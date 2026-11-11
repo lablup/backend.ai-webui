@@ -397,3 +397,16 @@ export const readDomainWebUISettings = (
     ? (settings as WebUISettingsDocument)
     : undefined;
 };
+
+export const findWebUISettingDefinition = (
+  key: string,
+): WebUISettingDefinition | undefined =>
+  _.find(WEBUI_SETTING_DEFINITIONS, (d) => d.key === key);
+
+/** The i18n key of a setting's row title on System Settings (`WebUISettingLabels.ts`). */
+export const webuiSettingLabelKey = (key: string): string =>
+  `webuiSettings.${_.upperFirst(key)}`;
+
+/** The i18n key of a System Settings group heading. */
+export const webuiSettingGroupLabelKey = (group: WebUISettingGroup): string =>
+  `webuiSettings.group.${_.upperFirst(group)}`;

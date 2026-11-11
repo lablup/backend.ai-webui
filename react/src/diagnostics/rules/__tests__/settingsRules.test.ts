@@ -1,0 +1,303 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
+import en from '../../../../../resources/i18n/en.json';
+import {
+  getDefaultLoginConfig,
+  type LoginConfigState,
+} from '../../../helper/loginConfig';
+import {
+  WEBUI_SETTING_DEFINITIONS,
+  webuiSettingGroupLabelKey,
+  webuiSettingLabelKey,
+} from '../../../helper/webuiSettings';
+import {
+  changedSettingKeys,
+  checkIgnoredConfigTomlKeys,
+  checkPluginConfiguration,
+  checkSettingImageReferences,
+  checkSettingMenuKeys,
+  checkSettingUrls,
+  findIgnoredConfigTomlKeys,
+} from '../settingsRules';
+import * as _ from 'lodash-es';
+
+const state = (
+  overrides: Partial<LoginConfigState> = {},
+): LoginConfigState => ({
+  ...getDefaultLoginConfig(),
+  ...overrides,
+});
+
+const validMenuKeys = ['start', 'dashboard', 'session', 'data'];
+
+describe('changedSettingKeys', () => {
+  it('finds nothing on the code defaults', () => {
+    expect(
+      changedSettingKeys(state(), getDefaultLoginConfig(), [
+        'maxCPUCoresPerContainer',
+        'defaultImportEnvironment',
+        'appDownloadUrl',
+      ]),
+    ).toEqual([]);
+  });
+
+  it('finds the keys set to another value, by setting key', () => {
+    expect(
+      changedSettingKeys(
+        state({
+          maxCPUCoresPerContainer: 8,
+          default_import_environment: 'a/b',
+        }),
+        getDefaultLoginConfig(),
+        [
+          'maxCPUCoresPerContainer',
+          'defaultImportEnvironment',
+          'appDownloadUrl',
+        ],
+      ),
+    ).toEqual(['maxCPUCoresPerContainer', 'defaultImportEnvironment']);
+  });
+
+  it('does not count an emptied value as set', () => {
+    expect(
+      changedSettingKeys(
+        state({ default_import_environment: '', appDownloadUrl: '' }),
+        getDefaultLoginConfig(),
+        ['defaultImportEnvironment', 'appDownloadUrl'],
+      ),
+    ).toEqual([]);
+  });
+});
+
+describe('checkSettingUrls', () => {
+  it('passes the defaults and an empty value', () => {
+    expect(checkSettingUrls(state({ fasttrackEndpoint: '' }))).toEqual([]);
+  });
+
+  it('flags a value that is not an http(s) URL', () => {
+    const results = checkSettingUrls(
+      state({ appDownloadUrl: 'ftp://x', fasttrackEndpoint: 'nope' }),
+    );
+    expect(results.map((r) => r.id)).toEqual([
+      'settings-invalid-url-appDownloadUrl',
+      'settings-invalid-url-fasttrackEndpoint',
+    ]);
+    expect(results[1].interpolationValues).toEqual({ value: 'nope' });
+  });
+});
+
+describe('checkSettingImageReferences', () => {
+  it('passes the defaults', () => {
+    expect(checkSettingImageReferences(state())).toEqual([]);
+  });
+
+  it('accepts a port in the registry and an architecture suffix', () => {
+    expect(
+      checkSettingImageReferences(
+        state({
+          systemSSHImage: 'registry.local:5000/ns/ssh:1.0',
+          defaultFileBrowserImage: 'cr.backend.ai/stable/fb:24.03@x86_64',
+        }),
+      ),
+    ).toEqual([]);
+  });
+
+  it('flags a malformed reference by setting key', () => {
+    const results = checkSettingImageReferences(
+      state({ default_session_environment: 'not an image' }),
+    );
+    expect(results).toHaveLength(1);
+    expect(results[0]).toMatchObject({
+      id: 'settings-invalid-image-ref-defaultSessionEnvironment',
+      settingKey: 'defaultSessionEnvironment',
+      interpolationValues: { value: 'not an image' },
+    });
+  });
+
+  it('skips placeholders', () => {
+    expect(
+      checkSettingImageReferences(state({ systemSSHImage: '[SSH image]' })),
+    ).toEqual([]);
+  });
+});
+
+describe('checkSettingMenuKeys', () => {
+  it('reports nothing when both lists are empty', () => {
+    expect(checkSettingMenuKeys(state(), validMenuKeys)).toEqual([]);
+  });
+
+  it('passes a list of known keys', () => {
+    expect(
+      checkSettingMenuKeys(state({ blockList: ['data'] }), validMenuKeys),
+    ).toEqual([
+      expect.objectContaining({
+        id: 'settings-menu-keys-valid-menuBlocklist',
+        severity: 'passed',
+        settingKey: 'menuBlocklist',
+        interpolationValues: { count: '1' },
+      }),
+    ]);
+  });
+
+  it('checks the inactive list too', () => {
+    const results = checkSettingMenuKeys(
+      state({ blockList: ['start'], inactiveList: ['dashbord', 'session'] }),
+      validMenuKeys,
+    );
+    expect(results.map((r) => [r.id, r.severity])).toEqual([
+      ['settings-menu-keys-valid-menuBlocklist', 'passed'],
+      ['settings-invalid-menu-keys-menuInactivelist', 'warning'],
+    ]);
+    expect(results[1].interpolationValues).toEqual({
+      entries: 'dashbord',
+      count: '1',
+    });
+  });
+
+  it('ignores system-settings, which neither list can hide', () => {
+    expect(
+      checkSettingMenuKeys(state({ blockList: ['system-settings'] }), [
+        ...validMenuKeys,
+        'system-settings',
+      ]),
+    ).toEqual([]);
+  });
+});
+
+describe('checkPluginConfiguration', () => {
+  it('returns nothing when no plugin is configured', () => {
+    expect(checkPluginConfiguration([], '')).toEqual([]);
+  });
+
+  it('accepts the names and folder paths the loader accepts', () => {
+    expect(
+      checkPluginConfiguration(
+        ['plugin_name', 'another-plugin', 'vendor/dashboard'],
+        'auth/signup-cloud',
+      ),
+    ).toEqual([]);
+  });
+
+  it('flags page entries and the login plugin the loader would refuse', () => {
+    const results = checkPluginConfiguration(
+      ['good', 'bad name', 'a/../b'],
+      'signup-cloud.js',
+    );
+    expect(results).toHaveLength(1);
+    expect(results[0]).toMatchObject({
+      id: 'settings-invalid-plugin-names',
+      severity: 'warning',
+      settingKey: 'pluginPage',
+      interpolationValues: {
+        plugins: 'bad name, a/../b, signup-cloud.js',
+        count: '3',
+      },
+    });
+  });
+
+  it('skips empty and placeholder entries', () => {
+    expect(
+      checkPluginConfiguration(['', '[Plugin Page]'], '[Login Plugin]'),
+    ).toEqual([]);
+  });
+});
+
+describe('findIgnoredConfigTomlKeys', () => {
+  it('skips the keys config.toml still owns and unknown keys', () => {
+    expect(
+      findIgnoredConfigTomlKeys({
+        general: {
+          apiEndpoint: 'https://api.example.com',
+          connectionMode: 'SESSION',
+          force2FA: true,
+        },
+        wsproxy: { proxyURL: 'http://127.0.0.1:5050/' },
+        server: { webServerURL: 'https://web.example.com' },
+      }),
+    ).toEqual([]);
+  });
+
+  it('maps the renamed keys of ADR 0028', () => {
+    expect(
+      findIgnoredConfigTomlKeys({
+        menu: { blocklist: 'data, session', inactivelist: 'dashboard' },
+        plugin: { login: 'signup', page: 'a,b' },
+        pipeline: { frontendEndpoint: 'https://ft.example.com' },
+      }),
+    ).toEqual([
+      { path: 'menu.blocklist', settingKey: 'menuBlocklist' },
+      { path: 'menu.inactivelist', settingKey: 'menuInactivelist' },
+      { path: 'plugin.login', settingKey: 'pluginLogin' },
+      { path: 'plugin.page', settingKey: 'pluginPage' },
+      { path: 'pipeline.frontendEndpoint', settingKey: 'fasttrackEndpoint' },
+    ]);
+  });
+
+  it('finds a key a System Settings key replaced under its own name', () => {
+    expect(
+      _.map(
+        findIgnoredConfigTomlKeys({
+          general: { autoLogout: 'true', debug: false },
+          resources: { maxCPUCoresPerContainer: 256 },
+        }),
+        'settingKey',
+      ),
+    ).toEqual(['autoLogout', 'debug', 'maxCPUCoresPerContainer']);
+  });
+
+  it('leaves out an empty or placeholder value, which sets nothing', () => {
+    expect(
+      findIgnoredConfigTomlKeys({
+        general: {
+          defaultSessionEnvironment: '[Default session kernel]',
+          appDownloadUrl: '',
+          systemSSHImage: '',
+        },
+      }),
+    ).toEqual([]);
+  });
+});
+
+describe('checkIgnoredConfigTomlKeys', () => {
+  it('reports nothing without a file or ignored keys', () => {
+    expect(checkIgnoredConfigTomlKeys(null)).toEqual([]);
+    expect(
+      checkIgnoredConfigTomlKeys({ general: { apiEndpoint: 'x' } }),
+    ).toEqual([]);
+  });
+
+  it('lists every ignored key in one info row', () => {
+    expect(
+      checkIgnoredConfigTomlKeys({
+        general: { hideAgents: true, maskUserInfo: true },
+        resources: { maxCPUCoresPerContainer: 256 },
+      }),
+    ).toEqual([
+      expect.objectContaining({
+        id: 'config-unused-keys',
+        severity: 'info',
+        titleKey: 'diagnostics.UnusedConfigKeys',
+        remediationKey: 'diagnostics.UnusedConfigKeysFix',
+        linksSystemSettings: true,
+        interpolationValues: {
+          keys: 'general.hideAgents, general.maskUserInfo, resources.maxCPUCoresPerContainer',
+        },
+      }),
+    ]);
+  });
+});
+
+describe('System Settings labels', () => {
+  it('has a row title and a group heading for every setting', () => {
+    for (const definition of WEBUI_SETTING_DEFINITIONS) {
+      expect(_.get(en, webuiSettingLabelKey(definition.key))).toEqual(
+        expect.any(String),
+      );
+      expect(_.get(en, webuiSettingGroupLabelKey(definition.group))).toEqual(
+        expect.any(String),
+      );
+    }
+  });
+});

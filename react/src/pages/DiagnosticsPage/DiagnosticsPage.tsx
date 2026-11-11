@@ -4,6 +4,7 @@
  */
 import { message } from '../../app-shim';
 import ErrorBoundaryWithNullFallback from '../../components/ErrorBoundaryWithNullFallback';
+import { diagnosticText } from '../../diagnostics/diagnosticText';
 import { downloadCSV, escapeCsvValue } from '../../helper/csv-util';
 import { DiagnosticResult } from '../../types/diagnostics';
 import CspDiagnosticsSection from './components/CspDiagnosticsSection';
@@ -116,16 +117,17 @@ const DiagnosticsPage = () => {
       'Description',
       'Remediation',
     ];
-    const rows = allResults.map((result) => [
-      result.id,
-      result.severity,
-      result.category,
-      t(result.titleKey, result.interpolationValues ?? {}),
-      t(result.descriptionKey, result.interpolationValues ?? {}),
-      result.remediationKey
-        ? t(result.remediationKey, result.interpolationValues ?? {})
-        : '',
-    ]);
+    const rows = allResults.map((result) => {
+      const text = diagnosticText(result, t);
+      return [
+        result.id,
+        result.severity,
+        result.category,
+        text.title,
+        text.description,
+        text.remediation,
+      ];
+    });
 
     const csvContent = [header, ...rows]
       .map((row) => row.map(escapeCsvValue).join(','))

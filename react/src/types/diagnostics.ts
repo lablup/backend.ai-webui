@@ -15,4 +15,11 @@ export interface DiagnosticResult {
   descriptionKey: string;
   remediationKey?: string;
   interpolationValues?: Record<string, string>;
+  /**
+   * The System Settings key (`WEBUI_SETTING_DEFINITIONS`) the result is about:
+   * the list fills `{{setting}}` / `{{group}}` with its labels and links the page.
+   */
+  settingKey?: string;
+  /** Links System Settings without naming one setting. */
+  linksSystemSettings?: boolean;
 }

@@ -2,21 +2,37 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { isValidPluginPath } from '../../helper/pluginPath';
+import { FILE_ONLY_CONFIG_KEYS } from '../../helper/loginConfig';
 import type { DiagnosticResult } from '../../types/diagnostics';
+import * as _ from 'lodash-es';
 
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
 
 /** Check whether a string is a valid URL (http/https). */
-function isValidUrl(value: string): boolean {
+export function isValidUrl(value: string): boolean {
   try {
     const url = new URL(value);
     return url.protocol === 'http:' || url.protocol === 'https:';
   } catch {
     return false;
   }
+}
+
+/**
+ * The keys `config.toml` still owns, as the file sets them. `server.webServerURL`
+ * is read only by the Electron app (`electron-app/main.js`), so it is left out elsewhere.
+ */
+export function fileOnlyConfig(
+  rawConfig: Record<string, any>,
+  isElectron: boolean,
+): Record<string, Record<string, unknown>> {
+  return _.mapValues(FILE_ONLY_CONFIG_KEYS, (keys, section) =>
+    section === 'server' && !isElectron
+      ? {}
+      : _.pick(rawConfig[section] ?? {}, keys),
+  );
 }
 
 /**
@@ -114,51 +130,15 @@ export function checkSslMismatch(
 }
 
 // ---------------------------------------------------------------------------
-// Blocklist
-// ---------------------------------------------------------------------------
-
-/**
- * Check if the blocklist contains menu keys that don't exist.
- * Invalid blocklist entries have no effect and may indicate a typo or
- * an outdated config referencing removed menu items.
- */
-export function checkBlocklistValidity(
-  blockList: readonly string[],
-  validMenuKeys: readonly string[],
-): DiagnosticResult | null {
-  if (!blockList || blockList.length === 0) return null;
-
-  const invalidEntries = blockList.filter(
-    (key) => !validMenuKeys.includes(key),
-  );
-
-  if (invalidEntries.length > 0) {
-    return {
-      id: 'config-invalid-blocklist',
-      severity: 'warning',
-      category: 'config',
-      titleKey: 'diagnostics.InvalidBlocklistEntries',
-      descriptionKey: 'diagnostics.InvalidBlocklistEntriesDesc',
-      remediationKey: 'diagnostics.InvalidBlocklistEntriesFix',
-      interpolationValues: {
-        entries: invalidEntries.join(', '),
-        count: String(invalidEntries.length),
-      },
-    };
-  }
-
-  return null;
-}
-
-// ---------------------------------------------------------------------------
-// Connection mode  (config.toml: "Default is API. Currently supports API and SESSION")
+// Connection mode  (API or SESSION; anything else runs as SESSION, see loginConfig.ts)
 // ---------------------------------------------------------------------------
 
 const VALID_CONNECTION_MODES = ['API', 'SESSION'];
 
 /**
- * 1) connectionMode must be "API" or "SESSION".
- * 2) In SESSION mode, apiEndpoint should match webServerURL.
+ * 1) connectionMode must be "API" or "SESSION"; the WebUI runs any other value as SESSION.
+ * 2) In SESSION mode, notes when apiEndpoint differs from webServerURL, which may be
+ *    intended. Pass an empty webServerUrl outside Electron, the only reader of it.
  */
 export function checkConnectionMode(
   connectionMode: string,
@@ -174,7 +154,7 @@ export function checkConnectionMode(
   if (!VALID_CONNECTION_MODES.includes(mode)) {
     results.push({
       id: 'config-invalid-connection-mode',
-      severity: 'warning',
+      severity: 'critical',
       category: 'config',
       titleKey: 'diagnostics.InvalidConnectionMode',
       descriptionKey: 'diagnostics.InvalidConnectionModeDesc',
@@ -195,7 +175,7 @@ export function checkConnectionMode(
     if (normalizedApi !== normalizedWeb) {
       results.push({
         id: 'config-connection-mode-mismatch',
-        severity: 'warning',
+        severity: 'info',
         category: 'config',
         titleKey: 'diagnostics.ConnectionModeMismatch',
         descriptionKey: 'diagnostics.ConnectionModeMismatchDesc',
@@ -218,20 +198,11 @@ interface UrlFieldDef {
   field: string;
 }
 
-/**
- * URL fields extracted from config.toml comments:
- *   general.apiEndpoint   — "Default API Endpoint"
- *   general.appDownloadUrl — "URL to download the electron app"
- *   wsproxy.proxyURL      — "Proxy URL"
- *   server.webServerURL   — "Web server website URL"
- *   pipeline.frontendEndpoint — "FastTrack frontend endpoint"
- */
+/** The URL keys `config.toml` still owns; the settings URLs are `checkSettingUrls`. */
 const URL_FIELDS: UrlFieldDef[] = [
   { section: 'general', field: 'apiEndpoint' },
-  { section: 'general', field: 'appDownloadUrl' },
   { section: 'wsproxy', field: 'proxyURL' },
   { section: 'server', field: 'webServerURL' },
-  { section: 'pipeline', field: 'frontendEndpoint' },
 ];
 
 /**
@@ -273,239 +244,4 @@ export function checkUrlFields(rawConfig: Record<string, unknown>): {
   }
 
   return { issues, checkedCount };
-}
-
-// ---------------------------------------------------------------------------
-// Resource limits  (config.toml [resources] section)
-// ---------------------------------------------------------------------------
-
-interface ResourceLimitRange {
-  field: string;
-  min: number;
-  max: number;
-}
-
-const RESOURCE_LIMIT_RANGES: ResourceLimitRange[] = [
-  // [resources] — device / memory caps
-  {
-    field: 'maxCPUCoresPerContainer',
-    min: 1,
-    max: 8192,
-  },
-  {
-    field: 'maxMemoryPerContainer',
-    min: 1,
-    max: 16384,
-  },
-  {
-    field: 'maxCUDADevicesPerContainer',
-    min: 0,
-    max: 64,
-  },
-  {
-    field: 'maxCUDASharesPerContainer',
-    min: 0,
-    max: 64,
-  },
-  {
-    field: 'maxROCMDevicesPerContainer',
-    min: 0,
-    max: 64,
-  },
-  {
-    field: 'maxTPUDevicesPerContainer',
-    min: 0,
-    max: 64,
-  },
-  {
-    field: 'maxIPUDevicesPerContainer',
-    min: 0,
-    max: 64,
-  },
-  {
-    field: 'maxATOMDevicesPerContainer',
-    min: 0,
-    max: 64,
-  },
-  {
-    field: 'maxATOMPLUSDevicesPerContainer',
-    min: 0,
-    max: 64,
-  },
-  {
-    field: 'maxGaudi2DevicesPerContainer',
-    min: 0,
-    max: 64,
-  },
-  {
-    field: 'maxWarboyDevicesPerContainer',
-    min: 0,
-    max: 64,
-  },
-  {
-    field: 'maxRNGDDevicesPerContainer',
-    min: 0,
-    max: 64,
-  },
-  {
-    field: 'maxHyperaccelLPUDevicesPerContainer',
-    min: 0,
-    max: 64,
-  },
-  {
-    field: 'maxShmPerContainer',
-    min: 0,
-    max: 16384,
-  },
-  // "Set to -1 for unlimited upload"
-  {
-    field: 'maxFileUploadSize',
-    min: -1,
-    max: 107374182400,
-  },
-];
-
-/** [general] numeric fields with expected ranges. */
-const GENERAL_NUMERIC_RANGES: ResourceLimitRange[] = [
-  // "The maximum allowed number of preopen ports. 0 disables the feature."
-  {
-    field: 'maxCountForPreopenPorts',
-    min: 0,
-    max: 100,
-  },
-];
-
-/**
- * Check that all resource limit values are within reasonable ranges.
- */
-export function checkResourceLimits(
-  resources: Record<string, unknown> | undefined,
-): DiagnosticResult[] {
-  if (!resources) return [];
-  return checkNumericRanges(resources, RESOURCE_LIMIT_RANGES, 'resources');
-}
-
-/**
- * Check numeric fields in [general] section.
- */
-export function checkGeneralNumericFields(
-  general: Record<string, unknown> | undefined,
-): DiagnosticResult[] {
-  if (!general) return [];
-  return checkNumericRanges(general, GENERAL_NUMERIC_RANGES, 'general');
-}
-
-function checkNumericRanges(
-  config: Record<string, unknown>,
-  ranges: ResourceLimitRange[],
-  section: string,
-): DiagnosticResult[] {
-  const results: DiagnosticResult[] = [];
-
-  for (const range of ranges) {
-    const rawValue = config[range.field];
-    if (rawValue === undefined || rawValue === null) continue;
-
-    const value = Number(rawValue);
-    if (Number.isNaN(value)) continue;
-
-    if (value < range.min || value > range.max) {
-      results.push({
-        id: `config-${section}-${range.field}`,
-        severity: 'warning',
-        category: 'config',
-        titleKey: 'diagnostics.ResourceLimitOutOfRange',
-        descriptionKey: 'diagnostics.ResourceLimitOutOfRangeDesc',
-        remediationKey: 'diagnostics.ResourceLimitOutOfRangeFix',
-        interpolationValues: {
-          section: `[${section}]`,
-          field: range.field,
-          value: String(value),
-          min: String(range.min),
-          max: String(range.max),
-        },
-      });
-    }
-  }
-
-  return results;
-}
-
-// ---------------------------------------------------------------------------
-// Image references  (config.toml: "registry/namespace:tag@arch")
-// ---------------------------------------------------------------------------
-
-const IMAGE_REFERENCE_PATTERN =
-  /^[a-zA-Z0-9._-]+(?::[0-9]+)?(\/[a-zA-Z0-9._-]+)+(:[a-zA-Z0-9._-]+)?(@[a-zA-Z0-9._-]+)?$/;
-
-/**
- * Validate image reference fields:
- *   systemSSHImage, defaultFileBrowserImage,
- *   defaultSessionEnvironment, defaultImportEnvironment
- */
-export function checkImageReferences(
-  generalConfig: Record<string, unknown> | undefined,
-): DiagnosticResult[] {
-  if (!generalConfig) return [];
-
-  const results: DiagnosticResult[] = [];
-  const fields = [
-    'systemSSHImage',
-    'defaultFileBrowserImage',
-    'defaultSessionEnvironment',
-    'defaultImportEnvironment',
-  ];
-
-  for (const field of fields) {
-    const value = generalConfig[field];
-    if (!value || typeof value !== 'string' || value.trim() === '') continue;
-    if (isPlaceholder(value)) continue;
-
-    if (!IMAGE_REFERENCE_PATTERN.test(value)) {
-      results.push({
-        id: `config-invalid-image-ref-${field}`,
-        severity: 'warning',
-        category: 'config',
-        titleKey: 'diagnostics.InvalidImageReference',
-        descriptionKey: 'diagnostics.InvalidImageReferenceDesc',
-        remediationKey: 'diagnostics.InvalidImageReferenceFix',
-        interpolationValues: { field, value },
-      });
-    }
-  }
-
-  return results;
-}
-
-// ---------------------------------------------------------------------------
-// Plugin configuration (the effective `pluginPages` / `loginPlugin`)
-// ---------------------------------------------------------------------------
-
-/**
- * Flags plugin entries the loader would refuse (`isValidPluginPath`, the rule
- * `resolvePluginScriptUrl` applies): page entries and the login plugin alike.
- */
-export function checkPluginConfiguration(
-  pluginPages: ReadonlyArray<string>,
-  loginPlugin: string,
-): DiagnosticResult[] {
-  const entries = [...pluginPages, loginPlugin]
-    .map((entry) => entry.trim())
-    .filter((entry) => entry !== '' && !isPlaceholder(entry));
-  const invalidNames = entries.filter((entry) => !isValidPluginPath(entry));
-  if (invalidNames.length === 0) return [];
-  return [
-    {
-      id: 'config-invalid-plugin-names',
-      severity: 'warning',
-      category: 'config',
-      titleKey: 'diagnostics.InvalidPluginNames',
-      descriptionKey: 'diagnostics.InvalidPluginNamesDesc',
-      remediationKey: 'diagnostics.InvalidPluginNamesFix',
-      interpolationValues: {
-        plugins: invalidNames.join(', '),
-        count: String(invalidNames.length),
-      },
-    },
-  ];
 }

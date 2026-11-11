@@ -2,12 +2,15 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { diagnosticText } from '../../../diagnostics/diagnosticText';
+import { useWebUINavigate } from '../../../hooks';
 import type { DiagnosticResult } from '../../../types/diagnostics';
 import { Banner } from '@lablup/ui-common/Banner';
+import { Button } from '@lablup/ui-common/Button';
 import { Text } from '@lablup/ui-common/Text';
 import { useTheme } from '@lablup/ui-common/theme';
 import { BAIFlex, BAISkeleton, bannerLiveRole } from 'backend.ai-ui';
-import { CheckCircle } from 'lucide-react';
+import { CheckCircle, ChevronRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 interface DiagnosticResultListProps {
@@ -32,6 +35,7 @@ const DiagnosticResultList: React.FC<DiagnosticResultListProps> = ({
 
   const { t } = useTranslation();
   const { token } = useTheme();
+  const navigate = useWebUINavigate();
 
   if (loading) {
     return <BAISkeleton rows={2} />;
@@ -45,50 +49,61 @@ const DiagnosticResultList: React.FC<DiagnosticResultListProps> = ({
 
   return (
     <BAIFlex direction="column" align="stretch" gap="sm">
-      {issues.map((result) => (
-        // antd `Alert` -> Astryx `Banner` (MAPPING §4): `type` -> `status`,
-        // `showIcon` dropped (Banner always shows the status icon).
-        <Banner
-          key={result.id}
-          status={severityToBannerStatus[result.severity]}
-          role={bannerLiveRole(severityToBannerStatus[result.severity])}
-          title={t(result.titleKey, result.interpolationValues)}
-          description={
-            <BAIFlex align="start" direction="column" gap="xxs">
-              <span>
-                {t(result.descriptionKey, result.interpolationValues)}
-              </span>
-              {result.interpolationValues?.errorMessage && (
-                // antd `Typography.Paragraph` (deep-imported from
-                // `antd/lib/typography/Paragraph`) -> `Text as="p"
-                // display="block"`; the `<pre>` it wrapped is what actually
-                // formats the error, so nothing else is needed.
-                <Text as="p" display="block">
-                  <pre>{result.interpolationValues.errorMessage}</pre>
-                </Text>
-              )}
-              {result.remediationKey && (
-                <span style={{ fontStyle: 'italic' }}>
-                  {t(result.remediationKey, result.interpolationValues)}
-                </span>
-              )}
-            </BAIFlex>
-          }
-        />
-      ))}
-      {passed.map((result) => (
-        <BAIFlex key={result.id} gap="xs" align="center">
-          <CheckCircle
-            size={token('--font-size-sm')}
-            style={{ color: token('--color-success'), flexShrink: 0 }}
+      {issues.map((result) => {
+        const text = diagnosticText(result, t);
+        return (
+          <Banner
+            key={result.id}
+            data-testid={`diagnostic-${result.id}`}
+            status={severityToBannerStatus[result.severity]}
+            role={bannerLiveRole(severityToBannerStatus[result.severity])}
+            title={text.title}
+            endContent={
+              result.settingKey || result.linksSystemSettings ? (
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  label={t('webui.menu.SystemSettings')}
+                  endContent={<ChevronRight size="1em" />}
+                  onClick={() => navigate('/admin/system-settings')}
+                />
+              ) : undefined
+            }
+            description={
+              <BAIFlex align="start" direction="column" gap="xxs">
+                <span>{text.description}</span>
+                {result.interpolationValues?.errorMessage && (
+                  // The `<pre>` keeps the parse error's line breaks.
+                  <Text as="p" display="block">
+                    <pre>{result.interpolationValues.errorMessage}</pre>
+                  </Text>
+                )}
+                {text.remediation && (
+                  <span style={{ fontStyle: 'italic' }}>
+                    {text.remediation}
+                  </span>
+                )}
+              </BAIFlex>
+            }
           />
-          <Text color="secondary">
-            {t(result.titleKey, result.interpolationValues)}
-            {' — '}
-            {t(result.descriptionKey, result.interpolationValues)}
-          </Text>
-        </BAIFlex>
-      ))}
+        );
+      })}
+      {passed.map((result) => {
+        const text = diagnosticText(result, t);
+        return (
+          <BAIFlex key={result.id} gap="xs" align="center">
+            <CheckCircle
+              size={token('--font-size-sm')}
+              style={{ color: token('--color-success'), flexShrink: 0 }}
+            />
+            <Text color="secondary">
+              {text.title}
+              {' - '}
+              {text.description}
+            </Text>
+          </BAIFlex>
+        );
+      })}
     </BAIFlex>
   );
 };
