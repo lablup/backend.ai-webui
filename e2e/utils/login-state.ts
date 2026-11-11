@@ -62,9 +62,12 @@ export function isAuthSpec(): boolean {
 export function readLoginState(file: string): StorageState | undefined {
   try {
     const state = JSON.parse(fs.readFileSync(file, 'utf8')) as StorageState;
-    return Array.isArray(state.cookies) && state.cookies.length > 0
-      ? state
-      : undefined;
+    // The browser may carry the session in localStorage (the
+    // X-BackendAI-SessionID header) instead of a third-party cookie.
+    const held =
+      state.cookies?.length > 0 ||
+      state.origins?.some((origin) => origin.localStorage.length > 0);
+    return held ? state : undefined;
   } catch {
     return undefined;
   }
@@ -90,10 +93,10 @@ export async function saveLoginState(
     .map((cookie) => cookie.expires)
     .filter((expires) => expires > 0);
   const ttl = expiries.length
-    ? `~${Math.round((Math.min(...expiries) - now) / 60)} min`
-    : 'browser-session';
+    ? `session cookie lifetime ~${Math.round((Math.min(...expiries) - now) / 60)} min`
+    : `no expiring cookie (${state.cookies.length} cookies)`;
   console.log(
-    `[login-cache] saved state for account ${accountLabel(email)} (worker slot ${slot()}); session cookie lifetime ${ttl}`,
+    `[login-cache] saved state for account ${accountLabel(email)} (worker slot ${slot()}); ${ttl}`,
   );
 }
 
