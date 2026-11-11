@@ -2,7 +2,7 @@
   "version": 1,
   "channel": "next",
   "label": "PR preview",
-  "generatedAt": "2026-11-11T15:12:00.527Z",
+  "generatedAt": "2026-11-11T15:42:15.467Z",
   "languages": [
     "en",
     "ja",
@@ -13,11 +13,11 @@
     "en": {
       "totals": {
         "pages": 1,
-        "changes": 33,
-        "added": 12,
-        "modified": 12,
+        "changes": 36,
+        "added": 13,
+        "modified": 14,
         "removed": 9,
-        "images": 2,
+        "images": 3,
         "newPages": 0,
         "deletedPages": 0
       },
@@ -29,11 +29,11 @@
           "url": "next/en/dashboard.html",
           "sourcePath": "packages/backend.ai-webui-docs/src/en/dashboard/dashboard.md",
           "counts": {
-            "added": 12,
-            "modified": 12,
+            "added": 13,
+            "modified": 14,
             "removed": 9,
-            "images": 2,
-            "total": 33
+            "images": 3,
+            "total": 36
           },
           "fingerprints": [
             "d6b15dbdac40",
@@ -67,6 +67,9 @@
             "b9e72d5b5a58",
             "7b1175796fd8",
             "3ef5ace36d72",
+            "2fd24f4791bb",
+            "8c2b3ba8b089",
+            "c4a16b388ca7",
             "0fefc022f21f",
             "7af3e64dbfb4"
           ]
@@ -76,11 +79,11 @@
     "ja": {
       "totals": {
         "pages": 1,
-        "changes": 32,
-        "added": 12,
-        "modified": 11,
+        "changes": 35,
+        "added": 13,
+        "modified": 13,
         "removed": 9,
-        "images": 2,
+        "images": 3,
         "newPages": 0,
         "deletedPages": 0
       },
@@ -92,11 +95,11 @@
           "url": "next/ja/dashboard.html",
           "sourcePath": "packages/backend.ai-webui-docs/src/ja/dashboard/dashboard.md",
           "counts": {
-            "added": 12,
-            "modified": 11,
+            "added": 13,
+            "modified": 13,
             "removed": 9,
-            "images": 2,
-            "total": 32
+            "images": 3,
+            "total": 35
           },
           "fingerprints": [
             "f90f1da4afc9",
@@ -129,6 +132,9 @@
             "4868904a4b1c",
             "1bb30d029613",
             "82859b35a2c5",
+            "a6d32a5d863e",
+            "19886ba722cb",
+            "17467d511c7a",
             "b4d3d5b54f4d",
             "e2efb3f7c567"
           ]
@@ -138,11 +144,11 @@
     "ko": {
       "totals": {
         "pages": 1,
-        "changes": 32,
-        "added": 12,
-        "modified": 11,
+        "changes": 35,
+        "added": 13,
+        "modified": 13,
         "removed": 9,
-        "images": 2,
+        "images": 3,
         "newPages": 0,
         "deletedPages": 0
       },
@@ -154,11 +160,11 @@
           "url": "next/ko/dashboard.html",
           "sourcePath": "packages/backend.ai-webui-docs/src/ko/dashboard/dashboard.md",
           "counts": {
-            "added": 12,
-            "modified": 11,
+            "added": 13,
+            "modified": 13,
             "removed": 9,
-            "images": 2,
-            "total": 32
+            "images": 3,
+            "total": 35
           },
           "fingerprints": [
             "b93a76d35ca6",
@@ -175,7 +181,7 @@
             "4b77cc470c65",
             "ba8b9793eedb",
             "2e2f911f7f48",
-            "e13bb9ddf1e3",
+            "a9ae2559119e",
             "c3769173ab59",
             "f1ebffc73b63",
             "71f5784326e7",
@@ -191,6 +197,9 @@
             "c1142d5cbde2",
             "c3c3774ee08b",
             "9b807ead9dbe",
+            "c1c13af880c8",
+            "f4917805540e",
+            "d6ca05ecba54",
             "8286a83aaa40",
             "cdabe2ea1fff"
           ]
@@ -200,11 +209,11 @@
     "th": {
       "totals": {
         "pages": 1,
-        "changes": 33,
-        "added": 12,
-        "modified": 12,
+        "changes": 36,
+        "added": 13,
+        "modified": 14,
         "removed": 9,
-        "images": 2,
+        "images": 3,
         "newPages": 0,
         "deletedPages": 0
       },
@@ -216,11 +225,11 @@
           "url": "next/th/dashboard.html",
           "sourcePath": "packages/backend.ai-webui-docs/src/th/dashboard/dashboard.md",
           "counts": {
-            "added": 12,
-            "modified": 12,
+            "added": 13,
+            "modified": 14,
             "removed": 9,
-            "images": 2,
-            "total": 33
+            "images": 3,
+            "total": 36
           },
           "fingerprints": [
             "576f8122de4e",
@@ -254,6 +263,9 @@
             "d1af87713917",
             "8b46308fa38a",
             "a3ff90638e7e",
+            "fe2cb53d0bdc",
+            "7fead00b25d2",
+            "488dd71b7b13",
             "024217d0ff86",
             "4f648f88da57"
           ]

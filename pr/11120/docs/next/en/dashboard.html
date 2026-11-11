@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="Dashboard" />
   <meta name="twitter:description" content="The Dashboard is the page you land on after signing in. Its Get started cards launch the actions you run most often — an interactive or batch session, a…" />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Dashboard","inLanguage":"en","description":"The Dashboard is the page you land on after signing in. Its Get started cards launch the actions you run most often — an interactive or batch session, a…","dateModified":"2026-11-11T15:09:28.000Z","url":"https://webui.docs.backend.ai/next/en/dashboard.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Dashboard","inLanguage":"en","description":"The Dashboard is the page you land on after signing in. Its Get started cards launch the actions you run most often — an interactive or batch session, a…","dateModified":"2026-11-11T15:40:48.000Z","url":"https://webui.docs.backend.ai/next/en/dashboard.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/dashboard.html" />
   <link rel="alternate" hreflang="en" href="../en/dashboard.html" />
   <link rel="alternate" hreflang="ja" href="../ja/dashboard.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">Manual</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.10.0-alpha.3 (ba7f695)">v26.10.0-alpha.3 (ba7f695)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.10.0-alpha.3 (4959aa4)">v26.10.0-alpha.3 (4959aa4)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="Search docs...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -304,8 +304,9 @@ required — the dialog will not submit until both are chosen.</p>
 <ul>
 <li data-bai-block="30"><strong>Data source</strong>: The data source the panel lists. Choose <strong>Sessions</strong>,
 <strong>Deployments</strong>, or <strong>Data &amp; Storage</strong>.</li>
-<li data-bai-block="31"><strong>Panel type</strong>: How the panel displays the data source. Choose <strong>Table</strong> or
-<strong>Count</strong>. For the <strong>Sessions</strong> data source, <strong>Grid</strong> is also offered.</li>
+<li data-bai-block="31"><strong>Panel type</strong>: How the panel displays the data source. Choose <strong>Table</strong>,
+<strong>Count</strong>, or <strong>Chart</strong>. For the <strong>Sessions</strong> data source, <strong>Grid</strong> is also
+offered.</li>
 <li data-bai-block="32"><strong>Title</strong>: An optional panel title. When omitted, the data source name is
 used.</li>
 <li data-bai-block="33"><strong>Condition</strong>: A property filter that narrows the rows shown in the panel.</li>
@@ -318,20 +319,25 @@ place the panel on the board.</p>
 <p data-bai-block="36"><strong>Deployments</strong> panels list the project&#39;s model deployments, using the same
 table as the Deployments page: name, status, replica summary, model, and
 created at. Clicking a deployment&#39;s name opens its detail page.</p>
-<p data-bai-block="37"><strong>Grid</strong> shows the session resource grid: each matching session&#39;s allocated
+<p data-bai-block="37"><strong>Chart</strong> draws the matching items as a chart. <strong>Compare groups</strong> chart types
+(Donut, Pie, Bar, Radar) count the items grouped by the property chosen under
+<strong>Group by</strong>; <strong>Created over time</strong> chart types (Line, Area, Column) count the
+items created in each interval of the selected time range. Turn on <strong>Show
+table</strong> to list the matching rows under the chart on the panel.</p>
+<p data-bai-block="38"><strong>Grid</strong> shows the session resource grid: each matching session&#39;s allocated
 resources as unit cells, colored by utilization. Clicking a session opens its
 detail drawer, the same as clicking a row in the table. The grid shows at most
 the first 100 matching sessions; a notice appears when there are more.</p>
-<p data-bai-block="38">The grid&#39;s display settings — resource or kernel mode, which resource or
+<p data-bai-block="39">The grid&#39;s display settings — resource or kernel mode, which resource or
 metric to show, memory unit, and layout — are chosen in the Add/Edit panel
 dialog&#39;s live preview and saved with the panel. The panel itself shows no
 controls for these settings, so create a second panel if you want a different
 view.</p>
 <div class="admonition admonition-note">
-<div data-bai-block="39" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
+<div data-bai-block="40" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
 <div class="admonition-content">
 
-<p data-bai-block="40"><strong>Grid</strong> is an experimental feature. It is offered in the <strong>Panel type</strong>
+<p data-bai-block="41"><strong>Grid</strong> is an experimental feature. It is offered in the <strong>Panel type</strong>
 selector only when <strong>Session resource grid view</strong> is turned on under
 <a href="./user_settings.html#experimental-features">Experimental features</a>. If it is turned off later,
 existing Grid panels keep their saved configuration but display as the
@@ -339,23 +345,23 @@ session table until the setting is turned back on.</p>
 </div></div>
 
 
-<p data-bai-block="41">To change a panel&#39;s data source, panel type, condition, or title later, click
+<p data-bai-block="42">To change a panel&#39;s data source, panel type, condition, or title later, click
 the pencil (<strong>Edit</strong>) icon next to the panel in the sidebar — or in the
 panel&#39;s header on the board — and save your changes. To remove a panel, click
 the trash (<strong>Delete</strong>) icon and confirm in the popup.</p>
 <div class="admonition admonition-note">
-<div data-bai-block="42" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
+<div data-bai-block="43" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
 <div class="admonition-content">
 
-<p data-bai-block="43"><strong>Sessions</strong> and <strong>Deployments</strong> panels list data for the current project and
+<p data-bai-block="44"><strong>Sessions</strong> and <strong>Deployments</strong> panels list data for the current project and
 are available to every project member. <strong>Data &amp; Storage</strong> panels are
 available to superadmins only. A panel whose data source your role cannot
 query remains listed in the sidebar but is not shown on the board.</p>
 </div></div>
 
 
-<h2 data-bai-block="44" id="dashboard-automatic-refresh">Automatic Refresh<a class="hash-link" href="#dashboard-automatic-refresh" aria-label="Direct link to Automatic Refresh">#</a></h2>
-<p data-bai-block="45">The refresh control on the dashboard bar sets how often every card refreshes —
+<h2 data-bai-block="45" id="dashboard-automatic-refresh">Automatic Refresh<a class="hash-link" href="#dashboard-automatic-refresh" aria-label="Direct link to Automatic Refresh">#</a></h2>
+<p data-bai-block="46">The refresh control on the dashboard bar sets how often every card refreshes —
 <strong>Off</strong>, or an interval from 5 seconds to 10 minutes — and refreshes every card
 at once when you click it.</p>
 
