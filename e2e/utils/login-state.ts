@@ -91,8 +91,8 @@ export async function readLocalStorage(
 
 /**
  * Saves what the login produced: the context's cookies and the localStorage
- * entries the login added or changed (`before` is the storage just before
- * the submit), so nothing a test seeded itself travels to the next test.
+ * entries the login added or changed (`before` is the storage when the login
+ * page loaded), so nothing a test seeded itself travels to the next test.
  */
 export async function saveLoginState(
   page: Page,

@@ -358,7 +358,9 @@ async function restoreLogin(
 
 /**
  * Fills and submits the login form until the app shows the signed-in header.
- * Returns the app origin's localStorage as it was just before the submit.
+ * Returns the app origin's localStorage as it was before the login form was
+ * touched, so the caller can tell what the login (endpoint step included)
+ * wrote.
  */
 async function submitLogin(
   page: Page,
@@ -368,13 +370,13 @@ async function submitLogin(
 ): Promise<Record<string, string>> {
   await page.goto(webuiEndpoint);
   await removeDevServerOverlay(page);
+  const before = await readLocalStorage(page);
   await fillLoginEndpoint(page, endpoint);
   await page.getByLabel('Email or Username').fill(username);
   await page.getByLabel('Password').fill(password);
   // Astryx Button exposes no aria-label — its accessible name is the visible text.
   const loginButton = page.getByRole('button', { name: 'Login', exact: true });
   const account = accountLabel(username);
-  const before = await readLocalStorage(page);
   // A busy shared backend can transiently reject a valid login, so a
   // rejection is retried twice, 5s apart. A 429 is the manager's per-IP
   // anonymous window, which retries only refill: it waits for the reset once.
