@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<dc0c103977455b91a83f332b6fd40864>>
+ * @generated SignedSource<<20a5f2ce1e7005e455dff00cf9bacabb>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -13,9 +13,9 @@ export type AdminRetentionPolicyDeleteMutation$variables = {
   id: string;
 };
 export type AdminRetentionPolicyDeleteMutation$data = {
-  readonly adminDeleteRetentionPolicy: {
-    readonly id: string;
-  } | null | undefined;
+  readonly purgeRetentionPolicy: {
+    readonly entityId: string;
+  };
 };
 export type AdminRetentionPolicyDeleteMutation = {
   response: AdminRetentionPolicyDeleteMutation$data;
@@ -40,16 +40,16 @@ v1 = [
         "variableName": "id"
       }
     ],
-    "concreteType": "DeleteRetentionPolicyPayload",
+    "concreteType": "PurgeRetentionPolicyPayload",
     "kind": "LinkedField",
-    "name": "adminDeleteRetentionPolicy",
+    "name": "purgeRetentionPolicy",
     "plural": false,
     "selections": [
       {
         "alias": null,
         "args": null,
         "kind": "ScalarField",
-        "name": "id",
+        "name": "entityId",
         "storageKey": null
       }
     ],
@@ -74,16 +74,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "db275fd1b56d8af75bc028102eb630d0",
+    "cacheID": "b9028fcf3cb4560195eb0fcc28bedab6",
     "id": null,
     "metadata": {},
     "name": "AdminRetentionPolicyDeleteMutation",
     "operationKind": "mutation",
-    "text": "mutation AdminRetentionPolicyDeleteMutation(\n  $id: UUID!\n) {\n  adminDeleteRetentionPolicy(id: $id) {\n    id\n  }\n}\n"
+    "text": "mutation AdminRetentionPolicyDeleteMutation(\n  $id: UUID!\n) {\n  purgeRetentionPolicy(id: $id) {\n    entityId\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "6c16a5564da596d6035573a03b3d2deb";
+(node as any).hash = "6163e35b44260a48d64ed3d6503021f5";
 
 export default node;

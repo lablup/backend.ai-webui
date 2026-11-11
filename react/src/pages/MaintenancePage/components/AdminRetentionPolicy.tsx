@@ -105,8 +105,8 @@ const AdminRetentionPolicy: React.FC<AdminRetentionPolicyProps> = ({
   const [commitDelete, isInflightDelete] =
     useMutation<AdminRetentionPolicyDeleteMutation>(graphql`
       mutation AdminRetentionPolicyDeleteMutation($id: UUID!) {
-        adminDeleteRetentionPolicy(id: $id) {
-          id
+        purgeRetentionPolicy(id: $id) {
+          entityId
         }
       }
     `);
