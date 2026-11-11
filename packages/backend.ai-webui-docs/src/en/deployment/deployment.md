@@ -492,8 +492,8 @@ Click on a deployment name in the Deployments list to view detailed information 
 The Deployment Detail Page shows contextual alert banners at the top, reflecting the current state of the deployment:
 
 - **Deployment is ready**: Shown when the deployment is `HEALTHY`. Includes a **Test in Chat** button as a shortcut to the LLM Chat Test interface so you can test the model without leaving the page.
-- **Private deployment — use an access token to access the endpoint.**: Shown when **Open to Public** is disabled, the endpoint URL has been issued, and the deployment does not have an access token yet. Includes an **Add Access Token** button that opens the Create Access Token dialog directly from the banner. The banner disappears once you create the first token. See [Access Tokens](#generating-tokens).
-- **No revision is deployed — add a revision to activate this service.**: Shown when the deployment has no current revision. Click `Add Revision` to create the first revision and activate the service.
+- **Private deployment - use an access token to access the endpoint.**: Shown when **Open to Public** is disabled, the endpoint URL has been issued, and the deployment does not have an access token yet. Includes an **Add Access Token** button that opens the Create Access Token dialog directly from the banner. The banner disappears once you create the first token. See [Access Tokens](#generating-tokens).
+- **No revision is deployed - add a revision to activate this service.**: Shown when the deployment has no current revision. Click `Add Revision` to create the first revision and activate the service.
 
 - **Preparing your service**: Shown while the deployment is being created or transitioning between states. Indicates the service is not yet ready to handle requests.
 
@@ -584,7 +584,7 @@ While a different revision is being applied, the **Current Revision** tab shows 
 
 **Empty state**
 
-If no revision has been deployed yet, the tab shows: *"No revision is deployed — add a revision to activate this service."*
+If no revision has been deployed yet, the tab shows: *"No revision is deployed - add a revision to activate this service."*
 
 #### Revision history tab
 
