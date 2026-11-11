@@ -5,7 +5,7 @@
  * login error scenario handled by `handleLoginError` in LoginView.tsx.
  *
  * Mock strategy:
- *   - GET  /func/              -> mock server version
+ *   - GET  /func/health, /func/ -> mock reachability probe / server version
  *   - POST /server/login-check -> mock not-authenticated (show login form)
  *   - POST /server/login       -> per-test mock response (envelope cases)
  *   - `BackendAIClient.prototype.login` is stubbed to throw an `isError`
@@ -46,7 +46,7 @@ const TEST_PASSWORD = userInfo.admin.password;
 // ---------------------------------------------------------------------------
 
 async function setupBaseMocks(page: Page): Promise<void> {
-  await page.route(`${webServerEndpoint}/func/`, async (route) => {
+  await page.route(/\/func\/(health)?$/, async (route) => {
     if (route.request().method() === 'GET') {
       await route.fulfill({
         status: 200,

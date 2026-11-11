@@ -40,7 +40,7 @@ export async function checkLoginSession(apiEndpoint: string): Promise<boolean> {
   if (!apiEndpoint) return false;
   const { client } = createBackendAIClient('', '', apiEndpoint, 'SESSION');
   try {
-    await client.get_manager_version();
+    await client.probeServer();
     const isLogon = await client.check_login();
     return !!isLogon;
   } catch {
@@ -63,6 +63,9 @@ export async function connectViaGQL(
 
   let response;
   try {
+    // The manager tells its version only to an authenticated caller; the
+    // queries below need it to keep version-gated fields.
+    await client.get_manager_version();
     response = await client.query(q, v);
   } catch (err) {
     // A refused session is cleaned up like an empty keypair; a network blip is not.

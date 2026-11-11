@@ -717,7 +717,7 @@ const LoginView: React.FC<{
       clientRef.current = client;
 
       try {
-        await client.get_manager_version();
+        await client.probeServer();
       } catch {
         setIsBlockPanelOpen(false);
         open();
@@ -815,7 +815,7 @@ const LoginView: React.FC<{
       client.ready = false;
 
       try {
-        await client.get_manager_version();
+        await client.probeServer();
         await doGQLConnect(client);
       } catch {
         notification(t('error.CannotConnectToServer'));
@@ -982,7 +982,7 @@ const LoginView: React.FC<{
       const { client } = createBackendAIClient('', '', ep, 'SESSION');
       clientRef.current = client;
       try {
-        await client.get_manager_version();
+        await client.probeServer();
         const isLogon = await client.check_login();
         return !!isLogon;
       } catch {
