@@ -60,52 +60,39 @@ export async function clickRowAction(
   actionTitle: string,
 ) {
   await row.hover();
-  const moreActions = page.getByRole('button', { name: 'More actions' });
-  const inlineButton = row.getByRole('button', {
-    name: actionTitle,
-    exact: true,
-  });
-  // `isVisible()` never waits, so wait for the row's actions to render first.
-  await inlineButton
-    .or(row.getByRole('button', { name: 'More actions' }))
-    .first()
-    .waitFor({ timeout: 5000 })
-    .catch(() => {});
-
-  // A row can hold several cells with a "More actions" menu (e.g. Labels,
-  // behind its own Suspense): open each until one lists the action.
-  const moreButtonCells = row.getByRole('cell').filter({ has: moreActions });
-  const cellCount = await moreButtonCells.count();
-  for (let i = 0; i < cellCount; i++) {
-    const moreButton = moreButtonCells
-      .nth(i)
-      .getByRole('button', { name: 'More actions' });
-    if (!(await moreButton.isVisible())) continue;
-    await moreButton.click();
-    const menu = page.getByRole('menu');
-    await menu
-      .getByRole('menuitem')
-      .first()
-      .waitFor({ timeout: 2000 })
-      .catch(() => {});
-    const menuItem = menu.getByRole('menuitem', {
-      name: actionTitle,
-      exact: true,
-    });
-    if (await menuItem.isVisible()) {
-      await menuItem.click();
-      return;
+  const moreActionsIn = (scope: Locator | Page) =>
+    scope.getByRole('button', { name: 'More actions', exact: true });
+  const openMenu = page.getByRole('menu');
+  // Retried as a whole: the row's cells mount and re-measure their overflow
+  // after the row is visible (BAINameActionCell, the Labels cell's Suspense).
+  await expect(async () => {
+    if ((await openMenu.count()) > 0) {
+      await page.keyboard.press('Escape');
+      await expect(openMenu).toHaveCount(0);
     }
-    await page.keyboard.press('Escape');
-    await menu.waitFor({ state: 'hidden', timeout: 2000 }).catch(() => {});
-  }
-
-  if (await inlineButton.isVisible()) {
-    await inlineButton.click();
-    return;
-  }
-
-  throw new Error(`Action "${actionTitle}" not found in row`);
+    const menuCells = row
+      .getByRole('cell')
+      .filter({ has: moreActionsIn(page) });
+    for (const cell of await menuCells.all()) {
+      const moreButton = moreActionsIn(cell);
+      if (!(await moreButton.isVisible())) continue;
+      await moreButton.click();
+      await expect(openMenu.getByRole('menuitem').first()).toBeVisible();
+      const menuItem = openMenu.getByRole('menuitem', {
+        name: actionTitle,
+        exact: true,
+      });
+      if (await menuItem.isVisible()) {
+        await menuItem.click();
+        return;
+      }
+      await page.keyboard.press('Escape');
+      await expect(openMenu).toHaveCount(0);
+    }
+    await row
+      .getByRole('button', { name: actionTitle, exact: true })
+      .click({ timeout: 1000 });
+  }, `Action "${actionTitle}" not found in row`).toPass({ timeout: 15000 });
 }
 
 /**
