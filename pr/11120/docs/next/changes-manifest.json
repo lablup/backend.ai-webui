@@ -1,0 +1,264 @@
+{
+  "version": 1,
+  "channel": "next",
+  "label": "PR preview",
+  "generatedAt": "2026-11-11T15:12:00.527Z",
+  "languages": [
+    "en",
+    "ja",
+    "ko",
+    "th"
+  ],
+  "langs": {
+    "en": {
+      "totals": {
+        "pages": 1,
+        "changes": 33,
+        "added": 12,
+        "modified": 12,
+        "removed": 9,
+        "images": 2,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "dashboard",
+          "title": "Dashboard",
+          "status": "modified",
+          "url": "next/en/dashboard.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/en/dashboard/dashboard.md",
+          "counts": {
+            "added": 12,
+            "modified": 12,
+            "removed": 9,
+            "images": 2,
+            "total": 33
+          },
+          "fingerprints": [
+            "d6b15dbdac40",
+            "1b4d84bf32b9",
+            "8fa75bfb4c42",
+            "a8eed8953d27",
+            "57ee9d0e6835",
+            "03cd4c6ba0cf",
+            "ae782d8fdf8a",
+            "785992e0324a",
+            "c8f2bd876904",
+            "9a1790bdb51a",
+            "6e35ee6be07f",
+            "bc81c7a983e8",
+            "64c98fbe51e0",
+            "c703de3f2614",
+            "e967a332401f",
+            "f93833cd32f9",
+            "2859b8748fad",
+            "d1879d37a898",
+            "7e258eb7e216",
+            "4e4e4cca0d63",
+            "b1fc3a17df94",
+            "d9eac84600a7",
+            "a89758e8b29c",
+            "d08c5471ed4d",
+            "ae042882fba7",
+            "244c62b433ba",
+            "836ce9c713b4",
+            "01f31b6c479a",
+            "b9e72d5b5a58",
+            "7b1175796fd8",
+            "3ef5ace36d72",
+            "0fefc022f21f",
+            "7af3e64dbfb4"
+          ]
+        }
+      ]
+    },
+    "ja": {
+      "totals": {
+        "pages": 1,
+        "changes": 32,
+        "added": 12,
+        "modified": 11,
+        "removed": 9,
+        "images": 2,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "dashboard",
+          "title": "ダッシュボード",
+          "status": "modified",
+          "url": "next/ja/dashboard.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ja/dashboard/dashboard.md",
+          "counts": {
+            "added": 12,
+            "modified": 11,
+            "removed": 9,
+            "images": 2,
+            "total": 32
+          },
+          "fingerprints": [
+            "f90f1da4afc9",
+            "0b64bc8d5824",
+            "88e4d89c603b",
+            "3e84aeaac140",
+            "d532d9a50d27",
+            "f9d31d22dc72",
+            "8408bee37de4",
+            "a120dd73a668",
+            "d015474b23e1",
+            "12cab6c63b0e",
+            "7824c5b73d63",
+            "407c6503a39d",
+            "99e075db71cf",
+            "fbb39adf0574",
+            "2ef85edd8eb8",
+            "3c254f35127a",
+            "8fc8a7c862ae",
+            "b5bcffd23da4",
+            "932ff504b53e",
+            "ff509d25f551",
+            "c26baa869181",
+            "2803b4d67c1a",
+            "debdb228e1fa",
+            "c2caca3f725b",
+            "d0c6ece17d9c",
+            "6b3f28313bd8",
+            "d746ec1c6417",
+            "4868904a4b1c",
+            "1bb30d029613",
+            "82859b35a2c5",
+            "b4d3d5b54f4d",
+            "e2efb3f7c567"
+          ]
+        }
+      ]
+    },
+    "ko": {
+      "totals": {
+        "pages": 1,
+        "changes": 32,
+        "added": 12,
+        "modified": 11,
+        "removed": 9,
+        "images": 2,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "dashboard",
+          "title": "대시보드",
+          "status": "modified",
+          "url": "next/ko/dashboard.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ko/dashboard/dashboard.md",
+          "counts": {
+            "added": 12,
+            "modified": 11,
+            "removed": 9,
+            "images": 2,
+            "total": 32
+          },
+          "fingerprints": [
+            "b93a76d35ca6",
+            "e72e0a11a77e",
+            "c83f063d7aed",
+            "3833b2101572",
+            "026ecccb3d88",
+            "cdd9630b5770",
+            "855e5fdb390c",
+            "4469bf6b0cb9",
+            "7f259e94c2e8",
+            "d6002b654acf",
+            "25a43fd73d99",
+            "4b77cc470c65",
+            "ba8b9793eedb",
+            "2e2f911f7f48",
+            "e13bb9ddf1e3",
+            "c3769173ab59",
+            "f1ebffc73b63",
+            "71f5784326e7",
+            "22721e3f5465",
+            "87456526e39f",
+            "297bc5e74e13",
+            "218af09504b5",
+            "90a67f263438",
+            "b599cf08d9d9",
+            "02f7d9d7d847",
+            "7be2aafb4bf4",
+            "e57c87318448",
+            "c1142d5cbde2",
+            "c3c3774ee08b",
+            "9b807ead9dbe",
+            "8286a83aaa40",
+            "cdabe2ea1fff"
+          ]
+        }
+      ]
+    },
+    "th": {
+      "totals": {
+        "pages": 1,
+        "changes": 33,
+        "added": 12,
+        "modified": 12,
+        "removed": 9,
+        "images": 2,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "dashboard",
+          "title": "แดชบอร์ด",
+          "status": "modified",
+          "url": "next/th/dashboard.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/th/dashboard/dashboard.md",
+          "counts": {
+            "added": 12,
+            "modified": 12,
+            "removed": 9,
+            "images": 2,
+            "total": 33
+          },
+          "fingerprints": [
+            "576f8122de4e",
+            "0f48fcc9f879",
+            "0e157e203845",
+            "712e4292b882",
+            "83a1567f201b",
+            "a90f06ff963e",
+            "1304a7fe5e93",
+            "95ba9b317e57",
+            "be43d6ae45a1",
+            "0d014ebfd004",
+            "7ed1dc261ba8",
+            "7343c775e32e",
+            "b9bac02c4e4a",
+            "cf0f7de07bd9",
+            "7b0a34d538d0",
+            "79864a68c223",
+            "fe28a75fc150",
+            "62a1e2f848d5",
+            "94a47d440ed6",
+            "50deb1f4d7ed",
+            "8a3ea7446d19",
+            "5d2379e78e0b",
+            "8dd5cb4a2c99",
+            "e4565750515f",
+            "84c3553b39fc",
+            "c509452b79e8",
+            "be7739ae30d9",
+            "60dc5413cffe",
+            "d1af87713917",
+            "8b46308fa38a",
+            "a3ff90638e7e",
+            "024217d0ff86",
+            "4f648f88da57"
+          ]
+        }
+      ]
+    }
+  }
+}
