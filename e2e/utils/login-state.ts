@@ -7,7 +7,7 @@
  * saved under `e2e/.auth/<run>/` and later calls restore it instead.
  */
 import { BrowserContext, Page, test } from '@playwright/test';
-import { createHash } from 'crypto';
+import { createHash, scryptSync } from 'crypto';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -50,11 +50,29 @@ export function loginStateFile(
   if (!dir) return undefined;
   const key = createHash('sha256')
     .update(
-      [kind, slot(), endpoint.replace(/\/+$/, ''), email, password].join('\n'),
+      [
+        kind,
+        slot(),
+        endpoint.replace(/\/+$/, ''),
+        email,
+        passwordDigest(password),
+      ].join('\n'),
     )
     .digest('hex')
     .slice(0, 32);
   return path.join(dir, `${key}.json`);
+}
+
+const passwordDigests = new Map<string, string>();
+
+/** A slow (scrypt) digest of the password, so the key never weakly hashes it. */
+function passwordDigest(password: string): string {
+  let digest = passwordDigests.get(password);
+  if (!digest) {
+    digest = scryptSync(password, 'e2e-login-state', 32).toString('hex');
+    passwordDigests.set(password, digest);
+  }
+  return digest;
 }
 
 /** Specs whose login is the subject under test always log in for real. */
