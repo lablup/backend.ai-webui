@@ -1,6 +1,6 @@
 import { test } from "@e2e-dev/web";
 
-// ported from: e2e/webui-settings/webui-settings.spec.ts
+// ported from: e2e/admin/system-settings/webui-settings.spec.ts
 const draft = {
   session: "admin",
   tags: ["draft"],

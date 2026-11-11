@@ -419,7 +419,7 @@ are only reliable when `isLocalEnvironment` is true.
   redirect there). Admin console specs (`e2e/admin/<page>/`) act
   on those pages as usual: `.claude/rules/e2e-admin-prep-via-api.md`.
 - Skip rather than fail when the target deployment lacks a feature:
-  `skipUnlessWebUIVersion`, `skipUnlessManagerVersion`, `skipUnlessClientConfig`,
+  `skipUnlessWebUIVersion`, `skipUnlessManagerVersion`, `skipUnlessWebUISetting`,
   `skipUnlessAllowedVFolderType` from `e2e/utils/feature-gate-util.ts`.
   A test that depends on a manager version records the minimum version it
   passes on as a `@requires-manager-vX.Y` tag, even at or below the app's

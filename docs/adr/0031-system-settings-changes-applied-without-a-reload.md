@@ -57,7 +57,7 @@ sequenceDiagram
 ### 1. `loginConfigState` holds the settings; `_config` does not
 
 - **Client config**: `applyConfigToClient` (`react/src/helper/loginConfig.ts`) sets only `_proxyURL`, `_proxyToken`, `domainName`, `domainId` and `enableWebMCP` on `backendaiclient._config`, then marks the client ready.
-- **Type guard**: the host `BackendAIConfig` type (`react/src/hooks/index.tsx`) declares no setting field, so `tsc` rejects `useSuspendedBackendaiClient()._config.<setting>`. An untyped read through `globalThis` is not checked.
+- **Type guard**: the host `BackendAIConfig` type (`react/src/hooks/index.tsx`) declares no setting field, so `tsc` rejects `useSuspendedBackendaiClient()._config.<setting>`. An untyped read through `globalThis`, and a read through `useConnectedBAIClient()` (the BUI `BackendAIConfig` keeps `[key: string]: any`), are not checked.
 - **Reading in React**: `useEffectiveLoginConfig()` (`react/src/hooks/useWebUIConfig.ts`) returns `loginConfigState`, or the code defaults until it loads. It never returns `null`.
 - **Reading outside React**: `jotaiStore.get(loginConfigState)`, which is `null` before config loads, so the caller falls back to `getDefaultLoginConfig()` or uses optional chaining. A Jotai atom that derives from a setting reads it with `get(loginConfigState)`.
 - **Atoms beside it**: `autoLogoutState` mirrors `autoLogout` and is set wherever `loginConfigState` is. `loginPluginState` is set once at boot and is not rebuilt after a save.

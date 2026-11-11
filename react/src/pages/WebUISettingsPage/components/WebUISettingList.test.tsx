@@ -71,10 +71,11 @@ const deferred = () => {
 const writtenDoc = (write: typeof domainWrite, call: number) =>
   (write.mock.calls[call][0] as (current: unknown) => unknown)(undefined);
 
-const renderList = () => {
-  const store = createStore();
-  store.set(baseLoginConfigState, getDefaultLoginConfig());
-  render(
+const renderList = (store = createStore()) => {
+  if (!store.get(loginConfigState)) {
+    store.set(baseLoginConfigState, getDefaultLoginConfig());
+  }
+  const view = render(
     <MemoryRouter>
       <JotaiProvider store={store}>
         <WebUISettingList
@@ -86,7 +87,7 @@ const renderList = () => {
       </JotaiProvider>
     </MemoryRouter>,
   );
-  return store;
+  return Object.assign(store, { unmount: view.unmount });
 };
 
 const checkboxOf = (key: string) =>
@@ -173,5 +174,24 @@ describe('WebUISettingList', () => {
       allowAnonymousChangePassword: true,
     });
     expect(domainWrite).not.toHaveBeenCalled();
+  });
+
+  it('a remount during a write starts from the values being written', async () => {
+    const write = deferred();
+    domainWrite.mockReturnValueOnce(write.promise).mockResolvedValue();
+    const store = renderList();
+
+    fireEvent.click(checkboxOf('hideAgents'));
+    store.unmount();
+    // The cached document is still the old one while the write is in flight.
+    renderList(store);
+    expect(checkboxOf('hideAgents')).not.toBeChecked();
+
+    fireEvent.click(checkboxOf('enableReservoir'));
+    await act(async () => write.resolve());
+    expect(writtenDoc(domainWrite, domainWrite.mock.calls.length - 1)).toEqual({
+      hideAgents: false,
+      enableReservoir: true,
+    });
   });
 });

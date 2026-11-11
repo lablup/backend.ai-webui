@@ -23,11 +23,16 @@ function jsonConfigDialog(page: Page) {
   return page.getByRole('dialog', { name: 'JSON Config' });
 }
 
-/** Collects the app config upserts the page sends; a read-only test expects none. */
+/** Collects the requests a settings save sends; a read-only test expects none. */
 function watchSettingsWrites(page: Page): Array<string> {
   const writes: Array<string> = [];
   page.on('request', (request) => {
-    if ((request.postData() ?? '').includes('AppConfigUpsert')) {
+    // A save starts with the raw-document read, so it shows before its upsert.
+    if (
+      /AppConfigUpsert|AppConfig(Domain|Public)RawQuery/.test(
+        request.postData() ?? '',
+      )
+    ) {
       writes.push(request.url());
     }
   });
