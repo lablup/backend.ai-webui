@@ -54,64 +54,58 @@ const PanelSettingsHeaderControls: React.FC = () => {
     : (allowed?.defaultResourceGroup ?? undefined);
 
   return (
-    // Sized in percent of the card, not pixels: each control takes its natural
-    // width while there is room and shrinks with a narrow card instead of overflowing.
+    // The row shrinks with the card and wraps its controls onto their own lines; each control keeps its own width.
     <BAIFlex
       align="center"
       gap="xxs"
       wrap="wrap"
-      style={{ flexShrink: 1, minWidth: 0, maxWidth: '100%' }}
+      style={{ flexShrink: 1, minWidth: 0 }}
       data-testid="panel-header-settings"
     >
       {hasSetting(definition, 'resourceGroup') ? (
-        <BAIFlex style={{ flexShrink: 1, minWidth: 0, maxWidth: '100%' }}>
-          <Suspense fallback={null}>
-            {/* To the right, so it never covers the select's own "Clear" tooltip above. */}
-            <Tooltip
-              content={t('general.ResourceGroup')}
-              placement="end"
-              hasHoverIndication={false}
-            >
-              <BAIScopedResourceGroupSelect
-                size="sm"
-                variant={overridden.resourceGroup ? 'secondary' : 'ghost'}
-                label={t('general.ResourceGroup')}
-                isLabelHidden
-                scope={allowed?.scope ?? { project: [] }}
-                filter={allowed?.filter}
-                value={resourceGroup}
-                placeholder={defaultResourceGroupLabel}
-                allowClear={!!resourceGroup}
-                onChange={(value) =>
-                  onChange({
-                    resourceGroups: typeof value === 'string' ? [value] : [],
-                  })
-                }
-              />
-            </Tooltip>
-          </Suspense>
-        </BAIFlex>
-      ) : null}
-      {hasSetting(definition, 'range') ? (
-        <BAIFlex style={{ flex: '0 1 240px', minWidth: 0, maxWidth: '100%' }}>
+        <Suspense fallback={null}>
+          {/* To the right, so it never covers the select's own "Clear" tooltip above. */}
           <Tooltip
-            // Remount with the tooltip on an outside change (reset): drops the preset label the picker kept.
-            key={effective?.range ?? DEFAULT_RANGE}
-            content={t('dashboard.settings.TimeRange')}
+            content={t('general.ResourceGroup')}
             placement="end"
             hasHoverIndication={false}
           >
-            <PanelRangeSelect
+            <BAIScopedResourceGroupSelect
               size="sm"
-              width="100%"
-              isCompactLabel
-              aria-label={t('dashboard.settings.TimeRange')}
-              maxDays={maxRangeDaysOf(definition)}
-              value={effective?.range ?? DEFAULT_RANGE}
-              onChange={(range) => onChange({ range })}
+              variant={overridden.resourceGroup ? 'secondary' : 'ghost'}
+              label={t('general.ResourceGroup')}
+              isLabelHidden
+              scope={allowed?.scope ?? { project: [] }}
+              filter={allowed?.filter}
+              value={resourceGroup}
+              placeholder={defaultResourceGroupLabel}
+              allowClear={!!resourceGroup}
+              onChange={(value) =>
+                onChange({
+                  resourceGroups: typeof value === 'string' ? [value] : [],
+                })
+              }
             />
           </Tooltip>
-        </BAIFlex>
+        </Suspense>
+      ) : null}
+      {hasSetting(definition, 'range') ? (
+        <Tooltip
+          // Remount with the tooltip on an outside change (reset): drops the preset label the picker kept.
+          key={effective?.range ?? DEFAULT_RANGE}
+          content={t('dashboard.settings.TimeRange')}
+          placement="end"
+          hasHoverIndication={false}
+        >
+          <PanelRangeSelect
+            size="sm"
+            isCompactLabel
+            aria-label={t('dashboard.settings.TimeRange')}
+            maxDays={maxRangeDaysOf(definition)}
+            value={effective?.range ?? DEFAULT_RANGE}
+            onChange={(range) => onChange({ range })}
+          />
+        </Tooltip>
       ) : null}
     </BAIFlex>
   );
