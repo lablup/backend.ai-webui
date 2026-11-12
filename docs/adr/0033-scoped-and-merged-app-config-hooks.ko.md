@@ -4,9 +4,9 @@
 
 > 낯선 용어는 문서 맨 아래 [용어](#용어)에 모아 두었다.
 
-- `react/src/hooks/useAppConfig.ts`는 hook 두 개를 둔다. `useScopedAppConfig(scope, configName)`는 scope 하나의 [raw document](#용어)를 읽고 쓴다. `useMyAppConfig(configName, subKey)`는 [merged view](#용어)를 읽기만 한다.
+- `react/src/hooks/useAppConfig.ts`는 hook 두 개와 쓰기 전용 `useScopedAppConfigSetter`를 둔다. `useScopedAppConfig(scope, configName)`는 scope 하나의 [raw document](#용어)를 읽고 쓴다. `useMyAppConfig(configName, subKey)`는 [merged view](#용어)를 읽기만 한다.
 - 쓰기 한 번은 upsert 한 번이다. `setKey`는 Relay store에 있는 사본으로 문서 전체를 만들고, upsert 응답이 그 사본을 갱신하게 둔다. Relay가 저장된 사본을 이미 수거했을 때만 쓰기 전에 network에서 문서를 읽는다.
-- 모든 `userConfig` reader가 USER raw document를 읽으므로, 쓰기 결과는 upsert 응답만으로 화면에 나타난다. merged view는 `domainConfig`와 `publicConfigByDomain` reader만 쓰고, `domainConfig` 쓰기가 이를 다시 가져온다.
+- 모든 `userConfig` reader가 USER raw document를 읽으므로, 쓰기 결과는 upsert 응답만으로 화면에 나타난다. merged view는 `domainConfig`와 `publicConfigByDomain` reader만 쓰고, `domainConfig` 쓰기가 merged `domainConfig` view를 다시 가져온다.
 - 쓰기의 기준은 화면이 mount될 때 읽은 문서다. 그 mount 뒤에 CLI, 다른 관리자, 같은 계정의 다른 탭이 바꾼 값은 다음 쓰기가 덮어쓴다.
 
 ## Context
@@ -35,42 +35,49 @@ flowchart LR
   scoped -- "setKey: sub-key 하나만 바꾼 문서 전체" --> upsert
   upsert -- "같은 id의 응답" --> rawRec
   upsert -- "첫 쓰기: updater가 생성된 fragment를 연결" --> rawRec
-  upsert -. "domainConfig 쓰기: network-only refetch" .-> merged
-  merged -- "domainConfig, publicConfigByDomain" --> mergedRec
+  upsert -. "domainConfig 쓰기: network-only refetch, 기다리지 않음" .-> merged
+  merged -- "요청마다 config name 하나" --> mergedRec
   mergedRec -- "읽기 전용" --> my["useMyAppConfig"]
 ```
 
 ## Decision
 
-### 1. `useAppConfig.ts`의 hook 두 개
+### 1. `useAppConfig.ts`의 hook 세 개
 
-| Hook                                    | 읽는 것                                                                   | 쓰는 것                  | Fetch policy        |
-| --------------------------------------- | ------------------------------------------------------------------------- | ------------------------ | ------------------- |
-| `useScopedAppConfig(scope, configName)` | scope 하나, config name 하나에 대한 `scopedAppConfigFragmentsByNames`     | `setKey(subKey, update)` | `store-and-network` |
-| `useMyAppConfig(configName, subKey?)`   | 요청 하나로 `domainConfig`와 `publicConfigByDomain`에 대한 `myAppConfigs` | 없음                     | `store-or-network`  |
+| Hook                                          | 읽는 것                                                                              | 쓰는 것                  | Fetch policy                                                               |
+| --------------------------------------------- | ------------------------------------------------------------------------------------ | ------------------------ | -------------------------------------------------------------------------- |
+| `useScopedAppConfig(scope, configName)`       | scope 하나, config name 하나에 대한 `scopedAppConfigFragmentsByNames`, mount마다 1회 | `setKey(subKey, update)` | `store-and-network`, store가 내준 mount에서는 `network-only` 읽기 1회 추가 |
+| `useScopedAppConfigSetter(scope, configName)` | render 때 읽지 않음                                                                  | 같은 `setKey`            | 없음                                                                       |
+| `useMyAppConfig(configName, subKey?)`         | 요청마다 config name 하나에 대한 `myAppConfigs`                                      | 없음                     | `store-or-network`                                                         |
 
-- **Scope type**: `AppConfigScope`는 `{ scopeType: 'PUBLIC' }`, `{ scopeType: 'DOMAIN'; scopeId? }`, `{ scopeType: 'USER'; scopeId? }` 중 하나다. `scopeId`가 없으면 로그인한 사용자의 domain id(DOMAIN) 또는 user id(USER)가 된다.
+- **Scope type**: `AppConfigScope`는 `{ scopeType: 'PUBLIC' }`, `{ scopeType: 'DOMAIN'; scopeId? }`, `{ scopeType: 'USER'; scopeId? }` 중 하나다. `scopeId`가 없으면 로그인한 사용자의 domain id(`useCurrentDomain().id`, DOMAIN) 또는 user id(USER)가 된다.
 - **Return shape**: `useScopedAppConfig`는 `{ doc, setKey }`를 돌려준다. `doc`은 raw document이고, scope에 그 이름의 fragment가 없으면 `undefined`다.
+- **Read once per mount**: `useLazyLoadQuery`는 `MainLayout`의 `userConfig` 읽기처럼 다른 mount된 reader가 아직 retain한 query를 다시 가져오지 않는다. 그래서 store가 이미 문서를 가진 `useScopedAppConfig` mount는 effect에서 `network-only`로 한 번 읽는다. 문서가 없던 mount는 `useLazyLoadQuery`가 가져왔으므로 다시 읽지 않는다.
+- **Setter without a read**: 쓰기만 하는 화면(`BrandingSettingList`, `UserSettingsGeneralPane`)은 `useScopedAppConfigSetter`를 불러, 보여 주지도 않는 읽기에서 suspend하지 않는다.
+- **Merged view per name**: `useMyAppConfig`는 자기 config name 하나로 `myAppConfigs`를 물으므로, `domainConfig` reader는 sign-in query(`loginSessionAuth.ts`)가 저장한 `myAppConfigs(["domainConfig"])` 결과를 다시 쓴다.
 - **Domain slice**: `publicConfigByDomain`은 domain마다 slice 하나를 두므로, 호출부는 `setKey([domainName, key], …)`와 `useMyAppConfig('publicConfigByDomain', [domainName, key])` 모두에 domain 이름을 첫 경로로 넘긴다.
 
 ### 2. 쓰기마다 upsert 한 번
 
-- **Write base**: `setKey`는 Relay store에서 문서를 읽고 `applySubKey`로 sub-key를 바꾼 뒤, 그 결과를 `scopedAtomicBulkUpsertAppConfigFragments` 한 번으로 보낸다. Relay가 record를 이미 수거했으면 network에서 문서를 읽는다.
-- **Store update**: upsert가 `{ id configName config }`를 선택하므로, 응답이 읽기가 가진 record를 갱신한다. 읽기에서 fragment가 없었으면 mutation의 `updater`가 생성된 fragment를 읽기 결과에 연결하고, 다음 쓰기는 그 위에서 만든다.
+- **Write base**: `setKey`는 같은 문서에 대해 진행 중인 읽기를 기다린 뒤, Relay store에서 문서를 읽고 `applySubKey`로 sub-key를 바꾼 결과를 `scopedAtomicBulkUpsertAppConfigFragments` 한 번으로 보낸다. Relay가 record를 이미 수거했으면 network에서 문서를 읽는다.
+- **Store update**: upsert가 `{ id configName config }`를 선택하므로, 응답이 돌려준 record를 갱신한다. mutation의 `updater`가 읽기를 돌려받은 fragment로 가리키게 하므로 첫 쓰기와 fragment가 purge된 뒤의 쓰기도 다루고, 다음 쓰기는 그 위에서 만든다.
 - **Ordering**: `serializeWrite`가 한 문서(`scopeType`, `scopeId`, `configName`)에 대한 쓰기를 줄 세우므로, 쓰기는 앞 쓰기가 끝난 뒤 시작하고 그 응답 위에서 만든다.
 - **Value update**: `update`는 다음 값이거나, `subKey`의 현재 값을 받는 함수다. `undefined`는 key를 지운다.
 
 ### 3. 어떤 view를 누가 읽는가
 
-| Config name            | Reader                                                                                                                               | Hook                                                                  |
-| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------- |
-| `userConfig`           | `MainLayout`(`themeFamily`), `useDashboardBoards`, `FolderCreateModal`, `useRecentSessionHistory`, `UserSettingsGeneralPane`(쓰기만) | `useScopedAppConfig({ scopeType: 'USER' }, 'userConfig')`             |
-| `domainConfig`         | `AnnouncementBanner`, `useDashboardBoards`(template)                                                                                 | `useMyAppConfig('domainConfig', …)`                                   |
-| `domainConfig`         | `AnnouncementEditModal`, `WebUISettingsPage`(superadmin 전용)                                                                        | `useScopedAppConfig({ scopeType: 'DOMAIN' }, 'domainConfig')`         |
-| `publicConfigByDomain` | `useDashboardBoards`(template)                                                                                                       | `useMyAppConfig('publicConfigByDomain', …)`                           |
-| `publicConfigByDomain` | `WebUISettingsPage`, `BrandingSettingList`(superadmin 전용)                                                                          | `useScopedAppConfig({ scopeType: 'PUBLIC' }, 'publicConfigByDomain')` |
+| Config name            | Reader와 writer                                                                                   | Hook                                                                        |
+| ---------------------- | ------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| `userConfig`           | `MainLayout`(`themeFamily`), `useDashboardBoards`, `FolderCreateModal`, `useRecentSessionHistory` | `useScopedAppConfig({ scopeType: 'USER' }, 'userConfig')`                   |
+| `userConfig`           | `UserSettingsGeneralPane`(쓰기만)                                                                 | `useScopedAppConfigSetter({ scopeType: 'USER' }, 'userConfig')`             |
+| `domainConfig`         | `AnnouncementBanner`, `useDashboardBoards`(template)                                              | `useMyAppConfig('domainConfig', …)`                                         |
+| `domainConfig`         | `AnnouncementEditModal`, `WebUISettingsPage`(superadmin 전용)                                     | `useScopedAppConfig({ scopeType: 'DOMAIN' }, 'domainConfig')`               |
+| `publicConfigByDomain` | `useDashboardBoards`(template)                                                                    | `useMyAppConfig('publicConfigByDomain', …)`                                 |
+| `publicConfigByDomain` | `WebUISettingsPage`(superadmin 전용)                                                              | `useScopedAppConfig({ scopeType: 'PUBLIC' }, 'publicConfigByDomain')`       |
+| `publicConfigByDomain` | `BrandingSettingList`(superadmin 전용, 쓰기만)                                                    | `useScopedAppConfigSetter({ scopeType: 'PUBLIC' }, 'publicConfigByDomain')` |
 
-- **Merged refetch**: 모든 사용자가 `domainConfig`를 merged view로 읽으므로, `domainConfig` 쓰기는 merged view를 `network-only`로 다시 가져온다. `publicConfigByDomain` 쓰기는 다시 가져오지 않는다. Branding page와 System Settings는 적용 뒤 page를 새로고침한다.
+- **Merged refetch**: 모든 사용자가 `domainConfig`를 merged view로 읽으므로, `domainConfig` 쓰기는 upsert가 끝난 뒤 merged `domainConfig` view를 `network-only`로 읽기 시작한다. 쓰기는 그 읽기를 기다리지 않고, 읽기가 실패해도 쓰기는 실패하지 않으며 merged view만 옛 값으로 남는다. `publicConfigByDomain` 쓰기는 다시 가져오지 않는다. Branding page와 System Settings는 적용 뒤 page를 새로고침한다.
+- **Draft follows the refresh**: `WebUISettingList`는 저장된 문서로 draft를 채운다. mount의 refresh가 저장된 문서를 바꾸고 draft가 이전 저장값과 같으면, draft는 그 값을 수정으로 보여 주지 않고 갱신된 값을 받는다.
 
 ## 대안과 기각 사유
 

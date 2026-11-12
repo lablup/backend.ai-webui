@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { useSuspendedBackendaiClient } from '.';
+import { useCurrentDomain, useSuspendedBackendaiClient } from '.';
 import { useAppConfigMergedQuery } from '../__generated__/useAppConfigMergedQuery.graphql';
 import {
   useAppConfigScopedQuery,
@@ -10,6 +10,7 @@ import {
 } from '../__generated__/useAppConfigScopedQuery.graphql';
 import { useAppConfigUpsertMutation } from '../__generated__/useAppConfigUpsertMutation.graphql';
 import * as _ from 'lodash-es';
+import { useEffect, useEffectEvent } from 'react';
 import {
   commitMutation,
   fetchQuery,
@@ -18,6 +19,7 @@ import {
   useRelayEnvironment,
 } from 'react-relay';
 import {
+  __internal,
   createOperationDescriptor,
   getRequest,
   type IEnvironment,
@@ -45,11 +47,6 @@ export type AppConfigUpdate = unknown | ((current: unknown) => unknown);
 
 /** Names read through the merged view: every user reads them, but only their DOMAIN/PUBLIC writers may read the raw scope. */
 export type MergedAppConfigName = 'domainConfig' | 'publicConfigByDomain';
-// One request serves every merged reader.
-const MERGED_CONFIG_NAMES: Array<MergedAppConfigName> = [
-  'domainConfig',
-  'publicConfigByDomain',
-];
 
 const mergedQuery = graphql`
   query useAppConfigMergedQuery($configNames: [String!]!) {
@@ -118,7 +115,11 @@ const serializeWrite = <T>(
   return next;
 };
 
-/** The document as the store holds it now; read again when Relay has collected it. */
+/**
+ * The document as the store holds it now, after any read still in flight for
+ * it lands (a late read would otherwise put an older copy back); read again
+ * when Relay has collected it.
+ */
 const readDocument = async (
   environment: IEnvironment,
   variables: useAppConfigScopedQuery$variables,
@@ -127,6 +128,9 @@ const readDocument = async (
     getRequest(scopedQuery),
     variables,
   );
+  await __internal
+    .getPromiseForActiveRequest(environment, operation.request)
+    ?.catch(() => undefined);
   const snapshot = environment.lookup(operation.fragment);
   const data = snapshot.isMissingData
     ? await fetchQuery<useAppConfigScopedQuery>(
@@ -154,24 +158,20 @@ const upsertDocument = (
           items: [{ configName: variables.configNames[0], config }],
         },
       },
-      // The response updates an existing fragment by id; a first write has
-      // nothing to update, so link the created fragment where the read found null.
+      // Point the read at the fragment the upsert returned: a first write, or
+      // one after the fragment was purged, returns an id the read does not hold.
       updater: (store) => {
-        const root = store.getRoot();
-        const read = root.getLinkedRecords(
-          'scopedAppConfigFragmentsByNames',
-          variables,
-        );
-        if (read?.[0]) return;
-        const created = store
+        const written = store
           .getRootField('scopedAtomicBulkUpsertAppConfigFragments')
           ?.getLinkedRecords('items')?.[0];
-        if (created) {
-          root.setLinkedRecords(
-            [created],
-            'scopedAppConfigFragmentsByNames',
-            variables,
-          );
+        if (written) {
+          store
+            .getRoot()
+            .setLinkedRecords(
+              [written],
+              'scopedAppConfigFragmentsByNames',
+              variables,
+            );
         }
       },
       onCompleted: (_response, errors) => {
@@ -185,13 +185,70 @@ const upsertDocument = (
     });
   });
 
-const refetchMergedView = (environment: IEnvironment) =>
+const fetchMergedView = (
+  environment: IEnvironment,
+  configName: MergedAppConfigName,
+) =>
   fetchQuery<useAppConfigMergedQuery>(
     environment,
     mergedQuery,
-    { configNames: MERGED_CONFIG_NAMES },
+    { configNames: [configName] },
     { fetchPolicy: 'network-only' },
   ).toPromise();
+
+// Documents a mount found missing, so useLazyLoadQuery fetched them for it.
+const fetchedForMount = new Set<string>();
+
+const useScopeVariables = (
+  scope: AppConfigScope,
+  configName: AppConfigName,
+): useAppConfigScopedQuery$variables => {
+  const baiClient = useSuspendedBackendaiClient();
+  const { id: domainId } = useCurrentDomain();
+  const scopeId =
+    scope.scopeType === 'PUBLIC'
+      ? undefined
+      : (scope.scopeId ??
+        (scope.scopeType === 'DOMAIN' ? domainId : baiClient.user_uuid));
+  return {
+    scope:
+      scopeId === undefined
+        ? { scopeType: scope.scopeType }
+        : { scopeType: scope.scopeType, scopeId },
+    configNames: [configName],
+  };
+};
+
+/**
+ * `setKey` alone, for a screen that writes one scope's document without
+ * showing it: nothing suspends, and the write reads the document when the
+ * store does not hold it. Post-login surfaces only.
+ */
+export const useScopedAppConfigSetter = (
+  scope: AppConfigScope,
+  configName: AppConfigName,
+) => {
+  'use memo';
+  const relayEnv = useRelayEnvironment();
+  const variables = useScopeVariables(scope, configName);
+
+  return (subKey: AppConfigSubKey, update: AppConfigUpdate) =>
+    serializeWrite(
+      `${variables.scope.scopeType}:${variables.scope.scopeId ?? ''}:${configName}`,
+      async () => {
+        const base = await readDocument(relayEnv, variables);
+        await upsertDocument(
+          relayEnv,
+          variables,
+          applySubKey(base, subKey, update),
+        );
+        if (configName === 'domainConfig') {
+          // Not awaited: the write has landed, and a failed refetch only leaves the merged view stale.
+          fetchMergedView(relayEnv, configName).catch(() => undefined);
+        }
+      },
+    );
+};
 
 /**
  * One scope's raw document, read once per mount and kept current from the
@@ -206,45 +263,36 @@ export const useScopedAppConfig = <T = AppConfigDocument>(
 ) => {
   'use memo';
   const relayEnv = useRelayEnvironment();
-  const baiClient = useSuspendedBackendaiClient();
-  const scopeId =
-    scope.scopeType === 'PUBLIC'
-      ? undefined
-      : (scope.scopeId ??
-        (scope.scopeType === 'DOMAIN'
-          ? baiClient._config.domainId
-          : baiClient.user_uuid));
-  const variables: useAppConfigScopedQuery$variables = {
-    scope:
-      scopeId === undefined
-        ? { scopeType: scope.scopeType }
-        : { scopeType: scope.scopeType, scopeId },
-    configNames: [configName],
-  };
+  const variables = useScopeVariables(scope, configName);
+  const operation = createOperationDescriptor(
+    getRequest(scopedQuery),
+    variables,
+  );
+  const { identifier } = operation.request;
+  if (relayEnv.check(operation).status === 'missing') {
+    fetchedForMount.add(identifier);
+  }
   const data = useLazyLoadQuery<useAppConfigScopedQuery>(
     scopedQuery,
     variables,
     { fetchPolicy: 'store-and-network' },
   );
+  // useLazyLoadQuery does not fetch a query another mounted reader still
+  // retains, so a mount served from the store reads the document once itself.
+  const refreshOnMount = useEffectEvent(() => {
+    if (fetchedForMount.delete(identifier)) return;
+    fetchQuery<useAppConfigScopedQuery>(relayEnv, scopedQuery, variables, {
+      fetchPolicy: 'network-only',
+    })
+      .toPromise()
+      .catch(() => undefined);
+  });
+  useEffect(() => {
+    refreshOnMount();
+  }, []);
   const doc = (data.scopedAppConfigFragmentsByNames[0]?.config ?? undefined) as
     T | undefined;
-
-  const setKey = (subKey: AppConfigSubKey, update: AppConfigUpdate) =>
-    serializeWrite(
-      `${scope.scopeType}:${scopeId ?? ''}:${configName}`,
-      async () => {
-        const base = await readDocument(relayEnv, variables);
-        await upsertDocument(
-          relayEnv,
-          variables,
-          applySubKey(base, subKey, update),
-        );
-        if (configName === 'domainConfig') {
-          // The write has landed; a failed refetch only leaves the merged view stale.
-          await refetchMergedView(relayEnv).catch(() => undefined);
-        }
-      },
-    );
+  const setKey = useScopedAppConfigSetter(scope, configName);
 
   return { doc, setKey };
 };
@@ -252,7 +300,8 @@ export const useScopedAppConfig = <T = AppConfigDocument>(
 /**
  * The signed-in user's merged view of `domainConfig` or
  * `publicConfigByDomain` (pass `[domainName, ...]` for a domain's slice).
- * Read only. Suspends; post-login surfaces only.
+ * One request per name, so `domainConfig` reuses what the sign-in query
+ * stored. Read only. Suspends; post-login surfaces only.
  */
 export const useMyAppConfig = <T = AppConfigDocument>(
   configName: MergedAppConfigName,
@@ -260,7 +309,7 @@ export const useMyAppConfig = <T = AppConfigDocument>(
 ): T | undefined => {
   'use memo';
   const data = useLazyLoadQuery<useAppConfigMergedQuery>(mergedQuery, {
-    configNames: MERGED_CONFIG_NAMES,
+    configNames: [configName],
   });
   const doc = data.myAppConfigs.find((c) => c.configName === configName)
     ?.config as AppConfigDocument | undefined;
