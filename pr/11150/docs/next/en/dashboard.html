@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="Dashboard" />
   <meta name="twitter:description" content="The Dashboard is the page you land on after signing in. It is made up of cards, and the cards at the top are shortcuts to the tasks you usually start…" />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Dashboard","inLanguage":"en","description":"The Dashboard is the page you land on after signing in. It is made up of cards, and the cards at the top are shortcuts to the tasks you usually start…","dateModified":"2026-11-12T00:20:57.000Z","url":"https://webui.docs.backend.ai/next/en/dashboard.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Dashboard","inLanguage":"en","description":"The Dashboard is the page you land on after signing in. It is made up of cards, and the cards at the top are shortcuts to the tasks you usually start…","dateModified":"2026-11-12T01:09:02.000Z","url":"https://webui.docs.backend.ai/next/en/dashboard.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/dashboard.html" />
   <link rel="alternate" hreflang="en" href="../en/dashboard.html" />
   <link rel="alternate" hreflang="ja" href="../ja/dashboard.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">Manual</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.10.0-alpha.3 (e7f46a6)">v26.10.0-alpha.3 (e7f46a6)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.10.0-alpha.3 (3f60c15)">v26.10.0-alpha.3 (3f60c15)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="Search docs...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -227,91 +227,202 @@ starts it:</p>
 </li>
 <li data-bai-block="5"><p><strong>Start Deployment</strong>:
   Click <strong>Create Deployment</strong> to serve a trained model so that others can use
-  it. This card appears only when your administrator has enabled model
-  serving.</p>
+  it.</p>
 </li>
 <li data-bai-block="6"><p><strong>Start From URL</strong>:
-  Click <strong>Start Now</strong> to start a session from a Jupyter notebook, a GitHub or
-  GitLab repository, or a Hugging Face model, given its URL. See
+  Click <strong>Start Now</strong> to bring in a Jupyter notebook, a GitHub or GitLab
+  repository, or a Hugging Face model from its URL. A notebook opens in a new
+  session; a repository or a model is saved to a storage folder. See
   <a href="#start-from-url">Start from URL</a> for each import source.</p>
 </li>
 </ul>
-<p><figure data-bai-block="7" class="doc-figure"><img src="./images/dashboard.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>Figure 7.1</figcaption></figure>
+<div class="admonition admonition-note">
+<div data-bai-block="7" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
+<div class="admonition-content">
+
+<p data-bai-block="8">Depending on the server configuration, some cards such as the deployment card
+may not be available. If you want to use these features, please contact your
+system administrator.</p>
+</div></div>
+
+
+<p><figure data-bai-block="9" class="doc-figure"><img src="./images/dashboard.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>Figure 7.1</figcaption></figure>
 </p>
-<p data-bai-block="8">The cards below them summarize your sessions, resource usage and recent
+<p data-bai-block="10">The cards below them summarize your sessions, resource usage and recent
 activity in the current project:</p>
 <ul>
-<li data-bai-block="9"><p><strong>My Sessions</strong>:
+<li data-bai-block="11"><p><strong>My Sessions</strong>:
   Shows your sessions in the current project by status,
   and the active ones by session type such as <em>Interactive</em>, <em>Batch</em>,
   <em>Inference</em>, and <em>Upload</em>.</p>
 </li>
-<li data-bai-block="10"><p><strong>My Recent Sessions</strong>:
+<li data-bai-block="12"><p><strong>My Recent Sessions</strong>:
   Lists the sessions you created most recently, newest first.</p>
 </li>
-<li data-bai-block="11"><p><strong>My Total Resource Usage</strong>:
+<li data-bai-block="13"><p><strong>My Total Resource Usage</strong>:
   Shows what your sessions use across all resource groups and projects.
   When multiple limits (domain, project, or keypair) apply,
   the <strong>most restrictive</strong> one takes effect.</p>
 </li>
-<li data-bai-block="12"><p><strong>My Resources in Resource Group</strong>:
+<li data-bai-block="14"><p><strong>My Resources in Resource Group</strong>:
   Shows how much resource you have used and how much is still free
   in the card&#39;s resource group.</p>
 </li>
-<li data-bai-block="13"><p><strong>Total Resources in Resource Group</strong>:
+<li data-bai-block="15"><p><strong>Total Resources in Resource Group</strong>:
   Summarizes the used and free resources of the card&#39;s resource group.
   The data is aggregated from all agents that belong to the group.</p>
 </li>
-<li data-bai-block="14"><p><strong>Agent Statistics</strong>:
+<li data-bai-block="16"><p><strong>Agent Statistics</strong>:
   Shows the total resources of all agents in the system.</p>
 </li>
-<li data-bai-block="15"><p><strong>Quota per storage volume</strong>:
+<li data-bai-block="17"><p><strong>Quota per storage volume</strong>:
   Shows the quota available on each storage volume.
   When no storage host supports quota, the card shows a notice instead.</p>
 </li>
-<li data-bai-block="16"><p><strong>My Deployments</strong>:
+<li data-bai-block="18"><p><strong>My Deployments</strong>:
   Lists your model deployments with the health of their replicas.</p>
 </li>
-<li data-bai-block="17"><p><strong>My Activity</strong>:
+<li data-bai-block="19"><p><strong>My Activity</strong>:
   Lists your own audit log entries for the period the card is set to.</p>
 </li>
 </ul>
 <div class="admonition admonition-note">
-<div data-bai-block="18" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
+<div data-bai-block="20" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
 <div class="admonition-content">
 
-<p data-bai-block="19">The <strong>Total Resources in Resource Group</strong> and <strong>Agent Statistics</strong> cards may not
+<p data-bai-block="21">The <strong>Total Resources in Resource Group</strong> and <strong>Agent Statistics</strong> cards may not
 be visible depending on your system configuration.</p>
 </div></div>
 
 
-<p data-bai-block="20">Project admins and superadmins also have a <strong>Dashboard</strong> of their own in the
+<p data-bai-block="22">Project admins and superadmins also have a <strong>Dashboard</strong> of their own in the
 admin menu, with cards for the project or for the whole cluster.</p>
+<h2 data-bai-block="23" id="dashboard-customizing-the-dashboard-layout">Customizing the Dashboard Layout<a class="hash-link" href="#dashboard-customizing-the-dashboard-layout" aria-label="Direct link to Customizing the Dashboard Layout">#</a></h2>
+<p data-bai-block="24">You can rearrange the board at any time — there is no mode to enter first:</p>
+<ul>
+<li data-bai-block="25"><strong>Move cards</strong>: Drag a card by its header to reposition it on the board.</li>
+<li data-bai-block="26"><strong>Resize cards</strong>: Drag the bottom-right corner of a card to adjust its
+size. Each card has a minimum size to ensure its content remains readable.</li>
+</ul>
+<p data-bai-block="27">Click <strong>Edit</strong> to open the edit sidebar, and <strong>Close</strong> to hide it again. The
+sidebar lists every card the page offers, grouped by topic: select a card to
+put it on the board, and clear it to take it off.</p>
+<p><figure data-bai-block="28" class="doc-figure"><img src="./images/dashboard_edit_mode.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>Figure 7.2</figcaption></figure>
+</p>
+<p data-bai-block="29">Your arrangement is saved to your account on the server, so it follows you to
+every browser you sign in from. To discard it and restore the default cards
+and arrangement, click the <strong>Reset layout</strong> button at the bottom of the edit
+sidebar and confirm. Resetting the layout does not remove your custom panels.</p>
+<div class="admonition admonition-tip">
+<div data-bai-block="30" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 12 16"><path d="M6.5 0C3.48 0 1 2.19 1 5c0 .92.55 2.25 1 3 1.34 2.25 1.78 2.78 2 4v1h5v-1c.22-1.22.66-1.75 2-4 .45-.75 1-2.08 1-3 0-2.81-2.48-5-5.5-5zm3.64 7.48c-.25.44-.47.8-.67 1.11-.86 1.41-1.25 2.06-1.45 3.23-.02.05-.02.11-.02.17H5c0-.06 0-.13-.02-.17-.2-1.17-.59-1.83-1.45-3.23-.2-.31-.42-.67-.67-1.11C2.44 6.78 2 5.65 2 5c0-2.2 2.02-4 4.5-4 2.48 0 4.5 1.8 4.5 4 0 .65-.44 1.78-.86 2.48zM4 13h5v1H4v-1z"/></svg></span>TIP</div>
+<div class="admonition-content">
+
+<p data-bai-block="31">When the WebUI is updated with new dashboard cards, those cards will
+automatically appear on your dashboard even if you have a saved layout.</p>
+</div></div>
+
+
+<h3 data-bai-block="32" id="dashboard-card-settings">Card Settings<a class="hash-link" href="#dashboard-card-settings" aria-label="Direct link to Card Settings">#</a></h3>
+<p data-bai-block="33">A card that reads a resource group or a time range keeps a saved default.
+Open <strong>Default card settings</strong> for that card in the edit sidebar to choose the
+values the board opens with; the picker in the card&#39;s header changes them for
+the current visit only.</p>
+<h3 data-bai-block="34" id="dashboard-custom-panels">Custom Panels<a class="hash-link" href="#dashboard-custom-panels" aria-label="Direct link to Custom Panels">#</a></h3>
+<p data-bai-block="35">The edit sidebar also lists your custom panels. A custom panel shows a data
+source you select, narrowed by a condition you define. The panel itself shows
+only a title and its data, so give the panel a title that describes its
+condition.</p>
+<p data-bai-block="36">To add a panel, click the <strong>Add</strong> button in the sidebar. The panel dialog
+contains the following fields. <strong>Panel type</strong> and <strong>Data source</strong> are
+required — the dialog will not submit until both are chosen.</p>
+<ul>
+<li data-bai-block="37"><strong>Data source</strong>: The data source the panel lists. Choose <strong>Sessions</strong>,
+<strong>Deployments</strong>, or <strong>Data &amp; Storage</strong>.</li>
+<li data-bai-block="38"><strong>Panel type</strong>: How the panel displays the data source. Choose <strong>Table</strong>,
+<strong>Count</strong>, or <strong>Chart</strong>. For the <strong>Sessions</strong> data source, <strong>Grid</strong> is also
+offered.</li>
+<li data-bai-block="39"><strong>Title</strong>: An optional panel title. When omitted, the data source name is
+used.</li>
+<li data-bai-block="40"><strong>Condition</strong>: A property filter that narrows the rows shown in the panel.</li>
+</ul>
+<p data-bai-block="41">A live preview below the fields shows the rows matching the current condition.
+Sorting a column in the preview sets the panel&#39;s sort order. Click <strong>Add</strong> to
+place the panel on the board.</p>
+<p><figure data-bai-block="42" class="doc-figure"><img src="./images/dashboard_panel_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1920" height="1352" /><figcaption>Figure 7.3</figcaption></figure>
+</p>
+<p data-bai-block="43"><strong>Deployments</strong> panels list the project&#39;s model deployments, using the same
+table as the Deployments page: name, status, replica summary, model, and
+created at. Clicking a deployment&#39;s name opens its detail page.</p>
+<p data-bai-block="44"><strong>Chart</strong> draws the matching items as a chart. <strong>Compare groups</strong> chart types
+(Donut, Pie, Bar, Radar) count the items grouped by the property chosen under
+<strong>Group by</strong>; <strong>Created over time</strong> chart types (Line, Area, Column) count the
+items created in each interval of the selected time range. Turn on <strong>Show
+table</strong> to list the matching rows under the chart on the panel.</p>
+<p data-bai-block="45"><strong>Grid</strong> shows the session resource grid: each matching session&#39;s allocated
+resources as unit cells, colored by utilization. Clicking a session opens its
+detail drawer, the same as clicking a row in the table. The grid shows at most
+the first 100 matching sessions; a notice appears when there are more.</p>
+<p data-bai-block="46">The grid&#39;s display settings — resource or kernel mode, which resource or
+metric to show, memory unit, and layout — are chosen in the Add/Edit panel
+dialog&#39;s live preview and saved with the panel. The panel itself shows no
+controls for these settings, so create a second panel if you want a different
+view.</p>
+<div class="admonition admonition-note">
+<div data-bai-block="47" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
+<div class="admonition-content">
+
+<p data-bai-block="48"><strong>Grid</strong> is an experimental feature. It is offered in the <strong>Panel type</strong>
+selector only when <strong>Session resource grid view</strong> is turned on under
+<a href="./user_settings.html#experimental-features">Experimental features</a>. If it is turned off later,
+existing Grid panels keep their saved configuration but display as the
+session table until the setting is turned back on.</p>
+</div></div>
+
+
+<p data-bai-block="49">To change a panel&#39;s data source, panel type, condition, or title later, click
+the pencil (<strong>Edit</strong>) icon next to the panel in the sidebar — or in the
+panel&#39;s header on the board — and save your changes. To remove a panel, click
+the trash (<strong>Delete</strong>) icon and confirm in the popup.</p>
+<div class="admonition admonition-note">
+<div data-bai-block="50" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
+<div class="admonition-content">
+
+<p data-bai-block="51"><strong>Sessions</strong> and <strong>Deployments</strong> panels list data for the current project and
+are available to every project member. <strong>Data &amp; Storage</strong> panels are
+available to superadmins only. A panel whose data source your role cannot
+query remains listed in the sidebar but is not shown on the board.</p>
+</div></div>
+
+
+<h2 data-bai-block="52" id="dashboard-automatic-refresh">Automatic Refresh<a class="hash-link" href="#dashboard-automatic-refresh" aria-label="Direct link to Automatic Refresh">#</a></h2>
+<p data-bai-block="53">The refresh control on the dashboard bar sets how often every card refreshes —
+<strong>Off</strong>, or an interval from 5 seconds to 10 minutes — and refreshes every card
+at once when you click it.</p>
 <p><a id="start-from-url"></a></p>
-<h2 data-bai-block="21" id="dashboard-start-from-url">Start from URL<a class="hash-link" href="#dashboard-start-from-url" aria-label="Direct link to Start from URL">#</a></h2>
-<p data-bai-block="22">The <strong>Start From URL</strong> card on the Dashboard imports a project from an external
-source and runs it. Click <strong>Start Now</strong> on the card to open a dialog with one
+<h2 data-bai-block="54" id="dashboard-start-from-url">Start from URL<a class="hash-link" href="#dashboard-start-from-url" aria-label="Direct link to Start from URL">#</a></h2>
+<p data-bai-block="55">The <strong>Start From URL</strong> card on the Dashboard brings in a notebook, a repository
+or a model from an external source. Click <strong>Start Now</strong> on the card to open a dialog with one
 tab per import source: <strong>Import Notebook</strong>, <strong>Import GitHub Repository</strong>, and
 <strong>Import GitLab Repository</strong>. An additional <strong>Import Hugging Face Model</strong> tab
 appears when the experimental Hugging Face import is turned on.</p>
-<h3 data-bai-block="23" id="dashboard-import-notebook">Import notebook<a class="hash-link" href="#dashboard-import-notebook" aria-label="Direct link to Import notebook">#</a></h3>
-<p><figure data-bai-block="24" class="doc-figure"><img src="./images/start_from_url_notebook.png" alt="" class="doc-image" style="width:800px" loading="lazy" decoding="async" width="1600" height="848" /><figcaption>Figure 7.2</figcaption></figure>
+<h3 data-bai-block="56" id="dashboard-import-notebook">Import notebook<a class="hash-link" href="#dashboard-import-notebook" aria-label="Direct link to Import notebook">#</a></h3>
+<p><figure data-bai-block="57" class="doc-figure"><img src="./images/start_from_url_notebook.png" alt="" class="doc-image" style="width:800px" loading="lazy" decoding="async" width="1600" height="848" /><figcaption>Figure 7.4</figcaption></figure>
 </p>
 <ol>
-<li data-bai-block="25"><p>Enter a Jupyter Notebook URL (must end with <code>.ipynb</code>) in the <strong>Notebook URL</strong>
+<li data-bai-block="58"><p>Enter a Jupyter Notebook URL (must end with <code>.ipynb</code>) in the <strong>Notebook URL</strong>
 field</p>
 </li>
-<li data-bai-block="26"><p>Click <strong>Import &amp; Run</strong> to automatically create a session and open the
+<li data-bai-block="59"><p>Click <strong>Import &amp; Run</strong> to automatically create a session and open the
 notebook in Jupyter</p>
 <p>You can also click the dropdown arrow next to the button and select
 <strong>Start with options</strong> to customize the session environment before launching.</p>
 </li>
 </ol>
 <div class="admonition admonition-note">
-<div data-bai-block="27" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
+<div data-bai-block="60" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
 <div class="admonition-content">
 
-<p data-bai-block="28">The notebook is downloaded from inside the compute session (its bootstrap
+<p data-bai-block="61">The notebook is downloaded from inside the compute session (its bootstrap
 script runs <code>curl -O &lt;url&gt;</code>), so the URL must be reachable from the session.
 Local addresses such as <code>localhost</code> or <code>127.0.0.1</code> resolve to the session
 container itself — not your own machine — and will not work. Use a URL that is
@@ -320,66 +431,66 @@ reachable from the compute session.</p>
 
 
 <div class="admonition admonition-note">
-<div data-bai-block="29" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
+<div data-bai-block="62" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
 <div class="admonition-content">
 
-<p data-bai-block="30">Turn off your browser&#39;s pop-up blocker so the running notebook window can open
+<p data-bai-block="63">Turn off your browser&#39;s pop-up blocker so the running notebook window can open
 automatically. If there are not enough resources to start the session, the
 imported notebook will not run.</p>
 </div></div>
 
 
-<p data-bai-block="31">At the bottom of the tab, you can generate a &quot;Run on Backend.AI&quot; badge code.
+<p data-bai-block="64">At the bottom of the tab, you can generate a &quot;Run on Backend.AI&quot; badge code.
 Copy the HTML or Markdown badge code to embed a direct-launch link in your
 project documentation.</p>
 <div class="admonition admonition-note">
-<div data-bai-block="32" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
+<div data-bai-block="65" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
 <div class="admonition-content">
 
-<p data-bai-block="33">You must be logged in before generating the badge code. Otherwise, log in first
+<p data-bai-block="66">You must be logged in before generating the badge code. Otherwise, log in first
 and try again.</p>
 </div></div>
 
 
-<h3 data-bai-block="34" id="dashboard-import-github-repository">Import GitHub repository<a class="hash-link" href="#dashboard-import-github-repository" aria-label="Direct link to Import GitHub repository">#</a></h3>
-<p><figure data-bai-block="35" class="doc-figure"><img src="./images/start_from_url_github.png" alt="" class="doc-image" style="width:800px" loading="lazy" decoding="async" width="1600" height="1070" /><figcaption>Figure 7.3</figcaption></figure>
+<h3 data-bai-block="67" id="dashboard-import-github-repository">Import GitHub repository<a class="hash-link" href="#dashboard-import-github-repository" aria-label="Direct link to Import GitHub repository">#</a></h3>
+<p><figure data-bai-block="68" class="doc-figure"><img src="./images/start_from_url_github.png" alt="" class="doc-image" style="width:800px" loading="lazy" decoding="async" width="1600" height="1070" /><figcaption>Figure 7.5</figcaption></figure>
 </p>
 <ol>
-<li data-bai-block="36">Enter a valid GitHub repository URL in the <strong>GitHub URL</strong> field</li>
-<li data-bai-block="37">Select a <strong>Storage Host</strong> where the repository will be saved</li>
-<li data-bai-block="38">Optionally set the <strong>Folder Usage Mode</strong> (General or Models)</li>
-<li data-bai-block="39">Click <strong>Get To Folder</strong> to clone the repository into a new storage folder</li>
+<li data-bai-block="69">Enter a valid GitHub repository URL in the <strong>GitHub URL</strong> field</li>
+<li data-bai-block="70">Select a <strong>Storage Host</strong> where the repository will be saved</li>
+<li data-bai-block="71">Optionally set the <strong>Folder Usage Mode</strong> (General or Models)</li>
+<li data-bai-block="72">Click <strong>Get To Folder</strong> to clone the repository into a new storage folder</li>
 </ol>
-<p data-bai-block="40">The imported repository is converted to a storage folder that can be mounted
+<p data-bai-block="73">The imported repository is converted to a storage folder that can be mounted
 when starting a session.</p>
-<h3 data-bai-block="41" id="dashboard-import-gitlab-repository">Import GitLab repository<a class="hash-link" href="#dashboard-import-gitlab-repository" aria-label="Direct link to Import GitLab repository">#</a></h3>
-<p><figure data-bai-block="42" class="doc-figure"><img src="./images/start_from_url_gitlab.png" alt="" class="doc-image" style="width:800px" loading="lazy" decoding="async" width="1600" height="1242" /><figcaption>Figure 7.4</figcaption></figure>
+<h3 data-bai-block="74" id="dashboard-import-gitlab-repository">Import GitLab repository<a class="hash-link" href="#dashboard-import-gitlab-repository" aria-label="Direct link to Import GitLab repository">#</a></h3>
+<p><figure data-bai-block="75" class="doc-figure"><img src="./images/start_from_url_gitlab.png" alt="" class="doc-image" style="width:800px" loading="lazy" decoding="async" width="1600" height="1242" /><figcaption>Figure 7.6</figcaption></figure>
 </p>
 <ol>
-<li data-bai-block="43">Enter a valid GitLab repository URL in the <strong>GitLab URL</strong> field</li>
-<li data-bai-block="44">Optionally specify a <strong>GitLab Branch Name</strong> (defaults to <code>master</code>)</li>
-<li data-bai-block="45">Select a <strong>Storage Host</strong> where the repository will be saved</li>
-<li data-bai-block="46">Optionally set the <strong>Folder Usage Mode</strong> (General or Models)</li>
-<li data-bai-block="47">Click <strong>Get To Folder</strong> to clone the repository into a new storage folder</li>
+<li data-bai-block="76">Enter a valid GitLab repository URL in the <strong>GitLab URL</strong> field</li>
+<li data-bai-block="77">Optionally specify a <strong>GitLab Branch Name</strong> (defaults to <code>master</code>)</li>
+<li data-bai-block="78">Select a <strong>Storage Host</strong> where the repository will be saved</li>
+<li data-bai-block="79">Optionally set the <strong>Folder Usage Mode</strong> (General or Models)</li>
+<li data-bai-block="80">Click <strong>Get To Folder</strong> to clone the repository into a new storage folder</li>
 </ol>
-<h3 data-bai-block="48" id="dashboard-import-hugging-face-model">Import Hugging Face Model<a class="hash-link" href="#dashboard-import-hugging-face-model" aria-label="Direct link to Import Hugging Face Model">#</a></h3>
-<p data-bai-block="49">The <strong>Import Hugging Face Model</strong> tab downloads a model from Hugging Face into
+<h3 data-bai-block="81" id="dashboard-import-hugging-face-model">Import Hugging Face Model<a class="hash-link" href="#dashboard-import-hugging-face-model" aria-label="Direct link to Import Hugging Face Model">#</a></h3>
+<p data-bai-block="82">The <strong>Import Hugging Face Model</strong> tab downloads a model from Hugging Face into
 one of your model folders, so you can later mount it in a compute session or
 serve it as a deployment.</p>
 <div class="admonition admonition-warning">
-<div data-bai-block="50" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>Experimental feature</div>
+<div data-bai-block="83" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>Experimental feature</div>
 <div class="admonition-content">
 
-<p data-bai-block="51">This tab is hidden until you turn on <strong>Import from Hugging Face</strong> in the
+<p data-bai-block="84">This tab is hidden until you turn on <strong>Import from Hugging Face</strong> in the
 <strong>Experimental features</strong> section of the <a href="./user_settings.html#user-settings">User Settings</a> page.
 Experimental features may change or be removed in future updates.</p>
 </div></div>
 
 
-<p><figure data-bai-block="52" class="doc-figure"><img src="./images/start_from_url_huggingface.png" alt="" class="doc-image" style="width:800px" loading="lazy" decoding="async" width="1600" height="1592" /><figcaption>Figure 7.5</figcaption></figure>
+<p><figure data-bai-block="85" class="doc-figure"><img src="./images/start_from_url_huggingface.png" alt="" class="doc-image" style="width:800px" loading="lazy" decoding="async" width="1600" height="1592" /><figcaption>Figure 7.7</figcaption></figure>
 </p>
 <ol>
-<li data-bai-block="53"><p>Enter the model in the <strong>Hugging Face Model URL or ID</strong> field. Both a model
+<li data-bai-block="86"><p>Enter the model in the <strong>Hugging Face Model URL or ID</strong> field. Both a model
 page URL such as <code>https://huggingface.co/openai/gpt-oss-20b</code> and a plain
 model ID such as <code>openai/gpt-oss-20b</code> are accepted. Addresses that point to
 a dataset, a space, or any other non-model page are rejected.</p>
@@ -389,151 +500,49 @@ displays a preview card below the field before you start the import. The
 card shows the model ID as a link to its Hugging Face page, the model&#39;s
 task and library tags, its size, and when it was last updated.</p>
 </li>
-<li data-bai-block="54"><p>Optionally enter a <strong>Revision</strong> — the branch, tag, or commit of the model
+<li data-bai-block="87"><p>Optionally enter a <strong>Revision</strong> — the branch, tag, or commit of the model
 repository to download. Leave it empty to download the default revision. If
 the address you entered already contains a revision, that revision is used.</p>
 </li>
-<li data-bai-block="55"><p>Optionally enter a <strong>Hugging Face Token</strong>. A token is required for gated or
+<li data-bai-block="88"><p>Optionally enter a <strong>Hugging Face Token</strong>. A token is required for gated or
 private models.</p>
 </li>
-<li data-bai-block="56"><p>Select the <strong>Model Folder</strong> to download into. As the helper text under the
+<li data-bai-block="89"><p>Select the <strong>Model Folder</strong> to download into. As the helper text under the
 field notes, only model folders in the current project that you can mount
 with write permission are listed — the download session writes into the
 folder, so folders you can only mount read-only are excluded. The buttons
 next to the selector let you open the selected folder, create a new model
 folder, and refresh the list.</p>
 </li>
-<li data-bai-block="57"><p>Click <strong>Download Model To Folder</strong>.</p>
+<li data-bai-block="90"><p>Click <strong>Download Model To Folder</strong>.</p>
 </li>
 </ol>
-<p data-bai-block="58">The dialog closes and Backend.AI starts a batch session that performs the
+<p data-bai-block="91">The dialog closes and Backend.AI starts a batch session that performs the
 download. Because the download runs inside that session, you can follow its
 progress on the Sessions page; the model is ready once the session finishes
 successfully. If the session fails, the download did not complete and the
 model is not ready to use.</p>
-<p data-bai-block="59">The model is stored in a subfolder named after the model, inside the folder you
+<p data-bai-block="92">The model is stored in a subfolder named after the model, inside the folder you
 selected — <code>openai/gpt-oss-20b</code>, for example, is downloaded to <code>gpt-oss-20b/</code>.
 Several models can therefore share a single model folder.</p>
 <div class="admonition admonition-warning">
-<div data-bai-block="60" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>WARNING</div>
+<div data-bai-block="93" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>WARNING</div>
 <div class="admonition-content">
 
-<p data-bai-block="61">The token is passed to the download session as the <code>HF_TOKEN</code> environment
+<p data-bai-block="94">The token is passed to the download session as the <code>HF_TOKEN</code> environment
 variable and can be viewed by administrators. Use a read-only token.</p>
 </div></div>
 
 
 <div class="admonition admonition-note">
-<div data-bai-block="62" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
+<div data-bai-block="95" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
 <div class="admonition-content">
 
-<p data-bai-block="63">The tab downloads into model folders, so it is only available when the
+<p data-bai-block="96">The tab downloads into model folders, so it is only available when the
 deployment feature is enabled for your account. Large models take a long time
 to download and consume the storage quota of the target folder.</p>
 </div></div>
 
-
-<h2 data-bai-block="64" id="dashboard-customizing-the-dashboard-layout">Customizing the Dashboard Layout<a class="hash-link" href="#dashboard-customizing-the-dashboard-layout" aria-label="Direct link to Customizing the Dashboard Layout">#</a></h2>
-<p data-bai-block="65">You can rearrange the board at any time — there is no mode to enter first:</p>
-<ul>
-<li data-bai-block="66"><strong>Move cards</strong>: Drag a card by its header to reposition it on the board.</li>
-<li data-bai-block="67"><strong>Resize cards</strong>: Drag the bottom-right corner of a card to adjust its
-size. Each card has a minimum size to ensure its content remains readable.</li>
-</ul>
-<p data-bai-block="68">Click <strong>Edit</strong> to open the edit sidebar, and <strong>Close</strong> to hide it again. The
-sidebar lists every card the page offers, grouped by topic: select a card to
-put it on the board, and clear it to take it off.</p>
-<p><figure data-bai-block="69" class="doc-figure"><img src="./images/dashboard_edit_mode.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>Figure 7.6</figcaption></figure>
-</p>
-<p data-bai-block="70">Your arrangement is saved to your account on the server, so it follows you to
-every browser you sign in from. To discard it and restore the default cards
-and arrangement, click the <strong>Reset layout</strong> button at the bottom of the edit
-sidebar and confirm. Resetting the layout does not remove your custom panels.</p>
-<div class="admonition admonition-tip">
-<div data-bai-block="71" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 12 16"><path d="M6.5 0C3.48 0 1 2.19 1 5c0 .92.55 2.25 1 3 1.34 2.25 1.78 2.78 2 4v1h5v-1c.22-1.22.66-1.75 2-4 .45-.75 1-2.08 1-3 0-2.81-2.48-5-5.5-5zm3.64 7.48c-.25.44-.47.8-.67 1.11-.86 1.41-1.25 2.06-1.45 3.23-.02.05-.02.11-.02.17H5c0-.06 0-.13-.02-.17-.2-1.17-.59-1.83-1.45-3.23-.2-.31-.42-.67-.67-1.11C2.44 6.78 2 5.65 2 5c0-2.2 2.02-4 4.5-4 2.48 0 4.5 1.8 4.5 4 0 .65-.44 1.78-.86 2.48zM4 13h5v1H4v-1z"/></svg></span>TIP</div>
-<div class="admonition-content">
-
-<p data-bai-block="72">When the WebUI is updated with new dashboard cards, those cards will
-automatically appear on your dashboard even if you have a saved layout.</p>
-</div></div>
-
-
-<h3 data-bai-block="73" id="dashboard-card-settings">Card Settings<a class="hash-link" href="#dashboard-card-settings" aria-label="Direct link to Card Settings">#</a></h3>
-<p data-bai-block="74">A card that reads a resource group or a time range keeps a saved default.
-Open <strong>Default card settings</strong> for that card in the edit sidebar to choose the
-values the board opens with; the picker in the card&#39;s header changes them for
-the current visit only.</p>
-<h3 data-bai-block="75" id="dashboard-custom-panels">Custom Panels<a class="hash-link" href="#dashboard-custom-panels" aria-label="Direct link to Custom Panels">#</a></h3>
-<p data-bai-block="76">The edit sidebar also lists your custom panels. A custom panel shows a data
-source you select, narrowed by a condition you define. The panel itself shows
-only a title and its data, so give the panel a title that describes its
-condition.</p>
-<p data-bai-block="77">To add a panel, click the <strong>Add</strong> button in the sidebar. The panel dialog
-contains the following fields. <strong>Panel type</strong> and <strong>Data source</strong> are
-required — the dialog will not submit until both are chosen.</p>
-<ul>
-<li data-bai-block="78"><strong>Data source</strong>: The data source the panel lists. Choose <strong>Sessions</strong>,
-<strong>Deployments</strong>, or <strong>Data &amp; Storage</strong>.</li>
-<li data-bai-block="79"><strong>Panel type</strong>: How the panel displays the data source. Choose <strong>Table</strong>,
-<strong>Count</strong>, or <strong>Chart</strong>. For the <strong>Sessions</strong> data source, <strong>Grid</strong> is also
-offered.</li>
-<li data-bai-block="80"><strong>Title</strong>: An optional panel title. When omitted, the data source name is
-used.</li>
-<li data-bai-block="81"><strong>Condition</strong>: A property filter that narrows the rows shown in the panel.</li>
-</ul>
-<p data-bai-block="82">A live preview below the fields shows the rows matching the current condition.
-Sorting a column in the preview sets the panel&#39;s sort order. Click <strong>Add</strong> to
-place the panel on the board.</p>
-<p><figure data-bai-block="83" class="doc-figure"><img src="./images/dashboard_panel_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1920" height="1352" /><figcaption>Figure 7.7</figcaption></figure>
-</p>
-<p data-bai-block="84"><strong>Deployments</strong> panels list the project&#39;s model deployments, using the same
-table as the Deployments page: name, status, replica summary, model, and
-created at. Clicking a deployment&#39;s name opens its detail page.</p>
-<p data-bai-block="85"><strong>Chart</strong> draws the matching items as a chart. <strong>Compare groups</strong> chart types
-(Donut, Pie, Bar, Radar) count the items grouped by the property chosen under
-<strong>Group by</strong>; <strong>Created over time</strong> chart types (Line, Area, Column) count the
-items created in each interval of the selected time range. Turn on <strong>Show
-table</strong> to list the matching rows under the chart on the panel.</p>
-<p data-bai-block="86"><strong>Grid</strong> shows the session resource grid: each matching session&#39;s allocated
-resources as unit cells, colored by utilization. Clicking a session opens its
-detail drawer, the same as clicking a row in the table. The grid shows at most
-the first 100 matching sessions; a notice appears when there are more.</p>
-<p data-bai-block="87">The grid&#39;s display settings — resource or kernel mode, which resource or
-metric to show, memory unit, and layout — are chosen in the Add/Edit panel
-dialog&#39;s live preview and saved with the panel. The panel itself shows no
-controls for these settings, so create a second panel if you want a different
-view.</p>
-<div class="admonition admonition-note">
-<div data-bai-block="88" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
-<div class="admonition-content">
-
-<p data-bai-block="89"><strong>Grid</strong> is an experimental feature. It is offered in the <strong>Panel type</strong>
-selector only when <strong>Session resource grid view</strong> is turned on under
-<a href="./user_settings.html#experimental-features">Experimental features</a>. If it is turned off later,
-existing Grid panels keep their saved configuration but display as the
-session table until the setting is turned back on.</p>
-</div></div>
-
-
-<p data-bai-block="90">To change a panel&#39;s data source, panel type, condition, or title later, click
-the pencil (<strong>Edit</strong>) icon next to the panel in the sidebar — or in the
-panel&#39;s header on the board — and save your changes. To remove a panel, click
-the trash (<strong>Delete</strong>) icon and confirm in the popup.</p>
-<div class="admonition admonition-note">
-<div data-bai-block="91" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
-<div class="admonition-content">
-
-<p data-bai-block="92"><strong>Sessions</strong> and <strong>Deployments</strong> panels list data for the current project and
-are available to every project member. <strong>Data &amp; Storage</strong> panels are
-available to superadmins only. A panel whose data source your role cannot
-query remains listed in the sidebar but is not shown on the board.</p>
-</div></div>
-
-
-<h2 data-bai-block="93" id="dashboard-automatic-refresh">Automatic Refresh<a class="hash-link" href="#dashboard-automatic-refresh" aria-label="Direct link to Automatic Refresh">#</a></h2>
-<p data-bai-block="94">The refresh control on the dashboard bar sets how often every card refreshes —
-<strong>Off</strong>, or an interval from 5 seconds to 10 minutes — and refreshes every card
-at once when you click it.</p>
 
 </section>
     <div class="page-footer">
@@ -559,15 +568,15 @@ at once when you click it.</p>
   <aside class="doc-toc" aria-labelledby="doc-toc-heading">
   <div class="doc-toc__heading" id="doc-toc-heading">On this page</div>
   <ul class="doc-toc__list">
+      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#dashboard-customizing-the-dashboard-layout" data-toc-target="dashboard-customizing-the-dashboard-layout">Customizing the Dashboard Layout</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#dashboard-card-settings" data-toc-target="dashboard-card-settings">Card Settings</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#dashboard-custom-panels" data-toc-target="dashboard-custom-panels">Custom Panels</a></li>
+      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#dashboard-automatic-refresh" data-toc-target="dashboard-automatic-refresh">Automatic Refresh</a></li>
       <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#dashboard-start-from-url" data-toc-target="dashboard-start-from-url">Start from URL</a></li>
       <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#dashboard-import-notebook" data-toc-target="dashboard-import-notebook">Import notebook</a></li>
       <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#dashboard-import-github-repository" data-toc-target="dashboard-import-github-repository">Import GitHub repository</a></li>
       <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#dashboard-import-gitlab-repository" data-toc-target="dashboard-import-gitlab-repository">Import GitLab repository</a></li>
       <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#dashboard-import-hugging-face-model" data-toc-target="dashboard-import-hugging-face-model">Import Hugging Face Model</a></li>
-      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#dashboard-customizing-the-dashboard-layout" data-toc-target="dashboard-customizing-the-dashboard-layout">Customizing the Dashboard Layout</a></li>
-      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#dashboard-card-settings" data-toc-target="dashboard-card-settings">Card Settings</a></li>
-      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#dashboard-custom-panels" data-toc-target="dashboard-custom-panels">Custom Panels</a></li>
-      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#dashboard-automatic-refresh" data-toc-target="dashboard-automatic-refresh">Automatic Refresh</a></li>
   </ul>
   <div class="doc-toc__divider"></div>
   <div class="doc-toc__contrib">

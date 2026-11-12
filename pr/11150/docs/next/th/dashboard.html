@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="แดชบอร์ด" />
   <meta name="twitter:description" content="แดชบอร์ด คือหน้าแรกที่คุณเห็นหลังจากเข้าสู่ระบบ ประกอบด้วยการ์ดหลายใบ การ์ดที่อยู่ด้านบนเป็นทางลัดไปยังงานที่คุณมักเริ่มทำเป็นอย่างแรก…" />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"แดชบอร์ด","inLanguage":"th","description":"แดชบอร์ด คือหน้าแรกที่คุณเห็นหลังจากเข้าสู่ระบบ ประกอบด้วยการ์ดหลายใบ การ์ดที่อยู่ด้านบนเป็นทางลัดไปยังงานที่คุณมักเริ่มทำเป็นอย่างแรก…","dateModified":"2026-11-12T00:20:57.000Z","url":"https://webui.docs.backend.ai/next/th/dashboard.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"แดชบอร์ด","inLanguage":"th","description":"แดชบอร์ด คือหน้าแรกที่คุณเห็นหลังจากเข้าสู่ระบบ ประกอบด้วยการ์ดหลายใบ การ์ดที่อยู่ด้านบนเป็นทางลัดไปยังงานที่คุณมักเริ่มทำเป็นอย่างแรก…","dateModified":"2026-11-12T01:09:02.000Z","url":"https://webui.docs.backend.ai/next/th/dashboard.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/dashboard.html" />
   <link rel="alternate" hreflang="en" href="../en/dashboard.html" />
   <link rel="alternate" hreflang="ja" href="../ja/dashboard.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">คู่มือ</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.10.0-alpha.3 (e7f46a6)">v26.10.0-alpha.3 (e7f46a6)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.10.0-alpha.3 (3f60c15)">v26.10.0-alpha.3 (3f60c15)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="ค้นหาเอกสาร...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -221,77 +221,144 @@
   คลิก <strong>สร้างโฟลเดอร์</strong> เพื่อสร้างโฟลเดอร์จัดเก็บข้อมูลสำหรับไฟล์และข้อมูลที่เซสชันของคุณใช้</p>
 </li>
 <li data-bai-block="5"><p><strong>เริ่มการปรับใช้:</strong>
-  คลิก <strong>สร้างการปรับใช้</strong> เพื่อให้บริการโมเดลที่ฝึกแล้วให้ผู้อื่นใช้งานได้ การ์ดนี้จะแสดงเฉพาะเมื่อผู้ดูแลระบบเปิดใช้งานการให้บริการโมเดลแล้วเท่านั้น</p>
+  คลิก <strong>สร้างการปรับใช้</strong> เพื่อให้บริการโมเดลที่ฝึกแล้วให้ผู้อื่นใช้งานได้</p>
 </li>
 <li data-bai-block="6"><p><strong>เริ่มจาก URL:</strong>
-  คลิก <strong>เริ่มเลย</strong> แล้วป้อน URL ของ Jupyter notebook, ที่เก็บ GitHub หรือ GitLab หรือโมเดล Hugging Face เพื่อเริ่มเซสชันจากเนื้อหานั้น ดูวิธีใช้แต่ละแหล่งนำเข้าได้ที่ <a href="#start-from-url">เริ่มจาก URL</a></p>
+  คลิก <strong>เริ่มเลย</strong> เพื่อนำเข้า Jupyter notebook, ที่เก็บ GitHub หรือ GitLab หรือโมเดล Hugging Face จาก URL โน้ตบุ๊กจะเปิดในเซสชันใหม่ ส่วนที่เก็บและโมเดลจะถูกบันทึกลงในโฟลเดอร์จัดเก็บข้อมูล ดูวิธีใช้แต่ละแหล่งนำเข้าได้ที่ <a href="#start-from-url">เริ่มจาก URL</a></p>
 </li>
 </ul>
-<p><figure data-bai-block="7" class="doc-figure"><img src="./images/dashboard.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>รูปที่ 7.1</figcaption></figure>
+<div class="admonition admonition-note">
+<div data-bai-block="7" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
+<div class="admonition-content">
+
+<p data-bai-block="8">ขึ้นอยู่กับการตั้งค่าเซิร์ฟเวอร์ การ์ดบางส่วน เช่น การ์ดการปรับใช้ อาจไม่
+สามารถใช้งานได้ หากคุณต้องการใช้ฟีเจอร์เหล่านี้ กรุณาติดต่อผู้ดูแลระบบ</p>
+</div></div>
+
+
+<p><figure data-bai-block="9" class="doc-figure"><img src="./images/dashboard.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>รูปที่ 7.1</figcaption></figure>
 </p>
-<p data-bai-block="8">การ์ดด้านล่างจะสรุปเซสชัน การใช้ทรัพยากร และกิจกรรมล่าสุดของคุณในโปรเจกต์ปัจจุบัน:</p>
+<p data-bai-block="10">การ์ดด้านล่างจะสรุปเซสชัน การใช้ทรัพยากร และกิจกรรมล่าสุดของคุณในโปรเจกต์ปัจจุบัน:</p>
 <ul>
-<li data-bai-block="9"><p><strong>เซสชันของฉัน:</strong>
+<li data-bai-block="11"><p><strong>เซสชันของฉัน:</strong>
   แสดงเซสชันของคุณในโปรเจกต์ปัจจุบันตามสถานะ และแสดงเซสชันที่ใช้งานอยู่ตามประเภท เช่น <em>Interactive</em>, <em>Batch</em>, <em>Inference</em> และ <em>Upload</em></p>
 </li>
-<li data-bai-block="10"><p><strong>เซสชันล่าสุดของฉัน:</strong>
+<li data-bai-block="12"><p><strong>เซสชันล่าสุดของฉัน:</strong>
   แสดงรายการเซสชันที่คุณสร้างล่าสุด เรียงจากใหม่ไปเก่า</p>
 </li>
-<li data-bai-block="11"><p><strong>การใช้ทรัพยากรทั้งหมดของฉัน:</strong>
+<li data-bai-block="13"><p><strong>การใช้ทรัพยากรทั้งหมดของฉัน:</strong>
   แสดงทรัพยากรที่เซสชันของคุณใช้อยู่ในทุกกลุ่มทรัพยากรและทุกโปรเจกต์ เมื่อมีขีดจำกัดหลายรายการ (โดเมน โปรเจกต์ หรือคีย์แพร์) ระบบจะใช้ขีดจำกัด<strong>ที่เข้มงวดที่สุด</strong></p>
 </li>
-<li data-bai-block="12"><p><strong>ทรัพยากรของฉันในกลุ่มทรัพยากร:</strong>
+<li data-bai-block="14"><p><strong>ทรัพยากรของฉันในกลุ่มทรัพยากร:</strong>
   แสดงทรัพยากรที่ใช้ไปและที่ยังว่างอยู่ในกลุ่มทรัพยากรที่ตั้งไว้ของการ์ด</p>
 </li>
-<li data-bai-block="13"><p><strong>ทรัพยากรทั้งหมดในกลุ่มทรัพยากร:</strong>
+<li data-bai-block="15"><p><strong>ทรัพยากรทั้งหมดในกลุ่มทรัพยากร:</strong>
   สรุปทรัพยากรที่ใช้แล้วและว่างของกลุ่มทรัพยากรที่ตั้งไว้ของการ์ด ข้อมูลรวบรวมจากเอเจนต์ทั้งหมดที่อยู่ในกลุ่ม</p>
 </li>
-<li data-bai-block="14"><p><strong>สถิติตัวแทน:</strong>
+<li data-bai-block="16"><p><strong>สถิติตัวแทน:</strong>
   แสดงทรัพยากรทั้งหมดของเอเจนต์ทุกตัวในระบบ</p>
 </li>
-<li data-bai-block="15"><p><strong>โควตาต่อปริมาณการจัดเก็บ:</strong>
+<li data-bai-block="17"><p><strong>โควตาต่อปริมาณการจัดเก็บ:</strong>
   แสดงโควตาที่ใช้งานได้ในแต่ละปริมาณการจัดเก็บ หากไม่มีโฮสต์จัดเก็บใดรองรับโควตา การ์ดนี้จะแสดงข้อความแจ้งแทน</p>
 </li>
-<li data-bai-block="16"><p><strong>การปรับใช้ของฉัน:</strong>
+<li data-bai-block="18"><p><strong>การปรับใช้ของฉัน:</strong>
   แสดงรายการการปรับใช้โมเดลของคุณพร้อมสถานะของเรพลิกา</p>
 </li>
-<li data-bai-block="17"><p><strong>กิจกรรมของฉัน:</strong>
+<li data-bai-block="19"><p><strong>กิจกรรมของฉัน:</strong>
   แสดงรายการบันทึกการตรวจสอบของคุณเองในช่วงเวลาที่ตั้งไว้ของการ์ด</p>
 </li>
 </ul>
 <div class="admonition admonition-note">
-<div data-bai-block="18" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
+<div data-bai-block="20" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
 <div class="admonition-content">
 
-<p data-bai-block="19">การ์ด <strong>ทรัพยากรทั้งหมดในกลุ่มทรัพยากร</strong> และ <strong>สถิติตัวแทน</strong> อาจไม่แสดงขึ้นอยู่กับการกำหนดค่าระบบ</p>
+<p data-bai-block="21">การ์ด <strong>ทรัพยากรทั้งหมดในกลุ่มทรัพยากร</strong> และ <strong>สถิติตัวแทน</strong> อาจไม่แสดงขึ้นอยู่กับการกำหนดค่าระบบ</p>
 </div></div>
 
 
-<p data-bai-block="20">ผู้ดูแลโปรเจกต์และผู้ดูแลระบบระดับสูงจะมี <strong>แดชบอร์ด</strong> ของตนเองในเมนูผู้ดูแลระบบ ซึ่งแสดงการ์ดสำหรับโปรเจกต์หรือสำหรับทั้งคลัสเตอร์</p>
+<p data-bai-block="22">ผู้ดูแลโปรเจกต์และผู้ดูแลระบบระดับสูงจะมี <strong>แดชบอร์ด</strong> ของตนเองในเมนูผู้ดูแลระบบ ซึ่งแสดงการ์ดสำหรับโปรเจกต์หรือสำหรับทั้งคลัสเตอร์</p>
+<h2 data-bai-block="23" id="dashboard-การปรบแตงเลยเอาทแดชบอรด">การปรับแต่งเลย์เอาท์แดชบอร์ด<a class="hash-link" href="#dashboard-การปรบแตงเลยเอาทแดชบอรด" aria-label="Direct link to การปรับแต่งเลย์เอาท์แดชบอร์ด">#</a></h2>
+<p data-bai-block="24">คุณสามารถจัดเรียงบอร์ดใหม่ได้ตลอดเวลา โดยไม่ต้องเข้าสู่โหมดใดก่อน:</p>
+<ul>
+<li data-bai-block="25"><strong>ย้ายการ์ด</strong>: ลากส่วนหัวของการ์ดเพื่อเปลี่ยนตำแหน่งบนบอร์ด</li>
+<li data-bai-block="26"><strong>ปรับขนาดการ์ด</strong>: ลากมุมขวาล่างของการ์ดเพื่อปรับขนาด แต่ละการ์ดมีขนาดขั้นต่ำเพื่อให้เนื้อหาอ่านได้ง่าย</li>
+</ul>
+<p data-bai-block="27">คลิกปุ่ม <strong>แก้ไข</strong> เพื่อเปิดแถบด้านข้างสำหรับแก้ไข และคลิก <strong>ปิด</strong> เพื่อซ่อนอีกครั้ง แถบด้านข้างจะแสดงการ์ดทั้งหมดที่หน้านี้มีให้ จัดกลุ่มตามหัวข้อ เลือกการ์ดเพื่อเพิ่มลงบนบอร์ด และยกเลิกการเลือกเพื่อนำออกจากบอร์ด</p>
+<p><figure data-bai-block="28" class="doc-figure"><img src="./images/dashboard_edit_mode.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>รูปที่ 7.2</figcaption></figure>
+</p>
+<p data-bai-block="29">การจัดวางของคุณจะถูกบันทึกไว้กับบัญชีของคุณบนเซิร์ฟเวอร์ จึงใช้ได้เหมือนกันในทุกเบราว์เซอร์ที่คุณเข้าสู่ระบบ หากต้องการกลับไปใช้การ์ดและการจัดเรียงเริ่มต้น ให้คลิกปุ่ม <strong>รีเซ็ตการจัดวาง</strong> ที่ด้านล่างของแถบด้านข้างสำหรับแก้ไข แล้วยืนยัน การรีเซ็ตการจัดวางจะไม่ลบแผงที่กำหนดเองของคุณ</p>
+<div class="admonition admonition-tip">
+<div data-bai-block="30" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 12 16"><path d="M6.5 0C3.48 0 1 2.19 1 5c0 .92.55 2.25 1 3 1.34 2.25 1.78 2.78 2 4v1h5v-1c.22-1.22.66-1.75 2-4 .45-.75 1-2.08 1-3 0-2.81-2.48-5-5.5-5zm3.64 7.48c-.25.44-.47.8-.67 1.11-.86 1.41-1.25 2.06-1.45 3.23-.02.05-.02.11-.02.17H5c0-.06 0-.13-.02-.17-.2-1.17-.59-1.83-1.45-3.23-.2-.31-.42-.67-.67-1.11C2.44 6.78 2 5.65 2 5c0-2.2 2.02-4 4.5-4 2.48 0 4.5 1.8 4.5 4 0 .65-.44 1.78-.86 2.48zM4 13h5v1H4v-1z"/></svg></span>เคล็ดลับ</div>
+<div class="admonition-content">
+
+<p data-bai-block="31">เมื่อ WebUI ได้รับการอัปเดตพร้อมการ์ดแดชบอร์ดใหม่ การ์ดเหล่านั้นจะปรากฏบนแดชบอร์ด
+ของคุณโดยอัตโนมัติ แม้ว่าคุณจะมีการจัดวางที่บันทึกไว้แล้วก็ตาม</p>
+</div></div>
+
+
+<h3 data-bai-block="32" id="dashboard-การตงคาเรมตนของการด">การตั้งค่าเริ่มต้นของการ์ด<a class="hash-link" href="#dashboard-การตงคาเรมตนของการด" aria-label="Direct link to การตั้งค่าเริ่มต้นของการ์ด">#</a></h3>
+<p data-bai-block="33">การ์ดที่ใช้กลุ่มทรัพยากรหรือช่วงเวลาสามารถบันทึกค่าเริ่มต้นไว้ได้ เปิด <strong>การตั้งค่าเริ่มต้นของการ์ด</strong> ของการ์ดนั้นในแถบด้านข้างสำหรับแก้ไข เพื่อกำหนดค่าที่จะใช้เมื่อเปิดบอร์ด ส่วนค่าที่เปลี่ยนจากตัวเลือกในส่วนหัวของการ์ดจะมีผลเฉพาะระหว่างที่คุณกำลังดูอยู่เท่านั้น</p>
+<p><a id="custom-panels"></a></p>
+<h3 data-bai-block="34" id="dashboard-แผงทกำหนดเอง">แผงที่กำหนดเอง<a class="hash-link" href="#dashboard-แผงทกำหนดเอง" aria-label="Direct link to แผงที่กำหนดเอง">#</a></h3>
+<p data-bai-block="35">แถบด้านข้างสำหรับแก้ไขยังแสดงรายการแผงที่กำหนดเองของคุณด้วย แผงที่กำหนดเองจะแสดงแหล่งข้อมูลที่คุณเลือก ซึ่งถูกกรองด้วยเงื่อนไขที่คุณกำหนด ตัวแผงจะแสดงเฉพาะชื่อและข้อมูลเท่านั้น จึงควรตั้งชื่อแผงให้สื่อถึงเงื่อนไขที่ใช้</p>
+<p data-bai-block="36">หากต้องการเพิ่มแผง ให้คลิกปุ่ม <strong>เพิ่ม</strong> ในแถบด้านข้าง กล่องโต้ตอบของแผงประกอบด้วยฟิลด์ต่อไปนี้ <strong>ประเภทแผง</strong> และ <strong>แหล่งข้อมูล</strong> เป็นฟิลด์ที่จำเป็น ต้องเลือกทั้งสองอย่างจึงจะส่งกล่องโต้ตอบได้:</p>
+<ul>
+<li data-bai-block="37"><strong>แหล่งข้อมูล</strong>: แหล่งข้อมูลที่จะแสดงในแผง เลือกได้จาก <strong>เซสชัน</strong>, <strong>การปรับใช้</strong> หรือ <strong>ข้อมูลและการจัดเก็บ</strong></li>
+<li data-bai-block="38"><strong>ประเภทแผง</strong>: วิธีแสดงผลแหล่งข้อมูลของแผง เลือกได้จาก <strong>ตาราง</strong>, <strong>จำนวน</strong> หรือ <strong>แผนภูมิ</strong> และหากเลือกแหล่งข้อมูล <strong>เซสชัน</strong> จะมีตัวเลือก <strong>กริด</strong> เพิ่มขึ้นมาด้วย</li>
+<li data-bai-block="39"><strong>ชื่อ</strong>: ชื่อของแผง (ไม่บังคับ) หากไม่ระบุ ระบบจะใช้ชื่อแหล่งข้อมูลแทน</li>
+<li data-bai-block="40"><strong>เงื่อนไข</strong>: ตัวกรองคุณสมบัติที่ใช้จำกัดรายการที่แสดงในแผง</li>
+</ul>
+<p data-bai-block="41">ตัวอย่างแบบเรียลไทม์ด้านล่างฟิลด์จะแสดงแถวที่ตรงกับเงื่อนไขปัจจุบัน การเรียงลำดับคอลัมน์ในตัวอย่างจะกำหนดลำดับการเรียงของแผง คลิก <strong>เพิ่ม</strong> เพื่อวางแผงบนบอร์ด</p>
+<p><figure data-bai-block="42" class="doc-figure"><img src="./images/dashboard_panel_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1920" height="1352" /><figcaption>รูปที่ 7.3</figcaption></figure>
+</p>
+<p data-bai-block="43">แผง <strong>การปรับใช้</strong> จะแสดงรายการการปรับใช้โมเดลของโปรเจกต์ โดยใช้ตารางเดียวกับหน้าการปรับใช้ ได้แก่ ชื่อ สถานะ สรุปเรพลิกา โมเดล และวันที่สร้าง การคลิกชื่อการปรับใช้จะเปิดหน้ารายละเอียดของการปรับใช้นั้น</p>
+<p data-bai-block="44">เมื่อเลือก <strong>แผนภูมิ</strong> ระบบจะแสดงรายการที่ตรงกับเงื่อนไขเป็นแผนภูมิ ประเภทแผนภูมิในกลุ่ม <strong>เปรียบเทียบกลุ่ม</strong> (โดนัท วงกลม แท่ง เรดาร์) จะนับรายการโดยจัดกลุ่มตามคุณสมบัติที่เลือกไว้ใน <strong>จัดกลุ่มตาม</strong> ส่วนประเภทแผนภูมิในกลุ่ม <strong>การสร้างตามช่วงเวลา</strong> (เส้น พื้นที่ คอลัมน์) จะนับรายการที่สร้างขึ้นในแต่ละช่วงของระยะเวลาที่เลือก เปิด <strong>แสดงตาราง</strong> เพื่อแสดงแถวที่ตรงกับเงื่อนไขไว้ใต้แผนภูมิบนแผง</p>
+<p data-bai-block="45">เมื่อเลือก <strong>กริด</strong> จะแสดงกริดทรัพยากรของเซสชัน โดยแสดงทรัพยากรที่จัดสรรให้แต่ละเซสชันที่ตรงกับเงื่อนไขเป็นหน่วยเซลล์ ซึ่งมีสีตามระดับการใช้งาน การคลิกที่เซสชันจะเปิดแผงรายละเอียดของเซสชันนั้น เช่นเดียวกับการคลิกแถวในตาราง กริดจะแสดงเซสชันที่ตรงกับเงื่อนไขสูงสุด 100 รายการแรกเท่านั้น และจะมีข้อความแจ้งเตือนเมื่อมีมากกว่านั้น</p>
+<p data-bai-block="46">การตั้งค่าการแสดงผลของกริด (โหมดทรัพยากร/เคอร์เนล ทรัพยากรหรือเมตริกที่จะแสดง หน่วยหน่วยความจำ และรูปแบบการจัดวาง) จะกำหนดในตัวอย่างแบบเรียลไทม์ของกล่องโต้ตอบเพิ่ม/แก้ไขแผง และจะถูกบันทึกไว้พร้อมกับแผง ตัวแผงเองไม่มีตัวควบคุมสำหรับการตั้งค่าเหล่านี้ ดังนั้นหากต้องการมุมมองอื่น ให้สร้างแผงเพิ่มอีกหนึ่งแผง</p>
+<div class="admonition admonition-note">
+<div data-bai-block="47" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
+<div class="admonition-content">
+
+<p data-bai-block="48"><strong>กริด</strong> เป็นฟีเจอร์ทดลอง โดยจะปรากฏในตัวเลือก <strong>ประเภทแผง</strong> ก็ต่อเมื่อเปิดใช้งาน <strong>Session resource grid view</strong> ใน<a href="./user_settings.html#experimental-features">คุณสมบัติการทดลอง</a> หากปิดการตั้งค่านี้ในภายหลัง แผง กริด ที่มีอยู่แล้วจะยังคงการตั้งค่าที่บันทึกไว้ แต่จะแสดงผลเป็นตารางเซสชันจนกว่าจะเปิดการตั้งค่านี้อีกครั้ง</p>
+</div></div>
+
+
+<p data-bai-block="49">หากต้องการเปลี่ยนแหล่งข้อมูล ประเภทแผง เงื่อนไข หรือชื่อของแผงในภายหลัง ให้คลิกไอคอนดินสอ (<strong>แก้ไข</strong>) ข้างแผงในแถบด้านข้าง หรือที่ส่วนหัวของแผงบนบอร์ด แล้วบันทึกการเปลี่ยนแปลง หากต้องการลบแผง ให้คลิกไอคอนถังขยะ (<strong>ลบ</strong>) แล้วยืนยันในป๊อปอัป</p>
+<div class="admonition admonition-note">
+<div data-bai-block="50" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
+<div class="admonition-content">
+
+<p data-bai-block="51">แผง <strong>เซสชัน</strong> และ <strong>การปรับใช้</strong> แสดงข้อมูลของโปรเจกต์ปัจจุบันและใช้งานได้กับสมาชิกโปรเจกต์ทุกคน แผง <strong>ข้อมูลและการจัดเก็บ</strong> ใช้งานได้เฉพาะผู้ดูแลระบบระดับสูงเท่านั้น แผงของแหล่งข้อมูลที่สิทธิ์ปัจจุบันของคุณไม่สามารถเข้าถึงได้จะยังคงอยู่ในรายการของแถบด้านข้าง แต่จะไม่แสดงบนบอร์ด</p>
+</div></div>
+
+
+<p><a id="automatic-refresh"></a></p>
+<h2 data-bai-block="52" id="dashboard-การรเฟรชอตโนมต">การรีเฟรชอัตโนมัติ<a class="hash-link" href="#dashboard-การรเฟรชอตโนมต" aria-label="Direct link to การรีเฟรชอัตโนมัติ">#</a></h2>
+<p data-bai-block="53">ตัวควบคุมการรีเฟรชบนแถบแดชบอร์ดใช้กำหนดความถี่ในการรีเฟรชของทุกการ์ด เลือกได้ทั้ง <strong>ปิด</strong> หรือช่วงเวลาตั้งแต่ 5 วินาทีถึง 10 นาที และเมื่อคลิกตัวควบคุมนี้ ทุกการ์ดจะรีเฟรชพร้อมกันทันที</p>
 <p><a id="start-from-url"></a></p>
-<h2 data-bai-block="21" id="dashboard-เรมจาก-url">เริ่มจาก URL<a class="hash-link" href="#dashboard-เรมจาก-url" aria-label="Direct link to เริ่มจาก URL">#</a></h2>
-<p data-bai-block="22">การ์ด <strong>เริ่มจาก URL</strong> บนแดชบอร์ดช่วยให้คุณนำเข้าและรันโปรเจกต์จากแหล่งภายนอก
-ได้โดยตรง คลิก <strong>เริ่มเลย</strong> บนการ์ดเพื่อเปิดกล่องโต้ตอบที่มีแท็บสำหรับแต่ละแหล่งนำเข้า ได้แก่
+<h2 data-bai-block="54" id="dashboard-เรมจาก-url">เริ่มจาก URL<a class="hash-link" href="#dashboard-เรมจาก-url" aria-label="Direct link to เริ่มจาก URL">#</a></h2>
+<p data-bai-block="55">การ์ด <strong>เริ่มจาก URL</strong> บนแดชบอร์ดช่วยให้คุณนำเข้าโน้ตบุ๊ก ที่เก็บ หรือโมเดล
+จากแหล่งภายนอกได้ คลิก <strong>เริ่มเลย</strong> บนการ์ดเพื่อเปิดกล่องโต้ตอบที่มีแท็บสำหรับแต่ละแหล่งนำเข้า ได้แก่
 <strong>นำเข้าโน้ตบุ๊ก</strong>, <strong>นำเข้าพื้นที่เก็บข้อมูล GitHub</strong> และ
 <strong>นำเข้าพื้นที่เก็บข้อมูล GitLab</strong> เมื่อเปิดใช้งานการนำเข้าจาก Hugging Face
 ซึ่งเป็นฟีเจอร์ทดลอง จะมีแท็บ <strong>นำเข้าโมเดล Hugging Face</strong> เพิ่มขึ้นมา</p>
-<h3 data-bai-block="23" id="dashboard-นำเขาโนตบก">นำเข้าโน้ตบุ๊ก<a class="hash-link" href="#dashboard-นำเขาโนตบก" aria-label="Direct link to นำเข้าโน้ตบุ๊ก">#</a></h3>
-<p><figure data-bai-block="24" class="doc-figure"><img src="./images/start_from_url_notebook.png" alt="" class="doc-image" style="width:800px" loading="lazy" decoding="async" width="1600" height="848" /><figcaption>รูปที่ 7.2</figcaption></figure>
+<h3 data-bai-block="56" id="dashboard-นำเขาโนตบก">นำเข้าโน้ตบุ๊ก<a class="hash-link" href="#dashboard-นำเขาโนตบก" aria-label="Direct link to นำเข้าโน้ตบุ๊ก">#</a></h3>
+<p><figure data-bai-block="57" class="doc-figure"><img src="./images/start_from_url_notebook.png" alt="" class="doc-image" style="width:800px" loading="lazy" decoding="async" width="1600" height="848" /><figcaption>รูปที่ 7.4</figcaption></figure>
 </p>
 <ol>
-<li data-bai-block="25"><p>ป้อน URL ของ Jupyter Notebook (ต้องลงท้ายด้วย <code>.ipynb</code>) ในฟิลด์
+<li data-bai-block="58"><p>ป้อน URL ของ Jupyter Notebook (ต้องลงท้ายด้วย <code>.ipynb</code>) ในฟิลด์
 <strong>URL โน้ตบุ๊ก</strong></p>
 </li>
-<li data-bai-block="26"><p>คลิก <strong>นำเข้าและรัน</strong> เพื่อสร้างเซสชันอัตโนมัติและเปิดโน้ตบุ๊กใน Jupyter</p>
+<li data-bai-block="59"><p>คลิก <strong>นำเข้าและรัน</strong> เพื่อสร้างเซสชันอัตโนมัติและเปิดโน้ตบุ๊กใน Jupyter</p>
 <p>คุณยังสามารถคลิกลูกศรดรอปดาวน์ข้างปุ่มและเลือก <strong>เริ่มด้วยตัวเลือก</strong>
 เพื่อปรับแต่งสภาพแวดล้อมเซสชันก่อนเริ่มต้น</p>
 </li>
 </ol>
 <div class="admonition admonition-note">
-<div data-bai-block="27" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
+<div data-bai-block="60" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
 <div class="admonition-content">
 
-<p data-bai-block="28">โน้ตบุ๊กจะถูกดาวน์โหลดจากภายในเซสชันการคำนวณ (สคริปต์บูตสแตรปจะรันคำสั่ง
+<p data-bai-block="61">โน้ตบุ๊กจะถูกดาวน์โหลดจากภายในเซสชันการคำนวณ (สคริปต์บูตสแตรปจะรันคำสั่ง
 <code>curl -O &lt;url&gt;</code>) ดังนั้น URL ที่ป้อนต้องเข้าถึงได้จากเซสชันการคำนวณ ที่อยู่ภายในเครื่อง
 เช่น <code>localhost</code> หรือ <code>127.0.0.1</code> จะชี้ไปยังคอนเทนเนอร์ของเซสชันเอง ไม่ใช่เครื่องของคุณ
 จึงใช้งานไม่ได้ กรุณาป้อน URL ที่เข้าถึงได้จากเซสชันการคำนวณ</p>
@@ -299,65 +366,65 @@
 
 
 <div class="admonition admonition-note">
-<div data-bai-block="29" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
+<div data-bai-block="62" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
 <div class="admonition-content">
 
-<p data-bai-block="30">ปิดตัวบล็อกป๊อปอัพของเบราว์เซอร์เพื่อให้หน้าต่างโน้ตบุ๊กที่กำลังทำงานเปิดขึ้น
+<p data-bai-block="63">ปิดตัวบล็อกป๊อปอัพของเบราว์เซอร์เพื่อให้หน้าต่างโน้ตบุ๊กที่กำลังทำงานเปิดขึ้น
 โดยอัตโนมัติ หากไม่มีทรัพยากรเพียงพอในการเริ่มเซสชัน โน้ตบุ๊กที่นำเข้าจะไม่ทำงาน</p>
 </div></div>
 
 
-<p data-bai-block="31">ที่ด้านล่างของแท็บ คุณสามารถสร้างโค้ดป้าย &quot;Run on Backend.AI&quot; ได้ คัดลอก
+<p data-bai-block="64">ที่ด้านล่างของแท็บ คุณสามารถสร้างโค้ดป้าย &quot;Run on Backend.AI&quot; ได้ คัดลอก
 โค้ดป้าย HTML หรือ Markdown เพื่อฝังลิงก์เปิดใช้งานโดยตรงในเอกสารโปรเจกต์</p>
 <div class="admonition admonition-note">
-<div data-bai-block="32" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
+<div data-bai-block="65" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
 <div class="admonition-content">
 
-<p data-bai-block="33">คุณต้องเข้าสู่ระบบก่อนสร้างโค้ดป้าย มิฉะนั้น กรุณาเข้าสู่ระบบก่อนแล้วลองอีกครั้ง</p>
+<p data-bai-block="66">คุณต้องเข้าสู่ระบบก่อนสร้างโค้ดป้าย มิฉะนั้น กรุณาเข้าสู่ระบบก่อนแล้วลองอีกครั้ง</p>
 </div></div>
 
 
-<h3 data-bai-block="34" id="dashboard-นำเขาพนทเกบขอมล-github">นำเข้าพื้นที่เก็บข้อมูล GitHub<a class="hash-link" href="#dashboard-นำเขาพนทเกบขอมล-github" aria-label="Direct link to นำเข้าพื้นที่เก็บข้อมูล GitHub">#</a></h3>
-<p><figure data-bai-block="35" class="doc-figure"><img src="./images/start_from_url_github.png" alt="" class="doc-image" style="width:800px" loading="lazy" decoding="async" width="1600" height="1070" /><figcaption>รูปที่ 7.3</figcaption></figure>
+<h3 data-bai-block="67" id="dashboard-นำเขาพนทเกบขอมล-github">นำเข้าพื้นที่เก็บข้อมูล GitHub<a class="hash-link" href="#dashboard-นำเขาพนทเกบขอมล-github" aria-label="Direct link to นำเข้าพื้นที่เก็บข้อมูล GitHub">#</a></h3>
+<p><figure data-bai-block="68" class="doc-figure"><img src="./images/start_from_url_github.png" alt="" class="doc-image" style="width:800px" loading="lazy" decoding="async" width="1600" height="1070" /><figcaption>รูปที่ 7.5</figcaption></figure>
 </p>
 <ol>
-<li data-bai-block="36">ป้อน URL พื้นที่เก็บข้อมูล GitHub ที่ถูกต้องในฟิลด์ <strong>URL GitHub</strong></li>
-<li data-bai-block="37">เลือก <strong>โฮสต์ที่เก็บข้อมูล</strong> ที่จะบันทึกพื้นที่เก็บข้อมูล</li>
-<li data-bai-block="38">ตั้งค่า <strong>โหมดการใช้งานโฟลเดอร์</strong> (ทั่วไปหรือโมเดล) ตามต้องการ</li>
-<li data-bai-block="39">คลิก <strong>นำเข้าไปยังโฟลเดอร์</strong> เพื่อโคลนพื้นที่เก็บข้อมูลไปยังโฟลเดอร์
+<li data-bai-block="69">ป้อน URL พื้นที่เก็บข้อมูล GitHub ที่ถูกต้องในฟิลด์ <strong>URL GitHub</strong></li>
+<li data-bai-block="70">เลือก <strong>โฮสต์ที่เก็บข้อมูล</strong> ที่จะบันทึกพื้นที่เก็บข้อมูล</li>
+<li data-bai-block="71">ตั้งค่า <strong>โหมดการใช้งานโฟลเดอร์</strong> (ทั่วไปหรือโมเดล) ตามต้องการ</li>
+<li data-bai-block="72">คลิก <strong>นำเข้าไปยังโฟลเดอร์</strong> เพื่อโคลนพื้นที่เก็บข้อมูลไปยังโฟลเดอร์
 จัดเก็บใหม่</li>
 </ol>
-<p data-bai-block="40">พื้นที่เก็บข้อมูลที่นำเข้าจะถูกแปลงเป็นโฟลเดอร์จัดเก็บและสามารถเมาท์ได้
+<p data-bai-block="73">พื้นที่เก็บข้อมูลที่นำเข้าจะถูกแปลงเป็นโฟลเดอร์จัดเก็บและสามารถเมาท์ได้
 เมื่อเริ่มเซสชัน</p>
-<h3 data-bai-block="41" id="dashboard-นำเขาพนทเกบขอมล-gitlab">นำเข้าพื้นที่เก็บข้อมูล GitLab<a class="hash-link" href="#dashboard-นำเขาพนทเกบขอมล-gitlab" aria-label="Direct link to นำเข้าพื้นที่เก็บข้อมูล GitLab">#</a></h3>
-<p><figure data-bai-block="42" class="doc-figure"><img src="./images/start_from_url_gitlab.png" alt="" class="doc-image" style="width:800px" loading="lazy" decoding="async" width="1600" height="1242" /><figcaption>รูปที่ 7.4</figcaption></figure>
+<h3 data-bai-block="74" id="dashboard-นำเขาพนทเกบขอมล-gitlab">นำเข้าพื้นที่เก็บข้อมูล GitLab<a class="hash-link" href="#dashboard-นำเขาพนทเกบขอมล-gitlab" aria-label="Direct link to นำเข้าพื้นที่เก็บข้อมูล GitLab">#</a></h3>
+<p><figure data-bai-block="75" class="doc-figure"><img src="./images/start_from_url_gitlab.png" alt="" class="doc-image" style="width:800px" loading="lazy" decoding="async" width="1600" height="1242" /><figcaption>รูปที่ 7.6</figcaption></figure>
 </p>
 <ol>
-<li data-bai-block="43">ป้อน URL พื้นที่เก็บข้อมูล GitLab ที่ถูกต้องในฟิลด์ <strong>URL GitLab</strong></li>
-<li data-bai-block="44">ระบุ <strong>ชื่อ Branch GitLab</strong> ตามต้องการ (ค่าเริ่มต้น: <code>master</code>)</li>
-<li data-bai-block="45">เลือก <strong>โฮสต์ที่เก็บข้อมูล</strong> ที่จะบันทึกพื้นที่เก็บข้อมูล</li>
-<li data-bai-block="46">ตั้งค่า <strong>โหมดการใช้งานโฟลเดอร์</strong> (ทั่วไปหรือโมเดล) ตามต้องการ</li>
-<li data-bai-block="47">คลิก <strong>นำเข้าไปยังโฟลเดอร์</strong> เพื่อโคลนพื้นที่เก็บข้อมูลไปยังโฟลเดอร์
+<li data-bai-block="76">ป้อน URL พื้นที่เก็บข้อมูล GitLab ที่ถูกต้องในฟิลด์ <strong>URL GitLab</strong></li>
+<li data-bai-block="77">ระบุ <strong>ชื่อ Branch GitLab</strong> ตามต้องการ (ค่าเริ่มต้น: <code>master</code>)</li>
+<li data-bai-block="78">เลือก <strong>โฮสต์ที่เก็บข้อมูล</strong> ที่จะบันทึกพื้นที่เก็บข้อมูล</li>
+<li data-bai-block="79">ตั้งค่า <strong>โหมดการใช้งานโฟลเดอร์</strong> (ทั่วไปหรือโมเดล) ตามต้องการ</li>
+<li data-bai-block="80">คลิก <strong>นำเข้าไปยังโฟลเดอร์</strong> เพื่อโคลนพื้นที่เก็บข้อมูลไปยังโฟลเดอร์
 จัดเก็บใหม่</li>
 </ol>
-<h3 data-bai-block="48" id="dashboard-นำเขาโมเดล-hugging-face">นำเข้าโมเดล Hugging Face<a class="hash-link" href="#dashboard-นำเขาโมเดล-hugging-face" aria-label="Direct link to นำเข้าโมเดล Hugging Face">#</a></h3>
-<p data-bai-block="49">แท็บ <strong>นำเข้าโมเดล Hugging Face</strong> ใช้ดาวน์โหลดโมเดลจาก Hugging Face
+<h3 data-bai-block="81" id="dashboard-นำเขาโมเดล-hugging-face">นำเข้าโมเดล Hugging Face<a class="hash-link" href="#dashboard-นำเขาโมเดล-hugging-face" aria-label="Direct link to นำเข้าโมเดล Hugging Face">#</a></h3>
+<p data-bai-block="82">แท็บ <strong>นำเข้าโมเดล Hugging Face</strong> ใช้ดาวน์โหลดโมเดลจาก Hugging Face
 ไปยังโฟลเดอร์โมเดลของคุณ เพื่อให้คุณสามารถเมาท์โมเดลนั้นในเซสชันการคำนวณ
 หรือให้บริการเป็นการปรับใช้ในภายหลัง</p>
 <div class="admonition admonition-warning">
-<div data-bai-block="50" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>ฟีเจอร์ทดลอง</div>
+<div data-bai-block="83" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>ฟีเจอร์ทดลอง</div>
 <div class="admonition-content">
 
-<p data-bai-block="51">แท็บนี้จะถูกซ่อนไว้จนกว่าคุณจะเปิดใช้งาน <strong>นำเข้าจาก Hugging Face</strong>
+<p data-bai-block="84">แท็บนี้จะถูกซ่อนไว้จนกว่าคุณจะเปิดใช้งาน <strong>นำเข้าจาก Hugging Face</strong>
 ในส่วน <strong>คุณสมบัติการทดลอง</strong> ของหน้า <a href="./user_settings.html#user-settings">การตั้งค่าผู้ใช้</a>
 ฟีเจอร์ทดลองอาจเปลี่ยนแปลงหรือถูกลบออกในการอัปเดตในอนาคต</p>
 </div></div>
 
 
-<p><figure data-bai-block="52" class="doc-figure"><img src="./images/start_from_url_huggingface.png" alt="" class="doc-image" style="width:800px" loading="lazy" decoding="async" width="1600" height="1592" /><figcaption>รูปที่ 7.5</figcaption></figure>
+<p><figure data-bai-block="85" class="doc-figure"><img src="./images/start_from_url_huggingface.png" alt="" class="doc-image" style="width:800px" loading="lazy" decoding="async" width="1600" height="1592" /><figcaption>รูปที่ 7.7</figcaption></figure>
 </p>
 <ol>
-<li data-bai-block="53"><p>ป้อนโมเดลในฟิลด์ <strong>URL หรือ ID ของโมเดล Hugging Face</strong> ระบบรองรับทั้ง URL
+<li data-bai-block="86"><p>ป้อนโมเดลในฟิลด์ <strong>URL หรือ ID ของโมเดล Hugging Face</strong> ระบบรองรับทั้ง URL
 ของหน้าโมเดล เช่น <code>https://huggingface.co/openai/gpt-oss-20b</code> และ ID
 ของโมเดล เช่น <code>openai/gpt-oss-20b</code> ที่อยู่ซึ่งชี้ไปยังชุดข้อมูล สเปซ
 หรือหน้าอื่นที่ไม่ใช่โมเดลจะไม่ได้รับการยอมรับ</p>
@@ -367,107 +434,48 @@ Hugging Face (มีตัวบ่งชี้การโหลดแสดง
 ของโมเดลเป็นลิงก์ไปยังหน้า Hugging Face ของโมเดล แท็กงานและไลบรารีของโมเดล
 ขนาด และวันที่อัปเดตล่าสุด</p>
 </li>
-<li data-bai-block="54"><p>ป้อน <strong>Revision</strong> ตามต้องการ ซึ่งคือ branch, tag หรือ commit
+<li data-bai-block="87"><p>ป้อน <strong>Revision</strong> ตามต้องการ ซึ่งคือ branch, tag หรือ commit
 ของพื้นที่เก็บข้อมูลโมเดลที่จะดาวน์โหลด หากเว้นว่างไว้
 ระบบจะดาวน์โหลด revision เริ่มต้น และหากที่อยู่ที่ป้อนมี revision
 อยู่แล้ว ระบบจะใช้ revision นั้น</p>
 </li>
-<li data-bai-block="55"><p>ป้อน <strong>โทเค็น Hugging Face</strong> ตามต้องการ โมเดลที่จำกัดการเข้าถึง
+<li data-bai-block="88"><p>ป้อน <strong>โทเค็น Hugging Face</strong> ตามต้องการ โมเดลที่จำกัดการเข้าถึง
 หรือเป็นแบบส่วนตัวจำเป็นต้องใช้โทเค็น</p>
 </li>
-<li data-bai-block="56"><p>เลือก <strong>โฟลเดอร์โมเดล</strong> ที่จะดาวน์โหลดไปยัง ตามข้อความช่วยเหลือใต้ฟิลด์
+<li data-bai-block="89"><p>เลือก <strong>โฟลเดอร์โมเดล</strong> ที่จะดาวน์โหลดไปยัง ตามข้อความช่วยเหลือใต้ฟิลด์
 ระบบจะแสดงเฉพาะโฟลเดอร์โมเดลในโปรเจกต์ปัจจุบันที่คุณสามารถเมานต์ด้วยสิทธิ์เขียนได้
 เนื่องจากเซสชันดาวน์โหลดต้องเขียนลงในโฟลเดอร์ โฟลเดอร์ที่เมานต์ได้เฉพาะแบบ
 อ่านอย่างเดียวจึงถูกยกเว้น ปุ่มข้างตัวเลือกใช้สำหรับเปิดโฟลเดอร์ที่เลือก
 สร้างโฟลเดอร์โมเดลใหม่ และรีเฟรชรายการ</p>
 </li>
-<li data-bai-block="57"><p>คลิก <strong>ดาวน์โหลดโมเดลไปยังโฟลเดอร์</strong></p>
+<li data-bai-block="90"><p>คลิก <strong>ดาวน์โหลดโมเดลไปยังโฟลเดอร์</strong></p>
 </li>
 </ol>
-<p data-bai-block="58">กล่องโต้ตอบจะปิดลงและ Backend.AI จะเริ่มเซสชันแบทช์เพื่อทำการดาวน์โหลด
+<p data-bai-block="91">กล่องโต้ตอบจะปิดลงและ Backend.AI จะเริ่มเซสชันแบทช์เพื่อทำการดาวน์โหลด
 เนื่องจากการดาวน์โหลดทำงานอยู่ภายในเซสชันนั้น คุณจึงติดตามความคืบหน้าได้
 ที่หน้าเซสชัน และโมเดลจะพร้อมใช้งานเมื่อเซสชันสิ้นสุดลงสำเร็จ หากเซสชันล้มเหลว
 การดาวน์โหลดจะไม่เสร็จสมบูรณ์และโมเดลจะไม่พร้อมใช้งาน</p>
-<p data-bai-block="59">โมเดลจะถูกจัดเก็บในโฟลเดอร์ย่อยที่ตั้งชื่อตามโมเดลภายในโฟลเดอร์ที่คุณเลือก
+<p data-bai-block="92">โมเดลจะถูกจัดเก็บในโฟลเดอร์ย่อยที่ตั้งชื่อตามโมเดลภายในโฟลเดอร์ที่คุณเลือก
 ตัวอย่างเช่น <code>openai/gpt-oss-20b</code> จะถูกดาวน์โหลดไปยัง <code>gpt-oss-20b/</code>
 ดังนั้นโฟลเดอร์โมเดลเดียวจึงเก็บได้หลายโมเดล</p>
 <div class="admonition admonition-warning">
-<div data-bai-block="60" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>คำเตือน</div>
+<div data-bai-block="93" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>คำเตือน</div>
 <div class="admonition-content">
 
-<p data-bai-block="61">โทเค็นจะถูกส่งไปยังเซสชันดาวน์โหลดในรูปแบบตัวแปรสภาพแวดล้อม <code>HF_TOKEN</code>
+<p data-bai-block="94">โทเค็นจะถูกส่งไปยังเซสชันดาวน์โหลดในรูปแบบตัวแปรสภาพแวดล้อม <code>HF_TOKEN</code>
 และผู้ดูแลระบบสามารถดูได้ กรุณาใช้โทเค็นแบบอ่านอย่างเดียว</p>
 </div></div>
 
 
 <div class="admonition admonition-note">
-<div data-bai-block="62" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
+<div data-bai-block="95" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
 <div class="admonition-content">
 
-<p data-bai-block="63">แท็บนี้ดาวน์โหลดไปยังโฟลเดอร์โมเดล จึงใช้งานได้เฉพาะเมื่อบัญชีของคุณ
+<p data-bai-block="96">แท็บนี้ดาวน์โหลดไปยังโฟลเดอร์โมเดล จึงใช้งานได้เฉพาะเมื่อบัญชีของคุณ
 เปิดใช้งานฟีเจอร์การปรับใช้เท่านั้น โมเดลขนาดใหญ่ใช้เวลาดาวน์โหลดนาน
 และใช้พื้นที่จัดเก็บของโฟลเดอร์ปลายทาง</p>
 </div></div>
 
-
-<h2 data-bai-block="64" id="dashboard-การปรบแตงเลยเอาทแดชบอรด">การปรับแต่งเลย์เอาท์แดชบอร์ด<a class="hash-link" href="#dashboard-การปรบแตงเลยเอาทแดชบอรด" aria-label="Direct link to การปรับแต่งเลย์เอาท์แดชบอร์ด">#</a></h2>
-<p data-bai-block="65">คุณสามารถจัดเรียงบอร์ดใหม่ได้ตลอดเวลา โดยไม่ต้องเข้าสู่โหมดใดก่อน:</p>
-<ul>
-<li data-bai-block="66"><strong>ย้ายการ์ด</strong>: ลากส่วนหัวของการ์ดเพื่อเปลี่ยนตำแหน่งบนบอร์ด</li>
-<li data-bai-block="67"><strong>ปรับขนาดการ์ด</strong>: ลากมุมขวาล่างของการ์ดเพื่อปรับขนาด แต่ละการ์ดมีขนาดขั้นต่ำเพื่อให้เนื้อหาอ่านได้ง่าย</li>
-</ul>
-<p data-bai-block="68">คลิกปุ่ม <strong>แก้ไข</strong> เพื่อเปิดแถบด้านข้างสำหรับแก้ไข และคลิก <strong>ปิด</strong> เพื่อซ่อนอีกครั้ง แถบด้านข้างจะแสดงการ์ดทั้งหมดที่หน้านี้มีให้ จัดกลุ่มตามหัวข้อ เลือกการ์ดเพื่อเพิ่มลงบนบอร์ด และยกเลิกการเลือกเพื่อนำออกจากบอร์ด</p>
-<p><figure data-bai-block="69" class="doc-figure"><img src="./images/dashboard_edit_mode.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>รูปที่ 7.6</figcaption></figure>
-</p>
-<p data-bai-block="70">การจัดวางของคุณจะถูกบันทึกไว้กับบัญชีของคุณบนเซิร์ฟเวอร์ จึงใช้ได้เหมือนกันในทุกเบราว์เซอร์ที่คุณเข้าสู่ระบบ หากต้องการกลับไปใช้การ์ดและการจัดเรียงเริ่มต้น ให้คลิกปุ่ม <strong>รีเซ็ตการจัดวาง</strong> ที่ด้านล่างของแถบด้านข้างสำหรับแก้ไข แล้วยืนยัน การรีเซ็ตการจัดวางจะไม่ลบแผงที่กำหนดเองของคุณ</p>
-<div class="admonition admonition-tip">
-<div data-bai-block="71" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 12 16"><path d="M6.5 0C3.48 0 1 2.19 1 5c0 .92.55 2.25 1 3 1.34 2.25 1.78 2.78 2 4v1h5v-1c.22-1.22.66-1.75 2-4 .45-.75 1-2.08 1-3 0-2.81-2.48-5-5.5-5zm3.64 7.48c-.25.44-.47.8-.67 1.11-.86 1.41-1.25 2.06-1.45 3.23-.02.05-.02.11-.02.17H5c0-.06 0-.13-.02-.17-.2-1.17-.59-1.83-1.45-3.23-.2-.31-.42-.67-.67-1.11C2.44 6.78 2 5.65 2 5c0-2.2 2.02-4 4.5-4 2.48 0 4.5 1.8 4.5 4 0 .65-.44 1.78-.86 2.48zM4 13h5v1H4v-1z"/></svg></span>เคล็ดลับ</div>
-<div class="admonition-content">
-
-<p data-bai-block="72">เมื่อ WebUI ได้รับการอัปเดตพร้อมการ์ดแดชบอร์ดใหม่ การ์ดเหล่านั้นจะปรากฏบนแดชบอร์ด
-ของคุณโดยอัตโนมัติ แม้ว่าคุณจะมีการจัดวางที่บันทึกไว้แล้วก็ตาม</p>
-</div></div>
-
-
-<h3 data-bai-block="73" id="dashboard-การตงคาเรมตนของการด">การตั้งค่าเริ่มต้นของการ์ด<a class="hash-link" href="#dashboard-การตงคาเรมตนของการด" aria-label="Direct link to การตั้งค่าเริ่มต้นของการ์ด">#</a></h3>
-<p data-bai-block="74">การ์ดที่ใช้กลุ่มทรัพยากรหรือช่วงเวลาสามารถบันทึกค่าเริ่มต้นไว้ได้ เปิด <strong>การตั้งค่าเริ่มต้นของการ์ด</strong> ของการ์ดนั้นในแถบด้านข้างสำหรับแก้ไข เพื่อกำหนดค่าที่จะใช้เมื่อเปิดบอร์ด ส่วนค่าที่เปลี่ยนจากตัวเลือกในส่วนหัวของการ์ดจะมีผลเฉพาะระหว่างที่คุณกำลังดูอยู่เท่านั้น</p>
-<p><a id="custom-panels"></a></p>
-<h3 data-bai-block="75" id="dashboard-แผงทกำหนดเอง">แผงที่กำหนดเอง<a class="hash-link" href="#dashboard-แผงทกำหนดเอง" aria-label="Direct link to แผงที่กำหนดเอง">#</a></h3>
-<p data-bai-block="76">แถบด้านข้างสำหรับแก้ไขยังแสดงรายการแผงที่กำหนดเองของคุณด้วย แผงที่กำหนดเองจะแสดงแหล่งข้อมูลที่คุณเลือก ซึ่งถูกกรองด้วยเงื่อนไขที่คุณกำหนด ตัวแผงจะแสดงเฉพาะชื่อและข้อมูลเท่านั้น จึงควรตั้งชื่อแผงให้สื่อถึงเงื่อนไขที่ใช้</p>
-<p data-bai-block="77">หากต้องการเพิ่มแผง ให้คลิกปุ่ม <strong>เพิ่ม</strong> ในแถบด้านข้าง กล่องโต้ตอบของแผงประกอบด้วยฟิลด์ต่อไปนี้ <strong>ประเภทแผง</strong> และ <strong>แหล่งข้อมูล</strong> เป็นฟิลด์ที่จำเป็น ต้องเลือกทั้งสองอย่างจึงจะส่งกล่องโต้ตอบได้:</p>
-<ul>
-<li data-bai-block="78"><strong>แหล่งข้อมูล</strong>: แหล่งข้อมูลที่จะแสดงในแผง เลือกได้จาก <strong>เซสชัน</strong>, <strong>การปรับใช้</strong> หรือ <strong>ข้อมูลและการจัดเก็บ</strong></li>
-<li data-bai-block="79"><strong>ประเภทแผง</strong>: วิธีแสดงผลแหล่งข้อมูลของแผง เลือกได้จาก <strong>ตาราง</strong>, <strong>จำนวน</strong> หรือ <strong>แผนภูมิ</strong> และหากเลือกแหล่งข้อมูล <strong>เซสชัน</strong> จะมีตัวเลือก <strong>กริด</strong> เพิ่มขึ้นมาด้วย</li>
-<li data-bai-block="80"><strong>ชื่อ</strong>: ชื่อของแผง (ไม่บังคับ) หากไม่ระบุ ระบบจะใช้ชื่อแหล่งข้อมูลแทน</li>
-<li data-bai-block="81"><strong>เงื่อนไข</strong>: ตัวกรองคุณสมบัติที่ใช้จำกัดรายการที่แสดงในแผง</li>
-</ul>
-<p data-bai-block="82">ตัวอย่างแบบเรียลไทม์ด้านล่างฟิลด์จะแสดงแถวที่ตรงกับเงื่อนไขปัจจุบัน การเรียงลำดับคอลัมน์ในตัวอย่างจะกำหนดลำดับการเรียงของแผง คลิก <strong>เพิ่ม</strong> เพื่อวางแผงบนบอร์ด</p>
-<p><figure data-bai-block="83" class="doc-figure"><img src="./images/dashboard_panel_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1920" height="1352" /><figcaption>รูปที่ 7.7</figcaption></figure>
-</p>
-<p data-bai-block="84">แผง <strong>การปรับใช้</strong> จะแสดงรายการการปรับใช้โมเดลของโปรเจกต์ โดยใช้ตารางเดียวกับหน้าการปรับใช้ ได้แก่ ชื่อ สถานะ สรุปเรพลิกา โมเดล และวันที่สร้าง การคลิกชื่อการปรับใช้จะเปิดหน้ารายละเอียดของการปรับใช้นั้น</p>
-<p data-bai-block="85">เมื่อเลือก <strong>แผนภูมิ</strong> ระบบจะแสดงรายการที่ตรงกับเงื่อนไขเป็นแผนภูมิ ประเภทแผนภูมิในกลุ่ม <strong>เปรียบเทียบกลุ่ม</strong> (โดนัท วงกลม แท่ง เรดาร์) จะนับรายการโดยจัดกลุ่มตามคุณสมบัติที่เลือกไว้ใน <strong>จัดกลุ่มตาม</strong> ส่วนประเภทแผนภูมิในกลุ่ม <strong>การสร้างตามช่วงเวลา</strong> (เส้น พื้นที่ คอลัมน์) จะนับรายการที่สร้างขึ้นในแต่ละช่วงของระยะเวลาที่เลือก เปิด <strong>แสดงตาราง</strong> เพื่อแสดงแถวที่ตรงกับเงื่อนไขไว้ใต้แผนภูมิบนแผง</p>
-<p data-bai-block="86">เมื่อเลือก <strong>กริด</strong> จะแสดงกริดทรัพยากรของเซสชัน โดยแสดงทรัพยากรที่จัดสรรให้แต่ละเซสชันที่ตรงกับเงื่อนไขเป็นหน่วยเซลล์ ซึ่งมีสีตามระดับการใช้งาน การคลิกที่เซสชันจะเปิดแผงรายละเอียดของเซสชันนั้น เช่นเดียวกับการคลิกแถวในตาราง กริดจะแสดงเซสชันที่ตรงกับเงื่อนไขสูงสุด 100 รายการแรกเท่านั้น และจะมีข้อความแจ้งเตือนเมื่อมีมากกว่านั้น</p>
-<p data-bai-block="87">การตั้งค่าการแสดงผลของกริด (โหมดทรัพยากร/เคอร์เนล ทรัพยากรหรือเมตริกที่จะแสดง หน่วยหน่วยความจำ และรูปแบบการจัดวาง) จะกำหนดในตัวอย่างแบบเรียลไทม์ของกล่องโต้ตอบเพิ่ม/แก้ไขแผง และจะถูกบันทึกไว้พร้อมกับแผง ตัวแผงเองไม่มีตัวควบคุมสำหรับการตั้งค่าเหล่านี้ ดังนั้นหากต้องการมุมมองอื่น ให้สร้างแผงเพิ่มอีกหนึ่งแผง</p>
-<div class="admonition admonition-note">
-<div data-bai-block="88" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
-<div class="admonition-content">
-
-<p data-bai-block="89"><strong>กริด</strong> เป็นฟีเจอร์ทดลอง โดยจะปรากฏในตัวเลือก <strong>ประเภทแผง</strong> ก็ต่อเมื่อเปิดใช้งาน <strong>Session resource grid view</strong> ใน<a href="./user_settings.html#experimental-features">คุณสมบัติการทดลอง</a> หากปิดการตั้งค่านี้ในภายหลัง แผง กริด ที่มีอยู่แล้วจะยังคงการตั้งค่าที่บันทึกไว้ แต่จะแสดงผลเป็นตารางเซสชันจนกว่าจะเปิดการตั้งค่านี้อีกครั้ง</p>
-</div></div>
-
-
-<p data-bai-block="90">หากต้องการเปลี่ยนแหล่งข้อมูล ประเภทแผง เงื่อนไข หรือชื่อของแผงในภายหลัง ให้คลิกไอคอนดินสอ (<strong>แก้ไข</strong>) ข้างแผงในแถบด้านข้าง หรือที่ส่วนหัวของแผงบนบอร์ด แล้วบันทึกการเปลี่ยนแปลง หากต้องการลบแผง ให้คลิกไอคอนถังขยะ (<strong>ลบ</strong>) แล้วยืนยันในป๊อปอัป</p>
-<div class="admonition admonition-note">
-<div data-bai-block="91" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
-<div class="admonition-content">
-
-<p data-bai-block="92">แผง <strong>เซสชัน</strong> และ <strong>การปรับใช้</strong> แสดงข้อมูลของโปรเจกต์ปัจจุบันและใช้งานได้กับสมาชิกโปรเจกต์ทุกคน แผง <strong>ข้อมูลและการจัดเก็บ</strong> ใช้งานได้เฉพาะผู้ดูแลระบบระดับสูงเท่านั้น แผงของแหล่งข้อมูลที่สิทธิ์ปัจจุบันของคุณไม่สามารถเข้าถึงได้จะยังคงอยู่ในรายการของแถบด้านข้าง แต่จะไม่แสดงบนบอร์ด</p>
-</div></div>
-
-
-<p><a id="automatic-refresh"></a></p>
-<h2 data-bai-block="93" id="dashboard-การรเฟรชอตโนมต">การรีเฟรชอัตโนมัติ<a class="hash-link" href="#dashboard-การรเฟรชอตโนมต" aria-label="Direct link to การรีเฟรชอัตโนมัติ">#</a></h2>
-<p data-bai-block="94">ตัวควบคุมการรีเฟรชบนแถบแดชบอร์ดใช้กำหนดความถี่ในการรีเฟรชของทุกการ์ด เลือกได้ทั้ง <strong>ปิด</strong> หรือช่วงเวลาตั้งแต่ 5 วินาทีถึง 10 นาที และเมื่อคลิกตัวควบคุมนี้ ทุกการ์ดจะรีเฟรชพร้อมกันทันที</p>
 
 </section>
     <div class="page-footer">
@@ -493,15 +501,15 @@ Hugging Face (มีตัวบ่งชี้การโหลดแสดง
   <aside class="doc-toc" aria-labelledby="doc-toc-heading">
   <div class="doc-toc__heading" id="doc-toc-heading">หัวข้อในหน้านี้</div>
   <ul class="doc-toc__list">
+      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#dashboard-%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%9B%E0%B8%A3%E0%B8%9A%E0%B9%81%E0%B8%95%E0%B8%87%E0%B9%80%E0%B8%A5%E0%B8%A2%E0%B9%80%E0%B8%AD%E0%B8%B2%E0%B8%97%E0%B9%81%E0%B8%94%E0%B8%8A%E0%B8%9A%E0%B8%AD%E0%B8%A3%E0%B8%94" data-toc-target="dashboard-การปรบแตงเลยเอาทแดชบอรด">การปรับแต่งเลย์เอาท์แดชบอร์ด</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#dashboard-%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%95%E0%B8%87%E0%B8%84%E0%B8%B2%E0%B9%80%E0%B8%A3%E0%B8%A1%E0%B8%95%E0%B8%99%E0%B8%82%E0%B8%AD%E0%B8%87%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%94" data-toc-target="dashboard-การตงคาเรมตนของการด">การตั้งค่าเริ่มต้นของการ์ด</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#dashboard-%E0%B9%81%E0%B8%9C%E0%B8%87%E0%B8%97%E0%B8%81%E0%B8%B3%E0%B8%AB%E0%B8%99%E0%B8%94%E0%B9%80%E0%B8%AD%E0%B8%87" data-toc-target="dashboard-แผงทกำหนดเอง">แผงที่กำหนดเอง</a></li>
+      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#dashboard-%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%A3%E0%B9%80%E0%B8%9F%E0%B8%A3%E0%B8%8A%E0%B8%AD%E0%B8%95%E0%B9%82%E0%B8%99%E0%B8%A1%E0%B8%95" data-toc-target="dashboard-การรเฟรชอตโนมต">การรีเฟรชอัตโนมัติ</a></li>
       <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#dashboard-%E0%B9%80%E0%B8%A3%E0%B8%A1%E0%B8%88%E0%B8%B2%E0%B8%81-url" data-toc-target="dashboard-เรมจาก-url">เริ่มจาก URL</a></li>
       <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#dashboard-%E0%B8%99%E0%B8%B3%E0%B9%80%E0%B8%82%E0%B8%B2%E0%B9%82%E0%B8%99%E0%B8%95%E0%B8%9A%E0%B8%81" data-toc-target="dashboard-นำเขาโนตบก">นำเข้าโน้ตบุ๊ก</a></li>
       <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#dashboard-%E0%B8%99%E0%B8%B3%E0%B9%80%E0%B8%82%E0%B8%B2%E0%B8%9E%E0%B8%99%E0%B8%97%E0%B9%80%E0%B8%81%E0%B8%9A%E0%B8%82%E0%B8%AD%E0%B8%A1%E0%B8%A5-github" data-toc-target="dashboard-นำเขาพนทเกบขอมล-github">นำเข้าพื้นที่เก็บข้อมูล GitHub</a></li>
       <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#dashboard-%E0%B8%99%E0%B8%B3%E0%B9%80%E0%B8%82%E0%B8%B2%E0%B8%9E%E0%B8%99%E0%B8%97%E0%B9%80%E0%B8%81%E0%B8%9A%E0%B8%82%E0%B8%AD%E0%B8%A1%E0%B8%A5-gitlab" data-toc-target="dashboard-นำเขาพนทเกบขอมล-gitlab">นำเข้าพื้นที่เก็บข้อมูล GitLab</a></li>
       <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#dashboard-%E0%B8%99%E0%B8%B3%E0%B9%80%E0%B8%82%E0%B8%B2%E0%B9%82%E0%B8%A1%E0%B9%80%E0%B8%94%E0%B8%A5-hugging-face" data-toc-target="dashboard-นำเขาโมเดล-hugging-face">นำเข้าโมเดล Hugging Face</a></li>
-      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#dashboard-%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%9B%E0%B8%A3%E0%B8%9A%E0%B9%81%E0%B8%95%E0%B8%87%E0%B9%80%E0%B8%A5%E0%B8%A2%E0%B9%80%E0%B8%AD%E0%B8%B2%E0%B8%97%E0%B9%81%E0%B8%94%E0%B8%8A%E0%B8%9A%E0%B8%AD%E0%B8%A3%E0%B8%94" data-toc-target="dashboard-การปรบแตงเลยเอาทแดชบอรด">การปรับแต่งเลย์เอาท์แดชบอร์ด</a></li>
-      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#dashboard-%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%95%E0%B8%87%E0%B8%84%E0%B8%B2%E0%B9%80%E0%B8%A3%E0%B8%A1%E0%B8%95%E0%B8%99%E0%B8%82%E0%B8%AD%E0%B8%87%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%94" data-toc-target="dashboard-การตงคาเรมตนของการด">การตั้งค่าเริ่มต้นของการ์ด</a></li>
-      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#dashboard-%E0%B9%81%E0%B8%9C%E0%B8%87%E0%B8%97%E0%B8%81%E0%B8%B3%E0%B8%AB%E0%B8%99%E0%B8%94%E0%B9%80%E0%B8%AD%E0%B8%87" data-toc-target="dashboard-แผงทกำหนดเอง">แผงที่กำหนดเอง</a></li>
-      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#dashboard-%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%A3%E0%B9%80%E0%B8%9F%E0%B8%A3%E0%B8%8A%E0%B8%AD%E0%B8%95%E0%B9%82%E0%B8%99%E0%B8%A1%E0%B8%95" data-toc-target="dashboard-การรเฟรชอตโนมต">การรีเฟรชอัตโนมัติ</a></li>
   </ul>
   <div class="doc-toc__divider"></div>
   <div class="doc-toc__contrib">
