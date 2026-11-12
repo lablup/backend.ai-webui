@@ -421,7 +421,10 @@ test.describe(
         // The link is the banner's action, outside its role="alert" title and description.
         drawer
           .locator('.astryx-banner')
-          .filter({ has: readOnlyAlert })
+          .filter({
+            hasText:
+              "Roles automatically created from a preset inherit that preset's permissions.",
+          })
           .getByRole('link', { name: 'View Presets' })
           .click(),
       );

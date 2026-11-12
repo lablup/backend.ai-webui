@@ -63,7 +63,7 @@ import {
 export { ANTD_ALIGN_TOKENS };
 
 /** Bump when the static recipe (align tokens, formulas) changes. */
-export const THEME_NAME_REV = 29;
+export const THEME_NAME_REV = 30;
 
 /**
  * NEUTRAL BACKGROUND FAMILY — pinned to the measured legacy antd values.
