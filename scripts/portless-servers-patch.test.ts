@@ -43,15 +43,23 @@ describe("portless /servers patch", () => {
   const routes: RouteInfo[] = [];
 
   beforeAll(async () => {
-    app = http.createServer((req, res) => res.end(`app:${req.url}`));
+    app = http.createServer((req, res) => {
+      res.writeHead(200, { "Content-Type": "text/plain" });
+      res.end(req.url === "/servers" ? "app-servers" : "app");
+    });
     appPort = await listen(app);
     routes.push({ hostname: "app.localhost", port: appPort, pid: 4242 });
+    const probe = http.createServer();
+    proxyPort = await listen(probe);
+    await close(probe);
     proxy = createProxyServer({
       getRoutes: () => routes,
-      proxyPort: 0,
+      proxyPort,
       onError: () => {},
     }) as http.Server;
-    proxyPort = await listen(proxy);
+    await new Promise<void>((resolve) =>
+      proxy.listen(proxyPort, "127.0.0.1", resolve),
+    );
   });
 
   afterAll(async () => {
@@ -73,7 +81,7 @@ describe("portless /servers patch", () => {
         hostname: "app.localhost",
         port: appPort,
         pid: 4242,
-        url: expect.stringMatching(/^http:\/\/app\.localhost(:\d+)?$/),
+        url: `http://app.localhost:${proxyPort}`,
       },
     ]);
   });
@@ -81,7 +89,7 @@ describe("portless /servers patch", () => {
   it("proxies a registered app's own /servers to the app", async () => {
     const res = await get(proxyPort, `app.localhost:${proxyPort}`, "/servers");
     expect(res.status).toBe(200);
-    expect(res.body).toBe("app:/servers");
+    expect(res.body).toBe("app-servers");
   });
 
   it("refuses /servers for a host that is not a portless name", async () => {

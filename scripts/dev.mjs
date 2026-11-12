@@ -314,8 +314,7 @@ const groupAlive = (pgid) => {
   }
 };
 let escalation = null;
-const escalate = async () => {
-  const groups = descendantGroups();
+const escalate = async (groups) => {
   const alive = () => treeAlive() || groups.some(groupAlive);
   const deadline = Date.now() + SIGKILL_GRACE_MS;
   while (alive() && Date.now() < deadline) {
@@ -330,8 +329,9 @@ const escalate = async () => {
 };
 const shutdown = (sig) => {
   stopPrRefresh();
+  const groups = escalation ? [] : descendantGroups();
   signalTree(sig); // repeated Ctrl+C re-signals; the escalation only starts once
-  return (escalation ??= escalate());
+  return (escalation ??= escalate(groups));
 };
 process.on('SIGINT', () => shutdown('SIGINT'));
 process.on('SIGTERM', () => shutdown('SIGTERM'));

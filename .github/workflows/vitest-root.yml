@@ -17,6 +17,8 @@ on:
       - packages/backend.ai-docs-toolkit/src/markdown-extensions.ts
       # Exercised by scripts/portless-servers-patch.test.ts.
       - react/patches/portless@*.patch
+      - pnpm-workspace.yaml
+      - package.json
       - .github/workflows/vitest-root.yml
 
 permissions:
