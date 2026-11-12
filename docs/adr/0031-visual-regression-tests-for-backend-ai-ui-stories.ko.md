@@ -5,8 +5,8 @@
 > 낯선 용어는 문서 맨 아래 [용어](#용어)에 모아 두었다.
 
 - `packages/backend.ai-ui`의 모든 Storybook story는 Vitest browser mode로 Chromium에서 렌더링되고, commit된 screenshot([baseline](#용어))과 비교된다. story는 `no-vrt` tag로 비교에서 빠진다.
-- baseline은 `mcr.microsoft.com/playwright:v<version>-noble` container에서 `linux/amd64`로 만든 것만 유효하다. `<version>`은 BUI의 정확한 `playwright` pin이다. `-linux.png`로 끝나는 파일만 commit한다.
-- `Vitest visual (backend.ai-ui)` workflow는 BUI source, Storybook 설정, font, `pnpm-workspace.yaml`, `pnpm-lock.yaml`을 건드리는 모든 PR에서 같은 container로 비교를 실행하고, 실패하면 diff 이미지를 올린다.
+- baseline은 `mcr.microsoft.com/playwright:v<version>-noble` container에서 `linux/amd64`로 만든 것만 유효하다. `<version>`은 BUI의 정확한 `playwright` pin이다. `-linux.png`로 끝나는 파일은 container만 쓰고, 그 파일만 commit한다.
+- `Vitest visual (backend.ai-ui)` workflow는 BUI source, Storybook 설정, Storybook이 제공하는 font와 icon, `pnpm-workspace.yaml`, `pnpm-lock.yaml`을 건드리는 모든 PR과 `main` push에서 같은 container로 비교를 실행하고, 실패하면 diff 이미지를 올린다.
 - BUI story의 모양을 바꾸는 PR은 다시 만든 baseline을 같은 PR에 commit한다. `@lablup/ui-common` pin bump도 여기에 포함된다.
 - baseline은 Git LFS에 저장하고, 기본 clone은 이 파일들을 pointer file로 받는다. `scripts/visual-test.sh`와 workflow는 test를 실행하기 전에 `scripts/pull-visual-baselines.sh`로 pointer를 이미지로 바꾼다. 이는 사용자 매뉴얼의 이미지만 LFS로 추적한다고 정한 ADR 0029 §1을 넓힌다.
 
@@ -47,18 +47,22 @@ flowchart LR
 
 ### 2. container가 baseline의 유일한 출처다
 
-- **Pin**: `playwright`는 BUI의 정확한 devDependency이고, root의 `@playwright/test`가 resolve하는 버전과 같다. 그래서 e2e suite와 visual test가 같은 browser build를 쓴다. `@vitest/browser`와 `@vitest/browser-playwright`는 설치된 `vitest`와 같은 버전으로 정확히 pin한다.
+- **Pin**: `playwright`는 BUI의 정확한 devDependency이고, root의 `@playwright/test`가 resolve하는 버전과 같다. 그래서 e2e suite와 visual test가 같은 browser build를 쓴다. `@vitest/browser`, `@vitest/browser-playwright`, `@vitest/coverage-v8`은 정확한 `vitest` 버전에 peer로 묶이므로, BUI는 넷 모두를 같은 버전으로 정확히 pin한다. Storybook package(`storybook`, `@storybook/*`, `eslint-plugin-storybook`)도 정확히 pin하므로, `@storybook/addon-vitest`와 `storybook`은 함께만 움직인다. root와 `react/`의 `vitest` range는 바뀌지 않는다.
 - **Script**: `scripts/visual-test.sh`(`pnpm run test:visual:docker`, 다시 만들 때는 `-u`)는 `mcr.microsoft.com/playwright:v<pin>-noble`을 `linux/amd64`로 실행한다. 이 script는 checkout마다 이름이 다른 named volume에 `--filter "backend.ai-ui..."`로 설치하므로, host의 `node_modules`를 덮어쓰지 않는다.
-- **Git**: `.gitignore`는 `*-linux.png`를 뺀 모든 screenshot을 무시하므로, host 실행이 자기 platform의 그림을 commit할 수 없다.
+- **Naming**: script와 workflow는 `BUI_VISUAL_CONTAINER=1`을 설정한다. 이때만 `resolveScreenshotPath`가 파일 이름을 `<story>-chromium-linux.png`로 짓는다. 없으면 host 실행은, Linux host도 포함해, `<story>-chromium-<platform>-host.png`를 쓴다.
+- **Git**: `.gitignore`는 `*-linux.png`를 뺀 모든 screenshot을 무시하므로, host 실행이 자기 그림을 commit할 수 없다.
 
 ### 3. CI는 같은 container에서 비교를 실행한다
 
-- **Workflow**: `.github/workflows/vitest-visual-backend-ai-ui.yml`은 `container: mcr.microsoft.com/playwright:v<pin>-noble`에서 실행된다. 한 step은 그 tag가 BUI의 `playwright` pin과 다르면 실패한다. 실패하면 job은 `.vitest-attachments`를 `visual-diffs` artifact로 올린다.
-- **Gate**: `ci-gate.yml`은 head commit의 모든 `pull_request` workflow를 기다리므로, 새 workflow를 거기에 등록할 필요가 없다.
+- **Workflow**: `.github/workflows/vitest-visual-backend-ai-ui.yml`은 같은 `paths`로 `pull_request`와 `main`으로의 `push`에서 실행된다. push 실행은 각각 통과한 두 PR이 merge되어 baseline이 낡는 경우를 잡는다.
+- **Image tag**: `resolve-playwright` job이 `package.json`에서 BUI의 `playwright` devDependency를 읽고(`visual-test.sh`가 읽는 값과 같다), 정확한 버전이 아니면 실패한다. visual job은 `mcr.microsoft.com/playwright:v<그 버전>-noble`에서 실행되므로, `playwright` bump는 workflow 수정 없이 tag를 옮긴다.
+- **Job**: job은 20분 timeout으로, setup-node의 pnpm cache 없이(`setup-node-pnpm`에 `cache: ""`) 실행된다. container 안에서는 그 cache가 한 번도 hit하지 않고 post-save에 약 80 s가 들기 때문이며, `package.yml`의 `build_docs`와 같다. 실패하면 job은 `.vitest-attachments`를 `visual-diffs` artifact로 올린다.
+- **Gate**: `ci-gate.yml`은 head commit의 모든 `pull_request` workflow를 기다리므로, 새 workflow를 거기에 등록할 필요가 없다. `main` push 실행의 실패는 gate되지 않고 commit에 표시된다.
 
 ### 4. 안정될 수 없는 story에는 `no-vrt` tag를 붙인다
 
 - **Rule**: 그림이 `Math.random`이나 setup이 기다리지 않는 timer에 달린 story는 `tags: ['no-vrt']`를 받는다. 어느 페이지도 렌더하지 않는 PoC component(`BAISessionCrowdScene`, `BAISessionPinwheelMeadow`)도 `meta`에 한 번 붙여 뺀다. `Date`가 고정되어 있으므로 날짜에는 tag가 필요 없다.
+- **Frozen clock**: 실행 중에 `Date.now()`가 흐르지 않으므로 경과 시간은 0으로 계산되고, lodash `debounce`와 `throttle`은 trailing call을 실행하지 않는다. 둘 다 `Date.now()`를 마지막 호출 시각과 비교하기 때문이다. 지금은 이것이 실행되어야 하는 story가 없다. 그런 story는, 예를 들어 debounce되는 검색창에 입력하는 `play` 함수가 있는 story는 `no-vrt`를 받는다. 흐르는 clock(`shouldAdvanceTime`)도 시도했지만 기각했다. live ticker(`BAIIntervalView`, `BAIAgentTable`의 실행 시간)가 실행마다 다른 초를 보여 주어, 첫 container 실행에서 story 10개가 실패했다.
 
 ### 5. baseline은 Git LFS에 저장한다
 
@@ -81,7 +85,7 @@ flowchart LR
 - **Caught at review**: BUI component의 시각적 변경은, ui-common pin bump가 가져온 것을 포함해, diff 이미지가 붙은 채로 PR을 실패시키고, 다시 만든 baseline이 diff에서 변경을 보여 준다.
 - **Local cost**: baseline을 다시 만들려면 Docker가 필요하고, Apple Silicon에서는 container가 emulation으로 실행되어 host 실행보다 몇 배 느리다.
 - **Coverage limit**: 기본 theme(Backend.AI WebUI, light, `en`)만 비교한다. dark mode, neutral theme, 다른 locale은 비교하지 않는다.
-- **Upgrade cost**: `playwright` bump는 workflow의 container tag를 바꾸고 모든 baseline을 다시 만든다.
+- **Upgrade cost**: `playwright` bump는 모든 baseline을 다시 만든다. container tag는 pin을 스스로 따라간다.
 - **git-lfs required**: `visual-test.sh`를 실행하고 다시 만든 baseline을 commit하려면 host에 git-lfs가 있어야 한다. 없으면 다시 만든 baseline이 원본 바이트로 commit되고, pre-push hook이 push를 거부하며 `lfs-pointer-check`가 실패한다.
 
 ## 출처

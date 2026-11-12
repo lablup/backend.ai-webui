@@ -109,12 +109,13 @@ function paintedBounds() {
   let top = Infinity;
   let right = -Infinity;
   let bottom = -Infinity;
+  const { scrollX, scrollY } = window;
   const add = (rect: DOMRect) => {
     if (rect.width === 0 || rect.height === 0) return;
-    left = Math.min(left, rect.left);
-    top = Math.min(top, rect.top);
-    right = Math.max(right, rect.right);
-    bottom = Math.max(bottom, rect.bottom);
+    left = Math.min(left, rect.left + scrollX);
+    top = Math.min(top, rect.top + scrollY);
+    right = Math.max(right, rect.right + scrollX);
+    bottom = Math.max(bottom, rect.bottom + scrollY);
   };
 
   const walker = document.createTreeWalker(

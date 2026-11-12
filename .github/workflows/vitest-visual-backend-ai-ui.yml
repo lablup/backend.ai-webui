@@ -13,9 +13,32 @@ on:
       - packages/backend.ai-ui/scripts/pull-visual-baselines.sh
       - .gitattributes
       - .lfsconfig
+      - .github/actions/setup-node-pnpm/**
       - .github/scripts/lfs/install-git-lfs.sh
       - .github/scripts/lfs/lib.sh
       - resources/fonts/**
+      - resources/icons/**
+      # A @lablup/ui-common pin bump changes the pictures.
+      - pnpm-workspace.yaml
+      - pnpm-lock.yaml
+      - .github/workflows/vitest-visual-backend-ai-ui.yml
+  push:
+    branches: [main]
+    paths:
+      - packages/backend.ai-ui/src/**
+      - packages/backend.ai-ui/.storybook/**
+      - packages/backend.ai-ui/package.json
+      - packages/backend.ai-ui/vitest.visual.config.ts
+      - packages/backend.ai-ui/test/visual/**
+      - packages/backend.ai-ui/scripts/visual-test.sh
+      - packages/backend.ai-ui/scripts/pull-visual-baselines.sh
+      - .gitattributes
+      - .lfsconfig
+      - .github/actions/setup-node-pnpm/**
+      - .github/scripts/lfs/install-git-lfs.sh
+      - .github/scripts/lfs/lib.sh
+      - resources/fonts/**
+      - resources/icons/**
       # A @lablup/ui-common pin bump changes the pictures.
       - pnpm-workspace.yaml
       - pnpm-lock.yaml
@@ -25,14 +48,37 @@ permissions:
   contents: read
 
 concurrency:
-  group: vitest-visual-bui-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: true
+  group: vitest-visual-bui-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
-  backend-ai-ui-visual:
+  resolve-playwright:
     runs-on: ubuntu-latest
-    # Baselines come from this image; keep the tag equal to BUI's `playwright` pin.
-    container: mcr.microsoft.com/playwright:v1.58.2-noble
+    timeout-minutes: 5
+    outputs:
+      version: ${{ steps.pw.outputs.version }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          sparse-checkout: packages/backend.ai-ui/package.json
+          sparse-checkout-cone-mode: false
+      - id: pw
+        run: |
+          v=$(jq -r '.devDependencies.playwright // ""' packages/backend.ai-ui/package.json)
+          printf '%s\n' "$v" | grep -Eqx '[0-9]+\.[0-9]+\.[0-9]+' || {
+            echo "::error::backend.ai-ui's playwright devDependency must be an exact version, got '$v'"
+            exit 1
+          }
+          echo "version=$v" >> "$GITHUB_OUTPUT"
+
+  backend-ai-ui-visual:
+    needs: resolve-playwright
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v${{ needs.resolve-playwright.outputs.version }}-noble
+    timeout-minutes: 20
+    env:
+      BUI_VISUAL_CONTAINER: "1"
     defaults:
       run:
         working-directory: ./packages/backend.ai-ui
@@ -40,11 +86,8 @@ jobs:
       - uses: actions/checkout@v7
       - uses: ./.github/actions/setup-node-pnpm
         with:
+          cache: ""
           install-args: --filter "backend.ai-ui..."
-      - name: Container matches the installed Playwright
-        run: |
-          expected="playwright:v$(node -p "require('./package.json').devDependencies.playwright")-noble"
-          grep -q "$expected" ../../.github/workflows/vitest-visual-backend-ai-ui.yml
       - name: Pull the baselines (Git LFS)
         shell: bash
         run: |

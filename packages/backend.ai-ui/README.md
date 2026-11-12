@@ -296,10 +296,15 @@ $ pnpm run test:visual:docker src/components/BAICard -u  # put -u after the path
 - A story that cannot be stable (random data, a timer it never stops
   waiting on) gets `tags: ['no-vrt']`, and so does a PoC component no page
   renders, once in its `meta`.
+- `Date` is frozen at 2026-01-15T12:00:00Z and does not advance, so a lodash
+  `debounce` / `throttle` never runs its trailing call. A story that needs one
+  to fire (a `play` function typing into a debounced search) gets `no-vrt`.
 - `pnpm run test:visual` runs on the host for quick debugging; its screenshots
-  are named for the host platform and are git-ignored.
-- Bumping `playwright` means bumping the container tag in the workflow too, and
-  rewriting the baselines.
+  end in `-<platform>-host.png` (on Linux too) and are git-ignored. Only the
+  container, which sets `BUI_VISUAL_CONTAINER=1`, writes the committed
+  `-linux.png` names.
+- Bumping `playwright` rewrites every baseline; the workflow's container tag
+  follows the pin in `package.json` on its own.
 
 ## Localization
 
