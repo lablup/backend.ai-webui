@@ -242,8 +242,7 @@ WebUIアプリを使用する際、コンピュートセッションに直接SSH
 **公開鍵**の項目には現在登録されているSSH公開鍵が表示され、そのまま編集
 できます。
 
-![=528px](../images/ssh_keypair_dialog.png)
-<!-- TODO: Recapture the single Public Key field dialog -->
+![=520px](../images/ssh_keypair_dialog.png)
 
 :::note
 Backend.AIはOpenSSHに基づいたSSHキーペアを使用します。Windowsでは、これを

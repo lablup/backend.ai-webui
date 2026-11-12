@@ -229,8 +229,7 @@ WebUI에 **재로그인 필요** 알림과 함께 *"기본 액세스 키가 변�
 나타납니다. **공개 키** 항목에 현재 등록된 SSH 공개 키가 표시되며, 이 값을 바로
 편집할 수 있습니다.
 
-![=528px](../images/ssh_keypair_dialog.png)
-<!-- TODO: Recapture the single Public Key field dialog -->
+![=520px](../images/ssh_keypair_dialog.png)
 
 :::note
 Backend.AI는 OpenSSH에 기반한 SSH keypair를 사용합니다. Windows에서는 PPK 기반

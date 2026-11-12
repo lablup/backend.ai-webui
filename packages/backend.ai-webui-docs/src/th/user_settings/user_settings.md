@@ -239,8 +239,7 @@ https://github.com/lablup/backend.ai-webui.
 ปรากฏขึ้น ช่อง **คีย์สาธารณะ** จะแสดงคีย์สาธารณะ SSH ที่ลงทะเบียนไว้ในปัจจุบัน
 และคุณสามารถแก้ไขได้โดยตรง
 
-![=528px](../images/ssh_keypair_dialog.png)
-<!-- TODO: Recapture the single Public Key field dialog -->
+![=520px](../images/ssh_keypair_dialog.png)
 
 :::note
 Backend.AI ใช้คู่คีย์ SSH ที่อิงตาม OpenSSH บน Windows คุณอาจต้องแปลงเป็น
