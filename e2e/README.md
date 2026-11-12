@@ -129,13 +129,17 @@ has the same part folders, `e2e-agent/{admin,project,project-admin,common}/<page
 and the same folder rule; `auth.setup.e2e.ts` (the sign-in sessions) and
 `utils/` stay at its root, and the setup belongs to every part. `E2E_PART` and
 `E2E_ENV_FILE` select its folders and env file the same way (`e2eAgentPartGlobs`
-and `resolveE2EEnvFile` in `e2e-parts.ts`); `e2e/envs/.env.e2e-agent` is read
-after the env file and overrides it, so keep accounts and endpoints out of it
-when running parts against different servers.
+and `resolveE2EEnvFile` in `e2e-parts.ts`, paths relative to the repository root).
+A chosen env file (`admin` in the part list, or `E2E_ENV_FILE`) wins over `E2E_*`
+values already exported in the shell. `e2e/envs/.env.e2e-agent` is read after the
+env file for the model and the app URL; with a chosen env file it must not set
+endpoints or accounts (the config refuses them), and leave `E2E_AGENT_APP_URL`
+unset so each part opens its own `E2E_WEBUI_ENDPOINT`. A part other than `all`
+writes to `.e2e/<part>/`, and the config prints the same `[e2e] part=…` line.
 
 ```bash
-E2E_PART=user  pnpm exec e2e list
-E2E_PART=admin pnpm exec e2e run --exclude-tag draft
+E2E_PART=user  E2E_TELEMETRY_DISABLED=1 pnpm exec e2e list
+E2E_PART=admin pnpm run e2e:agent --exclude-tag draft
 ```
 
 ### Smoke run against an installed cluster

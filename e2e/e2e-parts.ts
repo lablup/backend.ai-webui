@@ -1,4 +1,5 @@
 import * as fs from 'fs';
+import * as path from 'path';
 
 /**
  * The e2e suite is laid out by the console a test acts on, and E2E_PART picks
@@ -51,6 +52,27 @@ export function resolveE2EParts(value: string | undefined): E2EPart[] {
   return [...new Set(parts)] as E2EPart[];
 }
 
+/**
+ * What a part list selects, before it is written as Playwright regexes or
+ * e2e globs: everything, everything but `admin/`, or a list of part folders.
+ */
+type PartSelection =
+  | { kind: 'all' }
+  | { kind: 'exceptAdmin' }
+  | { kind: 'folders'; folders: string[] };
+
+function partSelection(parts: E2EPart[]): PartSelection {
+  if (parts.includes('all')) return { kind: 'all' };
+  // `user` already holds every folder but admin; adding admin means all.
+  if (parts.includes('user')) {
+    return parts.includes('admin') ? { kind: 'all' } : { kind: 'exceptAdmin' };
+  }
+  return {
+    kind: 'folders',
+    folders: PART_FOLDERS.filter((name) => parts.includes(name)),
+  };
+}
+
 function escapeRegExp(value: string): string {
   return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
@@ -63,7 +85,8 @@ export function e2ePartFilter(
   parts: E2EPart[],
   e2eDir: string,
 ): { testMatch?: RegExp; testIgnore?: RegExp } {
-  if (parts.includes('all')) return {};
+  const selection = partSelection(parts);
+  if (selection.kind === 'all') return {};
   // Either separator, so a Windows path matches before its percent-encoded URL.
   const sep = String.raw`[\\/]`;
   const root = e2eDir
@@ -74,13 +97,10 @@ export function e2ePartFilter(
   const folder = (name: string) => `${root}${sep}${escapeRegExp(name)}${sep}`;
   // Windows paths (drive letter or backslash) are case-insensitive.
   const flags = /^[a-z]:|\\/i.test(e2eDir) ? 'i' : '';
-  if (parts.includes('user')) {
-    // `user` already holds every folder but admin; adding admin means all.
-    return parts.includes('admin')
-      ? {}
-      : { testIgnore: new RegExp(folder('admin'), flags) };
+  if (selection.kind === 'exceptAdmin') {
+    return { testIgnore: new RegExp(folder('admin'), flags) };
   }
-  const folders = PART_FOLDERS.filter((name) => parts.includes(name));
+  const { folders } = selection;
   // testMatch replaces Playwright's default, so keep its test-file suffixes.
   const testFile = String.raw`(?=.*\.(?:spec|test)\.[cm]?[jt]sx?$)`;
   return {
@@ -97,27 +117,30 @@ export const ADMIN_E2E_ENV_FILE = './e2e/envs/.env.playwright.admin';
 /**
  * The env file a run reads: E2E_ENV_FILE when set (it must exist), else the
  * admin env file for a part list with `admin` (it must exist, so admin tests
- * never fall back to the user server), else `.env.playwright`.
+ * never fall back to the user server), else `.env.playwright`. With `root`,
+ * the paths are resolved against it instead of the working directory.
  */
 export function resolveE2EEnvFile(
   parts: E2EPart[],
   requested: string | undefined,
+  root?: string,
   exists: (file: string) => boolean = fs.existsSync,
 ): string {
+  const at = (file: string) => (root ? path.resolve(root, file) : file);
   if (requested) {
-    if (!exists(requested)) {
+    if (!exists(at(requested))) {
       throw new Error(`E2E_ENV_FILE not found: ${requested}`);
     }
-    return requested;
+    return at(requested);
   }
-  if (!parts.includes('admin')) return DEFAULT_E2E_ENV_FILE;
-  if (!exists(ADMIN_E2E_ENV_FILE)) {
+  if (!parts.includes('admin')) return at(DEFAULT_E2E_ENV_FILE);
+  if (!exists(at(ADMIN_E2E_ENV_FILE))) {
     throw new Error(
       `E2E_PART=${parts.join(',')} needs ${ADMIN_E2E_ENV_FILE} (copy ` +
         `e2e/envs/.env.playwright.admin.sample) or an explicit E2E_ENV_FILE`,
     );
   }
-  return ADMIN_E2E_ENV_FILE;
+  return at(ADMIN_E2E_ENV_FILE);
 }
 
 /**
@@ -130,15 +153,12 @@ export function e2eAgentPartGlobs(
   parts: E2EPart[],
   agentDir = 'e2e-agent',
 ): string[] {
+  const selection = partSelection(parts);
   const every = `${agentDir}/**/*.e2e.ts`;
-  if (parts.includes('all')) return [every];
-  if (parts.includes('user')) {
-    return parts.includes('admin') ? [every] : [every, `!${agentDir}/admin/**`];
-  }
+  if (selection.kind === 'all') return [every];
+  if (selection.kind === 'exceptAdmin') return [every, `!${agentDir}/admin/**`];
   return [
     `${agentDir}/*.setup.e2e.ts`,
-    ...PART_FOLDERS.filter((name) => parts.includes(name)).map(
-      (name) => `${agentDir}/${name}/**/*.e2e.ts`,
-    ),
+    ...selection.folders.map((name) => `${agentDir}/${name}/**/*.e2e.ts`),
   ];
 }
