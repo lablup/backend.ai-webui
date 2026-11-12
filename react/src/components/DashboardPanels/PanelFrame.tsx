@@ -73,7 +73,12 @@ const PanelFrame: React.FC<PanelFrameProps> = ({
         title={
           hasHeaderSettings ? (
             // The card's own controls follow the title and its help glyph; the row's end keeps the actions.
-            <BAIFlex align="center" gap="xs" wrap="wrap">
+            <BAIFlex
+              align="center"
+              gap="xs"
+              wrap="wrap"
+              style={{ flexShrink: 1, minWidth: 0 }}
+            >
               {heading}
               {tooltip ? (
                 <BAIIconWithTooltip
