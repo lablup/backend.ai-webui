@@ -97,6 +97,13 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
     ...savedDomainSettings,
   });
   const [draft, setDraft] = useState<WebUISettingsDocument>(saved);
+  // The mount renders a cached copy before the refresh lands: an untouched
+  // draft follows the refreshed value instead of showing it as an edit.
+  const [draftBase, setDraftBase] = useState<WebUISettingsDocument>(saved);
+  if (!_.isEqual(draftBase, saved)) {
+    setDraftBase(saved);
+    if (_.isEqual(draft, draftBase)) setDraft(saved);
+  }
   const isDirty = !_.isEqual(draft, saved);
 
   const defaultValueOf = (definition: WebUISettingDefinition) =>

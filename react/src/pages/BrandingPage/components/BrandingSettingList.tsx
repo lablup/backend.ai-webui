@@ -9,7 +9,7 @@ import {
   DOMAIN_APPEARANCE_CONFIG_KEY,
 } from '../../../helper/customThemeConfig';
 import { useCurrentDomainValue } from '../../../hooks';
-import { useScopedAppConfig } from '../../../hooks/useAppConfig';
+import { useScopedAppConfigSetter } from '../../../hooks/useAppConfig';
 import { usePreviewThemeConfig } from '../../../hooks/usePreviewThemeConfig';
 import FontFamilySettingItem from './BrandingSettingItems/FontFamilySettingItem';
 import LogoPreviewer, {
@@ -54,7 +54,7 @@ const BrandingSettingList: React.FC<BrandingSettingListProps> = () => {
   // Saved WHOLE — families included — as this domain's slice of the public
   // document; reads replace wholesale rather than merging (FR-1964).
   const domainName = useCurrentDomainValue();
-  const { setKey: setPublicKey } = useScopedAppConfig(
+  const setPublicKey = useScopedAppConfigSetter(
     { scopeType: 'PUBLIC' },
     'publicConfigByDomain',
   );

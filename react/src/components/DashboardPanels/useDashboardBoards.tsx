@@ -51,7 +51,7 @@ export interface DashboardBoardsState {
   activeBoard: DashboardModel;
   /** What a new board and "Reset layout" start from. */
   template: DashboardModel;
-  /** Applies `update` to the page's boards at once; the write replays it on the server's value. */
+  /** Applies `update` to the page's boards at once; the write replays it on the stored document. */
   update: (
     update: (config: DashboardPageConfig) => DashboardPageConfig,
   ) => void;
@@ -61,7 +61,7 @@ export interface DashboardBoardsState {
  * One page's boards in `userConfig.dashboard`, falling back to the role template.
  *
  * Only this hook writes `userConfig.dashboard`, and only into the USER
- * fragment: the read is deep-merged across scopes, which mixes board arrays.
+ * fragment: a deep merge across scopes would mix board arrays.
  */
 export const useDashboardBoards = (
   page: PanelPage,

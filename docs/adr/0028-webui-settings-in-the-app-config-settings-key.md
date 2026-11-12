@@ -1,5 +1,7 @@
 # 0028 — WebUI settings in the app config settings key
 
+> The write hooks this ADR names (**Write scope**) are replaced by [ADR 0033](0033-scoped-and-merged-app-config-hooks.md): a save changes `settings` on the raw document the page read, without reading it again.
+
 ## Summary
 
 > Unfamiliar terms are collected in the [Glossary](#glossary) at the end.
@@ -59,7 +61,7 @@ flowchart LR
 - **Key names**: a key keeps the name it had in `config.toml`. The exceptions are `menuBlocklist`/`menuInactivelist` (the file's `menu.blocklist`/`inactivelist`), `fasttrackEndpoint` (the file's `pipeline.frontendEndpoint`) and `pluginLogin`/`pluginPage` (the file's `plugin.login`/`page`). A comma-joined string in the file is an array of strings.
 - **Public scope criterion**: only the keys the login page uses, and keys applied once before sign-in (`debug`, and `pluginPage`, loaded once at boot), are PUBLIC.
 - **Domain lookup**: the `<domain>` of the PUBLIC document is `general.apiDomainName` in `config.toml` (`resolvePublicConfigTarget`).
-- **Write scope**: a save changes the `settings` sub-key only, never the whole document. `setKey` of the DOMAIN and PUBLIC `useScopedAppConfig` changes `settings` alone on the raw document the page read ([read-modify-write](#glossary), ADR 0033).
+- **Write scope**: a save changes the `settings` sub-key only, never the whole document. The write hooks (`useUpdateDomainAppConfig`, `useUpdatePublicDomainAppConfig`) re-read the manager's raw document and change `settings` alone ([read-modify-write](#glossary)).
 
 ### 2. Merge rules
 
@@ -126,4 +128,4 @@ flowchart LR
 | app config        | JSON configuration documents the manager stores per scope (PUBLIC, DOMAIN, USER). Read over GraphQL after sign-in; the PUBLIC document also over REST before sign-in. |
 | scope             | The range a document belongs to. The PUBLIC document is read anonymously before sign-in; the DOMAIN document is read after a user of that domain signs in.            |
 | definition table  | `WEBUI_SETTING_DEFINITIONS`: an array that gives each setting key its scope, type, page group and `LoginConfigState` field.                                           |
-| read-modify-write | Taking the raw document, changing one part, and saving the whole document, so the document's other sub-keys are kept.                                             |
+| read-modify-write | Re-reading the raw document, changing one part, and saving the whole document, so the document's other sub-keys are kept.                                             |

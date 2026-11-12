@@ -1,5 +1,7 @@
 # 0028 — WebUI settings in the app config settings key
 
+> 이 ADR이 이름으로 부르는 쓰기 hook(**Write scope**)은 [ADR 0033](0033-scoped-and-merged-app-config-hooks.ko.md)이 대체한다. 이제 저장은 page가 읽은 원본 문서에서 다시 읽지 않고 `settings`를 바꾼다.
+
 ## Summary
 
 > 낯선 용어는 문서 맨 아래 [용어](#용어)에 모아 두었다.
@@ -59,7 +61,7 @@ flowchart LR
 - **Key names**: 키 이름은 `config.toml`에서 쓰던 이름을 그대로 쓴다. 예외는 `menuBlocklist`/`menuInactivelist`(파일의 `menu.blocklist`/`inactivelist`), `fasttrackEndpoint`(파일의 `pipeline.frontendEndpoint`), `pluginLogin`/`pluginPage`(파일의 `plugin.login`/`page`)다. 파일에서 쉼표로 이은 문자열은 문자열 배열이다.
 - **Public scope criterion**: 로그인 화면이 쓰는 키와, 로그인 전에 한 번 적용되는 키(`debug`, 부트 때 한 번 로드되는 `pluginPage`)만 PUBLIC이다.
 - **Domain lookup**: PUBLIC 문서의 `<domain>`은 `config.toml`의 `general.apiDomainName`이다(`resolvePublicConfigTarget`).
-- **Write scope**: 쓰기는 문서 전체가 아니라 `settings` 서브키만 바꾼다. DOMAIN·PUBLIC `useScopedAppConfig`의 `setKey`가 page가 읽은 원본 문서에서 `settings`만 바꾼다([read-modify-write](#용어), ADR 0033).
+- **Write scope**: 쓰기는 문서 전체가 아니라 `settings` 서브키만 바꾼다. 쓰기 hook(`useUpdateDomainAppConfig`, `useUpdatePublicDomainAppConfig`)은 [read-modify-write](#용어)로 manager의 원본 문서를 다시 읽고 `settings`만 바꾼다.
 
 ### 2. 병합 규칙
 
@@ -126,4 +128,4 @@ flowchart LR
 | app config        | manager가 스코프(PUBLIC, DOMAIN, USER)별로 저장하는 JSON 설정 문서. 로그인 뒤에는 GraphQL로, PUBLIC 문서는 로그인 전에도 REST로 읽는다. |
 | 스코프            | 문서가 속한 범위. PUBLIC 문서는 로그인 전에 익명으로 읽히고, DOMAIN 문서는 그 도메인 사용자가 로그인한 뒤 읽힌다.                       |
 | 정의표            | `WEBUI_SETTING_DEFINITIONS`. 설정 키마다 스코프, 타입, 화면 그룹, `LoginConfigState` 필드를 적은 배열.                                  |
-| read-modify-write | 원본 문서를 가져와 한 부분만 바꾼 뒤 문서 전체를 저장하는 방식. 같은 문서의 다른 서브키가 보존된다.                                  |
+| read-modify-write | 원본 문서를 다시 읽어 한 부분만 바꾼 뒤 문서 전체를 저장하는 방식. 같은 문서의 다른 서브키가 보존된다.                                  |

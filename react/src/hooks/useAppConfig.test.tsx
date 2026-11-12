@@ -2,11 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import {
-  type AppConfigName,
-  type AppConfigScope,
-  useScopedAppConfig,
-} from './useAppConfig';
+import type { AppConfigName, AppConfigScope } from './useAppConfig';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { ReactNode, Suspense } from 'react';
 import { RelayEnvironmentProvider } from 'react-relay';
@@ -23,11 +19,15 @@ vi.mock('react-i18next', () => ({
 }));
 
 vi.mock('.', () => ({
-  useSuspendedBackendaiClient: () => ({
-    _config: { domainId: 'domain-1' },
-    user_uuid: 'user-1',
-  }),
+  useSuspendedBackendaiClient: () => ({ user_uuid: 'user-1' }),
+  useCurrentDomain: () => ({ name: 'default', id: 'domain-1' }),
 }));
+
+// A fresh module per test: the write queue is module state.
+const loadHooks = async () => {
+  vi.resetModules();
+  return import('./useAppConfig');
+};
 
 type MockEnvironment = ReturnType<typeof createMockEnvironment>;
 
@@ -44,19 +44,24 @@ const waitForOperation = async (environment: MockEnvironment, name: string) => {
 };
 
 /** Mounts the hook and answers its read with `config` (`null`: no fragment yet). */
+const wrapperFor = (environment: MockEnvironment) => {
+  const RelayWrapper = ({ children }: { children: ReactNode }) => (
+    <RelayEnvironmentProvider environment={environment}>
+      <Suspense fallback={null}>{children}</Suspense>
+    </RelayEnvironmentProvider>
+  );
+  return RelayWrapper;
+};
+
 const mountScoped = async (
   scope: AppConfigScope,
   configName: AppConfigName,
   config: Record<string, unknown> | null,
 ) => {
+  const { useScopedAppConfig } = await loadHooks();
   const environment = createMockEnvironment();
-  const wrapper = ({ children }: { children: ReactNode }) => (
-    <RelayEnvironmentProvider environment={environment}>
-      <Suspense fallback={null}>{children}</Suspense>
-    </RelayEnvironmentProvider>
-  );
   const { result } = renderHook(() => useScopedAppConfig(scope, configName), {
-    wrapper,
+    wrapper: wrapperFor(environment),
   });
   const read = await waitForOperation(environment, 'useAppConfigScopedQuery');
   act(() => {
@@ -210,14 +215,46 @@ describe('useScopedAppConfig', () => {
       });
     });
     await answerUpsert(environment);
+    await act(() => pending);
     const merged = await waitForOperation(
       environment,
       'useAppConfigMergedQuery',
     );
+    expect(merged.request.variables.configNames).toEqual(['domainConfig']);
+  });
+
+  it('reads the document again when another reader mounts on the stored copy', async () => {
+    const { useScopedAppConfig } = await loadHooks();
+    const { environment } = await mountScoped(
+      { scopeType: 'USER' },
+      'userConfig',
+      { themeFamily: 'ocean' },
+    );
+    expect(operationsNamed(environment, 'useAppConfigScopedQuery')).toEqual([]);
+    const second = renderHook(
+      () => useScopedAppConfig({ scopeType: 'USER' }, 'userConfig'),
+      { wrapper: wrapperFor(environment) },
+    );
+    expect(second.result.current.doc).toEqual({ themeFamily: 'ocean' });
+    await waitForOperation(environment, 'useAppConfigScopedQuery');
+  });
+
+  it('follows the fragment the upsert returned when its id changed', async () => {
+    const { environment, result } = await mountScoped(
+      { scopeType: 'USER' },
+      'userConfig',
+      { themeFamily: 'ocean' },
+    );
+    let pending!: Promise<void>;
     act(() => {
-      environment.mock.resolve(merged, { data: { myAppConfigs: [] } });
+      pending = result.current.setKey('language', 'ko');
     });
+    await answerUpsert(environment, 'recreated');
     await act(() => pending);
+    expect(result.current.doc).toEqual({
+      themeFamily: 'ocean',
+      language: 'ko',
+    });
   });
 
   it('rejects with the server message when the write fails', async () => {
@@ -241,5 +278,40 @@ describe('useScopedAppConfig', () => {
       } as any);
     });
     await expect(pending).rejects.toThrow('publicConfigByDomain: not allowed');
+  });
+});
+
+describe('useMyAppConfig', () => {
+  it('reads one name per request and returns the requested slice', async () => {
+    const { useMyAppConfig } = await loadHooks();
+    const environment = createMockEnvironment();
+    const { result } = renderHook(
+      () =>
+        useMyAppConfig('publicConfigByDomain', [
+          'default',
+          'dashboardTemplates',
+        ]),
+      { wrapper: wrapperFor(environment) },
+    );
+    const read = await waitForOperation(environment, 'useAppConfigMergedQuery');
+    expect(read.request.variables.configNames).toEqual([
+      'publicConfigByDomain',
+    ]);
+    act(() => {
+      environment.mock.resolve(read, {
+        data: {
+          myAppConfigs: [
+            {
+              configName: 'publicConfigByDomain',
+              config: {
+                other: { dashboardTemplates: { a: 1 } },
+                default: { dashboardTemplates: { b: 2 } },
+              },
+            },
+          ],
+        },
+      });
+    });
+    await waitFor(() => expect(result.current).toEqual({ b: 2 }));
   });
 });
