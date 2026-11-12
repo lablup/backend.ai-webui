@@ -10,7 +10,8 @@ import MemoryInUseNote, {
   memoryMetricOf,
   useReportedMemoryMetrics,
 } from './MemoryInUseNote';
-import React from 'react';
+import React, { Suspense } from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
 import { Trans, useTranslation } from 'react-i18next';
 
 /** The statistics, with memory in use under RAM and each accelerator whose metric the manager reports. */
@@ -70,11 +71,28 @@ const MyTotalResourcePanel: React.FC<PanelComponentProps> = ({
         !projectId ? (
           <NoProjectText />
         ) : (
-          <StatisticsWithMemoryInUse
-            projectId={projectId}
-            fetchKey={key}
-            refreshedAt={vars.refreshedAt}
-          />
+          // Until the metric names arrive, or if they fail, the statistics show without the lines.
+          <ErrorBoundary
+            resetKeys={[key]}
+            fallbackRender={() => (
+              <MyTotalResourceStatistics projectId={projectId} fetchKey={key} />
+            )}
+          >
+            <Suspense
+              fallback={
+                <MyTotalResourceStatistics
+                  projectId={projectId}
+                  fetchKey={key}
+                />
+              }
+            >
+              <StatisticsWithMemoryInUse
+                projectId={projectId}
+                fetchKey={key}
+                refreshedAt={vars.refreshedAt}
+              />
+            </Suspense>
+          </ErrorBoundary>
         )
       }
     </MemberCard>
