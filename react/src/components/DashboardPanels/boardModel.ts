@@ -120,6 +120,9 @@ const panelOf = (
   id: definition.key,
   key: definition.key,
   ...(definition.defaultSizeByPage?.[page] ?? sizeOf(definition).defaultSize),
+  ...(definition.defaultSettings
+    ? { settings: definition.defaultSettings }
+    : {}),
 });
 
 /**

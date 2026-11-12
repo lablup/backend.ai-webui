@@ -5,6 +5,7 @@
 import QuotaPerStorageVolumeDashboardItem from '../QuotaPerStorageVolumeDashboardItem';
 import { useDashboardRefreshQuery } from './DashboardRefreshContext';
 import AuditLogPanel from './cards/AuditLogPanel';
+import { chartCard } from './cards/ChartCard';
 import DeploymentStatusPanel from './cards/DeploymentStatusPanel';
 import FoldersPanel from './cards/FoldersPanel';
 import LongRunningSessionsPanel from './cards/LongRunningSessionsPanel';
@@ -298,7 +299,7 @@ const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
     titleKey: 'dashboard.card.MyActivity',
     kind: 'custom',
     Component: AuditLogPanel,
-    defaultSize: size(6, 3),
+    defaultSize: size(3, 3),
     minSize: size(2, 2),
     settings: ['range'],
   },
@@ -434,6 +435,66 @@ const PROJECT_ADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
 ];
 
 const SUPERADMIN_ONLY = { role: 'superadmin' } as const;
+
+const LAST_7_DAYS = { range: 'now-7d' } as const;
+
+/** Cards the custom-panel chart engine draws, scoped like every other card on the page. */
+const CHART_PANELS: ReadonlyArray<PanelDefinition> = [
+  {
+    key: 'sessionsCreated',
+    page: ALL_PAGES,
+    group: 'session',
+    titleKey: 'dashboard.card.SessionsCreated',
+    kind: 'custom',
+    Component: chartCard(
+      'session',
+      { type: 'area' },
+      'dashboard.card.SessionsCreated',
+    ),
+    detailLink: listLink('session', SESSIONS),
+    defaultSize: size(4, 3),
+    // Half width beside My Activity and the folder donut.
+    defaultSizeByPage: { project: size(3, 3), admin: size(3, 3) },
+    minSize: size(2, 2),
+    settings: ['range'],
+    defaultSettings: LAST_7_DAYS,
+  },
+  {
+    key: 'sessionsByStatus',
+    page: ['projectAdmin', 'admin'],
+    group: 'session',
+    titleKey: 'dashboard.card.SessionsByStatus',
+    kind: 'custom',
+    Component: chartCard(
+      'session',
+      { type: 'bar', groupBy: 'status', period: true },
+      'dashboard.card.SessionsByStatus',
+    ),
+    detailLink: listLink('session', SESSIONS),
+    defaultSize: size(2, 3),
+    minSize: size(2, 2),
+    settings: ['range'],
+    defaultSettings: LAST_7_DAYS,
+    defaultHidden: ['admin'],
+  },
+  {
+    key: 'foldersByUsageMode',
+    page: ['admin'],
+    group: 'resource',
+    titleKey: 'dashboard.card.FoldersByUsageMode',
+    requires: SUPERADMIN_ONLY,
+    kind: 'custom',
+    Component: chartCard(
+      'vfolder',
+      { type: 'donut', groupBy: 'usageMode' },
+      'dashboard.card.FoldersByUsageMode',
+    ),
+    detailLink: listLink('data', { admin: 'webui.menu.Data' }),
+    // Narrower than three columns, the ring gives way to its legend.
+    defaultSize: size(3, 3),
+    minSize: size(2, 2),
+  },
+];
 
 /** Cards only the superadmin page has: cluster-wide and superadmin-only fields. */
 const SUPERADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
@@ -619,6 +680,7 @@ const PAGE_ORDER: Record<PanelPage, ReadonlyArray<string>> = {
     'myDeployments',
     'totalResourceWithinResourceGroup',
     'memberAgentStats',
+    'sessionsCreated',
     'myActivity',
   ],
   projectAdmin: [
@@ -628,6 +690,8 @@ const PAGE_ORDER: Record<PanelPage, ReadonlyArray<string>> = {
     'resourceGroupCapacity',
     'longRunningSessions',
     'projectDeployments',
+    'sessionsCreated',
+    'sessionsByStatus',
     'projectUsers',
     'projectFolders',
     'projectAuditLog',
@@ -639,6 +703,8 @@ const PAGE_ORDER: Record<PanelPage, ReadonlyArray<string>> = {
     'failuresByEntityType',
     'activeAgents',
     'totalResourceWithinResourceGroup',
+    'sessionsCreated',
+    'foldersByUsageMode',
     'projectAuditLog',
   ],
 };
@@ -657,5 +723,6 @@ export const PANEL_CATALOG: ReadonlyArray<PanelDefinition> = [
   ...MEMBER_PANELS,
   ...PROJECT_ADMIN_PANELS,
   ...SUPERADMIN_PANELS,
+  ...CHART_PANELS,
   ...PRESET_PANELS,
 ].map(withPageOrder);

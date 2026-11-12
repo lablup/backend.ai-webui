@@ -86,6 +86,7 @@ describe('PANEL_CATALOG', () => {
         'myDeployments',
         'totalResourceWithinResourceGroup',
         'memberAgentStats',
+        'sessionsCreated',
         'myActivity',
       ],
     ],
@@ -98,6 +99,8 @@ describe('PANEL_CATALOG', () => {
         'resourceGroupCapacity',
         'longRunningSessions',
         'projectDeployments',
+        'sessionsCreated',
+        'sessionsByStatus',
         'projectUsers',
         'projectFolders',
         'projectAuditLog',
@@ -112,6 +115,8 @@ describe('PANEL_CATALOG', () => {
         'failuresByEntityType',
         'activeAgents',
         'totalResourceWithinResourceGroup',
+        'sessionsCreated',
+        'foldersByUsageMode',
         'projectAuditLog',
       ],
     ],
@@ -128,6 +133,14 @@ describe('PANEL_CATALOG', () => {
       );
     expect(sizeOn('project')).toMatchObject({ columnSpan: 2, rowSpan: 2 });
     expect(sizeOn('admin')).toMatchObject({ columnSpan: 2, rowSpan: 4 });
+  });
+
+  it('seeds the session trend card with the last seven days', () => {
+    expect(
+      seedBoard(PANEL_CATALOG, 'project').panels.find(
+        (panel) => panel.id === 'sessionsCreated',
+      )?.settings,
+    ).toEqual({ range: 'now-7d' });
   });
 });
 
@@ -222,6 +235,7 @@ describe('catalogFor on the real catalog', () => {
       'projectFolders',
       'projectUsers',
       'resourceGroupCapacity',
+      'sessionsByStatus',
       'recentlyCreatedSession',
       'resourcePolicies',
       'failedLogins',

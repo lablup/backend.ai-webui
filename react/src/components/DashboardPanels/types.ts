@@ -319,6 +319,8 @@ export interface PanelDefinition {
   >;
   /** The settings the card reads; only these cards get a settings control. */
   settings?: ReadonlyArray<PanelSettingKind>;
+  /** The settings a new board gives the card. */
+  defaultSettings?: PanelSettings;
   /** The longest custom range the card accepts, in days; `MAX_WINDOW_DAYS` when absent, `0` for the presets only. */
   maxRangeDays?: number;
   /** The card's table offers column settings, kept in its `columnOverrides` setting. */
