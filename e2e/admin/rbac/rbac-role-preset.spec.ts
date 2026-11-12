@@ -418,7 +418,12 @@ test.describe(
       await expect(drawer.getByRole('checkbox')).toHaveCount(0);
 
       await settleTableAfter(page, 'RolePresetListTabQuery', () =>
-        readOnlyAlert.getByRole('link', { name: 'View Presets' }).click(),
+        // The link is the banner's action, outside its role="alert" title and description.
+        drawer
+          .locator('.astryx-banner')
+          .filter({ has: readOnlyAlert })
+          .getByRole('link', { name: 'View Presets' })
+          .click(),
       );
 
       await expect(drawer).toBeHidden({ timeout: 10000 });
