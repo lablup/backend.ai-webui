@@ -203,18 +203,21 @@ const UserSettingsModal: React.FC<UserSettingsModalProps> = ({
           paddingBlockEnd={2}
           style={PANE_NO_CONTAINER_BLEED}
         >
-          {showNavOnly ? (
-            categoryNav
-          ) : (
-            // `resetKeys` rather than `key`: a failed category does not latch
-            // the surface, yet switching categories keeps the pane mounted, so
-            // its query refs (and the reader's page in a log) survive.
+          {showNavOnly ? categoryNav : null}
+          {/* Hidden rather than unmounted below `md` while the rail shows: the
+              pane owns the query refs, so a remount would drop the reader's
+              page. `resetKeys` rather than `key` for the same reason, while
+              still letting a failed category recover. */}
+          <VStack
+            width="100%"
+            style={showNavOnly ? { display: 'none' } : undefined}
+          >
             <BAIErrorBoundary resetKeys={[category]}>
               <Suspense fallback={<BAISkeleton />}>
                 <UserSettingsModalPane category={category} />
               </Suspense>
             </BAIErrorBoundary>
-          )}
+          </VStack>
         </VStack>
       </HStack>
     </BAIModal>

@@ -173,21 +173,32 @@ const UserProfileSettingModalBody: React.FC<Props> = ({
   };
 
   // The frame owns the footer, so it takes the submit and the in-flight state
-  // from here (#11144).
-  const registerSubmit = useEffectEvent(() => {
+  // from here (#11144). Re-registered every render so it tracks the latest
+  // handler, as ImportImageModal does.
+  useEffect(() => {
     submitRef.current = onSubmit;
   });
-  // No dep array: the ref must track the latest submit closure, as
-  // ImportImageModal does.
-  useEffect(() => {
-    registerSubmit();
+  const reportReady = useEffectEvent((ready: boolean) => {
+    if (ready) {
+      onReadyChange(true);
+    } else {
+      // The body is the only writer of the frame's footer state; relinquish it
+      // on unmount so a remount never leaves Update enabled on a dead handler.
+      submitRef.current = null;
+      onReadyChange(false);
+      onSubmittingChange(false);
+    }
+  });
+  const reportSubmitting = useEffectEvent(() => {
+    onSubmittingChange(isInFlightUpdateUser);
   });
   useEffect(() => {
-    onReadyChange(true);
-  }, [onReadyChange]);
+    reportReady(true);
+    return () => reportReady(false);
+  }, []);
   useEffect(() => {
-    onSubmittingChange(isInFlightUpdateUser);
-  }, [isInFlightUpdateUser, onSubmittingChange]);
+    reportSubmitting();
+  }, [isInFlightUpdateUser]);
 
   return (
     <>

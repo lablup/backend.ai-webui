@@ -48,7 +48,10 @@ const UserProfileSettingModal: React.FC<Props> = ({
         onRequestClose();
       }}
       confirmLoading={isSubmitting}
-      okButtonProps={{ ...baiModalProps.okButtonProps, disabled: !isBodyReady }}
+      okButtonProps={{
+        ...baiModalProps.okButtonProps,
+        disabled: !isBodyReady || baiModalProps.okButtonProps?.disabled,
+      }}
       onOk={() => submitRef.current?.()}
       centered
       title={t('webui.menu.MyAccountInformation')}
