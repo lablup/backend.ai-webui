@@ -3,7 +3,8 @@
 # images (ADR 0031): .github/scripts/lfs/pull-docs-images.sh over the baselines
 # directory, so every image written is checked against its pointer's oid.
 # Options pass through (--remote, --fallback-remote, --fallback-report, --ref).
-# Exits at once when none is a pointer.
+# Without --remote it fetches from the current branch's upstream remote, then
+# origin. Exits at once when none is a pointer.
 set -euo pipefail
 
 repo="$(git -C "$(dirname "${BASH_SOURCE[0]}")" rev-parse --show-toplevel)"
@@ -18,4 +19,17 @@ if ! git lfs version >/dev/null 2>&1 && [ "$(uname -s) $(uname -m)" != "Linux x8
   exit 1
 fi
 
-exec bash "$repo/.github/scripts/lfs/pull-docs-images.sh" --root "$dir" "$@" "$repo"
+remotes=()
+case " $* " in
+  *" --remote "*) ;;
+  *)
+    branch="$(git -C "$repo" symbolic-ref -q --short HEAD || true)"
+    upstream="$([ -z "$branch" ] || git -C "$repo" config --get "branch.${branch}.remote" || true)"
+    if [ -n "$upstream" ] && [ "$upstream" != "." ] && [ "$upstream" != "origin" ]; then
+      remotes+=(--remote "$upstream")
+      ! git -C "$repo" remote get-url origin >/dev/null 2>&1 || remotes+=(--remote origin)
+    fi
+    ;;
+esac
+
+exec bash "$repo/.github/scripts/lfs/pull-docs-images.sh" --root "$dir" ${remotes[@]+"${remotes[@]}"} "$@" "$repo"
