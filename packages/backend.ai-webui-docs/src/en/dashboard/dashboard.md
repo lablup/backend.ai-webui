@@ -23,19 +23,13 @@ starts it:
 
 - **Start Deployment**:
     Click **Create Deployment** to serve a trained model so that others can use
-    it.
+    it. This card appears only when your administrator has enabled model
+    serving.
 
 - **Start From URL**:
-    Click **Start Now** to bring in a Jupyter notebook, a GitHub or GitLab
-    repository, or a Hugging Face model from its URL. A notebook opens in a new
-    session; a repository or a model is saved to a storage folder. See
-    [Start from URL](#start-from-url) for each import source.
-
-:::note
-Depending on the server configuration, some cards such as the deployment card
-may not be available. If you want to use these features, please contact your
-system administrator.
-:::
+    Click **Start Now** to import a Jupyter notebook, a GitHub or GitLab
+    repository, or a Hugging Face model from its URL. See
+    [Start from URL](#start-from-url).
 
 ![](../images/dashboard.png)
 
@@ -192,11 +186,10 @@ at once when you click it.
 
 ## Start from URL
 
-The **Start From URL** card on the Dashboard brings in a notebook, a repository
-or a model from an external source. Click **Start Now** on the card to open a dialog with one
-tab per import source: **Import Notebook**, **Import GitHub Repository**, and
-**Import GitLab Repository**. An additional **Import Hugging Face Model** tab
-appears when the experimental Hugging Face import is turned on.
+The **Start From URL** dialog has one tab per import source: **Import
+Notebook**, **Import GitHub Repository**, and **Import GitLab Repository**. An
+additional **Import Hugging Face Model** tab appears when the experimental
+Hugging Face import is turned on.
 
 ### Import notebook
 
