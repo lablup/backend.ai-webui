@@ -160,11 +160,6 @@ Hugging Face 가져오기를 활성화하면 **Hugging Face 모델 가져오기*
 Markdown 뱃지 코드를 복사하여 프로젝트 문서에 바로 실행 링크를 삽입할 수
 있습니다.
 
-:::note
-뱃지 코드를 생성하기 전에 로그인되어 있어야 합니다. 그렇지 않으면 먼저
-로그인한 후 다시 시도해 주십시오.
-:::
-
 ### GitHub 저장소 가져오기
 
 ![=800px](../images/start_from_url_github.png)

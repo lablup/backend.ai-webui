@@ -221,11 +221,6 @@ At the bottom of the tab, you can generate a "Run on Backend.AI" badge code.
 Copy the HTML or Markdown badge code to embed a direct-launch link in your
 project documentation.
 
-:::note
-You must be logged in before generating the badge code. Otherwise, log in first
-and try again.
-:::
-
 ### Import GitHub repository
 
 ![=800px](../images/start_from_url_github.png)
