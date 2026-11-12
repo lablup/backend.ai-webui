@@ -68,7 +68,7 @@ catalog:
   relay-compiler: ^20.1.1
   relay-runtime: ^20.1.1
   relay-test-utils: ^20.1.1
-  smol-toml: ^1.7.1
+  smol-toml: ^1.9.0
   ts-jest: ^29.4.9
   tus-js-client: ^4.3.1
   typescript-eslint: ^8.66.0
@@ -176,34 +176,50 @@ overrides:
   # patched version on its own.
   js-cookie: ^3.0.7 # GHSA-… prototype hijack (alert #385)
   mermaid: ^11.15.0 # HTML/CSS injection + DoS (alerts #379–382)
-  serialize-javascript: ^7.0.5 # RCE via RegExp.flags, CPU DoS (#279, #386)
+  serialize-javascript: ^7.1.3 # RCE via RegExp.flags, CPU DoS (#279, #386); XSS via unescaped </script (#540)
   "uuid@^11": ^11.1.1 # buffer bounds check (#387) v11 line
   "uuid@^13": ^13.0.1 # buffer bounds check (#374) v13 line
   dompurify: ^3.4.17 # SAFE_FOR_TEMPLATES / IN_PLACE bypasses (GHSA-cg2g-xh64-v4q7, GHSA-mrv2-3pqr-j5jr); aligns monaco-editor's copy with the catalog
   # FR-4149. fast-uri ships in the bundle via `ajv` (latest 8.20.0 still
   # ranges ^3.0.1). Was ^3.1.2 under the dev-only block (FR-3014).
-  "fast-uri@^3": ^3.1.8 # GHSA-qw65-cvwx-89v3 et al. (high, <3.1.7)
+  "fast-uri@^3": ^3.1.9 # GHSA-qw65-cvwx-89v3 et al. (high, <3.1.7); host confusion, scheme spoofing (#535–538)
   # FR-4149. `@ai-sdk/provider-utils@3` (ai v5 line) ranges undici ^5; it only
   # requires it from Node via createRequire, never in the browser bundle. Same
   # Agent/fetch usage as provider-utils@4, which ranges undici ^6.28.0.
   "undici@^5": ^6.28.1 # GHSA-vxpw-j846-p89q et al. (high, <6.27.0)
   "path-to-regexp@~0.1": ^0.1.13 # ReDoS GHSA-37ch-88jc-xwx2 (FR-4146); ships in the pkg local proxy via express
   proxy-addr: ^2.0.8 # IP spoofing via IPv4-mapped IPv6 GHSA-jqcg-44mw-7w3h (critical); ships in the pkg local proxy via express
+  # #11151. qs ships in the pkg local proxy via express (ranges ~6.14.0) and
+  # body-parser (ranges ~6.16.0); stay on the 6.16 line body-parser asks for.
+  qs: ~6.16.1 # crash on null in comma-format arrays (#388); comma-format DoS, parse mutating its input (#541)
+  pbkdf2: ^3.1.7 # rehashes long passwords on every iteration (#527); in the bundle via vite-plugin-node-polyfills
+  "@dicebear/initials": ^9.4.3 # SVG injection via unescaped options (#482); @dicebear/collection pins 9.4.2
   # Dev-only transitive security overrides — FR-3014. These ship only in
   # dev/build tooling (not the production bundle), but Dependabot still
   # surfaces them. Remove an entry when every upstream consumer ranges to
   # the patched version on its own.
-  qs: ^6.15.2 # crash on null in comma-format arrays (alert #388)
   "@babel/plugin-transform-modules-systemjs": ^7.29.4 # arbitrary code on malicious input (#378 high)
   postcss: ^8.5.10 # XSS via unescaped </style> (#372)
-  "@xmldom/xmldom": ^0.8.13 # XML injection (#318, #368, #369, #371 high)
+  "@xmldom/xmldom": ^0.8.15 # XML injection, quadratic-time parsing (#318, #368, #369, #371, #485–495 high)
   "picomatch@^2": ^2.3.2 # method injection in POSIX char classes (#296)
   "picomatch@^4": ^4.0.4 # same (#294)
   "minimatch@^3": ^3.1.4 # ReDoS (#267, #274, #278 high)
-  "js-yaml@^4": ^4.1.1 # prototype pollution in merge (#226)
+  "js-yaml@^3": ^3.15.2 # merge keys CPU DoS (#497 high)
+  "js-yaml@^4": ^4.3.2 # prototype pollution in merge (#226); merge keys CPU DoS (#496 high)
   "flatted@^3": ^3.4.2 # prototype pollution via parse() (#291 high)
   "yaml@^1": ^1.10.3 # stack overflow on deeply nested YAML (#292)
   lodash: ^4.18.0 # _.template RCE + _.unset prototype pollution (#321, #322 high)
+  # #11151.
+  shell-quote: ^1.9.0 # quote() newline injection (#391 critical), quadratic parse() (#421 high)
+  tar: ^7.5.21 # file smuggling, crash on PAX headers (#406, #425; GHSA-23hp-3jrh-7fpw critical)
+  "brace-expansion@^1": ^1.1.21 # exponential / recursive expansion DoS (#523)
+  "brace-expansion@^2": ^2.1.7 # same (#420, #516, #519 high, #522)
+  "brace-expansion@^5": ^5.0.12 # same (#417, #515, #518 high, #521)
+  browserslist: ^4.28.7 # prototype write via custom stats (#473 high)
+  compression: ^1.8.2 # memory leak on premature close (#524 high); serve pins 1.8.1
+  # The e2e agent runner pins both exactly; e2e 0.23.0 itself moved to these.
+  "e2e>@modelcontextprotocol/server": ^2.3.0 # cross-client message delivery (#531 high), bearer audience (#529)
+  "e2e>zod": ^4.6.6 # GHSA-mrhx-c7xc-m3w5 (high)
 
 patchedDependencies:
   portless@0.15.5: react/patches/portless@0.15.5.patch
