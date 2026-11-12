@@ -113,10 +113,13 @@ export const isHiddenByDefault = (
   Array.isArray(definition.defaultHidden)
     ? definition.defaultHidden.includes(page)
     : !!definition.defaultHidden;
-const panelOf = (definition: PanelDefinition): PersistedPanelV2 => ({
+const panelOf = (
+  definition: PanelDefinition,
+  page: PanelPage,
+): PersistedPanelV2 => ({
   id: definition.key,
   key: definition.key,
-  ...sizeOf(definition).defaultSize,
+  ...(definition.defaultSizeByPage?.[page] ?? sizeOf(definition).defaultSize),
 });
 
 /**
@@ -132,7 +135,7 @@ export const seedBoard = (
   return {
     panels: pageDefinitions
       .filter((definition) => !isHiddenByDefault(definition, page))
-      .map(panelOf),
+      .map((definition) => panelOf(definition, page)),
     knownKeys: pageDefinitions.map((definition) => definition.key),
   };
 };
@@ -158,7 +161,7 @@ export const syncBoard = (
             !isHiddenByDefault(definition, page) &&
             !onBoard.has(definition.key),
         )
-        .map(panelOf),
+        .map((definition) => panelOf(definition, page)),
     ],
     knownKeys: [
       ...board.knownKeys,
