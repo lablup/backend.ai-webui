@@ -562,9 +562,6 @@ Jupyter Notebookをクリックしてみましょう。
 別途パッケージをインストールする必要はありません。
 Jupyter Notebookの詳しい使い方については、Jupyter Notebookの公式ドキュメントを参照してください。
 
-Notebookのファイルエクスプローラーにある`id_container`ファイルには、SSHの秘密鍵が含まれています。
-必要に応じて、ユーザーはこれをダウンロードし、コンテナへのSSH/SFTP接続に使用できます。
-
 右上の「NEW」ボタンをクリックして「Notebook for Backend.AI」を選択すると、
 ユーザーがコードを入力できるipynbウィンドウが表示されます。
 
