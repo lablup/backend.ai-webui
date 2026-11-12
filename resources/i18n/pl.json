@@ -832,10 +832,10 @@
     }
   },
   "dashboard": {
-    "DeviceMemoryInUse": "Używana pamięć {{device}}",
     "Edit": "Edytuj",
     "Free": "Bezpłatny",
-    "MemoryInUse": "Używana pamięć",
+    "InUsePercent": "Używane {{percent}}%",
+    "MemoryInUsePercent": "Używana pamięć {{percent}}%",
     "Used": "Używany",
     "boards": {
       "BoardName": "Nazwa tablicy",

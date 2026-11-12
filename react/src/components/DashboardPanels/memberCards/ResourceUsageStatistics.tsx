@@ -46,7 +46,9 @@ export const toStatistic = (
  */
 const ResourceUsageStatistics: React.FC<{
   rows: ReadonlyArray<UsageRow>;
-}> = ({ rows }) => {
+  /** A line under a slot's statistic, keyed by its resource type (`mem`, `cuda.device`, …). */
+  notesOf?: (resourceType: string) => React.ReactNode;
+}> = ({ rows, notesOf }) => {
   'use memo';
   const { t } = useTranslation();
   const { mergedResourceSlots } = useBAIResourceSlots();
@@ -57,16 +59,31 @@ const ResourceUsageStatistics: React.FC<{
     toStatistic(row, mergedResourceSlots[row.resourceType]);
   const cpu = rows.find((row) => row.resourceType === 'cpu');
   const mem = rows.find((row) => row.resourceType === 'mem');
+  const accelerators = rows.filter((row) => row !== cpu && row !== mem);
   return (
     <ResourceStatistics
       displayType="used"
       progressMode="normal"
+      notes={
+        notesOf
+          ? {
+              memory: mem ? notesOf('mem') : undefined,
+              ...Object.fromEntries(
+                accelerators.map((row) => [
+                  row.resourceType,
+                  notesOf(row.resourceType),
+                ]),
+              ),
+            }
+          : undefined
+      }
       resourceData={{
         cpu: cpu ? statisticOf(cpu) : null,
         memory: mem ? statisticOf(mem) : null,
-        accelerators: rows
-          .filter((row) => row !== cpu && row !== mem)
-          .map((row) => ({ key: row.resourceType, ...statisticOf(row) })),
+        accelerators: accelerators.map((row) => ({
+          key: row.resourceType,
+          ...statisticOf(row),
+        })),
       }}
     />
   );

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<11b1dca351f9b43ed87c6b19b9d755d2>>
+ * @generated SignedSource<<4bb0045994d9f7513d2e4587a1fea5e4>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,15 +9,15 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
-export type MemoryInUseMetricNamesQuery$variables = Record<PropertyKey, never>;
-export type MemoryInUseMetricNamesQuery$data = {
+export type MemoryInUseNoteMetricNamesQuery$variables = Record<PropertyKey, never>;
+export type MemoryInUseNoteMetricNamesQuery$data = {
   readonly container_utilization_metric_metadata: {
     readonly metric_names: ReadonlyArray<string | null | undefined> | null | undefined;
   } | null | undefined;
 };
-export type MemoryInUseMetricNamesQuery = {
-  response: MemoryInUseMetricNamesQuery$data;
-  variables: MemoryInUseMetricNamesQuery$variables;
+export type MemoryInUseNoteMetricNamesQuery = {
+  response: MemoryInUseNoteMetricNamesQuery$data;
+  variables: MemoryInUseNoteMetricNamesQuery$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -46,7 +46,7 @@ return {
     "argumentDefinitions": [],
     "kind": "Fragment",
     "metadata": null,
-    "name": "MemoryInUseMetricNamesQuery",
+    "name": "MemoryInUseNoteMetricNamesQuery",
     "selections": (v0/*: any*/),
     "type": "Query",
     "abstractKey": null
@@ -55,20 +55,20 @@ return {
   "operation": {
     "argumentDefinitions": [],
     "kind": "Operation",
-    "name": "MemoryInUseMetricNamesQuery",
+    "name": "MemoryInUseNoteMetricNamesQuery",
     "selections": (v0/*: any*/)
   },
   "params": {
-    "cacheID": "b739b4907eb90ad2b1d01b21819d4328",
+    "cacheID": "7fbb1d305a9c24e54f269cace56e93eb",
     "id": null,
     "metadata": {},
-    "name": "MemoryInUseMetricNamesQuery",
+    "name": "MemoryInUseNoteMetricNamesQuery",
     "operationKind": "query",
-    "text": "query MemoryInUseMetricNamesQuery {\n  container_utilization_metric_metadata {\n    metric_names\n  }\n}\n"
+    "text": "query MemoryInUseNoteMetricNamesQuery {\n  container_utilization_metric_metadata {\n    metric_names\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "4317617b052da7d16d9d177e82b265f5";
+(node as any).hash = "f2ccc134ec4bb5fdb695cad7ab39c1cb";
 
 export default node;

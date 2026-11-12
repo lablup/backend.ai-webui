@@ -832,10 +832,10 @@
     }
   },
   "dashboard": {
-    "DeviceMemoryInUse": "Memoria {{device}} in uso",
     "Edit": "Modifica",
     "Free": "Gratuito",
-    "MemoryInUse": "Memoria in uso",
+    "InUsePercent": "In uso {{percent}}%",
+    "MemoryInUsePercent": "Memoria in uso {{percent}}%",
     "Used": "Usato",
     "boards": {
       "BoardName": "Nome della bacheca",

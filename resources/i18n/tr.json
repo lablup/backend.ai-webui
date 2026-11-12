@@ -832,10 +832,10 @@
     }
   },
   "dashboard": {
-    "DeviceMemoryInUse": "Kullanılan {{device}} belleği",
     "Edit": "Düzenle",
     "Free": "Özgür",
-    "MemoryInUse": "Kullanılan bellek",
+    "InUsePercent": "Kullanımda %{{percent}}",
+    "MemoryInUsePercent": "Bellek kullanımda %{{percent}}",
     "Used": "Kullanılmış",
     "boards": {
       "BoardName": "Pano adı",

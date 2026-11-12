@@ -832,10 +832,10 @@
     }
   },
   "dashboard": {
-    "DeviceMemoryInUse": "Memori {{device}} sedang digunakan",
     "Edit": "Edit",
     "Free": "Percuma",
-    "MemoryInUse": "Memori sedang digunakan",
+    "InUsePercent": "Digunakan {{percent}}%",
+    "MemoryInUsePercent": "Memori digunakan {{percent}}%",
     "Used": "digunakan",
     "boards": {
       "BoardName": "Nama papan",

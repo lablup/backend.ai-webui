@@ -832,10 +832,10 @@
     }
   },
   "dashboard": {
-    "DeviceMemoryInUse": "Ашиглагдаж буй {{device}} санах ой",
     "Edit": "Засах",
     "Free": "Үнэгүй",
-    "MemoryInUse": "Ашиглагдаж буй санах ой",
+    "InUsePercent": "Ашиглаж буй {{percent}}%",
+    "MemoryInUsePercent": "Санах ой ашиглаж буй {{percent}}%",
     "Used": "Ашиг ашиглагдсан",
     "boards": {
       "BoardName": "Самбарын нэр",

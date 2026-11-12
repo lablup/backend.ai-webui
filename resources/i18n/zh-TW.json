@@ -832,10 +832,10 @@
     }
   },
   "dashboard": {
-    "DeviceMemoryInUse": "已用 {{device}} 記憶體",
     "Edit": "編輯",
     "Free": "自由的",
-    "MemoryInUse": "已用記憶體",
+    "InUsePercent": "使用中 {{percent}}%",
+    "MemoryInUsePercent": "記憶體使用 {{percent}}%",
     "Used": "用過的",
     "boards": {
       "BoardName": "看板名稱",

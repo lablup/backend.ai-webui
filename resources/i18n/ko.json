@@ -832,10 +832,10 @@
     }
   },
   "dashboard": {
-    "DeviceMemoryInUse": "사용 중인 {{device}} 메모리",
     "Edit": "편집",
     "Free": "사용 가능",
-    "MemoryInUse": "사용 중인 메모리",
+    "InUsePercent": "사용 중 {{percent}}%",
+    "MemoryInUsePercent": "메모리 사용 {{percent}}%",
     "Used": "사용 중",
     "boards": {
       "BoardName": "보드 이름",

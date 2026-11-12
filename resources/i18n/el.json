@@ -832,10 +832,10 @@
     }
   },
   "dashboard": {
-    "DeviceMemoryInUse": "Μνήμη {{device}} σε χρήση",
     "Edit": "Επεξεργασία",
     "Free": "Δωρεάν",
-    "MemoryInUse": "Μνήμη σε χρήση",
+    "InUsePercent": "Σε χρήση {{percent}}%",
+    "MemoryInUsePercent": "Μνήμη σε χρήση {{percent}}%",
     "Used": "Μεταχειρισμένος",
     "boards": {
       "BoardName": "Όνομα πίνακα",

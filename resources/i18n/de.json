@@ -832,10 +832,10 @@
     }
   },
   "dashboard": {
-    "DeviceMemoryInUse": "Belegter {{device}}-Speicher",
     "Edit": "Bearbeiten",
     "Free": "Frei",
-    "MemoryInUse": "Belegter Speicher",
+    "InUsePercent": "Belegt {{percent}} %",
+    "MemoryInUsePercent": "Speicher belegt {{percent}} %",
     "Used": "Gebraucht",
     "boards": {
       "BoardName": "Board-Name",
