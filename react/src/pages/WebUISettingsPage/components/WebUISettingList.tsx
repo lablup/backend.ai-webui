@@ -15,7 +15,6 @@ import {
   readWebUISettingFromState,
   WEBUI_SETTING_DEFINITIONS,
   WEBUI_SETTING_GROUPS,
-  WEBUI_SETTINGS_CONFIG_KEY,
   type WebUISettingDefinition,
   type WebUISettingsDocument,
   ownedWebUISettings,
@@ -23,10 +22,7 @@ import {
   WEBUI_SETTINGS_DEFAULT_TAB,
 } from '../../../helper/webuiSettings';
 import { useCurrentDomainValue } from '../../../hooks';
-import {
-  useUpdateDomainAppConfig,
-  useUpdatePublicDomainAppConfig,
-} from '../../../hooks/useAppConfig';
+import type { AppConfigUpdate } from '../../../hooks/useAppConfig';
 import MenuKeySelector from './MenuKeySelector';
 import PluginPathInput from './PluginPathInput';
 import SettingsJsonModal from './SettingsJsonModal';
@@ -56,6 +52,8 @@ interface WebUISettingListProps {
   savedDomainSettings?: WebUISettingsDocument;
   /** The saved `publicConfigByDomain.<domain>.settings` document, if any. */
   savedPublicSettings?: WebUISettingsDocument;
+  setDomainSettings: (update: AppConfigUpdate) => Promise<void>;
+  setPublicSettings: (update: AppConfigUpdate) => Promise<void>;
 }
 
 // One width for every editable row; the plugin path rows keep their wider
@@ -82,14 +80,14 @@ const parseStringList = (raw: string): Array<string> =>
 const WebUISettingList: React.FC<WebUISettingListProps> = ({
   savedDomainSettings,
   savedPublicSettings,
+  setDomainSettings,
+  setPublicSettings,
 }) => {
   'use memo';
   const { t } = useTranslation();
   const { modal, message } = App.useApp();
   const { getErrorMessage } = useErrorMessageResolver();
   const labels = useWebUISettingLabels();
-  const updateDomainAppConfig = useUpdateDomainAppConfig();
-  const updatePublicDomainAppConfig = useUpdatePublicDomainAppConfig();
 
   const baseState = getDefaultLoginConfig();
   // Only the keys a definition owns: the announcement beside them is saved by
@@ -181,22 +179,18 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
     setIsApplying(true);
     let isDomainSaved = false;
     try {
-      await updateDomainAppConfig(
-        WEBUI_SETTINGS_CONFIG_KEY,
-        (current: unknown) =>
-          withForeignWebUISettings(
-            current,
-            buildWebUISettingsDocument('domain', next),
-          ),
+      await setDomainSettings((current: unknown) =>
+        withForeignWebUISettings(
+          current,
+          buildWebUISettingsDocument('domain', next),
+        ),
       );
       isDomainSaved = true;
-      await updatePublicDomainAppConfig(
-        WEBUI_SETTINGS_CONFIG_KEY,
-        (current: unknown) =>
-          withForeignWebUISettings(
-            current,
-            buildWebUISettingsDocument('public', next),
-          ),
+      await setPublicSettings((current: unknown) =>
+        withForeignWebUISettings(
+          current,
+          buildWebUISettingsDocument('public', next),
+        ),
       );
       isLeavingAfterApplyRef.current = true;
       window.location.reload();

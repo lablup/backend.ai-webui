@@ -41,9 +41,10 @@ const clientState = vi.hoisted(() => ({
 }));
 
 vi.mock('../hooks/useAppConfig', () => ({
-  useMyAppConfig: () => clientState.skipSharedConfirm,
-  useRefetchMyAppConfig: () => () => Promise.resolve(),
-  useUpdateMyUserAppConfig: () => () => Promise.resolve(),
+  useScopedAppConfig: () => ({
+    doc: { skip_project_folder_confirm: clientState.skipSharedConfirm },
+    setKey: () => Promise.resolve(),
+  }),
 }));
 
 vi.mock('../hooks', async (importOriginal) => {

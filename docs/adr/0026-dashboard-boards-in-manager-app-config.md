@@ -15,7 +15,7 @@
 
 - **Panel catalog**: #10580 merged the dashboard's fixed cards and custom panels into one `PANEL_CATALOG` (`react/src/components/DashboardPanels/panelCatalog.tsx`). The pure functions in `boardModel.ts` create a board (`seedBoard`), add and remove cards, apply a layout, and validate a stored value (`sanitizeBoard`).
 - **localStorage boards**: Up to #10580, boards lived in localStorage under `dashboard_board.<page>` through `useBAISettingUserState`, and before that under `dashboard_board_items`, `admin_dashboard_board_items`, and `custom_dashboard_panels`. A user who switches browsers loses the boards, and within one browser every project shares one board.
-- **App config documents**: `react/src/hooks/useAppConfig.ts` reads and writes three manager app config documents (FR-1964). `useMyAppConfig` reads the `userConfig` view, which the server builds by deep-merging the PUBLIC, DOMAIN, and USER fragments. `useUpdateMyUserAppConfig` reads the USER fragment source again and upserts the whole document with one key changed.
+- **App config documents**: `react/src/hooks/useAppConfig.ts` reads and writes three manager app config documents (FR-1964). `useScopedAppConfig({ scopeType: 'USER' }, 'userConfig')` reads the USER fragment source, and its `setKey` upserts the whole document with one key changed ([ADR 0033](0033-scoped-and-merged-app-config-hooks.md)).
 - **Deep merge of arrays**: The server's deep merge mixes arrays across scopes. If a domain admin puts a board list in the DOMAIN scope `userConfig`, it mixes with the user's board list, so a board the user deleted comes back or ids collide.
 - **Whole-document upsert**: One upsert replaces the whole USER fragment document. When two upserts read the source at the same time, the later one erases the earlier one's change.
 - **Layout events**: When a user drags or resizes a card, `BAIBoard` fires `onItemsChange` on every event.
@@ -34,13 +34,13 @@ flowchart LR
   hook["useDashboardBoards<br/>resolveBoards, optimistic atom"]
   queue["dashboardWriter<br/>debounce 800ms, one at a time"]
   board["DashboardPanelBoard<br/>useDashboardBoard, DashboardBoardTabs,<br/>DashboardBoardSection"]
-  user -- "useMyAppConfig merged view" --> hook
-  domain -- "useDomainAppConfig" --> hook
-  public -- "usePublicDomainAppConfig" --> hook
+  user -- "useScopedAppConfig USER" --> hook
+  domain -- "useMyAppConfig merged view" --> hook
+  public -- "useMyAppConfig merged view" --> hook
   hook -- "active board, template, update" --> board
   board -- "update(config => next)" --> hook
   hook -- "update function, optimistic value" --> queue
-  queue -- "useUpdateMyUserAppConfig dashboard.page<br/>update applied on the value read again" --> user
+  queue -- "setKey dashboard.page<br/>update applied on the stored document" --> user
 ```
 
 ### Write states
@@ -81,8 +81,8 @@ stateDiagram-v2
 | `boards` | `DashboardModel[]` | The page's boards. At least one  |
 | `active` | `string`           | The id of the board that is open |
 
-- **Read path**: `useDashboardBoards(page, catalog)` (`useDashboardBoards.tsx`) validates the page value of `useMyAppConfig('dashboard')` with `sanitizeDashboardPageConfig`. When no board is left, it treats the page as having no saved value.
-- **Single writer**: Only `useDashboardBoards` writes `userConfig.dashboard`, through `useUpdateMyUserAppConfig(['dashboard', page], …)`. No code writes a `dashboard` key into the `userConfig` of another scope.
+- **Read path**: `useDashboardBoards(page, catalog)` (`useDashboardBoards.tsx`) validates the page value of the USER `userConfig.dashboard` with `sanitizeDashboardPageConfig`. When no board is left, it treats the page as having no saved value.
+- **Single writer**: Only `useDashboardBoards` writes `userConfig.dashboard`, through `setKey(['dashboard', page], …)` of `useScopedAppConfig({ scopeType: 'USER' }, 'userConfig')`. No code writes a `dashboard` key into the `userConfig` of another scope.
 - **Board tabs and board section**: The `projectAdmin` and `admin` pages only select a board with `DashboardBoardTabs`. Adding a board (it starts empty), renaming it, and deleting it belong to `DashboardBoardSection` at the top of the edit-mode side panel. The section holds a board selector (it changes the active board the same way a tab click does), a name input (it saves on blur or Enter and does not save an empty name), a new board button, and a delete board button. The last board cannot be deleted. Deleting a board also deletes its panels, layout, and custom panels and cannot be undone, so `BAIDeleteConfirmModal` (`requireConfirmInput`) confirms it only after the user types the board name. The `project` page keeps one board and draws neither tabs nor the board section.
 
 ### 3. The default board comes from a template key
@@ -90,12 +90,12 @@ stateDiagram-v2
 - **Precedence**: `resolveTemplate` (`dashboardConfig.ts`) picks the page's template from `domainConfig.dashboardTemplates[page]`, `publicConfigByDomain[<domain>].dashboardTemplates[page]`, and `defaultBoardModel` (the catalog's `seedBoard`), in that order. When a value does not validate as a `DashboardModel`, it moves to the next one.
 - **Template knownKeys**: A template without `knownKeys` counts as having seen every page card in the current catalog. A card the template left out does not appear on the board.
 - **Template use**: A page with no saved board shows the template as it is and writes it when the user first edits. "New board" starts with no panels and counts every card in the current catalog as seen (`createEmptyBoard`), so the default cards are not filled in. "Reset to default layout" returns the open board's panels to the template and keeps the custom panels that are not in the template, the board's name, and its filter values.
-- **Template editing**: A screen for editing templates is out of scope. A superadmin writes the same keys with `useUpdateDomainAppConfig` and `useUpdatePublicDomainAppConfig`.
+- **Template editing**: A screen for editing templates is out of scope. A superadmin writes the same keys with the DOMAIN and PUBLIC `useScopedAppConfig`.
 
 ### 4. Writes are debounced and sent one at a time
 
-- **Optimistic state**: `update` puts the next page config into the jotai atom `optimisticDashboardAtom` at once, so the screen shows it, and puts the update function in the queue. After the write and `useRefetchMyAppConfig` finish, the hook clears the atom only when its value equals the value that write showed. When the write fails, the hook clears the atom so the screen returns to the server value, and shows an error message. When the write succeeds and only the refetch fails, the hook keeps the atom.
-- **Replay on the server value**: A write does not send the page config value. When `useUpdateMyUserAppConfig` reads the USER fragment source again, the writer turns its `dashboard.<page>` value into a page config with `resolveBoards`, applies the queued update functions in order, and upserts the result. Boards and names that another tab or device saved survive unless they overlap this tab's change. An update function must therefore decide its result from the config alone. A value such as a new board's id is decided outside the function.
+- **Optimistic state**: `update` puts the next page config into the jotai atom `optimisticDashboardAtom` at once, so the screen shows it, and puts the update function in the queue. After the write finishes, the upsert response has updated the stored document, and the hook clears the atom only when its value equals the value that write showed. When the write fails, the hook clears the atom so the screen returns to the stored value, and shows an error message.
+- **Replay on the stored document**: A write does not send the page config value. `setKey` hands the writer the `dashboard.<page>` value of the stored USER document; the writer turns it into a page config with `resolveBoards`, applies the queued update functions in order, and upserts the result. The stored document is the one read when the dashboard mounted, kept current by this tab's upsert responses, so a board another tab or device saved after that mount is overwritten (ADR 0033). An update function must therefore decide its result from the config alone. A value such as a new board's id is decided outside the function.
 - **Write queue**: `createWriteQueue` (`writeQueue.ts`) joins the updates that arrive within 800ms (`DASHBOARD_WRITE_DELAY_MS`) into one per page (`combinePageWrites`), and starts the next write only after the previous one finishes. The app has one queue, the module in `useDashboardBoards.tsx`. Dragging and resizing do not send a write per event.
 - **Flush**: The queue sends at once, without the debounce, when the tab is hidden (`visibilitychange` is `hidden`), on `pagehide`, and when the board unmounts.
 
@@ -123,9 +123,9 @@ stateDiagram-v2
 - **Admin-provided defaults**: A superadmin can change the default board of an installation or a domain by writing a template key. A user who already saved boards gets the new template when they press "Reset to default layout".
 - **Write latency**: A board change reaches the server up to 800ms later. Hiding or closing the tab sends it at once, but nothing guarantees the request finishes before the browser unloads the page.
 - **Lost local boards**: A user who arranged boards in localStorage before the upgrade starts again from the template.
-- **Same-panel edits**: A save applies only the panels this tab added, removed, or changed onto the panels the server holds, so a panel added or changed on another device survives. When two devices change the same panel, the later write wins.
+- **Same-panel edits**: A save applies only the panels this tab added, removed, or changed onto the panels of the stored document. A panel another device added or changed after this dashboard mounted is lost, and reloading the dashboard picks it up.
 - **Older clients**: A save puts back the stored cards that this client's catalog does not have and the settings its card definitions do not declare, so a save from an older WebUI on the same manager keeps what a newer one added.
-- **Shared queue scope**: The queue orders only dashboard writes. An upsert from a feature that writes another `userConfig` key, such as `useRecentSessionHistory`, can race with it over the USER fragment document.
+- **Shared queue scope**: The queue orders only dashboard writes. `serializeWrite` in `useAppConfig.ts` orders every `setKey` on the USER `userConfig`, so a write from `useRecentSessionHistory` builds on the dashboard's last upsert instead of racing it.
 - **Vars without consumer**: `vars` is saved, but it does not change a card's data range until the filter bar (#10582) exists.
 - **No pinned projects**: A board has no field that pins a project. `sanitizeDashboardModel` drops a `pinned` value saved earlier.
 
@@ -141,4 +141,4 @@ stateDiagram-v2
 | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | panel catalog | `PANEL_CATALOG`, the list of definitions of the cards a dashboard can hold. A fixed card is a `kind: 'custom'` entry, and a custom panel, one per data source, is a `kind: 'preset'` entry. |
 | role template | The per-page default board that a user with no saved board and "Reset to default layout" start from. It is stored as a `DashboardModel` in a `dashboardTemplates` key.                      |
-| USER fragment | The manager app config source stored in one user's scope. The view `useMyAppConfig` reads merges this source with the PUBLIC and DOMAIN fragments.                                          |
+| USER fragment | The manager app config source stored in one user's scope. `useScopedAppConfig({ scopeType: 'USER' }, 'userConfig')` reads this source as it is.                                          |

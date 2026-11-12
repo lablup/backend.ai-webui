@@ -4,11 +4,12 @@
  */
 import BAIErrorBoundary from '../../components/BAIErrorBoundary';
 import { WEBUI_SETTINGS_CONFIG_KEY } from '../../helper/webuiSettings';
-import { useSuspendedBackendaiClient, useTabQuerySnapshot } from '../../hooks';
 import {
-  useDomainAppConfig,
-  useRawPublicDomainAppConfig,
-} from '../../hooks/useAppConfig';
+  useCurrentDomain,
+  useSuspendedBackendaiClient,
+  useTabQuerySnapshot,
+} from '../../hooks';
+import { useScopedAppConfig } from '../../hooks/useAppConfig';
 import ConfigurationsSettingList from './components/ConfigurationsSettingList';
 import WebUISettingList from './components/WebUISettingList';
 import { BAICard, BAIFlex, BAISkeleton } from 'backend.ai-ui';
@@ -24,14 +25,22 @@ const tabParser = parseAsStringLiteral([
 /** Reads both saved documents: the public (pre-login) slice and the domain one. */
 const SavedWebUISettingList: React.FC = () => {
   'use memo';
-  const savedDomainSettings = useDomainAppConfig(WEBUI_SETTINGS_CONFIG_KEY);
-  const savedPublicSettings = useRawPublicDomainAppConfig(
-    WEBUI_SETTINGS_CONFIG_KEY,
+  const { name: domainName } = useCurrentDomain();
+  const domain = useScopedAppConfig({ scopeType: 'DOMAIN' }, 'domainConfig');
+  const pub = useScopedAppConfig(
+    { scopeType: 'PUBLIC' },
+    'publicConfigByDomain',
   );
   return (
     <WebUISettingList
-      savedDomainSettings={savedDomainSettings}
-      savedPublicSettings={savedPublicSettings}
+      savedDomainSettings={domain.doc?.[WEBUI_SETTINGS_CONFIG_KEY]}
+      savedPublicSettings={pub.doc?.[domainName]?.[WEBUI_SETTINGS_CONFIG_KEY]}
+      setDomainSettings={(update) =>
+        domain.setKey(WEBUI_SETTINGS_CONFIG_KEY, update)
+      }
+      setPublicSettings={(update) =>
+        pub.setKey([domainName, WEBUI_SETTINGS_CONFIG_KEY], update)
+      }
     />
   );
 };

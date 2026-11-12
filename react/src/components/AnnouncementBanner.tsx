@@ -9,7 +9,7 @@ import {
   summarizeAnnouncementTitle,
 } from '../helper/announcement';
 import { useCurrentUserRole } from '../hooks/backendai';
-import { useDomainAppConfig } from '../hooks/useAppConfig';
+import { useMyAppConfig } from '../hooks/useAppConfig';
 import './AnnouncementBanner.css';
 import { Banner } from '@lablup/ui-common/Banner';
 import { Button } from '@lablup/ui-common/Button';
@@ -50,7 +50,9 @@ const AnnouncementBanner: React.FC = () => {
   // own toggle sits at the far end of the header, away from the text it
   // reveals.
   const [isExpanded, { toggle: toggleExpanded }] = useToggle(false);
-  const announcement = readDomainAnnouncement(useDomainAppConfig('settings'));
+  const announcement = readDomainAnnouncement(
+    useMyAppConfig('domainConfig', 'settings'),
+  );
   const [dismissedKey, setDismissedKey] = useSessionStorageState<
     string | undefined
   >('backendaiwebui.dismissed_announcement');

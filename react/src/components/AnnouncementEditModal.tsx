@@ -9,10 +9,7 @@ import {
   DomainAnnouncement,
   withAnnouncement,
 } from '../helper/announcement';
-import {
-  useDomainAppConfig,
-  useUpdateDomainAppConfig,
-} from '../hooks/useAppConfig';
+import { useScopedAppConfig } from '../hooks/useAppConfig';
 import './AnnouncementEditModal.css';
 import BAICodeEditor from './BAICodeEditor';
 import BAIFormItem from './BAIFormItem';
@@ -112,14 +109,14 @@ const AnnouncementEditModalContent: React.FC<AnnouncementEditModalProps> = ({
   const { logger } = useBAILogger();
   const { getErrorMessage } = useErrorMessageResolver();
 
-  const announcement = readDomainAnnouncement(useDomainAppConfig('settings'));
-  const updateDomainAppConfig = useUpdateDomainAppConfig();
-  // One read-modify-write of `settings`, so the System Settings keys beside
-  // the announcement are kept as the manager holds them.
+  const { doc: domainConfig, setKey } = useScopedAppConfig(
+    { scopeType: 'DOMAIN' },
+    'domainConfig',
+  );
+  const announcement = readDomainAnnouncement(domainConfig?.settings);
+  // Keeps the System Settings keys beside the announcement.
   const writeAnnouncement = (next: DomainAnnouncement | undefined) =>
-    updateDomainAppConfig('settings', (current: unknown) =>
-      withAnnouncement(current, next),
-    );
+    setKey('settings', (current: unknown) => withAnnouncement(current, next));
 
   const formRef = useRef<FormInstance<AnnouncementFormValues>>(null);
   const [bodyDraft, setBodyDraft] = useState<string>();

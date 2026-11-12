@@ -3,13 +3,8 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { App } from '../../app-shim';
-import {
-  useDomainAppConfig,
-  useMyAppConfig,
-  usePublicDomainAppConfig,
-  useRefetchMyAppConfig,
-  useUpdateMyUserAppConfig,
-} from '../../hooks/useAppConfig';
+import { useCurrentDomainValue } from '../../hooks';
+import { useMyAppConfig, useScopedAppConfig } from '../../hooks/useAppConfig';
 import {
   activeBoardOf,
   keepUnreadablePanels,
@@ -33,7 +28,7 @@ import { atom, useSetAtom, useAtomValue } from 'jotai';
 import * as _ from 'lodash-es';
 import { useEffect } from 'react';
 
-/** Written page configs the refetched `userConfig` does not reflect yet. */
+/** Page configs whose write has not landed in the stored `userConfig` yet. */
 const optimisticDashboardAtom = atom<DashboardConfig>({});
 
 type DashboardWrite = (
@@ -75,11 +70,15 @@ export const useDashboardBoards = (
   'use memo';
   const { message } = App.useApp();
   const { getErrorMessage } = useErrorMessageResolver();
-  const storedDashboard = useMyAppConfig<Record<string, unknown>>('dashboard');
-  const domainTemplates = useDomainAppConfig('dashboardTemplates');
-  const publicTemplates = usePublicDomainAppConfig('dashboardTemplates');
-  const updateMyUserAppConfig = useUpdateMyUserAppConfig();
-  const refetchMyAppConfig = useRefetchMyAppConfig();
+  const domainName = useCurrentDomainValue();
+  const userConfig = useScopedAppConfig({ scopeType: 'USER' }, 'userConfig');
+  const storedDashboard = userConfig.doc?.dashboard as
+    Record<string, unknown> | undefined;
+  const domainTemplates = useMyAppConfig('domainConfig', 'dashboardTemplates');
+  const publicTemplates = useMyAppConfig('publicConfigByDomain', [
+    domainName,
+    'dashboardTemplates',
+  ]);
   const optimistic = useAtomValue(optimisticDashboardAtom);
   const setOptimistic = useSetAtom(optimisticDashboardAtom);
 
@@ -112,8 +111,8 @@ export const useDashboardBoards = (
           writtenPage,
           { update, resolve: resolveStored, keep },
         ] of batch) {
-          // Replayed on the value the server holds now, so edits made elsewhere survive.
-          await updateMyUserAppConfig(
+          // Replayed on the latest stored document, so this tab's earlier writes survive.
+          await userConfig.setKey(
             ['dashboard', writtenPage],
             (stored: unknown) => {
               const written = update(resolveStored(stored));
@@ -126,11 +125,8 @@ export const useDashboardBoards = (
         message.error(getErrorMessage(error));
         throw error;
       }
-      // The write landed: a failed refetch keeps the optimistic copy rather than a stale one.
-      await refetchMyAppConfig().then(
-        () => setOptimistic(settle(batch)),
-        () => {},
-      );
+      // The upsert response already updated the stored document.
+      setOptimistic(settle(batch));
     };
   });
 
