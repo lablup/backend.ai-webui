@@ -41,11 +41,15 @@ import * as _ from 'lodash-es';
 import React, { Suspense, useRef, useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 
-/** ui-common's breakpoints, with six columns from 1100px instead of 2100px, so laptop-width boards are not four wide. */
+/**
+ * Narrower than ui-common's: six columns from 1100px (not 2100px) so a laptop
+ * board is not four wide, and four from 640px (not 912px) so the ~680px board
+ * beside the edit sider still puts two 2-column cards in a row.
+ */
 const DASHBOARD_COLUMN_BREAKPOINTS: BAIBoardProps['columnBreakpoints'] = [
   { minWidth: 0, columns: 1 },
-  { minWidth: 688, columns: 2 },
-  { minWidth: 912, columns: 4 },
+  { minWidth: 480, columns: 2 },
+  { minWidth: 640, columns: 4 },
   { minWidth: 1100, columns: 6 },
   { minWidth: 2400, columns: 8 },
   { minWidth: 3000, columns: 10 },
