@@ -3838,6 +3838,7 @@
     "AdminOnlyPage": "You don't have permission to access this page.",
     "CleanUpLoginSession": "Clean up login session...",
     "CleanUpNow": "Clean up now...",
+    "ConfigLoadFailedSessionEnded": "The Web UI configuration could not be loaded. You have been signed out. Please sign in again.",
     "DescNotFound": "Sorry, the page you are looking for could not be found.",
     "NetworkSoftTimeout": "The server is taking longer to respond. Please wait a moment",
     "NotFound": "Oops!<br/>Page not Found...",

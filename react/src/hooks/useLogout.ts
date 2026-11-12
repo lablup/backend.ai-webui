@@ -138,9 +138,18 @@ export function useLogout() {
    * Perform the full logout flow including redirect:
    * 1. Clean up session data
    * 2. Redirect (Electron -> electronInitialHref, Web -> navigate + reload)
+   *
+   * `notificationMessage` overrides the default "cleaning up" notification
+   * text (the backend-ai-logout event carries its own message).
    */
-  const logout = async (performClose = false, callbackURL = '/') => {
-    const didCleanup = await performLogoutCleanup(t('webui.CleanUpNow'));
+  const logout = async (
+    performClose = false,
+    callbackURL = '/',
+    notificationMessage?: string,
+  ) => {
+    const didCleanup = await performLogoutCleanup(
+      notificationMessage ?? t('webui.CleanUpNow'),
+    );
 
     if (didCleanup) {
       if (performClose) {
@@ -182,8 +191,10 @@ export function useLogoutEventListeners() {
   // useEffectEvent captures the latest logout/closeAppWindow without
   // making them dependencies of the useEffect below.
   const onLogout = useEffectEvent((e: Event) => {
-    const detail = (e as CustomEvent<{ callbackURL?: string }>).detail;
-    logout(false, detail?.callbackURL);
+    const detail = (
+      e as CustomEvent<{ callbackURL?: string; message?: string }>
+    ).detail;
+    logout(false, detail?.callbackURL, detail?.message);
   });
 
   const onAppClose = useEffectEvent(() => {

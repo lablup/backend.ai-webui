@@ -3853,6 +3853,7 @@
     "AdminOnlyPage": "Bạn không có quyền truy cập trang này.",
     "CleanUpLoginSession": "Dọn dẹp phiên đăng nhập ...",
     "CleanUpNow": "Dọn dẹp ngay bây giờ ...",
+    "ConfigLoadFailedSessionEnded": "Không thể tải cấu hình Web UI. Bạn đã bị đăng xuất. Vui lòng đăng nhập lại.",
     "DescNotFound": "Xin lỗi, không thể tìm thấy trang bạn đang tìm.",
     "NetworkSoftTimeout": "Máy chủ mất nhiều thời gian hơn để phản hồi. \nVui lòng đợi một lát",
     "NotFound": "Rất tiếc! <br/> Không tìm thấy trang ...",

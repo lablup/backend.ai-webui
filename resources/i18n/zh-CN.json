@@ -3853,6 +3853,7 @@
     "AdminOnlyPage": "您没有权限访问此页面。",
     "CleanUpLoginSession": "清理登录会话...",
     "CleanUpNow": "现在清理...",
+    "ConfigLoadFailedSessionEnded": "无法加载 WebUI 配置，您已退出登录。请重新登录。",
     "DescNotFound": "抱歉，找不到您要找的页面。",
     "NetworkSoftTimeout": "服务器响应时间较长。请稍候",
     "NotFound": "糟糕！ <br/> 页面未找到...",

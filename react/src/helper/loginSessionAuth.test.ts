@@ -2,19 +2,36 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import type { LoginConfigState } from './loginConfig';
+import {
+  loginConfigState,
+  refreshConfigAfterLogin,
+} from '../hooks/useWebUIConfig';
+import { applyConfigToClient, type LoginConfigState } from './loginConfig';
 import { checkLoginSession, connectViaGQL } from './loginSessionAuth';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-vi.mock('../hooks/useWebUIConfig', () => ({
-  __esModule: true,
-  fetchAndParseConfig: vi.fn(),
-}));
+vi.mock('../hooks/useWebUIConfig', async () => {
+  const { atom } = await import('jotai');
+  return {
+    __esModule: true,
+    fetchAndParseConfig: vi.fn(),
+    refreshConfigAfterLogin: vi.fn().mockResolvedValue('refreshed'),
+    loginConfigState: atom<LoginConfigState | null>(null),
+  };
+});
 
 vi.mock('./loginConfig', () => ({
   __esModule: true,
   applyConfigToClient: vi.fn(),
 }));
+
+vi.mock('../components/DefaultProviders', async () => {
+  const { createStore } = await import('jotai');
+  return {
+    __esModule: true,
+    jotaiStore: createStore(),
+  };
+});
 
 const cfg = {} as LoginConfigState;
 
@@ -113,6 +130,148 @@ describe('connectViaGQL — manager version read (#10994)', () => {
 
     await expect(connectViaGQL(client, cfg, [])).rejects.toBe(outage);
     expect(logout).not.toHaveBeenCalled();
+  });
+});
+
+describe('connectViaGQL — post-login config re-fetch (#10912)', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+  afterEach(() => {
+    delete (globalThis as Record<string, unknown>).backendaiclient;
+    delete (globalThis as Record<string, unknown>).backendaiutils;
+    delete (globalThis as Record<string, unknown>).backendaioptions;
+  });
+
+  const successClient = () => ({
+    get_manager_version: versionOk(),
+    _config: { endpoint: 'https://api.test' },
+    query: vi
+      .fn()
+      .mockResolvedValueOnce({
+        keypair: { user_id: 'u', resource_policy: 'p', user: 'uid' },
+      })
+      .mockResolvedValueOnce({
+        user: {
+          username: 'u',
+          email: 'u@test',
+          full_name: 'u',
+          is_active: true,
+          role: 'user',
+          domain_name: 'd',
+          groups: [],
+          need_password_change: false,
+          uuid: 'uid',
+        },
+      }),
+    group: { list: vi.fn().mockResolvedValue({ groups: [] }) },
+    logout: vi.fn(),
+  });
+
+  it('re-reads config.toml after a successful connect (lablup/backend.ai#16486)', async () => {
+    (globalThis as Record<string, unknown>).backendaiutils = {
+      _readRecentProjectGroup: vi.fn().mockReturnValue(null),
+    };
+    (globalThis as Record<string, unknown>).backendaioptions = {
+      set: vi.fn(),
+    };
+    const client = successClient();
+
+    await connectViaGQL(client, cfg, []);
+
+    expect(refreshConfigAfterLogin).toHaveBeenCalledTimes(1);
+    // The session endpoint is the webserver Electron re-reads from.
+    expect(vi.mocked(refreshConfigAfterLogin).mock.calls[0][2]).toEqual({
+      webServerEndpoint: 'https://api.test',
+    });
+  });
+
+  it('re-applies the refreshed config to the client', async () => {
+    (globalThis as Record<string, unknown>).backendaiutils = {
+      _readRecentProjectGroup: vi.fn().mockReturnValue(null),
+    };
+    (globalThis as Record<string, unknown>).backendaioptions = {
+      set: vi.fn(),
+    };
+    const client = successClient();
+    // The re-fetch populates the post-login sections into the store.
+    vi.mocked(refreshConfigAfterLogin).mockImplementation(
+      async (store: any) => {
+        store.set(loginConfigState, {
+          proxy_url: 'http://refreshed:5050/',
+        } as LoginConfigState);
+        return 'refreshed';
+      },
+    );
+
+    await connectViaGQL(client, cfg, []);
+
+    expect(applyConfigToClient).toHaveBeenCalledTimes(2);
+    expect(applyConfigToClient).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        domain_name: 'd',
+        proxy_url: 'http://refreshed:5050/',
+      }),
+    );
+  });
+
+  it('dispatches backend-ai-logout when the re-fetch fails on every attempt', async () => {
+    (globalThis as Record<string, unknown>).backendaiutils = {
+      _readRecentProjectGroup: vi.fn().mockReturnValue(null),
+    };
+    (globalThis as Record<string, unknown>).backendaioptions = {
+      set: vi.fn(),
+    };
+    const client = successClient();
+    vi.mocked(refreshConfigAfterLogin).mockResolvedValue('failed');
+
+    const logoutEvent = new Promise<CustomEvent>((resolve) => {
+      document.addEventListener('backend-ai-logout', resolve as EventListener, {
+        once: true,
+      });
+    });
+
+    await expect(connectViaGQL(client, cfg, [])).resolves.toBeNull();
+
+    const event = await logoutEvent;
+    expect(event.type).toBe('backend-ai-logout');
+    // applyConfigToClient ran once with the truncated pre-login config; the
+    // refreshed re-apply is skipped because the session is being ended.
+    expect(applyConfigToClient).toHaveBeenCalledTimes(1);
+  });
+
+  it('keeps the session and the pre-login config when there was nothing to re-read', async () => {
+    (globalThis as Record<string, unknown>).backendaiutils = {
+      _readRecentProjectGroup: vi.fn().mockReturnValue(null),
+    };
+    (globalThis as Record<string, unknown>).backendaioptions = {
+      set: vi.fn(),
+    };
+    const client = successClient();
+    vi.mocked(refreshConfigAfterLogin).mockResolvedValue('unchanged');
+    const onLogout = vi.fn();
+    document.addEventListener('backend-ai-logout', onLogout);
+
+    try {
+      await connectViaGQL(client, cfg, []);
+    } finally {
+      document.removeEventListener('backend-ai-logout', onLogout);
+    }
+
+    expect(onLogout).not.toHaveBeenCalled();
+    expect(applyConfigToClient).toHaveBeenCalledTimes(1);
+  });
+
+  it('skips the re-fetch when the connect fails before it', async () => {
+    const refusal = { isError: true, statusCode: 401, message: 'auth' };
+    const client = {
+      get_manager_version: versionOk(),
+      query: vi.fn().mockRejectedValue(refusal),
+      logout: vi.fn().mockResolvedValue(undefined),
+    };
+
+    await expect(connectViaGQL(client, cfg, [])).rejects.toBe(refusal);
+    expect(refreshConfigAfterLogin).not.toHaveBeenCalled();
   });
 });
 

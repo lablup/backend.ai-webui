@@ -8,8 +8,15 @@
  * Extracted from backend-ai-login.ts _connectViaGQL method.
  * Handles post-authentication GQL connection and client setup.
  */
-import { fetchAndParseConfig } from '../hooks/useWebUIConfig';
+import {
+  fetchAndParseConfig,
+  loginConfigState,
+  mergeWebServerConfig,
+  refreshConfigAfterLogin,
+  webServerConfigUrl,
+} from '../hooks/useWebUIConfig';
 import { applyConfigToClient, type LoginConfigState } from './loginConfig';
+import i18n from 'i18next';
 
 /**
  * Create a Backend.AI client with the given credentials.
@@ -51,12 +58,14 @@ export async function checkLoginSession(apiEndpoint: string): Promise<boolean> {
 /**
  * Perform GQL connection after successful authentication.
  * Sets up globalThis.backendaiclient with user info, groups, and config.
+ * Resolves `null` when the session was ended (the post-login config re-read
+ * failed and `backend-ai-logout` was dispatched): skip the success path.
  */
 export async function connectViaGQL(
   client: any,
   cfg: LoginConfigState,
   endpoints: string[],
-): Promise<string[]> {
+): Promise<string[] | null> {
   const fields = ['user_id', 'resource_policy', 'user'];
   const q = `query { keypair { ${fields.join(' ')} } }`;
   const v = {};
@@ -165,6 +174,32 @@ export async function connectViaGQL(
   const updatedConfig = { ...cfg, domain_name: domainName };
   applyConfigToClient(updatedConfig);
 
+  // The webserver serves the rest of config.toml only after login
+  // (lablup/backend.ai#16486). Awaited so the config atoms are set before the
+  // callers fire `backend-ai-connected`.
+  const { jotaiStore } = await import('../components/DefaultProviders');
+  // On Electron the session endpoint is the webserver whose config was merged.
+  const refresh = await refreshConfigAfterLogin(jotaiStore, console, {
+    webServerEndpoint: client._config?.endpoint,
+  });
+
+  if (refresh === 'refreshed') {
+    // The call above applied the truncated pre-login config.
+    const refreshedConfig = jotaiStore.get(loginConfigState);
+    if (refreshedConfig) {
+      applyConfigToClient({ ...refreshedConfig, domain_name: domainName });
+    }
+  } else if (refresh === 'failed') {
+    // End the session rather than run on defaults; LogoutEventHandler cleans
+    // up and reloads.
+    document.dispatchEvent(
+      new CustomEvent('backend-ai-logout', {
+        detail: { message: i18n.t('webui.ConfigLoadFailedSessionEnded') },
+      }),
+    );
+    return null;
+  }
+
   // Manage endpoint history
   let updatedEndpoints = [...endpoints];
   const endpoint = (globalThis as any).backendaiclient._config
@@ -235,7 +270,7 @@ export async function tokenLogin(
   cfg: LoginConfigState,
   endpoints: string[],
   extraParams?: Record<string, string | boolean>,
-): Promise<string[]> {
+): Promise<string[] | null> {
   const sanitizedExtraParams = extraParams
     ? Object.fromEntries(
         Object.entries(extraParams).filter(
@@ -317,53 +352,12 @@ export function persistPostLoginState(client: any): void {
 export async function loadConfigFromWebServer(
   apiEndpoint: string,
 ): Promise<void> {
-  if (!window.location.href.startsWith(apiEndpoint)) {
-    // Validate the endpoint URL scheme to prevent fetching config from
-    // unexpected protocols (e.g., javascript:, data:, file:).
-    try {
-      const endpointUrl = new URL(apiEndpoint);
-      if (!['http:', 'https:'].includes(endpointUrl.protocol)) {
-        return;
-      }
-    } catch {
-      return;
-    }
-    const webserverConfigURL = new URL('./config.toml', apiEndpoint).href;
-    const { config } = await fetchAndParseConfig(webserverConfigURL);
-    if (!config) return;
-
-    const backendaiutils = (globalThis as Record<string, any>).backendaiutils;
-    if (!backendaiutils) return;
-
-    const fieldsToExclude = [
-      'general.apiEndpoint',
-      'general.apiEndpointText',
-      'general.appDownloadUrl',
-      'wsproxy',
-    ];
-    fieldsToExclude.forEach((key) => {
-      backendaiutils.deleteNestedKeyFromObject(config, key);
-    });
-
-    // Merge with the current raw config stored in the Jotai atom.
-    // For backward compat, we also try the Lit shell element.
-    const { jotaiStore } = await import('../components/DefaultProviders');
-    const { rawConfigState } = await import('../hooks/useWebUIConfig');
-    const currentConfig = jotaiStore.get(rawConfigState) ?? {};
-    const mergedConfig = backendaiutils.mergeNestedObjects(
-      currentConfig,
-      config,
-    );
-
-    // Update the Jotai store with merged config
-    jotaiStore.set(rawConfigState, mergedConfig);
-
-    // Re-process the merged config
-    const { refreshConfigFromToml } = await import('./loginConfig');
-    const { loginConfigState } = await import('../hooks/useWebUIConfig');
-    const loginConfig = refreshConfigFromToml(mergedConfig);
-    jotaiStore.set(loginConfigState, loginConfig);
-  }
+  const url = webServerConfigUrl(apiEndpoint);
+  if (!url) return;
+  const { config } = await fetchAndParseConfig(url);
+  if (!config) return;
+  const { jotaiStore } = await import('../components/DefaultProviders');
+  mergeWebServerConfig(jotaiStore, config);
 }
 
 /**

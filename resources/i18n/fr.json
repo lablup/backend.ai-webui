@@ -3854,6 +3854,7 @@
     "AdminOnlyPage": "Vous n'êtes pas autorisé à accéder à cette page.",
     "CleanUpLoginSession": "Rafraîchi la session de connexion...",
     "CleanUpNow": "En cours de rafraîchissement...",
+    "ConfigLoadFailedSessionEnded": "La configuration de la Web UI n'a pas pu être chargée. Vous avez été déconnecté. Veuillez vous reconnecter.",
     "DescNotFound": "Désolé, la page que vous recherchez est introuvable.",
     "NetworkSoftTimeout": "Le serveur prend plus de temps pour répondre. Veuillez patienter un moment",
     "NotFound": "Oups ! <br/> Page non trouvée...",

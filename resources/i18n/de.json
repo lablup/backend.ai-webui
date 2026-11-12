@@ -3853,6 +3853,7 @@
     "AdminOnlyPage": "Sie haben keine Berechtigung, auf diese Seite zuzugreifen.",
     "CleanUpLoginSession": "Anmeldesitzung bereinigen...",
     "CleanUpNow": "Räum jetzt auf...",
+    "ConfigLoadFailedSessionEnded": "Die Web-UI-Konfiguration konnte nicht geladen werden. Sie wurden abgemeldet. Bitte melden Sie sich erneut an.",
     "DescNotFound": "Die von Ihnen gesuchte Seite konnte leider nicht gefunden werden.",
     "NetworkSoftTimeout": "Der Server braucht länger, um zu antworten. Bitte warten Sie einen Moment",
     "NotFound": "Hoppla! <br/> Seite nicht gefunden...",

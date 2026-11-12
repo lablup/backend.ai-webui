@@ -1610,6 +1610,9 @@ export const routes: RouteObject[] = [
       return (
         <BAIErrorBoundary>
           <DefaultProvidersForReactRoot>
+            {/* No MainLayout on this route: the logout listeners the
+                config-refresh failure path dispatches against live here. */}
+            <LogoutEventHandler />
             <STokenLoginBoundary
               sToken={sToken ?? ''}
               extraParams={extraParams}
@@ -1655,6 +1658,9 @@ export const routes: RouteObject[] = [
       return (
         <BAIErrorBoundary>
           <DefaultProvidersForReactRoot>
+            {/* No MainLayout on this route: the logout listeners the
+                config-refresh failure path dispatches against live here. */}
+            <LogoutEventHandler />
             <STokenLoginBoundary
               sToken={sToken ?? ''}
               extraParams={extraParams}

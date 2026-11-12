@@ -451,6 +451,10 @@ const LoginView: React.FC<{
       const cfg = jotaiStore.get(loginConfigState) ?? configRef.current;
 
       const updatedEndpoints = await connectViaGQL(client, cfg, endpoints);
+
+      // The session was ended; the logout handler reloads the page.
+      if (!updatedEndpoints) return;
+
       setEndpoints(updatedEndpoints);
 
       postConnectSetup(client);

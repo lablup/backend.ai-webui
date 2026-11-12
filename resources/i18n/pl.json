@@ -3854,6 +3854,7 @@
     "AdminOnlyPage": "Nie masz uprawnień, aby uzyskać dostęp do tej strony.",
     "CleanUpLoginSession": "Wyczyść sesję logowania...",
     "CleanUpNow": "Posprzątaj teraz...",
+    "ConfigLoadFailedSessionEnded": "Nie udało się wczytać konfiguracji Web UI. Nastąpiło wylogowanie. Zaloguj się ponownie.",
     "DescNotFound": "Przepraszamy, nie można znaleźć strony, której szukasz.",
     "NetworkSoftTimeout": "Serwer potrzebuje więcej czasu na odpowiedź. Poczekaj chwilę",
     "NotFound": "Ups! <br/> Nie znaleziono strony...",

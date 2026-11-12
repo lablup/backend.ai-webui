@@ -204,6 +204,19 @@ describe('STokenLoginBoundary', () => {
     expect(connectedEventCount).toBe(1);
   });
 
+  test('skips backend-ai-connected when the login ended the session', async () => {
+    mockedTokenLogin.mockResolvedValue(null);
+    const onSuccess = vi.fn();
+    renderBoundary({ onSuccess });
+
+    await waitFor(() => {
+      expect(tokenLogin).toHaveBeenCalledTimes(1);
+    });
+    expect(connectedEventCount).toBe(0);
+    expect(onSuccess).not.toHaveBeenCalled();
+    expect(screen.queryByText('children-rendered')).not.toBeInTheDocument();
+  });
+
   test('reports missing-token when sToken prop is empty', async () => {
     const onError = vi.fn();
     renderBoundary({ sToken: '', onError });

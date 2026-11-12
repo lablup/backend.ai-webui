@@ -3851,6 +3851,7 @@
     "AdminOnlyPage": "Anda tidak mempunyai kebenaran untuk mengakses halaman ini.",
     "CleanUpLoginSession": "Bersihkan sesi log masuk ...",
     "CleanUpNow": "Bersihkan sekarang ...",
+    "ConfigLoadFailedSessionEnded": "Konfigurasi Web UI tidak dapat dimuatkan. Anda telah dilog keluar. Sila log masuk semula.",
     "DescNotFound": "Maaf, halaman yang anda cari tidak dapat dijumpai.",
     "NetworkSoftTimeout": "Pelayan mengambil masa yang lebih lama untuk bertindak balas. \nSila tunggu sebentar",
     "NotFound": "Alamak! <br/> Halaman tidak dijumpai ...",

@@ -401,6 +401,7 @@ const STokenLoginBoundaryInner: React.FC<STokenLoginBoundaryProps> = ({
     // "connecting" to "authenticating".
     setPendingStep('authenticating');
 
+    let connected: string[] | null;
     try {
       if (alreadyLoggedIn) {
         // Session already exists — wire up the GraphQL client / groups /
@@ -408,15 +409,24 @@ const STokenLoginBoundaryInner: React.FC<STokenLoginBoundaryProps> = ({
         // re-authenticating. `backend-ai-connected` is still dispatched
         // below so Relay and plugin subscribers unblock even on this
         // fast-path.
-        await connectViaGQL(client, cfg, endpoints);
+        connected = await connectViaGQL(client, cfg, endpoints);
       } else {
-        await tokenLogin(client, sToken!, cfg, endpoints, effectiveParams);
+        connected = await tokenLogin(
+          client,
+          sToken!,
+          cfg,
+          endpoints,
+          effectiveParams,
+        );
       }
     } catch (cause) {
       logger.error('[STokenLoginBoundary] token_login failed', cause);
       surfaceError(classifyTokenLoginFailure(cause, submittedOtp));
       return;
     }
+
+    // The session was ended; the logout handler reloads the page.
+    if (!connected) return;
 
     if (!eventDispatchedRef.current) {
       eventDispatchedRef.current = true;
