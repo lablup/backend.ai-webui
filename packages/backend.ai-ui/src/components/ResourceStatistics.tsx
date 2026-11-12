@@ -97,6 +97,7 @@ const ResourceStatistics: React.FC<ResourceStatisticsProps> = ({
     );
   }
 
+  const acceleratorPadding = token(notes ? '--spacing-3' : '--spacing-4');
   return (
     // With notes the rows are taller, so they sit closer to keep the same footprint.
     <BAIFlex direction="row" wrap="wrap" gap={notes ? 'sm' : 'lg'}>
@@ -143,7 +144,9 @@ const ResourceStatistics: React.FC<ResourceStatisticsProps> = ({
           style={{
             backgroundColor: token('--color-background-body'),
             borderRadius: token('--radius-element'),
-            padding: token(notes ? '--spacing-3' : '--spacing-4'),
+            padding: acceleratorPadding,
+            // The box reaches out by its padding, so its items start in line with CPU and memory.
+            marginInline: `calc(-1 * ${acceleratorPadding})`,
           }}
         >
           {resourceData.accelerators.map((acc) => (
