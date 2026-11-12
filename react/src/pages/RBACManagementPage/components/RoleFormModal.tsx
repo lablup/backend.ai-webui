@@ -13,6 +13,7 @@ import { rbacTypeI18nKey } from '../../../helper/rbacElementTypes';
 import { useCurrentDomain } from '../../../hooks';
 import {
   BAIAdminContainerRegistrySelect,
+  BAIAdminKeypairResourcePolicySelect,
   BAIAdminModelServiceSelect,
   BAIAdminProjectSelect,
   BAIAdminResourceGroupSelect,
@@ -21,6 +22,7 @@ import {
   BAIKeypairSelect,
   BAIModal,
   BAIModalProps,
+  BAIProjectResourcePolicySelect,
   BAISelect,
   BAIStorageHostSelect,
   BAIAdminUserV2Select,
@@ -54,6 +56,8 @@ export const RBAC_ELEMENT_TYPES: ReadonlyArray<string> = [
   'CONTAINER_REGISTRY',
   'STORAGE_HOST',
   'KEYPAIR',
+  'KEYPAIR_RESOURCE_POLICY',
+  'PROJECT_RESOURCE_POLICY',
   // TODO: Scope ID select to be implemented in separate stacks
   // 'IMAGE',
   // 'ARTIFACT',
@@ -61,8 +65,6 @@ export const RBAC_ELEMENT_TYPES: ReadonlyArray<string> = [
   // 'ARTIFACT_REVISION',
   // 'RESOURCE_PRESET',
   // 'USER_RESOURCE_POLICY',
-  // 'KEYPAIR_RESOURCE_POLICY',
-  // 'PROJECT_RESOURCE_POLICY',
   // 'ROLE',
   // TODO: No management UI in WebUI yet
   // 'DEPLOYMENT',
@@ -194,6 +196,26 @@ export const ScopeIdSelect: React.FC<ScopeIdSelectProps> = ({
     return (
       <Suspense fallback={fallback}>
         <BAIKeypairSelect {...branchProps} />
+      </Suspense>
+    );
+  }
+  if (scopeType === 'KEYPAIR_RESOURCE_POLICY') {
+    return (
+      <Suspense fallback={fallback}>
+        <BAIAdminKeypairResourcePolicySelect {...branchProps} />
+      </Suspense>
+    );
+  }
+  if (scopeType === 'PROJECT_RESOURCE_POLICY') {
+    return (
+      <Suspense fallback={fallback}>
+        <BAIProjectResourcePolicySelect
+          aria-label={branchProps.label}
+          placeholder={branchProps.placeholder}
+          value={branchProps.value}
+          onChange={branchProps.onChange}
+          disabled={branchProps.isDisabled}
+        />
       </Suspense>
     );
   }
