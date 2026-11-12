@@ -6,8 +6,9 @@ import * as fs from "fs";
 import * as path from "path";
 import { fileURLToPath } from "url";
 import {
-  DEFAULT_E2E_ENV_FILE,
   e2eAgentPartGlobs,
+  e2ePartOutputName,
+  e2eRunLine,
   resolveE2EEnvFile,
   resolveE2EParts,
 } from "./e2e/e2e-parts";
@@ -23,20 +24,22 @@ const rootDir = path.dirname(fileURLToPath(import.meta.url));
 const requestedPart = process.env.E2E_PART;
 const requestedEnvFile = process.env.E2E_ENV_FILE;
 const e2eParts = resolveE2EParts(requestedPart);
-const e2eEnvFile = resolveE2EEnvFile(e2eParts, requestedEnvFile, rootDir);
-const defaultEnvFile = path.resolve(rootDir, DEFAULT_E2E_ENV_FILE);
+const e2eEnvFile = resolveE2EEnvFile(e2eParts, requestedEnvFile, {
+  root: rootDir,
+});
 // A chosen env file wins over exported E2E_* values, so a shell set up for
 // the user server cannot leak into the admin part; the default keeps them.
-const chosenEnvFile = e2eEnvFile !== defaultEnvFile;
+const chosenEnvFile = Boolean(requestedEnvFile) || e2eParts.includes("admin");
 dotenv.config({ path: e2eEnvFile, override: chosenEnvFile, quiet: true });
-// .env.e2e-agent (model, app URL) overrides the env file. With a chosen env
-// file it must not carry the server or accounts, which belong to that file.
+// .env.e2e-agent (the model) overrides the env file. With a chosen env file it
+// must not carry the server, the app URL, accounts or the image: those belong
+// to that file (an exported E2E_AGENT_APP_URL still picks the app).
 const agentEnvFile = path.resolve(rootDir, "e2e/envs/.env.e2e-agent");
 const agentEnv = fs.existsSync(agentEnvFile)
   ? dotenv.parse(fs.readFileSync(agentEnvFile))
   : {};
 const serverKeys = Object.keys(agentEnv).filter((key) =>
-  /^E2E_(WEBUI_ENDPOINT|WEBSERVER_ENDPOINT|[A-Z0-9]+_(EMAIL|PASSWORD))$/.test(
+  /^E2E_(WEBUI_ENDPOINT|WEBSERVER_ENDPOINT|AGENT_APP_URL|DEFAULT_IMAGE|[A-Z0-9_]+_(EMAIL|PASSWORD))$/.test(
     key,
   ),
 );
@@ -72,26 +75,28 @@ const appUrl =
   process.env.E2E_WEBUI_ENDPOINT ??
   "https://backend-ai-webui.localhost:1355";
 
-if ((requestedPart || requestedEnvFile) && !process.env.E2E_AGENT_PART_LOGGED) {
-  // Workers inherit the variable, so the line is printed once per run.
-  process.env.E2E_AGENT_PART_LOGGED = "1";
-  const host = (url?: string) => {
-    try {
-      return new URL(url ?? "").host;
-    } catch {
-      return "(unset)";
-    }
-  };
-  console.error(
-    `[e2e] part=${e2eParts.join(",")} env=${path.relative(rootDir, e2eEnvFile)}` +
-      ` app=${host(appUrl)} webserver=${host(process.env.E2E_WEBSERVER_ENDPOINT)}`,
-  );
+// Workers inherit the variable, so the line is printed once per selection.
+const runLine = e2eRunLine(
+  e2eParts,
+  e2eEnvFile,
+  rootDir,
+  appUrl,
+  process.env.E2E_WEBSERVER_ENDPOINT,
+);
+if (
+  (requestedPart || requestedEnvFile) &&
+  process.env.E2E_AGENT_PART_LOGGED !== runLine
+) {
+  process.env.E2E_AGENT_PART_LOGGED = runLine;
+  console.error(runLine);
 }
 
 export default {
   tests: e2eAgentPartGlobs(e2eParts),
   // One results directory per part, so one part's run keeps the other's.
-  ...(!e2eParts.includes("all") && { output: `.e2e/${e2eParts.join("-")}` }),
+  ...(!e2eParts.includes("all") && {
+    output: `.e2e/${e2ePartOutputName(e2eParts)}`,
+  }),
   targets: [
     {
       name: "chromium",

@@ -123,8 +123,10 @@ export const ADMIN_E2E_ENV_FILE = './e2e/envs/.env.playwright.admin';
 export function resolveE2EEnvFile(
   parts: E2EPart[],
   requested: string | undefined,
-  root?: string,
-  exists: (file: string) => boolean = fs.existsSync,
+  {
+    root,
+    exists = fs.existsSync,
+  }: { root?: string; exists?: (file: string) => boolean } = {},
 ): string {
   const at = (file: string) => (root ? path.resolve(root, file) : file);
   if (requested) {
@@ -161,4 +163,33 @@ export function e2eAgentPartGlobs(
     `${agentDir}/*.setup.e2e.ts`,
     ...selection.folders.map((name) => `${agentDir}/${name}/**/*.e2e.ts`),
   ];
+}
+
+/** The `[e2e] part=… env=… webui=… webserver=…` line both configs print. */
+export function e2eRunLine(
+  parts: E2EPart[],
+  envFile: string,
+  root: string,
+  webui: string | undefined,
+  webserver: string | undefined,
+): string {
+  const host = (url?: string) => {
+    try {
+      return new URL(url ?? '').host;
+    } catch {
+      return '(unset)';
+    }
+  };
+  return (
+    `[e2e] part=${parts.join(',')} env=${path.relative(root, envFile)}` +
+    ` webui=${host(webui)} webserver=${host(webserver)}`
+  );
+}
+
+/**
+ * A results folder name for a part list: the same parts in any order give the
+ * same name, and `+` keeps `project+admin` apart from `project-admin`.
+ */
+export function e2ePartOutputName(parts: E2EPart[]): string {
+  return E2E_PARTS.filter((part) => parts.includes(part)).join('+');
 }

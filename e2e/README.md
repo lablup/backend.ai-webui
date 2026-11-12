@@ -132,10 +132,11 @@ and the same folder rule; `auth.setup.e2e.ts` (the sign-in sessions) and
 and `resolveE2EEnvFile` in `e2e-parts.ts`, paths relative to the repository root).
 A chosen env file (`admin` in the part list, or `E2E_ENV_FILE`) wins over `E2E_*`
 values already exported in the shell. `e2e/envs/.env.e2e-agent` is read after the
-env file for the model and the app URL; with a chosen env file it must not set
-endpoints or accounts (the config refuses them), and leave `E2E_AGENT_APP_URL`
-unset so each part opens its own `E2E_WEBUI_ENDPOINT`. A part other than `all`
-writes to `.e2e/<part>/`, and the config prints the same `[e2e] part=…` line.
+env file for the model; with a chosen env file the config refuses endpoints,
+accounts, `E2E_AGENT_APP_URL` and `E2E_DEFAULT_IMAGE` there, so each part opens its
+own `E2E_WEBUI_ENDPOINT` (an exported `E2E_AGENT_APP_URL` still overrides it). A
+part other than `all` writes to `.e2e/<parts>/` (`E2E_PART=project,admin` →
+`.e2e/admin+project/`), and the config prints the same `[e2e] part=…` line.
 
 ```bash
 E2E_PART=user  E2E_TELEMETRY_DISABLED=1 pnpm exec e2e list
