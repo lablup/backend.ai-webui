@@ -26,9 +26,19 @@ const BAIBoardItemTitle: React.FC<BAIBoardItemTitleProps> = ({
   ...titleProps
 }) => {
   'use memo';
+  const { title } = titleProps;
   return (
     <BoardItemTitle
       {...titleProps}
+      title={
+        typeof title === 'string' || title == null ? (
+          title
+        ) : (
+          // A node title (often a `BAIFlex` row, which never shrinks) gets a block
+          // that does, so the row wraps inside a narrow item instead of overflowing.
+          <div style={{ flex: '0 1 auto', minWidth: 0 }}>{title}</div>
+        )
+      }
       tooltipIcon={tooltipIcon}
       endContent={extra}
     />
