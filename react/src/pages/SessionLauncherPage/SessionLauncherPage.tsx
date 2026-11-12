@@ -53,6 +53,7 @@ import { DropdownMenu } from '@lablup/ui-common/DropdownMenu';
 import { Grid as AstryxGrid } from '@lablup/ui-common/Grid';
 import { Heading } from '@lablup/ui-common/Heading';
 import { InputGroup } from '@lablup/ui-common/InputGroup';
+import { Link } from '@lablup/ui-common/Link';
 import { Step, Stepper } from '@lablup/ui-common/Stepper';
 import { Text } from '@lablup/ui-common/Text';
 import { Tooltip } from '@lablup/ui-common/Tooltip';
@@ -591,11 +592,9 @@ const SessionLauncherPageContent: React.FC<{
           <BAIFlex direction="row" justify="between">
             <Heading level={4}>{t('session.launcher.StartNewSession')}</Heading>
             <BAIFlex direction="row" gap={'sm'}>
-              <Button
-                variant="ghost"
-                label={t('session.launcher.RecentHistory')}
-                onClick={() => toggleIsOpenTemplateModal()}
-              />
+              <Link onClick={() => toggleIsOpenTemplateModal()}>
+                {t('session.launcher.RecentHistory')}
+              </Link>
             </BAIFlex>
           </BAIFlex>
           <SessionLauncherAgentPrefillNotice />
