@@ -1,5 +1,7 @@
 # 0029 — User manual images in Git LFS
 
+> [ADR 0031](0031-visual-regression-tests-for-backend-ai-ui-stories.md) extends Decision 1 and the Summary: the backend.ai-ui visual test baselines (`packages/backend.ai-ui/test/visual/__screenshots__/**/*.png`) are LFS-tracked too, and `.lfsconfig` keeps them as pointer files by default next to the manual's images. The other decisions stay in force.
+
 ## Summary
 
 > Unfamiliar terms are collected in the [Glossary](#glossary) at the end.
@@ -86,9 +88,9 @@ flowchart LR
 
 ## Glossary
 
-| Term | Meaning |
-|---|---|
-| Git LFS | Git Large File Storage: an extension that stores a file's bytes on a separate server and commits a small pointer file in its place |
-| pointer file | The text Git LFS commits instead of the file: `version https://git-lfs.github.com/spec/v1`, an `oid sha256:` line and a `size` line |
-| smudge / clean filter | The Git filters that turn a pointer into the real file on checkout, and the real file into a pointer when it is staged |
-| `fetchexclude` | The git-lfs setting naming paths whose objects are not downloaded by default |
+| Term                  | Meaning                                                                                                                             |
+| --------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| Git LFS               | Git Large File Storage: an extension that stores a file's bytes on a separate server and commits a small pointer file in its place  |
+| pointer file          | The text Git LFS commits instead of the file: `version https://git-lfs.github.com/spec/v1`, an `oid sha256:` line and a `size` line |
+| smudge / clean filter | The Git filters that turn a pointer into the real file on checkout, and the real file into a pointer when it is staged              |
+| `fetchexclude`        | The git-lfs setting naming paths whose objects are not downloaded by default                                                        |

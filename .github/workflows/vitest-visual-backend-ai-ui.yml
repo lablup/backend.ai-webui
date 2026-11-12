@@ -1,0 +1,62 @@
+# Compares every backend.ai-ui story with its committed screenshot (ADR 0031).
+name: Vitest visual (backend.ai-ui)
+
+on:
+  pull_request:
+    paths:
+      - packages/backend.ai-ui/src/**
+      - packages/backend.ai-ui/.storybook/**
+      - packages/backend.ai-ui/package.json
+      - packages/backend.ai-ui/vitest.visual.config.ts
+      - packages/backend.ai-ui/test/visual/**
+      - packages/backend.ai-ui/scripts/visual-test.sh
+      - packages/backend.ai-ui/scripts/pull-visual-baselines.sh
+      - .gitattributes
+      - .lfsconfig
+      - .github/scripts/lfs/install-git-lfs.sh
+      - .github/scripts/lfs/lib.sh
+      - resources/fonts/**
+      # A @lablup/ui-common pin bump changes the pictures.
+      - pnpm-workspace.yaml
+      - pnpm-lock.yaml
+      - .github/workflows/vitest-visual-backend-ai-ui.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: vitest-visual-bui-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  backend-ai-ui-visual:
+    runs-on: ubuntu-latest
+    # Baselines come from this image; keep the tag equal to BUI's `playwright` pin.
+    container: mcr.microsoft.com/playwright:v1.58.2-noble
+    defaults:
+      run:
+        working-directory: ./packages/backend.ai-ui
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/setup-node-pnpm
+        with:
+          install-args: --filter "backend.ai-ui..."
+      - name: Container matches the installed Playwright
+        run: |
+          expected="playwright:v$(node -p "require('./package.json').devDependencies.playwright")-noble"
+          grep -q "$expected" ../../.github/workflows/vitest-visual-backend-ai-ui.yml
+      - name: Pull the baselines (Git LFS)
+        shell: bash
+        run: |
+          export GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=safe.directory GIT_CONFIG_VALUE_0="$GITHUB_WORKSPACE"
+          bash scripts/pull-visual-baselines.sh
+      - name: Visual tests
+        run: pnpm run test:visual
+      - name: Upload screenshot diffs
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: visual-diffs
+          path: packages/backend.ai-ui/.vitest-attachments
+          include-hidden-files: true
+          if-no-files-found: ignore

@@ -210,6 +210,7 @@ export const Default: Story = {
 };
 
 export const Authenticated: Story = {
+  tags: ['no-vrt'],
   args: { outcome: 'authenticated' },
   parameters: {
     docs: {
