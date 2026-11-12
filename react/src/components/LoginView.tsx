@@ -49,7 +49,6 @@ import { useLoginOrchestration } from '../hooks/useLoginOrchestration';
 import {
   useInitializeConfig,
   useConfigRefreshPageEffect,
-  didLastConfigRefreshFail,
   loginPluginState,
   loginConfigState,
 } from '../hooks/useWebUIConfig';
@@ -453,11 +452,8 @@ const LoginView: React.FC<{
 
       const updatedEndpoints = await connectViaGQL(client, cfg, endpoints);
 
-      if (didLastConfigRefreshFail()) {
-        // The post-login config re-fetch failed on every attempt;
-        // connectViaGQL dispatched the logout event and the page reloads.
-        return;
-      }
+      // The session was ended; the logout handler reloads the page.
+      if (!updatedEndpoints) return;
 
       setEndpoints(updatedEndpoints);
 

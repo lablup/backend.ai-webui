@@ -142,16 +142,6 @@ interface ConfigFetchResult {
   aborted?: boolean;
 }
 
-/** Rejects once `signal` aborts, so a stalled body read cannot outlive it. */
-function rejectOnAbort(signal: AbortSignal): Promise<never> {
-  return new Promise((_resolve, reject) => {
-    if (signal.aborted) reject(signal.reason);
-    signal.addEventListener('abort', () => reject(signal.reason), {
-      once: true,
-    });
-  });
-}
-
 /**
  * Fetch and parse config.toml from the given path.
  * Returns the parsed config and any parse error for diagnostic logging.
@@ -182,9 +172,8 @@ export async function fetchAndParseConfig(
 
   let text: string;
   try {
-    text = await (signal
-      ? Promise.race([res.text(), rejectOnAbort(signal)])
-      : res.text());
+    // An aborted signal also rejects an in-flight body read (Fetch spec).
+    text = await res.text();
   } catch {
     return signal?.aborted ? { config: null, aborted: true } : { config: null };
   }
@@ -365,19 +354,9 @@ const delay = (ms: number) =>
   new Promise<void>((resolve) => setTimeout(resolve, ms));
 
 /**
- * Set when the latest refreshConfigAfterLogin failed on every attempt.
- * Login flows read this right after `connectViaGQL` to skip their success
- * path — the logout event has already been dispatched and the page reloads.
- */
-let lastConfigRefreshFailed = false;
-
-export function didLastConfigRefreshFail(): boolean {
-  return lastConfigRefreshFailed;
-}
-
-/**
  * - `refreshed`: the post-login document is in the store.
- * - `unchanged`: there was nothing to re-read; the pre-login state stands.
+ * - `unchanged`: nothing to re-read, or nothing before login to lose; the
+ *   pre-login state stands.
  * - `failed`: every attempt failed; the caller ends the session.
  */
 export type ConfigRefreshResult = 'refreshed' | 'unchanged' | 'failed';
@@ -391,25 +370,29 @@ export async function refreshConfigAfterLogin(
   store: JotaiStore,
   logger: Pick<Console, 'error' | 'warn'> = console,
 ): Promise<ConfigRefreshResult> {
-  lastConfigRefreshFailed = false;
-
   // Electron reads its bundled config.toml, which no webserver trims; a
   // re-read would also drop what loadConfigFromWebServer merged in.
   if ((globalThis as Record<string, unknown>).isElectron) {
     return 'unchanged';
   }
 
-  // Let an in-flight bootstrap land first, or it overwrites the refreshed values.
-  await configInitPromise?.catch(() => undefined);
-
-  // No config.toml before login either (served without the webserver, file
-  // absent or unparsable): the defaults stand, as they did before login.
-  if (store.get(rawConfigState) === null) {
-    return 'unchanged';
+  // Let an in-flight bootstrap land first, or it overwrites the refreshed
+  // values; bounded, since the bootstrap fetch has no timeout of its own.
+  if (configInitPromise) {
+    await Promise.race([
+      configInitPromise.catch(() => undefined),
+      delay(CONFIG_REFRESH_ATTEMPT_TIMEOUT_MS),
+    ]);
   }
 
+  // Without a pre-login config (no config.toml, an empty or unparsable one, or
+  // a bootstrap that failed) one read is tried and failure keeps the defaults.
+  const preLogin = store.get(rawConfigState);
+  const hadPreLoginConfig = !!preLogin && Object.keys(preLogin).length > 0;
+  const maxAttempts = hadPreLoginConfig ? CONFIG_REFRESH_MAX_ATTEMPTS : 1;
+
   const configPath = '../../config.toml';
-  for (let attempt = 0; attempt < CONFIG_REFRESH_MAX_ATTEMPTS; attempt++) {
+  for (let attempt = 0; attempt < maxAttempts; attempt++) {
     if (attempt > 0) {
       await delay(CONFIG_REFRESH_RETRY_DELAYS_MS[attempt - 1]);
     }
@@ -425,10 +408,10 @@ export async function refreshConfigAfterLogin(
       clearTimeout(timeout);
     }
 
-    const label = `[config.toml] Post-login re-fetch attempt ${attempt + 1}/${CONFIG_REFRESH_MAX_ATTEMPTS}`;
+    const label = `[config.toml] Post-login re-fetch attempt ${attempt + 1}/${maxAttempts}`;
 
-    // An empty body parses to {}; the authenticated webserver never renders
-    // one, so it is a failed read, not a config that resets every field.
+    // An empty document ({}) after a non-empty pre-login one is a failed read,
+    // not a config that resets every field.
     if (result.config && Object.keys(result.config).length > 0) {
       store.set(rawConfigState, result.config);
       store.set(configParseErrorState, null);
@@ -460,8 +443,7 @@ export async function refreshConfigAfterLogin(
     }
   }
 
-  lastConfigRefreshFailed = true;
-  return 'failed';
+  return hadPreLoginConfig ? 'failed' : 'unchanged';
 }
 
 // ---------------------------------------------------------------------------

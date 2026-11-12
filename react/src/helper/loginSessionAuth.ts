@@ -56,12 +56,14 @@ export async function checkLoginSession(apiEndpoint: string): Promise<boolean> {
 /**
  * Perform GQL connection after successful authentication.
  * Sets up globalThis.backendaiclient with user info, groups, and config.
+ * Resolves `null` when the session was ended (the post-login config re-read
+ * failed and `backend-ai-logout` was dispatched): skip the success path.
  */
 export async function connectViaGQL(
   client: any,
   cfg: LoginConfigState,
   endpoints: string[],
-): Promise<string[]> {
+): Promise<string[] | null> {
   const fields = ['user_id', 'resource_policy', 'user'];
   const q = `query { keypair { ${fields.join(' ')} } }`;
   const v = {};
@@ -190,7 +192,7 @@ export async function connectViaGQL(
         detail: { message: i18n.t('webui.ConfigLoadFailedSessionEnded') },
       }),
     );
-    return [...endpoints];
+    return null;
   }
 
   // Manage endpoint history
@@ -263,7 +265,7 @@ export async function tokenLogin(
   cfg: LoginConfigState,
   endpoints: string[],
   extraParams?: Record<string, string | boolean>,
-): Promise<string[]> {
+): Promise<string[] | null> {
   const sanitizedExtraParams = extraParams
     ? Object.fromEntries(
         Object.entries(extraParams).filter(

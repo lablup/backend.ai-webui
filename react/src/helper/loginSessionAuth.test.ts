@@ -16,7 +16,6 @@ vi.mock('../hooks/useWebUIConfig', async () => {
     __esModule: true,
     fetchAndParseConfig: vi.fn(),
     refreshConfigAfterLogin: vi.fn().mockResolvedValue('refreshed'),
-    didLastConfigRefreshFail: vi.fn().mockReturnValue(false),
     loginConfigState: atom<LoginConfigState | null>(null),
   };
 });
@@ -228,7 +227,7 @@ describe('connectViaGQL — post-login config re-fetch (#10912)', () => {
       });
     });
 
-    await connectViaGQL(client, cfg, []);
+    await expect(connectViaGQL(client, cfg, [])).resolves.toBeNull();
 
     const event = await logoutEvent;
     expect(event.type).toBe('backend-ai-logout');
