@@ -1,5 +1,5 @@
 diff --git a/dist/chunk-KPJDIJBP.js b/dist/chunk-KPJDIJBP.js
-index 6e4dd72afa7b4bdab088284aa16d40e319cb7b10..69b08f02d6107173a825d6f755204ce17e421f58 100644
+index 6e4dd72afa7b4bdab088284aa16d40e319cb7b10..77856fbf78aef3f5d250c9b92a1db6c1af3cfa53 100644
 --- a/dist/chunk-KPJDIJBP.js
 +++ b/dist/chunk-KPJDIJBP.js
 @@ -628,6 +628,20 @@ function sendProxyError(req, res, status, error, message, host, renderHtml) {
@@ -23,18 +23,18 @@ index 6e4dd72afa7b4bdab088284aa16d40e319cb7b10..69b08f02d6107173a825d6f755204ce1
  function createProxyServer(options) {
    const {
      getRoutes,
-@@ -739,6 +753,11 @@ function createProxyServer(options) {
-     }
-     const route = findRoute(routes, rawHost, strict);
-     if (!route) {
+@@ -762,6 +776,11 @@ function createProxyServer(options) {
+         );
+         return;
+       }
 +      if (isServersRequest(req.url)) {
 +        res.writeHead(200, { "Content-Type": "application/json" });
 +        res.end(serversJson(routes, proxyPort, reqTls));
 +        return;
 +      }
-       const lowerHost = host.toLowerCase();
-       const nameHost = lowerHost.endsWith(".") ? lowerHost.slice(0, -1) : lowerHost;
-       const isPortlessName = tldSuffixes.some(
+       const safeHost = escapeHtml(host);
+       const matchedSuffix = tldSuffixes.filter((suffix) => host.endsWith(suffix)).sort((a, b) => b.length - a.length)[0];
+       const strippedHost = matchedSuffix && matchedSuffix.length < host.length ? host.slice(0, -matchedSuffix.length) : host;
 @@ -1016,6 +1035,11 @@ function createProxyServer(options) {
      }
      const route = findRoute(getRoutes(), getRequestHost(compatReq), strict);

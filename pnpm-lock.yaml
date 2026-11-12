@@ -366,7 +366,7 @@ overrides:
   lodash: ^4.18.0
 
 patchedDependencies:
-  portless@0.16.0: c6bb1dd42524e36ebad2fb8d181561ca507c829d13383ae1e5a6d92038795962
+  portless@0.16.0: e20c2d6e9c6bee79e4941e6b3ee6ab994f015512ad8322947421e61684e65bcf
   relay-runtime@20.1.1: cc791a2ea160bc7c87571401d2f1430d50527847c44039d45579a5bfa60effa6
 
 importers:
@@ -528,8 +528,8 @@ importers:
         specifier: ^3.1.14
         version: 3.1.14
       portless:
-        specifier: ^0.16.0
-        version: 0.16.0(patch_hash=c6bb1dd42524e36ebad2fb8d181561ca507c829d13383ae1e5a6d92038795962)
+        specifier: 0.16.0
+        version: 0.16.0(patch_hash=e20c2d6e9c6bee79e4941e6b3ee6ab994f015512ad8322947421e61684e65bcf)
       prettier:
         specifier: 'catalog:'
         version: 3.9.6
@@ -20372,7 +20372,7 @@ snapshots:
 
   pngjs@7.0.0: {}
 
-  portless@0.16.0(patch_hash=c6bb1dd42524e36ebad2fb8d181561ca507c829d13383ae1e5a6d92038795962): {}
+  portless@0.16.0(patch_hash=e20c2d6e9c6bee79e4941e6b3ee6ab994f015512ad8322947421e61684e65bcf): {}
 
   possible-typed-array-names@1.1.0: {}
 
