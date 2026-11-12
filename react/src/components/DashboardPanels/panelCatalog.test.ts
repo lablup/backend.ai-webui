@@ -84,10 +84,10 @@ describe('PANEL_CATALOG', () => {
         'quotaPerStorageVolume',
         'myRecentSessions',
         'myDeployments',
-        'totalResourceWithinResourceGroup',
-        'memberAgentStats',
         'sessionsCreated',
         'myActivity',
+        'totalResourceWithinResourceGroup',
+        'memberAgentStats',
       ],
     ],
     [
