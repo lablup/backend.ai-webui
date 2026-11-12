@@ -287,7 +287,7 @@ const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
     titleKey: 'data.QuotaPerStorageVolume',
     kind: 'custom',
     Component: QuotaPerStorageVolumePanel,
-    defaultSize: size(2, 2),
+    defaultSize: size(2, 3),
     minSize: size(2, 2),
   },
   {
@@ -299,7 +299,8 @@ const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
     kind: 'custom',
     Component: DeploymentStatusPanel,
     detailLink: listLink('deployments', { project: 'webui.menu.Deployments' }),
-    defaultSize: size(2, 3),
+    // Same as My Recent Sessions.
+    defaultSize: size(4, 3),
     minSize: size(2, 2),
     columnSettings: true,
   },
@@ -310,7 +311,7 @@ const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
     titleKey: 'dashboard.card.MyActivity',
     kind: 'custom',
     Component: AuditLogPanel,
-    defaultSize: size(3, 3),
+    defaultSize: size(4, 3),
     minSize: size(2, 2),
     settings: ['range'],
   },
@@ -464,9 +465,9 @@ const CHART_PANELS: ReadonlyArray<PanelDefinition> = [
     ),
     detailLink: listLink('session', SESSIONS),
     defaultSize: size(4, 3),
-    // Half width beside My Activity, Sessions by Status and the folder donut.
+    // Beside My Deployments on the member board; half width beside Sessions by Status and the folder donut.
     defaultSizeByPage: {
-      project: size(3, 3),
+      project: size(2, 3),
       projectAdmin: size(3, 3),
       admin: size(3, 3),
     },
@@ -693,8 +694,8 @@ const PAGE_ORDER: Record<PanelPage, ReadonlyArray<string>> = {
     'start.folder',
     'start.deployment',
     'start.url',
-    'quotaPerStorageVolume',
     'myRecentSessions',
+    'quotaPerStorageVolume',
     'myDeployments',
     'sessionsCreated',
     'myActivity',
