@@ -86,9 +86,9 @@ describe('PANEL_CATALOG', () => {
         'quotaPerStorageVolume',
         'myDeployments',
         'sessionsCreated',
-        'myActivity',
         'totalResourceWithinResourceGroup',
         'memberAgentStats',
+        'myActivity',
       ],
     ],
     [
@@ -132,7 +132,7 @@ describe('PANEL_CATALOG', () => {
       seedBoard(PANEL_CATALOG, page).panels.find(
         (panel) => panel.id === 'totalResourceWithinResourceGroup',
       );
-    expect(sizeOn('project')).toMatchObject({ columnSpan: 2, rowSpan: 2 });
+    expect(sizeOn('project')).toMatchObject({ columnSpan: 3, rowSpan: 2 });
     expect(sizeOn('admin')).toMatchObject({ columnSpan: 2, rowSpan: 4 });
   });
 

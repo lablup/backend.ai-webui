@@ -256,8 +256,8 @@ const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
     kind: 'custom',
     Component: ResourceGroupTotalPanel,
     defaultSize: size(2, 2),
-    // Beside the 4-row Agents card on the superadmin board.
-    defaultSizeByPage: { admin: size(2, 4) },
+    // Half of a row with Agent Stats on the member board; beside the 4-row Agents card on the superadmin board.
+    defaultSizeByPage: { project: size(3, 2), admin: size(2, 4) },
     minSize: size(2, 2),
     settings: ['resourceGroup'],
   },
@@ -276,7 +276,7 @@ const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
     detailLink: listLink('agent-summary', {
       project: 'webui.menu.AgentSummary',
     }),
-    defaultSize: size(2, 2),
+    defaultSize: size(3, 2),
     minSize: size(2, 2),
   },
   // TODO(needs-backend): BA-8719 - re-add `folderStatus` (FoldersPanel) once
@@ -312,7 +312,8 @@ const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
     titleKey: 'dashboard.card.MyActivity',
     kind: 'custom',
     Component: AuditLogPanel,
-    defaultSize: size(4, 3),
+    // A time axis: full width, last on the board.
+    defaultSize: size(6, 3),
     minSize: size(2, 2),
     settings: ['range'],
   },
@@ -699,9 +700,9 @@ const PAGE_ORDER: Record<PanelPage, ReadonlyArray<string>> = {
     'quotaPerStorageVolume',
     'myDeployments',
     'sessionsCreated',
-    'myActivity',
     'totalResourceWithinResourceGroup',
     'memberAgentStats',
+    'myActivity',
   ],
   projectAdmin: [
     'projectSessionStatus',
