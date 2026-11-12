@@ -121,8 +121,9 @@ required — the dialog will not submit until both are chosen.
 
 - **Data source**: The data source the panel lists. Choose **Sessions**,
   **Deployments**, or **Data & Storage**.
-- **Panel type**: How the panel displays the data source. Choose **Table** or
-  **Count**. For the **Sessions** data source, **Grid** is also offered.
+- **Panel type**: How the panel displays the data source. Choose **Table**,
+  **Count**, or **Chart**. For the **Sessions** data source, **Grid** is also
+  offered.
 - **Title**: An optional panel title. When omitted, the data source name is
   used.
 - **Condition**: A property filter that narrows the rows shown in the panel.
@@ -136,6 +137,12 @@ place the panel on the board.
 **Deployments** panels list the project's model deployments, using the same
 table as the Deployments page: name, status, replica summary, model, and
 created at. Clicking a deployment's name opens its detail page.
+
+**Chart** draws the matching items as a chart. **Compare groups** chart types
+(Donut, Pie, Bar, Radar) count the items grouped by the property chosen under
+**Group by**; **Created over time** chart types (Line, Area, Column) count the
+items created in each interval of the selected time range. Turn on **Show
+table** to list the matching rows under the chart on the panel.
 
 **Grid** shows the session resource grid: each matching session's allocated
 resources as unit cells, colored by utilization. Clicking a session opens its
