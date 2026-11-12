@@ -124,6 +124,20 @@ When `E2E_PART` or `E2E_ENV_FILE` is set, the config prints one
 teardown runs after whichever part ran, against that part's server; keep
 `--no-deps` for targeted runs on a shared server.
 
+The agent suite (`e2e-agent/`, run with the `e2e` CLI through `e2e.config.ts`)
+has the same part folders, `e2e-agent/{admin,project,project-admin,common}/<page>/`,
+and the same folder rule; `auth.setup.e2e.ts` (the sign-in sessions) and
+`utils/` stay at its root, and the setup belongs to every part. `E2E_PART` and
+`E2E_ENV_FILE` select its folders and env file the same way (`e2eAgentPartGlobs`
+and `resolveE2EEnvFile` in `e2e-parts.ts`); `e2e/envs/.env.e2e-agent` is read
+after the env file and overrides it, so keep accounts and endpoints out of it
+when running parts against different servers.
+
+```bash
+E2E_PART=user  pnpm exec e2e list
+E2E_PART=admin pnpm exec e2e run --exclude-tag draft
+```
+
 ### Smoke run against an installed cluster
 
 `e2e/playwright.smoke.config.ts` runs the `@smoke` subset against an already

@@ -64,7 +64,9 @@ everything outside `e2e/admin/`, comma lists allowed) narrows the `chromium` pro
 `E2E_ENV_FILE` picks the env file (default `e2e/envs/.env.playwright`; a part list with `admin`
 requires `e2e/envs/.env.playwright.admin` and fails without it). Parts other than `all` write to
 `test-results/<part>/` and `playwright-report/<part>/`. One run talks to one server, so run the
-admin part and the rest separately. Details and the folder rule: `e2e/README.md`.
+admin part and the rest separately. The agent suite (`e2e-agent/`, `e2e.config.ts`) uses the
+same part folders and takes the same `E2E_PART` / `E2E_ENV_FILE`. Details and the folder rule:
+`e2e/README.md`.
 
 Running (a full Backend.AI cluster must already be up):
 

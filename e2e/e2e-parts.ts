@@ -1,3 +1,5 @@
+import * as fs from 'fs';
+
 /**
  * The e2e suite is laid out by the console a test acts on, and E2E_PART picks
  * which of those folders a run covers (plan: lablup/backend.ai-webui#11056):
@@ -13,6 +15,10 @@
  * one server (`e2e/utils/test-util.ts` reads the endpoint and accounts once),
  * so the admin part and the rest run as separate invocations, each with its
  * own env file.
+ *
+ * The agent suite (`e2e-agent/`, `e2e.config.ts`) has the same part folders
+ * and takes the same E2E_PART / E2E_ENV_FILE, through `e2eAgentPartGlobs`
+ * and `resolveE2EEnvFile` below.
  */
 
 export const E2E_PARTS = [
@@ -83,4 +89,56 @@ export function e2ePartFilter(
       flags,
     ),
   };
+}
+
+export const DEFAULT_E2E_ENV_FILE = './e2e/envs/.env.playwright';
+export const ADMIN_E2E_ENV_FILE = './e2e/envs/.env.playwright.admin';
+
+/**
+ * The env file a run reads: E2E_ENV_FILE when set (it must exist), else the
+ * admin env file for a part list with `admin` (it must exist, so admin tests
+ * never fall back to the user server), else `.env.playwright`.
+ */
+export function resolveE2EEnvFile(
+  parts: E2EPart[],
+  requested: string | undefined,
+  exists: (file: string) => boolean = fs.existsSync,
+): string {
+  if (requested) {
+    if (!exists(requested)) {
+      throw new Error(`E2E_ENV_FILE not found: ${requested}`);
+    }
+    return requested;
+  }
+  if (!parts.includes('admin')) return DEFAULT_E2E_ENV_FILE;
+  if (!exists(ADMIN_E2E_ENV_FILE)) {
+    throw new Error(
+      `E2E_PART=${parts.join(',')} needs ${ADMIN_E2E_ENV_FILE} (copy ` +
+        `e2e/envs/.env.playwright.admin.sample) or an explicit E2E_ENV_FILE`,
+    );
+  }
+  return ADMIN_E2E_ENV_FILE;
+}
+
+/**
+ * `tests` globs of `e2e.config.ts` for the agent suite under `agentDir`
+ * (relative to the project root), by the same folder rule as
+ * `e2ePartFilter`. Root-level `*.setup.e2e.ts` files (sign-in sessions) are
+ * in every part, since the tests of every part restore their sessions.
+ */
+export function e2eAgentPartGlobs(
+  parts: E2EPart[],
+  agentDir = 'e2e-agent',
+): string[] {
+  const every = `${agentDir}/**/*.e2e.ts`;
+  if (parts.includes('all')) return [every];
+  if (parts.includes('user')) {
+    return parts.includes('admin') ? [every] : [every, `!${agentDir}/admin/**`];
+  }
+  return [
+    `${agentDir}/*.setup.e2e.ts`,
+    ...PART_FOLDERS.filter((name) => parts.includes(name)).map(
+      (name) => `${agentDir}/${name}/**/*.e2e.ts`,
+    ),
+  ];
 }

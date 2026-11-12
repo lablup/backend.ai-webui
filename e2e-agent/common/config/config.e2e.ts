@@ -3,8 +3,8 @@ import { expect } from "e2e";
 import {
   findNotInstalledEnvironment,
   isImageInstalled,
-} from "../utils/session-image";
-import { overrideWebUISettings } from "../utils/webui-settings";
+} from "../../utils/session-image";
+import { overrideWebUISettings } from "../../utils/webui-settings";
 
 // The first-use tours on the user menu cover the header and the side menu.
 const seedToursSeen = (browser: Browser) =>

@@ -3,12 +3,22 @@ import { web } from "@e2e-dev/web";
 import * as dotenv from "dotenv";
 import type { E2EConfig } from "e2e";
 import {
+  e2eAgentPartGlobs,
+  resolveE2EEnvFile,
+  resolveE2EParts,
+} from "./e2e/e2e-parts";
+import {
   lnaBypassEndpoint,
   needsLnaBypass,
 } from "./e2e-agent/utils/lna-browser";
 
-// .env.e2e-agent overrides .env.playwright (accounts, backend).
-dotenv.config({ path: "./e2e/envs/.env.playwright", quiet: true });
+// E2E_PART picks the part folders of e2e-agent/ and E2E_ENV_FILE the env file,
+// by the same rule as playwright.config.ts (e2e/e2e-parts.ts): a part list
+// with `admin` reads .env.playwright.admin. One run talks to one server.
+const e2eParts = resolveE2EParts(process.env.E2E_PART);
+const e2eEnvFile = resolveE2EEnvFile(e2eParts, process.env.E2E_ENV_FILE);
+// .env.e2e-agent overrides the env file (accounts, backend).
+dotenv.config({ path: e2eEnvFile, quiet: true });
 dotenv.config({
   path: "./e2e/envs/.env.e2e-agent",
   override: true,
@@ -32,7 +42,7 @@ const appUrl =
   "https://backend-ai-webui.localhost:1355";
 
 export default {
-  tests: "e2e-agent/**/*.e2e.ts",
+  tests: e2eAgentPartGlobs(e2eParts),
   targets: [
     {
       name: "chromium",
