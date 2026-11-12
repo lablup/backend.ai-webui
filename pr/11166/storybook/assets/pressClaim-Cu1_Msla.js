@@ -1,0 +1,1 @@
+import{n as e}from"./rolldown-runtime-sJBDdmOt.js";function t(){for(let e of[...r])e()}function n(e){return r.add(e),()=>{r.delete(e)}}var r;function i(){return(i=e((()=>{r=new Set})))()}export{i as n,n as r,t};
