@@ -27,6 +27,7 @@ import {
   type DropdownMenuOption,
 } from '@lablup/ui-common/DropdownMenu';
 import {
+  BAIModal,
   BAIUnmountAfterClose,
   filterOutEmpty,
   useFetchKey,
@@ -55,9 +56,11 @@ import { graphql, useLazyLoadQuery } from 'react-relay';
 // The download page's code view pulls shiki; load it when the modal opens.
 const DownloadModal = React.lazy(() => import('./DownloadModal'));
 
-const UserProfileSettingModal = React.lazy(
-  () => import('./UserProfileSettingModal'),
-);
+// The module import is shared so the menu can warm the chunk on open and the
+// first click rarely has to wait for it (#11144).
+const loadUserProfileSettingModal = () => import('./UserProfileSettingModal');
+
+const UserProfileSettingModal = React.lazy(loadUserProfileSettingModal);
 
 // PILOT-DECISION: antd `Dropdown menu={{items}} trigger={['click']}` →
 // Astryx `DropdownMenu items` (MAPPING §3.7 — the `menu={{items}}` branch;
@@ -294,6 +297,11 @@ const UserDropdownMenu: React.FC<{
         // `number | string` and lands on the popover's `width`, which is the
         // element legacy's `styles.root` also sized.
         menuWidth="fit-content(300px)"
+        onOpenChange={(isOpen) => {
+          if (isOpen) {
+            void loadUserProfileSettingModal();
+          }
+        }}
         button={{
           // The band is a REVERSED surface: its content polarity is the
           // opposite of the app's (FR-3502). Scoped to the trigger, never the
@@ -314,7 +322,23 @@ const UserDropdownMenu: React.FC<{
       <div style={{ display: 'contents', color: 'var(--color-text-primary)' }}>
         <ErrorBoundaryWithNullFallback>
           <AdminViewSwitchTour />
-          <Suspense>
+          {/* The frame paints on click; only the form body waits for the chunk
+              (#11144). */}
+          <Suspense
+            fallback={
+              <BAIModal
+                open={isOpenUserSettingModal}
+                title={t('webui.menu.MyAccountInformation')}
+                onCancel={() => {
+                  setIsOpenUserSettingModal(false);
+                }}
+                okText={t('webui.menu.Update')}
+                cancelText={t('webui.menu.Cancel')}
+                okButtonProps={{ disabled: true }}
+                loading
+              />
+            }
+          >
             {isOpenUserSettingModal && (
               <BAIUnmountAfterClose>
                 <UserProfileSettingModal
