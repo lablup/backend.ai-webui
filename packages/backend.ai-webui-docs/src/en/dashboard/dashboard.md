@@ -23,13 +23,19 @@ starts it:
 
 - **Start Deployment**:
     Click **Create Deployment** to serve a trained model so that others can use
-    it. This card appears only when your administrator has enabled model
-    serving.
+    it.
 
 - **Start From URL**:
-    Click **Start Now** to start a session from a Jupyter notebook, a GitHub or
-    GitLab repository, or a Hugging Face model, given its URL. See
+    Click **Start Now** to bring in a Jupyter notebook, a GitHub or GitLab
+    repository, or a Hugging Face model from its URL. A notebook opens in a new
+    session; a repository or a model is saved to a storage folder. See
     [Start from URL](#start-from-url) for each import source.
+
+:::note
+Depending on the server configuration, some cards such as the deployment card
+may not be available. If you want to use these features, please contact your
+system administrator.
+:::
 
 ![](../images/dashboard.png)
 
@@ -78,12 +84,116 @@ be visible depending on your system configuration.
 Project admins and superadmins also have a **Dashboard** of their own in the
 admin menu, with cards for the project or for the whole cluster.
 
+## Customizing the Dashboard Layout
+
+You can rearrange the board at any time — there is no mode to enter first:
+
+- **Move cards**: Drag a card by its header to reposition it on the board.
+- **Resize cards**: Drag the bottom-right corner of a card to adjust its
+  size. Each card has a minimum size to ensure its content remains readable.
+
+Click **Edit** to open the edit sidebar, and **Close** to hide it again. The
+sidebar lists every card the page offers, grouped by topic: select a card to
+put it on the board, and clear it to take it off.
+
+![](../images/dashboard_edit_mode.png)
+
+Your arrangement is saved to your account on the server, so it follows you to
+every browser you sign in from. To discard it and restore the default cards
+and arrangement, click the **Reset layout** button at the bottom of the edit
+sidebar and confirm. Resetting the layout does not remove your custom panels.
+
+:::tip
+When the WebUI is updated with new dashboard cards, those cards will
+automatically appear on your dashboard even if you have a saved layout.
+:::
+
+### Card Settings
+
+A card that reads a resource group or a time range keeps a saved default.
+Open **Default card settings** for that card in the edit sidebar to choose the
+values the board opens with; the picker in the card's header changes them for
+the current visit only.
+
+### Custom Panels
+
+The edit sidebar also lists your custom panels. A custom panel shows a data
+source you select, narrowed by a condition you define. The panel itself shows
+only a title and its data, so give the panel a title that describes its
+condition.
+
+To add a panel, click the **Add** button in the sidebar. The panel dialog
+contains the following fields. **Panel type** and **Data source** are
+required — the dialog will not submit until both are chosen.
+
+- **Data source**: The data source the panel lists. Choose **Sessions**,
+  **Deployments**, or **Data & Storage**.
+- **Panel type**: How the panel displays the data source. Choose **Table**,
+  **Count**, or **Chart**. For the **Sessions** data source, **Grid** is also
+  offered.
+- **Title**: An optional panel title. When omitted, the data source name is
+  used.
+- **Condition**: A property filter that narrows the rows shown in the panel.
+
+A live preview below the fields shows the rows matching the current condition.
+Sorting a column in the preview sets the panel's sort order. Click **Add** to
+place the panel on the board.
+
+![](../images/dashboard_panel_modal.png)
+
+**Deployments** panels list the project's model deployments, using the same
+table as the Deployments page: name, status, replica summary, model, and
+created at. Clicking a deployment's name opens its detail page.
+
+**Chart** draws the matching items as a chart. **Compare groups** chart types
+(Donut, Pie, Bar, Radar) count the items grouped by the property chosen under
+**Group by**; **Created over time** chart types (Line, Area, Column) count the
+items created in each interval of the selected time range. Turn on **Show
+table** to list the matching rows under the chart on the panel.
+
+**Grid** shows the session resource grid: each matching session's allocated
+resources as unit cells, colored by utilization. Clicking a session opens its
+detail drawer, the same as clicking a row in the table. The grid shows at most
+the first 100 matching sessions; a notice appears when there are more.
+
+The grid's display settings — resource or kernel mode, which resource or
+metric to show, memory unit, and layout — are chosen in the Add/Edit panel
+dialog's live preview and saved with the panel. The panel itself shows no
+controls for these settings, so create a second panel if you want a different
+view.
+
+:::note
+**Grid** is an experimental feature. It is offered in the **Panel type**
+selector only when **Session resource grid view** is turned on under
+[Experimental features](#experimental-features). If it is turned off later,
+existing Grid panels keep their saved configuration but display as the
+session table until the setting is turned back on.
+:::
+
+To change a panel's data source, panel type, condition, or title later, click
+the pencil (**Edit**) icon next to the panel in the sidebar — or in the
+panel's header on the board — and save your changes. To remove a panel, click
+the trash (**Delete**) icon and confirm in the popup.
+
+:::note
+**Sessions** and **Deployments** panels list data for the current project and
+are available to every project member. **Data & Storage** panels are
+available to superadmins only. A panel whose data source your role cannot
+query remains listed in the sidebar but is not shown on the board.
+:::
+
+## Automatic Refresh
+
+The refresh control on the dashboard bar sets how often every card refreshes —
+**Off**, or an interval from 5 seconds to 10 minutes — and refreshes every card
+at once when you click it.
+
 <a id="start-from-url"></a>
 
 ## Start from URL
 
-The **Start From URL** card on the Dashboard imports a project from an external
-source and runs it. Click **Start Now** on the card to open a dialog with one
+The **Start From URL** card on the Dashboard brings in a notebook, a repository
+or a model from an external source. Click **Start Now** on the card to open a dialog with one
 tab per import source: **Import Notebook**, **Import GitHub Repository**, and
 **Import GitLab Repository**. An additional **Import Hugging Face Model** tab
 appears when the experimental Hugging Face import is turned on.
@@ -203,107 +313,3 @@ The tab downloads into model folders, so it is only available when the
 deployment feature is enabled for your account. Large models take a long time
 to download and consume the storage quota of the target folder.
 :::
-
-## Customizing the Dashboard Layout
-
-You can rearrange the board at any time — there is no mode to enter first:
-
-- **Move cards**: Drag a card by its header to reposition it on the board.
-- **Resize cards**: Drag the bottom-right corner of a card to adjust its
-  size. Each card has a minimum size to ensure its content remains readable.
-
-Click **Edit** to open the edit sidebar, and **Close** to hide it again. The
-sidebar lists every card the page offers, grouped by topic: select a card to
-put it on the board, and clear it to take it off.
-
-![](../images/dashboard_edit_mode.png)
-
-Your arrangement is saved to your account on the server, so it follows you to
-every browser you sign in from. To discard it and restore the default cards
-and arrangement, click the **Reset layout** button at the bottom of the edit
-sidebar and confirm. Resetting the layout does not remove your custom panels.
-
-:::tip
-When the WebUI is updated with new dashboard cards, those cards will
-automatically appear on your dashboard even if you have a saved layout.
-:::
-
-### Card Settings
-
-A card that reads a resource group or a time range keeps a saved default.
-Open **Default card settings** for that card in the edit sidebar to choose the
-values the board opens with; the picker in the card's header changes them for
-the current visit only.
-
-### Custom Panels
-
-The edit sidebar also lists your custom panels. A custom panel shows a data
-source you select, narrowed by a condition you define. The panel itself shows
-only a title and its data, so give the panel a title that describes its
-condition.
-
-To add a panel, click the **Add** button in the sidebar. The panel dialog
-contains the following fields. **Panel type** and **Data source** are
-required — the dialog will not submit until both are chosen.
-
-- **Data source**: The data source the panel lists. Choose **Sessions**,
-  **Deployments**, or **Data & Storage**.
-- **Panel type**: How the panel displays the data source. Choose **Table**,
-  **Count**, or **Chart**. For the **Sessions** data source, **Grid** is also
-  offered.
-- **Title**: An optional panel title. When omitted, the data source name is
-  used.
-- **Condition**: A property filter that narrows the rows shown in the panel.
-
-A live preview below the fields shows the rows matching the current condition.
-Sorting a column in the preview sets the panel's sort order. Click **Add** to
-place the panel on the board.
-
-![](../images/dashboard_panel_modal.png)
-
-**Deployments** panels list the project's model deployments, using the same
-table as the Deployments page: name, status, replica summary, model, and
-created at. Clicking a deployment's name opens its detail page.
-
-**Chart** draws the matching items as a chart. **Compare groups** chart types
-(Donut, Pie, Bar, Radar) count the items grouped by the property chosen under
-**Group by**; **Created over time** chart types (Line, Area, Column) count the
-items created in each interval of the selected time range. Turn on **Show
-table** to list the matching rows under the chart on the panel.
-
-**Grid** shows the session resource grid: each matching session's allocated
-resources as unit cells, colored by utilization. Clicking a session opens its
-detail drawer, the same as clicking a row in the table. The grid shows at most
-the first 100 matching sessions; a notice appears when there are more.
-
-The grid's display settings — resource or kernel mode, which resource or
-metric to show, memory unit, and layout — are chosen in the Add/Edit panel
-dialog's live preview and saved with the panel. The panel itself shows no
-controls for these settings, so create a second panel if you want a different
-view.
-
-:::note
-**Grid** is an experimental feature. It is offered in the **Panel type**
-selector only when **Session resource grid view** is turned on under
-[Experimental features](#experimental-features). If it is turned off later,
-existing Grid panels keep their saved configuration but display as the
-session table until the setting is turned back on.
-:::
-
-To change a panel's data source, panel type, condition, or title later, click
-the pencil (**Edit**) icon next to the panel in the sidebar — or in the
-panel's header on the board — and save your changes. To remove a panel, click
-the trash (**Delete**) icon and confirm in the popup.
-
-:::note
-**Sessions** and **Deployments** panels list data for the current project and
-are available to every project member. **Data & Storage** panels are
-available to superadmins only. A panel whose data source your role cannot
-query remains listed in the sidebar but is not shown on the board.
-:::
-
-## Automatic Refresh
-
-The refresh control on the dashboard bar sets how often every card refreshes —
-**Off**, or an interval from 5 seconds to 10 minutes — and refreshes every card
-at once when you click it.
