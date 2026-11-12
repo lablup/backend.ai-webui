@@ -23,6 +23,11 @@ import ResourceAllocationFormItems, {
 import SessionTemplateModal from '../../components/SessionTemplateModal';
 import { Form, type FormInstance } from '../../form-engine';
 import { formatDuration } from '../../helper';
+import {
+  type LauncherStepKey,
+  launcherStepKeysOf,
+  launcherValueFromHistory,
+} from '../../helper/sessionLauncherHistory';
 import { normalizeLegacyMountFields } from '../../helper/vfolderMounts';
 import { AGENT_PREFILL_PARAM } from '../../helper/webmcpConstants';
 import {
@@ -66,8 +71,6 @@ import {
   BAIIntervalView,
   BAIUnmountAfterClose,
   type VFolderMountConfigValue,
-  filterOutEmpty,
-  generateRandomString,
   useBAILogger,
   useDebounceFn,
   useErrorMessageResolver,
@@ -417,33 +420,24 @@ const SessionLauncherPageContent: React.FC<{
     preserve: true,
   });
 
-  const steps: Array<StepPropsWithKey> = filterOutEmpty([
-    {
-      title: t('session.launcher.SessionType'),
-      key: 'sessionType',
-      // status: form.getFieldError('name').length > 0 ? 'error' : undefined,
-    },
-    {
+  const stepProps: Record<LauncherStepKey, Omit<StepPropsWithKey, 'key'>> = {
+    sessionType: { title: t('session.launcher.SessionType') },
+    environment: {
       title: `${t('session.launcher.Environments')} & ${t(
         'session.launcher.ResourceAllocation',
       )} `,
-      key: 'environment',
     },
-    sessionType !== 'inference' && {
-      title: t('webui.menu.Data&Storage'),
-      key: 'storage',
-    },
-    {
-      title: t('session.launcher.Network'),
-      key: 'network',
-    },
-    {
+    storage: { title: t('webui.menu.Data&Storage') },
+    network: { title: t('session.launcher.Network') },
+    review: {
       title: t('session.launcher.ConfirmAndLaunch'),
       icon: <CirclePlay size="1em" />,
-      // @ts-ignore
-      key: 'review',
     },
-  ]);
+  };
+  // The order lives in launcherStepKeysOf, which the dashboard's Recent History card also reads.
+  const steps: Array<StepPropsWithKey> = launcherStepKeysOf(sessionType).map(
+    (key) => ({ ...stepProps[key], key }) as StepPropsWithKey,
+  );
 
   const currentStepKey = steps[currentStep]?.key;
 
@@ -1488,32 +1482,7 @@ const SessionLauncherPageContent: React.FC<{
       <SessionTemplateModal
         onRequestClose={(formValue) => {
           if (formValue) {
-            const fieldsValue = _.merge(
-              {
-                // reset fields related to optional and nested fields
-                sessionName: '',
-                ports: [],
-                vfolderMounts: [],
-                bootstrap_script: '',
-                num_of_sessions: 1,
-                environments: {
-                  manual: '',
-                },
-                batch: {
-                  enabled: false,
-                  command: undefined,
-                  scheduleDate: undefined,
-                },
-                reuseIfExists: false,
-                agent: ['auto'], // Add the missing 'agent' property
-              } as SessionLauncherFormData,
-              normalizeLegacyMountFields(formValue),
-            );
-
-            if (!_.isEmpty(fieldsValue.sessionName)) {
-              fieldsValue.sessionName =
-                fieldsValue.sessionName + '-' + generateRandomString(4);
-            }
+            const fieldsValue = launcherValueFromHistory(formValue);
             form.setFieldsValue(fieldsValue as SessionLauncherFormData);
             setCurrentStep(steps.length - 1);
             form.validateFields().catch(() => {});

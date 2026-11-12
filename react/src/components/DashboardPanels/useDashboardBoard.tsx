@@ -272,7 +272,7 @@ export const useDashboardBoard = ({
           const definition = definitionByKey.get(key);
           if (!definition) return current;
           return active
-            ? addPanel(current, definition)
+            ? addPanel(current, definition, {}, page)
             : removePanel(current, key);
         },
         setPanelsHidden(

@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { catalogFor, sanitizeBoard, seedBoard } from './boardModel';
+import { addPanel, catalogFor, sanitizeBoard, seedBoard } from './boardModel';
 import { PANEL_CATALOG } from './panelCatalog';
 import { resourceKeys } from './resourceRegistry';
 import type { PanelCatalogContext, PanelPage } from './types';
@@ -134,6 +134,23 @@ describe('PANEL_CATALOG', () => {
       );
     expect(sizeOn('project')).toMatchObject({ columnSpan: 3, rowSpan: 2 });
     expect(sizeOn('admin')).toMatchObject({ columnSpan: 2, rowSpan: 4 });
+  });
+
+  it('gives a card added from the sider the size and range a new board would', () => {
+    const definition = PANEL_CATALOG.find(
+      (entry) => entry.key === 'sessionsCreated',
+    )!;
+    const added = addPanel(
+      { panels: [], knownKeys: [] },
+      definition,
+      {},
+      'project',
+    ).panels[0];
+    expect(added).toMatchObject({
+      columnSpan: 2,
+      rowSpan: 3,
+      settings: { range: 'now-7d' },
+    });
   });
 
   it('seeds the session trend card with the last seven days', () => {

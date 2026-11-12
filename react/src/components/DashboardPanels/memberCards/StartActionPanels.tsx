@@ -2,6 +2,10 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import {
+  launcherValueFromHistory,
+  reviewStepOf,
+} from '../../../helper/sessionLauncherHistory';
 import { useWebUINavigate } from '../../../hooks';
 import { useIsPersonalProject } from '../../../hooks/useAccessibleProjects';
 import { useProjectPath } from '../../../hooks/useRouteScope';
@@ -22,7 +26,6 @@ import {
   BAINewFolderIcon,
   BAIUnmountAfterClose,
   BAIURLStartIcon,
-  generateRandomString,
 } from 'backend.ai-ui';
 import { Grid2x2Plus, History } from 'lucide-react';
 import React, { useState } from 'react';
@@ -79,17 +82,9 @@ export const RecentHistoryPanel: React.FC<PanelComponentProps> = () => {
           onRequestClose={(formValue) => {
             setIsModalOpen(false);
             if (!formValue) return;
-            const launcherValue: DeepPartial<SessionLauncherFormValue> = {
-              ...formValue,
-              // As the launcher does with a history pick: a fresh name, not a clash.
-              sessionName: formValue.sessionName
-                ? `${formValue.sessionName}-${generateRandomString(4)}`
-                : formValue.sessionName,
-            };
             const params = new URLSearchParams({
-              // The review step: inference sessions have no storage step.
-              step: formValue.sessionType === 'inference' ? '3' : '4',
-              formValues: JSON.stringify(launcherValue),
+              step: String(reviewStepOf(formValue.sessionType)),
+              formValues: JSON.stringify(launcherValueFromHistory(formValue)),
             });
             webuiNavigate(
               `${buildProjectPath('session/start')}?${params.toString()}`,

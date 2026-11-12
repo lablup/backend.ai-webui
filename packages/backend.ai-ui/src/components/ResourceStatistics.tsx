@@ -1,5 +1,6 @@
 import { convertToBinaryUnit, getDisplayUnitToInputSizeUnit } from '../helper';
 import { useBAIi18n } from '../hooks/useBAIi18n';
+import { useIsInBAIBoardItem } from './BAIBoard';
 import BAIFlex from './BAIFlex';
 import BAIRowWrapWithDividers from './BAIRowWrapWithDividers';
 import BAIStatistic, { BAIStatisticProps } from './BAIStatistic';
@@ -79,6 +80,7 @@ const ResourceStatistics: React.FC<ResourceStatisticsProps> = ({
 }) => {
   const { t } = useBAIi18n();
   const { token } = useTheme();
+  const isInBoard = useIsInBAIBoardItem();
 
   const hasResources =
     resourceData.cpu ||
@@ -145,8 +147,10 @@ const ResourceStatistics: React.FC<ResourceStatisticsProps> = ({
             backgroundColor: token('--color-background-body'),
             borderRadius: token('--radius-element'),
             padding: acceleratorPadding,
-            // The box reaches out by its padding, so its items start in line with CPU and memory.
-            marginInline: `calc(-1 * ${acceleratorPadding})`,
+            // On a dashboard card the box reaches out by its padding, so its items start in line with CPU and memory.
+            marginInline: isInBoard
+              ? `calc(-1 * ${acceleratorPadding})`
+              : undefined,
           }}
         >
           {resourceData.accelerators.map((acc) => (

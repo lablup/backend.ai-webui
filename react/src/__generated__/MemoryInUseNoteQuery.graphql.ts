@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<305ebca194920939edea33c07c0ef780>>
+ * @generated SignedSource<<91db2e5a08d9f41aa81e60928daefa78>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -19,18 +19,17 @@ export type UserUtilizationMetricQueryInput = {
 export type MemoryInUseNoteQuery$variables = {
   capacityProps: UserUtilizationMetricQueryInput;
   currentProps: UserUtilizationMetricQueryInput;
-  isReported: boolean;
   userId: string;
 };
 export type MemoryInUseNoteQuery$data = {
-  readonly capacity?: {
+  readonly capacity: {
     readonly metrics: ReadonlyArray<{
       readonly values: ReadonlyArray<{
         readonly value: string | null | undefined;
       } | null | undefined> | null | undefined;
     } | null | undefined> | null | undefined;
   } | null | undefined;
-  readonly current?: {
+  readonly current: {
     readonly metrics: ReadonlyArray<{
       readonly values: ReadonlyArray<{
         readonly value: string | null | undefined;
@@ -57,19 +56,14 @@ v1 = {
 v2 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "isReported"
-},
-v3 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
   "name": "userId"
 },
-v4 = {
+v3 = {
   "kind": "Variable",
   "name": "user_id",
   "variableName": "userId"
 },
-v5 = [
+v4 = [
   {
     "alias": null,
     "args": null,
@@ -100,47 +94,40 @@ v5 = [
     "storageKey": null
   }
 ],
-v6 = [
+v5 = [
   {
-    "condition": "isReported",
-    "kind": "Condition",
-    "passingValue": true,
-    "selections": [
+    "alias": "capacity",
+    "args": [
       {
-        "alias": "capacity",
-        "args": [
-          {
-            "kind": "Variable",
-            "name": "props",
-            "variableName": "capacityProps"
-          },
-          (v4/*: any*/)
-        ],
-        "concreteType": "UserUtilizationMetric",
-        "kind": "LinkedField",
-        "name": "user_utilization_metric",
-        "plural": false,
-        "selections": (v5/*: any*/),
-        "storageKey": null
+        "kind": "Variable",
+        "name": "props",
+        "variableName": "capacityProps"
       },
+      (v3/*: any*/)
+    ],
+    "concreteType": "UserUtilizationMetric",
+    "kind": "LinkedField",
+    "name": "user_utilization_metric",
+    "plural": false,
+    "selections": (v4/*: any*/),
+    "storageKey": null
+  },
+  {
+    "alias": "current",
+    "args": [
       {
-        "alias": "current",
-        "args": [
-          {
-            "kind": "Variable",
-            "name": "props",
-            "variableName": "currentProps"
-          },
-          (v4/*: any*/)
-        ],
-        "concreteType": "UserUtilizationMetric",
-        "kind": "LinkedField",
-        "name": "user_utilization_metric",
-        "plural": false,
-        "selections": (v5/*: any*/),
-        "storageKey": null
-      }
-    ]
+        "kind": "Variable",
+        "name": "props",
+        "variableName": "currentProps"
+      },
+      (v3/*: any*/)
+    ],
+    "concreteType": "UserUtilizationMetric",
+    "kind": "LinkedField",
+    "name": "user_utilization_metric",
+    "plural": false,
+    "selections": (v4/*: any*/),
+    "storageKey": null
   }
 ];
 return {
@@ -148,39 +135,37 @@ return {
     "argumentDefinitions": [
       (v0/*: any*/),
       (v1/*: any*/),
-      (v2/*: any*/),
-      (v3/*: any*/)
+      (v2/*: any*/)
     ],
     "kind": "Fragment",
     "metadata": null,
     "name": "MemoryInUseNoteQuery",
-    "selections": (v6/*: any*/),
+    "selections": (v5/*: any*/),
     "type": "Query",
     "abstractKey": null
   },
   "kind": "Request",
   "operation": {
     "argumentDefinitions": [
-      (v3/*: any*/),
+      (v2/*: any*/),
       (v0/*: any*/),
-      (v1/*: any*/),
-      (v2/*: any*/)
+      (v1/*: any*/)
     ],
     "kind": "Operation",
     "name": "MemoryInUseNoteQuery",
-    "selections": (v6/*: any*/)
+    "selections": (v5/*: any*/)
   },
   "params": {
-    "cacheID": "30e4a42e6a942faee2b17f3a75785336",
+    "cacheID": "d82da18638fbd5c044891996efbb51f1",
     "id": null,
     "metadata": {},
     "name": "MemoryInUseNoteQuery",
     "operationKind": "query",
-    "text": "query MemoryInUseNoteQuery(\n  $userId: UUID!\n  $capacityProps: UserUtilizationMetricQueryInput!\n  $currentProps: UserUtilizationMetricQueryInput!\n  $isReported: Boolean!\n) {\n  capacity: user_utilization_metric(user_id: $userId, props: $capacityProps) @include(if: $isReported) {\n    metrics {\n      values {\n        value\n      }\n    }\n  }\n  current: user_utilization_metric(user_id: $userId, props: $currentProps) @include(if: $isReported) {\n    metrics {\n      values {\n        value\n      }\n    }\n  }\n}\n"
+    "text": "query MemoryInUseNoteQuery(\n  $userId: UUID!\n  $capacityProps: UserUtilizationMetricQueryInput!\n  $currentProps: UserUtilizationMetricQueryInput!\n) {\n  capacity: user_utilization_metric(user_id: $userId, props: $capacityProps) {\n    metrics {\n      values {\n        value\n      }\n    }\n  }\n  current: user_utilization_metric(user_id: $userId, props: $currentProps) {\n    metrics {\n      values {\n        value\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "7abdd0d62b07e9dd1be2ceef88b435d7";
+(node as any).hash = "e08b8cbe477e75879d81abde8306e59e";
 
 export default node;

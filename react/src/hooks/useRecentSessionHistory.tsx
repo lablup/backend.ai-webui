@@ -15,13 +15,15 @@ import {
   useErrorMessageResolver,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { useEffect, useEffectEvent, useRef, useState } from 'react';
+import { useEffect, useEffectEvent, useState } from 'react';
 
 type SessionHistoryKey = 'recentSessionHistory' | 'pinnedSessionHistory';
 
 // Each write replaces the whole `userConfig` document, so concurrent writes
 // (a rename updates both lists) must run one after another.
 let writeQueue: Promise<unknown> = Promise.resolve();
+// Several stores of one key mount at once; only the first moves its local history.
+const migratingKeys = new Set<SessionHistoryKey>();
 
 /**
  * Session history lives in the user's server-side `userConfig` so it follows
@@ -39,31 +41,44 @@ const useSessionHistoryStore = (key: SessionHistoryKey) => {
   // Shows the written value while the write and the refetch are in flight.
   const [pending, setPending] = useState<{ value: Array<SessionHistory> }>();
 
-  const setValue = async (next: Array<SessionHistory>): Promise<boolean> => {
-    setPending({ value: next });
-    const write = writeQueue.then(async () => {
+  /** Writes `next` after any write already queued; false when it failed (the error is shown). */
+  const write = async (next: Array<SessionHistory>): Promise<boolean> => {
+    const queued = writeQueue.then(async () => {
       await updateMyUserAppConfig(key, next);
       await refetchMyAppConfig();
     });
-    writeQueue = write.catch(() => {});
+    writeQueue = queued.catch(() => {});
     try {
-      await write;
+      await queued;
       return true;
     } catch (error) {
       message.error(getErrorMessage(error));
       return false;
+    }
+  };
+
+  const setValue = async (next: Array<SessionHistory>): Promise<boolean> => {
+    setPending({ value: next });
+    try {
+      return await write(next);
     } finally {
       setPending(undefined);
     }
   };
 
-  const migrated = useRef(false);
   const migrateLocalHistory = useEffectEvent(() => {
-    if (migrated.current || serverValue !== undefined || _.isEmpty(localValue))
+    if (
+      migratingKeys.has(key) ||
+      serverValue !== undefined ||
+      _.isEmpty(localValue)
+    )
       return;
-    migrated.current = true;
-    setValue(localValue!).then((written) => {
+    migratingKeys.add(key);
+    // No pending value: the local history stays on screen until the server has it.
+    write(localValue!).then((written) => {
       if (written) setLocalValue(undefined);
+      // A failed move may run again on a later mount.
+      else migratingKeys.delete(key);
     });
   });
   useEffect(() => {

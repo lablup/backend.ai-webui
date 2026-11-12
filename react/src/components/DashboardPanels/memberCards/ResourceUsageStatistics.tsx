@@ -9,6 +9,7 @@ import {
   processMemoryValue,
   useBAIResourceSlots,
 } from 'backend.ai-ui';
+import * as _ from 'lodash-es';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -60,23 +61,26 @@ const ResourceUsageStatistics: React.FC<{
   const cpu = rows.find((row) => row.resourceType === 'cpu');
   const mem = rows.find((row) => row.resourceType === 'mem');
   const accelerators = rows.filter((row) => row !== cpu && row !== mem);
+  // Only the lines that exist, so a card with none keeps the usual spacing.
+  const notes = notesOf
+    ? _.omitBy(
+        {
+          memory: mem ? notesOf('mem') : null,
+          ..._.fromPairs(
+            accelerators.map((row) => [
+              row.resourceType,
+              notesOf(row.resourceType),
+            ]),
+          ),
+        },
+        _.isNil,
+      )
+    : {};
   return (
     <ResourceStatistics
       displayType="used"
       progressMode="normal"
-      notes={
-        notesOf
-          ? {
-              memory: mem ? notesOf('mem') : undefined,
-              ...Object.fromEntries(
-                accelerators.map((row) => [
-                  row.resourceType,
-                  notesOf(row.resourceType),
-                ]),
-              ),
-            }
-          : undefined
-      }
+      notes={_.isEmpty(notes) ? undefined : notes}
       resourceData={{
         cpu: cpu ? statisticOf(cpu) : null,
         memory: mem ? statisticOf(mem) : null,

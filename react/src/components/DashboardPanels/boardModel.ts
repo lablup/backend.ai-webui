@@ -181,14 +181,20 @@ export const addPanel = (
   board: DashboardBoard,
   definition: PanelDefinition,
   init: Partial<PersistedPanelV2> = {},
+  page?: PanelPage,
 ): DashboardBoard => {
   const id = definition.kind === 'custom' ? definition.key : init.id;
   if (!id || board.panels.some((panel) => panel.id === id)) return board;
   const viz =
     definition.kind === 'preset' ? (init.viz ?? definition.viz) : undefined;
+  // Added back from the sider, a card takes the size and settings a new board gives it.
   const panel: PersistedPanelV2 = {
+    ...(definition.defaultSettings && !init.settings
+      ? { settings: definition.defaultSettings }
+      : {}),
     ...init,
-    ...sizeOf(definition, viz).defaultSize,
+    ...((page && definition.defaultSizeByPage?.[page]) ??
+      sizeOf(definition, viz).defaultSize),
     id,
     key: definition.key,
     ...(viz ? { viz } : {}),
