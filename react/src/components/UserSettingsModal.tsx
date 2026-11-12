@@ -10,6 +10,8 @@ import type { LoginHistoryQuery as LoginHistoryQueryType } from '../__generated_
 import type { LoginSessionQuery as LoginSessionQueryType } from '../__generated__/LoginSessionQuery.graphql';
 import {
   USER_SETTINGS_CATEGORIES,
+  USER_SETTINGS_DIALOG_HEIGHT,
+  USER_SETTINGS_DIALOG_WIDTH,
   type UserSettingsCategory,
 } from '../helper/userSettingsModal';
 import BAIErrorBoundary from './BAIErrorBoundary';
@@ -46,9 +48,7 @@ import { useQueryLoader } from 'react-relay';
 // Astryx's dialog surface is `height: fit-content`, so the rail and the pane
 // need a resolved height before either can own a scrollport. `dvh` so mobile
 // browser chrome does not push the bottom edge off-screen.
-const DIALOG_INSET_BLOCK = 'var(--spacing-12)';
-const DIALOG_HEIGHT_VALUE = `calc(100dvh - ${DIALOG_INSET_BLOCK} * 2)`;
-const DIALOG_HEIGHT: CSSProperties = { height: DIALOG_HEIGHT_VALUE };
+const DIALOG_HEIGHT: CSSProperties = { height: USER_SETTINGS_DIALOG_HEIGHT };
 const BODY_FILL: CSSProperties = { height: '100%', minHeight: 0 };
 // The dialog publishes its inline padding as `--container-padding-inline-*`, which
 // an Astryx `Table` bleeds out to; this pane is not that padded box, so the table
@@ -58,10 +58,6 @@ const PANE_NO_CONTAINER_BLEED = {
   '--container-padding-inline-end': '0px',
 } as CSSProperties;
 
-// 1100 matches `MyKeypairManagementModal`, the widest dialog opened from here,
-// so a child never overhangs its parent. Minus the rail it still leaves the
-// pane above `ErrorLogList`'s eight-column minimum.
-const DIALOG_WIDTH = 'min(1100px, 92vw)';
 const NAV_PANEL_WIDTH = 240;
 
 const CATEGORY_ICONS: Record<
@@ -235,9 +231,9 @@ const UserSettingsModal: React.FC<UserSettingsModalProps> = ({
       }
       footer={null}
       variant={isNarrow ? 'fullscreen' : 'standard'}
-      width={DIALOG_WIDTH}
+      width={USER_SETTINGS_DIALOG_WIDTH}
       // Astryx caps a standard dialog at 75dvh; raise it so `style.height` wins.
-      maxHeight={DIALOG_HEIGHT_VALUE}
+      maxHeight={USER_SETTINGS_DIALOG_HEIGHT}
       // `purpose="form"` in Astryx terms: Escape closes, the backdrop does not.
       maskClosable={false}
       style={isNarrow ? undefined : DIALOG_HEIGHT}

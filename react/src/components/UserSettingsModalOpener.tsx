@@ -6,13 +6,17 @@ import {
   coerceUserSettingsCategory,
   isUserSettingsPath,
   rememberNonSettingsLocation,
+  USER_SETTINGS_DIALOG_HEIGHT,
+  USER_SETTINGS_DIALOG_WIDTH,
   USER_SETTINGS_PARAM,
   type UserSettingsCategory,
 } from '../helper/userSettingsModal';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useWebUIMenuItems } from '../hooks/useWebUIMenuItems';
+import { BAIModal } from 'backend.ai-ui';
 import { parseAsString, useQueryState } from 'nuqs';
 import React, { Suspense, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 
 const UserSettingsModal = React.lazy(() => import('./UserSettingsModal'));
@@ -30,6 +34,7 @@ const UserSettingsModalOpener = () => {
   const location = useLocation();
   const navigate = useWebUINavigate();
   const { defaultMenuPath } = useWebUIMenuItems();
+  const { t } = useTranslation();
   // Read from the router, not nuqs: nuqs applies a URL change it did not make
   // in a transition, which React holds back while any async action is pending.
   const category = coerceUserSettingsCategory(
@@ -71,7 +76,23 @@ const UserSettingsModalOpener = () => {
   if (category === null) return null;
 
   return (
-    <Suspense fallback={null}>
+    <Suspense
+      // The frame is the dialog's own size, so the form only replaces its body
+      // once the chunk lands (#11144).
+      fallback={
+        <BAIModal
+          open
+          title={t('webui.menu.Settings&Logs')}
+          onCancel={close}
+          footer={null}
+          width={USER_SETTINGS_DIALOG_WIDTH}
+          maxHeight={USER_SETTINGS_DIALOG_HEIGHT}
+          maskClosable={false}
+          style={{ height: USER_SETTINGS_DIALOG_HEIGHT }}
+          loading
+        />
+      }
+    >
       <UserSettingsModal
         category={category}
         onCategoryChange={setCategory}

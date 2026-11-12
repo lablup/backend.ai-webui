@@ -358,7 +358,17 @@ const UserDropdownMenu: React.FC<{
               </BAIUnmountAfterClose>
             )}
           </Suspense>
-          <Suspense fallback={null}>
+          <Suspense
+            fallback={
+              <BAIModal
+                open={isDownloadModalOpen}
+                title={t('summary.Downloads')}
+                onCancel={() => toggleDownloadModal()}
+                footer={null}
+                loading
+              />
+            }
+          >
             <BAIUnmountAfterClose>
               <DownloadModal
                 open={isDownloadModalOpen}
