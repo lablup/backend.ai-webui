@@ -6,12 +6,12 @@ catalog:
   # Astryx pins are exact and move as one set with @lablup/ui-common, which
   # pins the same versions (ADR 0009): a mismatch installs a second core, and
   # scripts/migration-gates/single-astryx-core-gate.mjs fails.
-  "@astryxdesign/cli": 0.7.7
-  "@astryxdesign/core": 0.7.7
-  "@astryxdesign/lab": 0.7.7-canary.273ec43
+  "@astryxdesign/cli": 0.7.11
+  "@astryxdesign/core": 0.7.11
+  "@astryxdesign/lab": 0.7.11-canary.d810271
   # The library and its CLI release in lockstep; pin both exactly (ADR 0009).
-  "@lablup/ui-common": 0.2.0-alpha.21.canary-20261109014528-8160304a1
-  "@lablup/ui-common-cli": 0.2.0-alpha.21.canary-20261109014528-8160304a1
+  "@lablup/ui-common": 0.2.0-alpha.21.canary-20261111033103-c445de1bd
+  "@lablup/ui-common-cli": 0.2.0-alpha.21.canary-20261111033103-c445de1bd
   "@babel/core": ^7.29.7
   "@babel/preset-typescript": ^7.29.7
   "@eslint/js": ^9.39.5
@@ -92,11 +92,14 @@ minimumReleaseAgeExclude:
   # canary adoption with an exact pin; canary releases never age past the
   # quarantine window by design, so the exclusion is permanent while the
   # pin exists. Tarball-verified build (MAPPING.md header).
-  - "@astryxdesign/lab@0.7.7-canary.273ec43"
-  # Astryx 0.7.7 was published 2026-11-03; remove these after 2026-11-10.
-  - "@astryxdesign/cli@0.7.7"
-  - "@astryxdesign/core@0.7.7"
-  - "@astryxdesign/theme-neutral@0.7.7"
+  - "@astryxdesign/lab@0.7.11-canary.d810271"
+  # Astryx 0.7.11 was published 2026-11-07; remove these after 2026-11-14.
+  - "@astryxdesign/cli@0.7.11"
+  - "@astryxdesign/core@0.7.11"
+  - "@astryxdesign/theme-neutral@0.7.11"
+  # lucide-react 1.70.0: the floor ui-common's canaries since 2026-11-10
+  # require; published 2026-11-06. Remove after 2026-11-13.
+  - "lucide-react@1.70.0"
   # ui-common is Lablup's own package, pinned exactly and moved on purpose:
   # its canaries and PR previews are installed the day they are published
   # (scripts/ui-common-pin.mjs), so it is excluded by name, permanently.
@@ -159,7 +162,7 @@ allowBuilds:
 overrides:
   # The lab canary peers on the core canary it was cut from; run it on the
   # pinned stable core instead of a second copy (ui-common upgrade adds this).
-  "@astryxdesign/lab>@astryxdesign/core": "0.7.7"
+  "@astryxdesign/lab>@astryxdesign/core": "0.7.11"
   tar-fs@2: 2.1.4
   # Build-tooling override. `@electron/packager` extracts its downloaded ZIPs
   # via `extract-zip` → `yauzl` (`electron` >= 41 uses its own
