@@ -1,0 +1,332 @@
+{
+  "version": 1,
+  "channel": "next",
+  "label": "PR preview",
+  "generatedAt": "2026-11-12T08:24:23.899Z",
+  "languages": [
+    "en",
+    "ja",
+    "ko",
+    "th"
+  ],
+  "langs": {
+    "en": {
+      "totals": {
+        "pages": 3,
+        "changes": 19,
+        "added": 2,
+        "modified": 12,
+        "removed": 5,
+        "images": 0,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "sessions_all",
+          "title": "Compute Sessions",
+          "status": "modified",
+          "url": "next/en/sessions_all.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/en/sessions_all/sessions_all.md",
+          "counts": {
+            "added": 0,
+            "modified": 0,
+            "removed": 1,
+            "images": 0,
+            "total": 1
+          },
+          "fingerprints": [
+            "3e522de101ed"
+          ]
+        },
+        {
+          "slug": "sftp_to_container",
+          "title": "SFTP to Container",
+          "status": "modified",
+          "url": "next/en/sftp_to_container.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/en/sftp_to_container/sftp_to_container.md",
+          "counts": {
+            "added": 1,
+            "modified": 11,
+            "removed": 3,
+            "images": 0,
+            "total": 15
+          },
+          "fingerprints": [
+            "d20c4e38f668",
+            "9cd80ba9344f",
+            "82d093443948",
+            "3d80857620ae",
+            "19bcc9ebb261",
+            "d5e7b29b0e09",
+            "88ea37fda23e",
+            "6548b7051428",
+            "4e22b0b81143",
+            "83f82e3a94d8",
+            "7dd8279de9f7",
+            "ac96fc2fa553",
+            "7ece7ecb59f3",
+            "7e67130d9877",
+            "6c97de66ca82"
+          ]
+        },
+        {
+          "slug": "vfolder",
+          "title": "Storage Folders",
+          "status": "modified",
+          "url": "next/en/vfolder.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/en/vfolder/vfolder.md",
+          "counts": {
+            "added": 1,
+            "modified": 1,
+            "removed": 1,
+            "images": 0,
+            "total": 3
+          },
+          "fingerprints": [
+            "36b5434b8270",
+            "27ac480f4109",
+            "aa5b97de9b71"
+          ]
+        }
+      ]
+    },
+    "ja": {
+      "totals": {
+        "pages": 3,
+        "changes": 17,
+        "added": 0,
+        "modified": 14,
+        "removed": 3,
+        "images": 0,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "sessions_all",
+          "title": "コンピュートセッション",
+          "status": "modified",
+          "url": "next/ja/sessions_all.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ja/sessions_all/sessions_all.md",
+          "counts": {
+            "added": 0,
+            "modified": 0,
+            "removed": 1,
+            "images": 0,
+            "total": 1
+          },
+          "fingerprints": [
+            "c6650fce0a74"
+          ]
+        },
+        {
+          "slug": "sftp_to_container",
+          "title": "コンピュートセッションへのSFTP接続",
+          "status": "modified",
+          "url": "next/ja/sftp_to_container.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ja/sftp_to_container/sftp_to_container.md",
+          "counts": {
+            "added": 0,
+            "modified": 12,
+            "removed": 2,
+            "images": 0,
+            "total": 14
+          },
+          "fingerprints": [
+            "cebd9d9981a7",
+            "6462eb22bee5",
+            "82d093443948",
+            "5e1dca7e14c5",
+            "515f9e28b317",
+            "a45b332dee86",
+            "8d0e41875327",
+            "eca5726e17ab",
+            "d483f104a2e2",
+            "bc1b2cbaa787",
+            "61fd077f4def",
+            "74ef75447b99",
+            "7e67130d9877",
+            "6c97de66ca82"
+          ]
+        },
+        {
+          "slug": "vfolder",
+          "title": "ストレージフォルダ",
+          "status": "modified",
+          "url": "next/ja/vfolder.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ja/vfolder/vfolder.md",
+          "counts": {
+            "added": 0,
+            "modified": 2,
+            "removed": 0,
+            "images": 0,
+            "total": 2
+          },
+          "fingerprints": [
+            "175679361264",
+            "ba8a149f914e"
+          ]
+        }
+      ]
+    },
+    "ko": {
+      "totals": {
+        "pages": 3,
+        "changes": 17,
+        "added": 0,
+        "modified": 14,
+        "removed": 3,
+        "images": 0,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "sessions_all",
+          "title": "연산 세션",
+          "status": "modified",
+          "url": "next/ko/sessions_all.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ko/sessions_all/sessions_all.md",
+          "counts": {
+            "added": 0,
+            "modified": 0,
+            "removed": 1,
+            "images": 0,
+            "total": 1
+          },
+          "fingerprints": [
+            "fbf99e8af3cb"
+          ]
+        },
+        {
+          "slug": "sftp_to_container",
+          "title": "연산 세션에 대한 SFTP 연결",
+          "status": "modified",
+          "url": "next/ko/sftp_to_container.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ko/sftp_to_container/sftp_to_container.md",
+          "counts": {
+            "added": 0,
+            "modified": 12,
+            "removed": 2,
+            "images": 0,
+            "total": 14
+          },
+          "fingerprints": [
+            "ed4b2b340656",
+            "72adc984164b",
+            "82d093443948",
+            "b8a258f1cfb5",
+            "9c863849c3e0",
+            "243f28df9bef",
+            "87ab30a060e0",
+            "13319e6cdfd5",
+            "0ce7f3cb874c",
+            "bf9732a04464",
+            "460e4be4141e",
+            "43dc80638110",
+            "7e67130d9877",
+            "6c97de66ca82"
+          ]
+        },
+        {
+          "slug": "vfolder",
+          "title": "스토리지 폴더",
+          "status": "modified",
+          "url": "next/ko/vfolder.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ko/vfolder/vfolder.md",
+          "counts": {
+            "added": 0,
+            "modified": 2,
+            "removed": 0,
+            "images": 0,
+            "total": 2
+          },
+          "fingerprints": [
+            "75ad3948fbe6",
+            "078e010f58dd"
+          ]
+        }
+      ]
+    },
+    "th": {
+      "totals": {
+        "pages": 3,
+        "changes": 17,
+        "added": 0,
+        "modified": 14,
+        "removed": 3,
+        "images": 0,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "sessions_all",
+          "title": "เซสชันการคำนวณ",
+          "status": "modified",
+          "url": "next/th/sessions_all.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/th/sessions_all/sessions_all.md",
+          "counts": {
+            "added": 0,
+            "modified": 0,
+            "removed": 1,
+            "images": 0,
+            "total": 1
+          },
+          "fingerprints": [
+            "4dd20bd87826"
+          ]
+        },
+        {
+          "slug": "sftp_to_container",
+          "title": "การเชื่อมต่อ SFTP ไปยังเซสชันการคำนวณ",
+          "status": "modified",
+          "url": "next/th/sftp_to_container.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/th/sftp_to_container/sftp_to_container.md",
+          "counts": {
+            "added": 0,
+            "modified": 12,
+            "removed": 2,
+            "images": 0,
+            "total": 14
+          },
+          "fingerprints": [
+            "dd44b25cde6a",
+            "8e785dea79a1",
+            "82d093443948",
+            "5cb5ed090d28",
+            "d9ab51a4349f",
+            "805a94830fcb",
+            "3ce3d021ad81",
+            "59abb0de05fb",
+            "dd9a82f13f45",
+            "3f0e8e33043c",
+            "146e81ec7057",
+            "87027ed60575",
+            "7e67130d9877",
+            "6c97de66ca82"
+          ]
+        },
+        {
+          "slug": "vfolder",
+          "title": "โฟลเดอร์จัดเก็บ",
+          "status": "modified",
+          "url": "next/th/vfolder.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/th/vfolder/vfolder.md",
+          "counts": {
+            "added": 0,
+            "modified": 2,
+            "removed": 0,
+            "images": 0,
+            "total": 2
+          },
+          "fingerprints": [
+            "95f11c6d42a1",
+            "ae2d18260ce6"
+          ]
+        }
+      ]
+    }
+  }
+}
