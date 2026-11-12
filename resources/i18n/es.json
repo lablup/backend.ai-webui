@@ -3779,6 +3779,7 @@
     "CreateFolder": "Crear una nueva carpeta de almacenamiento",
     "CreateFolderDesc": "Crear una carpeta y cargar archivos es crucial para entrenar modelos o brindar servicios externamente. \nComience subiendo los archivos.",
     "NoStartItems": "Sin exceso de artículos de inicio.",
+    "RecentHistoryDesc": "Inicie una nueva sesión con la configuración de una que creó recientemente.",
     "StartBatchSession": "Iniciar sesión por lotes",
     "StartBatchSessionDesc": "Para archivos predefinidos o tareas programadas, pruebe las sesiones por lotes. \nIngrese el comando, establezca la fecha y la hora y ejecútelo según sea necesario.",
     "StartDeployment": "Iniciar despliegue",
@@ -3794,7 +3795,8 @@
       "StartBatchSession": "Comenzar desde una URL",
       "StartDeployment": "Crear despliegue",
       "StartNow": "Empezar ahora",
-      "StartSession": "Iniciar sesión"
+      "StartSession": "Iniciar sesión",
+      "ViewRecentHistory": "Ver historial"
     }
   },
   "statistics": {

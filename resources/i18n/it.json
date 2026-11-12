@@ -3779,6 +3779,7 @@
     "CreateFolder": "Crea una nuova cartella di archiviazione",
     "CreateFolderDesc": "La creazione di una cartella e il caricamento di file sono fondamentali per la formazione di modelli o la fornitura di servizi esternamente. \nInizia caricando i file.",
     "NoStartItems": "NESSUNA PROPRIETÀ DI AVVIBILE DISPONIBILI.",
+    "RecentHistoryDesc": "Avvia una nuova sessione con le impostazioni di una creata di recente.",
     "StartBatchSession": "Avvia sessione batch",
     "StartBatchSessionDesc": "Per file predefiniti o attività pianificate, prova le sessioni batch. \nImmettere il comando, impostare la data e l'ora ed eseguirlo secondo necessità.",
     "StartDeployment": "Avvia la distribuzione",
@@ -3794,7 +3795,8 @@
       "StartBatchSession": "Inizia da un URL",
       "StartDeployment": "Crea distribuzione",
       "StartNow": "Inizia ora",
-      "StartSession": "Avvia sessione"
+      "StartSession": "Avvia sessione",
+      "ViewRecentHistory": "Visualizza cronologia"
     }
   },
   "statistics": {

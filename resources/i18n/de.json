@@ -3781,6 +3781,7 @@
     "CreateFolder": "Erstellen Sie einen neuen Speicherordner",
     "CreateFolderDesc": "Für das Training von Modellen oder die externe Bereitstellung von Diensten sind das Erstellen eines Ordners und das Hochladen von Dateien von entscheidender Bedeutung. \nBitte beginnen Sie mit dem Hochladen der Dateien.",
     "NoStartItems": "Keine verfügbaren Startartikel.",
+    "RecentHistoryDesc": "Starten Sie eine neue Sitzung mit den Einstellungen einer kürzlich erstellten Sitzung.",
     "StartBatchSession": "Starten Sie die Batch-Sitzung",
     "StartBatchSessionDesc": "Versuchen Sie für vordefinierte Dateien oder geplante Aufgaben Batch-Sitzungen. \nGeben Sie den Befehl ein, stellen Sie Datum und Uhrzeit ein und führen Sie ihn nach Bedarf aus.",
     "StartDeployment": "Bereitstellung starten",
@@ -3796,7 +3797,8 @@
       "StartBatchSession": "Beginnen Sie mit einer URL",
       "StartDeployment": "Bereitstellung erstellen",
       "StartNow": "Beginnen Sie jetzt",
-      "StartSession": "Sitzung starten"
+      "StartSession": "Sitzung starten",
+      "ViewRecentHistory": "Verlauf anzeigen"
     }
   },
   "statistics": {

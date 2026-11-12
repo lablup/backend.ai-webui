@@ -3782,6 +3782,7 @@
     "CreateFolder": "Utwórz nowy folder przechowywania",
     "CreateFolderDesc": "Utworzenie folderu i przesłanie plików jest kluczowe w przypadku uczenia modeli lub świadczenia usług na zewnątrz. \nRozpocznij od przesłania plików.",
     "NoStartItems": "Bez dostępnych elementów startowych.",
+    "RecentHistoryDesc": "Uruchom nową sesję z ustawieniami ostatnio utworzonej sesji.",
     "StartBatchSession": "Rozpocznij sesję wsadową",
     "StartBatchSessionDesc": "W przypadku wstępnie zdefiniowanych plików lub zaplanowanych zadań wypróbuj sesje wsadowe. \nWprowadź polecenie, ustaw datę i godzinę i uruchom w razie potrzeby.",
     "StartDeployment": "Uruchom wdrożenie",
@@ -3797,7 +3798,8 @@
       "StartBatchSession": "Zacznij od adresu URL",
       "StartDeployment": "Utwórz wdrożenie",
       "StartNow": "Zacznij teraz",
-      "StartSession": "Rozpocznij sesję"
+      "StartSession": "Rozpocznij sesję",
+      "ViewRecentHistory": "Pokaż historię"
     }
   },
   "statistics": {

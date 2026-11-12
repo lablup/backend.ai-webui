@@ -3782,6 +3782,7 @@
     "CreateFolder": "Créer un nouveau dossier de stockage",
     "CreateFolderDesc": "La création d'un dossier et le téléchargement de fichiers sont cruciaux pour former des modèles ou fournir des services en externe. \nVeuillez commencer par télécharger les fichiers.",
     "NoStartItems": "Pas d'articles de démarrage disponibles.",
+    "RecentHistoryDesc": "Démarrez une nouvelle session avec les paramètres d'une session créée récemment.",
     "StartBatchSession": "Démarrer une session par lots",
     "StartBatchSessionDesc": "Pour les fichiers prédéfinis ou les tâches planifiées, essayez les sessions par lots. \nEntrez la commande, définissez la date et l'heure et exécutez-la selon vos besoins.",
     "StartDeployment": "Démarrer le déploiement",
@@ -3797,7 +3798,8 @@
       "StartBatchSession": "Commencer à partir d'une URL",
       "StartDeployment": "Créer un déploiement",
       "StartNow": "Commencez maintenant",
-      "StartSession": "Démarrer la session"
+      "StartSession": "Démarrer la session",
+      "ViewRecentHistory": "Voir l'historique"
     }
   },
   "statistics": {

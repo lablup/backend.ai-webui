@@ -22,6 +22,7 @@ import ResourceGroupTotalPanel from './memberCards/ResourceGroupTotalPanel';
 import ResourcePresetsPanel from './memberCards/ResourcePresetsPanel';
 import {
   CreateFolderPanel,
+  RecentHistoryPanel,
   StartBatchSessionPanel,
   StartDeploymentPanel,
   StartFromURLPanel,
@@ -121,6 +122,16 @@ const ALL_PAGES: ReadonlyArray<PanelPage> = [
 const START_SIZE = { defaultSize: size(2, 2), minSize: size(1, 2) };
 /** The member page's cards and the shared ones, in the order a new board places them. */
 const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
+  {
+    key: 'start.recentHistory',
+    page: ['project'],
+    group: 'start',
+    titleKey: 'session.launcher.RecentHistory',
+    requires: { menuKey: ['session', 'start'] },
+    kind: 'custom',
+    Component: RecentHistoryPanel,
+    ...START_SIZE,
+  },
   {
     key: 'start.session',
     page: ['project'],
@@ -676,6 +687,7 @@ const PAGE_ORDER: Record<PanelPage, ReadonlyArray<string>> = {
     'mySession',
     'myTotalResource',
     'myResource',
+    'start.recentHistory',
     'start.session',
     'start.batchSession',
     'start.folder',

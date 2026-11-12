@@ -8,6 +8,7 @@ import { useProjectPath } from '../../../hooks/useRouteScope';
 import type { SessionLauncherFormValue } from '../../../pages/SessionLauncherPage/SessionLauncherPage';
 import DeploymentSettingModal from '../../DeploymentSettingModal';
 import FolderCreateModal from '../../FolderCreateModal';
+import SessionTemplateModal from '../../SessionTemplateModal';
 import StartFromURLModal from '../../StartFromURLModal';
 import PanelFrame from '../PanelFrame';
 import type { PanelComponentProps } from '../types';
@@ -21,8 +22,9 @@ import {
   BAINewFolderIcon,
   BAIUnmountAfterClose,
   BAIURLStartIcon,
+  generateRandomString,
 } from 'backend.ai-ui';
-import { Grid2x2Plus } from 'lucide-react';
+import { Grid2x2Plus, History } from 'lucide-react';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -52,6 +54,50 @@ const StartActionCard: React.FC<StartActionCardProps> = ({
         <Button variant="primary" label={buttonLabel} onClick={onClick} />
       </BAIFlex>
     </PanelFrame>
+  );
+};
+
+/** Opens the launcher's recent history; a pick lands on the launcher's review step with that session's settings. */
+export const RecentHistoryPanel: React.FC<PanelComponentProps> = () => {
+  'use memo';
+  const { t } = useTranslation();
+  const webuiNavigate = useWebUINavigate();
+  const buildProjectPath = useProjectPath();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  return (
+    <>
+      <StartActionCard
+        title={t('session.launcher.RecentHistory')}
+        description={t('start.RecentHistoryDesc')}
+        buttonLabel={t('start.button.ViewRecentHistory')}
+        icon={<History size="1em" />}
+        onClick={() => setIsModalOpen(true)}
+      />
+      <BAIUnmountAfterClose>
+        <SessionTemplateModal
+          open={isModalOpen}
+          onRequestClose={(formValue) => {
+            setIsModalOpen(false);
+            if (!formValue) return;
+            const launcherValue: DeepPartial<SessionLauncherFormValue> = {
+              ...formValue,
+              // As the launcher does with a history pick: a fresh name, not a clash.
+              sessionName: formValue.sessionName
+                ? `${formValue.sessionName}-${generateRandomString(4)}`
+                : formValue.sessionName,
+            };
+            const params = new URLSearchParams({
+              // The review step: inference sessions have no storage step.
+              step: formValue.sessionType === 'inference' ? '3' : '4',
+              formValues: JSON.stringify(launcherValue),
+            });
+            webuiNavigate(
+              `${buildProjectPath('session/start')}?${params.toString()}`,
+            );
+          }}
+        />
+      </BAIUnmountAfterClose>
+    </>
   );
 };
 

@@ -3779,6 +3779,7 @@
     "CreateFolder": "Crie uma nova pasta de armazenamento",
     "CreateFolderDesc": "Criar uma pasta e fazer upload de arquivos são cruciais para treinar modelos ou fornecer serviços externamente. \nComece enviando os arquivos.",
     "NoStartItems": "Sem itens de início disponíveis.",
+    "RecentHistoryDesc": "Inicie uma nova sessão com as configurações de uma criada recentemente.",
     "StartBatchSession": "Iniciar sessão em lote",
     "StartBatchSessionDesc": "Para arquivos predefinidos ou tarefas agendadas, experimente sessões em lote. \nDigite o comando, defina a data e a hora e execute conforme necessário.",
     "StartDeployment": "Iniciar implantação",
@@ -3794,7 +3795,8 @@
       "StartBatchSession": "Comece a partir de um URL",
       "StartDeployment": "Criar implantação",
       "StartNow": "Comece agora",
-      "StartSession": "Iniciar sessão"
+      "StartSession": "Iniciar sessão",
+      "ViewRecentHistory": "Ver histórico"
     }
   },
   "statistics": {

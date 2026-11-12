@@ -3783,6 +3783,7 @@
     "CreateFolder": "Buat Folder Penyimpanan Baru",
     "CreateFolderDesc": "Membuat folder dan mengunggah file sangat penting untuk melatih model atau menyediakan layanan secara eksternal. \nSilakan mulai dengan mengunggah file.",
     "NoStartItems": "Tidak ada item mulai yang tersedia.",
+    "RecentHistoryDesc": "Mulai sesi baru dengan pengaturan sesi yang baru-baru ini Anda buat.",
     "StartBatchSession": "Mulai Sesi Batch",
     "StartBatchSessionDesc": "Untuk file yang telah ditentukan sebelumnya atau tugas terjadwal, cobalah sesi Batch. \nMasukkan perintah, atur tanggal dan waktu, dan jalankan sesuai kebutuhan.",
     "StartDeployment": "Mulai Penerapan",
@@ -3798,7 +3799,8 @@
       "StartBatchSession": "Mulai dari URL",
       "StartDeployment": "Buat Penerapan",
       "StartNow": "Mulai Sekarang",
-      "StartSession": "Mulai Sesi"
+      "StartSession": "Mulai Sesi",
+      "ViewRecentHistory": "Lihat riwayat"
     }
   },
   "statistics": {

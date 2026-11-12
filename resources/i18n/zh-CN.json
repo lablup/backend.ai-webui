@@ -3781,6 +3781,7 @@
     "CreateFolder": "创建新的存储文件夹",
     "CreateFolderDesc": "创建文件夹和上传文件对于训练模型或对外提供服务至关重要。\n请首先上传文件。",
     "NoStartItems": "没有可用的开始项目。",
+    "RecentHistoryDesc": "使用最近创建的会话的设置启动新会话。",
     "StartBatchSession": "开始批量会话",
     "StartBatchSessionDesc": "对于预定义文件或计划任务，请尝试批处理会话。\n输入命令，设置日期和时间，然后根据需要运行。",
     "StartDeployment": "启动部署",
@@ -3796,7 +3797,8 @@
       "StartBatchSession": "从 URL 开始",
       "StartDeployment": "创建部署",
       "StartNow": "现在开始",
-      "StartSession": "开始会话"
+      "StartSession": "开始会话",
+      "ViewRecentHistory": "查看历史"
     }
   },
   "statistics": {

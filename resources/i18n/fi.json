@@ -3779,6 +3779,7 @@
     "CreateFolder": "Luo uusi tallennuskansio",
     "CreateFolderDesc": "Kansion luominen ja tiedostojen lataaminen ovat tärkeitä koulutusmallien tai palvelujen tarjoamisen kannalta. \nAloita lataamalla tiedostot.",
     "NoStartItems": "Ei käytettävissä olevia aloitustuotteita.",
+    "RecentHistoryDesc": "Käynnistä uusi istunto äskettäin luomasi istunnon asetuksilla.",
     "StartBatchSession": "Aloita eräistunto",
     "StartBatchSessionDesc": "Jos haluat käyttää ennalta määritettyjä tiedostoja tai ajoitettuja tehtäviä, kokeile eräistuntoja. \nAnna komento, aseta päivämäärä ja aika ja suorita tarvittaessa.",
     "StartDeployment": "Käynnistä käyttöönotto",
@@ -3794,7 +3795,8 @@
       "StartBatchSession": "Aloita URL-osoitteesta",
       "StartDeployment": "Luo käyttöönotto",
       "StartNow": "Aloita nyt",
-      "StartSession": "Aloita istunto"
+      "StartSession": "Aloita istunto",
+      "ViewRecentHistory": "Näytä historia"
     }
   },
   "statistics": {

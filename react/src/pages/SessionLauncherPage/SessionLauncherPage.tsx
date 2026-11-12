@@ -20,6 +20,7 @@ import ResourceAllocationFormItems, {
   RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
   ResourceAllocationFormValue,
 } from '../../components/SessionFormItems/ResourceAllocationFormItems';
+import SessionTemplateModal from '../../components/SessionTemplateModal';
 import { Form, type FormInstance } from '../../form-engine';
 import { formatDuration } from '../../helper';
 import { normalizeLegacyMountFields } from '../../helper/vfolderMounts';
@@ -46,7 +47,6 @@ import SessionLauncherWebMCPTool from './components/SessionLauncherWebMCPTool';
 import SessionNameFormItem, {
   SessionNameFormItemValue,
 } from './components/SessionNameFormItem';
-import SessionTemplateModal from './components/SessionTemplateModal';
 import { Button } from '@lablup/ui-common/Button';
 import { ButtonGroup } from '@lablup/ui-common/ButtonGroup';
 import { DropdownMenu } from '@lablup/ui-common/DropdownMenu';

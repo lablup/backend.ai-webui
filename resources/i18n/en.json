@@ -3766,6 +3766,7 @@
     "CreateFolder": "Create New Storage Folder",
     "CreateFolderDesc": "Create folders and upload files. To train models or provide external services, it is essential to create folders and upload files.",
     "NoStartItems": "No availiable Start items.",
+    "RecentHistoryDesc": "Start a new session with the settings of one you created recently.",
     "StartBatchSession": "Start Batch Session",
     "StartBatchSessionDesc": "Create a batch session for predefined files or scheduled tasks. Enter the command, set the date and time, and run the session on demand.",
     "StartDeployment": "Start Deployment",
@@ -3781,7 +3782,8 @@
       "StartBatchSession": "Start from a URL",
       "StartDeployment": "Create Deployment",
       "StartNow": "Start Now",
-      "StartSession": "Start Session"
+      "StartSession": "Start Session",
+      "ViewRecentHistory": "View History"
     }
   },
   "statistics": {

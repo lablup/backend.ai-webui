@@ -3782,6 +3782,7 @@
     "CreateFolder": "새 스토리지 폴더 생성하기",
     "CreateFolderDesc": "폴더를 만들고 파일을 업로드합니다. 모델을 학습시키거나 외부 서비스를 제공하려면 해당 작업은 필수적입니다.",
     "NoStartItems": "사용가능한 Start 항목이 없습니다.",
+    "RecentHistoryDesc": "최근에 만든 세션의 설정으로 새 세션을 시작합니다.",
     "StartBatchSession": "배치 세션 생성",
     "StartBatchSessionDesc": "미리 정의된 파일 또는 예약된 작업에 대한 배치 세션을 생성합니다. 명령을 입력하고 날짜와 시간을 설정한 다음 필요에 따라 세션을 실행하세요.",
     "StartDeployment": "배포 시작",
@@ -3797,7 +3798,8 @@
       "StartBatchSession": "URL로 시작하기",
       "StartDeployment": "배포 생성",
       "StartNow": "지금 시작하기",
-      "StartSession": "세션 시작"
+      "StartSession": "세션 시작",
+      "ViewRecentHistory": "기록 보기"
     }
   },
   "statistics": {

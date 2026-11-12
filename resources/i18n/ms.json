@@ -3779,6 +3779,7 @@
     "CreateFolder": "Buat Folder Storan Baharu",
     "CreateFolderDesc": "Mencipta folder dan memuat naik fail adalah penting untuk model latihan atau menyediakan perkhidmatan secara luaran. \nSila mulakan dengan memuat naik fail.",
     "NoStartItems": "Tiada item permulaan yang boleh didapati.",
+    "RecentHistoryDesc": "Mulakan sesi baharu dengan tetapan sesi yang anda cipta baru-baru ini.",
     "StartBatchSession": "Mulakan Sesi Kelompok",
     "StartBatchSessionDesc": "Untuk fail yang dipratentukan atau tugasan yang dijadualkan, cuba sesi Kelompok. \nMasukkan arahan, tetapkan tarikh dan masa, dan jalankan seperti yang diperlukan.",
     "StartDeployment": "Mulakan Penggunaan",
@@ -3794,7 +3795,8 @@
       "StartBatchSession": "Mulakan daripada URL",
       "StartDeployment": "Cipta Penggunaan",
       "StartNow": "Mulakan Sekarang",
-      "StartSession": "Mulakan Sesi"
+      "StartSession": "Mulakan Sesi",
+      "ViewRecentHistory": "Lihat sejarah"
     }
   },
   "statistics": {

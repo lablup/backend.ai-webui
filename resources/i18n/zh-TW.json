@@ -3783,6 +3783,7 @@
     "CreateFolder": "建立新的儲存資料夾",
     "CreateFolderDesc": "建立資料夾和上傳檔案對於訓練模型或對外提供服務至關重要。\n請先上傳文件。",
     "NoStartItems": "沒有可用的開始項目。",
+    "RecentHistoryDesc": "使用最近建立的會話設定啟動新會話。",
     "StartBatchSession": "開始批量會話",
     "StartBatchSessionDesc": "對於預先定義檔案或排程任務，請嘗試批次會話。\n輸入命令，設定日期和時間，然後根據需要運行。",
     "StartDeployment": "啟動部署",
@@ -3798,7 +3799,8 @@
       "StartBatchSession": "從 URL 開始",
       "StartDeployment": "建立部署",
       "StartNow": "現在開始",
-      "StartSession": "開始會話"
+      "StartSession": "開始會話",
+      "ViewRecentHistory": "查看歷史"
     }
   },
   "statistics": {

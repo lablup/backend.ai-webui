@@ -76,6 +76,7 @@ describe('PANEL_CATALOG', () => {
         'mySession',
         'myTotalResource',
         'myResource',
+        'start.recentHistory',
         'start.session',
         'start.batchSession',
         'start.folder',

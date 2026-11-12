@@ -3779,6 +3779,7 @@
     "CreateFolder": "Yeni Bir Depolama Klasörü Oluşturun",
     "CreateFolderDesc": "Bir klasör oluşturmak ve dosyaları yüklemek, modellerin eğitimi veya dışarıdan hizmet sağlanması için çok önemlidir. \nLütfen dosyaları yükleyerek başlayın.",
     "NoStartItems": "Kullanılabilir başlangıç öğeleri yok.",
+    "RecentHistoryDesc": "Yakın zamanda oluşturduğunuz bir oturumun ayarlarıyla yeni bir oturum başlatın.",
     "StartBatchSession": "Toplu Oturumu Başlat",
     "StartBatchSessionDesc": "Önceden tanımlanmış dosyalar veya zamanlanmış görevler için Toplu oturumları deneyin. \nKomutu girin, tarih ve saati ayarlayın ve gerektiği gibi çalıştırın.",
     "StartDeployment": "Dağıtımı Başlat",
@@ -3794,7 +3795,8 @@
       "StartBatchSession": "Bir URL'den başlayın",
       "StartDeployment": "Dağıtım Oluştur",
       "StartNow": "Şimdi Başla",
-      "StartSession": "Oturumu Başlat"
+      "StartSession": "Oturumu Başlat",
+      "ViewRecentHistory": "Geçmişi görüntüle"
     }
   },
   "statistics": {
