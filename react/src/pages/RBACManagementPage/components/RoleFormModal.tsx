@@ -5,26 +5,18 @@
 import { RoleFormModalCreateMutation } from '../../../__generated__/RoleFormModalCreateMutation.graphql';
 import { RoleFormModalFragment$key } from '../../../__generated__/RoleFormModalFragment.graphql';
 import { RoleFormModalPermissionMatrixQuery } from '../../../__generated__/RoleFormModalPermissionMatrixQuery.graphql';
-import { RoleFormModalResourceGroupQuery } from '../../../__generated__/RoleFormModalResourceGroupQuery.graphql';
 import { RoleFormModalUpdateMutation } from '../../../__generated__/RoleFormModalUpdateMutation.graphql';
 import { App } from '../../../app-shim';
 import { Form } from '../../../form-engine';
 import { rbacTypeI18nKey } from '../../../helper/rbacElementTypes';
 import { useCurrentDomain } from '../../../hooks';
 import {
-  BAIAdminContainerRegistrySelect,
-  BAIAdminModelServiceSelect,
   BAIAdminProjectSelect,
-  BAIAdminResourceGroupSelect,
-  BAIAdminSessionSelect,
   BAIFlex,
-  BAIKeypairSelect,
   BAIModal,
   BAIModalProps,
   BAISelect,
-  BAIStorageHostSelect,
   BAIAdminUserV2Select,
-  BAIVFolderSelect,
   useBAILogger,
   BAICheckboxInput,
   BAITextArea,
@@ -40,47 +32,14 @@ import {
   useMutation,
 } from 'react-relay';
 
-// Scope types with a scope-id picker, in the uppercase spelling of the retired
-// `RBACElementType` enum; managers >= 26.9.0 report them lowercase.
+// The role scope types managers >= 26.10 report (`role_scope_types()`), in the
+// uppercase spelling of the retired `RBACElementType` enum; managers report them lowercase.
 export const RBAC_ELEMENT_TYPES: ReadonlyArray<string> = [
-  // Scope ID select implemented
   'DOMAIN',
   'PROJECT',
   'USER',
-  'VFOLDER',
-  'RESOURCE_GROUP',
-  'SESSION',
-  'MODEL_DEPLOYMENT',
-  'CONTAINER_REGISTRY',
-  'STORAGE_HOST',
-  'KEYPAIR',
-  // TODO: Scope ID select to be implemented in separate stacks
-  // 'IMAGE',
-  // 'ARTIFACT',
-  // 'ARTIFACT_REGISTRY',
-  // 'ARTIFACT_REVISION',
-  // 'RESOURCE_PRESET',
-  // 'USER_RESOURCE_POLICY',
-  // 'KEYPAIR_RESOURCE_POLICY',
-  // 'PROJECT_RESOURCE_POLICY',
-  // 'ROLE',
-  // TODO: No management UI in WebUI yet
-  // 'DEPLOYMENT',
-  // 'NOTIFICATION_CHANNEL',
-  // 'NETWORK',
-  // 'SESSION_TEMPLATE',
-  // 'APP_CONFIG',
-  // 'AUDIT_LOG',
-  // 'EVENT_LOG',
-  // 'NOTIFICATION_RULE',
 ];
 
-/**
- * PILOT-DECISION P3C-4: this used to `extend SelectProps` (antd) and spread the
- * whole antd prop bag into ten different selects. The Astryx siblings do not
- * take antd props, so the router now declares the narrow contract its two call
- * sites actually use — the rest is what `Form.Item` injects.
- */
 interface ScopeIdSelectProps {
   scopeType?: string;
   /** Injected by `Form.Item`. */
@@ -94,20 +53,6 @@ interface ScopeIdSelectProps {
 type ScopeIdBranchProps = Omit<ScopeIdSelectProps, 'scopeType'> & {
   label: string;
   isLabelHidden?: boolean;
-};
-
-const ResourceGroupScopeIdSelect: React.FC<ScopeIdBranchProps> = (props) => {
-  'use memo';
-  const queryRef = useLazyLoadQuery<RoleFormModalResourceGroupQuery>(
-    graphql`
-      query RoleFormModalResourceGroupQuery {
-        ...BAIAdminResourceGroupSelect_resourceGroupsFragment
-      }
-    `,
-    {},
-    { fetchPolicy: 'store-and-network' },
-  );
-  return <BAIAdminResourceGroupSelect queryRef={queryRef} {...props} />;
 };
 
 /** True for the DOMAIN scope, whose id is the signed-in domain and is never shown. */
@@ -149,58 +94,6 @@ export const ScopeIdSelect: React.FC<ScopeIdSelectProps> = ({
     return (
       <Suspense fallback={fallback}>
         <BAIAdminUserV2Select valuePropName="id" {...branchProps} />
-      </Suspense>
-    );
-  }
-  if (scopeType === 'VFOLDER') {
-    return (
-      <Suspense fallback={fallback}>
-        <BAIVFolderSelect {...branchProps} />
-      </Suspense>
-    );
-  }
-  if (scopeType === 'SESSION') {
-    return (
-      <Suspense fallback={fallback}>
-        <BAIAdminSessionSelect {...branchProps} />
-      </Suspense>
-    );
-  }
-  if (scopeType === 'MODEL_DEPLOYMENT') {
-    return (
-      <Suspense fallback={fallback}>
-        <BAIAdminModelServiceSelect {...branchProps} />
-      </Suspense>
-    );
-  }
-  if (scopeType === 'CONTAINER_REGISTRY') {
-    return (
-      <Suspense fallback={fallback}>
-        <BAIAdminContainerRegistrySelect
-          valuePropName="row_id"
-          {...branchProps}
-        />
-      </Suspense>
-    );
-  }
-  if (scopeType === 'STORAGE_HOST') {
-    return (
-      <Suspense fallback={fallback}>
-        <BAIStorageHostSelect {...branchProps} />
-      </Suspense>
-    );
-  }
-  if (scopeType === 'KEYPAIR') {
-    return (
-      <Suspense fallback={fallback}>
-        <BAIKeypairSelect {...branchProps} />
-      </Suspense>
-    );
-  }
-  if (scopeType === 'RESOURCE_GROUP') {
-    return (
-      <Suspense fallback={fallback}>
-        <ResourceGroupScopeIdSelect {...branchProps} />
       </Suspense>
     );
   }
