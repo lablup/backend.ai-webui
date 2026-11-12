@@ -2,7 +2,7 @@
   "version": 1,
   "channel": "next",
   "label": "PR preview",
-  "generatedAt": "2026-11-11T15:11:41.197Z",
+  "generatedAt": "2026-11-12T00:18:41.664Z",
   "languages": [
     "en",
     "ja",
@@ -13,8 +13,8 @@
     "en": {
       "totals": {
         "pages": 1,
-        "changes": 33,
-        "added": 12,
+        "changes": 38,
+        "added": 17,
         "modified": 12,
         "removed": 9,
         "images": 2,
@@ -29,18 +29,23 @@
           "url": "next/en/dashboard.html",
           "sourcePath": "packages/backend.ai-webui-docs/src/en/dashboard/dashboard.md",
           "counts": {
-            "added": 12,
+            "added": 17,
             "modified": 12,
             "removed": 9,
             "images": 2,
-            "total": 33
+            "total": 38
           },
           "fingerprints": [
             "d6b15dbdac40",
-            "1b4d84bf32b9",
+            "23e9bf2c780c",
+            "f24a7029a7a7",
+            "4b35a4132a14",
+            "c3357be1d8a8",
+            "7f275a9a5946",
+            "c8ab72914d23",
             "8fa75bfb4c42",
             "a8eed8953d27",
-            "57ee9d0e6835",
+            "e88c8de1b307",
             "03cd4c6ba0cf",
             "ae782d8fdf8a",
             "785992e0324a",
@@ -76,8 +81,8 @@
     "ja": {
       "totals": {
         "pages": 1,
-        "changes": 32,
-        "added": 12,
+        "changes": 37,
+        "added": 17,
         "modified": 11,
         "removed": 9,
         "images": 2,
@@ -92,18 +97,23 @@
           "url": "next/ja/dashboard.html",
           "sourcePath": "packages/backend.ai-webui-docs/src/ja/dashboard/dashboard.md",
           "counts": {
-            "added": 12,
+            "added": 17,
             "modified": 11,
             "removed": 9,
             "images": 2,
-            "total": 32
+            "total": 37
           },
           "fingerprints": [
             "f90f1da4afc9",
-            "0b64bc8d5824",
+            "4b9c9591f469",
+            "601e5d524200",
+            "c6cda120bd4c",
+            "5bd3d495ba4b",
+            "71bd3912c995",
+            "ce11c527b792",
             "88e4d89c603b",
             "3e84aeaac140",
-            "d532d9a50d27",
+            "6981e3ce373e",
             "f9d31d22dc72",
             "8408bee37de4",
             "a120dd73a668",
@@ -138,8 +148,8 @@
     "ko": {
       "totals": {
         "pages": 1,
-        "changes": 32,
-        "added": 12,
+        "changes": 37,
+        "added": 17,
         "modified": 11,
         "removed": 9,
         "images": 2,
@@ -154,18 +164,23 @@
           "url": "next/ko/dashboard.html",
           "sourcePath": "packages/backend.ai-webui-docs/src/ko/dashboard/dashboard.md",
           "counts": {
-            "added": 12,
+            "added": 17,
             "modified": 11,
             "removed": 9,
             "images": 2,
-            "total": 32
+            "total": 37
           },
           "fingerprints": [
             "b93a76d35ca6",
-            "e72e0a11a77e",
+            "fe891692ece5",
+            "76d97e76b2ae",
+            "c676e9cdfdc0",
+            "222a160731ab",
+            "09cbe9f45f83",
+            "c2b0417e4d09",
             "c83f063d7aed",
             "3833b2101572",
-            "026ecccb3d88",
+            "820f450e9f1e",
             "cdd9630b5770",
             "855e5fdb390c",
             "4469bf6b0cb9",
@@ -200,8 +215,8 @@
     "th": {
       "totals": {
         "pages": 1,
-        "changes": 33,
-        "added": 12,
+        "changes": 38,
+        "added": 17,
         "modified": 12,
         "removed": 9,
         "images": 2,
@@ -216,18 +231,23 @@
           "url": "next/th/dashboard.html",
           "sourcePath": "packages/backend.ai-webui-docs/src/th/dashboard/dashboard.md",
           "counts": {
-            "added": 12,
+            "added": 17,
             "modified": 12,
             "removed": 9,
             "images": 2,
-            "total": 33
+            "total": 38
           },
           "fingerprints": [
             "576f8122de4e",
-            "0f48fcc9f879",
+            "17fb0a5a619a",
+            "8e56f2c1281e",
+            "cd28202ae631",
+            "b9bb532e18d0",
+            "3b2a1f56bd16",
+            "51f72524b59a",
             "0e157e203845",
             "712e4292b882",
-            "83a1567f201b",
+            "bb28594ca25a",
             "a90f06ff963e",
             "1304a7fe5e93",
             "95ba9b317e57",

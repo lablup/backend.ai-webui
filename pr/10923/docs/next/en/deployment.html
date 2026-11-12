@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="Deployments" />
   <meta name="twitter:description" content="Backend.AI lets you deploy AI models as inference services through the Deployments feature." />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Deployments","inLanguage":"en","description":"Backend.AI lets you deploy AI models as inference services through the Deployments feature.","dateModified":"2026-11-10T00:06:19.000Z","url":"https://webui.docs.backend.ai/next/en/deployment.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Deployments","inLanguage":"en","description":"Backend.AI lets you deploy AI models as inference services through the Deployments feature.","dateModified":"2026-11-12T00:16:15.000Z","url":"https://webui.docs.backend.ai/next/en/deployment.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/deployment.html" />
   <link rel="alternate" hreflang="en" href="../en/deployment.html" />
   <link rel="alternate" hreflang="ja" href="../ja/deployment.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">Manual</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.10.0-alpha.3 (92081a1)">v26.10.0-alpha.3 (92081a1)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.10.0-alpha.3 (5fc9a57)">v26.10.0-alpha.3 (5fc9a57)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="Search docs...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -671,9 +671,9 @@ please refer to the <a href="./vfolder.html#explore-folder">Explore Folder</a> s
 <ul>
 <li data-bai-block="224"><p><strong>Deployment is ready</strong>: Shown when the deployment is <code>HEALTHY</code>. Includes a <strong>Test in Chat</strong> button as a shortcut to the LLM Chat Test interface so you can test the model without leaving the page.</p>
 </li>
-<li data-bai-block="225"><p><strong>Private deployment — use an access token to access the endpoint.</strong>: Shown when <strong>Open to Public</strong> is disabled, the endpoint URL has been issued, and the deployment does not have an access token yet. Includes an <strong>Add Access Token</strong> button that opens the Create Access Token dialog directly from the banner. The banner disappears once you create the first token. See <a href="#generating-tokens">Access Tokens</a>.</p>
+<li data-bai-block="225"><p><strong>Private deployment - use an access token to access the endpoint.</strong>: Shown when <strong>Open to Public</strong> is disabled, the endpoint URL has been issued, and the deployment does not have an access token yet. Includes an <strong>Add Access Token</strong> button that opens the Create Access Token dialog directly from the banner. The banner disappears once you create the first token. See <a href="#generating-tokens">Access Tokens</a>.</p>
 </li>
-<li data-bai-block="226"><p><strong>No revision is deployed — add a revision to activate this service.</strong>: Shown when the deployment has no current revision. Click <code>Add Revision</code> to create the first revision and activate the service.</p>
+<li data-bai-block="226"><p><strong>No revision is deployed - add a revision to activate this service.</strong>: Shown when the deployment has no current revision. Click <code>Add Revision</code> to create the first revision and activate the service.</p>
 </li>
 <li data-bai-block="227"><p><strong>Preparing your service</strong>: Shown while the deployment is being created or transitioning between states. Indicates the service is not yet ready to handle requests.</p>
 </li>
@@ -749,7 +749,7 @@ please refer to the <a href="./vfolder.html#explore-folder">Explore Folder</a> s
 <p data-bai-block="280"><strong>Applying-in-progress state</strong></p>
 <p data-bai-block="281">While a different revision is being applied, the <strong>Current Revision</strong> tab shows an alert: <em>&quot;Applying revision N.&quot;</em> A <strong>View Revision</strong> button in the alert opens a detail drawer for the revision currently being applied. The tab refreshes automatically every 5 seconds until the apply completes.</p>
 <p data-bai-block="282"><strong>Empty state</strong></p>
-<p data-bai-block="283">If no revision has been deployed yet, the tab shows: <em>&quot;No revision is deployed — add a revision to activate this service.&quot;</em></p>
+<p data-bai-block="283">If no revision has been deployed yet, the tab shows: <em>&quot;No revision is deployed - add a revision to activate this service.&quot;</em></p>
 <h4 data-bai-block="284" id="deployment-revision-history-tab">Revision history tab<a class="hash-link" href="#deployment-revision-history-tab" aria-label="Direct link to Revision history tab">#</a></h4>
 <p data-bai-block="285">The <strong>Revision History</strong> tab lists all revisions added to the deployment, sorted from newest to oldest by default.</p>
 <p><figure data-bai-block="286" class="doc-figure"><img src="./images/revision_history_tab.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2344" height="502" /><figcaption>Figure 12.17</figcaption></figure>
@@ -1057,7 +1057,7 @@ For instance, when using the service generated by Backend.AI, please refer to th
     <div class="page-footer">
       <div class="page-metadata">
   <a class="edit-link" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/en/deployment/deployment.md" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg> Edit this page</a>
-  <span class="last-updated">Last updated on Nov 10, 2026</span>
+  <span class="last-updated">Last updated on Nov 12, 2026</span>
 </div>
       <nav class="pagination-nav" aria-label="Docs pages">
   <a class="pagination-nav__link pagination-nav__link--prev" href="./cluster_session.html">
