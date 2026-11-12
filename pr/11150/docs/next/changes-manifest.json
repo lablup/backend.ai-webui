@@ -2,7 +2,7 @@
   "version": 1,
   "channel": "next",
   "label": "PR preview",
-  "generatedAt": "2026-11-12T01:30:29.150Z",
+  "generatedAt": "2026-11-12T01:37:59.540Z",
   "languages": [
     "en",
     "ja",
@@ -13,8 +13,8 @@
     "en": {
       "totals": {
         "pages": 3,
-        "changes": 49,
-        "added": 48,
+        "changes": 47,
+        "added": 46,
         "modified": 1,
         "removed": 0,
         "images": 4,
@@ -29,11 +29,11 @@
           "url": "next/en/dashboard.html",
           "sourcePath": "packages/backend.ai-webui-docs/src/en/dashboard/dashboard.md",
           "counts": {
-            "added": 43,
+            "added": 41,
             "modified": 1,
             "removed": 0,
             "images": 4,
-            "total": 44
+            "total": 42
           },
           "fingerprints": [
             "8f353843cb7c",
@@ -48,8 +48,6 @@
             "1229675f88f9-2",
             "42040775b8e7",
             "6abb807b1fa6",
-            "1229675f88f9-3",
-            "d4877cb91a4e",
             "ceef3cfba543",
             "a11f8118d67d",
             "4551793432d8",
@@ -78,7 +76,7 @@
             "3cde27626a05",
             "fb2852b378af",
             "103f79120ce7",
-            "1229675f88f9-4",
+            "1229675f88f9-3",
             "9f743507ae47"
           ]
         },
@@ -124,8 +122,8 @@
     "ja": {
       "totals": {
         "pages": 3,
-        "changes": 49,
-        "added": 48,
+        "changes": 47,
+        "added": 46,
         "modified": 1,
         "removed": 0,
         "images": 4,
@@ -140,11 +138,11 @@
           "url": "next/ja/dashboard.html",
           "sourcePath": "packages/backend.ai-webui-docs/src/ja/dashboard/dashboard.md",
           "counts": {
-            "added": 43,
+            "added": 41,
             "modified": 1,
             "removed": 0,
             "images": 4,
-            "total": 44
+            "total": 42
           },
           "fingerprints": [
             "0c4ed01613e3",
@@ -159,8 +157,6 @@
             "f01269a566cb-2",
             "b7dcd230ec71",
             "738aeb5f3e21",
-            "f01269a566cb-3",
-            "4097d3ebd3c2",
             "19a5f804b5fd",
             "bbfa2a0163a3",
             "afc799c551e7",
@@ -189,7 +185,7 @@
             "540927915ba8",
             "b497ed002ea2",
             "e859dec79af3",
-            "f01269a566cb-4",
+            "f01269a566cb-3",
             "c2045cef4639"
           ]
         },
@@ -235,8 +231,8 @@
     "ko": {
       "totals": {
         "pages": 3,
-        "changes": 49,
-        "added": 48,
+        "changes": 47,
+        "added": 46,
         "modified": 1,
         "removed": 0,
         "images": 4,
@@ -251,11 +247,11 @@
           "url": "next/ko/dashboard.html",
           "sourcePath": "packages/backend.ai-webui-docs/src/ko/dashboard/dashboard.md",
           "counts": {
-            "added": 43,
+            "added": 41,
             "modified": 1,
             "removed": 0,
             "images": 4,
-            "total": 44
+            "total": 42
           },
           "fingerprints": [
             "88074423a682",
@@ -270,8 +266,6 @@
             "1cb9bc9daf22-2",
             "5dcd55075290",
             "1f197eb056ab",
-            "1cb9bc9daf22-3",
-            "e8a3966ce987",
             "7d71875c8f42",
             "46d7b552b128",
             "9449454dd159",
@@ -300,7 +294,7 @@
             "c799de8df19e",
             "65e2183657c9",
             "299e27bf7644",
-            "1cb9bc9daf22-4",
+            "1cb9bc9daf22-3",
             "f95bf68a5be5"
           ]
         },
@@ -346,8 +340,8 @@
     "th": {
       "totals": {
         "pages": 3,
-        "changes": 49,
-        "added": 48,
+        "changes": 47,
+        "added": 46,
         "modified": 1,
         "removed": 0,
         "images": 4,
@@ -362,11 +356,11 @@
           "url": "next/th/dashboard.html",
           "sourcePath": "packages/backend.ai-webui-docs/src/th/dashboard/dashboard.md",
           "counts": {
-            "added": 43,
+            "added": 41,
             "modified": 1,
             "removed": 0,
             "images": 4,
-            "total": 44
+            "total": 42
           },
           "fingerprints": [
             "d7bc1526af3d",
@@ -381,8 +375,6 @@
             "d07801ca98f9-2",
             "417f16d92afa",
             "6354b6691aa7",
-            "d07801ca98f9-3",
-            "8c8485167305",
             "b77baf286170",
             "09334478f1b7",
             "b69208babf9d",
@@ -411,7 +403,7 @@
             "c730e4f0b7ab",
             "ffd63c3b6dbb",
             "92b67ec74b9b",
-            "d07801ca98f9-4",
+            "d07801ca98f9-3",
             "f116ae8f9af9"
           ]
         },
