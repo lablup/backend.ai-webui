@@ -14,8 +14,7 @@ on:
       - .gitattributes
       - .lfsconfig
       - .github/actions/setup-node-pnpm/**
-      - .github/scripts/lfs/install-git-lfs.sh
-      - .github/scripts/lfs/lib.sh
+      - .github/scripts/lfs/**
       - resources/fonts/**
       - resources/icons/**
       # A @lablup/ui-common pin bump changes the pictures.
@@ -35,8 +34,7 @@ on:
       - .gitattributes
       - .lfsconfig
       - .github/actions/setup-node-pnpm/**
-      - .github/scripts/lfs/install-git-lfs.sh
-      - .github/scripts/lfs/lib.sh
+      - .github/scripts/lfs/**
       - resources/fonts/**
       - resources/icons/**
       # A @lablup/ui-common pin bump changes the pictures.
@@ -60,13 +58,20 @@ jobs:
     steps:
       - uses: actions/checkout@v7
         with:
-          sparse-checkout: packages/backend.ai-ui/package.json
+          sparse-checkout: |
+            packages/backend.ai-ui/package.json
+            pnpm-lock.yaml
           sparse-checkout-cone-mode: false
       - id: pw
         run: |
           v=$(jq -r '.devDependencies.playwright // ""' packages/backend.ai-ui/package.json)
           printf '%s\n' "$v" | grep -Eqx '[0-9]+\.[0-9]+\.[0-9]+' || {
             echo "::error::backend.ai-ui's playwright devDependency must be an exact version, got '$v'"
+            exit 1
+          }
+          others=$(sed -n -E "s/^  '?(@playwright\/test|playwright)@([0-9][^:'(]*)'?:.*/\2/p" pnpm-lock.yaml | sort -u | grep -vx "$v" | paste -sd ' ' - || true)
+          [ -z "$others" ] || {
+            echo "::error::pnpm-lock.yaml resolves playwright or @playwright/test to $others besides backend.ai-ui's pin $v; bump them together"
             exit 1
           }
           echo "version=$v" >> "$GITHUB_OUTPUT"
@@ -88,13 +93,59 @@ jobs:
         with:
           cache: ""
           install-args: --filter "backend.ai-ui..."
-      - name: Pull the baselines (Git LFS)
+      - name: Trust the workspace
         shell: bash
         run: |
-          export GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=safe.directory GIT_CONFIG_VALUE_0="$GITHUB_WORKSPACE"
-          bash scripts/pull-visual-baselines.sh
+          {
+            echo GIT_CONFIG_COUNT=1
+            echo GIT_CONFIG_KEY_0=safe.directory
+            echo "GIT_CONFIG_VALUE_0=$GITHUB_WORKSPACE"
+          } >> "$GITHUB_ENV"
+      # LFS object cache: the key changes only when a baseline does; restore-keys
+      # fall back to this PR's or main's latest store (main's is written by the
+      # push run). pull-visual-baselines.sh hashes every object it uses.
+      - name: Compute the LFS cache key
+        id: lfs-key
+        shell: bash
+        working-directory: .
+        run: |
+          key="$(bash .github/scripts/lfs/docs-lfs-cache-key.sh --root packages/backend.ai-ui/test/visual/__screenshots__ --prefix bui-visual-lfs-v1-)"
+          echo "key=${key}" >> "$GITHUB_OUTPUT"
+      - name: Restore the LFS object cache
+        id: lfs-cache
+        uses: actions/cache/restore@v6
+        with:
+          path: .git/lfs/objects
+          key: ${{ steps.lfs-key.outputs.key }}
+          restore-keys: bui-visual-lfs-v1-
+      # A fork PR's new baselines may exist only in the fork's LFS store, so the
+      # pull falls back to the fork's public URL, fetched anonymously.
+      - name: Pull the baselines (Git LFS)
+        shell: bash
+        env:
+          LFS_USED_OIDS_FILE: ${{ runner.temp }}/lfs-used-oids
+          HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+          HEAD_CLONE_URL: ${{ github.event.pull_request.head.repo.clone_url }}
+        run: |
+          fork_args=()
+          if [ -n "$HEAD_REPO" ] && [ "$HEAD_REPO" != "$GITHUB_REPOSITORY" ]; then
+            fork_args=(--fallback-remote "$HEAD_CLONE_URL" --fallback-report "${RUNNER_TEMP}/lfs-fork-only.txt")
+          fi
+          bash scripts/pull-visual-baselines.sh "${fork_args[@]}"
       - name: Visual tests
         run: pnpm run test:visual
+      # Not for a fork PR: objects only the fork has would then skip the fetch
+      # from origin on the next run and pass the check below.
+      - name: Prune the LFS object store to what the run used
+        if: steps.lfs-cache.outputs.cache-hit != 'true' && (github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository)
+        shell: bash
+        run: bash ../../.github/scripts/lfs/prune-lfs-store.sh "${RUNNER_TEMP}/lfs-used-oids"
+      - name: Save the LFS object cache
+        if: steps.lfs-cache.outputs.cache-hit != 'true' && (github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository)
+        uses: actions/cache/save@v6
+        with:
+          path: .git/lfs/objects
+          key: ${{ steps.lfs-key.outputs.key }}
       - name: Upload screenshot diffs
         if: failure()
         uses: actions/upload-artifact@v7
@@ -103,3 +154,17 @@ jobs:
           path: packages/backend.ai-ui/.vitest-attachments
           include-hidden-files: true
           if-no-files-found: ignore
+      # Main's runs fetch from this repository alone, so baselines only the fork
+      # holds must be copied to its LFS storage before merging.
+      - name: Check that the PR's baselines are in this repository
+        shell: bash
+        env:
+          HEAD_CLONE_URL: ${{ github.event.pull_request.head.repo.clone_url }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          [ -s "${RUNNER_TEMP}/lfs-fork-only.txt" ] || exit 0
+          echo "::error::Some of this PR's visual test baselines are stored only in the fork's Git LFS (${HEAD_CLONE_URL})."
+          echo "A maintainer must copy them before merging, from a clone with git-lfs installed:"
+          echo "  git fetch origin refs/pull/${PR_NUMBER}/head && git lfs fetch --exclude=\"\" ${HEAD_CLONE_URL} FETCH_HEAD && git -c lfs.allowincompletepush=true lfs push origin FETCH_HEAD"
+          echo "Then re-run this job."
+          exit 1

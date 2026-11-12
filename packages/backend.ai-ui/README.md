@@ -286,6 +286,10 @@ $ pnpm run test:visual:docker src/components/BAICard -u  # put -u after the path
   [git-lfs](https://git-lfs.com) (`git lfs install --skip-repo` once). With it
   set up, `git add` stores the rewritten baselines in LFS.
 - A new story has no baseline and fails CI until you add one with `-u`.
+- A baseline no current story produces (a story renamed, removed, or tagged
+  `no-vrt`) fails the run with its path; `-u` deletes it.
+- A story taller or wider than the 1200 × 900 page is captured whole: the page
+  grows to fit for its screenshot.
 - When a visual change is intended, rewrite the baselines and commit them with
   the change, so the review shows the picture changing. When the painted area
   changes size there is no diff image; compare the actual screenshot in
@@ -304,7 +308,11 @@ $ pnpm run test:visual:docker src/components/BAICard -u  # put -u after the path
   container, which sets `BUI_VISUAL_CONTAINER=1`, writes the committed
   `-linux.png` names.
 - Bumping `playwright` rewrites every baseline; the workflow's container tag
-  follows the pin in `package.json` on its own.
+  follows the pin in `package.json` on its own. Bump the root
+  `@playwright/test` to the same version, or the workflow fails.
+- The container keeps `node_modules`, the pnpm store and npm's cache in Docker
+  volumes named `bui-visual-*`. Remove them to reclaim the space:
+  `docker volume ls -q --filter name=bui-visual- | xargs docker volume rm`.
 
 ## Localization
 

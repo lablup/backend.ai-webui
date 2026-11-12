@@ -1,5 +1,11 @@
 import { afterEach, beforeAll, expect, vi } from 'vitest';
-import { page } from 'vitest/browser';
+import { commands, page } from 'vitest/browser';
+
+declare module 'vitest/browser' {
+  interface BrowserCommands {
+    setPageViewport: (width: number, height: number) => Promise<void>;
+  }
+}
 
 // relay-test-utils reads `global`, which Storybook's iframe.html sets.
 Object.assign(globalThis, { global: globalThis });
@@ -151,9 +157,36 @@ function paintedBounds() {
   if (left === Infinity) return { left: 0, top: 0, width: 1, height: 1 };
   left = Math.max(0, Math.floor(left - MARGIN));
   top = Math.max(0, Math.floor(top - MARGIN));
-  right = Math.min(root.scrollWidth, Math.ceil(right + MARGIN));
-  bottom = Math.min(root.scrollHeight, Math.ceil(bottom + MARGIN));
+  right = Math.min(root.scrollWidth, innerWidth, Math.ceil(right + MARGIN));
+  bottom = Math.min(root.scrollHeight, innerHeight, Math.ceil(bottom + MARGIN));
   return { left, top, width: right - left, height: bottom - top };
+}
+
+async function resizeViewport(width: number, height: number) {
+  await commands.setPageViewport(width, height);
+  await page.viewport(width, height);
+  await new Promise((r) => requestAnimationFrame(() => r(undefined)));
+}
+
+function overflow() {
+  const root = document.documentElement;
+  return {
+    width: Math.max(innerWidth, root.scrollWidth),
+    height: Math.max(innerHeight, root.scrollHeight),
+  };
+}
+
+async function fitViewport(base: { width: number; height: number }) {
+  const wanted = overflow();
+  if (wanted.width === innerWidth && wanted.height === innerHeight) return;
+  await resizeViewport(wanted.width, wanted.height);
+  await domSettled(200);
+  const grown = overflow();
+  const width = grown.width > innerWidth ? base.width : innerWidth;
+  const height = grown.height > innerHeight ? base.height : innerHeight;
+  if (width === innerWidth && height === innerHeight) return;
+  await resizeViewport(width, height);
+  await domSettled(200);
 }
 
 afterEach(async (context) => {
@@ -161,23 +194,28 @@ afterEach(async (context) => {
   await domSettled();
   await document.fonts.ready;
 
-  // An element screenshot is the page inside its box, so an invisible box over
-  // the painted area captures exactly that area.
-  const { left, top, width, height } = paintedBounds();
+  const base = { width: innerWidth, height: innerHeight };
   const frame = document.createElement('div');
-  frame.setAttribute('aria-hidden', 'true');
-  Object.assign(frame.style, {
-    position: 'absolute',
-    left: `${left}px`,
-    top: `${top}px`,
-    width: `${width}px`,
-    height: `${height}px`,
-    pointerEvents: 'none',
-  });
-  document.body.append(frame);
   try {
+    await fitViewport(base);
+    // An element screenshot is the page inside its box, so an invisible box over
+    // the painted area captures exactly that area.
+    const { left, top, width, height } = paintedBounds();
+    frame.setAttribute('aria-hidden', 'true');
+    Object.assign(frame.style, {
+      position: 'absolute',
+      left: `${left}px`,
+      top: `${top}px`,
+      width: `${width}px`,
+      height: `${height}px`,
+      pointerEvents: 'none',
+    });
+    document.body.append(frame);
     await expect(page.elementLocator(frame)).toMatchScreenshot();
   } finally {
     frame.remove();
+    if (innerWidth !== base.width || innerHeight !== base.height) {
+      await resizeViewport(base.width, base.height);
+    }
   }
 });
