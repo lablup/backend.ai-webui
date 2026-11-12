@@ -8,6 +8,7 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation, useTanQuery } from '../hooks/reactQueryAlias';
 import BAIFormItem from './BAIFormItem';
 import { AstryxFormTextArea } from './astryxFormControls';
+import { useQueryClient } from '@tanstack/react-query';
 import {
   BAIModal,
   BAIModalProps,
@@ -30,8 +31,9 @@ const SSHKeypairManagementModal: React.FC<SSHKeypairManagementModalProps> = ({
   const { getErrorMessage } = useErrorMessageResolver();
   const baiClient = useSuspendedBackendaiClient();
   const formRef = useRef<FormInstance>(null);
+  const queryClient = useQueryClient();
 
-  const { data, isFetching, refetch } = useTanQuery<{
+  const { data, isFetching } = useTanQuery<{
     ssh_public_key: string;
   }>({
     queryKey: ['fetchSSHKeypair'],
@@ -46,7 +48,7 @@ const SSHKeypairManagementModal: React.FC<SSHKeypairManagementModalProps> = ({
       baiClient.postSSHKeypair(values),
     onSuccess: () => {
       message.success(t('userSettings.SSHKeypairEnterManuallyFinished'));
-      refetch();
+      queryClient.invalidateQueries({ queryKey: ['fetchSSHKeypair'] });
       onRequestClose(true);
     },
     onError: (error) => {
@@ -68,11 +70,10 @@ const SSHKeypairManagementModal: React.FC<SSHKeypairManagementModalProps> = ({
       }}
       onCancel={() => onRequestClose()}
       confirmLoading={mutationToPostSSHKeypair.isPending}
+      loading={isFetching}
       {...modalProps}
     >
-      {/* Remounts once the key arrives so the field starts from it. */}
       <Form
-        key={data ? 'loaded' : 'loading'}
         ref={formRef}
         preserve={false}
         layout="vertical"
@@ -86,7 +87,6 @@ const SSHKeypairManagementModal: React.FC<SSHKeypairManagementModalProps> = ({
           <AstryxFormTextArea
             label={t('userSettings.PublicKey')}
             placeholder={t('userSettings.NoExistingSSHKeypair')}
-            disabled={isFetching && !data}
             rows={6}
           />
         </BAIFormItem>
