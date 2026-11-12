@@ -627,10 +627,6 @@ library provided by the computation session can be used as it is. For detailed
 instructions on how to use Jupyter Notebook, please refer to the official Jupyter Notebook
 documentation.
 
-`id_container file` in the notebook's file explorer, contains a private
-SSH key. If necessary, users can download it and use it for SSH / SFTP access to
-the container.
-
 Click the `NEW` button at the top right and select the Notebook for Backend.AI,
 then the ipynb window appears where users can enter their own code.
 

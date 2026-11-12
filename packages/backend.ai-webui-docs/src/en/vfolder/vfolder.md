@@ -392,8 +392,8 @@ automatically. (This session will not affect resource occupancy.)
 
 ![=800px](../images/SSH_SFTP_connection.png)
 
-For the connection, click `Download SSH Key` button to download the SSH private key
-(`id_container`). Also, remember the host and port number. Then, you can copy your
+For the connection, remember the host and port number, and use the private key of
+the SSH keypair you registered in User Settings. Then, you can copy your
 files to the session using the Connection Example code written in the dialog, or
 referring to the following guide: [SFTP Connection Guide](#ssh-sftp-container).
 To preserve the files, you need to transfer the files to the storage folder. Also,
@@ -401,10 +401,8 @@ the session will be terminated when there is no transfer for some time.
 
 
 :::note
-If you upload your SSH keypair, the `id_container` will be set with your
-own SSH private key. So, you don't need to download it every time you
-want to connect via SSH to your container. Please refer to
-[managing user's SSH keypair](#user-ssh-keypair-management).
+The connection uses the SSH public key registered in your user settings. Please
+refer to [managing user's SSH keypair](#user-ssh-keypair-management).
 :::
 
 ## Pipeline folders
