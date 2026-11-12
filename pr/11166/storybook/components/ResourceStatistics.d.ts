@@ -51,6 +51,8 @@ interface ResourceStatisticsProps {
     progressMode?: BAIStatisticProps['progressMode'];
     precision?: number;
     progressSteps?: number;
+    /** A line under an item, keyed `cpu`, `memory` or an accelerator's `key`. */
+    notes?: Partial<Record<string, React.ReactNode>>;
 }
 export declare const processMemoryValue: (value: any, displayUnit: string) => number;
 export declare const convertToNumber: (value: any) => number;
