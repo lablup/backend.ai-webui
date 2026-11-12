@@ -4,101 +4,116 @@ navTitle: Dashboard
 
 # Dashboard
 
-The **Dashboard** provides an at-a-glance summary of your current resource usage,
-available limits, and session information across all your projects and resource groups.
-It helps you quickly understand how your computing resources are being utilized
-and monitor your recent activities in the system.
+The **Dashboard** is the page you land on after signing in. It is made up of
+cards, and the cards at the top are shortcuts to the tasks you usually start
+with. Each one names a task, describes it in a sentence, and has a button that
+starts it:
+
+- **Start Interactive Session**:
+    Click **Start Session** to open the session launcher, where you pick an
+    environment and resources and work with your code interactively.
+
+- **Start Batch Session**:
+    Click **Start Session** to open the session launcher with the session type
+    set to batch, for a command that runs to completion on its own.
+
+- **Create New Storage Folder**:
+    Click **Create Folder** to create a storage folder for the files and data
+    your sessions use.
+
+- **Start Deployment**:
+    Click **Create Deployment** to serve a trained model so that others can use
+    it. This card appears only when your administrator has enabled model
+    serving.
+
+- **Start From URL**:
+    Click **Start Now** to start a session from a Jupyter notebook, a GitHub or
+    GitLab repository, or a Hugging Face model, given its URL.
 
 ![](../images/dashboard.png)
 
-The page is composed of several main panels:
+The cards below them summarize your sessions, resource usage and recent
+activity in the current project:
 
 - **My Sessions**:
-    Shows the number of active sessions by type,
-    such as *Interactive*, *Batch*, *Inference*, and *Upload*.
-    You can quickly see how many sessions of each type are currently running.
+    Shows your sessions in the current project by status,
+    and the active ones by session type such as *Interactive*, *Batch*,
+    *Inference*, and *Upload*.
+
+- **My Recent Sessions**:
+    Lists the sessions you created most recently, newest first.
 
 - **My Total Resource Usage**:
-    Displays the resources you are currently using across all your projects.
-    Each resource shows a usage bar below its value; hover over the bar to see
-    how much of your total limit that usage represents.
+    Shows what your sessions use across all resource groups and projects.
     When multiple limits (domain, project, or keypair) apply,
     the **most restrictive** one takes effect.
 
 - **My Resources in Resource Group**:
-    Shows your current resource usage and remaining capacity
-    within the selected resource group of your current project.
-    You can switch groups using the dropdown menu.
+    Shows how much resource you have used and how much is still free
+    in the card's resource group.
 
-- **Folder Status**:
-    Shows how many storage folders you can reach, split into **My Folders**,
-    **Project Folders**, and **Invited Folders**.
-    When invitations are waiting for you, click the **Invited Folders** count
-    to open the Data page and review them.
+- **Total Resources in Resource Group**:
+    Summarizes the used and free resources of the card's resource group.
+    The data is aggregated from all agents that belong to the group.
+
+- **Agent Statistics**:
+    Shows the total resources of all agents in the system.
 
 - **Quota per storage volume**:
     Shows the quota available on each storage volume.
-    When no storage host supports quota, the panel shows a notice instead.
+    When no storage host supports quota, the card shows a notice instead.
 
-- **Total Resources in Resource Group**:
-    Summarizes the overall used and free resources in the selected resource group.
-    The data is aggregated from all agents that belong to the group.
+- **My Deployments**:
+    Lists your model deployments with the health of their replicas.
+
+- **My Activity**:
+    Lists your own audit log entries for the period the card is set to.
 
 :::note
-The **Total Resources in Resource Group** panel may not be visible depending on your
-system configuration.
+The **Total Resources in Resource Group** and **Agent Statistics** cards may not
+be visible depending on your system configuration.
 :::
 
-- **Recently Created Sessions**:
-    Lists the most recently created active sessions within the current project.
-    Provides session details such as name, status, CPU/memory usage, environment, resource group,
-    session type, and creation time.
-    By default, the latest 5 active sessions are displayed.
-
-<a id="superadmin-dashboard"></a>
-
-When you are logged in as a superadmin, the Dashboard page also displays
-**Agent Statistics** and **Active Agents** panels alongside the standard user panels.
-These panels show cluster-wide agent health and resource utilization.
-The **My Sessions** panel is titled **Active Sessions** for superadmins; it still
-counts the sessions of the current project.
+Project admins and superadmins also have a **Dashboard** of their own in the
+admin menu, with cards for the project or for the whole cluster.
 
 ## Customizing the Dashboard Layout
 
 You can rearrange the board at any time — there is no mode to enter first:
 
-- **Move panels**: Drag a panel by its header to reposition it on the board.
-- **Resize panels**: Drag the bottom-right corner of a panel to adjust its
-  size. Each panel has a minimum size to ensure its content remains readable.
+- **Move cards**: Drag a card by its header to reposition it on the board.
+- **Resize cards**: Drag the bottom-right corner of a card to adjust its
+  size. Each card has a minimum size to ensure its content remains readable.
+
+Click **Edit** to open the edit sidebar, and **Close** to hide it again. The
+sidebar lists every card the page offers, grouped by topic: select a card to
+put it on the board, and clear it to take it off.
 
 ![](../images/dashboard_edit_mode.png)
 
-Your customized layout is automatically saved and persists across browser
-sessions. The layout is stored per user, so each user can have their own
-preferred arrangement. To discard your arrangement and restore the default
-one, click the **Reset layout** button at the bottom of the edit sidebar and
-confirm. Resetting the layout does not remove your custom panels.
+Your arrangement is saved to your account on the server, so it follows you to
+every browser you sign in from. To discard it and restore the default cards
+and arrangement, click the **Reset layout** button at the bottom of the edit
+sidebar and confirm. Resetting the layout does not remove your custom panels.
 
 :::tip
-When the WebUI is updated with new dashboard panels, those panels will
-automatically appear on your dashboard even if you have a saved custom layout.
+When the WebUI is updated with new dashboard cards, those cards will
+automatically appear on your dashboard even if you have a saved layout.
 :::
+
+### Card Settings
+
+A card that reads a resource group or a time range keeps a saved default.
+Open **Default card settings** for that card in the edit sidebar to choose the
+values the board opens with; the picker in the card's header changes them for
+the current visit only.
 
 ### Custom Panels
 
-:::note[Experimental feature]
-The entire custom-panel feature is hidden until you turn on **Custom dashboard
-panels** in the [Experimental features](#experimental-features) section of the
-User Settings page. If you turn the feature off later, your existing custom
-panels are hidden — not deleted — and reappear with their saved board
-positions once you turn it back on.
-:::
-
-Click the **Edit** button at the top right of the page to open the custom-panel
-sidebar, and **Close** to hide it again. The sidebar lists your custom panels. A
-custom panel shows a data source you select, narrowed by a condition you define.
-The panel itself shows only a title and its data, so
-give the panel a title that describes its condition.
+The edit sidebar also lists your custom panels. A custom panel shows a data
+source you select, narrowed by a condition you define. The panel itself shows
+only a title and its data, so give the panel a title that describes its
+condition.
 
 To add a panel, click the **Add** button in the sidebar. The panel dialog
 contains the following fields. **Panel type** and **Data source** are
@@ -155,6 +170,6 @@ query remains listed in the sidebar but is not shown on the board.
 
 ## Automatic Refresh
 
-The dashboard refreshes its data automatically every 15 seconds, so the panels
-always reflect recent activity without reloading the page. Custom panels
-refresh on the same cycle as the built-in panels.
+The refresh control on the dashboard bar sets how often every card refreshes —
+**Off**, or an interval from 5 seconds to 10 minutes — and refreshes every card
+at once when you click it.
