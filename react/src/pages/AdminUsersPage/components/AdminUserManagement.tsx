@@ -210,8 +210,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
   // scoped migration and stays superadmin-only by design (ADR 0012).
   const isSuperAdmin = bailClient.is_superadmin;
 
-  const canActAs =
-    bailClient.isManagerVersionCompatibleWith('26.9.0') && isSuperAdmin;
+  const canActAs = isSuperAdmin;
 
   const confirmActAs = (userId: string, email: string, name: string) => {
     modal.confirm({
