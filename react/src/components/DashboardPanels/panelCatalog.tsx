@@ -116,7 +116,8 @@ const ALL_PAGES: ReadonlyArray<PanelPage> = [
 ];
 
 // Each Start card also carries the retired Start page's menu key, which still hides them all.
-const START_SIZE = { defaultSize: size(1, 2), minSize: size(1, 2) };
+// Two columns: on a six-column board one column is too narrow for a title and a button.
+const START_SIZE = { defaultSize: size(2, 2), minSize: size(1, 2) };
 /** The member page's cards and the shared ones, in the order a new board places them. */
 const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
   {
@@ -613,9 +614,9 @@ const PAGE_ORDER: Record<PanelPage, ReadonlyArray<string>> = {
     'start.folder',
     'start.deployment',
     'start.url',
+    'quotaPerStorageVolume',
     'myRecentSessions',
     'myDeployments',
-    'quotaPerStorageVolume',
     'totalResourceWithinResourceGroup',
     'memberAgentStats',
     'myActivity',
