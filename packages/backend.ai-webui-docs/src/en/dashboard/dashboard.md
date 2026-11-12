@@ -4,17 +4,36 @@ navTitle: Dashboard
 
 # Dashboard
 
-The **Dashboard** is the page you land on after signing in. The **Get started**
-cards open the actions you run most often, and the cards below them summarize
-your sessions, resource usage and recent activity in the current project.
+The **Dashboard** is the page you land on after signing in. It is made up of
+cards, and the cards at the top are shortcuts to the tasks you usually start
+with. Each one names a task, describes it in a sentence, and has a button that
+starts it:
+
+- **Start Interactive Session**:
+    Click **Start Session** to open the session launcher, where you pick an
+    environment and resources and work with your code interactively.
+
+- **Start Batch Session**:
+    Click **Start Session** to open the session launcher with the session type
+    set to batch, for a command that runs to completion on its own.
+
+- **Create New Storage Folder**:
+    Click **Create Folder** to create a storage folder for the files and data
+    your sessions use.
+
+- **Start Deployment**:
+    Click **Create Deployment** to serve a trained model so that others can use
+    it. This card appears only when your administrator has enabled model
+    serving.
+
+- **Start From URL**:
+    Click **Start Now** to start a session from a Jupyter notebook, a GitHub or
+    GitLab repository, or a Hugging Face model, given its URL.
 
 ![](../images/dashboard.png)
 
-The **Get started** cards are **Start Interactive Session**, **Start Batch
-Session**, **Create New Storage Folder**, **Start Deployment** and **Start From
-URL**.
-
-The remaining cards are:
+The cards below them summarize your sessions, resource usage and recent
+activity in the current project:
 
 - **My Sessions**:
     Shows your sessions in the current project by status,
