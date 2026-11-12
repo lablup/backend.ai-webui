@@ -57,8 +57,9 @@ const mountScoped = async (
   scope: AppConfigScope,
   configName: AppConfigName,
   config: Record<string, unknown> | null,
+  hooks?: Awaited<ReturnType<typeof loadHooks>>,
 ) => {
-  const { useScopedAppConfig } = await loadHooks();
+  const { useScopedAppConfig } = hooks ?? (await loadHooks());
   const environment = createMockEnvironment();
   const { result } = renderHook(() => useScopedAppConfig(scope, configName), {
     wrapper: wrapperFor(environment),
@@ -224,19 +225,42 @@ describe('useScopedAppConfig', () => {
   });
 
   it('reads the document again when another reader mounts on the stored copy', async () => {
-    const { useScopedAppConfig } = await loadHooks();
+    const hooks = await loadHooks();
     const { environment } = await mountScoped(
       { scopeType: 'USER' },
       'userConfig',
       { themeFamily: 'ocean' },
+      hooks,
     );
+    // The first mount's own read just landed, so it reads nothing more.
     expect(operationsNamed(environment, 'useAppConfigScopedQuery')).toEqual([]);
-    const second = renderHook(
-      () => useScopedAppConfig({ scopeType: 'USER' }, 'userConfig'),
+    const later = Date.now() + 5000;
+    const now = vi.spyOn(Date, 'now').mockReturnValue(later);
+    try {
+      const second = renderHook(
+        () => hooks.useScopedAppConfig({ scopeType: 'USER' }, 'userConfig'),
+        { wrapper: wrapperFor(environment) },
+      );
+      expect(second.result.current.doc).toEqual({ themeFamily: 'ocean' });
+      await waitForOperation(environment, 'useAppConfigScopedQuery');
+    } finally {
+      now.mockRestore();
+    }
+  });
+
+  it('reads the document on mount for a setter that shows nothing', async () => {
+    const { useScopedAppConfigSetter } = await loadHooks();
+    const environment = createMockEnvironment();
+    renderHook(
+      () =>
+        useScopedAppConfigSetter(
+          { scopeType: 'PUBLIC' },
+          'publicConfigByDomain',
+        ),
       { wrapper: wrapperFor(environment) },
     );
-    expect(second.result.current.doc).toEqual({ themeFamily: 'ocean' });
-    await waitForOperation(environment, 'useAppConfigScopedQuery');
+    const read = await waitForOperation(environment, 'useAppConfigScopedQuery');
+    expect(read.request.variables.scope).toEqual({ scopeType: 'PUBLIC' });
   });
 
   it('follows the fragment the upsert returned when its id changed', async () => {

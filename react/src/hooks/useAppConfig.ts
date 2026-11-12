@@ -196,9 +196,6 @@ const fetchMergedView = (
     { fetchPolicy: 'network-only' },
   ).toPromise();
 
-// Documents a mount found missing, so useLazyLoadQuery fetched them for it.
-const fetchedForMount = new Set<string>();
-
 const useScopeVariables = (
   scope: AppConfigScope,
   configName: AppConfigName,
@@ -219,10 +216,65 @@ const useScopeVariables = (
   };
 };
 
+// A fetch younger than this was the mount's own suspending read.
+const JUST_FETCHED_MS = 2000;
+
+/**
+ * Reads the document once when a screen mounts, unless that mount's own
+ * suspending read just landed: useLazyLoadQuery does not fetch a query another
+ * mounted reader (MainLayout) still retains.
+ */
+const useRefreshOnMount = (
+  relayEnv: IEnvironment,
+  variables: useAppConfigScopedQuery$variables,
+) => {
+  const operation = createOperationDescriptor(
+    getRequest(scopedQuery),
+    variables,
+  );
+  const refresh = useEffectEvent(() => {
+    const availability = relayEnv.check(operation);
+    if (
+      availability.status === 'available' &&
+      availability.fetchTime != null &&
+      Date.now() - availability.fetchTime < JUST_FETCHED_MS
+    ) {
+      return;
+    }
+    fetchQuery<useAppConfigScopedQuery>(relayEnv, scopedQuery, variables, {
+      fetchPolicy: 'network-only',
+    })
+      .toPromise()
+      .catch(() => undefined);
+  });
+  useEffect(() => {
+    refresh();
+  }, [operation.request.identifier]);
+};
+
+const makeSetKey =
+  (relayEnv: IEnvironment, variables: useAppConfigScopedQuery$variables) =>
+  (subKey: AppConfigSubKey, update: AppConfigUpdate) =>
+    serializeWrite(
+      `${variables.scope.scopeType}:${variables.scope.scopeId ?? ''}:${variables.configNames[0]}`,
+      async () => {
+        const base = await readDocument(relayEnv, variables);
+        await upsertDocument(
+          relayEnv,
+          variables,
+          applySubKey(base, subKey, update),
+        );
+        if (variables.configNames[0] === 'domainConfig') {
+          // Not awaited: the write has landed, and a failed refetch only leaves the merged view stale.
+          fetchMergedView(relayEnv, 'domainConfig').catch(() => undefined);
+        }
+      },
+    );
+
 /**
  * `setKey` alone, for a screen that writes one scope's document without
- * showing it: nothing suspends, and the write reads the document when the
- * store does not hold it. Post-login surfaces only.
+ * showing it: nothing suspends, and the document is read once on mount so
+ * the write does not build on an older copy. Post-login surfaces only.
  */
 export const useScopedAppConfigSetter = (
   scope: AppConfigScope,
@@ -231,23 +283,8 @@ export const useScopedAppConfigSetter = (
   'use memo';
   const relayEnv = useRelayEnvironment();
   const variables = useScopeVariables(scope, configName);
-
-  return (subKey: AppConfigSubKey, update: AppConfigUpdate) =>
-    serializeWrite(
-      `${variables.scope.scopeType}:${variables.scope.scopeId ?? ''}:${configName}`,
-      async () => {
-        const base = await readDocument(relayEnv, variables);
-        await upsertDocument(
-          relayEnv,
-          variables,
-          applySubKey(base, subKey, update),
-        );
-        if (configName === 'domainConfig') {
-          // Not awaited: the write has landed, and a failed refetch only leaves the merged view stale.
-          fetchMergedView(relayEnv, configName).catch(() => undefined);
-        }
-      },
-    );
+  useRefreshOnMount(relayEnv, variables);
+  return makeSetKey(relayEnv, variables);
 };
 
 /**
@@ -264,44 +301,22 @@ export const useScopedAppConfig = <T = AppConfigDocument>(
   'use memo';
   const relayEnv = useRelayEnvironment();
   const variables = useScopeVariables(scope, configName);
-  const operation = createOperationDescriptor(
-    getRequest(scopedQuery),
-    variables,
-  );
-  const { identifier } = operation.request;
-  if (relayEnv.check(operation).status === 'missing') {
-    fetchedForMount.add(identifier);
-  }
   const data = useLazyLoadQuery<useAppConfigScopedQuery>(
     scopedQuery,
     variables,
     { fetchPolicy: 'store-and-network' },
   );
-  // useLazyLoadQuery does not fetch a query another mounted reader still
-  // retains, so a mount served from the store reads the document once itself.
-  const refreshOnMount = useEffectEvent(() => {
-    if (fetchedForMount.delete(identifier)) return;
-    fetchQuery<useAppConfigScopedQuery>(relayEnv, scopedQuery, variables, {
-      fetchPolicy: 'network-only',
-    })
-      .toPromise()
-      .catch(() => undefined);
-  });
-  useEffect(() => {
-    refreshOnMount();
-  }, []);
+  useRefreshOnMount(relayEnv, variables);
   const doc = (data.scopedAppConfigFragmentsByNames[0]?.config ?? undefined) as
     T | undefined;
-  const setKey = useScopedAppConfigSetter(scope, configName);
-
-  return { doc, setKey };
+  return { doc, setKey: makeSetKey(relayEnv, variables) };
 };
 
 /**
  * The signed-in user's merged view of `domainConfig` or
  * `publicConfigByDomain` (pass `[domainName, ...]` for a domain's slice).
- * One request per name, so `domainConfig` reuses what the sign-in query
- * stored. Read only. Suspends; post-login surfaces only.
+ * One request per name, so `domainConfig` can reuse what the sign-in query
+ * or another reader left in the store. Read only. Suspends; post-login surfaces only.
  */
 export const useMyAppConfig = <T = AppConfigDocument>(
   configName: MergedAppConfigName,

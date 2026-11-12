@@ -47,14 +47,14 @@ flowchart LR
 | Hook                                          | 읽는 것                                                                              | 쓰는 것                  | Fetch policy                                                               |
 | --------------------------------------------- | ------------------------------------------------------------------------------------ | ------------------------ | -------------------------------------------------------------------------- |
 | `useScopedAppConfig(scope, configName)`       | scope 하나, config name 하나에 대한 `scopedAppConfigFragmentsByNames`, mount마다 1회 | `setKey(subKey, update)` | `store-and-network`, store가 내준 mount에서는 `network-only` 읽기 1회 추가 |
-| `useScopedAppConfigSetter(scope, configName)` | render 때 읽지 않음                                                                  | 같은 `setKey`            | 없음                                                                       |
+| `useScopedAppConfigSetter(scope, configName)` | 같은 문서를 mount마다 1회, suspend 없이                                              | 같은 `setKey`            | `network-only`                                                             |
 | `useMyAppConfig(configName, subKey?)`         | 요청마다 config name 하나에 대한 `myAppConfigs`                                      | 없음                     | `store-or-network`                                                         |
 
 - **Scope type**: `AppConfigScope`는 `{ scopeType: 'PUBLIC' }`, `{ scopeType: 'DOMAIN'; scopeId? }`, `{ scopeType: 'USER'; scopeId? }` 중 하나다. `scopeId`가 없으면 로그인한 사용자의 domain id(`useCurrentDomain().id`, DOMAIN) 또는 user id(USER)가 된다.
 - **Return shape**: `useScopedAppConfig`는 `{ doc, setKey }`를 돌려준다. `doc`은 raw document이고, scope에 그 이름의 fragment가 없으면 `undefined`다.
-- **Read once per mount**: `useLazyLoadQuery`는 `MainLayout`의 `userConfig` 읽기처럼 다른 mount된 reader가 아직 retain한 query를 다시 가져오지 않는다. 그래서 store가 이미 문서를 가진 `useScopedAppConfig` mount는 effect에서 `network-only`로 한 번 읽는다. 문서가 없던 mount는 `useLazyLoadQuery`가 가져왔으므로 다시 읽지 않는다.
-- **Setter without a read**: 쓰기만 하는 화면(`BrandingSettingList`, `UserSettingsGeneralPane`)은 `useScopedAppConfigSetter`를 불러, 보여 주지도 않는 읽기에서 suspend하지 않는다.
-- **Merged view per name**: `useMyAppConfig`는 자기 config name 하나로 `myAppConfigs`를 물으므로, `domainConfig` reader는 sign-in query(`loginSessionAuth.ts`)가 저장한 `myAppConfigs(["domainConfig"])` 결과를 다시 쓴다.
+- **Read once per mount**: `useLazyLoadQuery`는 `MainLayout`의 `userConfig` 읽기처럼 다른 mount된 reader가 아직 retain한 query를 다시 가져오지 않는다. 그래서 `useScopedAppConfig`와 `useScopedAppConfigSetter`의 effect가 화면이 mount될 때 문서를 `network-only`로 읽는다. 단, `environment.check()`가 2초 안에 가져왔다고 알리면 그것이 그 mount 자신의 suspend 읽기이므로 다시 읽지 않는다.
+- **Setter without a read**: 쓰기만 하는 화면(`BrandingSettingList`, `UserSettingsGeneralPane`)은 `useScopedAppConfigSetter`를 부른다. suspend하지 않고, mount 때의 읽기가 쓰기 기준을 화면보다 오래되지 않게 유지한다.
+- **Merged view per name**: `useMyAppConfig`는 자기 config name 하나로 `myAppConfigs`를 물으므로, `domainConfig` reader는 sign-in query(`loginSessionAuth.ts`)나 `MainLayout`의 `AnnouncementBanner`가 store에 남긴 `myAppConfigs(["domainConfig"])` 결과를 다시 쓸 수 있다.
 - **Domain slice**: `publicConfigByDomain`은 domain마다 slice 하나를 두므로, 호출부는 `setKey([domainName, key], …)`와 `useMyAppConfig('publicConfigByDomain', [domainName, key])` 모두에 domain 이름을 첫 경로로 넘긴다.
 
 ### 2. 쓰기마다 upsert 한 번
