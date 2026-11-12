@@ -412,7 +412,9 @@ are only reliable when `isLocalEnvironment` is true.
   never assume creation succeeded.
 - **Admin-side preparation goes through the API.** A user console or project admin spec that
   needs a user, keypair, project or resource policy creates and cleans it up through the API
-  helpers above, never through `/admin/*` pages. Admin console specs (`e2e/admin/<page>/`) act
+  helpers in `e2e/utils/admin-api.ts` (adding a missing create helper with its delete
+  counterpart), never through admin console pages (`/admin/*` or the old flat URLs that
+  redirect there). Admin console specs (`e2e/admin/<page>/`) act
   on those pages as usual: `.claude/rules/e2e-admin-prep-via-api.md`.
 - Skip rather than fail when the target deployment lacks a feature:
   `skipUnlessWebUIVersion`, `skipUnlessManagerVersion`, `skipUnlessClientConfig`,
