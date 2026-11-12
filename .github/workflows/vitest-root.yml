@@ -15,6 +15,8 @@ on:
       # would merge while the copy in check-help-anchors.mjs went stale.
       - packages/backend.ai-docs-toolkit/src/markdown-processor.ts
       - packages/backend.ai-docs-toolkit/src/markdown-extensions.ts
+      # Exercised by scripts/portless-servers-patch.test.ts.
+      - react/patches/portless@*.patch
       - .github/workflows/vitest-root.yml
 
 permissions:

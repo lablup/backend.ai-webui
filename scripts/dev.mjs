@@ -283,13 +283,50 @@ const treeAlive = () => {
 // shutdown signal, poll for survivors and escalate to SIGKILL once the grace
 // period runs out. Nothing in this group may outlive dev.mjs.
 const SIGKILL_GRACE_MS = 5000;
+// portless runs its child in a process group of its own, outside concurrently's.
+const descendantGroups = () => {
+  if (!detached) return [];
+  const rows = (spawnSync('ps', ['-A', '-o', 'pid=,ppid=,pgid='], { encoding: 'utf8' }).stdout || '')
+    .trim()
+    .split('\n')
+    .map((line) => line.trim().split(/\s+/).map(Number));
+  const ownGroup = rows.find(([pid]) => pid === process.pid)?.[2];
+  const pids = new Set([child.pid]);
+  const groups = new Set();
+  for (let grown = true; grown; ) {
+    grown = false;
+    for (const [pid, ppid, pgid] of rows) {
+      if (pids.has(ppid) && !pids.has(pid)) {
+        pids.add(pid);
+        if (pgid !== child.pid && pgid !== ownGroup) groups.add(pgid);
+        grown = true;
+      }
+    }
+  }
+  return [...groups];
+};
+const groupAlive = (pgid) => {
+  try {
+    process.kill(-pgid, 0);
+    return true;
+  } catch {
+    return false;
+  }
+};
 let escalation = null;
 const escalate = async () => {
+  const groups = descendantGroups();
+  const alive = () => treeAlive() || groups.some(groupAlive);
   const deadline = Date.now() + SIGKILL_GRACE_MS;
-  while (treeAlive() && Date.now() < deadline) {
+  while (alive() && Date.now() < deadline) {
     await new Promise((resolve) => setTimeout(resolve, 100));
   }
   if (treeAlive()) signalTree('SIGKILL');
+  for (const pgid of groups) {
+    try {
+      process.kill(-pgid, 'SIGKILL');
+    } catch {}
+  }
 };
 const shutdown = (sig) => {
   stopPrRefresh();
@@ -305,6 +342,6 @@ child.on('exit', async (code, signal) => {
   // (leaked grandchild mid-shutdown). Sweep it before exiting.
   // treeAlive() only covers concurrently's group; the PR refresh is not in it.
   stopPrRefresh();
-  if (treeAlive()) await shutdown('SIGTERM');
+  if (escalation || treeAlive()) await shutdown('SIGTERM');
   process.exit(signal ? 1 : (code ?? 0));
 });

@@ -1,5 +1,5 @@
 diff --git a/dist/chunk-KPJDIJBP.js b/dist/chunk-KPJDIJBP.js
-index 6e4dd72afa7b4bdab088284aa16d40e319cb7b10..77856fbf78aef3f5d250c9b92a1db6c1af3cfa53 100644
+index 6e4dd72afa7b4bdab088284aa16d40e319cb7b10..1175324f92f0e68796b782a55e97553eb46e1143 100644
 --- a/dist/chunk-KPJDIJBP.js
 +++ b/dist/chunk-KPJDIJBP.js
 @@ -628,6 +628,20 @@ function sendProxyError(req, res, status, error, message, host, renderHtml) {
@@ -35,15 +35,3 @@ index 6e4dd72afa7b4bdab088284aa16d40e319cb7b10..77856fbf78aef3f5d250c9b92a1db6c1
        const safeHost = escapeHtml(host);
        const matchedSuffix = tldSuffixes.filter((suffix) => host.endsWith(suffix)).sort((a, b) => b.length - a.length)[0];
        const strippedHost = matchedSuffix && matchedSuffix.length < host.length ? host.slice(0, -matchedSuffix.length) : host;
-@@ -1016,6 +1035,11 @@ function createProxyServer(options) {
-     }
-     const route = findRoute(getRoutes(), getRequestHost(compatReq), strict);
-     if (!route) {
-+      if (isServersRequest(compatReq.url)) {
-+        res.writeHead(200, { "content-type": "application/json" });
-+        res.end(serversJson(getRoutes(), proxyPort, true));
-+        return;
-+      }
-       res.writeHead(404, { "content-type": "text/plain" });
-       res.end(`No app registered for ${getRequestHost(compatReq)}
- `);
