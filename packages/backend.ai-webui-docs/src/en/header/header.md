@@ -282,8 +282,6 @@ banner at the top of every page. The announcement supports Markdown formatting
 and may contain important notices about system maintenance, updates, or usage
 guidelines.
 
-![](../images/start_announcement_banner.png)
-
 The banner shows the announcement's title. When the announcement has a message,
 click **See Details** to reveal it and **Hide Details** to collapse it again.
 
