@@ -43,6 +43,7 @@ import type {
   PanelType,
 } from './types';
 import { BAIBoardItemErrorBoundary, BAISkeleton } from 'backend.ai-ui';
+import * as _ from 'lodash-es';
 import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -179,7 +180,7 @@ const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
     kind: 'custom',
     Component: SessionStatusPanel,
     detailLink: RUNNING_SESSIONS,
-    defaultSize: size(2, 2),
+    defaultSize: size(2, 3),
     minSize: size(2, 2),
   },
   {
@@ -241,6 +242,8 @@ const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
     kind: 'custom',
     Component: ResourceGroupTotalPanel,
     defaultSize: size(2, 2),
+    // Beside the 4-row Agents card on the superadmin board.
+    defaultSizeByPage: { admin: size(2, 4) },
     minSize: size(2, 2),
     settings: ['resourceGroup'],
   },
@@ -294,25 +297,11 @@ const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
     titleKey: 'dashboard.card.MyActivity',
     kind: 'custom',
     Component: AuditLogPanel,
-    defaultSize: size(4, 3),
+    defaultSize: size(6, 3),
     minSize: size(2, 2),
     settings: ['range'],
   },
 ];
-
-/** Where the superadmin page's default board places its cards. */
-const ADMIN_ORDER = {
-  projectSessionStatus: 1,
-  pendingSessions: 2,
-  activeAgents: 3,
-  agentStats: 4,
-  failuresByEntityType: 5,
-  projectAuditLog: 6,
-} as const;
-
-const adminOrder = (key: keyof typeof ADMIN_ORDER) => ({
-  order: { admin: ADMIN_ORDER[key] },
-});
 
 /**
  * The admin pages' cards, in the order the project admin board places them.
@@ -329,7 +318,6 @@ const PROJECT_ADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     detailLink: RUNNING_SESSIONS,
     defaultSize: size(4, 3),
     minSize: size(2, 2),
-    ...adminOrder('projectSessionStatus'),
   },
   {
     key: 'pendingSessions',
@@ -343,7 +331,6 @@ const PROJECT_ADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     minSize: size(2, 2),
     settings: ['resourceGroup'],
     columnSettings: true,
-    ...adminOrder('pendingSessions'),
   },
   {
     key: 'longRunningSessions',
@@ -367,7 +354,7 @@ const PROJECT_ADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     titleKey: 'dashboard.card.ResourceAllocation',
     kind: 'custom',
     Component: ResourceAllocationPanel,
-    defaultSize: size(2, 2),
+    defaultSize: size(2, 3),
     minSize: size(2, 2),
     defaultHidden: ['admin'],
   },
@@ -400,7 +387,7 @@ const PROJECT_ADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
       projectAdmin: 'webui.menu.Data',
       admin: 'webui.menu.Data',
     }),
-    defaultSize: size(2, 2),
+    defaultSize: size(3, 2),
     minSize: size(2, 2),
     defaultHidden: ['admin'],
   },
@@ -416,7 +403,7 @@ const PROJECT_ADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
       projectAdmin: 'webui.menu.ProjectMembers',
       admin: 'webui.menu.Users',
     }),
-    defaultSize: size(2, 2),
+    defaultSize: size(3, 2),
     minSize: size(2, 2),
     defaultHidden: ['admin'],
   },
@@ -427,10 +414,9 @@ const PROJECT_ADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     titleKey: 'auditLog.AuditLog',
     kind: 'custom',
     Component: AuditLogPanel,
-    defaultSize: size(4, 4),
+    defaultSize: size(6, 4),
     minSize: size(2, 3),
     settings: ['range'],
-    ...adminOrder('projectAuditLog'),
   },
   {
     key: 'resourceGroupCapacity',
@@ -439,10 +425,10 @@ const PROJECT_ADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     titleKey: 'dashboard.card.ResourceGroupCapacity',
     kind: 'custom',
     Component: ResourceGroupCapacityPanel,
-    defaultSize: size(2, 2),
+    defaultSize: size(2, 3),
     minSize: size(2, 2),
     settings: ['resourceGroup'],
-    defaultHidden: true,
+    defaultHidden: ['admin'],
   },
 ];
 
@@ -479,7 +465,6 @@ const SUPERADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     ),
     defaultSize: size(4, 4),
     minSize: size(2, 3),
-    ...adminOrder('activeAgents'),
   },
   {
     key: 'agentStats',
@@ -490,9 +475,8 @@ const SUPERADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     kind: 'custom',
     Component: AgentStatsPanel,
     detailLink: listLink('agent', { admin: 'webui.menu.Resources' }),
-    defaultSize: size(2, 2),
+    defaultSize: size(2, 3),
     minSize: size(2, 2),
-    ...adminOrder('agentStats'),
   },
   {
     key: 'failuresByEntityType',
@@ -505,7 +489,6 @@ const SUPERADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     defaultSize: size(2, 3),
     minSize: size(2, 3),
     settings: ['range'],
-    ...adminOrder('failuresByEntityType'),
   },
   {
     // The member page's My Recent Sessions over the domain; the key is the one stored boards already carry.
@@ -615,9 +598,63 @@ const PRESET_PANELS: ReadonlyArray<PanelDefinition> = resourceKeys.map(
   },
 );
 
+/**
+ * Where each page's default board places its cards, most important first: on
+ * a six-column board each row pairs a 4-column card with the 2-column one that
+ * explains it. Cards not listed follow, in catalog order.
+ */
+const PAGE_ORDER: Record<PanelPage, ReadonlyArray<string>> = {
+  project: [
+    'mySession',
+    'myTotalResource',
+    'myResource',
+    'start.session',
+    'start.batchSession',
+    'start.folder',
+    'start.deployment',
+    'start.url',
+    'myRecentSessions',
+    'myDeployments',
+    'quotaPerStorageVolume',
+    'totalResourceWithinResourceGroup',
+    'memberAgentStats',
+    'myActivity',
+  ],
+  projectAdmin: [
+    'projectSessionStatus',
+    'projectResourceAllocation',
+    'pendingSessions',
+    'resourceGroupCapacity',
+    'longRunningSessions',
+    'projectDeployments',
+    'projectUsers',
+    'projectFolders',
+    'projectAuditLog',
+  ],
+  admin: [
+    'projectSessionStatus',
+    'agentStats',
+    'pendingSessions',
+    'failuresByEntityType',
+    'activeAgents',
+    'totalResourceWithinResourceGroup',
+    'projectAuditLog',
+  ],
+};
+
+const withPageOrder = (definition: PanelDefinition): PanelDefinition => {
+  const order = _.fromPairs(
+    ALL_PAGES.flatMap((page) => {
+      const index = PAGE_ORDER[page].indexOf(definition.key);
+      return index === -1 ? [] : [[page, index]];
+    }),
+  );
+  return _.isEmpty(order) ? definition : { ...definition, order };
+};
+
 export const PANEL_CATALOG: ReadonlyArray<PanelDefinition> = [
   ...MEMBER_PANELS,
   ...PROJECT_ADMIN_PANELS,
   ...SUPERADMIN_PANELS,
   ...PRESET_PANELS,
-];
+].map(withPageOrder);
