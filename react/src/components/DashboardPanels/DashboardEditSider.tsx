@@ -181,10 +181,13 @@ const DashboardEditSider: React.FC<DashboardEditSiderProps> = ({
       gap="md"
       className="dashboard-edit-sider"
       style={{
-        // Inline, because BAIFlex sets `position: relative` inline.
+        // Inline, because BAIFlex sets `position: relative` and `margin` inline.
         position: 'sticky',
         width: 320,
         flexShrink: 0,
+        // Overlays the board's right edge instead of narrowing it, so the board
+        // keeps its viewing column count (the row's gap is --spacing-6).
+        marginInlineStart: `calc(-320px - ${token('--spacing-6')})`,
         paddingLeft: token('--spacing-6'),
         paddingRight: token('--spacing-4'),
         borderLeft: `1px solid ${token('--color-border-emphasized')}`,

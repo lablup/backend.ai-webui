@@ -11,4 +11,8 @@
   overflow-y: auto;
   /* Keeps the checklist clear of its own scrollbar. */
   scrollbar-gutter: stable;
+  /* Overlays the board's right edge (see the inline margin) above its cards. */
+  z-index: 2;
+  background: var(--color-background-body);
+  box-shadow: var(--shadow-med);
 }
