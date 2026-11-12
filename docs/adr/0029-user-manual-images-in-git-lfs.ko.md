@@ -1,6 +1,6 @@
 # 0029 — User manual images in Git LFS
 
-> Decision 1절과 Summary는 [ADR 0031](0031-visual-regression-tests-for-backend-ai-ui-stories.ko.md)이 넓힌다. backend.ai-ui visual test baseline(`packages/backend.ai-ui/test/visual/__screenshots__/**/*.png`)도 LFS로 추적하며, `.lfsconfig`는 매뉴얼 이미지 옆에서 이 파일들도 기본적으로 pointer file로 둔다. 나머지 결정은 그대로 발효 중이다.
+> Decision 1절과 Summary는 [ADR 0031](0031-visual-regression-tests-for-backend-ai-ui-stories.ko.md)이 넓힌다. backend.ai-ui visual test baseline(`packages/backend.ai-ui/test/visual/__screenshots__/**/*.png`)도 LFS로 추적하며, `.lfsconfig`는 매뉴얼 이미지 옆에서 이 파일들도 기본적으로 pointer file로 둔다. 이 파일들은 backend.ai-ui 자체 script가 받으며, 이 ADR이 말하는 script는 매뉴얼에만 쓰인다. 나머지 결정은 그대로 발효 중이다.
 
 ## Summary
 

@@ -11,10 +11,14 @@ on:
       - packages/backend.ai-ui/test/visual/**
       - packages/backend.ai-ui/scripts/visual-test.sh
       - packages/backend.ai-ui/scripts/pull-visual-baselines.sh
+      - packages/backend.ai-ui/scripts/visual-lfs-cache-key.sh
+      - packages/backend.ai-ui/scripts/test-pull-visual-baselines.sh
       - .gitattributes
       - .lfsconfig
       - .github/actions/setup-node-pnpm/**
-      - .github/scripts/lfs/**
+      - .github/scripts/lfs/lib.sh
+      - .github/scripts/lfs/install-git-lfs.sh
+      - .github/scripts/lfs/prune-lfs-store.sh
       - resources/fonts/**
       - resources/icons/**
       # A @lablup/ui-common pin bump changes the pictures.
@@ -31,10 +35,14 @@ on:
       - packages/backend.ai-ui/test/visual/**
       - packages/backend.ai-ui/scripts/visual-test.sh
       - packages/backend.ai-ui/scripts/pull-visual-baselines.sh
+      - packages/backend.ai-ui/scripts/visual-lfs-cache-key.sh
+      - packages/backend.ai-ui/scripts/test-pull-visual-baselines.sh
       - .gitattributes
       - .lfsconfig
       - .github/actions/setup-node-pnpm/**
-      - .github/scripts/lfs/**
+      - .github/scripts/lfs/lib.sh
+      - .github/scripts/lfs/install-git-lfs.sh
+      - .github/scripts/lfs/prune-lfs-store.sh
       - resources/fonts/**
       - resources/icons/**
       # A @lablup/ui-common pin bump changes the pictures.
@@ -107,9 +115,8 @@ jobs:
       - name: Compute the LFS cache key
         id: lfs-key
         shell: bash
-        working-directory: .
         run: |
-          key="$(bash .github/scripts/lfs/docs-lfs-cache-key.sh --root packages/backend.ai-ui/test/visual/__screenshots__ --prefix bui-visual-lfs-v1-)"
+          key="$(bash scripts/visual-lfs-cache-key.sh)"
           echo "key=${key}" >> "$GITHUB_OUTPUT"
       - name: Restore the LFS object cache
         id: lfs-cache
@@ -132,6 +139,9 @@ jobs:
             fork_args=(--fallback-remote "$HEAD_CLONE_URL" --fallback-report "${RUNNER_TEMP}/lfs-fork-only.txt")
           fi
           bash scripts/pull-visual-baselines.sh "${fork_args[@]}"
+      - name: Test the baseline pull script
+        shell: bash
+        run: bash scripts/test-pull-visual-baselines.sh
       - name: Visual tests
         run: pnpm run test:visual
       # Not for a fork PR: objects only the fork has would then skip the fetch
