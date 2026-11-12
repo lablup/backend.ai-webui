@@ -678,10 +678,10 @@ const PAGE_ORDER: Record<PanelPage, ReadonlyArray<string>> = {
     'quotaPerStorageVolume',
     'myRecentSessions',
     'myDeployments',
-    'totalResourceWithinResourceGroup',
-    'memberAgentStats',
     'sessionsCreated',
     'myActivity',
+    'totalResourceWithinResourceGroup',
+    'memberAgentStats',
   ],
   projectAdmin: [
     'projectSessionStatus',
