@@ -26,6 +26,7 @@ exec docker run --rm --init --platform linux/amd64 \
   -v "$vol-bui-modules:/work/packages/backend.ai-ui/node_modules" \
   -v "$vol-eslint-config-modules:/work/packages/eslint-config-bai/node_modules" \
   -v bui-visual-pnpm-store:/pnpm-store \
+  -v bui-visual-npm-cache:/root/.npm \
   -w /work/packages/backend.ai-ui \
   -e CI=true \
   -e HUSKY=0 \
@@ -34,10 +35,12 @@ exec docker run --rm --init --platform linux/amd64 \
   "mcr.microsoft.com/playwright:v$version-noble" \
   sh -c '
     pnpm="npx --yes $0"
-    $pnpm install --frozen-lockfile --prefer-offline --filter "backend.ai-ui..." \
-      --store-dir /pnpm-store --reporter=append-only || exit
+    cp /work/pnpm-lock.yaml /tmp/pnpm-lock.yaml
     status=0
-    $pnpm run test:visual "$@" || status=$?
+    $pnpm install --frozen-lockfile --prefer-offline --filter "backend.ai-ui..." \
+      --store-dir /pnpm-store --reporter=append-only &&
+      $pnpm run test:visual "$@" || status=$?
+    cmp -s /tmp/pnpm-lock.yaml /work/pnpm-lock.yaml || cp /tmp/pnpm-lock.yaml /work/pnpm-lock.yaml
     chown -R "$HOST_OWNER" test/visual/__screenshots__ .vitest-attachments 2>/dev/null
     exit $status
   ' "$pnpm_spec" "$@"
