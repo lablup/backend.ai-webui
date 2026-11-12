@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="การเชื่อมต่อ SFTP ไปยังเซสชันการคำนวณ" />
   <meta name="twitter:description" content="Backend.AI สนับสนุนการเชื่อมต่อ SSH/SFTP ไปยังเซสชันการคำนวณที่สร้างขึ้น (คอนเทนเนอร์) ในส่วนนี้เราจะเรียนรู้วิธีทำเช่นนั้น" />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"การเชื่อมต่อ SFTP ไปยังเซสชันการคำนวณ","inLanguage":"th","description":"Backend.AI สนับสนุนการเชื่อมต่อ SSH/SFTP ไปยังเซสชันการคำนวณที่สร้างขึ้น (คอนเทนเนอร์) ในส่วนนี้เราจะเรียนรู้วิธีทำเช่นนั้น","dateModified":"2026-10-29T02:12:31.000Z","url":"https://webui.docs.backend.ai/next/th/sftp_to_container.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"การเชื่อมต่อ SFTP ไปยังเซสชันการคำนวณ","inLanguage":"th","description":"Backend.AI สนับสนุนการเชื่อมต่อ SSH/SFTP ไปยังเซสชันการคำนวณที่สร้างขึ้น (คอนเทนเนอร์) ในส่วนนี้เราจะเรียนรู้วิธีทำเช่นนั้น","dateModified":"2026-11-10T00:06:19.000Z","url":"https://webui.docs.backend.ai/next/th/sftp_to_container.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/sftp_to_container.html" />
   <link rel="alternate" hreflang="en" href="../en/sftp_to_container.html" />
   <link rel="alternate" hreflang="ja" href="../ja/sftp_to_container.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">คู่มือ</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.10.0-alpha.2 (534e211)">v26.10.0-alpha.2 (534e211)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.10.0-alpha.3 (fb7b6d1)">v26.10.0-alpha.3 (fb7b6d1)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="ค้นหาเอกสาร...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -123,7 +123,7 @@
   <summary class="doc-sidebar-group__summary">
     <span class="doc-sidebar-group__icon" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg></span>
     <span class="doc-sidebar-group__label">เริ่มต้นใช้งาน</span>
-    <span class="doc-sidebar-group__count" aria-label="8 pages">8</span>
+    <span class="doc-sidebar-group__count" aria-label="7 pages">7</span>
   </summary>
   <ul class="doc-sidebar-nav doc-sidebar-nav--grouped" data-group="เรมตนใชงาน">
     <li><a href="./quickstart.html">1. เริ่มต้นอย่างรวดเร็ว</a></li>
@@ -132,8 +132,7 @@
 <li><a href="./installation.html">4. การติดตั้ง</a></li>
 <li><a href="./login.html">5. การเข้าสู่ระบบ</a></li>
 <li><a href="./header.html">6. แถบด้านบน</a></li>
-<li><a href="./start.html">7. เริ่มต้น</a></li>
-<li><a href="./dashboard.html">8. แดชบอร์ด</a></li>
+<li><a href="./dashboard.html">7. แดชบอร์ด</a></li>
   </ul>
 </details>
 <details class="doc-sidebar-group">
@@ -143,12 +142,12 @@
     <span class="doc-sidebar-group__count" aria-label="6 pages">6</span>
   </summary>
   <ul class="doc-sidebar-nav doc-sidebar-nav--grouped" data-group="เวรกโหลด">
-    <li><a href="./session_page.html">9. หน้าเซสชัน</a></li>
-<li><a href="./sessions_all.html">10. เซสชันการคำนวณ</a></li>
-<li><a href="./cluster_session.html">11. เซสชันคลัสเตอร์</a></li>
-<li><a href="./deployment.html">12. การปรับใช้</a></li>
-<li><a href="./chat.html">13. แชท</a></li>
-<li><a href="./my_environments.html">14. สภาพแวดล้อมของฉัน</a></li>
+    <li><a href="./session_page.html">8. หน้าเซสชัน</a></li>
+<li><a href="./sessions_all.html">9. เซสชันการคำนวณ</a></li>
+<li><a href="./cluster_session.html">10. เซสชันคลัสเตอร์</a></li>
+<li><a href="./deployment.html">11. การปรับใช้</a></li>
+<li><a href="./chat.html">12. แชท</a></li>
+<li><a href="./my_environments.html">13. สภาพแวดล้อมของฉัน</a></li>
   </ul>
 </details>
 <details class="doc-sidebar-group" open>
@@ -158,10 +157,10 @@
     <span class="doc-sidebar-group__count" aria-label="4 pages">4</span>
   </summary>
   <ul class="doc-sidebar-nav doc-sidebar-nav--grouped" data-group="พนทจดเกบและขอมล">
-    <li><a href="./vfolder.html">15. โฟลเดอร์จัดเก็บ</a></li>
-<li><a href="./mount_vfolder.html">16. การเมาท์โฟลเดอร์จัดเก็บ</a></li>
-<li><a href="./share_vfolder.html">17. การแชร์โฟลเดอร์จัดเก็บ</a></li>
-<li><a href="./sftp_to_container.html" class="active" aria-current="page">18. การเชื่อมต่อ SFTP ไปยังเซสชันการคำนวณ</a></li>
+    <li><a href="./vfolder.html">14. โฟลเดอร์จัดเก็บ</a></li>
+<li><a href="./mount_vfolder.html">15. การเมาท์โฟลเดอร์จัดเก็บ</a></li>
+<li><a href="./share_vfolder.html">16. การแชร์โฟลเดอร์จัดเก็บ</a></li>
+<li><a href="./sftp_to_container.html" class="active" aria-current="page">17. การเชื่อมต่อ SFTP ไปยังเซสชันการคำนวณ</a></li>
   </ul>
 </details>
 <details class="doc-sidebar-group">
@@ -171,12 +170,12 @@
     <span class="doc-sidebar-group__count" aria-label="6 pages">6</span>
   </summary>
   <ul class="doc-sidebar-nav doc-sidebar-nav--grouped" data-group="การดแลระบบ">
-    <li><a href="./user_settings.html">19. ตั้งค่าผู้ใช้</a></li>
-<li><a href="./project_admin.html">20. ฟีเจอร์ผู้ดูแลโปรเจกต์</a></li>
-<li><a href="./rbac_management.html">21. การจัดการ RBAC</a></li>
-<li><a href="./agent_summary.html">22. สรุปเอเจนต์</a></li>
-<li><a href="./statistics.html">23. สถิติ</a></li>
-<li><a href="./admin_menu.html">24. ฟีเจอร์ผู้ดูแลระบบ</a></li>
+    <li><a href="./user_settings.html">18. ตั้งค่าผู้ใช้</a></li>
+<li><a href="./project_admin.html">19. ฟีเจอร์ผู้ดูแลโปรเจกต์</a></li>
+<li><a href="./rbac_management.html">20. การจัดการ RBAC</a></li>
+<li><a href="./agent_summary.html">21. สรุปเอเจนต์</a></li>
+<li><a href="./statistics.html">22. สถิติ</a></li>
+<li><a href="./admin_menu.html">23. ฟีเจอร์ผู้ดูแลระบบ</a></li>
   </ul>
 </details>
 <details class="doc-sidebar-group">
@@ -186,10 +185,10 @@
     <span class="doc-sidebar-group__count" aria-label="4 pages">4</span>
   </summary>
   <ul class="doc-sidebar-nav doc-sidebar-nav--grouped" data-group="เอกสารอางอง">
-    <li><a href="./trouble_shooting.html">25. FAQ และการแก้ไขปัญหา</a></li>
-<li><a href="./appendix.html">26. ภาคผนวก</a></li>
-<li><a href="./license_agreement.html">27. ข้อตกลงการอนุญาตใช้งาน</a></li>
-<li><a href="./references.html">28. อ้างอิง</a></li>
+    <li><a href="./trouble_shooting.html">24. FAQ และการแก้ไขปัญหา</a></li>
+<li><a href="./appendix.html">25. ภาคผนวก</a></li>
+<li><a href="./license_agreement.html">26. ข้อตกลงการอนุญาตใช้งาน</a></li>
+<li><a href="./references.html">27. อ้างอิง</a></li>
   </ul>
 </details>
     </nav>
@@ -232,9 +231,9 @@
 <code>/home/work/</code> ด้วยเทอร์มินัลเว็บหรือ Jupyter Notebook ของคุณได้ คีย์ SSH
 ที่สร้างขึ้นโดยอัตโนมัติอาจเปลี่ยนแปลงเมื่อมีการสร้างเซสชันใหม่ ในกรณีนั้น ต้อง
 ดาวน์โหลดใหม่อีกครั้ง</p>
-<p><figure data-bai-block="7" class="doc-figure"><img src="./images/SSH_SFTP_connection.png" alt="" class="doc-image" style="width:800px" loading="lazy" decoding="async" width="1600" height="1608" /><figcaption>รูปที่ 18.1</figcaption></figure>
+<p><figure data-bai-block="7" class="doc-figure"><img src="./images/SSH_SFTP_connection.png" alt="" class="doc-image" style="width:800px" loading="lazy" decoding="async" width="1600" height="1608" /><figcaption>รูปที่ 17.1</figcaption></figure>
 </p>
-<p><figure data-bai-block="8" class="doc-figure"><img src="./images/sftp_app.png" alt="" class="doc-image" loading="lazy" decoding="async" width="913" height="1000" /><figcaption>รูปที่ 18.2</figcaption></figure>
+<p><figure data-bai-block="8" class="doc-figure"><img src="./images/sftp_app.png" alt="" class="doc-image" loading="lazy" decoding="async" width="913" height="1000" /><figcaption>รูปที่ 17.2</figcaption></figure>
 </p>
 <p data-bai-block="9">ให้ใช้ที่อยู่สำหรับการเชื่อมต่อจากช่องโฮสต์และพอร์ตในกล่องโต้ตอบนี้เสมอ
 ค่าเหล่านี้ขึ้นอยู่กับวิธีที่คุณใช้งาน Backend.AI
@@ -291,7 +290,7 @@
 
 <p data-bai-block="18">หากคุณได้รับข้อความเตือนต่อไปนี้ ให้ลองอีกครั้งหลังจากเปลี่ยน
 สิทธิ์ของ <code>id_container</code> เป็น 600 (<code>chmod 600 &lt;id_container path&gt;</code>)</p>
-<p><figure data-bai-block="19" class="doc-figure"><img src="./images/bad_permissions.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2583" height="646" /><figcaption>รูปที่ 18.3</figcaption></figure>
+<p><figure data-bai-block="19" class="doc-figure"><img src="./images/bad_permissions.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2583" height="646" /><figcaption>รูปที่ 17.3</figcaption></figure>
 </p>
 </div></div>
 
@@ -332,25 +331,25 @@
 Conversions เลือกไฟล์ <code>id_container</code> ที่ดาวน์โหลดมาจากกล่องโต้ตอบเปิดไฟล์
 คลิกปุ่ม Save private key ของ PuTTYGen และบันทึกไฟล์ด้วย
 ชื่อ <code>id_container.ppk</code></p>
-<p><figure data-bai-block="28" class="doc-figure"><img src="./images/puttygen_conversion.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1758" height="898" /><figcaption>รูปที่ 18.4</figcaption></figure>
+<p><figure data-bai-block="28" class="doc-figure"><img src="./images/puttygen_conversion.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1758" height="898" /><figcaption>รูปที่ 17.4</figcaption></figure>
 </p>
 <p data-bai-block="29">หลังจากเรียกใช้ไคลเอ็นต์ FileZilla แล้ว ให้ไปที่ Settings-Connection-SFTP
 และลงทะเบียนไฟล์คีย์ <code>id_container.ppk</code> (<code>id_container</code> สำหรับไคลเอ็นต์
 ที่รองรับ OpenSSH)</p>
-<p><figure data-bai-block="30" class="doc-figure"><img src="./images/filezilla_setting.png" alt="" class="doc-image" style="width:628px" loading="lazy" decoding="async" width="1257" height="910" /><figcaption>รูปที่ 18.5</figcaption></figure>
+<p><figure data-bai-block="30" class="doc-figure"><img src="./images/filezilla_setting.png" alt="" class="doc-image" style="width:628px" loading="lazy" decoding="async" width="1257" height="910" /><figcaption>รูปที่ 17.5</figcaption></figure>
 </p>
 <p data-bai-block="31">เปิด Site Manager สร้างไซต์ใหม่ และป้อนข้อมูลการเชื่อมต่อตาม
 ด้านล่าง</p>
-<p><figure data-bai-block="32" class="doc-figure"><img src="./images/filezilla_site_setting.png" alt="" class="doc-image" style="width:798px" loading="lazy" decoding="async" width="1596" height="901" /><figcaption>รูปที่ 18.6</figcaption></figure>
+<p><figure data-bai-block="32" class="doc-figure"><img src="./images/filezilla_site_setting.png" alt="" class="doc-image" style="width:798px" loading="lazy" decoding="async" width="1596" height="901" /><figcaption>รูปที่ 17.6</figcaption></figure>
 </p>
 <p data-bai-block="33">เมื่อเชื่อมต่อกับคอนเทนเนอร์เป็นครั้งแรก อาจมีป๊อปอัปยืนยัน
 ต่อไปนี้ปรากฏขึ้น คลิกปุ่ม OK เพื่อบันทึกคีย์โฮสต์</p>
-<p><figure data-bai-block="34" class="doc-figure"><img src="./images/unknown_host_key.png" alt="" class="doc-image" style="width:501px" loading="lazy" decoding="async" width="1002" height="527" /><figcaption>รูปที่ 18.7</figcaption></figure>
+<p><figure data-bai-block="34" class="doc-figure"><img src="./images/unknown_host_key.png" alt="" class="doc-image" style="width:501px" loading="lazy" decoding="async" width="1002" height="527" /><figcaption>รูปที่ 17.7</figcaption></figure>
 </p>
 <p data-bai-block="35">หลังจากครู่หนึ่ง คุณจะเห็นว่าการเชื่อมต่อถูกสร้างขึ้นดังต่อไปนี้
 ตอนนี้คุณสามารถถ่ายโอนไฟล์ขนาดใหญ่ไปยัง <code>/home/work/</code> หรือโฟลเดอร์จัดเก็บที่เมานต์อื่น
 ผ่านการเชื่อมต่อ SFTP นี้ได้</p>
-<p><figure data-bai-block="36" class="doc-figure"><img src="./images/filezilla_connection_established.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1775" height="1114" /><figcaption>รูปที่ 18.8</figcaption></figure>
+<p><figure data-bai-block="36" class="doc-figure"><img src="./images/filezilla_connection_established.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1775" height="1114" /><figcaption>รูปที่ 17.8</figcaption></figure>
 </p>
 <p><a id="for-visual-studio-code"></a></p>
 <h2 data-bai-block="37" id="sftp_to_container-สำหรบ-visual-studio-code">สำหรับ Visual Studio Code<a class="hash-link" href="#sftp_to_container-สำหรบ-visual-studio-code" aria-label="Direct link to สำหรับ Visual Studio Code">#</a></h2>
@@ -360,13 +359,13 @@ Conversions เลือกไฟล์ <code>id_container</code> ที่ด�
 ทำสิ่งนี้</p>
 <p data-bai-block="39">ก่อนอื่น คุณควรติดตั้ง Visual Studio Code และแพ็กเกจส่วนขยาย Remote Development</p>
 <p data-bai-block="40">ลิงก์: <a href="https://aka.ms/vscode-remote/download/extension">https://aka.ms/vscode-remote/download/extension</a></p>
-<p><figure data-bai-block="41" class="doc-figure"><img src="./images/vscode_install_remote_ssh.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1471" height="327" /><figcaption>รูปที่ 18.9</figcaption></figure>
+<p><figure data-bai-block="41" class="doc-figure"><img src="./images/vscode_install_remote_ssh.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1471" height="327" /><figcaption>รูปที่ 17.9</figcaption></figure>
 </p>
 <p data-bai-block="42">หลังจากติดตั้งส่วนขยายแล้ว คุณควรกำหนดค่าการเชื่อมต่อ SSH สำหรับ
 เซสชันการคำนวณ ในกล่องโต้ตอบ VSCode Remote Connection คลิกปุ่มไอคอนคัดลอก
 เพื่อคัดลอกรหัสผ่าน SSH ระยะไกลของ Visual Studio Code นอกจากนี้
 ให้จดจำโฮสต์และหมายเลขพอร์ตที่แสดงในกล่องโต้ตอบ</p>
-<p><figure data-bai-block="43" class="doc-figure"><img src="./images/download_ssh_key.png" alt="" class="doc-image" style="width:418px" loading="lazy" decoding="async" width="836" height="1270" /><figcaption>รูปที่ 18.10</figcaption></figure>
+<p><figure data-bai-block="43" class="doc-figure"><img src="./images/download_ssh_key.png" alt="" class="doc-image" style="width:418px" loading="lazy" decoding="async" width="836" height="1270" /><figcaption>รูปที่ 17.10</figcaption></figure>
 </p>
 <p data-bai-block="44">จากนั้น ตั้งค่าไฟล์ SSH config แก้ไขไฟล์ <code>~/.ssh/config</code> (สำหรับ Linux/Mac)
 หรือ <code>C:\Users\[ชื่อผู้ใช้]\.ssh\config</code> (สำหรับ Windows) และเพิ่มบล็อกต่อไปนี้
@@ -379,23 +378,23 @@ Conversions เลือกไฟล์ <code>id_container</code> ที่ด�
 <span class="line">StrictHostKeyChecking no</span>
 <span class="line">UserKnownHostsFile /dev/null</span></code></pre>
 <p data-bai-block="46">ตอนนี้ใน Visual Studio Code ให้เลือก <code>Command Palette...</code> จากเมนู <code>View</code></p>
-<p><figure data-bai-block="47" class="doc-figure"><img src="./images/vscode_view_commandpalett.png" alt="" class="doc-image" loading="lazy" decoding="async" width="444" height="205" /><figcaption>รูปที่ 18.11</figcaption></figure>
+<p><figure data-bai-block="47" class="doc-figure"><img src="./images/vscode_view_commandpalett.png" alt="" class="doc-image" loading="lazy" decoding="async" width="444" height="205" /><figcaption>รูปที่ 17.11</figcaption></figure>
 </p>
 <p data-bai-block="48">Visual Studio Code สามารถตรวจจับประเภทของโฮสต์ที่คุณกำลังเชื่อมต่อได้
 โดยอัตโนมัติ เลือก <code>Remote-SSH: Connect to Host...</code></p>
-<p><figure data-bai-block="49" class="doc-figure"><img src="./images/vscode_remote_ssh_connect.png" alt="" class="doc-image" loading="lazy" decoding="async" width="611" height="451" /><figcaption>รูปที่ 18.12</figcaption></figure>
+<p><figure data-bai-block="49" class="doc-figure"><img src="./images/vscode_remote_ssh_connect.png" alt="" class="doc-image" loading="lazy" decoding="async" width="611" height="451" /><figcaption>รูปที่ 17.12</figcaption></figure>
 </p>
 <p data-bai-block="50">คุณจะเห็นรายการโฮสต์ใน <code>.ssh/config</code> โปรดเลือกโฮสต์ที่จะ
 เชื่อมต่อ ในกรณีนี้ คือ <code>vscode</code></p>
-<p><figure data-bai-block="51" class="doc-figure"><img src="./images/vscode_remote_ssh_select_host.png" alt="" class="doc-image" loading="lazy" decoding="async" width="609" height="211" /><figcaption>รูปที่ 18.13</figcaption></figure>
+<p><figure data-bai-block="51" class="doc-figure"><img src="./images/vscode_remote_ssh_select_host.png" alt="" class="doc-image" loading="lazy" decoding="async" width="609" height="211" /><figcaption>รูปที่ 17.13</figcaption></figure>
 </p>
 <p data-bai-block="52">การเลือกชื่อโฮสต์จะนำคุณไปสู่การเข้าถึงเซสชันการคำนวณระยะไกล
 หลังจากเชื่อมต่อแล้ว คุณจะเห็นหน้าต่างว่าง คุณสามารถดูแถบสถานะได้เสมอ
 เพื่อดูว่าคุณเชื่อมต่อกับโฮสต์ใดอยู่</p>
-<p><figure data-bai-block="53" class="doc-figure"><img src="./images/vscode_connect_finish.png" alt="" class="doc-image" style="width:333px" loading="lazy" decoding="async" width="666" height="94" /><figcaption>รูปที่ 18.14</figcaption></figure>
+<p><figure data-bai-block="53" class="doc-figure"><img src="./images/vscode_connect_finish.png" alt="" class="doc-image" style="width:333px" loading="lazy" decoding="async" width="666" height="94" /><figcaption>รูปที่ 17.14</figcaption></figure>
 </p>
 <p data-bai-block="54">จากนั้นคุณสามารถเปิดโฟลเดอร์หรือพื้นที่ทำงานใด ๆ บนโฮสต์ระยะไกลได้โดยการเข้าถึงเมนู <code>File &gt; Open...</code> หรือ <code>File &gt; Open Workspace...</code> เหมือนที่คุณทำตามปกติ!</p>
-<p><figure data-bai-block="55" class="doc-figure"><img src="./images/vscode_connected_host_file_open.png" alt="" class="doc-image" style="width:614px" loading="lazy" decoding="async" width="1228" height="740" /><figcaption>รูปที่ 18.15</figcaption></figure>
+<p><figure data-bai-block="55" class="doc-figure"><img src="./images/vscode_connected_host_file_open.png" alt="" class="doc-image" style="width:614px" loading="lazy" decoding="async" width="1228" height="740" /><figcaption>รูปที่ 17.15</figcaption></figure>
 </p>
 <p><a id="establish-ssh-connection-with-backendai-client-package"></a></p>
 <h2 data-bai-block="56" id="sftp_to_container-ตงคาการเชอมตอ-ssh-ดวยแพกเกจ-backendai-client">ตั้งค่าการเชื่อมต่อ SSH ด้วยแพ็กเกจ Backend.AI Client<a class="hash-link" href="#sftp_to_container-ตงคาการเชอมตอ-ssh-ดวยแพกเกจ-backendai-client" aria-label="Direct link to ตั้งค่าการเชื่อมต่อ SSH ด้วยแพ็กเกจ Backend.AI Client">#</a></h2>
@@ -417,7 +416,7 @@ Conversions เลือกไฟล์ <code>id_container</code> ที่ด�
 <span class="line"><span style="color:#B392F0">docker</span><span style="color:#9ECBFF"> pull</span><span style="color:#9ECBFF"> lablup/backend.ai-client:</span><span style="color:#E1E4E8">${VERSION}</span></span></code></pre></div>
 <p data-bai-block="63">เวอร์ชันของเซิร์ฟเวอร์ Backend.AI สามารถพบได้ในเมนู &quot;About Backend.AI&quot; ที่
 ปรากฏขึ้นเมื่อคุณคลิกที่ไอคอนรูปคนที่มุมขวาบนของ Web UI</p>
-<p><figure data-bai-block="64" class="doc-figure"><img src="./images/check_backend_server_version.png" alt="" class="doc-image" style="width:350px" loading="lazy" decoding="async" width="700" height="610" /><figcaption>รูปที่ 18.16</figcaption></figure>
+<p><figure data-bai-block="64" class="doc-figure"><img src="./images/check_backend_server_version.png" alt="" class="doc-image" style="width:350px" loading="lazy" decoding="async" width="700" height="610" /><figcaption>รูปที่ 17.16</figcaption></figure>
 </p>
 <p data-bai-block="65">เรียกใช้อิมเมจ Docker ด้วยคำสั่งต่อไปนี้:</p>
 <div data-bai-block="66" class="code-block-wrapper"><div class="code-block-title"><span class="code-block-lang">bash</span><span class="code-block-title-text" aria-hidden="true"></span></div><pre class="language-bash shiki-host"><code><span class="line"><span style="color:#B392F0">docker</span><span style="color:#9ECBFF"> run</span><span style="color:#79B8FF"> --rm</span><span style="color:#79B8FF"> -it</span><span style="color:#9ECBFF"> lablup/backend.ai-client</span><span style="color:#9ECBFF"> bash</span></span></code></pre></div>
@@ -533,7 +532,7 @@ Conversions เลือกไฟล์ <code>id_container</code> ที่ด�
     <div class="page-footer">
       <div class="page-metadata">
   <a class="edit-link" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/th/sftp_to_container/sftp_to_container.md" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg> แก้ไขหน้านี้</a>
-  <span class="last-updated">อัปเดตล่าสุด 29 ต.ค. 2569</span>
+  <span class="last-updated">อัปเดตล่าสุด 10 พ.ย. 2569</span>
 </div>
       <nav class="pagination-nav" aria-label="Docs pages">
   <a class="pagination-nav__link pagination-nav__link--prev" href="./share_vfolder.html">

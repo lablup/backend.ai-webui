@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="การจัดการ RBAC" />
   <meta name="twitter:description" content="การจัดการ RBAC (Role-Based Access Control) ช่วยให้ผู้ดูแลระบบระดับสูงสามารถกำหนดบทบาทที่มีสิทธิ์แบบละเอียดและมอบหมายให้กับผู้ใช้ได้ ด้วย RBAC…" />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"การจัดการ RBAC","inLanguage":"th","description":"การจัดการ RBAC (Role-Based Access Control) ช่วยให้ผู้ดูแลระบบระดับสูงสามารถกำหนดบทบาทที่มีสิทธิ์แบบละเอียดและมอบหมายให้กับผู้ใช้ได้ ด้วย RBAC…","dateModified":"2026-10-29T02:12:31.000Z","url":"https://webui.docs.backend.ai/next/th/rbac_management.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"การจัดการ RBAC","inLanguage":"th","description":"การจัดการ RBAC (Role-Based Access Control) ช่วยให้ผู้ดูแลระบบระดับสูงสามารถกำหนดบทบาทที่มีสิทธิ์แบบละเอียดและมอบหมายให้กับผู้ใช้ได้ ด้วย RBAC…","dateModified":"2026-11-10T00:06:19.000Z","url":"https://webui.docs.backend.ai/next/th/rbac_management.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/rbac_management.html" />
   <link rel="alternate" hreflang="en" href="../en/rbac_management.html" />
   <link rel="alternate" hreflang="ja" href="../ja/rbac_management.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">คู่มือ</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.10.0-alpha.2 (534e211)">v26.10.0-alpha.2 (534e211)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.10.0-alpha.3 (fb7b6d1)">v26.10.0-alpha.3 (fb7b6d1)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="ค้นหาเอกสาร...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -123,7 +123,7 @@
   <summary class="doc-sidebar-group__summary">
     <span class="doc-sidebar-group__icon" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg></span>
     <span class="doc-sidebar-group__label">เริ่มต้นใช้งาน</span>
-    <span class="doc-sidebar-group__count" aria-label="8 pages">8</span>
+    <span class="doc-sidebar-group__count" aria-label="7 pages">7</span>
   </summary>
   <ul class="doc-sidebar-nav doc-sidebar-nav--grouped" data-group="เรมตนใชงาน">
     <li><a href="./quickstart.html">1. เริ่มต้นอย่างรวดเร็ว</a></li>
@@ -132,8 +132,7 @@
 <li><a href="./installation.html">4. การติดตั้ง</a></li>
 <li><a href="./login.html">5. การเข้าสู่ระบบ</a></li>
 <li><a href="./header.html">6. แถบด้านบน</a></li>
-<li><a href="./start.html">7. เริ่มต้น</a></li>
-<li><a href="./dashboard.html">8. แดชบอร์ด</a></li>
+<li><a href="./dashboard.html">7. แดชบอร์ด</a></li>
   </ul>
 </details>
 <details class="doc-sidebar-group">
@@ -143,12 +142,12 @@
     <span class="doc-sidebar-group__count" aria-label="6 pages">6</span>
   </summary>
   <ul class="doc-sidebar-nav doc-sidebar-nav--grouped" data-group="เวรกโหลด">
-    <li><a href="./session_page.html">9. หน้าเซสชัน</a></li>
-<li><a href="./sessions_all.html">10. เซสชันการคำนวณ</a></li>
-<li><a href="./cluster_session.html">11. เซสชันคลัสเตอร์</a></li>
-<li><a href="./deployment.html">12. การปรับใช้</a></li>
-<li><a href="./chat.html">13. แชท</a></li>
-<li><a href="./my_environments.html">14. สภาพแวดล้อมของฉัน</a></li>
+    <li><a href="./session_page.html">8. หน้าเซสชัน</a></li>
+<li><a href="./sessions_all.html">9. เซสชันการคำนวณ</a></li>
+<li><a href="./cluster_session.html">10. เซสชันคลัสเตอร์</a></li>
+<li><a href="./deployment.html">11. การปรับใช้</a></li>
+<li><a href="./chat.html">12. แชท</a></li>
+<li><a href="./my_environments.html">13. สภาพแวดล้อมของฉัน</a></li>
   </ul>
 </details>
 <details class="doc-sidebar-group">
@@ -158,10 +157,10 @@
     <span class="doc-sidebar-group__count" aria-label="4 pages">4</span>
   </summary>
   <ul class="doc-sidebar-nav doc-sidebar-nav--grouped" data-group="พนทจดเกบและขอมล">
-    <li><a href="./vfolder.html">15. โฟลเดอร์จัดเก็บ</a></li>
-<li><a href="./mount_vfolder.html">16. การเมาท์โฟลเดอร์จัดเก็บ</a></li>
-<li><a href="./share_vfolder.html">17. การแชร์โฟลเดอร์จัดเก็บ</a></li>
-<li><a href="./sftp_to_container.html">18. การเชื่อมต่อ SFTP ไปยังเซสชันการคำนวณ</a></li>
+    <li><a href="./vfolder.html">14. โฟลเดอร์จัดเก็บ</a></li>
+<li><a href="./mount_vfolder.html">15. การเมาท์โฟลเดอร์จัดเก็บ</a></li>
+<li><a href="./share_vfolder.html">16. การแชร์โฟลเดอร์จัดเก็บ</a></li>
+<li><a href="./sftp_to_container.html">17. การเชื่อมต่อ SFTP ไปยังเซสชันการคำนวณ</a></li>
   </ul>
 </details>
 <details class="doc-sidebar-group" open>
@@ -171,12 +170,12 @@
     <span class="doc-sidebar-group__count" aria-label="6 pages">6</span>
   </summary>
   <ul class="doc-sidebar-nav doc-sidebar-nav--grouped" data-group="การดแลระบบ">
-    <li><a href="./user_settings.html">19. ตั้งค่าผู้ใช้</a></li>
-<li><a href="./project_admin.html">20. ฟีเจอร์ผู้ดูแลโปรเจกต์</a></li>
-<li><a href="./rbac_management.html" class="active" aria-current="page">21. การจัดการ RBAC</a></li>
-<li><a href="./agent_summary.html">22. สรุปเอเจนต์</a></li>
-<li><a href="./statistics.html">23. สถิติ</a></li>
-<li><a href="./admin_menu.html">24. ฟีเจอร์ผู้ดูแลระบบ</a></li>
+    <li><a href="./user_settings.html">18. ตั้งค่าผู้ใช้</a></li>
+<li><a href="./project_admin.html">19. ฟีเจอร์ผู้ดูแลโปรเจกต์</a></li>
+<li><a href="./rbac_management.html" class="active" aria-current="page">20. การจัดการ RBAC</a></li>
+<li><a href="./agent_summary.html">21. สรุปเอเจนต์</a></li>
+<li><a href="./statistics.html">22. สถิติ</a></li>
+<li><a href="./admin_menu.html">23. ฟีเจอร์ผู้ดูแลระบบ</a></li>
   </ul>
 </details>
 <details class="doc-sidebar-group">
@@ -186,10 +185,10 @@
     <span class="doc-sidebar-group__count" aria-label="4 pages">4</span>
   </summary>
   <ul class="doc-sidebar-nav doc-sidebar-nav--grouped" data-group="เอกสารอางอง">
-    <li><a href="./trouble_shooting.html">25. FAQ และการแก้ไขปัญหา</a></li>
-<li><a href="./appendix.html">26. ภาคผนวก</a></li>
-<li><a href="./license_agreement.html">27. ข้อตกลงการอนุญาตใช้งาน</a></li>
-<li><a href="./references.html">28. อ้างอิง</a></li>
+    <li><a href="./trouble_shooting.html">24. FAQ และการแก้ไขปัญหา</a></li>
+<li><a href="./appendix.html">25. ภาคผนวก</a></li>
+<li><a href="./license_agreement.html">26. ข้อตกลงการอนุญาตใช้งาน</a></li>
+<li><a href="./references.html">27. อ้างอิง</a></li>
   </ul>
 </details>
     </nav>
@@ -213,7 +212,7 @@
 <p data-bai-block="1">การจัดการ RBAC (Role-Based Access Control) ช่วยให้ผู้ดูแลระบบระดับสูงสามารถกำหนดบทบาทที่มีสิทธิ์แบบละเอียดและมอบหมายให้กับผู้ใช้ได้ ด้วย RBAC คุณสามารถควบคุมการดำเนินการที่ผู้ใช้เฉพาะสามารถทำได้กับทรัพยากรต่าง ๆ ในระบบ Backend.AI</p>
 <p data-bai-block="2">ในการเข้าถึงหน้าการจัดการ RBAC ให้เลือก <strong>สลับไปยังคอนโซลผู้ดูแลระบบ</strong> ในเมนูผู้ใช้ จากนั้นคลิก <strong>การจัดการ RBAC</strong> ในแถบด้านข้าง</p>
 <p data-bai-block="3">หน้านี้มีสองแท็บ: <strong>บทบาท</strong> และ <strong>พรีเซ็ต</strong></p>
-<p><figure data-bai-block="4" class="doc-figure"><img src="./images/rbac_role_list_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>รูปที่ 21.1</figcaption></figure>
+<p><figure data-bai-block="4" class="doc-figure"><img src="./images/rbac_role_list_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>รูปที่ 20.1</figcaption></figure>
 </p>
 <p><a id="role-list"></a></p>
 <h2 data-bai-block="5" id="rbac_management-รายการบทบาท">รายการบทบาท<a class="hash-link" href="#rbac_management-รายการบทบาท" aria-label="Direct link to รายการบทบาท">#</a></h2>
@@ -262,7 +261,7 @@
 </li>
 <li data-bai-block="38">คลิก <strong>ตกลง</strong> เพื่อสร้างบทบาท</li>
 </ol>
-<p><figure data-bai-block="39" class="doc-figure"><img src="./images/rbac_create_role_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>รูปที่ 21.2</figcaption></figure>
+<p><figure data-bai-block="39" class="doc-figure"><img src="./images/rbac_create_role_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>รูปที่ 20.2</figcaption></figure>
 </p>
 <div class="admonition admonition-info">
 <div data-bai-block="40" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"/></svg></span>ข้อมูล</div>
@@ -292,7 +291,7 @@
 <li data-bai-block="52"><strong>วันที่อัปเดต</strong>: เวลาที่แก้ไขล่าสุด</li>
 </ul>
 <p data-bai-block="53">ด้านล่างข้อมูลเมตามีสองแท็บ: <strong>สิทธิ์</strong> และ <strong>การมอบหมายบทบาท</strong> โดยค่าเริ่มต้นจะเลือกแท็บ <strong>สิทธิ์</strong></p>
-<p><figure data-bai-block="54" class="doc-figure"><img src="./images/rbac_role_detail_drawer.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>รูปที่ 21.3</figcaption></figure>
+<p><figure data-bai-block="54" class="doc-figure"><img src="./images/rbac_role_detail_drawer.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>รูปที่ 20.3</figcaption></figure>
 </p>
 <h3 data-bai-block="55" id="rbac_management-การแกไขบทบาท">การแก้ไขบทบาท<a class="hash-link" href="#rbac_management-การแกไขบทบาท" aria-label="Direct link to การแก้ไขบทบาท">#</a></h3>
 <p data-bai-block="56">ในการแก้ไขชื่อ คำอธิบาย หรือการตั้งค่าการมอบหมายอัตโนมัติของบทบาทแบบกำหนดเอง:</p>
@@ -307,7 +306,7 @@
 </li>
 <li data-bai-block="63">คลิก <strong>ตกลง</strong> เพื่อบันทึกการเปลี่ยนแปลง</li>
 </ol>
-<p><figure data-bai-block="64" class="doc-figure"><img src="./images/rbac_edit_role_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>รูปที่ 21.4</figcaption></figure>
+<p><figure data-bai-block="64" class="doc-figure"><img src="./images/rbac_edit_role_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>รูปที่ 20.4</figcaption></figure>
 </p>
 <div class="admonition admonition-note">
 <div data-bai-block="65" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
@@ -322,7 +321,7 @@
 <h2 data-bai-block="67" id="rbac_management-การจดการสทธ">การจัดการสิทธิ์<a class="hash-link" href="#rbac_management-การจดการสทธ" aria-label="Direct link to การจัดการสิทธิ์">#</a></h2>
 <p data-bai-block="68">แท็บ <strong>สิทธิ์</strong> ในแผงรายละเอียดบทบาทจะแสดงประเภทสิทธิ์ที่ใช้ได้ในขอบเขตของบทบาทแถวละหนึ่งประเภท ช่องทำเครื่องหมายในแต่ละแถวจัดกลุ่มไว้ภายใต้ <strong>อ่าน</strong> และ <strong>เขียน</strong> โดย <strong>เขียน</strong> ครอบคลุมการสร้าง การแก้ไข การลบ และการลบถาวร</p>
 <p data-bai-block="69">ในการเปลี่ยนสิทธิ์ของบทบาท ให้เลือกหรือยกเลิกการเลือกช่องทำเครื่องหมาย แล้วคลิก <strong>บันทึก</strong></p>
-<p><figure data-bai-block="70" class="doc-figure"><img src="./images/rbac_permissions_tab.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>รูปที่ 21.5</figcaption></figure>
+<p><figure data-bai-block="70" class="doc-figure"><img src="./images/rbac_permissions_tab.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>รูปที่ 20.5</figcaption></figure>
 </p>
 <p data-bai-block="71">สิทธิ์ของบทบาทระบบเป็นแบบอ่านอย่างเดียวในแท็บนี้ สิทธิ์เหล่านี้เป็นไปตาม<a href="#role-presets">พรีเซ็ตบทบาท</a>ที่ใช้สร้างบทบาทนั้น คลิก <strong>ดูพรีเซ็ต</strong> เพื่อเปิดพรีเซ็ต</p>
 <div class="admonition admonition-info">
@@ -372,10 +371,10 @@
 <p><a id="role-presets"></a></p>
 <h2 data-bai-block="81" id="rbac_management-พรเซตบทบาท">พรีเซ็ตบทบาท<a class="hash-link" href="#rbac_management-พรเซตบทบาท" aria-label="Direct link to พรีเซ็ตบทบาท">#</a></h2>
 <p data-bai-block="82">แท็บ <strong>พรีเซ็ต</strong> จะแสดงรายการพรีเซ็ตบทบาทที่ใช้สร้างบทบาทระบบ</p>
-<p><figure data-bai-block="83" class="doc-figure"><img src="./images/rbac_presets_tab.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>รูปที่ 21.6</figcaption></figure>
+<p><figure data-bai-block="83" class="doc-figure"><img src="./images/rbac_presets_tab.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>รูปที่ 20.6</figcaption></figure>
 </p>
 <p data-bai-block="84">ในการแก้ไขสิทธิ์ของพรีเซ็ต ให้คลิกชื่อพรีเซ็ตเพื่อเปิดแผงรายละเอียด เลือกหรือยกเลิกการเลือกช่องทำเครื่องหมายในกริด <strong>อ่าน</strong> / <strong>เขียน</strong> แล้วคลิก <strong>บันทึก</strong></p>
-<p><figure data-bai-block="85" class="doc-figure"><img src="./images/rbac_preset_detail_drawer.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>รูปที่ 21.7</figcaption></figure>
+<p><figure data-bai-block="85" class="doc-figure"><img src="./images/rbac_preset_detail_drawer.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>รูปที่ 20.7</figcaption></figure>
 </p>
 <div class="admonition admonition-warning">
 <div data-bai-block="86" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>คำเตือน</div>
@@ -388,7 +387,7 @@
 <p><a id="manage-user-assignments"></a></p>
 <h2 data-bai-block="88" id="rbac_management-การจดการการมอบหมายผใช">การจัดการการมอบหมายผู้ใช้<a class="hash-link" href="#rbac_management-การจดการการมอบหมายผใช" aria-label="Direct link to การจัดการการมอบหมายผู้ใช้">#</a></h2>
 <p data-bai-block="89">แท็บ <strong>การมอบหมายบทบาท</strong> ในแผงรายละเอียดบทบาทจะแสดงผู้ใช้ที่ถูกมอบหมายให้กับบทบาท</p>
-<p><figure data-bai-block="90" class="doc-figure"><img src="./images/rbac_assignments_tab.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>รูปที่ 21.8</figcaption></figure>
+<p><figure data-bai-block="90" class="doc-figure"><img src="./images/rbac_assignments_tab.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>รูปที่ 20.8</figcaption></figure>
 </p>
 <p><a id="add-users-to-a-role"></a></p>
 <h3 data-bai-block="91" id="rbac_management-การเพมผใชในบทบาท">การเพิ่มผู้ใช้ในบทบาท<a class="hash-link" href="#rbac_management-การเพมผใชในบทบาท" aria-label="Direct link to การเพิ่มผู้ใช้ในบทบาท">#</a></h3>
@@ -399,7 +398,7 @@
 <li data-bai-block="95">เลือกผู้ใช้หนึ่งคนขึ้นไปโดยใช้ช่องทำเครื่องหมาย</li>
 <li data-bai-block="96">คลิก <strong>มอบหมาย</strong> เพื่อมอบหมายผู้ใช้ที่เลือกให้กับบทบาท</li>
 </ol>
-<p><figure data-bai-block="97" class="doc-figure"><img src="./images/rbac_add_user_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>รูปที่ 21.9</figcaption></figure>
+<p><figure data-bai-block="97" class="doc-figure"><img src="./images/rbac_add_user_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>รูปที่ 20.9</figcaption></figure>
 </p>
 <p data-bai-block="98">การเพิ่มผู้ใช้เป็นการดำเนินการแบบกลุ่ม คุณสามารถเลือกผู้ใช้หลายคนในครั้งเดียวและมอบหมายทั้งหมดพร้อมกันได้ หากการมอบหมายบางรายการล้มเหลว โมดอลจะยังคงเปิดอยู่ และโมดอลข้อผิดพลาดแบบชุดจะแสดงผู้ใช้ที่ล้มเหลวแต่ละรายพร้อมข้อความแสดงข้อผิดพลาดและจำนวนที่สำเร็จและล้มเหลว ผู้ใช้ที่ถูกมอบหมายสำเร็จจะถูกล้างออกจากการเลือก ดังนั้นจึงเหลือเฉพาะผู้ใช้ที่ล้มเหลวที่ถูกเลือกไว้ และคุณสามารถคลิก <strong>เพิ่มผู้ใช้</strong> อีกครั้งเพื่อลองใหม่เฉพาะผู้ใช้เหล่านั้น</p>
 <!-- ![](/images/rbac_assign_user_partial_failure.png) -->
@@ -408,7 +407,7 @@
 <p><a id="system-roles-and-assignment-restrictions"></a></p>
 <h3 data-bai-block="99" id="rbac_management-บทบาทระบบและขอจำกดในการมอบหมาย">บทบาทระบบและข้อจำกัดในการมอบหมาย<a class="hash-link" href="#rbac_management-บทบาทระบบและขอจำกดในการมอบหมาย" aria-label="Direct link to บทบาทระบบและข้อจำกัดในการมอบหมาย">#</a></h3>
 <p data-bai-block="100">บทบาทผู้ดูแลโปรเจกต์ที่ระบบสร้างขึ้น (บทบาทที่มี<strong>แหล่งที่มา</strong>เป็น<strong>ระบบ</strong>) ไม่สามารถมอบหมายหรือเพิกถอนผู้ใช้ได้โดยตรงจากแท็บการมอบหมายบทบาท แท็บนี้จะแสดงการแจ้งเตือน <strong>บทบาทที่ระบบสร้างขึ้นโดยอัตโนมัติไม่สามารถมอบหมายหรือนำผู้ใช้ออกได้โดยตรง</strong> และตารางการมอบหมายจะเป็นแบบอ่านอย่างเดียว (ตัวควบคุม <strong>เพิ่มผู้ใช้</strong> และการเพิกถอนจะถูกซ่อนไว้)</p>
-<p><figure data-bai-block="101" class="doc-figure"><img src="./images/rbac_system_role_assignments_readonly.png" alt="" class="doc-image" style="width:800px" loading="lazy" decoding="async" width="1600" height="1800" /><figcaption>รูปที่ 21.10</figcaption></figure>
+<p><figure data-bai-block="101" class="doc-figure"><img src="./images/rbac_system_role_assignments_readonly.png" alt="" class="doc-image" style="width:800px" loading="lazy" decoding="async" width="1600" height="1800" /><figcaption>รูปที่ 20.10</figcaption></figure>
 </p>
 <p data-bai-block="102">หากต้องการจัดการผู้ที่ดูแลโปรเจกต์ ให้ใช้ <strong>ตั้งค่าผู้ดูแลโปรเจกต์</strong> บนหน้าโปรเจกต์แทน ดูที่<a href="./project_admin.html#set-project-admin">ตั้งค่าผู้ดูแลโปรเจกต์</a>ในบทฟีเจอร์สำหรับผู้ดูแลโปรเจกต์ และ<a href="#grant-project-admin">การมอบสิทธิ์ผู้ดูแลโปรเจกต์</a>ด้านล่าง</p>
 <p><a id="revoke-users-from-a-role"></a></p>
@@ -419,7 +418,7 @@
 <li data-bai-block="106">ในแท็บ <strong>การมอบหมายบทบาท</strong> วางเมาส์เหนือแถวผู้ใช้แล้วคลิกไอคอนเพิกถอน (ถังขยะ) ถัดจากผู้ใช้</li>
 <li data-bai-block="107">โมดอลยืนยัน <strong>นำผู้ใช้ออกจากบทบาท</strong> จะเปิดขึ้น ตรวจสอบผู้ใช้ที่แสดงในรายการ จากนั้นคลิก <strong>นำผู้ใช้ออกจากบทบาท</strong> เพื่อยืนยัน หรือ <strong>ยกเลิก</strong> เพื่อปิด</li>
 </ol>
-<p><figure data-bai-block="108" class="doc-figure"><img src="./images/rbac_revoke_confirm_modal.png" alt="" class="doc-image" style="width:520px" loading="lazy" decoding="async" width="1040" height="436" /><figcaption>รูปที่ 21.11</figcaption></figure>
+<p><figure data-bai-block="108" class="doc-figure"><img src="./images/rbac_revoke_confirm_modal.png" alt="" class="doc-image" style="width:520px" loading="lazy" decoding="async" width="1040" height="436" /><figcaption>รูปที่ 20.11</figcaption></figure>
 </p>
 <p data-bai-block="109">ในการเพิกถอนผู้ใช้หลายคนพร้อมกัน:</p>
 <ol>
@@ -427,7 +426,7 @@
 <li data-bai-block="111">คลิกปุ่ม <strong>นำผู้ใช้ออกจากบทบาท</strong> แบบกลุ่ม (ไอคอนถังขยะ) ที่ปรากฏขึ้นเมื่อมีการเลือกหนึ่งแถวขึ้นไป</li>
 <li data-bai-block="112">ในโมดอลยืนยัน <strong>นำผู้ใช้ออกจากบทบาท</strong> ตรวจสอบผู้ใช้ที่แสดงในรายการ จากนั้นคลิก <strong>นำผู้ใช้ออกจากบทบาท</strong> เพื่อยืนยัน หรือ <strong>ยกเลิก</strong> เพื่อปิด</li>
 </ol>
-<p><figure data-bai-block="113" class="doc-figure"><img src="./images/rbac_bulk_revoke_selection.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>รูปที่ 21.12</figcaption></figure>
+<p><figure data-bai-block="113" class="doc-figure"><img src="./images/rbac_bulk_revoke_selection.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>รูปที่ 20.12</figcaption></figure>
 </p>
 <p data-bai-block="114">การเพิกถอนผู้ใช้จะลบเฉพาะการมอบหมายของผู้ใช้นั้นกับบทบาทนี้เท่านั้น บทบาทและการมอบหมายอื่น ๆ ยังคงไม่เปลี่ยนแปลง</p>
 <div class="admonition admonition-note">
@@ -441,10 +440,10 @@
 <p><a id="grant-project-admin"></a></p>
 <h2 data-bai-block="117" id="rbac_management-การมอบสทธผดแลโปรเจกต">การมอบสิทธิ์ผู้ดูแลโปรเจกต์<a class="hash-link" href="#rbac_management-การมอบสทธผดแลโปรเจกต" aria-label="Direct link to การมอบสิทธิ์ผู้ดูแลโปรเจกต์">#</a></h2>
 <p data-bai-block="118">เมื่อสร้างโปรเจกต์ ระบบจะสร้างบทบาทผู้ดูแลโปรเจกต์เฉพาะสำหรับโปรเจกต์นั้นขึ้นมาด้วย ผู้ใช้ที่ถูกมอบหมายให้กับบทบาทนี้จะได้รับสิทธิ์ <a href="./project_admin.html#project-admin-features">ผู้ดูแลโปรเจกต์</a> เหนือโปรเจกต์ดังกล่าวโดยเฉพาะ ผู้ใช้สามารถจัดการผู้ใช้ เซสชัน การปรับใช้ และโฟลเดอร์จัดเก็บของโปรเจกต์ได้โดยไม่ต้องมีสิทธิ์ผู้ดูแลระบบระดับสูงทั่วทั้งระบบ</p>
-<p><figure data-bai-block="119" class="doc-figure"><img src="./images/rbac_project_admin_role_in_list.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>รูปที่ 21.13</figcaption></figure>
+<p><figure data-bai-block="119" class="doc-figure"><img src="./images/rbac_project_admin_role_in_list.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>รูปที่ 20.13</figcaption></figure>
 </p>
 <p data-bai-block="120">มอบและเพิกถอนสิทธิ์ผู้ดูแลโปรเจกต์ผ่านขั้นตอนคลิกเดียว <strong>ตั้งค่าผู้ดูแลโปรเจกต์</strong> บนหน้าผู้ดูแล<strong>โปรเจกต์</strong> ตามที่อธิบายไว้ใน<a href="./project_admin.html#set-project-admin">ตั้งค่าผู้ดูแลโปรเจกต์</a>ในบทฟีเจอร์สำหรับผู้ดูแลโปรเจกต์ บทบาทผู้ดูแลโปรเจกต์เป็นบทบาทระบบ ดังนั้นแท็บการมอบหมายบทบาทที่นี่จึงเป็นแบบ<strong>อ่านอย่างเดียว</strong>และมีไว้เพื่อการตรวจสอบ คุณยังสามารถเปิดบทบาทเพื่อดูว่าใครถือสิทธิ์ผู้ดูแลโปรเจกต์อยู่ในปัจจุบัน โมดอล <strong>ตั้งค่าผู้ดูแลโปรเจกต์</strong> ยังลิงก์กลับไปยังแผงรายละเอียดของบทบาทนี้ผ่านทางลัด RBAC ด้วย</p>
-<p><figure data-bai-block="121" class="doc-figure"><img src="./images/rbac_project_admin_role_detail.png" alt="" class="doc-image" style="width:800px" loading="lazy" decoding="async" width="1600" height="1800" /><figcaption>รูปที่ 21.14</figcaption></figure>
+<p><figure data-bai-block="121" class="doc-figure"><img src="./images/rbac_project_admin_role_detail.png" alt="" class="doc-image" style="width:800px" loading="lazy" decoding="async" width="1600" height="1800" /><figcaption>รูปที่ 20.14</figcaption></figure>
 </p>
 <p data-bai-block="122">เมื่อมอบสิทธิ์แล้ว ผู้ใช้จะได้รับสิทธิ์ผู้ดูแลโปรเจกต์ทันที เมื่อผู้ใช้เปิดดรอปดาวน์โปรเจกต์ในส่วนหัวในครั้งถัดไป ผู้ใช้จะเห็นป้ายผู้ดูแลโปรเจกต์ถัดจากโปรเจกต์ที่เกี่ยวข้อง รวมถึงรายการแถบด้านข้างสำหรับผู้ดูแลโปรเจกต์ที่อธิบายไว้ในบท <a href="./project_admin.html#project-admin-features">ฟีเจอร์สำหรับผู้ดูแลโปรเจกต์</a></p>
 
@@ -452,7 +451,7 @@
     <div class="page-footer">
       <div class="page-metadata">
   <a class="edit-link" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/th/rbac_management/rbac_management.md" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg> แก้ไขหน้านี้</a>
-  <span class="last-updated">อัปเดตล่าสุด 29 ต.ค. 2569</span>
+  <span class="last-updated">อัปเดตล่าสุด 10 พ.ย. 2569</span>
 </div>
       <nav class="pagination-nav" aria-label="Docs pages">
   <a class="pagination-nav__link pagination-nav__link--prev" href="./project_admin.html">
