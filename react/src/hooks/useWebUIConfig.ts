@@ -148,11 +148,12 @@ interface ConfigFetchResult {
  */
 export async function fetchAndParseConfig(
   configPath: string,
-  signal?: AbortSignal,
+  init?: Pick<RequestInit, 'signal' | 'credentials'>,
 ): Promise<ConfigFetchResult> {
+  const signal = init?.signal ?? undefined;
   let res: Response;
   try {
-    res = await fetch(configPath, signal ? { signal } : undefined);
+    res = await fetch(configPath, init);
   } catch {
     // Network / fetch error — treat as missing config (no error field).
     return signal?.aborted ? { config: null, aborted: true } : { config: null };
@@ -344,14 +345,124 @@ export function initializeConfigOnce(
   return configInitPromise;
 }
 
-// Post-login re-fetch: one attempt plus one retry per delay, each attempt
-// bounded by the timeout (#10912).
+// ---------------------------------------------------------------------------
+// Electron: the connected webserver's config.toml
+// ---------------------------------------------------------------------------
+
+/** Set once a webserver's config.toml has been merged over Electron's own. */
+export const webServerConfigMergedState = atom<boolean>(false);
+
+// Electron keeps its own endpoint, download URL and local wsproxy.
+const WEB_SERVER_CONFIG_EXCLUDED_KEYS = [
+  'general.apiEndpoint',
+  'general.apiEndpointText',
+  'general.appDownloadUrl',
+  'wsproxy',
+];
+
+/**
+ * The webserver config.toml URL for `apiEndpoint`, or null when the page is
+ * served from that endpoint already or it is not http(s).
+ */
+export function webServerConfigUrl(apiEndpoint: string): string | null {
+  if (window.location.href.startsWith(apiEndpoint)) return null;
+  try {
+    const endpointUrl = new URL(apiEndpoint);
+    if (!['http:', 'https:'].includes(endpointUrl.protocol)) return null;
+    return new URL('./config.toml', apiEndpoint).href;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Merge a webserver config.toml over the current one, except the keys
+ * Electron keeps for itself. Returns false when the merge helpers are absent.
+ */
+export function mergeWebServerConfig(
+  store: JotaiStore,
+  config: RawTomlConfig,
+): boolean {
+  const backendaiutils = (globalThis as Record<string, any>).backendaiutils;
+  if (!backendaiutils) return false;
+  WEB_SERVER_CONFIG_EXCLUDED_KEYS.forEach((key) => {
+    backendaiutils.deleteNestedKeyFromObject(config, key);
+  });
+  const merged = backendaiutils.mergeNestedObjects(
+    store.get(rawConfigState) ?? {},
+    config,
+  );
+  store.set(rawConfigState, merged);
+  store.set(loginConfigState, refreshConfigFromToml(merged));
+  store.set(webServerConfigMergedState, true);
+  return true;
+}
+
+// ---------------------------------------------------------------------------
+// Post-login re-read
+// ---------------------------------------------------------------------------
+
+// One attempt plus one retry per delay, each attempt bounded by the timeout.
 const CONFIG_REFRESH_RETRY_DELAYS_MS = [500, 1000];
 const CONFIG_REFRESH_MAX_ATTEMPTS = CONFIG_REFRESH_RETRY_DELAYS_MS.length + 1;
 const CONFIG_REFRESH_ATTEMPT_TIMEOUT_MS = 5000;
 
 const delay = (ms: number) =>
   new Promise<void>((resolve) => setTimeout(resolve, ms));
+
+/**
+ * Read a non-empty config.toml with retries; null when every attempt failed.
+ * An empty document ({}) counts as a failed read, not a config that resets
+ * every field.
+ */
+async function readConfigWithRetries(
+  store: JotaiStore,
+  configPath: string,
+  maxAttempts: number,
+  logger: Pick<Console, 'error' | 'warn'>,
+  credentials?: RequestCredentials,
+): Promise<RawTomlConfig | null> {
+  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+    if (attempt > 0) {
+      await delay(CONFIG_REFRESH_RETRY_DELAYS_MS[attempt - 1]);
+    }
+    const controller = new AbortController();
+    const timeout = setTimeout(
+      () => controller.abort(),
+      CONFIG_REFRESH_ATTEMPT_TIMEOUT_MS,
+    );
+    let result: ConfigFetchResult;
+    try {
+      result = await fetchAndParseConfig(configPath, {
+        signal: controller.signal,
+        ...(credentials ? { credentials } : {}),
+      });
+    } finally {
+      clearTimeout(timeout);
+    }
+
+    if (result.config && Object.keys(result.config).length > 0) {
+      store.set(configParseErrorState, null);
+      return result.config;
+    }
+
+    const label = `[config.toml] Post-login re-fetch attempt ${attempt + 1}/${maxAttempts}`;
+    if (result.error) {
+      store.set(configParseErrorState, result.error);
+      logger.error(
+        `${label} failed to parse — keeping pre-login configuration:`,
+        result.error,
+      );
+    } else if (result.aborted) {
+      logger.warn(
+        `${label} timed out after ${CONFIG_REFRESH_ATTEMPT_TIMEOUT_MS}ms`,
+      );
+    } else {
+      logger.warn(`${label} found no config`);
+    }
+  }
+  return null;
+}
 
 /**
  * - `refreshed`: the post-login document is in the store.
@@ -365,15 +476,32 @@ export type ConfigRefreshResult = 'refreshed' | 'unchanged' | 'failed';
  * Re-fetch config.toml after login: the webserver serves only the login-screen
  * fields before authentication (lablup/backend.ai#16486), so the pre-login
  * fetch never saw the rest. Retried with backoff and a per-attempt timeout.
+ *
+ * On Electron the re-read is of the connected webserver (`webServerEndpoint`),
+ * with the session cookie, merged as before login.
  */
 export async function refreshConfigAfterLogin(
   store: JotaiStore,
   logger: Pick<Console, 'error' | 'warn'> = console,
+  options: { webServerEndpoint?: string } = {},
 ): Promise<ConfigRefreshResult> {
-  // Electron reads its bundled config.toml, which no webserver trims; a
-  // re-read would also drop what loadConfigFromWebServer merged in.
   if ((globalThis as Record<string, unknown>).isElectron) {
-    return 'unchanged';
+    // Nothing was merged before login (API mode, no webserver config.toml):
+    // the bundled config is the whole config.
+    const url = options.webServerEndpoint
+      ? webServerConfigUrl(options.webServerEndpoint)
+      : null;
+    if (!url || !store.get(webServerConfigMergedState)) return 'unchanged';
+    const config = await readConfigWithRetries(
+      store,
+      url,
+      CONFIG_REFRESH_MAX_ATTEMPTS,
+      logger,
+      'include',
+    );
+    return config && mergeWebServerConfig(store, config)
+      ? 'refreshed'
+      : 'failed';
   }
 
   // Let an in-flight bootstrap land first, or it overwrites the refreshed
@@ -389,61 +517,23 @@ export async function refreshConfigAfterLogin(
   // a bootstrap that failed) one read is tried and failure keeps the defaults.
   const preLogin = store.get(rawConfigState);
   const hadPreLoginConfig = !!preLogin && Object.keys(preLogin).length > 0;
-  const maxAttempts = hadPreLoginConfig ? CONFIG_REFRESH_MAX_ATTEMPTS : 1;
+  const config = await readConfigWithRetries(
+    store,
+    '../../config.toml',
+    hadPreLoginConfig ? CONFIG_REFRESH_MAX_ATTEMPTS : 1,
+    logger,
+  );
+  if (!config) return hadPreLoginConfig ? 'failed' : 'unchanged';
 
-  const configPath = '../../config.toml';
-  for (let attempt = 0; attempt < maxAttempts; attempt++) {
-    if (attempt > 0) {
-      await delay(CONFIG_REFRESH_RETRY_DELAYS_MS[attempt - 1]);
-    }
-    const controller = new AbortController();
-    const timeout = setTimeout(
-      () => controller.abort(),
-      CONFIG_REFRESH_ATTEMPT_TIMEOUT_MS,
-    );
-    let result: ConfigFetchResult;
-    try {
-      result = await fetchAndParseConfig(configPath, controller.signal);
-    } finally {
-      clearTimeout(timeout);
-    }
-
-    const label = `[config.toml] Post-login re-fetch attempt ${attempt + 1}/${maxAttempts}`;
-
-    // An empty document ({}) after a non-empty pre-login one is a failed read,
-    // not a config that resets every field.
-    if (result.config && Object.keys(result.config).length > 0) {
-      store.set(rawConfigState, result.config);
-      store.set(configParseErrorState, null);
-
-      const { autoLogout, proxyUrl, loginPlugin, loginConfig } = processConfig(
-        result.config,
-      );
-
-      store.set(loginConfigState, loginConfig);
-      store.set(autoLogoutState, autoLogout);
-      store.set(proxyUrlState, proxyUrl);
-      store.set(loginPluginState, loginPlugin);
-      store.set(configLoadedState, true);
-      return 'refreshed';
-    }
-
-    if (result.error) {
-      store.set(configParseErrorState, result.error);
-      logger.error(
-        `${label} failed to parse — keeping pre-login configuration:`,
-        result.error,
-      );
-    } else if (result.aborted) {
-      logger.warn(
-        `${label} timed out after ${CONFIG_REFRESH_ATTEMPT_TIMEOUT_MS}ms`,
-      );
-    } else {
-      logger.warn(`${label} found no config`);
-    }
-  }
-
-  return hadPreLoginConfig ? 'failed' : 'unchanged';
+  store.set(rawConfigState, config);
+  const { autoLogout, proxyUrl, loginPlugin, loginConfig } =
+    processConfig(config);
+  store.set(loginConfigState, loginConfig);
+  store.set(autoLogoutState, autoLogout);
+  store.set(proxyUrlState, proxyUrl);
+  store.set(loginPluginState, loginPlugin);
+  store.set(configLoadedState, true);
+  return 'refreshed';
 }
 
 // ---------------------------------------------------------------------------

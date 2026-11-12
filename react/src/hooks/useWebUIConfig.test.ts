@@ -425,16 +425,119 @@ login = "custom-login"
     expect(global.fetch).toHaveBeenCalledTimes(1);
   });
 
-  it('skips the re-read on Electron, keeping the merged webserver config', async () => {
+  it('leaves Electron alone when no webserver config was merged before login', async () => {
     const { refreshConfigAfterLogin } = await import('./useWebUIConfig');
     (globalThis as Record<string, unknown>).isElectron = true;
     const store = preLoginStore();
     global.fetch = vi.fn();
 
-    await expect(refreshConfigAfterLogin(store)).resolves.toBe('unchanged');
+    await expect(
+      refreshConfigAfterLogin(store, console, {
+        webServerEndpoint: 'https://ws.example.com',
+      }),
+    ).resolves.toBe('unchanged');
 
     expect(global.fetch).not.toHaveBeenCalled();
     expect(store.get(proxyUrlState)).toBe('http://keep:5050');
+  });
+
+  describe('on Electron after a pre-login webserver merge', () => {
+    beforeEach(() => {
+      (globalThis as Record<string, unknown>).isElectron = true;
+      // The two backendaiUtils helpers mergeWebServerConfig relies on.
+      (globalThis as Record<string, unknown>).backendaiutils = {
+        deleteNestedKeyFromObject(obj: any, nestedKey: string) {
+          const keys = nestedKey.split('.');
+          const last = keys.pop()!;
+          const parent = keys.reduce((o: any, k) => o?.[k], obj);
+          if (parent) delete parent[last];
+          return obj;
+        },
+        mergeNestedObjects(a: any, b: any) {
+          const merge = (x: any, y: any): any =>
+            Object.entries(y).reduce(
+              (o: any, [k, v]) => {
+                o[k] =
+                  v && (v as object).constructor === Object
+                    ? merge({ ...(o[k] ?? {}) }, v)
+                    : v;
+                return o;
+              },
+              { ...x },
+            );
+          return merge(a, b);
+        },
+      };
+    });
+
+    afterEach(() => {
+      delete (globalThis as Record<string, unknown>).backendaiutils;
+    });
+
+    async function mergedStore() {
+      const { webServerConfigMergedState } = await import('./useWebUIConfig');
+      const store = createStore();
+      store.set(rawConfigState, {
+        general: { apiEndpoint: 'https://ws.example.com' },
+        wsproxy: { proxyURL: 'http://127.0.0.1:5050/' },
+      });
+      store.set(webServerConfigMergedState, true);
+      return store;
+    }
+
+    it('re-reads the webserver config with the session cookie and merges it', async () => {
+      const { refreshConfigAfterLogin } = await import('./useWebUIConfig');
+      const store = await mergedStore();
+      mockFetch(
+        200,
+        `
+[general]
+apiEndpoint = "https://elsewhere.example.com"
+allowSignout = true
+
+[wsproxy]
+proxyURL = "https://remote-proxy.example.com/"
+
+[resources]
+maxCPUCoresPerContainer = 8
+`,
+      );
+
+      await expect(
+        refreshConfigAfterLogin(store, console, {
+          webServerEndpoint: 'https://ws.example.com',
+        }),
+      ).resolves.toBe('refreshed');
+
+      expect(global.fetch).toHaveBeenCalledWith(
+        'https://ws.example.com/config.toml',
+        expect.objectContaining({ credentials: 'include' }),
+      );
+      const raw = store.get(rawConfigState);
+      expect(raw?.resources?.maxCPUCoresPerContainer).toBe(8);
+      expect(raw?.general?.allowSignout).toBe(true);
+      // Electron's own endpoint and local wsproxy survive the merge.
+      expect(raw?.general?.apiEndpoint).toBe('https://ws.example.com');
+      expect(raw?.wsproxy?.proxyURL).toBe('http://127.0.0.1:5050/');
+    });
+
+    it('fails when every webserver re-read fails', async () => {
+      const { refreshConfigAfterLogin } = await import('./useWebUIConfig');
+      const store = await mergedStore();
+      global.fetch = vi.fn().mockRejectedValue(new Error('network down'));
+
+      await expect(
+        runWithTimers(
+          () =>
+            refreshConfigAfterLogin(store, console, {
+              webServerEndpoint: 'https://ws.example.com',
+            }),
+          2000,
+        ),
+      ).resolves.toBe('failed');
+
+      expect(global.fetch).toHaveBeenCalledTimes(3);
+    });
   });
 
   it('waits for an in-flight bootstrap so it cannot overwrite the refresh', async () => {

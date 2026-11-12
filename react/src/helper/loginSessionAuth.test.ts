@@ -180,6 +180,10 @@ describe('connectViaGQL — post-login config re-fetch (#10912)', () => {
     await connectViaGQL(client, cfg, []);
 
     expect(refreshConfigAfterLogin).toHaveBeenCalledTimes(1);
+    // The session endpoint is the webserver Electron re-reads from.
+    expect(vi.mocked(refreshConfigAfterLogin).mock.calls[0][2]).toEqual({
+      webServerEndpoint: 'https://api.test',
+    });
   });
 
   it('re-applies the refreshed config to the client', async () => {
