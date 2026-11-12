@@ -240,41 +240,5 @@ check "cancelled: git status clean" [ -z "$(git -C "$T/c5" status --porcelain)" 
 check "cancelled: says the pointers were restored" grep -q "pointer files were restored" <<<"$out"
 check "cancelled: temp dir removed" [ -z "$(ls -A "$T/tmp5")" ]
 
-# 10. --root pulls another directory (the backend.ai-ui visual baselines) the same
-# way: the docs source is left as pointers, a fork-only object needs the fallback.
-R=pkg/shots
-cd "$T/seed" || exit 1
-mkdir -p "$R/a"
-head -c 21000 /dev/urandom > "$R/a/one.png"
-printf '%s\n' "$R/**/*.png filter=lfs diff=lfs merge=lfs -text" >> .gitattributes
-git add -A && git commit -qm "root: add a baseline"
-quiet git push origin HEAD:refs/heads/root-base
-head -c 22000 /dev/urandom > "$R/a/two.png"
-git add -A && git commit -qm "root: fork adds a baseline"
-quiet git -c lfs.allowincompletepush=true push fork HEAD:refs/heads/root-feature
-quiet env GIT_LFS_SKIP_PUSH=1 git push origin HEAD:refs/pull/2/head
-ONE_SHA="$(sha "$R/a/one.png")" TWO_SHA="$(sha "$R/a/two.png")"
-fresh "$T/c10" refs/pull/2/head
-quiet bash "$PULL" --root "$R" "$T/c10"; rc=$?
-check "root: origin alone cannot complete a fork PR" [ "$rc" -ne 0 ]
-check "root: nothing changed when the fetch is incomplete" is_pointer "$T/c10/$R/a/one.png"
-quiet bash "$PULL" --root "$R" --fallback-remote "file://$T/fork.git" --fallback-report "$T/c10.report" "$T/c10"; rc=$?
-check "root: fork fallback materializes, exit 0" [ "$rc" -eq 0 ]
-check "root: fork fallback is reported" grep -q "fork.git" "$T/c10.report"
-check "root: images materialized" [ "$(sha "$T/c10/$R/a/one.png") $(sha "$T/c10/$R/a/two.png")" = "$ONE_SHA $TWO_SHA" ]
-check "root: docs source left as pointers" is_pointer "$T/c10/$D/en/images/a.png"
-check "root: git status clean" [ -z "$(git -C "$T/c10" status --porcelain)" ]
-fresh "$T/c10b" refs/pull/2/head
-O10="$(git -C "$T/c10b" cat-file blob "HEAD:$R/a/one.png" | sed -n 's/^oid sha256://p')"
-S10="$(store_of "$T/c10b")/${O10:0:2}/${O10:2:2}"
-mkdir -p "$S10" && cp "$(store_of "$T/c10")/${O10:0:2}/${O10:2:2}/$O10" "$S10/" && "$T/flip" "$S10/$O10"
-out="$(bash "$PULL" --root "$R" --fallback-remote "file://$T/fork.git" "$T/c10b" 2>&1)"; rc=$?
-check "root: corrupted object replaced, exit 0" [ "$rc" -eq 0 ]
-check "root: corrupted object reported" grep -q "1 corrupted local object(s) replaced" <<<"$out"
-check "root: one.png has the right content" [ "$(sha "$T/c10b/$R/a/one.png")" = "$ONE_SHA" ]
-out="$(bash "$PULL" --root missing/dir "$T/c10b" 2>&1)"; rc=$?
-check "root: a missing root fails" [ "$rc" -ne 0 ]
-check "root: a missing root is named" grep -q "missing/dir is not a directory" <<<"$out"
-
 echo
 if [ "$fails" -eq 0 ]; then echo "all tests passed"; else echo "$fails test(s) failed"; exit 1; fi

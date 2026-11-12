@@ -1,6 +1,6 @@
 # 0029 — User manual images in Git LFS
 
-> [ADR 0031](0031-visual-regression-tests-for-backend-ai-ui-stories.md) extends Decision 1 and the Summary: the backend.ai-ui visual test baselines (`packages/backend.ai-ui/test/visual/__screenshots__/**/*.png`) are LFS-tracked too, and `.lfsconfig` keeps them as pointer files by default next to the manual's images. The other decisions stay in force.
+> [ADR 0031](0031-visual-regression-tests-for-backend-ai-ui-stories.md) extends Decision 1 and the Summary: the backend.ai-ui visual test baselines (`packages/backend.ai-ui/test/visual/__screenshots__/**/*.png`) are LFS-tracked too, and `.lfsconfig` keeps them as pointer files by default next to the manual's images. backend.ai-ui's own scripts pull them; the scripts this ADR names serve the manual only. The other decisions stay in force.
 
 ## Summary
 
