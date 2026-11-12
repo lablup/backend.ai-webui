@@ -310,6 +310,8 @@ export interface PanelDefinition {
   viz?: Viz;
   Component?: React.FC<PanelComponentProps>;
   defaultSize: PanelSize;
+  /** The size a new board of the page gives the card, overriding `defaultSize` there. */
+  defaultSizeByPage?: Partial<Record<PanelPage, PanelSize>>;
   minSize: PanelSize;
   /** Per-viz sizes of a preset, overriding `defaultSize` / `minSize`. */
   sizeByViz?: Partial<
