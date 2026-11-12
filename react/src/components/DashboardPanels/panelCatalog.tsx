@@ -180,7 +180,7 @@ const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
     kind: 'custom',
     Component: SessionStatusPanel,
     detailLink: RUNNING_SESSIONS,
-    defaultSize: size(2, 3),
+    defaultSize: size(2, 2),
     minSize: size(2, 2),
   },
   {
@@ -201,7 +201,7 @@ const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
     titleKey: 'webui.menu.MyResources',
     kind: 'custom',
     Component: MyTotalResourcePanel,
-    defaultSize: size(2, 3),
+    defaultSize: size(2, 2),
     minSize: size(2, 2),
   },
   {
@@ -211,7 +211,7 @@ const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
     titleKey: 'webui.menu.MyResourcesInResourceGroup',
     kind: 'custom',
     Component: MyResourcesPanel,
-    defaultSize: size(2, 3),
+    defaultSize: size(2, 2),
     minSize: size(2, 2),
     settings: ['resourceGroup'],
   },
