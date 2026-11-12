@@ -24,12 +24,14 @@ fi
 
 hooks="$(mktemp -d)"
 trap 'rm -rf "$hooks"' EXIT
-git -C "$repo" -c core.hooksPath="$hooks" \
-  -c filter.lfs.process="git-lfs filter-process" \
-  -c filter.lfs.smudge="git-lfs smudge -- %f" \
-  -c filter.lfs.clean="git-lfs clean -- %f" \
-  -c filter.lfs.required=true \
-  lfs pull --include="$dir/**" --exclude=""
+lfs_git=(git -C "$repo" -c core.hooksPath="$hooks"
+  -c filter.lfs.process="git-lfs filter-process"
+  -c filter.lfs.smudge="git-lfs smudge -- %f"
+  -c filter.lfs.clean="git-lfs clean -- %f"
+  -c filter.lfs.required=true)
+"${lfs_git[@]}" lfs pull --include="$dir/**" --exclude=""
+sleep 1
+"${lfs_git[@]}" update-index -q --refresh >/dev/null || true
 
 left="$(pointers)"
 if [ -n "$left" ]; then

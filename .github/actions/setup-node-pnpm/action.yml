@@ -16,6 +16,9 @@ inputs:
   registry-url:
     description: npm registry URL (publish workflows)
     default: ""
+  cache:
+    description: setup-node cache; "" disables it (container jobs, where it never hits)
+    default: "pnpm"
 runs:
   using: composite
   steps:
@@ -25,7 +28,7 @@ runs:
     - uses: actions/setup-node@v6.4.0
       with:
         node-version-file: ".nvmrc"
-        cache: "pnpm"
+        cache: ${{ inputs.cache }}
         registry-url: ${{ inputs.registry-url }}
     - if: inputs.install == 'true'
       name: Install dependencies

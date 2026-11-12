@@ -166,7 +166,7 @@ check_lint() {
   fi
   local rc=0
   lint_changed react 'react/(src|vite-plugins)/' || rc=1
-  lint_changed packages/backend.ai-ui 'packages/backend\.ai-ui/(src|\.storybook)/' || rc=1
+  lint_changed packages/backend.ai-ui 'packages/backend\.ai-ui/((src|\.storybook|test)/|vitest\.visual\.config\.)' || rc=1
   pnpm -r --stream --filter backend.ai-client --filter backend.ai-agent-cli lint:ci || rc=1
   return $rc
 }

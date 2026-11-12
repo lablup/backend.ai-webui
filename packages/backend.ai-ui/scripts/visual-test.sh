@@ -29,6 +29,7 @@ exec docker run --rm --init --platform linux/amd64 \
   -w /work/packages/backend.ai-ui \
   -e CI=true \
   -e HUSKY=0 \
+  -e BUI_VISUAL_CONTAINER=1 \
   -e HOST_OWNER="$(id -u):$(id -g)" \
   "mcr.microsoft.com/playwright:v$version-noble" \
   sh -c '
