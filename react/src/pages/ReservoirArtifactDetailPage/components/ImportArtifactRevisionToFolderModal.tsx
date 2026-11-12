@@ -316,6 +316,8 @@ const ImportArtifactRevisionToFolderModal = ({
                     filter={notDeletedVFolderFilter}
                     // Model-store project folders only; without a destination
                     // there is no scope to read, so the picker stays disabled.
+                    // TODO(needs-backend): #11103 VFolderFilter has no ownership
+                    // condition, so folders shared into the project also list.
                     isDisabled={!destinationProject?.id}
                     scope={{
                       project: destinationProject?.id
