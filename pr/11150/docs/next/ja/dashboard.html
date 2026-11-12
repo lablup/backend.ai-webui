@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="ダッシュボード" />
   <meta name="twitter:description" content="ダッシュボードは、ログイン後に最初に表示されるページで、複数のカードで構成されています。上部のカードは、最初によく行う操作にすぐ移動できるショートカットです。各カードには操作名と一文の説明、その操作を開始するボタンがあります。" />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"ダッシュボード","inLanguage":"ja","description":"ダッシュボードは、ログイン後に最初に表示されるページで、複数のカードで構成されています。上部のカードは、最初によく行う操作にすぐ移動できるショートカットです。各カードには操作名と一文の説明、その操作を開始するボタンがあります。","dateModified":"2026-11-12T01:09:02.000Z","url":"https://webui.docs.backend.ai/next/ja/dashboard.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"ダッシュボード","inLanguage":"ja","description":"ダッシュボードは、ログイン後に最初に表示されるページで、複数のカードで構成されています。上部のカードは、最初によく行う操作にすぐ移動できるショートカットです。各カードには操作名と一文の説明、その操作を開始するボタンがあります。","dateModified":"2026-11-12T01:28:50.000Z","url":"https://webui.docs.backend.ai/next/ja/dashboard.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/dashboard.html" />
   <link rel="alternate" hreflang="en" href="../en/dashboard.html" />
   <link rel="alternate" hreflang="ja" href="../ja/dashboard.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">マニュアル</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.10.0-alpha.3 (e166381)">v26.10.0-alpha.3 (e166381)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.10.0-alpha.3 (e43c07e)">v26.10.0-alpha.3 (e43c07e)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="ドキュメント検索...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -221,147 +221,135 @@
   <strong>フォルダー作成</strong>をクリックすると、セッションで使うファイルやデータを保存するストレージフォルダーを作成できます。</p>
 </li>
 <li data-bai-block="5"><p><strong>デプロイ開始:</strong>
-  <strong>デプロイを作成</strong>をクリックすると、学習済みモデルを他のユーザーが利用できるよう提供するデプロイを作成できます。</p>
+  <strong>デプロイを作成</strong>をクリックすると、学習済みモデルを他のユーザーが利用できるよう提供するデプロイを作成できます。このカードは、管理者がモデルサービングを有効にしている場合にのみ表示されます。</p>
 </li>
 <li data-bai-block="6"><p><strong>URLから開始:</strong>
-  <strong>今すぐ始めましょう</strong>をクリックすると、Jupyter ノートブック、GitHub または GitLab リポジトリ、Hugging Face モデルを URL から取り込めます。ノートブックは新しいセッションで開き、リポジトリやモデルはストレージフォルダーに保存されます。インポート元ごとの使い方は<a href="#start-from-url">URLから開始</a>を参照してください。</p>
+  <strong>今すぐ始めましょう</strong>をクリックすると、Jupyter ノートブック、GitHub または GitLab リポジトリ、Hugging Face モデルを URL から取り込めます。<a href="#start-from-url">URLから開始</a>を参照してください。</p>
 </li>
 </ul>
-<div class="admonition admonition-note">
-<div data-bai-block="7" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
-<div class="admonition-content">
-
-<p data-bai-block="8">サーバーの設定状況によって、デプロイカードなど一部のカードが利用できない
-場合があります。これらの機能をご利用になりたい場合は、システム管理者にお問い
-合わせください。</p>
-</div></div>
-
-
-<p><figure data-bai-block="9" class="doc-figure"><img src="./images/dashboard.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>図 7.1</figcaption></figure>
+<p><figure data-bai-block="7" class="doc-figure"><img src="./images/dashboard.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>図 7.1</figcaption></figure>
 </p>
-<p data-bai-block="10">その下のカードは、現在のプロジェクトのセッション、リソース使用状況、最近のアクティビティを表示します：</p>
+<p data-bai-block="8">その下のカードは、現在のプロジェクトのセッション、リソース使用状況、最近のアクティビティを表示します：</p>
 <ul>
-<li data-bai-block="11"><p><strong>私のセッション:</strong>
+<li data-bai-block="9"><p><strong>私のセッション:</strong>
   現在のプロジェクトのセッションをステータス別に表示し、実行中のセッションはインタラクティブ、バッチ、推論、アップロードなどのタイプ別に表示します。</p>
 </li>
-<li data-bai-block="12"><p><strong>最近の自分のセッション:</strong>
+<li data-bai-block="10"><p><strong>最近の自分のセッション:</strong>
   最近作成したセッションを新しい順に一覧表示します。</p>
 </li>
-<li data-bai-block="13"><p><strong>私の総リソース使用量:</strong>
+<li data-bai-block="11"><p><strong>私の総リソース使用量:</strong>
   すべてのリソースグループとプロジェクトで自分のセッションが使用しているリソースを表示します。ドメイン、プロジェクト、キーペアなど複数の制限が同時に適用される場合は、<strong>最も厳しい制限</strong>が適用されます。</p>
 </li>
-<li data-bai-block="14"><p><strong>リソースグループの私のリソース:</strong>
+<li data-bai-block="12"><p><strong>リソースグループの私のリソース:</strong>
   カードに設定されたリソースグループにおけるリソース使用量と空き容量を表示します。</p>
 </li>
-<li data-bai-block="15"><p><strong>リソースグループの総リソース:</strong>
+<li data-bai-block="13"><p><strong>リソースグループの総リソース:</strong>
   カードに設定されたリソースグループ全体の使用量と空き容量を要約表示します。グループに属するすべてのエージェントのデータを集計した値です。</p>
 </li>
-<li data-bai-block="16"><p><strong>エージェントの統計:</strong>
+<li data-bai-block="14"><p><strong>エージェントの統計:</strong>
   システム内のすべてのエージェントの総リソースを表示します。</p>
 </li>
-<li data-bai-block="17"><p><strong>ストレージボリュームごとの利用可能量:</strong>
+<li data-bai-block="15"><p><strong>ストレージボリュームごとの利用可能量:</strong>
   各ストレージボリュームで利用可能な容量を表示します。利用可能量の設定に対応したストレージホストがない場合は、代わりに案内メッセージが表示されます。</p>
 </li>
-<li data-bai-block="18"><p><strong>自分のデプロイ:</strong>
+<li data-bai-block="16"><p><strong>自分のデプロイ:</strong>
   自分のモデルデプロイをレプリカの状態とともに一覧表示します。</p>
 </li>
-<li data-bai-block="19"><p><strong>自分のアクティビティ:</strong>
+<li data-bai-block="17"><p><strong>自分のアクティビティ:</strong>
   カードに設定された期間に記録された自分の監査ログを一覧表示します。</p>
 </li>
 </ul>
 <div class="admonition admonition-note">
-<div data-bai-block="20" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
+<div data-bai-block="18" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
 <div class="admonition-content">
 
-<p data-bai-block="21"><strong>リソースグループの総リソース</strong>と<strong>エージェントの統計</strong>のカードは、システム構成によって表示されない場合があります。</p>
+<p data-bai-block="19"><strong>リソースグループの総リソース</strong>と<strong>エージェントの統計</strong>のカードは、システム構成によって表示されない場合があります。</p>
 </div></div>
 
 
-<p data-bai-block="22">プロジェクト管理者とスーパー管理者には、管理者メニューに専用の<strong>ダッシュボード</strong>があり、プロジェクトまたはクラスター全体を対象とするカードが表示されます。</p>
-<h2 data-bai-block="23" id="dashboard-ダッシュボードレイアウトのカスタマイズ">ダッシュボードレイアウトのカスタマイズ<a class="hash-link" href="#dashboard-ダッシュボードレイアウトのカスタマイズ" aria-label="Direct link to ダッシュボードレイアウトのカスタマイズ">#</a></h2>
-<p data-bai-block="24">ボードは特別なモードに切り替えなくても、いつでも並べ替えられます：</p>
+<p data-bai-block="20">プロジェクト管理者とスーパー管理者には、管理者メニューに専用の<strong>ダッシュボード</strong>があり、プロジェクトまたはクラスター全体を対象とするカードが表示されます。</p>
+<h2 data-bai-block="21" id="dashboard-ダッシュボードレイアウトのカスタマイズ">ダッシュボードレイアウトのカスタマイズ<a class="hash-link" href="#dashboard-ダッシュボードレイアウトのカスタマイズ" aria-label="Direct link to ダッシュボードレイアウトのカスタマイズ">#</a></h2>
+<p data-bai-block="22">ボードは特別なモードに切り替えなくても、いつでも並べ替えられます：</p>
 <ul>
-<li data-bai-block="25"><strong>カードの移動</strong>: カードのヘッダーをドラッグして、ボード上の位置を変更できます。</li>
-<li data-bai-block="26"><strong>カードのサイズ変更</strong>: カードの右下隅をドラッグしてサイズを調整できます。各カードにはコンテンツの可読性を確保するための最小サイズが設定されています。</li>
+<li data-bai-block="23"><strong>カードの移動</strong>: カードのヘッダーをドラッグして、ボード上の位置を変更できます。</li>
+<li data-bai-block="24"><strong>カードのサイズ変更</strong>: カードの右下隅をドラッグしてサイズを調整できます。各カードにはコンテンツの可読性を確保するための最小サイズが設定されています。</li>
 </ul>
-<p data-bai-block="27"><strong>編集</strong>ボタンをクリックすると編集サイドバーが開き、<strong>閉じる</strong>をクリックすると再び非表示になります。サイドバーにはそのページで提供されるすべてのカードがテーマ別に一覧表示されます。カードを選択するとボードに追加され、選択を解除するとボードから削除されます。</p>
-<p><figure data-bai-block="28" class="doc-figure"><img src="./images/dashboard_edit_mode.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>図 7.2</figcaption></figure>
+<p data-bai-block="25"><strong>編集</strong>ボタンをクリックすると編集サイドバーが開き、<strong>閉じる</strong>をクリックすると再び非表示になります。サイドバーにはそのページで提供されるすべてのカードがテーマ別に一覧表示されます。カードを選択するとボードに追加され、選択を解除するとボードから削除されます。</p>
+<p><figure data-bai-block="26" class="doc-figure"><img src="./images/dashboard_edit_mode.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>図 7.2</figcaption></figure>
 </p>
-<p data-bai-block="29">配置はサーバー上の自分のアカウントに保存されるため、ログインするどのブラウザーでも同じ配置が使われます。配置をデフォルトに戻すには、編集サイドバー下部の<strong>レイアウトを初期化</strong>ボタンをクリックして確認します。レイアウトを初期化してもカスタムパネルは削除されません。</p>
+<p data-bai-block="27">配置はサーバー上の自分のアカウントに保存されるため、ログインするどのブラウザーでも同じ配置が使われます。配置をデフォルトに戻すには、編集サイドバー下部の<strong>レイアウトを初期化</strong>ボタンをクリックして確認します。レイアウトを初期化してもカスタムパネルは削除されません。</p>
 <div class="admonition admonition-tip">
-<div data-bai-block="30" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 12 16"><path d="M6.5 0C3.48 0 1 2.19 1 5c0 .92.55 2.25 1 3 1.34 2.25 1.78 2.78 2 4v1h5v-1c.22-1.22.66-1.75 2-4 .45-.75 1-2.08 1-3 0-2.81-2.48-5-5.5-5zm3.64 7.48c-.25.44-.47.8-.67 1.11-.86 1.41-1.25 2.06-1.45 3.23-.02.05-.02.11-.02.17H5c0-.06 0-.13-.02-.17-.2-1.17-.59-1.83-1.45-3.23-.2-.31-.42-.67-.67-1.11C2.44 6.78 2 5.65 2 5c0-2.2 2.02-4 4.5-4 2.48 0 4.5 1.8 4.5 4 0 .65-.44 1.78-.86 2.48zM4 13h5v1H4v-1z"/></svg></span>ヒント</div>
+<div data-bai-block="28" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 12 16"><path d="M6.5 0C3.48 0 1 2.19 1 5c0 .92.55 2.25 1 3 1.34 2.25 1.78 2.78 2 4v1h5v-1c.22-1.22.66-1.75 2-4 .45-.75 1-2.08 1-3 0-2.81-2.48-5-5.5-5zm3.64 7.48c-.25.44-.47.8-.67 1.11-.86 1.41-1.25 2.06-1.45 3.23-.02.05-.02.11-.02.17H5c0-.06 0-.13-.02-.17-.2-1.17-.59-1.83-1.45-3.23-.2-.31-.42-.67-.67-1.11C2.44 6.78 2 5.65 2 5c0-2.2 2.02-4 4.5-4 2.48 0 4.5 1.8 4.5 4 0 .65-.44 1.78-.86 2.48zM4 13h5v1H4v-1z"/></svg></span>ヒント</div>
 <div class="admonition-content">
 
-<p data-bai-block="31">WebUIの更新で新しいダッシュボードカードが追加された場合、保存済みの配置が
+<p data-bai-block="29">WebUIの更新で新しいダッシュボードカードが追加された場合、保存済みの配置が
 あっても、新しいカードは自動的にダッシュボードに表示されます。</p>
 </div></div>
 
 
-<h3 data-bai-block="32" id="dashboard-カードの既定の設定">カードの既定の設定<a class="hash-link" href="#dashboard-カードの既定の設定" aria-label="Direct link to カードの既定の設定">#</a></h3>
-<p data-bai-block="33">リソースグループや期間を使用するカードには、既定値を保存しておけます。編集サイドバーでそのカードの<strong>カードの既定の設定</strong>を開き、ボードを開いたときに適用する値を指定します。カードのヘッダーの選択メニューで変更した値は、表示中の間だけ適用されます。</p>
+<h3 data-bai-block="30" id="dashboard-カードの既定の設定">カードの既定の設定<a class="hash-link" href="#dashboard-カードの既定の設定" aria-label="Direct link to カードの既定の設定">#</a></h3>
+<p data-bai-block="31">リソースグループや期間を使用するカードには、既定値を保存しておけます。編集サイドバーでそのカードの<strong>カードの既定の設定</strong>を開き、ボードを開いたときに適用する値を指定します。カードのヘッダーの選択メニューで変更した値は、表示中の間だけ適用されます。</p>
 <p><a id="custom-panels"></a></p>
-<h3 data-bai-block="34" id="dashboard-カスタムパネル">カスタムパネル<a class="hash-link" href="#dashboard-カスタムパネル" aria-label="Direct link to カスタムパネル">#</a></h3>
-<p data-bai-block="35">編集サイドバーにはカスタムパネルの一覧も表示されます。カスタムパネルは、選択したデータソースを指定した条件で絞り込んで表示します。パネルにはタイトルとデータのみが表示されるため、条件がわかるタイトルを付けることをおすすめします。</p>
-<p data-bai-block="36">パネルを追加するには、サイドバーの<strong>追加</strong>ボタンをクリックします。パネルのダイアログには以下の項目があります。<strong>パネル形式</strong>と<strong>データソース</strong>は必須項目で、両方を選択しないとダイアログを送信できません。</p>
+<h3 data-bai-block="32" id="dashboard-カスタムパネル">カスタムパネル<a class="hash-link" href="#dashboard-カスタムパネル" aria-label="Direct link to カスタムパネル">#</a></h3>
+<p data-bai-block="33">編集サイドバーにはカスタムパネルの一覧も表示されます。カスタムパネルは、選択したデータソースを指定した条件で絞り込んで表示します。パネルにはタイトルとデータのみが表示されるため、条件がわかるタイトルを付けることをおすすめします。</p>
+<p data-bai-block="34">パネルを追加するには、サイドバーの<strong>追加</strong>ボタンをクリックします。パネルのダイアログには以下の項目があります。<strong>パネル形式</strong>と<strong>データソース</strong>は必須項目で、両方を選択しないとダイアログを送信できません。</p>
 <ul>
-<li data-bai-block="37"><strong>データソース</strong>: パネルに表示するデータソースです。<strong>セッション</strong>、<strong>デプロイ</strong>、<strong>データストレージ選択</strong>から選択します。</li>
-<li data-bai-block="38"><strong>パネル形式</strong>: データソースの表示方法です。<strong>テーブル</strong>、<strong>カウント</strong>、<strong>チャート</strong>から選択します。<strong>セッション</strong>データソースの場合は <strong>グリッド</strong> も選択できます。</li>
-<li data-bai-block="39"><strong>タイトル</strong>: パネルのタイトル（オプション）です。省略した場合はデータソース名が使用されます。</li>
-<li data-bai-block="40"><strong>条件</strong>: パネルに表示する項目を絞り込むプロパティフィルターです。</li>
+<li data-bai-block="35"><strong>データソース</strong>: パネルに表示するデータソースです。<strong>セッション</strong>、<strong>デプロイ</strong>、<strong>データストレージ選択</strong>から選択します。</li>
+<li data-bai-block="36"><strong>パネル形式</strong>: データソースの表示方法です。<strong>テーブル</strong>、<strong>カウント</strong>、<strong>チャート</strong>から選択します。<strong>セッション</strong>データソースの場合は <strong>グリッド</strong> も選択できます。</li>
+<li data-bai-block="37"><strong>タイトル</strong>: パネルのタイトル（オプション）です。省略した場合はデータソース名が使用されます。</li>
+<li data-bai-block="38"><strong>条件</strong>: パネルに表示する項目を絞り込むプロパティフィルターです。</li>
 </ul>
-<p data-bai-block="41">入力項目の下のライブプレビューには、現在の条件に一致する行が表示されます。プレビューで列をソートすると、そのソート順がパネルに適用されます。<strong>追加</strong>ボタンをクリックすると、パネルがボードに配置されます。</p>
-<p><figure data-bai-block="42" class="doc-figure"><img src="./images/dashboard_panel_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1920" height="1352" /><figcaption>図 7.3</figcaption></figure>
+<p data-bai-block="39">入力項目の下のライブプレビューには、現在の条件に一致する行が表示されます。プレビューで列をソートすると、そのソート順がパネルに適用されます。<strong>追加</strong>ボタンをクリックすると、パネルがボードに配置されます。</p>
+<p><figure data-bai-block="40" class="doc-figure"><img src="./images/dashboard_panel_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1920" height="1352" /><figcaption>図 7.3</figcaption></figure>
 </p>
-<p data-bai-block="43"><strong>デプロイ</strong>パネルは、デプロイページと同じテーブル（名前、状態、レプリカ概要、モデル、作成日時）を使用して、プロジェクトのモデルデプロイを一覧表示します。デプロイの名前をクリックすると、その詳細ページが開きます。</p>
-<p data-bai-block="44"><strong>チャート</strong>を選択すると、条件に一致する項目をチャートとして表示します。<strong>グループ比較</strong>のチャートの種類（ドーナツ、円、棒、レーダー）は、<strong>グループ化</strong>で選んだプロパティごとに項目数を数えます。<strong>作成数の推移</strong>のチャートの種類（折れ線、面、縦棒）は、選択した期間を区切った各区間で作成された項目数を数えます。<strong>テーブルも表示</strong>をオンにすると、条件に一致する行がパネルのチャートの下に表示されます。</p>
-<p data-bai-block="45"><strong>グリッド</strong>を選択すると、セッションリソースグリッドが表示されます。条件に一致する各セッションに割り当てられたリソースを、使用率に応じて色分けされたユニットセルとして表示します。セッションをクリックすると、テーブルで行をクリックしたときと同様に詳細ドロワーが開きます。グリッドは条件に一致するセッションのうち最大100件までを表示し、それを超える場合は件数の通知が表示されます。</p>
-<p data-bai-block="46">グリッドの表示設定（リソース／カーネルモード、表示するリソースまたはメトリック、メモリ単位、レイアウト）は、パネルの追加／編集ダイアログのライブプレビューで指定し、パネルとともに保存されます。パネル自体にはこれらの設定を変更するコントロールがないため、別の表示にしたい場合はパネルをもう一つ追加してください。</p>
+<p data-bai-block="41"><strong>デプロイ</strong>パネルは、デプロイページと同じテーブル（名前、状態、レプリカ概要、モデル、作成日時）を使用して、プロジェクトのモデルデプロイを一覧表示します。デプロイの名前をクリックすると、その詳細ページが開きます。</p>
+<p data-bai-block="42"><strong>チャート</strong>を選択すると、条件に一致する項目をチャートとして表示します。<strong>グループ比較</strong>のチャートの種類（ドーナツ、円、棒、レーダー）は、<strong>グループ化</strong>で選んだプロパティごとに項目数を数えます。<strong>作成数の推移</strong>のチャートの種類（折れ線、面、縦棒）は、選択した期間を区切った各区間で作成された項目数を数えます。<strong>テーブルも表示</strong>をオンにすると、条件に一致する行がパネルのチャートの下に表示されます。</p>
+<p data-bai-block="43"><strong>グリッド</strong>を選択すると、セッションリソースグリッドが表示されます。条件に一致する各セッションに割り当てられたリソースを、使用率に応じて色分けされたユニットセルとして表示します。セッションをクリックすると、テーブルで行をクリックしたときと同様に詳細ドロワーが開きます。グリッドは条件に一致するセッションのうち最大100件までを表示し、それを超える場合は件数の通知が表示されます。</p>
+<p data-bai-block="44">グリッドの表示設定（リソース／カーネルモード、表示するリソースまたはメトリック、メモリ単位、レイアウト）は、パネルの追加／編集ダイアログのライブプレビューで指定し、パネルとともに保存されます。パネル自体にはこれらの設定を変更するコントロールがないため、別の表示にしたい場合はパネルをもう一つ追加してください。</p>
 <div class="admonition admonition-note">
-<div data-bai-block="47" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
+<div data-bai-block="45" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
 <div class="admonition-content">
 
-<p data-bai-block="48"><strong>グリッド</strong>は実験的機能です。<strong>パネル形式</strong>の選択肢に表示されるのは、<a href="./user_settings.html#experimental-features">実験的特徴</a>で<strong>Session resource grid view</strong> がオンになっている場合のみです。後でこの設定をオフにしても、作成済みのグリッドパネルは保存された設定を維持したまま、設定を再度オンにするまでセッションテーブルとして表示されます。</p>
+<p data-bai-block="46"><strong>グリッド</strong>は実験的機能です。<strong>パネル形式</strong>の選択肢に表示されるのは、<a href="./user_settings.html#experimental-features">実験的特徴</a>で<strong>Session resource grid view</strong> がオンになっている場合のみです。後でこの設定をオフにしても、作成済みのグリッドパネルは保存された設定を維持したまま、設定を再度オンにするまでセッションテーブルとして表示されます。</p>
 </div></div>
 
 
-<p data-bai-block="49">パネルのデータソース、パネル形式、条件、タイトルを後から変更するには、サイドバーの該当パネルの横、またはボード上のパネルヘッダーにある鉛筆（<strong>編集</strong>）アイコンをクリックし、変更内容を保存します。パネルを削除するには、ゴミ箱（<strong>削除</strong>）アイコンをクリックし、確認ポップアップで承認します。</p>
+<p data-bai-block="47">パネルのデータソース、パネル形式、条件、タイトルを後から変更するには、サイドバーの該当パネルの横、またはボード上のパネルヘッダーにある鉛筆（<strong>編集</strong>）アイコンをクリックし、変更内容を保存します。パネルを削除するには、ゴミ箱（<strong>削除</strong>）アイコンをクリックし、確認ポップアップで承認します。</p>
 <div class="admonition admonition-note">
-<div data-bai-block="50" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
+<div data-bai-block="48" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
 <div class="admonition-content">
 
-<p data-bai-block="51"><strong>セッション</strong>および<strong>デプロイ</strong>パネルは現在のプロジェクトのデータを表示し、すべてのプロジェクトメンバーが利用できます。<strong>データストレージ選択</strong>パネルはスーパー管理者のみ利用できます。現在の権限で照会できないデータソースのパネルは、サイドバーの一覧には残りますが、ボードには表示されません。</p>
+<p data-bai-block="49"><strong>セッション</strong>および<strong>デプロイ</strong>パネルは現在のプロジェクトのデータを表示し、すべてのプロジェクトメンバーが利用できます。<strong>データストレージ選択</strong>パネルはスーパー管理者のみ利用できます。現在の権限で照会できないデータソースのパネルは、サイドバーの一覧には残りますが、ボードには表示されません。</p>
 </div></div>
 
 
 <p><a id="automatic-refresh"></a></p>
-<h2 data-bai-block="52" id="dashboard-自動更新">自動更新<a class="hash-link" href="#dashboard-自動更新" aria-label="Direct link to 自動更新">#</a></h2>
-<p data-bai-block="53">ダッシュボードバーの更新コントロールで、すべてのカードの更新間隔を設定できます。<strong>オフ</strong>または5秒から10分の間隔を選択でき、コントロールをクリックするとすべてのカードをすぐに更新します。</p>
+<h2 data-bai-block="50" id="dashboard-自動更新">自動更新<a class="hash-link" href="#dashboard-自動更新" aria-label="Direct link to 自動更新">#</a></h2>
+<p data-bai-block="51">ダッシュボードバーの更新コントロールで、すべてのカードの更新間隔を設定できます。<strong>オフ</strong>または5秒から10分の間隔を選択でき、コントロールをクリックするとすべてのカードをすぐに更新します。</p>
 <p><a id="start-from-url"></a></p>
-<h2 data-bai-block="54" id="dashboard-urlから開始">URLから開始<a class="hash-link" href="#dashboard-urlから開始" aria-label="Direct link to URLから開始">#</a></h2>
-<p data-bai-block="55">ダッシュボードの<strong>URLから開始</strong>カードを使用すると、外部ソースからノートブック、
-リポジトリ、モデルを取り込めます。カードの<strong>今すぐ始めましょう</strong>をクリックすると、インポート元ごとに
-<strong>ノートブック取り込み</strong>、<strong>GitHubリポジトリをインポートする</strong>、
-<strong>GitLabリポジトリ取り込み</strong>のタブを持つダイアログが開きます。実験的機能である
-Hugging Faceインポートを有効にすると、<strong>Hugging Face モデルをインポート</strong>タブが
-追加で表示されます。</p>
-<h3 data-bai-block="56" id="dashboard-ノートブック取り込み">ノートブック取り込み<a class="hash-link" href="#dashboard-ノートブック取り込み" aria-label="Direct link to ノートブック取り込み">#</a></h3>
-<p><figure data-bai-block="57" class="doc-figure"><img src="./images/start_from_url_notebook.png" alt="" class="doc-image" style="width:800px" loading="lazy" decoding="async" width="1600" height="960" /><figcaption>図 7.4</figcaption></figure>
+<h2 data-bai-block="52" id="dashboard-urlから開始">URLから開始<a class="hash-link" href="#dashboard-urlから開始" aria-label="Direct link to URLから開始">#</a></h2>
+<p data-bai-block="53"><strong>URLから開始</strong>ダイアログには、インポート元ごとに<strong>ノートブック取り込み</strong>、
+<strong>GitHubリポジトリをインポートする</strong>、<strong>GitLabリポジトリ取り込み</strong>のタブがあります。
+実験的機能であるHugging Faceインポートを有効にすると、
+<strong>Hugging Face モデルをインポート</strong>タブが追加で表示されます。</p>
+<h3 data-bai-block="54" id="dashboard-ノートブック取り込み">ノートブック取り込み<a class="hash-link" href="#dashboard-ノートブック取り込み" aria-label="Direct link to ノートブック取り込み">#</a></h3>
+<p><figure data-bai-block="55" class="doc-figure"><img src="./images/start_from_url_notebook.png" alt="" class="doc-image" style="width:800px" loading="lazy" decoding="async" width="1600" height="960" /><figcaption>図 7.4</figcaption></figure>
 </p>
 <ol>
-<li data-bai-block="58"><p><strong>ノートブックのURL</strong>フィールドにJupyter Notebook URL（<code>.ipynb</code>で終わる）を
+<li data-bai-block="56"><p><strong>ノートブックのURL</strong>フィールドにJupyter Notebook URL（<code>.ipynb</code>で終わる）を
 入力します</p>
 </li>
-<li data-bai-block="59"><p><strong>インポート &amp; 実行</strong>をクリックすると、自動的にセッションが作成され、Jupyterで
+<li data-bai-block="57"><p><strong>インポート &amp; 実行</strong>をクリックすると、自動的にセッションが作成され、Jupyterで
 ノートブックが開きます</p>
 <p>ボタンの横にあるドロップダウン矢印をクリックして<strong>オプション付きで開始</strong>を
 選択すると、起動前にセッション環境をカスタマイズできます。</p>
 </li>
 </ol>
 <div class="admonition admonition-note">
-<div data-bai-block="60" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
+<div data-bai-block="58" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
 <div class="admonition-content">
 
-<p data-bai-block="61">ノートブックはコンピュートセッション内部でダウンロードされる（ブートストラップ
+<p data-bai-block="59">ノートブックはコンピュートセッション内部でダウンロードされる（ブートストラップ
 スクリプトが<code>curl -O &lt;url&gt;</code>を実行する）ため、入力するURLはセッションから到達可能で
 ある必要があります。<code>localhost</code>や<code>127.0.0.1</code>などのローカルアドレスは、お使いのマシン
 ではなくセッションコンテナ自体を指すため利用できません。コンピュートセッションから
@@ -370,68 +358,68 @@ Hugging Faceインポートを有効にすると、<strong>Hugging Face モデ�
 
 
 <div class="admonition admonition-note">
-<div data-bai-block="62" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
+<div data-bai-block="60" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
 <div class="admonition-content">
 
-<p data-bai-block="63">ブラウザのポップアップブロッカーをオフにすると、実行中のノートブックウィンドウが
+<p data-bai-block="61">ブラウザのポップアップブロッカーをオフにすると、実行中のノートブックウィンドウが
 自動的に開きます。セッションを開始するためのリソースが不足している場合、インポート
 されたノートブックは実行されません。</p>
 </div></div>
 
 
-<p data-bai-block="64">タブの下部では、「Run on Backend.AI」バッジコードを生成できます。HTMLまたは
+<p data-bai-block="62">タブの下部では、「Run on Backend.AI」バッジコードを生成できます。HTMLまたは
 Markdownのバッジコードをコピーして、プロジェクトのドキュメントに直接実行リンクを
 埋め込むことができます。</p>
 <div class="admonition admonition-note">
-<div data-bai-block="65" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
+<div data-bai-block="63" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
 <div class="admonition-content">
 
-<p data-bai-block="66">バッジコードを生成する前にログインしている必要があります。ログインしていない場合
+<p data-bai-block="64">バッジコードを生成する前にログインしている必要があります。ログインしていない場合
 は、まずログインしてから再度お試しください。</p>
 </div></div>
 
 
-<h3 data-bai-block="67" id="dashboard-githubリポジトリをインポートする">GitHubリポジトリをインポートする<a class="hash-link" href="#dashboard-githubリポジトリをインポートする" aria-label="Direct link to GitHubリポジトリをインポートする">#</a></h3>
-<p><figure data-bai-block="68" class="doc-figure"><img src="./images/start_from_url_github.png" alt="" class="doc-image" style="width:800px" loading="lazy" decoding="async" width="1600" height="1070" /><figcaption>図 7.5</figcaption></figure>
+<h3 data-bai-block="65" id="dashboard-githubリポジトリをインポートする">GitHubリポジトリをインポートする<a class="hash-link" href="#dashboard-githubリポジトリをインポートする" aria-label="Direct link to GitHubリポジトリをインポートする">#</a></h3>
+<p><figure data-bai-block="66" class="doc-figure"><img src="./images/start_from_url_github.png" alt="" class="doc-image" style="width:800px" loading="lazy" decoding="async" width="1600" height="1070" /><figcaption>図 7.5</figcaption></figure>
 </p>
 <ol>
-<li data-bai-block="69"><strong>GitHubのURL</strong>フィールドに有効なGitHubリポジトリURLを入力します</li>
-<li data-bai-block="70">リポジトリを保存する<strong>ストレージホスト</strong>を選択します</li>
-<li data-bai-block="71">必要に応じて<strong>フォルダ利用モード</strong>（一般またはモデル）を設定します</li>
-<li data-bai-block="72"><strong>フォルダに移動</strong>をクリックしてリポジトリを新しいストレージフォルダにクローン
+<li data-bai-block="67"><strong>GitHubのURL</strong>フィールドに有効なGitHubリポジトリURLを入力します</li>
+<li data-bai-block="68">リポジトリを保存する<strong>ストレージホスト</strong>を選択します</li>
+<li data-bai-block="69">必要に応じて<strong>フォルダ利用モード</strong>（一般またはモデル）を設定します</li>
+<li data-bai-block="70"><strong>フォルダに移動</strong>をクリックしてリポジトリを新しいストレージフォルダにクローン
 します</li>
 </ol>
-<p data-bai-block="73">インポートされたリポジトリはストレージフォルダに変換され、セッション開始時に
+<p data-bai-block="71">インポートされたリポジトリはストレージフォルダに変換され、セッション開始時に
 マウントできます。</p>
-<h3 data-bai-block="74" id="dashboard-gitlabリポジトリ取り込み">GitLabリポジトリ取り込み<a class="hash-link" href="#dashboard-gitlabリポジトリ取り込み" aria-label="Direct link to GitLabリポジトリ取り込み">#</a></h3>
-<p><figure data-bai-block="75" class="doc-figure"><img src="./images/start_from_url_gitlab.png" alt="" class="doc-image" style="width:800px" loading="lazy" decoding="async" width="1600" height="1242" /><figcaption>図 7.6</figcaption></figure>
+<h3 data-bai-block="72" id="dashboard-gitlabリポジトリ取り込み">GitLabリポジトリ取り込み<a class="hash-link" href="#dashboard-gitlabリポジトリ取り込み" aria-label="Direct link to GitLabリポジトリ取り込み">#</a></h3>
+<p><figure data-bai-block="73" class="doc-figure"><img src="./images/start_from_url_gitlab.png" alt="" class="doc-image" style="width:800px" loading="lazy" decoding="async" width="1600" height="1242" /><figcaption>図 7.6</figcaption></figure>
 </p>
 <ol>
-<li data-bai-block="76"><strong>GitLabアドレス</strong>フィールドに有効なGitLabリポジトリURLを入力します</li>
-<li data-bai-block="77">必要に応じて<strong>GitLab ブランチ名</strong>を指定します（デフォルト: <code>master</code>）</li>
-<li data-bai-block="78">リポジトリを保存する<strong>ストレージホスト</strong>を選択します</li>
-<li data-bai-block="79">必要に応じて<strong>フォルダ利用モード</strong>（一般またはモデル）を設定します</li>
-<li data-bai-block="80"><strong>フォルダに移動</strong>をクリックしてリポジトリを新しいストレージフォルダにクローン
+<li data-bai-block="74"><strong>GitLabアドレス</strong>フィールドに有効なGitLabリポジトリURLを入力します</li>
+<li data-bai-block="75">必要に応じて<strong>GitLab ブランチ名</strong>を指定します（デフォルト: <code>master</code>）</li>
+<li data-bai-block="76">リポジトリを保存する<strong>ストレージホスト</strong>を選択します</li>
+<li data-bai-block="77">必要に応じて<strong>フォルダ利用モード</strong>（一般またはモデル）を設定します</li>
+<li data-bai-block="78"><strong>フォルダに移動</strong>をクリックしてリポジトリを新しいストレージフォルダにクローン
 します</li>
 </ol>
-<h3 data-bai-block="81" id="dashboard-hugging-face-モデルをインポート">Hugging Face モデルをインポート<a class="hash-link" href="#dashboard-hugging-face-モデルをインポート" aria-label="Direct link to Hugging Face モデルをインポート">#</a></h3>
-<p data-bai-block="82"><strong>Hugging Face モデルをインポート</strong>タブでは、Hugging Faceのモデルをモデル
+<h3 data-bai-block="79" id="dashboard-hugging-face-モデルをインポート">Hugging Face モデルをインポート<a class="hash-link" href="#dashboard-hugging-face-モデルをインポート" aria-label="Direct link to Hugging Face モデルをインポート">#</a></h3>
+<p data-bai-block="80"><strong>Hugging Face モデルをインポート</strong>タブでは、Hugging Faceのモデルをモデル
 フォルダーにダウンロードできます。ダウンロードしたモデルは、あとでコンピュート
 セッションにマウントしたり、デプロイとして公開したりできます。</p>
 <div class="admonition admonition-warning">
-<div data-bai-block="83" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>実験的機能</div>
+<div data-bai-block="81" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>実験的機能</div>
 <div class="admonition-content">
 
-<p data-bai-block="84">このタブは、<a href="./user_settings.html#user-settings">ユーザー設定</a>ページの<strong>実験的特徴</strong>セクションで
+<p data-bai-block="82">このタブは、<a href="./user_settings.html#user-settings">ユーザー設定</a>ページの<strong>実験的特徴</strong>セクションで
 <strong>Hugging Face からインポート</strong>を有効にするまで表示されません。実験的機能は
 将来のアップデートで変更または削除される可能性があります。</p>
 </div></div>
 
 
-<p><figure data-bai-block="85" class="doc-figure"><img src="./images/start_from_url_huggingface.png" alt="" class="doc-image" style="width:800px" loading="lazy" decoding="async" width="1600" height="1592" /><figcaption>図 7.7</figcaption></figure>
+<p><figure data-bai-block="83" class="doc-figure"><img src="./images/start_from_url_huggingface.png" alt="" class="doc-image" style="width:800px" loading="lazy" decoding="async" width="1600" height="1592" /><figcaption>図 7.7</figcaption></figure>
 </p>
 <ol>
-<li data-bai-block="86"><p><strong>Hugging Face モデルの URL または ID</strong>フィールドにモデルを入力します。
+<li data-bai-block="84"><p><strong>Hugging Face モデルの URL または ID</strong>フィールドにモデルを入力します。
 <code>https://huggingface.co/openai/gpt-oss-20b</code>のようなモデルページのURLと、
 <code>openai/gpt-oss-20b</code>のようなモデルIDのどちらも使用できます。データセットや
 スペースなど、モデル以外のページのアドレスは受け付けられません</p>
@@ -441,45 +429,45 @@ Markdownのバッジコードをコピーして、プロジェクトのドキュ
 のモデルページへのリンクになったモデルID、モデルのタスクおよびライブラリの
 タグ、サイズ、更新日時が表示されます</p>
 </li>
-<li data-bai-block="87"><p>必要に応じて<strong>Revision</strong>にダウンロードするモデルリポジトリのブランチ、タグ、
+<li data-bai-block="85"><p>必要に応じて<strong>Revision</strong>にダウンロードするモデルリポジトリのブランチ、タグ、
 またはコミットを入力します。空欄のままにするとデフォルトのリビジョンが
 ダウンロードされます。入力したアドレスにリビジョンが含まれている場合は、その
 リビジョンが使用されます</p>
 </li>
-<li data-bai-block="88"><p>必要に応じて<strong>Hugging Face トークン</strong>を入力します。アクセスが制限された
+<li data-bai-block="86"><p>必要に応じて<strong>Hugging Face トークン</strong>を入力します。アクセスが制限された
 モデルや非公開モデルにはトークンが必要です</p>
 </li>
-<li data-bai-block="89"><p>ダウンロード先の<strong>モデルフォルダー</strong>を選択します。フィールドの下の説明の
+<li data-bai-block="87"><p>ダウンロード先の<strong>モデルフォルダー</strong>を選択します。フィールドの下の説明の
 とおり、現在のプロジェクトで書き込み権限でマウントできるモデルフォルダーのみ
 表示されます。ダウンロードセッションがフォルダーに書き込むため、読み取り専用
 でしかマウントできないフォルダーは除外されます。セレクターの横のボタンで、
 選択したフォルダーを開く、新しいモデルフォルダーを作成する、一覧を更新する
 操作ができます。</p>
 </li>
-<li data-bai-block="90"><p><strong>モデルをフォルダにダウンロード</strong>をクリックします</p>
+<li data-bai-block="88"><p><strong>モデルをフォルダにダウンロード</strong>をクリックします</p>
 </li>
 </ol>
-<p data-bai-block="91">ダイアログが閉じ、ダウンロードを実行するバッチセッションが開始されます。
+<p data-bai-block="89">ダイアログが閉じ、ダウンロードを実行するバッチセッションが開始されます。
 ダウンロードはそのセッション内部で実行されるため、進行状況はセッションページで
 確認できます。セッションが正常に終了するとモデルを利用できます。セッションが
 失敗した場合、ダウンロードは完了しておらずモデルは利用できません。</p>
-<p data-bai-block="92">モデルは、選択したフォルダー内にモデル名で作成されたサブフォルダーに保存
+<p data-bai-block="90">モデルは、選択したフォルダー内にモデル名で作成されたサブフォルダーに保存
 されます。たとえば<code>openai/gpt-oss-20b</code>は<code>gpt-oss-20b/</code>にダウンロードされます。
 そのため、1つのモデルフォルダーに複数のモデルを保管できます。</p>
 <div class="admonition admonition-warning">
-<div data-bai-block="93" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>警告</div>
+<div data-bai-block="91" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>警告</div>
 <div class="admonition-content">
 
-<p data-bai-block="94">トークンはダウンロードセッションに<code>HF_TOKEN</code>環境変数として渡され、管理者が閲覧
+<p data-bai-block="92">トークンはダウンロードセッションに<code>HF_TOKEN</code>環境変数として渡され、管理者が閲覧
 できます。読み取り専用のトークンを使用してください。</p>
 </div></div>
 
 
 <div class="admonition admonition-note">
-<div data-bai-block="95" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
+<div data-bai-block="93" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
 <div class="admonition-content">
 
-<p data-bai-block="96">このタブはモデルフォルダーにダウンロードするため、デプロイ機能が有効な
+<p data-bai-block="94">このタブはモデルフォルダーにダウンロードするため、デプロイ機能が有効な
 アカウントでのみ利用できます。サイズの大きいモデルはダウンロードに時間がかかり、
 対象フォルダーのストレージ容量を消費します。</p>
 </div></div>
