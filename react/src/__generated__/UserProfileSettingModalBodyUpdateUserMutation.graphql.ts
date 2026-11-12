@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<5f5c34721426f8aaa8de6c4c4ac91864>>
+ * @generated SignedSource<<f4496a62fd74d0aad408e26b25c5ec1b>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -29,10 +29,10 @@ export type UpdateUserV2Input = {
   sudoSessionEnabled?: boolean | null | undefined;
   username?: string | null | undefined;
 };
-export type UserProfileSettingModalUpdateUserMutation$variables = {
+export type UserProfileSettingModalBodyUpdateUserMutation$variables = {
   input: UpdateUserV2Input;
 };
-export type UserProfileSettingModalUpdateUserMutation$data = {
+export type UserProfileSettingModalBodyUpdateUserMutation$data = {
   readonly updateUserV2: {
     readonly user: {
       readonly basicInfo: {
@@ -72,9 +72,9 @@ export type UserProfileSettingModalUpdateUserMutation$data = {
     };
   } | null | undefined;
 };
-export type UserProfileSettingModalUpdateUserMutation = {
-  response: UserProfileSettingModalUpdateUserMutation$data;
-  variables: UserProfileSettingModalUpdateUserMutation$variables;
+export type UserProfileSettingModalBodyUpdateUserMutation = {
+  response: UserProfileSettingModalBodyUpdateUserMutation$data;
+  variables: UserProfileSettingModalBodyUpdateUserMutation$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -340,7 +340,7 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "UserProfileSettingModalUpdateUserMutation",
+    "name": "UserProfileSettingModalBodyUpdateUserMutation",
     "selections": (v1/*: any*/),
     "type": "Mutation",
     "abstractKey": null
@@ -349,20 +349,20 @@ return {
   "operation": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "UserProfileSettingModalUpdateUserMutation",
+    "name": "UserProfileSettingModalBodyUpdateUserMutation",
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "7058e74e168b78a893d20d6de8cc09db",
+    "cacheID": "e6d92429da6b69886dc53670b61edd49",
     "id": null,
     "metadata": {},
-    "name": "UserProfileSettingModalUpdateUserMutation",
+    "name": "UserProfileSettingModalBodyUpdateUserMutation",
     "operationKind": "mutation",
-    "text": "mutation UserProfileSettingModalUpdateUserMutation(\n  $input: UpdateUserV2Input!\n) {\n  updateUserV2(input: $input) {\n    user {\n      id\n      basicInfo {\n        email\n        fullName\n        username\n        description\n        integrationName\n      }\n      organization {\n        domainName\n        role\n        resourcePolicy\n        mainAccessKey\n      }\n      security {\n        totpActivated\n        totpActivatedAt\n        sudoSessionEnabled\n        allowedClientIp\n      }\n      status {\n        status\n        statusInfo\n        needPasswordChange\n      }\n      container {\n        containerUid\n        containerMainGid\n        containerGids\n      }\n      timestamps {\n        createdAt\n        modifiedAt\n      }\n    }\n  }\n}\n"
+    "text": "mutation UserProfileSettingModalBodyUpdateUserMutation(\n  $input: UpdateUserV2Input!\n) {\n  updateUserV2(input: $input) {\n    user {\n      id\n      basicInfo {\n        email\n        fullName\n        username\n        description\n        integrationName\n      }\n      organization {\n        domainName\n        role\n        resourcePolicy\n        mainAccessKey\n      }\n      security {\n        totpActivated\n        totpActivatedAt\n        sudoSessionEnabled\n        allowedClientIp\n      }\n      status {\n        status\n        statusInfo\n        needPasswordChange\n      }\n      container {\n        containerUid\n        containerMainGid\n        containerGids\n      }\n      timestamps {\n        createdAt\n        modifiedAt\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "d2dd9fa7dbd020c11fc03607d6400386";
+(node as any).hash = "ce5c7b61d7a590d858c9df090f8cd58f";
 
 export default node;

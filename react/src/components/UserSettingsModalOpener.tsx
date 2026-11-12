@@ -11,11 +11,10 @@ import {
 } from '../helper/userSettingsModal';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useWebUIMenuItems } from '../hooks/useWebUIMenuItems';
+import UserSettingsModal from './UserSettingsModal';
 import { parseAsString, useQueryState } from 'nuqs';
-import React, { Suspense, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-
-const UserSettingsModal = React.lazy(() => import('./UserSettingsModal'));
 
 /**
  * Mounts the user-settings modal app-wide and drives it from `?settings=`, so
@@ -71,13 +70,11 @@ const UserSettingsModalOpener = () => {
   if (category === null) return null;
 
   return (
-    <Suspense fallback={null}>
-      <UserSettingsModal
-        category={category}
-        onCategoryChange={setCategory}
-        onRequestClose={close}
-      />
-    </Suspense>
+    <UserSettingsModal
+      category={category}
+      onCategoryChange={setCategory}
+      onRequestClose={close}
+    />
   );
 };
 

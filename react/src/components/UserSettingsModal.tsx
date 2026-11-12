@@ -5,18 +5,15 @@
  The user-settings surface, as a dialog over whatever page is underneath
  (`UserSettingsModalOpener` owns the `?settings=` param that drives it).
 
+ The frame and the rail are this module's; only the pane is lazy
+ (`UserSettingsModalPane`), so a click paints the dialog immediately and the
+ pane fills in (#11144).
 */
-import type { LoginHistoryQuery as LoginHistoryQueryType } from '../__generated__/LoginHistoryQuery.graphql';
-import type { LoginSessionQuery as LoginSessionQueryType } from '../__generated__/LoginSessionQuery.graphql';
 import {
   USER_SETTINGS_CATEGORIES,
   type UserSettingsCategory,
 } from '../helper/userSettingsModal';
 import BAIErrorBoundary from './BAIErrorBoundary';
-import ErrorLogList from './ErrorLogList';
-import LoginHistory, { LoginHistoryQuery } from './LoginHistory';
-import LoginSession, { LoginSessionQuery } from './LoginSession';
-import UserSettingsGeneralPane from './UserSettingsGeneralPane';
 import WEBUIHelpButton from './WEBUIHelpButton';
 import { Button } from '@lablup/ui-common/Button';
 import { Divider } from '@lablup/ui-common/Divider';
@@ -33,22 +30,21 @@ import {
   ScrollText,
   SlidersHorizontal,
 } from 'lucide-react';
-import React, {
-  CSSProperties,
-  Suspense,
-  useEffect,
-  useEffectEvent,
-  useState,
-} from 'react';
+import React, { CSSProperties, Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useQueryLoader } from 'react-relay';
+
+const UserSettingsModalPane = React.lazy(
+  () => import('./UserSettingsModalPane'),
+);
 
 // Astryx's dialog surface is `height: fit-content`, so the rail and the pane
 // need a resolved height before either can own a scrollport. `dvh` so mobile
 // browser chrome does not push the bottom edge off-screen.
-const DIALOG_INSET_BLOCK = 'var(--spacing-12)';
-const DIALOG_HEIGHT_VALUE = `calc(100dvh - ${DIALOG_INSET_BLOCK} * 2)`;
+const DIALOG_HEIGHT_VALUE = 'calc(100dvh - var(--spacing-12) * 2)';
 const DIALOG_HEIGHT: CSSProperties = { height: DIALOG_HEIGHT_VALUE };
+// 1100 matches `MyKeypairManagementModal`, the widest dialog opened from here,
+// so a child never overhangs its parent.
+const DIALOG_WIDTH = 'min(1100px, 92vw)';
 const BODY_FILL: CSSProperties = { height: '100%', minHeight: 0 };
 // The dialog publishes its inline padding as `--container-padding-inline-*`, which
 // an Astryx `Table` bleeds out to; this pane is not that padded box, so the table
@@ -58,10 +54,6 @@ const PANE_NO_CONTAINER_BLEED = {
   '--container-padding-inline-end': '0px',
 } as CSSProperties;
 
-// 1100 matches `MyKeypairManagementModal`, the widest dialog opened from here,
-// so a child never overhangs its parent. Minus the rail it still leaves the
-// pane above `ErrorLogList`'s eight-column minimum.
-const DIALOG_WIDTH = 'min(1100px, 92vw)';
 const NAV_PANEL_WIDTH = 240;
 
 const CATEGORY_ICONS: Record<
@@ -98,42 +90,6 @@ const UserSettingsModal: React.FC<UserSettingsModalProps> = ({
   const { md } = useBAIBreakpoint();
   const isNarrow = !md;
   const [narrowView, setNarrowView] = useState<'nav' | 'detail'>('detail');
-
-  const [loginSessionQueryRef, loadLoginSessionQuery] =
-    useQueryLoader<LoginSessionQueryType>(LoginSessionQuery);
-  const [loginHistoryQueryRef, loadLoginHistoryQuery] =
-    useQueryLoader<LoginHistoryQueryType>(LoginHistoryQuery);
-  // Lazily fetch a category's data only once it becomes active (covers both a
-  // rail click and a direct `?settings=...` URL restore), so neither query runs
-  // while the General/Logs categories are shown.
-  const ensureActiveCategoryQueryLoaded = useEffectEvent(() => {
-    if (category === 'login-sessions' && !loginSessionQueryRef) {
-      loadLoginSessionQuery(
-        {
-          orderBy: [{ field: 'CREATED_AT', direction: 'DESC' }],
-          limit: 10,
-          offset: 0,
-        },
-        { fetchPolicy: 'store-and-network' },
-      );
-    }
-    if (category === 'login-history' && !loginHistoryQueryRef) {
-      loadLoginHistoryQuery(
-        {
-          orderBy: [{ field: 'CREATED_AT', direction: 'DESC' }],
-          limit: 10,
-          offset: 0,
-        },
-        { fetchPolicy: 'store-and-network' },
-      );
-    }
-  });
-  useEffect(
-    function loadActiveCategoryQueryOnActivation() {
-      ensureActiveCategoryQueryLoaded();
-    },
-    [category],
-  );
 
   // Narrow drill-down: picking a category in the rail reveals its pane, the
   // back button returns to the rail (same idiom as `SettingList`).
@@ -178,29 +134,6 @@ const UserSettingsModal: React.FC<UserSettingsModalProps> = ({
       </List>
     </VStack>
   );
-
-  const pane =
-    category === 'general' ? (
-      <UserSettingsGeneralPane />
-    ) : category === 'logs' ? (
-      <ErrorLogList />
-    ) : category === 'login-sessions' ? (
-      loginSessionQueryRef ? (
-        <LoginSession
-          queryRef={loginSessionQueryRef}
-          onReload={loadLoginSessionQuery}
-        />
-      ) : (
-        <BAISkeleton />
-      )
-    ) : loginHistoryQueryRef ? (
-      <LoginHistory
-        queryRef={loginHistoryQueryRef}
-        onReload={loadLoginHistoryQuery}
-      />
-    ) : (
-      <BAISkeleton />
-    );
 
   const showNavOnly = isNarrow && narrowView === 'nav';
 
@@ -270,16 +203,21 @@ const UserSettingsModal: React.FC<UserSettingsModalProps> = ({
           paddingBlockEnd={2}
           style={PANE_NO_CONTAINER_BLEED}
         >
-          {showNavOnly ? (
-            categoryNav
-          ) : (
-            // Keyed so a failed category does not latch the whole surface: the
-            // page this replaced mounted one boundary per tab, which switching
-            // tabs unmounted.
-            <BAIErrorBoundary key={category}>
-              <Suspense fallback={<BAISkeleton />}>{pane}</Suspense>
+          {showNavOnly ? categoryNav : null}
+          {/* Hidden rather than unmounted below `md` while the rail shows: the
+              pane owns the query refs, so a remount would drop the reader's
+              page. `resetKeys` rather than `key` for the same reason, while
+              still letting a failed category recover. */}
+          <VStack
+            width="100%"
+            style={showNavOnly ? { display: 'none' } : undefined}
+          >
+            <BAIErrorBoundary resetKeys={[category]}>
+              <Suspense fallback={<BAISkeleton />}>
+                <UserSettingsModalPane category={category} />
+              </Suspense>
             </BAIErrorBoundary>
-          )}
+          </VStack>
         </VStack>
       </HStack>
     </BAIModal>

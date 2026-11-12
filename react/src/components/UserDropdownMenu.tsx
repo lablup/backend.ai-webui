@@ -20,7 +20,9 @@ import {
 } from '../hooks/useWebUIMenuItems';
 import AboutBackendAIModal from './AboutBackendAIModal';
 import AdminViewSwitchTour from './AdminViewSwitchTour';
+import DownloadModal from './DownloadModal';
 import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
+import UserProfileSettingModal from './UserProfileSettingModal';
 import { useUserSettingsModal } from './UserSettingsModalOpener';
 import {
   DropdownMenu,
@@ -48,16 +50,9 @@ import {
   CircleHelp,
   ArrowLeftRight,
 } from 'lucide-react';
-import React, { CSSProperties, Suspense, useTransition } from 'react';
+import React, { CSSProperties, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
-
-// The download page's code view pulls shiki; load it when the modal opens.
-const DownloadModal = React.lazy(() => import('./DownloadModal'));
-
-const UserProfileSettingModal = React.lazy(
-  () => import('./UserProfileSettingModal'),
-);
 
 // PILOT-DECISION: antd `Dropdown menu={{items}} trigger={['click']}` →
 // Astryx `DropdownMenu items` (MAPPING §3.7 — the `menu={{items}}` branch;
@@ -119,7 +114,7 @@ const UserDropdownMenu: React.FC<{
             basicInfo {
               fullName
             }
-            ...UserProfileSettingModalFragment
+            ...UserProfileSettingModalBodyFragment
           }
           myClientIp {
             clientIp
@@ -314,34 +309,30 @@ const UserDropdownMenu: React.FC<{
       <div style={{ display: 'contents', color: 'var(--color-text-primary)' }}>
         <ErrorBoundaryWithNullFallback>
           <AdminViewSwitchTour />
-          <Suspense>
-            {isOpenUserSettingModal && (
-              <BAIUnmountAfterClose>
-                <UserProfileSettingModal
-                  totpSupported={isTOTPSupported}
-                  userFrgmt={user}
-                  currentClientIp={currentClientIp}
-                  open={isOpenUserSettingModal}
-                  onRequestClose={() => {
-                    setIsOpenUserSettingModal(false);
-                  }}
-                  onRequestRefresh={() => {
-                    startRefetchTransition(() => {
-                      updateFetchKey();
-                    });
-                  }}
-                />
-              </BAIUnmountAfterClose>
-            )}
-          </Suspense>
-          <Suspense fallback={null}>
+          {isOpenUserSettingModal && (
             <BAIUnmountAfterClose>
-              <DownloadModal
-                open={isDownloadModalOpen}
-                onRequestClose={() => toggleDownloadModal()}
+              <UserProfileSettingModal
+                totpSupported={isTOTPSupported}
+                userFrgmt={user}
+                currentClientIp={currentClientIp}
+                open={isOpenUserSettingModal}
+                onRequestClose={() => {
+                  setIsOpenUserSettingModal(false);
+                }}
+                onRequestRefresh={() => {
+                  startRefetchTransition(() => {
+                    updateFetchKey();
+                  });
+                }}
               />
             </BAIUnmountAfterClose>
-          </Suspense>
+          )}
+          <BAIUnmountAfterClose>
+            <DownloadModal
+              open={isDownloadModalOpen}
+              onRequestClose={() => toggleDownloadModal()}
+            />
+          </BAIUnmountAfterClose>
           <BAIUnmountAfterClose>
             <AboutBackendAIModal
               open={isOpenAboutBAIModal}
