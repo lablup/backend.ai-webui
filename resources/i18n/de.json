@@ -832,8 +832,10 @@
     }
   },
   "dashboard": {
+    "DeviceMemoryInUse": "Belegter {{device}}-Speicher",
     "Edit": "Bearbeiten",
     "Free": "Frei",
+    "MemoryInUse": "Belegter Speicher",
     "Used": "Gebraucht",
     "boards": {
       "BoardName": "Board-Name",

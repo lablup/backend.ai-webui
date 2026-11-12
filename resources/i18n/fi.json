@@ -832,8 +832,10 @@
     }
   },
   "dashboard": {
+    "DeviceMemoryInUse": "Käytössä oleva {{device}}-muisti",
     "Edit": "Muokkaa",
     "Free": "Ilmainen",
+    "MemoryInUse": "Käytössä oleva muisti",
     "Used": "Käytetty",
     "boards": {
       "BoardName": "Taulun nimi",

@@ -832,8 +832,10 @@
     }
   },
   "dashboard": {
+    "DeviceMemoryInUse": "Используемая память {{device}}",
     "Edit": "Редактировать",
     "Free": "Бесплатно",
+    "MemoryInUse": "Используемая память",
     "Used": "Использовал",
     "boards": {
       "BoardName": "Название доски",

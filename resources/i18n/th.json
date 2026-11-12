@@ -829,8 +829,10 @@
     }
   },
   "dashboard": {
+    "DeviceMemoryInUse": "หน่วยความจำ {{device}} ที่ใช้อยู่",
     "Edit": "แก้ไข",
     "Free": "ฟรี",
+    "MemoryInUse": "หน่วยความจำที่ใช้อยู่",
     "Used": "ใช้แล้ว",
     "boards": {
       "BoardName": "ชื่อบอร์ด",

@@ -832,8 +832,10 @@
     }
   },
   "dashboard": {
+    "DeviceMemoryInUse": "Bộ nhớ {{device}} đang dùng",
     "Edit": "Chỉnh sửa",
     "Free": "Miễn phí",
+    "MemoryInUse": "Bộ nhớ đang dùng",
     "Used": "Đã sử dụng",
     "boards": {
       "BoardName": "Tên bảng",

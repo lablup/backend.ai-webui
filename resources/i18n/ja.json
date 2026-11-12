@@ -832,8 +832,10 @@
     }
   },
   "dashboard": {
+    "DeviceMemoryInUse": "使用中の {{device}} メモリ",
     "Edit": "編集",
     "Free": "無料",
+    "MemoryInUse": "使用中のメモリ",
     "Used": "使用済み",
     "boards": {
       "BoardName": "ボード名",

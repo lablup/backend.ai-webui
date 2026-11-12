@@ -832,8 +832,10 @@
     }
   },
   "dashboard": {
+    "DeviceMemoryInUse": "已用 {{device}} 内存",
     "Edit": "编辑",
     "Free": "自由的",
+    "MemoryInUse": "已用内存",
     "Used": "用过的",
     "boards": {
       "BoardName": "看板名称",
