@@ -455,19 +455,19 @@
   }
 
   .astryx-item[data-selected="selected"] {
-    --color-text-secondary: light-dark(#474747, #c6c6c6);
+    --color-text-secondary: light-dark(rgba(0,0,0,0.65), rgba(255,255,255,0.65));
   }
 
   .astryx-tree-list-item[data-selected="selected"] {
-    --color-text-secondary: light-dark(#474747, #c6c6c6);
+    --color-text-secondary: light-dark(rgba(0,0,0,0.65), rgba(255,255,255,0.65));
   }
 
   .astryx-file-input[data-mode="dropzone"] {
-    --color-text-secondary: light-dark(#474747, #c6c6c6);
+    --color-text-secondary: light-dark(rgba(0,0,0,0.65), rgba(255,255,255,0.65));
   }
 
   .astryx-citation[data-variant="number"] {
-    --color-text-secondary: light-dark(#474747, #c6c6c6);
+    --color-text-secondary: light-dark(rgba(0,0,0,0.65), rgba(255,255,255,0.65));
   }
 
   .astryx-button[data-variant="destructive"] {

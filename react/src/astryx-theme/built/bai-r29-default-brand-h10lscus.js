@@ -361,22 +361,22 @@ export const baiR29DefaultBrandH10lscusTheme = {
     },
     "item": {
       "selected": {
-        "--color-text-secondary": "light-dark(#474747, #c6c6c6)"
+        "--color-text-secondary": "light-dark(rgba(0,0,0,0.65), rgba(255,255,255,0.65))"
       }
     },
     "tree-list-item": {
       "selected": {
-        "--color-text-secondary": "light-dark(#474747, #c6c6c6)"
+        "--color-text-secondary": "light-dark(rgba(0,0,0,0.65), rgba(255,255,255,0.65))"
       }
     },
     "file-input": {
       "mode:dropzone": {
-        "--color-text-secondary": "light-dark(#474747, #c6c6c6)"
+        "--color-text-secondary": "light-dark(rgba(0,0,0,0.65), rgba(255,255,255,0.65))"
       }
     },
     "citation": {
       "variant:number": {
-        "--color-text-secondary": "light-dark(#474747, #c6c6c6)"
+        "--color-text-secondary": "light-dark(rgba(0,0,0,0.65), rgba(255,255,255,0.65))"
       }
     },
     "button": {
