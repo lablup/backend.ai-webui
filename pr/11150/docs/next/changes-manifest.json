@@ -2,7 +2,7 @@
   "version": 1,
   "channel": "next",
   "label": "PR preview",
-  "generatedAt": "2026-11-12T00:23:07.175Z",
+  "generatedAt": "2026-11-12T00:25:08.188Z",
   "languages": [
     "en",
     "ja",
@@ -12,10 +12,10 @@
   "langs": {
     "en": {
       "totals": {
-        "pages": 3,
-        "changes": 50,
+        "pages": 4,
+        "changes": 53,
         "added": 49,
-        "modified": 1,
+        "modified": 4,
         "removed": 0,
         "images": 5,
         "newPages": 0,
@@ -80,6 +80,25 @@
             "103f79120ce7",
             "1229675f88f9-4",
             "9f743507ae47"
+          ]
+        },
+        {
+          "slug": "deployment",
+          "title": "Deployments",
+          "status": "modified",
+          "url": "next/en/deployment.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/en/deployment/deployment.md",
+          "counts": {
+            "added": 0,
+            "modified": 3,
+            "removed": 0,
+            "images": 0,
+            "total": 3
+          },
+          "fingerprints": [
+            "1615aa653544",
+            "9672d10bd652",
+            "9bbf72116b68"
           ]
         },
         {
@@ -236,10 +255,10 @@
     },
     "ko": {
       "totals": {
-        "pages": 3,
-        "changes": 50,
+        "pages": 4,
+        "changes": 51,
         "added": 49,
-        "modified": 1,
+        "modified": 2,
         "removed": 0,
         "images": 5,
         "newPages": 0,
@@ -329,6 +348,23 @@
           ]
         },
         {
+          "slug": "project_admin",
+          "title": "프로젝트 관리자 기능",
+          "status": "modified",
+          "url": "next/ko/project_admin.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ko/project_admin/project_admin.md",
+          "counts": {
+            "added": 0,
+            "modified": 1,
+            "removed": 0,
+            "images": 0,
+            "total": 1
+          },
+          "fingerprints": [
+            "557f65d76f2a"
+          ]
+        },
+        {
           "slug": "start",
           "title": "시작 페이지",
           "status": "deleted",
@@ -348,10 +384,10 @@
     },
     "th": {
       "totals": {
-        "pages": 3,
-        "changes": 50,
+        "pages": 4,
+        "changes": 53,
         "added": 49,
-        "modified": 1,
+        "modified": 4,
         "removed": 0,
         "images": 5,
         "newPages": 0,
@@ -416,6 +452,25 @@
             "92b67ec74b9b",
             "d07801ca98f9-4",
             "f116ae8f9af9"
+          ]
+        },
+        {
+          "slug": "deployment",
+          "title": "การปรับใช้",
+          "status": "modified",
+          "url": "next/th/deployment.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/th/deployment/deployment.md",
+          "counts": {
+            "added": 0,
+            "modified": 3,
+            "removed": 0,
+            "images": 0,
+            "total": 3
+          },
+          "fingerprints": [
+            "4d4311a26f48",
+            "5058db1555d9",
+            "91dc7d0e5c6e"
           ]
         },
         {
