@@ -176,11 +176,15 @@ const UserProfileSettingModalBody: React.FC<Props> = ({
   // from here (#11144).
   const registerSubmit = useEffectEvent(() => {
     submitRef.current = onSubmit;
-    onReadyChange(true);
   });
+  // No dep array: the ref must track the latest submit closure, as
+  // ImportImageModal does.
   useEffect(() => {
     registerSubmit();
-  }, []);
+  });
+  useEffect(() => {
+    onReadyChange(true);
+  }, [onReadyChange]);
   useEffect(() => {
     onSubmittingChange(isInFlightUpdateUser);
   }, [isInFlightUpdateUser, onSubmittingChange]);
@@ -217,31 +221,13 @@ const UserProfileSettingModalBody: React.FC<Props> = ({
             }),
           ]}
         >
-          {/* PILOT-DECISION 1: `autoComplete` is dropped on all three text
-                fields — `TextInputProps` is a closed surface with no
-                raw-attribute passthrough. The password fields lose only the
-                browser hint that this is a NEW password, not any validation
-                (the Form.Item rules are unchanged).
-
-                PILOT-DECISION 2: `Input.Password` -> `TextInput
-                type="password"` (MAPPING §3.6) drops antd's reveal-eye
-                toggle; Astryx's TextInput has no show/hide affordance and
-                rebuilding one is out of scope. Both password fields are
-                write-only here (they are never pre-filled), so nothing the
-                user cannot re-type is hidden from them.
-
-                HANDOFF (not ours to fix): the antd `Form.Item` LABELS in this
-                modal render at `rgb(20,20,20)` against the dialog's dark
-                surface, i.e. invisible — measured live during the FR-3482
-                Astryx migration. It is
-                PRE-EXISTING: the same probe against this file's
-                pre-conversion revision reproduces it exactly. The cause is
-                the header's reverse-theme region (this modal is opened from
-                the account menu) meeting the Astryx `Dialog` surface that
-                wave 1 introduced, while the antd Form layer still paints its
-                labels from the LIGHT antd theme — MAPPING §5's "a nested
-                <Theme> with no explicit `mode`" hazard. Fixing it belongs to
-                the modal/theme layer, not to this call site. */}
+          {/* `TextInputProps` has no raw-attribute passthrough, so
+                `autoComplete` is dropped and the password reveal toggle is
+                gone — both password fields are write-only here, so nothing
+                the user cannot re-type is hidden. The labels render
+                invisible on the dark dialog surface: measured live, and
+                pre-existing (FR-3482's nested-Theme hazard); the fix belongs
+                to the modal/theme layer. */}
           <BAITextInput aria-label={t('webui.menu.FullName')} />
         </Form.Item>
         <Form.Item

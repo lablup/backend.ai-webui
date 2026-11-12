@@ -206,10 +206,10 @@ const UserSettingsModal: React.FC<UserSettingsModalProps> = ({
           {showNavOnly ? (
             categoryNav
           ) : (
-            // Keyed so a failed category does not latch the whole surface: the
-            // page this replaced mounted one boundary per tab, which switching
-            // tabs unmounted.
-            <BAIErrorBoundary key={category}>
+            // `resetKeys` rather than `key`: a failed category does not latch
+            // the surface, yet switching categories keeps the pane mounted, so
+            // its query refs (and the reader's page in a log) survive.
+            <BAIErrorBoundary resetKeys={[category]}>
               <Suspense fallback={<BAISkeleton />}>
                 <UserSettingsModalPane category={category} />
               </Suspense>
