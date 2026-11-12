@@ -21,14 +21,6 @@ export const USER_SETTINGS_CATEGORIES = [
 
 export type UserSettingsCategory = (typeof USER_SETTINGS_CATEGORIES)[number];
 
-// The dialog's outer size. Shared so the opener's loading frame is the size of
-// the dialog it becomes. 1100 matches `MyKeypairManagementModal`, the widest
-// dialog opened from here, so a child never overhangs its parent.
-export const USER_SETTINGS_DIALOG_WIDTH = 'min(1100px, 92vw)';
-/** Astryx dialogs are `fit-content` tall; this resolves the height up front. */
-export const USER_SETTINGS_DIALOG_HEIGHT =
-  'calc(100dvh - var(--spacing-12) * 2)';
-
 /** Absent means closed; present-but-unknown falls back to the first category. */
 export const coerceUserSettingsCategory = (
   raw: string | null | undefined,

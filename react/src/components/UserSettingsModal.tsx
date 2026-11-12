@@ -5,20 +5,15 @@
  The user-settings surface, as a dialog over whatever page is underneath
  (`UserSettingsModalOpener` owns the `?settings=` param that drives it).
 
+ The frame and the rail are this module's; only the pane is lazy
+ (`UserSettingsModalPane`), so a click paints the dialog immediately and the
+ pane fills in (#11144).
 */
-import type { LoginHistoryQuery as LoginHistoryQueryType } from '../__generated__/LoginHistoryQuery.graphql';
-import type { LoginSessionQuery as LoginSessionQueryType } from '../__generated__/LoginSessionQuery.graphql';
 import {
   USER_SETTINGS_CATEGORIES,
-  USER_SETTINGS_DIALOG_HEIGHT,
-  USER_SETTINGS_DIALOG_WIDTH,
   type UserSettingsCategory,
 } from '../helper/userSettingsModal';
 import BAIErrorBoundary from './BAIErrorBoundary';
-import ErrorLogList from './ErrorLogList';
-import LoginHistory, { LoginHistoryQuery } from './LoginHistory';
-import LoginSession, { LoginSessionQuery } from './LoginSession';
-import UserSettingsGeneralPane from './UserSettingsGeneralPane';
 import WEBUIHelpButton from './WEBUIHelpButton';
 import { Button } from '@lablup/ui-common/Button';
 import { Divider } from '@lablup/ui-common/Divider';
@@ -35,20 +30,21 @@ import {
   ScrollText,
   SlidersHorizontal,
 } from 'lucide-react';
-import React, {
-  CSSProperties,
-  Suspense,
-  useEffect,
-  useEffectEvent,
-  useState,
-} from 'react';
+import React, { CSSProperties, Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useQueryLoader } from 'react-relay';
+
+const UserSettingsModalPane = React.lazy(
+  () => import('./UserSettingsModalPane'),
+);
 
 // Astryx's dialog surface is `height: fit-content`, so the rail and the pane
 // need a resolved height before either can own a scrollport. `dvh` so mobile
 // browser chrome does not push the bottom edge off-screen.
-const DIALOG_HEIGHT: CSSProperties = { height: USER_SETTINGS_DIALOG_HEIGHT };
+const DIALOG_HEIGHT_VALUE = 'calc(100dvh - var(--spacing-12) * 2)';
+const DIALOG_HEIGHT: CSSProperties = { height: DIALOG_HEIGHT_VALUE };
+// 1100 matches `MyKeypairManagementModal`, the widest dialog opened from here,
+// so a child never overhangs its parent.
+const DIALOG_WIDTH = 'min(1100px, 92vw)';
 const BODY_FILL: CSSProperties = { height: '100%', minHeight: 0 };
 // The dialog publishes its inline padding as `--container-padding-inline-*`, which
 // an Astryx `Table` bleeds out to; this pane is not that padded box, so the table
@@ -95,42 +91,6 @@ const UserSettingsModal: React.FC<UserSettingsModalProps> = ({
   const isNarrow = !md;
   const [narrowView, setNarrowView] = useState<'nav' | 'detail'>('detail');
 
-  const [loginSessionQueryRef, loadLoginSessionQuery] =
-    useQueryLoader<LoginSessionQueryType>(LoginSessionQuery);
-  const [loginHistoryQueryRef, loadLoginHistoryQuery] =
-    useQueryLoader<LoginHistoryQueryType>(LoginHistoryQuery);
-  // Lazily fetch a category's data only once it becomes active (covers both a
-  // rail click and a direct `?settings=...` URL restore), so neither query runs
-  // while the General/Logs categories are shown.
-  const ensureActiveCategoryQueryLoaded = useEffectEvent(() => {
-    if (category === 'login-sessions' && !loginSessionQueryRef) {
-      loadLoginSessionQuery(
-        {
-          orderBy: [{ field: 'CREATED_AT', direction: 'DESC' }],
-          limit: 10,
-          offset: 0,
-        },
-        { fetchPolicy: 'store-and-network' },
-      );
-    }
-    if (category === 'login-history' && !loginHistoryQueryRef) {
-      loadLoginHistoryQuery(
-        {
-          orderBy: [{ field: 'CREATED_AT', direction: 'DESC' }],
-          limit: 10,
-          offset: 0,
-        },
-        { fetchPolicy: 'store-and-network' },
-      );
-    }
-  });
-  useEffect(
-    function loadActiveCategoryQueryOnActivation() {
-      ensureActiveCategoryQueryLoaded();
-    },
-    [category],
-  );
-
   // Narrow drill-down: picking a category in the rail reveals its pane, the
   // back button returns to the rail (same idiom as `SettingList`).
   const selectCategory = (next: UserSettingsCategory) => {
@@ -175,29 +135,6 @@ const UserSettingsModal: React.FC<UserSettingsModalProps> = ({
     </VStack>
   );
 
-  const pane =
-    category === 'general' ? (
-      <UserSettingsGeneralPane />
-    ) : category === 'logs' ? (
-      <ErrorLogList />
-    ) : category === 'login-sessions' ? (
-      loginSessionQueryRef ? (
-        <LoginSession
-          queryRef={loginSessionQueryRef}
-          onReload={loadLoginSessionQuery}
-        />
-      ) : (
-        <BAISkeleton />
-      )
-    ) : loginHistoryQueryRef ? (
-      <LoginHistory
-        queryRef={loginHistoryQueryRef}
-        onReload={loadLoginHistoryQuery}
-      />
-    ) : (
-      <BAISkeleton />
-    );
-
   const showNavOnly = isNarrow && narrowView === 'nav';
 
   return (
@@ -231,9 +168,9 @@ const UserSettingsModal: React.FC<UserSettingsModalProps> = ({
       }
       footer={null}
       variant={isNarrow ? 'fullscreen' : 'standard'}
-      width={USER_SETTINGS_DIALOG_WIDTH}
+      width={DIALOG_WIDTH}
       // Astryx caps a standard dialog at 75dvh; raise it so `style.height` wins.
-      maxHeight={USER_SETTINGS_DIALOG_HEIGHT}
+      maxHeight={DIALOG_HEIGHT_VALUE}
       // `purpose="form"` in Astryx terms: Escape closes, the backdrop does not.
       maskClosable={false}
       style={isNarrow ? undefined : DIALOG_HEIGHT}
@@ -273,7 +210,9 @@ const UserSettingsModal: React.FC<UserSettingsModalProps> = ({
             // page this replaced mounted one boundary per tab, which switching
             // tabs unmounted.
             <BAIErrorBoundary key={category}>
-              <Suspense fallback={<BAISkeleton />}>{pane}</Suspense>
+              <Suspense fallback={<BAISkeleton />}>
+                <UserSettingsModalPane category={category} />
+              </Suspense>
             </BAIErrorBoundary>
           )}
         </VStack>

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<c94f74ce5c8174e8b84582c8eb7886b3>>
+ * @generated SignedSource<<d3191c618b525f75264e7f66c8c047c5>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -21,7 +21,7 @@ export type UserDropdownMenuQuery$data = {
     readonly basicInfo: {
       readonly fullName: string | null | undefined;
     };
-    readonly " $fragmentSpreads": FragmentRefs<"UserProfileSettingModalFragment">;
+    readonly " $fragmentSpreads": FragmentRefs<"UserProfileSettingModalBodyFragment">;
   } | null | undefined;
 };
 export type UserDropdownMenuQuery = {
@@ -92,7 +92,7 @@ return {
           {
             "args": null,
             "kind": "FragmentSpread",
-            "name": "UserProfileSettingModalFragment"
+            "name": "UserProfileSettingModalBodyFragment"
           }
         ],
         "storageKey": null
@@ -174,16 +174,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "112762bc16d5fc1b71485ea4d6fafb7d",
+    "cacheID": "72cdd42f58f945b40db58f0375f9e73e",
     "id": null,
     "metadata": {},
     "name": "UserDropdownMenuQuery",
     "operationKind": "query",
-    "text": "query UserDropdownMenuQuery(\n  $isNotSupportTotp: Boolean!\n) {\n  myUserV2 {\n    basicInfo {\n      fullName\n    }\n    ...UserProfileSettingModalFragment\n    id\n  }\n  myClientIp {\n    clientIp\n  }\n}\n\nfragment TOTPActivateModalFragment on UserV2 {\n  basicInfo {\n    email\n  }\n  security {\n    totpActivated @skip(if: $isNotSupportTotp) @skipOnClient(if: $isNotSupportTotp)\n  }\n}\n\nfragment UserProfileSettingModalFragment on UserV2 {\n  id\n  basicInfo {\n    email\n    fullName\n  }\n  security {\n    totpActivated @skipOnClient(if: $isNotSupportTotp)\n    allowedClientIp\n  }\n  ...TOTPActivateModalFragment\n}\n"
+    "text": "query UserDropdownMenuQuery(\n  $isNotSupportTotp: Boolean!\n) {\n  myUserV2 {\n    basicInfo {\n      fullName\n    }\n    ...UserProfileSettingModalBodyFragment\n    id\n  }\n  myClientIp {\n    clientIp\n  }\n}\n\nfragment TOTPActivateModalFragment on UserV2 {\n  basicInfo {\n    email\n  }\n  security {\n    totpActivated @skip(if: $isNotSupportTotp) @skipOnClient(if: $isNotSupportTotp)\n  }\n}\n\nfragment UserProfileSettingModalBodyFragment on UserV2 {\n  id\n  basicInfo {\n    email\n    fullName\n  }\n  security {\n    totpActivated @skipOnClient(if: $isNotSupportTotp)\n    allowedClientIp\n  }\n  ...TOTPActivateModalFragment\n}\n"
   }
 };
 })();
 
-(node as any).hash = "6ef8afee5a76685ed5656775a8910544";
+(node as any).hash = "4292e90c51f4835a4e23aa127fa91d74";
 
 export default node;

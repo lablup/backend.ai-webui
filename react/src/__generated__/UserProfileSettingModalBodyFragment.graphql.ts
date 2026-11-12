@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<8acf95169f0d1be4db6400c353a419b2>>
+ * @generated SignedSource<<6ee481d1ebb27ab17fb22fa5e47f719a>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,7 +10,7 @@
 
 import { ReaderFragment } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
-export type UserProfileSettingModalFragment$data = {
+export type UserProfileSettingModalBodyFragment$data = {
   readonly basicInfo: {
     readonly email: string;
     readonly fullName: string | null | undefined;
@@ -21,11 +21,11 @@ export type UserProfileSettingModalFragment$data = {
     readonly totpActivated: boolean | null | undefined;
   };
   readonly " $fragmentSpreads": FragmentRefs<"TOTPActivateModalFragment">;
-  readonly " $fragmentType": "UserProfileSettingModalFragment";
+  readonly " $fragmentType": "UserProfileSettingModalBodyFragment";
 };
-export type UserProfileSettingModalFragment$key = {
-  readonly " $data"?: UserProfileSettingModalFragment$data;
-  readonly " $fragmentSpreads": FragmentRefs<"UserProfileSettingModalFragment">;
+export type UserProfileSettingModalBodyFragment$key = {
+  readonly " $data"?: UserProfileSettingModalBodyFragment$data;
+  readonly " $fragmentSpreads": FragmentRefs<"UserProfileSettingModalBodyFragment">;
 };
 
 const node: ReaderFragment = {
@@ -37,7 +37,7 @@ const node: ReaderFragment = {
   ],
   "kind": "Fragment",
   "metadata": null,
-  "name": "UserProfileSettingModalFragment",
+  "name": "UserProfileSettingModalBodyFragment",
   "selections": [
     {
       "alias": null,
@@ -106,6 +106,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "7748d6ef82197657e9545689a3497939";
+(node as any).hash = "b005183696a0e84b2f9d8476cfb7da8f";
 
 export default node;

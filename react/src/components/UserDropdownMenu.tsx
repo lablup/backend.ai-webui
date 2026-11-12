@@ -20,14 +20,15 @@ import {
 } from '../hooks/useWebUIMenuItems';
 import AboutBackendAIModal from './AboutBackendAIModal';
 import AdminViewSwitchTour from './AdminViewSwitchTour';
+import DownloadModal from './DownloadModal';
 import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
+import UserProfileSettingModal from './UserProfileSettingModal';
 import { useUserSettingsModal } from './UserSettingsModalOpener';
 import {
   DropdownMenu,
   type DropdownMenuOption,
 } from '@lablup/ui-common/DropdownMenu';
 import {
-  BAIModal,
   BAIUnmountAfterClose,
   filterOutEmpty,
   useFetchKey,
@@ -49,18 +50,9 @@ import {
   CircleHelp,
   ArrowLeftRight,
 } from 'lucide-react';
-import React, { CSSProperties, Suspense, useTransition } from 'react';
+import React, { CSSProperties, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
-
-// The download page's code view pulls shiki; load it when the modal opens.
-const DownloadModal = React.lazy(() => import('./DownloadModal'));
-
-// The module import is shared so the menu can warm the chunk on open and the
-// first click rarely has to wait for it (#11144).
-const loadUserProfileSettingModal = () => import('./UserProfileSettingModal');
-
-const UserProfileSettingModal = React.lazy(loadUserProfileSettingModal);
 
 // PILOT-DECISION: antd `Dropdown menu={{items}} trigger={['click']}` →
 // Astryx `DropdownMenu items` (MAPPING §3.7 — the `menu={{items}}` branch;
@@ -122,7 +114,7 @@ const UserDropdownMenu: React.FC<{
             basicInfo {
               fullName
             }
-            ...UserProfileSettingModalFragment
+            ...UserProfileSettingModalBodyFragment
           }
           myClientIp {
             clientIp
@@ -297,11 +289,6 @@ const UserDropdownMenu: React.FC<{
         // `number | string` and lands on the popover's `width`, which is the
         // element legacy's `styles.root` also sized.
         menuWidth="fit-content(300px)"
-        onOpenChange={(isOpen) => {
-          if (isOpen) {
-            void loadUserProfileSettingModal();
-          }
-        }}
         button={{
           // The band is a REVERSED surface: its content polarity is the
           // opposite of the app's (FR-3502). Scoped to the trigger, never the
@@ -322,60 +309,30 @@ const UserDropdownMenu: React.FC<{
       <div style={{ display: 'contents', color: 'var(--color-text-primary)' }}>
         <ErrorBoundaryWithNullFallback>
           <AdminViewSwitchTour />
-          {/* The frame paints on click; only the form body waits for the chunk
-              (#11144). */}
-          <Suspense
-            fallback={
-              <BAIModal
+          {isOpenUserSettingModal && (
+            <BAIUnmountAfterClose>
+              <UserProfileSettingModal
+                totpSupported={isTOTPSupported}
+                userFrgmt={user}
+                currentClientIp={currentClientIp}
                 open={isOpenUserSettingModal}
-                title={t('webui.menu.MyAccountInformation')}
-                onCancel={() => {
+                onRequestClose={() => {
                   setIsOpenUserSettingModal(false);
                 }}
-                okText={t('webui.menu.Update')}
-                cancelText={t('webui.menu.Cancel')}
-                okButtonProps={{ disabled: true }}
-                loading
-              />
-            }
-          >
-            {isOpenUserSettingModal && (
-              <BAIUnmountAfterClose>
-                <UserProfileSettingModal
-                  totpSupported={isTOTPSupported}
-                  userFrgmt={user}
-                  currentClientIp={currentClientIp}
-                  open={isOpenUserSettingModal}
-                  onRequestClose={() => {
-                    setIsOpenUserSettingModal(false);
-                  }}
-                  onRequestRefresh={() => {
-                    startRefetchTransition(() => {
-                      updateFetchKey();
-                    });
-                  }}
-                />
-              </BAIUnmountAfterClose>
-            )}
-          </Suspense>
-          <Suspense
-            fallback={
-              <BAIModal
-                open={isDownloadModalOpen}
-                title={t('summary.Downloads')}
-                onCancel={() => toggleDownloadModal()}
-                footer={null}
-                loading
-              />
-            }
-          >
-            <BAIUnmountAfterClose>
-              <DownloadModal
-                open={isDownloadModalOpen}
-                onRequestClose={() => toggleDownloadModal()}
+                onRequestRefresh={() => {
+                  startRefetchTransition(() => {
+                    updateFetchKey();
+                  });
+                }}
               />
             </BAIUnmountAfterClose>
-          </Suspense>
+          )}
+          <BAIUnmountAfterClose>
+            <DownloadModal
+              open={isDownloadModalOpen}
+              onRequestClose={() => toggleDownloadModal()}
+            />
+          </BAIUnmountAfterClose>
           <BAIUnmountAfterClose>
             <AboutBackendAIModal
               open={isOpenAboutBAIModal}
