@@ -32,3 +32,6 @@ packages/backend.ai-webui-docs/src/**/*.jpg filter=lfs diff=lfs merge=lfs -text
 packages/backend.ai-webui-docs/src/**/*.jpeg filter=lfs diff=lfs merge=lfs -text
 packages/backend.ai-webui-docs/src/**/*.gif filter=lfs diff=lfs merge=lfs -text
 packages/backend.ai-webui-docs/src/**/*.webp filter=lfs diff=lfs merge=lfs -text
+
+# backend.ai-ui visual regression baselines (ADR 0031); .lfsconfig keeps them as pointers by default.
+packages/backend.ai-ui/test/visual/__screenshots__/**/*.png filter=lfs diff=lfs merge=lfs -text

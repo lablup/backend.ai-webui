@@ -260,6 +260,47 @@ Components that are not related to Relay can be tested using Storybook.
    $ pnpm run storybook
    ```
 
+### Visual regression tests
+
+`pnpm run test:visual:docker` renders every story in Chromium (Vitest browser
+mode through `@storybook/addon-vitest`) and compares what it painted with the
+screenshot committed under `test/visual/__screenshots__/` (ADR 0031). Only the
+default theme (Backend.AI WebUI, light, `en`) is compared. The
+`Vitest visual (backend.ai-ui)` workflow runs the same check and uploads the
+differences as the `visual-diffs` artifact when it fails.
+
+Screenshots differ between operating systems and CPU architectures, so the
+baselines come only from the pinned `mcr.microsoft.com/playwright` container
+(Docker required; on Apple Silicon it runs emulated as `linux/amd64` and is
+slow):
+
+```console
+$ pnpm run test:visual:docker                            # compare
+$ pnpm run test:visual:docker src/components/BAICard     # compare one path
+$ pnpm run test:visual:docker -u                         # rewrite the baselines
+$ pnpm run test:visual:docker src/components/BAICard -u  # put -u after the path
+```
+
+- The baselines are stored in Git LFS and a clone holds pointer files for
+  them; the script pulls them first, so it needs
+  [git-lfs](https://git-lfs.com) (`git lfs install --skip-repo` once). With it
+  set up, `git add` stores the rewritten baselines in LFS.
+- A new story has no baseline and fails CI until you add one with `-u`.
+- When a visual change is intended, rewrite the baselines and commit them with
+  the change, so the review shows the picture changing. When the painted area
+  changes size there is no diff image; compare the actual screenshot in
+  `.vitest-attachments/` with the reference instead.
+- After a `@lablup/ui-common` pin bump (`pnpm run ui-common:pin`), run
+  `pnpm run test:visual:docker -u`, review every changed screenshot, and commit
+  the ones that are expected in the same PR.
+- A story that cannot be stable (random data, a timer it never stops
+  waiting on) gets `tags: ['no-vrt']`, and so does a PoC component no page
+  renders, once in its `meta`.
+- `pnpm run test:visual` runs on the host for quick debugging; its screenshots
+  are named for the host platform and are git-ignored.
+- Bumping `playwright` means bumping the container tag in the workflow too, and
+  rewriting the baselines.
+
 ## Localization
 
 A host selects the language by handing `BAIConfigProvider` a `BAILocale`.
