@@ -51,17 +51,8 @@ export function createUserMoreButton(page: Page): Locator {
 }
 
 /**
- * Clicks a BAINameActionCell action by its title.
- * Handles both directly visible icon buttons and overflow dropdown menu items.
- *
- * BAINameActionCell exposes each action's `title` (not the icon name) as the
- * visible button's accessible name (`aria-label={action.title}`), e.g. the
- * "Edit" action's title is t('button.Edit') = "Edit", "User Detail" is
- * t('credential.UserDetail') = "User Detail", etc. The caller's
- * `actionTitle` argument already matches these titles exactly, so a direct
- * role-based lookup replaces the older icon-class-based lookup (which broke
- * once BAINameActionCell started deriving the aria-label from the action
- * title instead of the icon).
+ * Clicks a BAINameActionCell action by its title (the button's aria-label),
+ * whether it is an inline icon button or an item of a "More actions" menu.
  */
 export async function clickRowAction(
   page: Page,
@@ -69,27 +60,55 @@ export async function clickRowAction(
   actionTitle: string,
 ) {
   await row.hover();
-
-  // Case 1: Actions overflowed into "More actions" dropdown
-  const moreButton = row.getByRole('button', { name: 'More actions' });
-  if (await moreButton.isVisible().catch(() => false)) {
-    await moreButton.click();
-    const menuItem = page.getByRole('menuitem', { name: actionTitle });
-    if (await menuItem.isVisible({ timeout: 2000 }).catch(() => false)) {
-      await menuItem.click();
-      return;
+  const moreActionsIn = (scope: Locator | Page) =>
+    scope.getByRole('button', { name: 'More actions', exact: true });
+  const expandedMoreButtons = row.getByRole('button', {
+    name: 'More actions',
+    exact: true,
+    expanded: true,
+  });
+  // Retried as a whole: the row's cells mount and re-measure their overflow
+  // after the row is visible (BAINameActionCell, the Labels cell's Suspense).
+  await expect(async () => {
+    if ((await expandedMoreButtons.count()) > 0) {
+      await page.keyboard.press('Escape');
+      await expect(expandedMoreButtons).toHaveCount(0);
     }
-    await page.keyboard.press('Escape');
-  }
-
-  // Case 2: Actions are directly visible — find by accessible name
-  const button = row.getByRole('button', { name: actionTitle, exact: true });
-  if (await button.isVisible({ timeout: 5000 }).catch(() => false)) {
-    await button.click();
-    return;
-  }
-
-  throw new Error(`Action "${actionTitle}" not found in row`);
+    const menuCells = row
+      .getByRole('cell')
+      .filter({ has: moreActionsIn(page) });
+    for (const cell of await menuCells.all()) {
+      const moreButton = moreActionsIn(cell);
+      // The Labels cell's hover-only button passes isVisible() but takes no
+      // clicks, so check that a click would land before making it.
+      const clickable = await moreButton
+        .click({ trial: true, timeout: 1000 })
+        .then(
+          () => true,
+          () => false,
+        );
+      if (!clickable) continue;
+      await moreButton.click();
+      await expect(moreButton).toHaveAttribute('aria-expanded', 'true');
+      // The opened menu is the element the trigger's aria-controls names.
+      const menuId = await moreButton.getAttribute('aria-controls');
+      const menu = page.locator(`[id="${menuId}"]`);
+      await expect(menu.getByRole('menuitem').first()).toBeVisible();
+      const menuItem = menu.getByRole('menuitem', {
+        name: actionTitle,
+        exact: true,
+      });
+      if (await menuItem.isVisible()) {
+        await menuItem.click();
+        return;
+      }
+      await page.keyboard.press('Escape');
+      await expect(moreButton).toHaveAttribute('aria-expanded', 'false');
+    }
+    await row
+      .getByRole('button', { name: actionTitle, exact: true })
+      .click({ timeout: 1000 });
+  }, `Action "${actionTitle}" not found in row`).toPass({ timeout: 15000 });
 }
 
 /**
