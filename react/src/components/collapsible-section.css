@@ -16,3 +16,14 @@
 .bai-collapsible-section > .astryx-collapsible-content {
   padding: var(--spacing-3);
 }
+
+/* The same frame with a switch instead of a chevron as the expander. */
+.bai-collapsible-section > .bai-toggle-section__header {
+  background: var(--color-background-muted);
+  padding-block: var(--spacing-2);
+  padding-inline: var(--spacing-3);
+}
+
+.bai-collapsible-section > .bai-toggle-section__content {
+  padding: var(--spacing-3);
+}
