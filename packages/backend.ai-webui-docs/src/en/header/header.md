@@ -272,3 +272,23 @@ credentials. Replace `<your-access-key>` and `<your-secret-key>` with your own
 keypair before running it. The snippet also pins Python 3.13, which the client
 requires.
 :::
+
+<a id="announcement-banner"></a>
+
+## Announcement banner
+
+If your system administrator has published an announcement, it appears as a
+banner at the top of every page. The announcement supports Markdown formatting
+and may contain important notices about system maintenance, updates, or usage
+guidelines.
+
+The banner shows the announcement's title. When the announcement has a message,
+click **See Details** to reveal it and **Hide Details** to collapse it again.
+
+Click the close icon to dismiss the banner. It stays hidden for the rest of the
+current browser session, and appears again when your administrator publishes a
+new or changed announcement.
+
+For superadmins, the banner also carries an **Edit** button that opens the Edit
+Announcement dialog, so an announcement can be edited from any page. For
+details, refer to the [System announcement](#system-announcement) section.

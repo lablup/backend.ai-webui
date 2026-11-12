@@ -1,7 +1,6 @@
 {
   "entries": [
     { "path": "", "docPage": "dashboard.html" },
-    { "path": "start", "docPage": "start.html" },
     { "path": "dashboard", "docPage": "dashboard.html" },
     { "path": "summary", "docPage": "dashboard.html" },
     { "path": "session", "docPage": "sessions_all.html" },
@@ -14,8 +13,6 @@
       "docPage": "deployment.html",
       "anchor": "model-store"
     },
-    { "path": "import", "docPage": "start.html" },
-    { "path": "github", "docPage": "start.html" },
     { "path": "chat", "docPage": "chat.html" },
     { "path": "data", "docPage": "vfolder.html" },
     { "path": "my-environment", "docPage": "my_environments.html" },
