@@ -206,5 +206,5 @@ overrides:
   lodash: ^4.18.0 # _.template RCE + _.unset prototype pollution (#321, #322 high)
 
 patchedDependencies:
-  portless@0.15.5: react/patches/portless@0.15.5.patch
+  portless@0.16.0: react/patches/portless@0.16.0.patch
   relay-runtime@20.1.1: react/patches/relay-runtime@20.1.1.patch

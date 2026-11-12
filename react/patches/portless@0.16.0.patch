@@ -1,10 +1,10 @@
-diff --git a/dist/chunk-SLEZT6EJ.js b/dist/chunk-SLEZT6EJ.js
-index 76791c619bf72a8c5b99eb2f086e150b3cef9466..5e088b6d2cd545876f77206fd2c7cede5f02a6d9 100644
---- a/dist/chunk-SLEZT6EJ.js
-+++ b/dist/chunk-SLEZT6EJ.js
-@@ -404,6 +404,20 @@ function findRoute(routes, host, strict) {
-   const hostname = authority.split(":")[0];
-   return routes.find((r) => r.hostname.toLowerCase() === hostname) || routes.find((r) => tailscaleAuthority(r.tailscaleUrl) === authority) || routes.find((r) => tailscaleAuthority(r.tailscaleUrl)?.split(":")[0] === hostname) || (strict ? void 0 : routes.find((r) => hostname.endsWith("." + r.hostname.toLowerCase())));
+diff --git a/dist/chunk-KPJDIJBP.js b/dist/chunk-KPJDIJBP.js
+index 6e4dd72afa7b4bdab088284aa16d40e319cb7b10..69b08f02d6107173a825d6f755204ce17e421f58 100644
+--- a/dist/chunk-KPJDIJBP.js
++++ b/dist/chunk-KPJDIJBP.js
+@@ -628,6 +628,20 @@ function sendProxyError(req, res, status, error, message, host, renderHtml) {
+   res.writeHead(status, { "Content-Type": "application/json; charset=utf-8" });
+   res.end(JSON.stringify({ error, upstream: host, message }));
  }
 +function isServersRequest(url) {
 +  const path = (url || "/").split("?")[0];
@@ -23,7 +23,7 @@ index 76791c619bf72a8c5b99eb2f086e150b3cef9466..5e088b6d2cd545876f77206fd2c7cede
  function createProxyServer(options) {
    const {
      getRoutes,
-@@ -449,6 +463,11 @@ function createProxyServer(options) {
+@@ -739,6 +753,11 @@ function createProxyServer(options) {
      }
      const route = findRoute(routes, rawHost, strict);
      if (!route) {
@@ -32,10 +32,10 @@ index 76791c619bf72a8c5b99eb2f086e150b3cef9466..5e088b6d2cd545876f77206fd2c7cede
 +        res.end(serversJson(routes, proxyPort, reqTls));
 +        return;
 +      }
-       const safeHost = escapeHtml(host);
-       const matchedSuffix = tldSuffixes.filter((suffix) => host.endsWith(suffix)).sort((a, b) => b.length - a.length)[0];
-       const strippedHost = matchedSuffix && matchedSuffix.length < host.length ? host.slice(0, -matchedSuffix.length) : host;
-@@ -653,6 +672,11 @@ function createProxyServer(options) {
+       const lowerHost = host.toLowerCase();
+       const nameHost = lowerHost.endsWith(".") ? lowerHost.slice(0, -1) : lowerHost;
+       const isPortlessName = tldSuffixes.some(
+@@ -1016,6 +1035,11 @@ function createProxyServer(options) {
      }
      const route = findRoute(getRoutes(), getRequestHost(compatReq), strict);
      if (!route) {
