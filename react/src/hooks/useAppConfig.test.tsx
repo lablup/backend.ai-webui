@@ -3,11 +3,12 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import {
-  useUpdateMyUserAppConfig,
-  useUpdatePublicDomainAppConfig,
+  type AppConfigName,
+  type AppConfigScope,
+  useScopedAppConfig,
 } from './useAppConfig';
 import { act, renderHook, waitFor } from '@testing-library/react';
-import { ReactNode } from 'react';
+import { ReactNode, Suspense } from 'react';
 import { RelayEnvironmentProvider } from 'react-relay';
 import { createMockEnvironment } from 'relay-test-utils';
 
@@ -22,226 +23,223 @@ vi.mock('react-i18next', () => ({
 }));
 
 vi.mock('.', () => ({
-  useCurrentDomainValue: () => 'default',
+  useSuspendedBackendaiClient: () => ({
+    _config: { domainId: 'domain-1' },
+    user_uuid: 'user-1',
+  }),
 }));
 
 type MockEnvironment = ReturnType<typeof createMockEnvironment>;
 
-const renderWithRelay = <T,>(hook: () => T) => {
+const operationsNamed = (environment: MockEnvironment, name: string) =>
+  environment.mock
+    .getAllOperations()
+    .filter((op) => op.request.node.params.name === name);
+
+const waitForOperation = async (environment: MockEnvironment, name: string) => {
+  await waitFor(() =>
+    expect(operationsNamed(environment, name).length).toBeGreaterThan(0),
+  );
+  return operationsNamed(environment, name)[0];
+};
+
+/** Mounts the hook and answers its read with `config` (`null`: no fragment yet). */
+const mountScoped = async (
+  scope: AppConfigScope,
+  configName: AppConfigName,
+  config: Record<string, unknown> | null,
+) => {
   const environment = createMockEnvironment();
   const wrapper = ({ children }: { children: ReactNode }) => (
     <RelayEnvironmentProvider environment={environment}>
-      {children}
+      <Suspense fallback={null}>{children}</Suspense>
     </RelayEnvironmentProvider>
   );
-  const { result } = renderHook(hook, { wrapper });
-  return { environment, result };
-};
-
-const waitForOperation = async (
-  environment: MockEnvironment,
-  operationName: string,
-) => {
-  await waitFor(() =>
-    expect(
-      environment.mock
-        .getAllOperations()
-        .some((op) => op.request.node.params.name === operationName),
-    ).toBe(true),
-  );
-  return environment.mock
-    .getAllOperations()
-    .find((op) => op.request.node.params.name === operationName)!;
-};
-
-/** Resolves the raw public read, then returns the document the upsert sends. */
-const runPublicDomainWrite = async (
-  rawConfig: Record<string, unknown> | null,
-  write: (
-    setter: ReturnType<typeof useUpdatePublicDomainAppConfig>,
-  ) => Promise<void>,
-  errors?: Array<{ message: string }>,
-) => {
-  const { environment, result } = renderWithRelay(() =>
-    useUpdatePublicDomainAppConfig(),
-  );
-  let pending!: Promise<void>;
-  act(() => {
-    pending = write(result.current);
+  const { result } = renderHook(() => useScopedAppConfig(scope, configName), {
+    wrapper,
   });
-
-  const read = await waitForOperation(
-    environment,
-    'useAppConfigPublicRawQuery',
-  );
+  const read = await waitForOperation(environment, 'useAppConfigScopedQuery');
   act(() => {
     environment.mock.resolve(read, {
       data: {
-        scopedAppConfigFragmentsByNames: rawConfig
-          ? [
-              {
-                id: 'fragment-1',
-                configName: 'publicConfigByDomain',
-                config: rawConfig,
-              },
-            ]
-          : [],
+        scopedAppConfigFragmentsByNames: [
+          config ? { id: 'fragment-1', configName, config } : null,
+        ],
       },
     });
   });
+  await waitFor(() => expect(result.current).not.toBeNull());
+  return { environment, result, read };
+};
 
+/** Answers the next upsert with the document it sent, as the manager does. */
+const answerUpsert = async (
+  environment: MockEnvironment,
+  id = 'fragment-1',
+) => {
   const upsert = await waitForOperation(
     environment,
     'useAppConfigUpsertMutation',
   );
   const sent = upsert.request.variables.input;
   act(() => {
-    environment.mock.resolve(
-      upsert,
-      // The atomic upsert has no `failed` list: a rejected item fails the
-      // whole write as a GraphQL error.
-      errors
-        ? ({ data: null, errors } as any)
-        : { data: { scopedAtomicBulkUpsertAppConfigFragments: { items: [] } } },
-    );
-  });
-  return { sent, pending };
-};
-
-describe('useUpdatePublicDomainAppConfig', () => {
-  it('replaces only the current domain slice and keeps other domains', async () => {
-    const otherDomain = { appearance: { schemaVersion: 2, brand: 'other' } };
-    const { sent, pending } = await runPublicDomainWrite(
-      {
-        other: otherDomain,
-        default: { appearance: { schemaVersion: 2, brand: 'old' }, keep: 1 },
-      },
-      (setter) => setter('appearance', { schemaVersion: 2, brand: 'new' }),
-    );
-    await pending;
-
-    expect(sent.scope).toEqual({ scopeType: 'PUBLIC' });
-    expect(sent.items).toEqual([
-      {
-        configName: 'publicConfigByDomain',
-        config: {
-          other: otherDomain,
-          default: { appearance: { schemaVersion: 2, brand: 'new' }, keep: 1 },
+    environment.mock.resolve(upsert, {
+      data: {
+        scopedAtomicBulkUpsertAppConfigFragments: {
+          items: [{ id, ...sent.items[0] }],
         },
       },
-    ]);
-  });
-
-  it('writes to the domain passed explicitly instead of the current one', async () => {
-    const { sent, pending } = await runPublicDomainWrite(
-      { default: { appearance: { brand: 'current' } } },
-      (setter) => setter('appearance', { brand: 'target' }, 'target'),
-    );
-    await pending;
-
-    expect(sent.items[0].config).toEqual({
-      default: { appearance: { brand: 'current' } },
-      target: { appearance: { brand: 'target' } },
     });
   });
+  return sent;
+};
 
-  it('creates the document when no public fragment exists yet', async () => {
-    const { sent, pending } = await runPublicDomainWrite(null, (setter) =>
-      setter('appearance', { brand: 'first' }),
-    );
-    await pending;
-
-    expect(sent.items[0].config).toEqual({
-      default: { appearance: { brand: 'first' } },
+describe('useScopedAppConfig', () => {
+  it('fills the scope id from the signed-in user and domain', async () => {
+    const user = await mountScoped({ scopeType: 'USER' }, 'userConfig', {});
+    expect(user.read.request.variables.scope).toEqual({
+      scopeType: 'USER',
+      scopeId: 'user-1',
     });
+    const domain = await mountScoped(
+      { scopeType: 'DOMAIN' },
+      'domainConfig',
+      {},
+    );
+    expect(domain.read.request.variables.scope).toEqual({
+      scopeType: 'DOMAIN',
+      scopeId: 'domain-1',
+    });
+    const pub = await mountScoped(
+      { scopeType: 'PUBLIC' },
+      'publicConfigByDomain',
+      {},
+    );
+    expect(pub.read.request.variables.scope).toEqual({ scopeType: 'PUBLIC' });
   });
 
-  it('removes only the current domain sub key when the value is undefined', async () => {
-    const { sent, pending } = await runPublicDomainWrite(
+  it('writes one domain slice with a single upsert and keeps other domains', async () => {
+    const otherDomain = { appearance: { brand: 'other' } };
+    const { environment, result } = await mountScoped(
+      { scopeType: 'PUBLIC' },
+      'publicConfigByDomain',
       {
-        other: { appearance: { brand: 'other' } },
+        other: otherDomain,
         default: { appearance: { brand: 'old' }, keep: 1 },
       },
-      (setter) => setter('appearance', undefined),
-    );
-    await pending;
-
-    expect(sent.items[0].config).toEqual({
-      other: { appearance: { brand: 'other' } },
-      default: { keep: 1 },
-    });
-  });
-
-  it('passes the current raw value to an updater and stores what it returns', async () => {
-    const { sent, pending } = await runPublicDomainWrite(
-      { default: { settings: { debug: true, extra: 1 } } },
-      (setter) =>
-        setter('settings', (current: unknown) => ({
-          ...(current as Record<string, unknown>),
-          debug: false,
-        })),
-    );
-    await pending;
-
-    expect(sent.items[0].config).toEqual({
-      default: { settings: { debug: false, extra: 1 } },
-    });
-  });
-
-  it('rejects with the server message when the write fails', async () => {
-    const { pending } = await runPublicDomainWrite(
-      {},
-      (setter) => setter('appearance', { brand: 'denied' }),
-      [{ message: 'publicConfigByDomain: not allowed' }],
-    );
-
-    await expect(pending).rejects.toThrow('publicConfigByDomain: not allowed');
-  });
-});
-
-describe('useUpdateMyUserAppConfig', () => {
-  it('replaces only the given key of the raw user fragment', async () => {
-    const { environment, result } = renderWithRelay(() =>
-      useUpdateMyUserAppConfig(),
     );
     let pending!: Promise<void>;
     act(() => {
-      pending = result.current('themeFamily', 'ocean');
-    });
-
-    const read = await waitForOperation(
-      environment,
-      'useAppConfigUserRawQuery',
-    );
-    act(() => {
-      environment.mock.resolve(read, {
-        data: {
-          myAppConfigFragmentsByNames: [
-            {
-              id: 'fragment-1',
-              configName: 'userConfig',
-              config: { themeFamily: 'default', language: 'ko' },
-            },
-          ],
-        },
+      pending = result.current.setKey(['default', 'appearance'], {
+        brand: 'new',
       });
     });
+    const sent = await answerUpsert(environment);
+    await act(() => pending);
 
+    expect(sent.scope).toEqual({ scopeType: 'PUBLIC' });
+    expect(sent.items[0].config).toEqual({
+      other: otherDomain,
+      default: { appearance: { brand: 'new' }, keep: 1 },
+    });
+    expect(operationsNamed(environment, 'useAppConfigScopedQuery')).toEqual([]);
+    expect(result.current.doc?.default.appearance).toEqual({ brand: 'new' });
+  });
+
+  it('passes the current value to an updater and removes a key set to undefined', async () => {
+    const { environment, result } = await mountScoped(
+      { scopeType: 'USER' },
+      'userConfig',
+      { settings: { debug: true, extra: 1 }, themeFamily: 'ocean' },
+    );
+    let first!: Promise<void>;
+    let second!: Promise<void>;
+    act(() => {
+      first = result.current.setKey('settings', (current: unknown) => ({
+        ...(current as Record<string, unknown>),
+        debug: false,
+      }));
+      second = result.current.setKey('themeFamily', undefined);
+    });
+    expect((await answerUpsert(environment)).items[0].config).toEqual({
+      settings: { debug: false, extra: 1 },
+      themeFamily: 'ocean',
+    });
+    // The second write waits for the first and builds on its response.
+    expect((await answerUpsert(environment)).items[0].config).toEqual({
+      settings: { debug: false, extra: 1 },
+    });
+    await act(() => Promise.all([first, second]));
+  });
+
+  it('links a first write into the read so the next write builds on it', async () => {
+    const { environment, result } = await mountScoped(
+      { scopeType: 'USER' },
+      'userConfig',
+      null,
+    );
+    expect(result.current.doc).toBeUndefined();
+    let first!: Promise<void>;
+    act(() => {
+      first = result.current.setKey('themeFamily', 'ocean');
+    });
+    await answerUpsert(environment, 'created');
+    await act(() => first);
+    expect(result.current.doc).toEqual({ themeFamily: 'ocean' });
+
+    let second!: Promise<void>;
+    act(() => {
+      second = result.current.setKey('language', 'ko');
+    });
+    expect(
+      (await answerUpsert(environment, 'created')).items[0].config,
+    ).toEqual({ themeFamily: 'ocean', language: 'ko' });
+    await act(() => second);
+  });
+
+  it('refetches the merged view after a domainConfig write', async () => {
+    const { environment, result } = await mountScoped(
+      { scopeType: 'DOMAIN' },
+      'domainConfig',
+      { settings: {} },
+    );
+    let pending!: Promise<void>;
+    act(() => {
+      pending = result.current.setKey(['settings', 'announcement'], {
+        title: 'hi',
+      });
+    });
+    await answerUpsert(environment);
+    const merged = await waitForOperation(
+      environment,
+      'useAppConfigMergedQuery',
+    );
+    act(() => {
+      environment.mock.resolve(merged, { data: { myAppConfigs: [] } });
+    });
+    await act(() => pending);
+  });
+
+  it('rejects with the server message when the write fails', async () => {
+    const { environment, result } = await mountScoped(
+      { scopeType: 'PUBLIC' },
+      'publicConfigByDomain',
+      {},
+    );
+    let pending!: Promise<void>;
+    act(() => {
+      pending = result.current.setKey(['default', 'appearance'], {});
+    });
     const upsert = await waitForOperation(
       environment,
-      'useAppConfigMyUpsertMutation',
+      'useAppConfigUpsertMutation',
     );
-    expect(upsert.request.variables.input.items).toEqual([
-      {
-        configName: 'userConfig',
-        config: { themeFamily: 'ocean', language: 'ko' },
-      },
-    ]);
     act(() => {
       environment.mock.resolve(upsert, {
-        data: { myAtomicBulkUpsertAppConfigFragments: { items: [] } },
-      });
+        data: null,
+        errors: [{ message: 'publicConfigByDomain: not allowed' }],
+      } as any);
     });
-    await pending;
+    await expect(pending).rejects.toThrow('publicConfigByDomain: not allowed');
   });
 });

@@ -15,7 +15,7 @@
 
 - **Panel catalog**: #10580이 대시보드의 고정 카드와 사용자 정의 패널을 `PANEL_CATALOG`(`react/src/components/DashboardPanels/panelCatalog.tsx`) 하나로 합쳤다. 순수 함수 `boardModel.ts`가 보드를 만들고(`seedBoard`), 카드를 더하고 빼고, 배치를 반영하고, 저장값을 검사한다(`sanitizeBoard`).
 - **localStorage boards**: #10580까지 보드는 `useBAISettingUserState`로 localStorage의 `dashboard_board.<page>`에 있었고, 그 전에는 `dashboard_board_items`, `admin_dashboard_board_items`, `custom_dashboard_panels`에 있었다. 브라우저를 바꾸면 보드가 사라지고, 한 브라우저 안에서는 모든 프로젝트가 한 보드를 나눠 쓴다.
-- **App config documents**: `react/src/hooks/useAppConfig.ts`가 매니저 app config 문서 세 개를 읽고 쓴다(FR-1964). `useMyAppConfig`는 서버가 PUBLIC, DOMAIN, USER fragment를 deep-merge한 `userConfig` view를 읽고, `useUpdateMyUserAppConfig`는 USER fragment 원본을 다시 읽어 key 하나만 바꾼 문서 전체를 upsert한다.
+- **App config documents**: `react/src/hooks/useAppConfig.ts`가 매니저 app config 문서 세 개를 읽고 쓴다(FR-1964). `useScopedAppConfig({ scopeType: 'USER' }, 'userConfig')`가 USER fragment 원본을 읽고, 그 `setKey`가 key 하나만 바꾼 문서 전체를 upsert한다([ADR 0033](0033-scoped-and-merged-app-config-hooks.ko.md)).
 - **Deep merge of arrays**: 서버의 deep-merge는 배열을 scope 사이에서 섞는다. 도메인 관리자가 DOMAIN scope의 `userConfig`에 보드 목록을 두면 사용자의 보드 목록과 섞여, 사용자가 지운 보드가 다시 나타나거나 id가 겹친다.
 - **Whole-document upsert**: 한 upsert가 USER fragment 문서 전체를 바꾸므로, 두 upsert가 동시에 원본을 읽으면 나중 것이 먼저 것의 변경을 지운다.
 - **Layout events**: 보드를 끌거나 크기를 바꾸면 `BAIBoard`가 이벤트마다 `onItemsChange`를 낸다.
@@ -34,13 +34,13 @@ flowchart LR
   hook["useDashboardBoards<br/>resolveBoards, optimistic atom"]
   queue["dashboardWriter<br/>debounce 800ms, 한 번에 하나"]
   board["DashboardPanelBoard<br/>useDashboardBoard, DashboardBoardTabs,<br/>DashboardBoardSection"]
-  user -- "useMyAppConfig merged view" --> hook
-  domain -- "useDomainAppConfig" --> hook
-  public -- "usePublicDomainAppConfig" --> hook
+  user -- "useScopedAppConfig USER" --> hook
+  domain -- "useMyAppConfig merged view" --> hook
+  public -- "useMyAppConfig merged view" --> hook
   hook -- "active board, template, update" --> board
   board -- "update(config => next)" --> hook
   hook -- "update 함수, optimistic 값" --> queue
-  queue -- "useUpdateMyUserAppConfig dashboard.page<br/>다시 읽은 값 위에 update 적용" --> user
+  queue -- "setKey dashboard.page<br/>저장된 문서 위에 update 적용" --> user
 ```
 
 ### 쓰기 상태
@@ -81,8 +81,8 @@ stateDiagram-v2
 | `boards` | `DashboardModel[]` | page의 보드. 하나 이상 |
 | `active` | `string`           | 열려 있는 보드의 id    |
 
-- **Read path**: `useDashboardBoards(page, catalog)`(`useDashboardBoards.tsx`)가 `useMyAppConfig('dashboard')`의 page 값을 `sanitizeDashboardPageConfig`로 검사한다. 남는 보드가 없으면 저장값이 없는 것으로 본다.
-- **Single writer**: `userConfig.dashboard`는 `useDashboardBoards`만 `useUpdateMyUserAppConfig(['dashboard', page], …)`로 쓴다. 다른 scope의 `userConfig`에 `dashboard` key를 쓰는 코드는 두지 않는다.
+- **Read path**: `useDashboardBoards(page, catalog)`(`useDashboardBoards.tsx`)가 USER `userConfig.dashboard`의 page 값을 `sanitizeDashboardPageConfig`로 검사한다. 남는 보드가 없으면 저장값이 없는 것으로 본다.
+- **Single writer**: `userConfig.dashboard`는 `useDashboardBoards`만 `useScopedAppConfig({ scopeType: 'USER' }, 'userConfig')`의 `setKey(['dashboard', page], …)`로 쓴다. 다른 scope의 `userConfig`에 `dashboard` key를 쓰는 코드는 두지 않는다.
 - **Board tabs and board section**: `projectAdmin`과 `admin` page는 `DashboardBoardTabs`로 보드를 고르기만 한다. 보드를 더하고(빈 보드로 시작), 이름을 바꾸고, 지우는 일은 편집 모드 사이드 패널 맨 위의 `DashboardBoardSection`이 맡는다. 이 section은 보드 selector(탭을 누른 것과 같이 active 보드를 바꾼다), 이름 입력(blur나 Enter에 저장하고 빈 이름은 저장하지 않는다), 새 보드 버튼, 보드 삭제 버튼을 둔다. 마지막 보드는 지울 수 없다. 보드 삭제는 그 보드의 패널, 배치, 사용자 정의 패널을 함께 지워 되돌릴 수 없으므로, 보드 이름을 입력해야 확인되는 `BAIDeleteConfirmModal`(`requireConfirmInput`)로 확인한다. `project` page는 보드 하나만 두고 탭도 board section도 그리지 않는다.
 
 ### 3. 기본 보드는 template key에서 고른다
@@ -90,12 +90,12 @@ stateDiagram-v2
 - **Precedence**: `resolveTemplate`(`dashboardConfig.ts`)이 page의 template을 `domainConfig.dashboardTemplates[page]`, `publicConfigByDomain[<domain>].dashboardTemplates[page]`, `defaultBoardModel`(catalog의 `seedBoard`) 순서로 고른다. 값이 `DashboardModel`로 검사되지 않으면 다음 순서로 넘어간다.
 - **Template knownKeys**: `knownKeys`가 없는 template은 지금 catalog의 page 카드를 모두 본 것으로 친다. template이 뺀 카드는 보드에 나오지 않는다.
 - **Template use**: 저장된 보드가 없는 page는 template을 그대로 보여 주고, 사용자가 처음 고칠 때 쓴다. "새 보드"는 패널 없이 시작하고, 지금 catalog의 카드를 모두 본 것으로 쳐서(`createEmptyBoard`) 기본 카드가 채워지지 않는다. "기본 배치로 초기화"는 열린 보드의 패널을 template으로 되돌리고, template에 없는 사용자 정의 패널과 보드의 이름, 필터 값은 남긴다.
-- **Template editing**: template을 고치는 화면은 이 결정의 범위 밖이다. superadmin은 `useUpdateDomainAppConfig`·`useUpdatePublicDomainAppConfig`로 같은 key를 쓴다.
+- **Template editing**: template을 고치는 화면은 이 결정의 범위 밖이다. superadmin은 DOMAIN·PUBLIC `useScopedAppConfig`로 같은 key를 쓴다.
 
 ### 4. 쓰기는 debounce하고 한 번에 하나만 보낸다
 
-- **Optimistic state**: `update`는 다음 page config를 jotai atom `optimisticDashboardAtom`에 바로 넣어 화면에 보여 주고, update 함수를 queue에 넣는다. 쓰기와 `useRefetchMyAppConfig`가 끝나면 atom의 값이 그 쓰기가 보여 준 값과 같을 때만 지운다. 쓰기가 실패하면 atom을 지워 서버 값으로 돌아가고 오류 message를 띄운다. 쓰기는 성공하고 refetch만 실패하면 atom을 남긴다.
-- **Replay on the server value**: 쓰기는 page config 값을 보내지 않는다. `useUpdateMyUserAppConfig`가 USER fragment 원본을 다시 읽으면, 그 `dashboard.<page>` 값을 `resolveBoards`로 page config로 만들고 queue에 쌓인 update 함수를 순서대로 적용한 결과를 upsert한다. 다른 탭이나 기기가 저장한 보드와 이름은 이 탭의 변경과 겹치지 않는 한 남는다. 그래서 update 함수는 config만 보고 결과를 정해야 한다. 새 보드의 id 같은 값은 함수 밖에서 정한다.
+- **Optimistic state**: `update`는 다음 page config를 jotai atom `optimisticDashboardAtom`에 바로 넣어 화면에 보여 주고, update 함수를 queue에 넣는다. 쓰기가 끝나면 upsert 응답이 저장된 문서를 이미 갱신했고, hook은 atom의 값이 그 쓰기가 보여 준 값과 같을 때만 지운다. 쓰기가 실패하면 atom을 지워 저장된 값으로 돌아가고 오류 message를 띄운다.
+- **Replay on the stored document**: 쓰기는 page config 값을 보내지 않는다. `setKey`가 저장된 USER 문서의 `dashboard.<page>` 값을 writer에 넘기면, writer가 그 값을 `resolveBoards`로 page config로 만들고 queue에 쌓인 update 함수를 순서대로 적용한 결과를 upsert한다. 저장된 문서는 대시보드가 mount될 때 읽고 이 탭의 upsert 응답으로 갱신한 문서이므로, 그 mount 뒤에 다른 탭이나 기기가 저장한 보드는 덮어쓴다(ADR 0033). 그래서 update 함수는 config만 보고 결과를 정해야 한다. 새 보드의 id 같은 값은 함수 밖에서 정한다.
 - **Write queue**: `createWriteQueue`(`writeQueue.ts`)가 800ms(`DASHBOARD_WRITE_DELAY_MS`) 안에 들어온 update를 page마다 하나로 이어 붙이고(`combinePageWrites`), 앞선 쓰기가 끝난 뒤에만 다음 쓰기를 시작한다. 앱 전체에 queue는 `useDashboardBoards.tsx`의 module 하나다. 끌기와 크기 바꾸기는 이벤트마다 쓰기를 보내지 않는다.
 - **Flush**: 탭이 숨겨질 때(`visibilitychange`가 `hidden`), `pagehide`, 보드가 unmount될 때 queue를 debounce 없이 바로 보낸다.
 
@@ -123,9 +123,9 @@ stateDiagram-v2
 - **Admin-provided defaults**: superadmin은 template key를 써서 설치나 도메인의 기본 보드를 바꿀 수 있다. 이미 보드를 저장한 사용자는 "기본 배치로 초기화"를 누를 때 새 template을 받는다.
 - **Write latency**: 보드 변경은 최대 800ms 뒤에 서버로 간다. 탭을 숨기거나 닫으면 바로 보내지만, 브라우저가 페이지를 내리기 전에 요청이 끝난다는 보장은 없다.
 - **Lost local boards**: 업그레이드 전 localStorage에 보드를 꾸며 둔 사용자는 template부터 다시 시작한다.
-- **Same-panel edits**: 저장은 이 탭이 추가, 삭제, 변경한 패널만 서버에 있는 패널 목록에 적용하므로, 다른 기기에서 추가하거나 바꾼 패널은 남는다. 두 기기가 같은 패널을 바꾸면 나중에 쓴 쪽이 이긴다.
+- **Same-panel edits**: 저장은 이 탭이 추가, 삭제, 변경한 패널만 저장된 문서의 패널 목록에 적용한다. 이 대시보드가 mount된 뒤 다른 기기가 추가하거나 바꾼 패널은 사라지고, 대시보드를 새로고침하면 다시 가져온다.
 - **Older clients**: 저장은 이 클라이언트 카탈로그에 없는 저장된 카드와, 카드 정의가 선언하지 않은 설정을 되돌려 놓으므로, 같은 매니저를 쓰는 구버전 WebUI가 저장해도 신버전이 추가한 내용이 남는다.
-- **Shared queue scope**: queue는 대시보드 쓰기만 줄 세운다. `useRecentSessionHistory`처럼 `userConfig`의 다른 key를 쓰는 기능과 동시에 upsert하면 USER fragment 문서를 두고 경합할 수 있다.
+- **Shared queue scope**: queue는 대시보드 쓰기만 줄 세운다. `useAppConfig.ts`의 `serializeWrite`가 USER `userConfig`에 대한 모든 `setKey`를 줄 세우므로, `useRecentSessionHistory`의 쓰기는 대시보드와 경합하지 않고 그 마지막 upsert 위에서 만든다.
 - **Vars without consumer**: `vars`는 저장되지만, 필터 바(#10582)가 생기기 전까지 카드의 데이터 범위를 바꾸지 않는다.
 - **No pinned projects**: 보드에 프로젝트를 고정하는 field는 두지 않는다. 예전에 저장된 `pinned`는 `sanitizeDashboardModel`이 버린다.
 
@@ -141,4 +141,4 @@ stateDiagram-v2
 | ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | panel catalog | 대시보드에 놓을 수 있는 카드의 정의 목록 `PANEL_CATALOG`이다. 고정 카드는 `kind: 'custom'`, data source마다 하나인 사용자 정의 패널은 `kind: 'preset'` 항목이다. |
 | role template | 저장된 보드가 없는 사용자와 "기본 배치로 초기화"가 시작점으로 쓰는 page별 기본 보드이다. `dashboardTemplates` key에 `DashboardModel`로 둔다.                     |
-| USER fragment | 매니저 app config 문서 중 사용자 한 명의 scope에 저장된 원본이다. `useMyAppConfig`가 읽는 view는 이 원본과 PUBLIC, DOMAIN fragment를 합친 값이다.                |
+| USER fragment | 매니저 app config 문서 중 사용자 한 명의 scope에 저장된 원본이다. `useScopedAppConfig({ scopeType: 'USER' }, 'userConfig')`는 이 원본을 그대로 읽는다.                |

@@ -508,7 +508,7 @@ test.describe(
           (response) => {
             const body = response.request().postData() ?? '';
             return (
-              body.includes('useAppConfigMyUpsertMutation') &&
+              body.includes('useAppConfigUpsertMutation') &&
               !body.includes(panelTitle) &&
               response.ok()
             );

@@ -2,35 +2,57 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { useCurrentDomain, useCurrentDomainValue } from '.';
-import { useAppConfigDomainRawQuery } from '../__generated__/useAppConfigDomainRawQuery.graphql';
-import { useAppConfigMyQuery } from '../__generated__/useAppConfigMyQuery.graphql';
-import { useAppConfigMyUpsertMutation } from '../__generated__/useAppConfigMyUpsertMutation.graphql';
-import { useAppConfigPublicQuery } from '../__generated__/useAppConfigPublicQuery.graphql';
-import { useAppConfigPublicRawQuery } from '../__generated__/useAppConfigPublicRawQuery.graphql';
+import { useSuspendedBackendaiClient } from '.';
+import { useAppConfigMergedQuery } from '../__generated__/useAppConfigMergedQuery.graphql';
+import {
+  useAppConfigScopedQuery,
+  useAppConfigScopedQuery$variables,
+} from '../__generated__/useAppConfigScopedQuery.graphql';
 import { useAppConfigUpsertMutation } from '../__generated__/useAppConfigUpsertMutation.graphql';
-import { useAppConfigUserRawQuery } from '../__generated__/useAppConfigUserRawQuery.graphql';
-import { useMutationWithPromise } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import {
+  commitMutation,
   fetchQuery,
   graphql,
   useLazyLoadQuery,
   useRelayEnvironment,
 } from 'react-relay';
+import {
+  createOperationDescriptor,
+  getRequest,
+  type IEnvironment,
+} from 'relay-runtime';
 
 /**
- * App config documents this app reads (FR-1964). Each hook fetches where it
- * is used; reads are the server-side deep-merged view across allow-listed
- * scopes. Writes replace ONE scope's whole document, so setters re-read the
- * raw document first and edit on top of it.
+ * App config documents (FR-1964): `useScopedAppConfig` reads and writes one
+ * scope's raw document, `useMyAppConfig` reads the server-side merged view.
+ * Hook layout and the write-base limit: ADR 0033.
  */
 export type AppConfigName =
   'userConfig' | 'domainConfig' | 'publicConfigByDomain';
 export type AppConfigDocument = Record<string, any>;
 
-const myQuery = graphql`
-  query useAppConfigMyQuery($configNames: [String!]!) {
+/** `scopeId` defaults to the signed-in user's domain (DOMAIN) or id (USER). */
+export type AppConfigScope =
+  | { scopeType: 'PUBLIC' }
+  | { scopeType: 'DOMAIN'; scopeId?: string }
+  | { scopeType: 'USER'; scopeId?: string };
+
+export type AppConfigSubKey = string | Array<string>;
+
+/** A sub-key's next value, or a function of its current raw value. */
+export type AppConfigUpdate = unknown | ((current: unknown) => unknown);
+
+/** Names read through the merged view: every user reads them, but only their DOMAIN/PUBLIC writers may read the raw scope. */
+export type MergedAppConfigName = 'domainConfig' | 'publicConfigByDomain';
+// One request serves every merged reader.
+const MERGED_CONFIG_NAMES: Array<MergedAppConfigName> = [
+  'domainConfig',
+  'publicConfigByDomain',
+];
+
+const mergedQuery = graphql`
+  query useAppConfigMergedQuery($configNames: [String!]!) {
     myAppConfigs(configNames: $configNames) {
       configName
       config
@@ -38,50 +60,12 @@ const myQuery = graphql`
   }
 `;
 
-const publicQuery = graphql`
-  query useAppConfigPublicQuery($configNames: [String!]!) {
-    publicAppConfigs(configNames: $configNames) {
-      configName
-      config
-    }
-  }
-`;
-
-// PUBLIC is baked into the query (not a variable) so this raw read cannot be
-// pointed at another scope; it exists solely as the public write base.
-const publicRawQuery = graphql`
-  query useAppConfigPublicRawQuery($configNames: [String!]!) {
-    scopedAppConfigFragmentsByNames(
-      scope: { scopeType: PUBLIC }
-      configNames: $configNames
-    ) {
-      id
-      configName
-      config
-    }
-  }
-`;
-
-// The domain write base: the raw DOMAIN-scope fragment, not the merged
-// `myAppConfigs` view.
-const domainRawQuery = graphql`
-  query useAppConfigDomainRawQuery($scopeId: UUID!, $configNames: [String!]!) {
-    scopedAppConfigFragmentsByNames(
-      scope: { scopeType: DOMAIN, scopeId: $scopeId }
-      configNames: $configNames
-    ) {
-      id
-      configName
-      config
-    }
-  }
-`;
-
-// The own-user write base: the raw USER-scope fragment, not the merged
-// `myAppConfigs` view (which folds domain defaults into the user doc).
-const userRawQuery = graphql`
-  query useAppConfigUserRawQuery($configNames: [String!]!) {
-    myAppConfigFragmentsByNames(configNames: $configNames) {
+const scopedQuery = graphql`
+  query useAppConfigScopedQuery(
+    $scope: AppConfigScopeRef!
+    $configNames: [String!]!
+  ) {
+    scopedAppConfigFragmentsByNames(scope: $scope, configNames: $configNames) {
       id
       configName
       config
@@ -103,28 +87,9 @@ const upsertMutation = graphql`
   }
 `;
 
-// The scoped mutation refuses `userConfig` at USER scope; the own-user write
-// goes through the `my*` mutation, which needs no scope.
-const myUpsertMutation = graphql`
-  mutation useAppConfigMyUpsertMutation(
-    $input: MyUpsertAppConfigFragmentsInput!
-  ) {
-    myAtomicBulkUpsertAppConfigFragments(input: $input) {
-      items {
-        id
-        configName
-        config
-      }
-    }
-  }
-`;
-
-/** A sub-key's next value, or a function of its current raw value. */
-export type AppConfigUpdate = unknown | ((current: unknown) => unknown);
-
 const applySubKey = (
   base: AppConfigDocument,
-  subKey: string | Array<string>,
+  subKey: AppConfigSubKey,
   update: AppConfigUpdate,
 ): AppConfigDocument => {
   const next = _.cloneDeep(base);
@@ -138,239 +103,166 @@ const applySubKey = (
   return next;
 };
 
+// The upsert replaces the whole document, so two overlapping writes to one
+// document would drop a change: each runs after the previous one settles.
+const writeQueues = new Map<string, Promise<unknown>>();
+const serializeWrite = <T>(
+  doc: string,
+  write: () => Promise<T>,
+): Promise<T> => {
+  const next = (writeQueues.get(doc) ?? Promise.resolve()).then(write, write);
+  writeQueues.set(
+    doc,
+    next.catch(() => undefined),
+  );
+  return next;
+};
+
+/** The document as the store holds it now; read again when Relay has collected it. */
+const readDocument = async (
+  environment: IEnvironment,
+  variables: useAppConfigScopedQuery$variables,
+): Promise<AppConfigDocument> => {
+  const operation = createOperationDescriptor(
+    getRequest(scopedQuery),
+    variables,
+  );
+  const snapshot = environment.lookup(operation.fragment);
+  const data = snapshot.isMissingData
+    ? await fetchQuery<useAppConfigScopedQuery>(
+        environment,
+        scopedQuery,
+        variables,
+        { fetchPolicy: 'network-only' },
+      ).toPromise()
+    : (snapshot.data as useAppConfigScopedQuery['response']);
+  return (data?.scopedAppConfigFragmentsByNames?.[0]?.config ??
+    {}) as AppConfigDocument;
+};
+
+const upsertDocument = (
+  environment: IEnvironment,
+  variables: useAppConfigScopedQuery$variables,
+  config: AppConfigDocument,
+) =>
+  new Promise<void>((resolve, reject) => {
+    commitMutation<useAppConfigUpsertMutation>(environment, {
+      mutation: upsertMutation,
+      variables: {
+        input: {
+          scope: variables.scope,
+          items: [{ configName: variables.configNames[0], config }],
+        },
+      },
+      // The response updates an existing fragment by id; a first write has
+      // nothing to update, so link the created fragment where the read found null.
+      updater: (store) => {
+        const root = store.getRoot();
+        const read = root.getLinkedRecords(
+          'scopedAppConfigFragmentsByNames',
+          variables,
+        );
+        if (read?.[0]) return;
+        const created = store
+          .getRootField('scopedAtomicBulkUpsertAppConfigFragments')
+          ?.getLinkedRecords('items')?.[0];
+        if (created) {
+          root.setLinkedRecords(
+            [created],
+            'scopedAppConfigFragmentsByNames',
+            variables,
+          );
+        }
+      },
+      onCompleted: (_response, errors) => {
+        if (errors) {
+          reject(new Error(errors.map((e) => e.message).join('\n')));
+        } else {
+          resolve();
+        }
+      },
+      onError: reject,
+    });
+  });
+
+const refetchMergedView = (environment: IEnvironment) =>
+  fetchQuery<useAppConfigMergedQuery>(
+    environment,
+    mergedQuery,
+    { configNames: MERGED_CONFIG_NAMES },
+    { fetchPolicy: 'network-only' },
+  ).toPromise();
+
 /**
- * The current user's personal config (`userConfig`), merged server-side
- * across the allow-listed scopes (domain defaults < own overrides). Read
- * only. Suspends; post-login surfaces inside `RelayEnvironmentProvider`
- * only.
+ * One scope's raw document, read once per mount and kept current from the
+ * upsert responses. `setKey` sends that document with one sub-key replaced
+ * (`undefined` removes it) as a single upsert. A `domainConfig` write also
+ * refetches the merged view its every-user readers use. Suspends; post-login
+ * surfaces only. DOMAIN is readable by superadmins only.
+ */
+export const useScopedAppConfig = <T = AppConfigDocument>(
+  scope: AppConfigScope,
+  configName: AppConfigName,
+) => {
+  'use memo';
+  const relayEnv = useRelayEnvironment();
+  const baiClient = useSuspendedBackendaiClient();
+  const scopeId =
+    scope.scopeType === 'PUBLIC'
+      ? undefined
+      : (scope.scopeId ??
+        (scope.scopeType === 'DOMAIN'
+          ? baiClient._config.domainId
+          : baiClient.user_uuid));
+  const variables: useAppConfigScopedQuery$variables = {
+    scope:
+      scopeId === undefined
+        ? { scopeType: scope.scopeType }
+        : { scopeType: scope.scopeType, scopeId },
+    configNames: [configName],
+  };
+  const data = useLazyLoadQuery<useAppConfigScopedQuery>(
+    scopedQuery,
+    variables,
+    { fetchPolicy: 'store-and-network' },
+  );
+  const doc = (data.scopedAppConfigFragmentsByNames[0]?.config ?? undefined) as
+    T | undefined;
+
+  const setKey = (subKey: AppConfigSubKey, update: AppConfigUpdate) =>
+    serializeWrite(
+      `${scope.scopeType}:${scopeId ?? ''}:${configName}`,
+      async () => {
+        const base = await readDocument(relayEnv, variables);
+        await upsertDocument(
+          relayEnv,
+          variables,
+          applySubKey(base, subKey, update),
+        );
+        if (configName === 'domainConfig') {
+          // The write has landed; a failed refetch only leaves the merged view stale.
+          await refetchMergedView(relayEnv).catch(() => undefined);
+        }
+      },
+    );
+
+  return { doc, setKey };
+};
+
+/**
+ * The signed-in user's merged view of `domainConfig` or
+ * `publicConfigByDomain` (pass `[domainName, ...]` for a domain's slice).
+ * Read only. Suspends; post-login surfaces only.
  */
 export const useMyAppConfig = <T = AppConfigDocument>(
-  subKey?: string | Array<string>,
+  configName: MergedAppConfigName,
+  subKey?: AppConfigSubKey,
 ): T | undefined => {
   'use memo';
-  const data = useLazyLoadQuery<useAppConfigMyQuery>(myQuery, {
-    configNames: ['userConfig'],
+  const data = useLazyLoadQuery<useAppConfigMergedQuery>(mergedQuery, {
+    configNames: MERGED_CONFIG_NAMES,
   });
-  const doc = data?.myAppConfigs?.find((c) => c.configName === 'userConfig')
+  const doc = data.myAppConfigs.find((c) => c.configName === configName)
     ?.config as AppConfigDocument | undefined;
   return (subKey === undefined ? doc : _.get(doc, subKey)) as T | undefined;
-};
-
-/**
- * The domain-wide config (`domainConfig`) readable by every signed-in user
- * of the domain (admin-writable only). Read only. Suspends; post-login
- * surfaces inside `RelayEnvironmentProvider` only.
- */
-export const useDomainAppConfig = <T = AppConfigDocument>(
-  subKey?: string | Array<string>,
-): T | undefined => {
-  'use memo';
-  const data = useLazyLoadQuery<useAppConfigMyQuery>(myQuery, {
-    configNames: ['domainConfig'],
-  });
-  const doc = data.myAppConfigs.find((c) => c.configName === 'domainConfig')
-    ?.config as AppConfigDocument | undefined;
-  return (subKey === undefined ? doc : _.get(doc, subKey)) as T | undefined;
-};
-
-/**
- * The current domain's slice of `publicConfigByDomain`, the installation-wide
- * document every user can read. Read only. Suspends; post-login surfaces
- * inside `RelayEnvironmentProvider` only (the pre-login theme read is REST).
- */
-export const usePublicDomainAppConfig = <T = AppConfigDocument>(
-  subKey?: string | Array<string>,
-): T | undefined => {
-  'use memo';
-  const currentDomainName = useCurrentDomainValue();
-  const data = useLazyLoadQuery<useAppConfigPublicQuery>(publicQuery, {
-    configNames: ['publicConfigByDomain'],
-  });
-  const doc = data.publicAppConfigs.find(
-    (c) => c.configName === 'publicConfigByDomain',
-  )?.config as AppConfigDocument | undefined;
-  const slice = _.get(doc, [currentDomainName]) as
-    AppConfigDocument | undefined;
-  return (subKey === undefined ? slice : _.get(slice, subKey)) as T | undefined;
-};
-
-/**
- * Superadmin read of one domain's slice of `publicConfigByDomain` — the raw
- * PUBLIC document, so it is the edit base for the public setters. Post-login
- * admin surfaces only.
- */
-export const useRawPublicDomainAppConfig = <T = AppConfigDocument>(
-  subKey?: string | Array<string>,
-  domainName?: string,
-): T | undefined => {
-  'use memo';
-  const currentDomainName = useCurrentDomainValue();
-  const data = useLazyLoadQuery<useAppConfigPublicRawQuery>(
-    publicRawQuery,
-    { configNames: ['publicConfigByDomain'] },
-    { fetchPolicy: 'network-only' },
-  );
-  const doc = data?.scopedAppConfigFragmentsByNames?.[0]?.config as
-    AppConfigDocument | undefined;
-  const slice = _.get(doc, [domainName ?? currentDomainName]);
-  return (subKey === undefined ? slice : _.get(slice, subKey)) as T | undefined;
-};
-
-/**
- * Superadmin setter for ONE domain's slice of `publicConfigByDomain`:
- * re-reads the raw public document and replaces only `[domainName, ...subKey]`
- * so other domains' slices survive the whole-document write. Post-login admin
- * surfaces only. The anonymous read path picks the new document up on the
- * next load — the caller reloads for the own session (FR-1964).
- */
-export const useUpdatePublicDomainAppConfig = () => {
-  'use memo';
-  const relayEnv = useRelayEnvironment();
-  const currentDomainName = useCurrentDomainValue();
-  const upsert =
-    useMutationWithPromise<useAppConfigUpsertMutation>(upsertMutation);
-
-  return async (
-    subKey: string | Array<string>,
-    nextValue: AppConfigUpdate,
-    domainName?: string,
-  ) => {
-    const targetDomainName = domainName ?? currentDomainName;
-    const raw = await fetchQuery<useAppConfigPublicRawQuery>(
-      relayEnv,
-      publicRawQuery,
-      { configNames: ['publicConfigByDomain'] },
-      { fetchPolicy: 'network-only' },
-    ).toPromise();
-    const rawDoc =
-      (raw?.scopedAppConfigFragmentsByNames?.[0]?.config as
-        AppConfigDocument | undefined) ?? {};
-    await upsert({
-      input: {
-        scope: { scopeType: 'PUBLIC' },
-        items: [
-          {
-            configName: 'publicConfigByDomain',
-            config: applySubKey(
-              rawDoc,
-              [targetDomainName, ..._.toPath(subKey)],
-              nextValue,
-            ),
-          },
-        ],
-      },
-    });
-  };
-};
-
-/**
- * Admin setter for the current domain's `domainConfig` fragment: re-reads
- * the raw DOMAIN-scope document and replaces only `subKey` (`undefined`
- * removes it). Then refetches the merged `domainConfig` view so every
- * `useDomainAppConfig` reader updates without a reload. Post-login admin
- * surfaces only.
- */
-export const useUpdateDomainAppConfig = () => {
-  'use memo';
-  const relayEnv = useRelayEnvironment();
-  const { id: scopeId } = useCurrentDomain();
-  const upsert =
-    useMutationWithPromise<useAppConfigUpsertMutation>(upsertMutation);
-
-  return async (subKey: string | Array<string>, nextValue: AppConfigUpdate) => {
-    const raw = await fetchQuery<useAppConfigDomainRawQuery>(
-      relayEnv,
-      domainRawQuery,
-      { scopeId, configNames: ['domainConfig'] },
-      { fetchPolicy: 'network-only' },
-    ).toPromise();
-    const rawDoc =
-      (raw?.scopedAppConfigFragmentsByNames?.[0]?.config as
-        AppConfigDocument | undefined) ?? {};
-    await upsert({
-      input: {
-        scope: { scopeType: 'DOMAIN', scopeId },
-        items: [
-          {
-            configName: 'domainConfig',
-            config: applySubKey(
-              rawDoc,
-              _.toPath(subKey),
-              typeof nextValue === 'function'
-                ? nextValue(_.get(rawDoc, subKey))
-                : nextValue,
-            ),
-          },
-        ],
-      },
-    });
-    await fetchQuery<useAppConfigMyQuery>(
-      relayEnv,
-      myQuery,
-      { configNames: ['domainConfig'] },
-      { fetchPolicy: 'network-only' },
-    ).toPromise();
-  };
-};
-
-/**
- * Refetches the merged `userConfig` view so every `useMyAppConfig` reader
- * picks up a write made with `useUpdateMyUserAppConfig`.
- */
-export const useRefetchMyAppConfig = () => {
-  'use memo';
-  const relayEnv = useRelayEnvironment();
-
-  return async () => {
-    await fetchQuery<useAppConfigMyQuery>(
-      relayEnv,
-      myQuery,
-      { configNames: ['userConfig'] },
-      { fetchPolicy: 'network-only' },
-    ).toPromise();
-  };
-};
-
-/**
- * Setter for the current user's own `userConfig` fragment: re-reads the raw
- * USER-scope document (not the merged view) and replaces only `subKey`. A
- * function `nextValue` receives the re-read value at `subKey`.
- * Post-login surfaces only.
- */
-export const useUpdateMyUserAppConfig = () => {
-  'use memo';
-  const relayEnv = useRelayEnvironment();
-  const upsert =
-    useMutationWithPromise<useAppConfigMyUpsertMutation>(myUpsertMutation);
-
-  return async (
-    subKey: string | Array<string>,
-    nextValue: unknown | ((current: unknown) => unknown),
-  ) => {
-    const raw = await fetchQuery<useAppConfigUserRawQuery>(
-      relayEnv,
-      userRawQuery,
-      { configNames: ['userConfig'] },
-      { fetchPolicy: 'network-only' },
-    ).toPromise();
-    const rawDoc =
-      (raw?.myAppConfigFragmentsByNames?.[0]?.config as
-        AppConfigDocument | undefined) ?? {};
-    await upsert({
-      input: {
-        items: [
-          {
-            configName: 'userConfig',
-            config: applySubKey(
-              rawDoc,
-              _.toPath(subKey),
-              typeof nextValue === 'function'
-                ? nextValue(_.get(rawDoc, subKey))
-                : nextValue,
-            ),
-          },
-        ],
-      },
-    });
-  };
 };

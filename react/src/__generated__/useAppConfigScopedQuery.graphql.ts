@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<09bf8a0f63ad5f2e17a0ffce88af9582>>
+ * @generated SignedSource<<14ec2f16d37ed53d2892b82a40f8b488>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,20 +9,25 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
-export type useAppConfigDomainRawQuery$variables = {
-  configNames: ReadonlyArray<string>;
-  scopeId: string;
+export type AppConfigScopeType = "DOMAIN" | "PUBLIC" | "USER" | "%future added value";
+export type AppConfigScopeRef = {
+  scopeId?: string | null | undefined;
+  scopeType: AppConfigScopeType;
 };
-export type useAppConfigDomainRawQuery$data = {
+export type useAppConfigScopedQuery$variables = {
+  configNames: ReadonlyArray<string>;
+  scope: AppConfigScopeRef;
+};
+export type useAppConfigScopedQuery$data = {
   readonly scopedAppConfigFragmentsByNames: ReadonlyArray<{
     readonly config: any;
     readonly configName: string;
     readonly id: string;
   } | null | undefined>;
 };
-export type useAppConfigDomainRawQuery = {
-  response: useAppConfigDomainRawQuery$data;
-  variables: useAppConfigDomainRawQuery$variables;
+export type useAppConfigScopedQuery = {
+  response: useAppConfigScopedQuery$data;
+  variables: useAppConfigScopedQuery$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -34,7 +39,7 @@ var v0 = {
 v1 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "scopeId"
+  "name": "scope"
 },
 v2 = [
   {
@@ -46,20 +51,9 @@ v2 = [
         "variableName": "configNames"
       },
       {
-        "fields": [
-          {
-            "kind": "Variable",
-            "name": "scopeId",
-            "variableName": "scopeId"
-          },
-          {
-            "kind": "Literal",
-            "name": "scopeType",
-            "value": "DOMAIN"
-          }
-        ],
-        "kind": "ObjectValue",
-        "name": "scope"
+        "kind": "Variable",
+        "name": "scope",
+        "variableName": "scope"
       }
     ],
     "concreteType": "AppConfigFragment",
@@ -100,7 +94,7 @@ return {
     ],
     "kind": "Fragment",
     "metadata": null,
-    "name": "useAppConfigDomainRawQuery",
+    "name": "useAppConfigScopedQuery",
     "selections": (v2/*: any*/),
     "type": "Query",
     "abstractKey": null
@@ -112,20 +106,20 @@ return {
       (v0/*: any*/)
     ],
     "kind": "Operation",
-    "name": "useAppConfigDomainRawQuery",
+    "name": "useAppConfigScopedQuery",
     "selections": (v2/*: any*/)
   },
   "params": {
-    "cacheID": "1d361fa75e2154bda74a382fd8621e51",
+    "cacheID": "8df627dc07cf71c155c9574a29909539",
     "id": null,
     "metadata": {},
-    "name": "useAppConfigDomainRawQuery",
+    "name": "useAppConfigScopedQuery",
     "operationKind": "query",
-    "text": "query useAppConfigDomainRawQuery(\n  $scopeId: UUID!\n  $configNames: [String!]!\n) {\n  scopedAppConfigFragmentsByNames(scope: {scopeType: DOMAIN, scopeId: $scopeId}, configNames: $configNames) {\n    id\n    configName\n    config\n  }\n}\n"
+    "text": "query useAppConfigScopedQuery(\n  $scope: AppConfigScopeRef!\n  $configNames: [String!]!\n) {\n  scopedAppConfigFragmentsByNames(scope: $scope, configNames: $configNames) {\n    id\n    configName\n    config\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "da4a8cf295f7377e3ce13a08a869b0f1";
+(node as any).hash = "424ad6669b7b8634f23be1e99a6f39b0";
 
 export default node;

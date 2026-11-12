@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<ef194d8d6ebebf50b7eaecd4f6c669ef>>
+ * @generated SignedSource<<202bfd18b3bfada0e94ea7f919a1010b>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,18 +9,18 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
-export type useAppConfigMyQuery$variables = {
+export type useAppConfigMergedQuery$variables = {
   configNames: ReadonlyArray<string>;
 };
-export type useAppConfigMyQuery$data = {
+export type useAppConfigMergedQuery$data = {
   readonly myAppConfigs: ReadonlyArray<{
     readonly config: any;
     readonly configName: string;
   }>;
 };
-export type useAppConfigMyQuery = {
-  response: useAppConfigMyQuery$data;
-  variables: useAppConfigMyQuery$variables;
+export type useAppConfigMergedQuery = {
+  response: useAppConfigMergedQuery$data;
+  variables: useAppConfigMergedQuery$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -69,7 +69,7 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "useAppConfigMyQuery",
+    "name": "useAppConfigMergedQuery",
     "selections": (v1/*: any*/),
     "type": "Query",
     "abstractKey": null
@@ -78,20 +78,20 @@ return {
   "operation": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "useAppConfigMyQuery",
+    "name": "useAppConfigMergedQuery",
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "9e89356de6cfbbec3c5ab6a3abae5ccc",
+    "cacheID": "490bda848adf705d273fc8080738c410",
     "id": null,
     "metadata": {},
-    "name": "useAppConfigMyQuery",
+    "name": "useAppConfigMergedQuery",
     "operationKind": "query",
-    "text": "query useAppConfigMyQuery(\n  $configNames: [String!]!\n) {\n  myAppConfigs(configNames: $configNames) {\n    configName\n    config\n  }\n}\n"
+    "text": "query useAppConfigMergedQuery(\n  $configNames: [String!]!\n) {\n  myAppConfigs(configNames: $configNames) {\n    configName\n    config\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "202cdeea55d7128e47305776c0859d4f";
+(node as any).hash = "9873ab8c1b945548a665462a65d57bba";
 
 export default node;
