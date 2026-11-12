@@ -3853,6 +3853,7 @@
     "AdminOnlyPage": "Você não tem permissão para acessar esta página.",
     "CleanUpLoginSession": "Limpar sessão de login ...",
     "CleanUpNow": "Limpe agora ...",
+    "ConfigLoadFailedSessionEnded": "Não foi possível carregar a configuração da Web UI. A sua sessão foi terminada. Inicie sessão novamente.",
     "DescNotFound": "Desculpe, a página que você está procurando não foi encontrada.",
     "NetworkSoftTimeout": "O servidor está a demorar mais tempo a responder. Por favor, aguarde um momento",
     "NotFound": "Ops! <br/> Página não encontrada ...",

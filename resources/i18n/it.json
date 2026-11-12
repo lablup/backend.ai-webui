@@ -3851,6 +3851,7 @@
     "AdminOnlyPage": "Non hai l'autorizzazione per accedere a questa pagina.",
     "CleanUpLoginSession": "Pulisci sessione di accesso...",
     "CleanUpNow": "Pulisci ora...",
+    "ConfigLoadFailedSessionEnded": "Impossibile caricare la configurazione della Web UI. Sei stato disconnesso. Accedi di nuovo.",
     "DescNotFound": "Siamo spiacenti, la pagina che stai cercando non è stata trovata.",
     "NetworkSoftTimeout": "Il server sta impiegando più tempo per rispondere. Attendere un momento",
     "NotFound": "Ops! <br/> Pagina non trovata...",

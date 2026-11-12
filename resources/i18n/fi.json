@@ -3851,6 +3851,7 @@
     "AdminOnlyPage": "Sinulla ei ole oikeuksia käyttää tätä sivua.",
     "CleanUpLoginSession": "Siivoa kirjautumisistunto...",
     "CleanUpNow": "Siivoa nyt...",
+    "ConfigLoadFailedSessionEnded": "Web UI:n asetuksia ei voitu ladata. Sinut on kirjattu ulos. Kirjaudu sisään uudelleen.",
     "DescNotFound": "Valitettavasti etsimääsi sivua ei löytynyt.",
     "NetworkSoftTimeout": "Palvelimen vastaus kestää kauemmin. Odota hetki",
     "NotFound": "Oops!<br/>Sivua ei löydy...",

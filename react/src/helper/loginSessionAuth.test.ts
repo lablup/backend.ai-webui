@@ -15,7 +15,7 @@ vi.mock('../hooks/useWebUIConfig', async () => {
   return {
     __esModule: true,
     fetchAndParseConfig: vi.fn(),
-    refreshConfigAfterLogin: vi.fn().mockResolvedValue(true),
+    refreshConfigAfterLogin: vi.fn().mockResolvedValue('refreshed'),
     didLastConfigRefreshFail: vi.fn().mockReturnValue(false),
     loginConfigState: atom<LoginConfigState | null>(null),
   };
@@ -197,7 +197,7 @@ describe('connectViaGQL — post-login config re-fetch (#10912)', () => {
         store.set(loginConfigState, {
           proxy_url: 'http://refreshed:5050/',
         } as LoginConfigState);
-        return true;
+        return 'refreshed';
       },
     );
 
@@ -220,7 +220,7 @@ describe('connectViaGQL — post-login config re-fetch (#10912)', () => {
       set: vi.fn(),
     };
     const client = successClient();
-    vi.mocked(refreshConfigAfterLogin).mockResolvedValue(false);
+    vi.mocked(refreshConfigAfterLogin).mockResolvedValue('failed');
 
     const logoutEvent = new Promise<CustomEvent>((resolve) => {
       document.addEventListener('backend-ai-logout', resolve as EventListener, {
@@ -234,6 +234,28 @@ describe('connectViaGQL — post-login config re-fetch (#10912)', () => {
     expect(event.type).toBe('backend-ai-logout');
     // applyConfigToClient ran once with the truncated pre-login config; the
     // refreshed re-apply is skipped because the session is being ended.
+    expect(applyConfigToClient).toHaveBeenCalledTimes(1);
+  });
+
+  it('keeps the session and the pre-login config when there was nothing to re-read', async () => {
+    (globalThis as Record<string, unknown>).backendaiutils = {
+      _readRecentProjectGroup: vi.fn().mockReturnValue(null),
+    };
+    (globalThis as Record<string, unknown>).backendaioptions = {
+      set: vi.fn(),
+    };
+    const client = successClient();
+    vi.mocked(refreshConfigAfterLogin).mockResolvedValue('unchanged');
+    const onLogout = vi.fn();
+    document.addEventListener('backend-ai-logout', onLogout);
+
+    try {
+      await connectViaGQL(client, cfg, []);
+    } finally {
+      document.removeEventListener('backend-ai-logout', onLogout);
+    }
+
+    expect(onLogout).not.toHaveBeenCalled();
     expect(applyConfigToClient).toHaveBeenCalledTimes(1);
   });
 

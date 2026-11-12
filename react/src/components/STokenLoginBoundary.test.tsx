@@ -56,6 +56,7 @@ vi.mock('../hooks/useWebUIConfig', async () => {
     __esModule: true,
     loginConfigState: atom(null),
     initializeConfigOnce: vi.fn().mockResolvedValue(undefined),
+    didLastConfigRefreshFail: vi.fn().mockReturnValue(false),
   };
 });
 

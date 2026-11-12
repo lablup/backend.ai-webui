@@ -335,17 +335,34 @@ describe('refreshConfigAfterLogin', () => {
     delete (globalThis as Record<string, unknown>).isElectron;
   });
 
+  // A store holding the truncated pre-login document the webserver serves.
+  function preLoginStore() {
+    const store = createStore();
+    store.set(rawConfigState, {
+      general: { apiEndpoint: 'https://api.example.com' },
+    });
+    store.set(proxyUrlState, 'http://keep:5050');
+    return store;
+  }
+
+  async function runWithTimers<T>(promise: Promise<T>, ms: number) {
+    vi.useFakeTimers();
+    try {
+      await vi.advanceTimersByTimeAsync(ms);
+      return await promise;
+    } finally {
+      vi.useRealTimers();
+    }
+  }
+
   it('re-reads config.toml and populates the previously missing values', async () => {
     const { refreshConfigAfterLogin, configParseErrorState } =
       await import('./useWebUIConfig');
-    // Pre-login: the truncated document has no wsproxy section (the webserver
-    // serves only the login-screen fields before login).
-    const preLoginToml = '[general]\napiEndpoint = "https://api.example.com"';
-    mockFetch(200, preLoginToml);
-    const store = createStore();
-    await refreshConfigAfterLogin(store);
-
-    const postLoginToml = `
+    const store = preLoginStore();
+    store.set(configParseErrorState, new Error('earlier attempt'));
+    mockFetch(
+      200,
+      `
 [general]
 apiEndpoint = "https://api.example.com"
 
@@ -358,9 +375,10 @@ validUntil = "2030-12-31"
 
 [plugin]
 login = "custom-login"
-`;
-    mockFetch(200, postLoginToml);
-    await refreshConfigAfterLogin(store);
+`,
+    );
+
+    await expect(refreshConfigAfterLogin(store)).resolves.toBe('refreshed');
 
     expect(store.get(proxyUrlState)).toBe('http://127.0.0.1:5050/');
     expect(store.get(loginPluginState)).toBe('custom-login');
@@ -373,49 +391,111 @@ login = "custom-login"
     expect(store.get(configParseErrorState)).toBeNull();
   });
 
+  it('leaves the defaults alone when there was no config.toml before login', async () => {
+    const { refreshConfigAfterLogin, didLastConfigRefreshFail } =
+      await import('./useWebUIConfig');
+    const store = createStore();
+    global.fetch = vi.fn();
+
+    await expect(refreshConfigAfterLogin(store)).resolves.toBe('unchanged');
+
+    expect(global.fetch).not.toHaveBeenCalled();
+    expect(didLastConfigRefreshFail()).toBe(false);
+  });
+
+  it('skips the re-read on Electron, keeping the merged webserver config', async () => {
+    const { refreshConfigAfterLogin } = await import('./useWebUIConfig');
+    (globalThis as Record<string, unknown>).isElectron = true;
+    const store = preLoginStore();
+    global.fetch = vi.fn();
+
+    await expect(refreshConfigAfterLogin(store)).resolves.toBe('unchanged');
+
+    expect(global.fetch).not.toHaveBeenCalled();
+    expect(store.get(proxyUrlState)).toBe('http://keep:5050');
+  });
+
+  it('waits for an in-flight bootstrap so it cannot overwrite the refresh', async () => {
+    const { refreshConfigAfterLogin, initializeConfigOnce } =
+      await import('./useWebUIConfig');
+    const store = createStore();
+    let releaseBootstrap!: () => void;
+    global.fetch = vi
+      .fn()
+      .mockImplementationOnce(
+        () =>
+          new Promise<Response>((resolve) => {
+            releaseBootstrap = () =>
+              resolve({
+                status: 200,
+                text: () =>
+                  Promise.resolve(
+                    '[general]\napiEndpoint = "https://api.example.com"',
+                  ),
+                headers: new Headers({
+                  'content-type': 'application/octet-stream',
+                }),
+              } as unknown as Response);
+          }),
+      )
+      .mockResolvedValue({
+        status: 200,
+        text: () =>
+          Promise.resolve('[wsproxy]\nproxyURL = "http://post-login:5050/"'),
+        headers: new Headers({ 'content-type': 'application/octet-stream' }),
+      } as unknown as Response);
+
+    const bootstrap = initializeConfigOnce(store, { error() {}, warn() {} });
+    const refresh = refreshConfigAfterLogin(store);
+    releaseBootstrap();
+    await bootstrap;
+
+    await expect(refresh).resolves.toBe('refreshed');
+    expect(store.get(proxyUrlState)).toBe('http://post-login:5050/');
+  });
+
   it('keeps the pre-login state when the re-fetch finds no config', async () => {
     const { refreshConfigAfterLogin } = await import('./useWebUIConfig');
-    const store = createStore();
-    store.set(proxyUrlState, 'http://keep:5050');
-
+    const store = preLoginStore();
     mockFetch(404, '');
-    vi.useFakeTimers();
-    try {
-      const promise = refreshConfigAfterLogin(store);
-      await vi.advanceTimersByTimeAsync(2000);
-      await promise;
-    } finally {
-      vi.useRealTimers();
-    }
+
+    await expect(
+      runWithTimers(refreshConfigAfterLogin(store), 2000),
+    ).resolves.toBe('failed');
 
     expect(store.get(proxyUrlState)).toBe('http://keep:5050');
     expect(store.get(configLoadedState)).toBe(false);
   });
 
+  it('treats an empty document as a failed read, not as a config', async () => {
+    const { refreshConfigAfterLogin } = await import('./useWebUIConfig');
+    const store = preLoginStore();
+    mockFetch(200, '');
+
+    await expect(
+      runWithTimers(refreshConfigAfterLogin(store), 2000),
+    ).resolves.toBe('failed');
+
+    expect(store.get(proxyUrlState)).toBe('http://keep:5050');
+    expect(store.get(loginConfigState)).toBeNull();
+  });
+
   it('records a parse error but keeps the pre-login state', async () => {
     const { refreshConfigAfterLogin, configParseErrorState } =
       await import('./useWebUIConfig');
-    const store = createStore();
-    store.set(proxyUrlState, 'http://keep:5050');
-
+    const store = preLoginStore();
     mockFetch(200, '[general]\ninvalid toml = = =');
-    vi.useFakeTimers();
-    try {
-      const promise = refreshConfigAfterLogin(store);
-      await vi.advanceTimersByTimeAsync(2000);
-      await promise;
-    } finally {
-      vi.useRealTimers();
-    }
 
-    expect(store.get(configParseErrorState)).toBeDefined();
+    await runWithTimers(refreshConfigAfterLogin(store), 2000);
+
+    expect(store.get(configParseErrorState)).toBeTruthy();
     expect(store.get(proxyUrlState)).toBe('http://keep:5050');
   });
 
   it('retries and succeeds on a later attempt', async () => {
     const { refreshConfigAfterLogin, didLastConfigRefreshFail } =
       await import('./useWebUIConfig');
-    const store = createStore();
+    const store = preLoginStore();
     const tomlContent = '[general]\napiEndpoint = "https://api.example.com"';
     global.fetch = vi
       .fn()
@@ -427,14 +507,9 @@ login = "custom-login"
         headers: new Headers({ 'content-type': 'application/octet-stream' }),
       } as unknown as Response);
 
-    vi.useFakeTimers();
-    try {
-      const promise = refreshConfigAfterLogin(store);
-      await vi.advanceTimersByTimeAsync(2000);
-      await expect(promise).resolves.toBe(true);
-    } finally {
-      vi.useRealTimers();
-    }
+    await expect(
+      runWithTimers(refreshConfigAfterLogin(store), 2000),
+    ).resolves.toBe('refreshed');
 
     expect(global.fetch).toHaveBeenCalledTimes(3);
     expect(store.get(configLoadedState)).toBe(true);
@@ -444,18 +519,12 @@ login = "custom-login"
   it('gives up after all attempts fail and flags the failure', async () => {
     const { refreshConfigAfterLogin, didLastConfigRefreshFail } =
       await import('./useWebUIConfig');
-    const store = createStore();
-    store.set(proxyUrlState, 'http://keep:5050');
+    const store = preLoginStore();
     global.fetch = vi.fn().mockRejectedValue(new Error('network down'));
 
-    vi.useFakeTimers();
-    try {
-      const promise = refreshConfigAfterLogin(store);
-      await vi.advanceTimersByTimeAsync(2000);
-      await expect(promise).resolves.toBe(false);
-    } finally {
-      vi.useRealTimers();
-    }
+    await expect(
+      runWithTimers(refreshConfigAfterLogin(store), 2000),
+    ).resolves.toBe('failed');
 
     expect(global.fetch).toHaveBeenCalledTimes(3);
     expect(store.get(proxyUrlState)).toBe('http://keep:5050');
@@ -463,11 +532,11 @@ login = "custom-login"
     expect(didLastConfigRefreshFail()).toBe(true);
   });
 
-  it('aborts an attempt that exceeds the per-attempt timeout', async () => {
+  it('aborts an attempt whose fetch exceeds the per-attempt timeout', async () => {
     const { refreshConfigAfterLogin } = await import('./useWebUIConfig');
-    const store = createStore();
-    // A fetch that never resolves on its own: only the AbortController
-    // timeout can end each attempt.
+    const store = preLoginStore();
+    const warn = vi.fn();
+    // Only the AbortController timeout can end each attempt.
     const hangingFetch = (
       _input: unknown,
       init?: { signal?: AbortSignal },
@@ -479,15 +548,30 @@ login = "custom-login"
       });
     global.fetch = vi.fn(hangingFetch as unknown as typeof fetch);
 
-    vi.useFakeTimers();
-    try {
-      const promise = refreshConfigAfterLogin(store);
-      // 3 attempts x 5s timeout + 500ms/1000ms backoff between them.
-      await vi.advanceTimersByTimeAsync(17000);
-      await expect(promise).resolves.toBe(false);
-    } finally {
-      vi.useRealTimers();
-    }
+    // 3 attempts x 5s timeout + 500ms/1000ms backoff between them.
+    await expect(
+      runWithTimers(
+        refreshConfigAfterLogin(store, { error() {}, warn }),
+        17000,
+      ),
+    ).resolves.toBe('failed');
+
+    expect(global.fetch).toHaveBeenCalledTimes(3);
+    expect(warn).toHaveBeenCalledWith(expect.stringContaining('timed out'));
+  });
+
+  it('aborts an attempt whose body read stalls past the timeout', async () => {
+    const { refreshConfigAfterLogin } = await import('./useWebUIConfig');
+    const store = preLoginStore();
+    global.fetch = vi.fn().mockResolvedValue({
+      status: 200,
+      text: () => new Promise<string>(() => {}),
+      headers: new Headers({ 'content-type': 'application/octet-stream' }),
+    } as unknown as Response);
+
+    await expect(
+      runWithTimers(refreshConfigAfterLogin(store), 17000),
+    ).resolves.toBe('failed');
 
     expect(global.fetch).toHaveBeenCalledTimes(3);
   });

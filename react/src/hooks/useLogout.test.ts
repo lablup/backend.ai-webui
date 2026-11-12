@@ -393,6 +393,28 @@ describe('useLogoutEventListeners', () => {
     addSpy.mockRestore();
   });
 
+  it('shows the message a backend-ai-logout event carries instead of the default', async () => {
+    const messages: string[] = [];
+    const onNotification = (e: Event) =>
+      messages.push((e as CustomEvent).detail.message);
+    document.addEventListener('add-bai-notification', onNotification);
+
+    const { unmount } = renderHook(() => useLogoutEventListeners(), {
+      wrapper,
+    });
+    await act(async () => {
+      document.dispatchEvent(
+        new CustomEvent('backend-ai-logout', {
+          detail: { message: 'config could not be loaded' },
+        }),
+      );
+    });
+
+    unmount();
+    document.removeEventListener('add-bai-notification', onNotification);
+    expect(messages[0]).toBe('config could not be loaded');
+  });
+
   it('removes backend-ai-logout listener on unmount', () => {
     const removeSpy = vi.spyOn(document, 'removeEventListener');
 

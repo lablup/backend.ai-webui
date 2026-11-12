@@ -3855,6 +3855,7 @@
     "AdminOnlyPage": "您沒有權限存取此頁面。",
     "CleanUpLoginSession": "清理登錄會話...",
     "CleanUpNow": "現在清理...",
+    "ConfigLoadFailedSessionEnded": "無法載入 WebUI 設定，您已登出。請重新登入。",
     "DescNotFound": "抱歉，找不到您要找的頁面。",
     "NetworkSoftTimeout": "服务器响应时间较长。请稍候",
     "NotFound": "糟糕！ <br/> 頁面未找到...",

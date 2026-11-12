@@ -138,6 +138,18 @@ function preprocessToml(config: RawTomlConfig): void {
 interface ConfigFetchResult {
   config: RawTomlConfig | null;
   error?: unknown;
+  /** The `signal` aborted the fetch or the body read. */
+  aborted?: boolean;
+}
+
+/** Rejects once `signal` aborts, so a stalled body read cannot outlive it. */
+function rejectOnAbort(signal: AbortSignal): Promise<never> {
+  return new Promise((_resolve, reject) => {
+    if (signal.aborted) reject(signal.reason);
+    signal.addEventListener('abort', () => reject(signal.reason), {
+      once: true,
+    });
+  });
 }
 
 /**
@@ -153,7 +165,7 @@ export async function fetchAndParseConfig(
     res = await fetch(configPath, signal ? { signal } : undefined);
   } catch {
     // Network / fetch error — treat as missing config (no error field).
-    return { config: null };
+    return signal?.aborted ? { config: null, aborted: true } : { config: null };
   }
 
   if (res.status !== 200) {
@@ -168,8 +180,16 @@ export async function fetchAndParseConfig(
     return { config: null };
   }
 
+  let text: string;
   try {
-    const text = await res.text();
+    text = await (signal
+      ? Promise.race([res.text(), rejectOnAbort(signal)])
+      : res.text());
+  } catch {
+    return signal?.aborted ? { config: null, aborted: true } : { config: null };
+  }
+
+  try {
     const parsed = toml(text) as RawTomlConfig;
     preprocessToml(parsed);
     return { config: parsed };
@@ -335,29 +355,10 @@ export function initializeConfigOnce(
   return configInitPromise;
 }
 
-/**
- * Re-fetch config.toml after a successful login and re-process it into the
- * store.
- *
- * The webserver serves only the login-screen fields of config.toml before
- * authentication (lablup/backend.ai#16486): the rest of `[general]` plus
- * `[resources]`, `[environments]`, `[menu]`, `[plugin]`, `[wsproxy]`,
- * `[pipeline]` are rendered only once the session is authenticated. The
- * initial `initializeConfigOnce` fetch runs before login, so those values
- * must be read again after login.
- *
- * The fetch is retried with backoff and a per-attempt timeout (the webserver
- * may still be settling right after login). When every attempt fails,
- * resolves false and sets `didLastConfigRefreshFail()` — the caller ends the
- * session instead of continuing on a client configured from defaults. A
- * single failed attempt keeps the pre-login state (wiping it to defaults
- * would drop values that are already loaded).
- */
-
-// Post-login re-fetch: 3 attempts (initial + 2 retries) with backoff and a
-// per-attempt timeout (#10912 review).
-const CONFIG_REFRESH_MAX_ATTEMPTS = 3;
+// Post-login re-fetch: one attempt plus one retry per delay, each attempt
+// bounded by the timeout (#10912).
 const CONFIG_REFRESH_RETRY_DELAYS_MS = [500, 1000];
+const CONFIG_REFRESH_MAX_ATTEMPTS = CONFIG_REFRESH_RETRY_DELAYS_MS.length + 1;
 const CONFIG_REFRESH_ATTEMPT_TIMEOUT_MS = 5000;
 
 const delay = (ms: number) =>
@@ -374,16 +375,40 @@ export function didLastConfigRefreshFail(): boolean {
   return lastConfigRefreshFailed;
 }
 
+/**
+ * - `refreshed`: the post-login document is in the store.
+ * - `unchanged`: there was nothing to re-read; the pre-login state stands.
+ * - `failed`: every attempt failed; the caller ends the session.
+ */
+export type ConfigRefreshResult = 'refreshed' | 'unchanged' | 'failed';
+
+/**
+ * Re-fetch config.toml after login: the webserver serves only the login-screen
+ * fields before authentication (lablup/backend.ai#16486), so the pre-login
+ * fetch never saw the rest. Retried with backoff and a per-attempt timeout.
+ */
 export async function refreshConfigAfterLogin(
   store: JotaiStore,
   logger: Pick<Console, 'error' | 'warn'> = console,
-): Promise<boolean> {
-  // Electron uses es6:// protocol which resolves from app/ directory
-  // Web uses relative path from the HTML location
-  const configPath = (globalThis as Record<string, unknown>).isElectron
-    ? 'es6://config.toml'
-    : '../../config.toml';
+): Promise<ConfigRefreshResult> {
+  lastConfigRefreshFailed = false;
 
+  // Electron reads its bundled config.toml, which no webserver trims; a
+  // re-read would also drop what loadConfigFromWebServer merged in.
+  if ((globalThis as Record<string, unknown>).isElectron) {
+    return 'unchanged';
+  }
+
+  // Let an in-flight bootstrap land first, or it overwrites the refreshed values.
+  await configInitPromise?.catch(() => undefined);
+
+  // No config.toml before login either (served without the webserver, file
+  // absent or unparsable): the defaults stand, as they did before login.
+  if (store.get(rawConfigState) === null) {
+    return 'unchanged';
+  }
+
+  const configPath = '../../config.toml';
   for (let attempt = 0; attempt < CONFIG_REFRESH_MAX_ATTEMPTS; attempt++) {
     if (attempt > 0) {
       await delay(CONFIG_REFRESH_RETRY_DELAYS_MS[attempt - 1]);
@@ -400,9 +425,13 @@ export async function refreshConfigAfterLogin(
       clearTimeout(timeout);
     }
 
-    if (result.config) {
-      lastConfigRefreshFailed = false;
+    const label = `[config.toml] Post-login re-fetch attempt ${attempt + 1}/${CONFIG_REFRESH_MAX_ATTEMPTS}`;
+
+    // An empty body parses to {}; the authenticated webserver never renders
+    // one, so it is a failed read, not a config that resets every field.
+    if (result.config && Object.keys(result.config).length > 0) {
       store.set(rawConfigState, result.config);
+      store.set(configParseErrorState, null);
 
       const { autoLogout, proxyUrl, loginPlugin, loginConfig } = processConfig(
         result.config,
@@ -413,28 +442,26 @@ export async function refreshConfigAfterLogin(
       store.set(proxyUrlState, proxyUrl);
       store.set(loginPluginState, loginPlugin);
       store.set(configLoadedState, true);
-
-      // Drop the cached pre-login promise so a later initializeConfigOnce caller
-      // re-reads the full post-login document instead of the truncated one.
-      configInitPromise = null;
-      return true;
+      return 'refreshed';
     }
 
     if (result.error) {
       store.set(configParseErrorState, result.error);
       logger.error(
-        `[config.toml] Post-login re-fetch attempt ${attempt + 1}/${CONFIG_REFRESH_MAX_ATTEMPTS} failed to parse — keeping pre-login configuration:`,
+        `${label} failed to parse — keeping pre-login configuration:`,
         result.error,
       );
-    } else {
+    } else if (result.aborted) {
       logger.warn(
-        `[config.toml] Post-login re-fetch attempt ${attempt + 1}/${CONFIG_REFRESH_MAX_ATTEMPTS} found no config`,
+        `${label} timed out after ${CONFIG_REFRESH_ATTEMPT_TIMEOUT_MS}ms`,
       );
+    } else {
+      logger.warn(`${label} found no config`);
     }
   }
 
   lastConfigRefreshFailed = true;
-  return false;
+  return 'failed';
 }
 
 // ---------------------------------------------------------------------------
@@ -542,14 +569,16 @@ export function useUpdateRawConfig(): (config: RawTomlConfig) => void {
  * when the user connects (replaces Lit shell's refreshPage).
  */
 export function useConfigRefreshPageEffect(): void {
-  const proxyUrl = useAtomValue(proxyUrlState);
+  const store = useStore();
 
   useEffect(() => {
+    // Read the store, not a rendered value: the post-login refresh sets the
+    // atom and `backend-ai-connected` fires before React re-renders.
     const handleConnected = () => {
       const client = (globalThis as Record<string, unknown>).backendaiclient as
         { proxyURL?: string } | undefined;
       if (client) {
-        client.proxyURL = proxyUrl;
+        client.proxyURL = store.get(proxyUrlState);
       }
     };
 
@@ -557,5 +586,5 @@ export function useConfigRefreshPageEffect(): void {
     return () => {
       document.removeEventListener('backend-ai-connected', handleConnected);
     };
-  }, [proxyUrl]);
+  }, [store]);
 }

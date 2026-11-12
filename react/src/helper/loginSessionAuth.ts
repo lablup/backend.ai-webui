@@ -170,27 +170,21 @@ export async function connectViaGQL(
   const updatedConfig = { ...cfg, domain_name: domainName };
   applyConfigToClient(updatedConfig);
 
-  // Re-read config.toml now that the session is authenticated: the webserver
-  // serves only the login-screen fields before login (lablup/backend.ai#16486),
-  // so the remaining config values are only available post-login. Awaited so
-  // the proxy URL and config atoms are set before `backend-ai-connected`
-  // fires on the callers' post-connect setup.
+  // The webserver serves the rest of config.toml only after login
+  // (lablup/backend.ai#16486). Awaited so the config atoms are set before the
+  // callers fire `backend-ai-connected`.
   const { jotaiStore } = await import('../components/DefaultProviders');
-  const refreshed = await refreshConfigAfterLogin(jotaiStore);
+  const refresh = await refreshConfigAfterLogin(jotaiStore);
 
-  if (refreshed) {
-    // applyConfigToClient above ran against the truncated pre-login config;
-    // re-apply the full post-login values so readers of backendaiclient._config
-    // (proxy URL, resource limits, image allow-list) see the
-    // webserver-configured values instead of defaults.
+  if (refresh === 'refreshed') {
+    // The call above applied the truncated pre-login config.
     const refreshedConfig = jotaiStore.get(loginConfigState);
     if (refreshedConfig) {
       applyConfigToClient({ ...refreshedConfig, domain_name: domainName });
     }
-  } else {
-    // Every re-fetch attempt failed: end the session instead of continuing
-    // on a client configured from defaults. LogoutEventHandler on the login
-    // routes performs the cleanup and reloads the page.
+  } else if (refresh === 'failed') {
+    // End the session rather than run on defaults; LogoutEventHandler cleans
+    // up and reloads.
     document.dispatchEvent(
       new CustomEvent('backend-ai-logout', {
         detail: { message: i18n.t('webui.ConfigLoadFailedSessionEnded') },

@@ -3853,6 +3853,7 @@
     "AdminOnlyPage": "このページにアクセスする権限がありません。",
     "CleanUpLoginSession": "ログインセッションをクリーンアップします...",
     "CleanUpNow": "今すぐクリーンアップ...",
+    "ConfigLoadFailedSessionEnded": "WebUI の設定を読み込めなかったため、サインアウトしました。もう一度サインインしてください。",
     "DescNotFound": "申し訳ありませんが、お探しのページが見つかりませんでした。",
     "NetworkSoftTimeout": "サーバーの応答に時間がかかっています。しばらくお待ちください。",
     "NotFound": "おっと！ <br/>ページが見つかりません...",

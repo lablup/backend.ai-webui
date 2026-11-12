@@ -3851,6 +3851,7 @@
     "AdminOnlyPage": "Bu sayfaya erişim izniniz yok.",
     "CleanUpLoginSession": "Oturum açma oturumunu temizle...",
     "CleanUpNow": "Şimdi temizle...",
+    "ConfigLoadFailedSessionEnded": "Web UI yapılandırması yüklenemedi. Oturumunuz kapatıldı. Lütfen tekrar oturum açın.",
     "DescNotFound": "Üzgünüz, aradığınız sayfa bulunamadı.",
     "NetworkSoftTimeout": "Sunucunun yanıt vermesi uzun sürüyor. Lütfen biraz bekleyin",
     "NotFound": "Hata! <br/> Sayfa Bulunamadı...",
