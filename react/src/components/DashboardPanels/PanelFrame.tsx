@@ -50,11 +50,9 @@ const PanelFrame: React.FC<PanelFrameProps> = ({
   const isInBoard = useIsInBAIBoardItem();
   const hasHeaderSettings = !!use(PanelHeaderSettingsContext);
   const heading = icon ? (
-    <BAIFlex align="center" gap="xs">
+    <BAIFlex align="center" gap="xs" style={{ flexShrink: 1, minWidth: 0 }}>
       {icon}
-      <Heading level={5} maxLines={1}>
-        {title}
-      </Heading>
+      <Heading level={5}>{title}</Heading>
     </BAIFlex>
   ) : hasHeaderSettings ? (
     <Heading level={5}>{title}</Heading>
