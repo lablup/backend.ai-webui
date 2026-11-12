@@ -453,8 +453,12 @@ const CHART_PANELS: ReadonlyArray<PanelDefinition> = [
     ),
     detailLink: listLink('session', SESSIONS),
     defaultSize: size(4, 3),
-    // Half width beside My Activity and the folder donut.
-    defaultSizeByPage: { project: size(3, 3), admin: size(3, 3) },
+    // Half width beside My Activity, Sessions by Status and the folder donut.
+    defaultSizeByPage: {
+      project: size(3, 3),
+      projectAdmin: size(3, 3),
+      admin: size(3, 3),
+    },
     minSize: size(2, 2),
     settings: ['range'],
     defaultSettings: LAST_7_DAYS,
@@ -467,11 +471,13 @@ const CHART_PANELS: ReadonlyArray<PanelDefinition> = [
     kind: 'custom',
     Component: chartCard(
       'session',
-      { type: 'bar', groupBy: 'status', period: true },
+      // A donut, not a bar: a bar's six status labels run into each other on a card this wide.
+      { type: 'donut', groupBy: 'status', period: true },
       'dashboard.card.SessionsByStatus',
     ),
     detailLink: listLink('session', SESSIONS),
-    defaultSize: size(2, 3),
+    // Narrower than three columns, the ring gives way to its legend.
+    defaultSize: size(3, 3),
     minSize: size(2, 2),
     settings: ['range'],
     defaultSettings: LAST_7_DAYS,
