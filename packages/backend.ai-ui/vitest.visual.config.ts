@@ -57,7 +57,7 @@ function committedBaselines(dir: string): string[] {
     .map((entry) => join(entry.parentPath, entry.name));
 }
 
-function hasStorySource(file: string) {
+function storyFileOwner(file: string): string | undefined {
   for (
     let dir = dirname(file);
     dir.startsWith(BASELINES + sep);
@@ -65,9 +65,9 @@ function hasStorySource(file: string) {
   ) {
     const source = resolve(root, 'src', relative(BASELINES, dir));
     if (['.stories.tsx', '.stories.ts'].some((ext) => existsSync(source + ext)))
-      return true;
+      return dir;
   }
-  return false;
+  return undefined;
 }
 
 function staleBaselineReporter(): Reporter {
@@ -75,6 +75,9 @@ function staleBaselineReporter(): Reporter {
   return {
     onInit(ctx) {
       vitest = ctx;
+    },
+    onTestRunStart() {
+      resolvedBaselines.clear();
     },
     onTestRunEnd(testModules, _errors, reason) {
       if (!isBaselineContainer || reason === 'interrupted') return;
@@ -87,11 +90,12 @@ function staleBaselineReporter(): Reporter {
           basename(testModule.moduleId),
         );
         for (const file of committedBaselines(dir)) {
-          if (!resolvedBaselines.has(file)) stale.add(file);
+          if (storyFileOwner(file) === dir && !resolvedBaselines.has(file))
+            stale.add(file);
         }
       }
       for (const file of committedBaselines(BASELINES)) {
-        if (!hasStorySource(file)) stale.add(file);
+        if (!storyFileOwner(file)) stale.add(file);
       }
       if (stale.size === 0) return;
       const files = [...stale].sort().map((file) => relative(root, file));

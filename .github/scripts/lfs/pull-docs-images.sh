@@ -8,7 +8,8 @@
 #
 #   --root             directory, relative to the checkout, to pull instead of the
 #                      user manual source; repeatable (the backend.ai-ui visual
-#                      test baselines use it).
+#                      test baselines use it). A root that is not a directory
+#                      is an error.
 #   --ref              revision whose LFS objects to fetch in one batch (default:
 #                      HEAD). Pass it when the docs source was checked out from
 #                      another commit (`git checkout <rev> -- <src>`); files are
@@ -50,7 +51,7 @@ while [ $# -gt 0 ]; do
     --fallback-remote) FALLBACKS+=("${2:?--fallback-remote needs a value}"); shift 2 ;;
     --fallback-report) FALLBACK_REPORT="${2:?--fallback-report needs a value}"; shift 2 ;;
     --root) ROOTS+=("${2:?--root needs a value}"); shift 2 ;;
-    -h|--help) sed -n '2,33p' "$0"; exit 0 ;;
+    -h|--help) sed -n '2,34p' "$0"; exit 0 ;;
     -*) echo "Unknown option: $1" >&2; exit 2 ;;
     *) DIRS+=("$1"); shift ;;
   esac
@@ -110,7 +111,10 @@ pull_one() {
   local dir="$1" top roots=() root remote work list attrs n
   top="$(git -C "$dir" rev-parse --show-toplevel)"
   if [ ${#ROOTS[@]} -gt 0 ]; then
-    for root in "${ROOTS[@]}"; do [ ! -d "${top}/${root}" ] || roots+=("$root"); done
+    for root in "${ROOTS[@]}"; do
+      [ -d "${top}/${root}" ] || { log "ERROR: ${top}: --root ${root} is not a directory." >&2; exit 1; }
+      roots+=("$root")
+    done
   else
     while IFS= read -r root; do roots+=("$root"); done < <(lfs_docs_roots "$top")
   fi

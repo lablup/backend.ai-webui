@@ -176,17 +176,33 @@ function overflow() {
   };
 }
 
-async function fitViewport(base: { width: number; height: number }) {
-  const wanted = overflow();
-  if (wanted.width === innerWidth && wanted.height === innerHeight) return;
-  await resizeViewport(wanted.width, wanted.height);
-  await domSettled(200);
-  const grown = overflow();
-  const width = grown.width > innerWidth ? base.width : innerWidth;
-  const height = grown.height > innerHeight ? base.height : innerHeight;
-  if (width === innerWidth && height === innerHeight) return;
-  await resizeViewport(width, height);
-  await domSettled(200);
+const MAX_SIDE = 8000;
+const FIT_PASSES = 3;
+
+async function fitViewport(
+  base: { width: number; height: number },
+  story: string,
+  state: { resized: boolean },
+) {
+  const pinned = { width: false, height: false };
+  let grew = { width: false, height: false };
+  for (let pass = 0; pass < FIT_PASSES; pass++) {
+    const content = overflow();
+    pinned.width ||= grew.width && content.width > innerWidth;
+    pinned.height ||= grew.height && content.height > innerHeight;
+    const width = pinned.width ? base.width : content.width;
+    const height = pinned.height ? base.height : content.height;
+    if (width === innerWidth && height === innerHeight) return;
+    if (width > MAX_SIDE || height > MAX_SIDE) {
+      throw new Error(
+        `${story}: the story needs a ${width} × ${height} px page, more than the ${MAX_SIDE} px a screenshot may cover on an axis; make the story smaller or tag it no-vrt.`,
+      );
+    }
+    grew = { width: width > innerWidth, height: height > innerHeight };
+    state.resized = true;
+    await resizeViewport(width, height);
+    await domSettled(200);
+  }
 }
 
 afterEach(async (context) => {
@@ -195,9 +211,14 @@ afterEach(async (context) => {
   await document.fonts.ready;
 
   const base = { width: innerWidth, height: innerHeight };
+  const state = { resized: false };
   const frame = document.createElement('div');
   try {
-    await fitViewport(base);
+    await fitViewport(
+      base,
+      `${context.task.file.name} > ${context.task.name}`,
+      state,
+    );
     // An element screenshot is the page inside its box, so an invisible box over
     // the painted area captures exactly that area.
     const { left, top, width, height } = paintedBounds();
@@ -214,8 +235,6 @@ afterEach(async (context) => {
     await expect(page.elementLocator(frame)).toMatchScreenshot();
   } finally {
     frame.remove();
-    if (innerWidth !== base.width || innerHeight !== base.height) {
-      await resizeViewport(base.width, base.height);
-    }
+    if (state.resized) await resizeViewport(base.width, base.height);
   }
 });

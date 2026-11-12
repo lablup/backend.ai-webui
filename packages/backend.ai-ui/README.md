@@ -284,12 +284,14 @@ $ pnpm run test:visual:docker src/components/BAICard -u  # put -u after the path
 - The baselines are stored in Git LFS and a clone holds pointer files for
   them; the script pulls them first, so it needs
   [git-lfs](https://git-lfs.com) (`git lfs install --skip-repo` once). With it
-  set up, `git add` stores the rewritten baselines in LFS.
+  set up, `git add` stores the rewritten baselines in LFS. It fetches from
+  the current branch's upstream remote, then origin.
 - A new story has no baseline and fails CI until you add one with `-u`.
 - A baseline no current story produces (a story renamed, removed, or tagged
   `no-vrt`) fails the run with its path; `-u` deletes it.
 - A story taller or wider than the 1200 × 900 page is captured whole: the page
-  grows to fit for its screenshot.
+  grows to fit for its screenshot, up to 8000 px on each axis. A story larger
+  than that fails with its size; make it smaller or tag it `no-vrt`.
 - When a visual change is intended, rewrite the baselines and commit them with
   the change, so the review shows the picture changing. When the painted area
   changes size there is no diff image; compare the actual screenshot in

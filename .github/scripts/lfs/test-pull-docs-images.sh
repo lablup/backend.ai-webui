@@ -273,7 +273,8 @@ check "root: corrupted object replaced, exit 0" [ "$rc" -eq 0 ]
 check "root: corrupted object reported" grep -q "1 corrupted local object(s) replaced" <<<"$out"
 check "root: one.png has the right content" [ "$(sha "$T/c10b/$R/a/one.png")" = "$ONE_SHA" ]
 out="$(bash "$PULL" --root missing/dir "$T/c10b" 2>&1)"; rc=$?
-check "root: a missing root is nothing to do" [ "$rc" -eq 0 ]
+check "root: a missing root fails" [ "$rc" -ne 0 ]
+check "root: a missing root is named" grep -q "missing/dir is not a directory" <<<"$out"
 
 echo
 if [ "$fails" -eq 0 ]; then echo "all tests passed"; else echo "$fails test(s) failed"; exit 1; fi
