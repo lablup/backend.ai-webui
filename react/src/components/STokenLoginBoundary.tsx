@@ -22,6 +22,7 @@ import {
 } from '../helper/loginSessionAuth';
 import { useResolvedApiEndpoint } from '../hooks/useResolvedApiEndpoint';
 import {
+  didLastConfigRefreshFail,
   initializeConfigOnce,
   loginConfigState,
 } from '../hooks/useWebUIConfig';
@@ -415,6 +416,12 @@ const STokenLoginBoundaryInner: React.FC<STokenLoginBoundaryProps> = ({
     } catch (cause) {
       logger.error('[STokenLoginBoundary] token_login failed', cause);
       surfaceError(classifyTokenLoginFailure(cause, submittedOtp));
+      return;
+    }
+
+    if (didLastConfigRefreshFail()) {
+      // The post-login config re-fetch failed on every attempt;
+      // connectViaGQL dispatched the logout event and the page reloads.
       return;
     }
 

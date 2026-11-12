@@ -49,6 +49,7 @@ import { useLoginOrchestration } from '../hooks/useLoginOrchestration';
 import {
   useInitializeConfig,
   useConfigRefreshPageEffect,
+  didLastConfigRefreshFail,
   loginPluginState,
   loginConfigState,
 } from '../hooks/useWebUIConfig';
@@ -451,6 +452,13 @@ const LoginView: React.FC<{
       const cfg = jotaiStore.get(loginConfigState) ?? configRef.current;
 
       const updatedEndpoints = await connectViaGQL(client, cfg, endpoints);
+
+      if (didLastConfigRefreshFail()) {
+        // The post-login config re-fetch failed on every attempt;
+        // connectViaGQL dispatched the logout event and the page reloads.
+        return;
+      }
+
       setEndpoints(updatedEndpoints);
 
       postConnectSetup(client);

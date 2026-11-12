@@ -146,10 +146,11 @@ interface ConfigFetchResult {
  */
 export async function fetchAndParseConfig(
   configPath: string,
+  signal?: AbortSignal,
 ): Promise<ConfigFetchResult> {
   let res: Response;
   try {
-    res = await fetch(configPath);
+    res = await fetch(configPath, signal ? { signal } : undefined);
   } catch {
     // Network / fetch error — treat as missing config (no error field).
     return { config: null };
@@ -345,52 +346,95 @@ export function initializeConfigOnce(
  * initial `initializeConfigOnce` fetch runs before login, so those values
  * must be read again after login.
  *
- * Fetch/parse failure is not an error: the pre-login state stays as-is
- * (wiping it to defaults would drop values that are already loaded) and the
- * promise resolves.
+ * The fetch is retried with backoff and a per-attempt timeout (the webserver
+ * may still be settling right after login). When every attempt fails,
+ * resolves false and sets `didLastConfigRefreshFail()` — the caller ends the
+ * session instead of continuing on a client configured from defaults. A
+ * single failed attempt keeps the pre-login state (wiping it to defaults
+ * would drop values that are already loaded).
  */
+
+// Post-login re-fetch: 3 attempts (initial + 2 retries) with backoff and a
+// per-attempt timeout (#10912 review).
+const CONFIG_REFRESH_MAX_ATTEMPTS = 3;
+const CONFIG_REFRESH_RETRY_DELAYS_MS = [500, 1000];
+const CONFIG_REFRESH_ATTEMPT_TIMEOUT_MS = 5000;
+
+const delay = (ms: number) =>
+  new Promise<void>((resolve) => setTimeout(resolve, ms));
+
+/**
+ * Set when the latest refreshConfigAfterLogin failed on every attempt.
+ * Login flows read this right after `connectViaGQL` to skip their success
+ * path — the logout event has already been dispatched and the page reloads.
+ */
+let lastConfigRefreshFailed = false;
+
+export function didLastConfigRefreshFail(): boolean {
+  return lastConfigRefreshFailed;
+}
+
 export async function refreshConfigAfterLogin(
   store: JotaiStore,
   logger: Pick<Console, 'error' | 'warn'> = console,
-): Promise<void> {
+): Promise<boolean> {
   // Electron uses es6:// protocol which resolves from app/ directory
   // Web uses relative path from the HTML location
   const configPath = (globalThis as Record<string, unknown>).isElectron
     ? 'es6://config.toml'
     : '../../config.toml';
 
-  const result = await fetchAndParseConfig(configPath);
+  for (let attempt = 0; attempt < CONFIG_REFRESH_MAX_ATTEMPTS; attempt++) {
+    if (attempt > 0) {
+      await delay(CONFIG_REFRESH_RETRY_DELAYS_MS[attempt - 1]);
+    }
+    const controller = new AbortController();
+    const timeout = setTimeout(
+      () => controller.abort(),
+      CONFIG_REFRESH_ATTEMPT_TIMEOUT_MS,
+    );
+    let result: ConfigFetchResult;
+    try {
+      result = await fetchAndParseConfig(configPath, controller.signal);
+    } finally {
+      clearTimeout(timeout);
+    }
 
-  if (!result.config) {
+    if (result.config) {
+      lastConfigRefreshFailed = false;
+      store.set(rawConfigState, result.config);
+
+      const { autoLogout, proxyUrl, loginPlugin, loginConfig } = processConfig(
+        result.config,
+      );
+
+      store.set(loginConfigState, loginConfig);
+      store.set(autoLogoutState, autoLogout);
+      store.set(proxyUrlState, proxyUrl);
+      store.set(loginPluginState, loginPlugin);
+      store.set(configLoadedState, true);
+
+      // Drop the cached pre-login promise so a later initializeConfigOnce caller
+      // re-reads the full post-login document instead of the truncated one.
+      configInitPromise = null;
+      return true;
+    }
+
     if (result.error) {
       store.set(configParseErrorState, result.error);
       logger.error(
-        '[config.toml] Post-login re-fetch failed to parse — keeping pre-login configuration:',
+        `[config.toml] Post-login re-fetch attempt ${attempt + 1}/${CONFIG_REFRESH_MAX_ATTEMPTS} failed to parse — keeping pre-login configuration:`,
         result.error,
       );
     } else {
       logger.warn(
-        '[config.toml] Post-login re-fetch found no config — keeping pre-login configuration',
+        `[config.toml] Post-login re-fetch attempt ${attempt + 1}/${CONFIG_REFRESH_MAX_ATTEMPTS} found no config`,
       );
     }
-    return;
   }
 
-  store.set(rawConfigState, result.config);
-
-  const { autoLogout, proxyUrl, loginPlugin, loginConfig } = processConfig(
-    result.config,
-  );
-
-  store.set(loginConfigState, loginConfig);
-  store.set(autoLogoutState, autoLogout);
-  store.set(proxyUrlState, proxyUrl);
-  store.set(loginPluginState, loginPlugin);
-  store.set(configLoadedState, true);
-
-  // Drop the cached pre-login promise so a later initializeConfigOnce caller
-  // re-reads the full post-login document instead of the truncated one.
-  configInitPromise = null;
+  lastConfigRefreshFailed = true;
+  return false;
 }
 
 // ---------------------------------------------------------------------------

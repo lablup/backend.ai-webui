@@ -213,14 +213,14 @@ debug = true
     const tomlContent = '[general]\napiEndpoint = ""';
     mockFetch(200, tomlContent);
     await fetchAndParseConfig('./config.toml');
-    expect(global.fetch).toHaveBeenCalledWith('./config.toml');
+    expect(global.fetch).toHaveBeenCalledWith('./config.toml', undefined);
   });
 
   it('calls fetch with Electron config path', async () => {
     const tomlContent = '[general]\napiEndpoint = ""';
     mockFetch(200, tomlContent);
     await fetchAndParseConfig('./config.toml');
-    expect(global.fetch).toHaveBeenCalledWith('./config.toml');
+    expect(global.fetch).toHaveBeenCalledWith('./config.toml', undefined);
   });
 });
 
@@ -379,7 +379,14 @@ login = "custom-login"
     store.set(proxyUrlState, 'http://keep:5050');
 
     mockFetch(404, '');
-    await refreshConfigAfterLogin(store);
+    vi.useFakeTimers();
+    try {
+      const promise = refreshConfigAfterLogin(store);
+      await vi.advanceTimersByTimeAsync(2000);
+      await promise;
+    } finally {
+      vi.useRealTimers();
+    }
 
     expect(store.get(proxyUrlState)).toBe('http://keep:5050');
     expect(store.get(configLoadedState)).toBe(false);
@@ -392,10 +399,97 @@ login = "custom-login"
     store.set(proxyUrlState, 'http://keep:5050');
 
     mockFetch(200, '[general]\ninvalid toml = = =');
-    await refreshConfigAfterLogin(store);
+    vi.useFakeTimers();
+    try {
+      const promise = refreshConfigAfterLogin(store);
+      await vi.advanceTimersByTimeAsync(2000);
+      await promise;
+    } finally {
+      vi.useRealTimers();
+    }
 
     expect(store.get(configParseErrorState)).toBeDefined();
     expect(store.get(proxyUrlState)).toBe('http://keep:5050');
+  });
+
+  it('retries and succeeds on a later attempt', async () => {
+    const { refreshConfigAfterLogin, didLastConfigRefreshFail } =
+      await import('./useWebUIConfig');
+    const store = createStore();
+    const tomlContent = '[general]\napiEndpoint = "https://api.example.com"';
+    global.fetch = vi
+      .fn()
+      .mockRejectedValueOnce(new Error('network blip'))
+      .mockRejectedValueOnce(new Error('network blip'))
+      .mockResolvedValue({
+        status: 200,
+        text: () => Promise.resolve(tomlContent),
+        headers: new Headers({ 'content-type': 'application/octet-stream' }),
+      } as unknown as Response);
+
+    vi.useFakeTimers();
+    try {
+      const promise = refreshConfigAfterLogin(store);
+      await vi.advanceTimersByTimeAsync(2000);
+      await expect(promise).resolves.toBe(true);
+    } finally {
+      vi.useRealTimers();
+    }
+
+    expect(global.fetch).toHaveBeenCalledTimes(3);
+    expect(store.get(configLoadedState)).toBe(true);
+    expect(didLastConfigRefreshFail()).toBe(false);
+  });
+
+  it('gives up after all attempts fail and flags the failure', async () => {
+    const { refreshConfigAfterLogin, didLastConfigRefreshFail } =
+      await import('./useWebUIConfig');
+    const store = createStore();
+    store.set(proxyUrlState, 'http://keep:5050');
+    global.fetch = vi.fn().mockRejectedValue(new Error('network down'));
+
+    vi.useFakeTimers();
+    try {
+      const promise = refreshConfigAfterLogin(store);
+      await vi.advanceTimersByTimeAsync(2000);
+      await expect(promise).resolves.toBe(false);
+    } finally {
+      vi.useRealTimers();
+    }
+
+    expect(global.fetch).toHaveBeenCalledTimes(3);
+    expect(store.get(proxyUrlState)).toBe('http://keep:5050');
+    expect(store.get(configLoadedState)).toBe(false);
+    expect(didLastConfigRefreshFail()).toBe(true);
+  });
+
+  it('aborts an attempt that exceeds the per-attempt timeout', async () => {
+    const { refreshConfigAfterLogin } = await import('./useWebUIConfig');
+    const store = createStore();
+    // A fetch that never resolves on its own: only the AbortController
+    // timeout can end each attempt.
+    const hangingFetch = (
+      _input: unknown,
+      init?: { signal?: AbortSignal },
+    ): Promise<Response> =>
+      new Promise<Response>((_resolve, reject) => {
+        init?.signal?.addEventListener('abort', () =>
+          reject(new Error('aborted')),
+        );
+      });
+    global.fetch = vi.fn(hangingFetch as unknown as typeof fetch);
+
+    vi.useFakeTimers();
+    try {
+      const promise = refreshConfigAfterLogin(store);
+      // 3 attempts x 5s timeout + 500ms/1000ms backoff between them.
+      await vi.advanceTimersByTimeAsync(17000);
+      await expect(promise).resolves.toBe(false);
+    } finally {
+      vi.useRealTimers();
+    }
+
+    expect(global.fetch).toHaveBeenCalledTimes(3);
   });
 });
 

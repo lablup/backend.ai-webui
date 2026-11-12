@@ -10,9 +10,11 @@
  */
 import {
   fetchAndParseConfig,
+  loginConfigState,
   refreshConfigAfterLogin,
 } from '../hooks/useWebUIConfig';
 import { applyConfigToClient, type LoginConfigState } from './loginConfig';
+import i18n from 'i18next';
 
 /**
  * Create a Backend.AI client with the given credentials.
@@ -174,7 +176,28 @@ export async function connectViaGQL(
   // the proxy URL and config atoms are set before `backend-ai-connected`
   // fires on the callers' post-connect setup.
   const { jotaiStore } = await import('../components/DefaultProviders');
-  await refreshConfigAfterLogin(jotaiStore);
+  const refreshed = await refreshConfigAfterLogin(jotaiStore);
+
+  if (refreshed) {
+    // applyConfigToClient above ran against the truncated pre-login config;
+    // re-apply the full post-login values so readers of backendaiclient._config
+    // (proxy URL, resource limits, image allow-list) see the
+    // webserver-configured values instead of defaults.
+    const refreshedConfig = jotaiStore.get(loginConfigState);
+    if (refreshedConfig) {
+      applyConfigToClient({ ...refreshedConfig, domain_name: domainName });
+    }
+  } else {
+    // Every re-fetch attempt failed: end the session instead of continuing
+    // on a client configured from defaults. LogoutEventHandler on the login
+    // routes performs the cleanup and reloads the page.
+    document.dispatchEvent(
+      new CustomEvent('backend-ai-logout', {
+        detail: { message: i18n.t('webui.ConfigLoadFailedSessionEnded') },
+      }),
+    );
+    return [...endpoints];
+  }
 
   // Manage endpoint history
   let updatedEndpoints = [...endpoints];
