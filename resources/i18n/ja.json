@@ -3794,6 +3794,7 @@
     "StartFromURLDesc": "GitHub、GitLab、Notebook などのさまざまな環境からプロジェクトとコードをインポートします。",
     "StartSession": "インタラクティブセッション開始",
     "StartSessionDesc": "コード実行やモデル学習のための対話型セッションを開始します。必要なリソースを選択して実行します。",
+    "StartSessionFromRecentHistory": "最近の履歴からセッション開始",
     "button": {
       "CreateFolder": "フォルダー作成",
       "StartBatchSession": "URLから開始",

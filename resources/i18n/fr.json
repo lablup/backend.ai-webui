@@ -3795,6 +3795,7 @@
     "StartFromURLDesc": "Importez votre projet et votre code depuis divers environnements tels que GitHub, GitLab, Notebook, etc.",
     "StartSession": "Démarrer une session interactive",
     "StartSessionDesc": "Vous souhaitez former un modèle ? \nCliquez sur le bouton pour créer une session instantanément. \nChoisissez votre environnement et vos ressources préférés pour exécuter du code et d'autres tâches.",
+    "StartSessionFromRecentHistory": "Démarrer une session depuis l'historique récent",
     "button": {
       "CreateFolder": "Créer un dossier",
       "StartBatchSession": "Commencer à partir d'une URL",

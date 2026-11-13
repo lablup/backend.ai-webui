@@ -3778,6 +3778,7 @@
     "StartFromURLDesc": "นำเข้าโปรเจ็กต์และโค้ดของคุณจากสภาพแวดล้อมต่างๆ เช่น GitHub, GitLab, Notebook เป็นต้น",
     "StartSession": "เริ่มเซสชันแบบโต้ตอบ",
     "StartSessionDesc": "ต้องการฝึกโมเดลหรือไม่? \nคลิกปุ่มเพื่อสร้างเซสชันทันที \nเลือกสภาพแวดล้อมและทรัพยากรที่คุณต้องการสำหรับการรันโค้ดและงานอื่นๆ",
+    "StartSessionFromRecentHistory": "เริ่มเซสชันจากประวัติล่าสุด",
     "button": {
       "CreateFolder": "สร้างโฟลเดอร์",
       "StartBatchSession": "เริ่มจาก URL",

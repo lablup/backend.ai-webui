@@ -3795,6 +3795,7 @@
     "StartFromURLDesc": "GitHub, GitLab, Notebook 등 다양한 환경에서 프로젝트와 코드를 가져오고, 실행할 수 있습니다. ",
     "StartSession": "인터랙티브 세션 생성",
     "StartSessionDesc": "모델을 학습시킬 세션을 생성합니다. 원하는 환경과 리소스를 선택하여 코드를 실행하세요.",
+    "StartSessionFromRecentHistory": "최근 기록으로 세션 시작",
     "button": {
       "CreateFolder": "폴더 생성하기",
       "StartBatchSession": "URL로 시작하기",

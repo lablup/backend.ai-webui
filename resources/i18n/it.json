@@ -3792,6 +3792,7 @@
     "StartFromURLDesc": "Importa il tuo progetto e codice da vari ambienti come GitHub, GitLab, Notebook, ecc.",
     "StartSession": "Avvia una sessione interattiva",
     "StartSessionDesc": "Vuoi addestrare un modello? \nFare clic sul pulsante per creare immediatamente una sessione. \nScegli l'ambiente e le risorse preferiti per l'esecuzione del codice e altre attività.",
+    "StartSessionFromRecentHistory": "Avvia una sessione dalla cronologia recente",
     "button": {
       "CreateFolder": "Crea cartella",
       "StartBatchSession": "Inizia da un URL",

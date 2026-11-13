@@ -3792,6 +3792,7 @@
     "StartFromURLDesc": "Projenizi ve kodunuzu GitHub, GitLab, Notebook vb. çeşitli ortamlardan içe aktarın.",
     "StartSession": "Etkileşimli Bir Oturum Başlatın",
     "StartSessionDesc": "Bir model yetiştirmek ister misiniz? \nAnında oturum oluşturmak için düğmeye tıklayın. \nKod çalıştırmak ve diğer görevler için tercih ettiğiniz ortamı ve kaynakları seçin.",
+    "StartSessionFromRecentHistory": "Son Geçmişten Oturum Başlat",
     "button": {
       "CreateFolder": "Klasör Oluştur",
       "StartBatchSession": "Bir URL'den başlayın",

@@ -3796,6 +3796,7 @@
     "StartFromURLDesc": "Impor proyek dan kode Anda dari berbagai lingkungan seperti GitHub, GitLab, Notebook, dll.",
     "StartSession": "Mulai Sesi Interaktif",
     "StartSessionDesc": "Ingin melatih model? \nKlik tombol untuk membuat sesi secara instan. \nPilih lingkungan dan sumber daya pilihan Anda untuk menjalankan kode dan tugas lainnya.",
+    "StartSessionFromRecentHistory": "Mulai Sesi dari Riwayat Terbaru",
     "button": {
       "CreateFolder": "Buat folder",
       "StartBatchSession": "Mulai dari URL",

@@ -3794,6 +3794,7 @@
     "StartFromURLDesc": "从各种环境（例如 GitHub、GitLab、Notebook 等）导入您的项目和代码。",
     "StartSession": "开始互动会话",
     "StartSessionDesc": "想训练模型吗？\n单击该按钮即可立即创建会话。\n选择您喜欢的环境和资源来运行代码和其他任务。",
+    "StartSessionFromRecentHistory": "从最近记录开始会话",
     "button": {
       "CreateFolder": "创建文件夹",
       "StartBatchSession": "从 URL 开始",

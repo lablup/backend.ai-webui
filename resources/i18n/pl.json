@@ -3795,6 +3795,7 @@
     "StartFromURLDesc": "Zaimportuj swój projekt i kod z różnych środowisk, takich jak GitHub, GitLab, Notatnik itp.",
     "StartSession": "Rozpocznij sesję interaktywną",
     "StartSessionDesc": "Chcesz wyszkolić modelkę? \nKliknij przycisk, aby natychmiast utworzyć sesję. \nWybierz preferowane środowisko i zasoby do uruchamiania kodu i innych zadań.",
+    "StartSessionFromRecentHistory": "Rozpocznij sesję z ostatniej historii",
     "button": {
       "CreateFolder": "Utwórz folder",
       "StartBatchSession": "Zacznij od adresu URL",

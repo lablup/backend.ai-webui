@@ -3792,6 +3792,7 @@
     "StartFromURLDesc": "Tuo projektisi ja koodisi eri ympäristöistä, kuten GitHubista, GitLabista, Notebookista jne.",
     "StartSession": "Aloita interaktiivinen istunto",
     "StartSessionDesc": "Haluatko kouluttaa mallia? \nNapsauta painiketta luodaksesi istunnon välittömästi. \nValitse haluamasi ympäristö ja resurssit koodin ja muiden tehtävien suorittamista varten.",
+    "StartSessionFromRecentHistory": "Aloita istunto viimeaikaisesta historiasta",
     "button": {
       "CreateFolder": "Luo kansio",
       "StartBatchSession": "Aloita URL-osoitteesta",

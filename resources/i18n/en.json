@@ -3779,6 +3779,7 @@
     "StartFromURLDesc": "Import your project and code from various environments such as GitHub, GitLab, Notebook, etc.",
     "StartSession": "Start Interactive Session",
     "StartSessionDesc": "Create a session to train a model. Choose your preferred environment and resources to run a code.",
+    "StartSessionFromRecentHistory": "Start Session from Recent History",
     "button": {
       "CreateFolder": "Create Folder",
       "StartBatchSession": "Start from a URL",

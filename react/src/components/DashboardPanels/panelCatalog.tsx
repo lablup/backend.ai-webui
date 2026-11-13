@@ -126,7 +126,7 @@ const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
     key: 'start.recentHistory',
     page: ['project'],
     group: 'start',
-    titleKey: 'session.launcher.RecentHistory',
+    titleKey: 'start.StartSessionFromRecentHistory',
     requires: { menuKey: ['session', 'start'] },
     kind: 'custom',
     Component: RecentHistoryPanel,

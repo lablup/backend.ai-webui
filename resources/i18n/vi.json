@@ -3794,6 +3794,7 @@
     "StartFromURLDesc": "Nhập dự án và mã của bạn từ nhiều môi trường khác nhau như GitHub, GitLab, Notebook, v.v.",
     "StartSession": "Bắt đầu một phiên tương tác",
     "StartSessionDesc": "Bạn muốn đào tạo một người mẫu? \nNhấp vào nút để tạo phiên ngay lập tức. \nChọn môi trường và tài nguyên ưa thích của bạn để chạy mã và các tác vụ khác.",
+    "StartSessionFromRecentHistory": "Bắt đầu phiên từ lịch sử gần đây",
     "button": {
       "CreateFolder": "Tạo thư mục",
       "StartBatchSession": "Bắt đầu từ một URL",

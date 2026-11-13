@@ -70,7 +70,7 @@ export const RecentHistoryPanel: React.FC<PanelComponentProps> = () => {
   return (
     <>
       <StartActionCard
-        title={t('session.launcher.RecentHistory')}
+        title={t('start.StartSessionFromRecentHistory')}
         description={t('start.RecentHistoryDesc')}
         buttonLabel={t('start.button.ViewRecentHistory')}
         icon={<History size="1em" />}
