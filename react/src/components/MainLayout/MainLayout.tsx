@@ -17,6 +17,7 @@ import { useLogoutEventListeners } from '../../hooks/useLogout';
 import { useRouteAccessDecision } from '../../hooks/useRouteAccess';
 import { useCurrentMenuKey, useRouteScope } from '../../hooks/useRouteScope';
 import { useSiderCollapsedState } from '../../hooks/useShellPanels';
+import { useUserSettingsAppConfigSync } from '../../hooks/useUserSettingsAppConfigSync';
 import { useSetupWebUIPluginEffect } from '../../hooks/useWebUIPluginState';
 import ActAsBanner from '../ActAsBanner';
 import AnnouncementBanner from '../AnnouncementBanner';
@@ -514,11 +515,13 @@ export const CSSTokenVariables = () => {
  * Also suspends on the signed-in user's `userConfig.themeFamily` and copies
  * it into the localStorage mirror BEFORE the splash goes, so the account's
  * family is what the page reveals (FR-3834). The mirror survives logout; the
- * next login overrides it here.
+ * next login overrides it here. The account's personal settings are mirrored
+ * the same way (ADR 0032).
  */
 const DismissSplashOnMount = () => {
   'use memo';
   useSuspendedBackendaiClient();
+  useUserSettingsAppConfigSync();
   const userConfigFamily = useMyAppConfig<string>('themeFamily');
   const { setActiveThemeFamily } = useCustomThemeConfig();
   const syncThemeFamilyMirror = useEffectEvent(() => {
