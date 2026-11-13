@@ -53,16 +53,36 @@ import {
 const AGENT_PAGE_SIZE = 100;
 
 interface AgentSlots {
-  id: string | null | undefined;
-  available_slots: string | null | undefined;
-  occupied_slots: string | null | undefined;
+  capacity: unknown;
+  used: unknown;
 }
 
+const parseSlots = (slots: unknown): Record<string, unknown> =>
+  (typeof slots === 'string' ? JSON.parse(slots || '{}') : slots) ?? {};
+
+type AgentPage = Pick<
+  TotalResourceWithinResourceGroupRemainingAgentsQuery['response'],
+  'agentsV2' | 'agent_summary_list'
+>;
+
+const toAgentSlots = (page: AgentPage | null | undefined): Array<AgentSlots> =>
+  page?.agentsV2
+    ? page.agentsV2.edges.map(({ node }) => ({
+        capacity: node.resourceInfo.capacity,
+        used: node.resourceInfo.used,
+      }))
+    : filterOutNullAndUndefined(page?.agent_summary_list?.items ?? []).map(
+        (item) => ({
+          capacity: item.available_slots,
+          used: item.occupied_slots,
+        }),
+      );
+
+// Offset paging: keep these filters and orderBy identical to the fragment's first page.
 const remainingAgentsQuery = graphql`
   query TotalResourceWithinResourceGroupRemainingAgentsQuery(
     $resourceGroup: String
     $isSuperAdmin: Boolean!
-    $agentNodeFilter: String!
     $limit: Int!
     $offset: Int!
   ) {
@@ -79,13 +99,23 @@ const remainingAgentsQuery = graphql`
         occupied_slots
       }
     }
-    agent_nodes(filter: $agentNodeFilter, first: $limit, offset: $offset)
-      @include(if: $isSuperAdmin) {
+    agentsV2(
+      filter: {
+        status: { equals: ALIVE }
+        schedulable: true
+        scalingGroup: { equals: $resourceGroup }
+      }
+      orderBy: [{ field: ID }]
+      limit: $limit
+      offset: $offset
+    ) @include(if: $isSuperAdmin) {
       edges {
         node {
           id
-          available_slots
-          occupied_slots
+          resourceInfo {
+            capacity
+            used
+          }
         }
       }
     }
@@ -134,12 +164,9 @@ const useRemainingAgents = ({
           { ...variables, limit: AGENT_PAGE_SIZE, offset },
         ).toPromise();
       if (isCancelled()) return agents;
-      const items: ReadonlyArray<AgentSlots | null | undefined> =
-        page?.agent_nodes
-          ? page.agent_nodes.edges.map((edge) => edge?.node)
-          : (page?.agent_summary_list?.items ?? []);
+      const items = toAgentSlots(page);
       if (_.isEmpty(items)) break;
-      agents.push(...filterOutNullAndUndefined(items));
+      agents.push(...items);
     }
     return agents;
   });
@@ -182,7 +209,7 @@ export const useIsAvailableTotalResourceWithinResourceGroup = () => {
   const userRole = useCurrentUserRole();
   const isHiddenAgents = !!baiClient?._config?.hideAgents;
 
-  // Superadmins read `agent_nodes` even when hideAgents is true; others need `agent_summary_list`.
+  // Superadmins read `agentsV2` even when hideAgents is true; others need `agent_summary_list`.
   return userRole === 'superadmin' || !isHiddenAgents;
 };
 
@@ -207,13 +234,13 @@ const TotalResourceWithinResourceGroup: React.FC<
   const { token } = useTheme();
   const isInBoard = useIsInBAIBoardItem();
 
-  const [{ agent_nodes, agent_summary_list }, refetch] = useRefetchableFragment(
+  // TODO(needs-backend): #11077 agentsV2 is superadmin-only, so other roles stay on agent_summary_list.
+  const [data, refetch] = useRefetchableFragment(
     graphql`
       fragment TotalResourceWithinResourceGroupFragment on Query
       @argumentDefinitions(
         resourceGroup: { type: "String" }
         isSuperAdmin: { type: "Boolean!" }
-        agentNodeFilter: { type: "String!" }
       )
       @refetchable(
         queryName: "TotalResourceWithinResourceGroupFragmentRefetchQuery"
@@ -234,15 +261,23 @@ const TotalResourceWithinResourceGroup: React.FC<
           }
           total_count
         }
-        agent_nodes(filter: $agentNodeFilter, first: 100)
-          @include(if: $isSuperAdmin) {
+        agentsV2(
+          filter: {
+            status: { equals: ALIVE }
+            schedulable: true
+            scalingGroup: { equals: $resourceGroup }
+          }
+          orderBy: [{ field: ID }]
+          limit: 100
+          offset: 0
+        ) @include(if: $isSuperAdmin) {
           edges {
             node {
               id
-              status
-              available_slots
-              occupied_slots
-              scaling_group
+              resourceInfo {
+                capacity
+                used
+              }
             }
           }
           count
@@ -271,21 +306,16 @@ const TotalResourceWithinResourceGroup: React.FC<
     }
   }, [deferredSelectedResourceGroup, refetch, userRole, resourceGroup]);
 
-  const firstPageAgents: Array<AgentSlots> = filterOutNullAndUndefined(
-    agent_nodes
-      ? _.map(agent_nodes?.edges, 'node')
-      : agent_summary_list?.items || [],
-  );
+  const firstPageAgents = toAgentSlots(data);
   const { remainingAgents, isLoadingRemaining } = useRemainingAgents({
-    firstPageKey: agent_nodes ?? agent_summary_list,
+    firstPageKey: data.agentsV2 ?? data.agent_summary_list,
     loadedCount: firstPageAgents.length,
-    totalCount: agent_nodes
-      ? agent_nodes.count
-      : agent_summary_list?.total_count,
+    totalCount: data.agentsV2
+      ? data.agentsV2.count
+      : data.agent_summary_list?.total_count,
     variables: {
       resourceGroup: deferredSelectedResourceGroup,
       isSuperAdmin: userRole === 'superadmin',
-      agentNodeFilter: `schedulable == true & status == "ALIVE" & scaling_group == "${deferredSelectedResourceGroup}"`,
     },
   });
 
@@ -300,8 +330,8 @@ const TotalResourceWithinResourceGroup: React.FC<
       let availableSlots;
 
       try {
-        occupiedSlots = JSON.parse(agent.occupied_slots || '{}');
-        availableSlots = JSON.parse(agent.available_slots || '{}');
+        occupiedSlots = parseSlots(agent.used);
+        availableSlots = parseSlots(agent.capacity);
       } catch {
         return;
       }

@@ -232,7 +232,7 @@ const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
     group: 'resource',
     titleKey: 'webui.menu.TotalResourcesInResourceGroup',
     requires: {
-      // Superadmins read `agent_nodes` even with hideAgents; others need `agent_summary_list`.
+      // Superadmins read `agentsV2` even with hideAgents; others need `agent_summary_list`.
       config: (config, role) => role === 'superadmin' || !config.hideAgents,
       // Regular users never see it then; admins see it as unavailable.
       hidden: (config, role) =>

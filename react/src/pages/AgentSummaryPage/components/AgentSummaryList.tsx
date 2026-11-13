@@ -119,6 +119,7 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
     'table_column_overrides.AgentSummaryList',
   );
 
+  // TODO(needs-backend): #11077 agentsV2 is superadmin-only, and this page serves every role.
   const { agent_summary_list } = useLazyLoadQuery<AgentSummaryListQuery>(
     graphql`
       query AgentSummaryListQuery(

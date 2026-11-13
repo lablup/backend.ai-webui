@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<02f0034259118d44f3767b167df4de23>>
+ * @generated SignedSource<<d4fc38ef521aee574fd372b23278f991>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,10 +10,7 @@
 
 import { ConcreteRequest } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
-export type AgentStatsPanelQuery$variables = {
-  aliveAgentFilter: string;
-  schedulableAgentFilter: string;
-};
+export type AgentStatsPanelQuery$variables = Record<PropertyKey, never>;
 export type AgentStatsPanelQuery$data = {
   readonly " $fragmentSpreads": FragmentRefs<"AgentStatsFragment">;
 };
@@ -23,21 +20,12 @@ export type AgentStatsPanelQuery = {
 };
 
 const node: ConcreteRequest = (function(){
-var v0 = [
-  {
-    "defaultValue": null,
-    "kind": "LocalArgument",
-    "name": "aliveAgentFilter"
-  },
-  {
-    "defaultValue": null,
-    "kind": "LocalArgument",
-    "name": "schedulableAgentFilter"
-  }
-],
+var v0 = {
+  "equals": "ALIVE"
+},
 v1 = {
   "kind": "Literal",
-  "name": "first",
+  "name": "limit",
   "value": 1
 },
 v2 = [
@@ -51,24 +39,13 @@ v2 = [
 ];
 return {
   "fragment": {
-    "argumentDefinitions": (v0/*: any*/),
+    "argumentDefinitions": [],
     "kind": "Fragment",
     "metadata": null,
     "name": "AgentStatsPanelQuery",
     "selections": [
       {
-        "args": [
-          {
-            "kind": "Variable",
-            "name": "aliveAgentFilter",
-            "variableName": "aliveAgentFilter"
-          },
-          {
-            "kind": "Variable",
-            "name": "schedulableAgentFilter",
-            "variableName": "schedulableAgentFilter"
-          }
-        ],
+        "args": null,
         "kind": "FragmentSpread",
         "name": "AgentStatsFragment"
       }
@@ -78,7 +55,7 @@ return {
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": (v0/*: any*/),
+    "argumentDefinitions": [],
     "kind": "Operation",
     "name": "AgentStatsPanelQuery",
     "selections": [
@@ -129,49 +106,54 @@ return {
         "alias": "aliveAgents",
         "args": [
           {
-            "kind": "Variable",
+            "kind": "Literal",
             "name": "filter",
-            "variableName": "aliveAgentFilter"
+            "value": {
+              "status": (v0/*: any*/)
+            }
           },
           (v1/*: any*/)
         ],
-        "concreteType": "AgentConnection",
+        "concreteType": "AgentV2Connection",
         "kind": "LinkedField",
-        "name": "agent_nodes",
+        "name": "agentsV2",
         "plural": false,
         "selections": (v2/*: any*/),
-        "storageKey": null
+        "storageKey": "agentsV2(filter:{\"status\":{\"equals\":\"ALIVE\"}},limit:1)"
       },
       {
         "alias": "schedulableAgents",
         "args": [
           {
-            "kind": "Variable",
+            "kind": "Literal",
             "name": "filter",
-            "variableName": "schedulableAgentFilter"
+            "value": {
+              "schedulable": true,
+              "status": (v0/*: any*/)
+            }
           },
           (v1/*: any*/)
         ],
-        "concreteType": "AgentConnection",
+        "concreteType": "AgentV2Connection",
         "kind": "LinkedField",
-        "name": "agent_nodes",
+        "name": "agentsV2",
         "plural": false,
         "selections": (v2/*: any*/),
-        "storageKey": null
+        "storageKey": "agentsV2(filter:{\"schedulable\":true,\"status\":{\"equals\":\"ALIVE\"}},limit:1)"
       }
     ]
   },
   "params": {
-    "cacheID": "0285c6d546774c489568a773993ccf80",
+    "cacheID": "198420e5649579308721010a90f45fbb",
     "id": null,
     "metadata": {},
     "name": "AgentStatsPanelQuery",
     "operationKind": "query",
-    "text": "query AgentStatsPanelQuery(\n  $aliveAgentFilter: String!\n  $schedulableAgentFilter: String!\n) {\n  ...AgentStatsFragment_rQkRq\n}\n\nfragment AgentStatsFragment_rQkRq on Query {\n  agentStats {\n    totalResource {\n      free\n      used\n      capacity\n    }\n  }\n  aliveAgents: agent_nodes(filter: $aliveAgentFilter, first: 1) {\n    count\n  }\n  schedulableAgents: agent_nodes(filter: $schedulableAgentFilter, first: 1) {\n    count\n  }\n}\n"
+    "text": "query AgentStatsPanelQuery {\n  ...AgentStatsFragment\n}\n\nfragment AgentStatsFragment on Query {\n  agentStats {\n    totalResource {\n      free\n      used\n      capacity\n    }\n  }\n  aliveAgents: agentsV2(filter: {status: {equals: ALIVE}}, limit: 1) {\n    count\n  }\n  schedulableAgents: agentsV2(filter: {status: {equals: ALIVE}, schedulable: true}, limit: 1) {\n    count\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "74cc5de09af2045ff157d8c4987177ad";
+(node as any).hash = "34eaf98ee96ce760a2e26c8990b9cf5a";
 
 export default node;
