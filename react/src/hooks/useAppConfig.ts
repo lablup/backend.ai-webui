@@ -274,9 +274,6 @@ const fetchMergedView = (
     { fetchPolicy: 'network-only' },
   ).toPromise();
 
-// A fetch younger than this was the mount's own suspending read.
-const JUST_FETCHED_MS = 2000;
-
 /**
  * The raw PUBLIC, current-DOMAIN and own-USER documents the request names, read
  * in one request: the store's copy renders first, and each mount reads the
@@ -299,14 +296,6 @@ export const useScopedAppConfig = (request: ScopedAppConfigRequest) => {
   );
 
   const refreshOnMount = useEffectEvent(() => {
-    const availability = relayEnv.check(operation);
-    if (
-      availability.status === 'available' &&
-      availability.fetchTime != null &&
-      Date.now() - availability.fetchTime < JUST_FETCHED_MS
-    ) {
-      return;
-    }
     fetchQuery<useAppConfigScopedQuery>(relayEnv, scopedQuery, variables, {
       fetchPolicy: 'network-only',
     })

@@ -44,15 +44,15 @@ flowchart LR
 
 ### 1. Two hooks in `useAppConfig.ts`
 
-| Hook                                  | Reads                                                                    | Writes            | Fetch policy                                                                  |
-| ------------------------------------- | ------------------------------------------------------------------------ | ----------------- | ----------------------------------------------------------------------------- |
-| `useScopedAppConfig(request)`         | `scopedAppConfigFragmentsByNames` once per requested scope, in one query | `upsert(changes)` | `store-and-network`, plus one `network-only` read on a mount the store served |
-| `useMyAppConfig(configName, subKey?)` | `myAppConfigs` for one config name per request                           | none              | `store-or-network`                                                            |
+| Hook                                  | Reads                                                                    | Writes            | Fetch policy                                                     |
+| ------------------------------------- | ------------------------------------------------------------------------ | ----------------- | ---------------------------------------------------------------- |
+| `useScopedAppConfig(request)`         | `scopedAppConfigFragmentsByNames` once per requested scope, in one query | `upsert(changes)` | `store-and-network`, plus one `network-only` read on every mount |
+| `useMyAppConfig(configName, subKey?)` | `myAppConfigs` for one config name per request                           | none              | `store-or-network`                                               |
 
 - **Request shape**: `ScopedAppConfigRequest` is `{ public?: AppConfigName[]; domain?: AppConfigName[]; user?: AppConfigName[] }`. `domain` is the signed-in user's domain (`useCurrentDomain().id`) and `user` is the signed-in user; a caller cannot name another id.
 - **One query**: `useAppConfigScopedQuery` holds three aliased `scopedAppConfigFragmentsByNames` fields (`public`, `domain`, `user`). Each carries `@skip(if:)` for a scope the request leaves out and `@catch(to: NULL)`, so a scope the caller may not read comes back `undefined` without failing the others.
 - **Return shape**: the hook returns `{ public, domain, user, upsert }`. Each scope is a map from the requested names to the raw document, `undefined` for a name the scope holds no fragment for, and the whole scope is `undefined` when it was not requested or not readable.
-- **Read once per mount**: `useLazyLoadQuery` does not fetch a query that another mounted reader still retains, such as `MainLayout`'s `userConfig` read. An effect therefore reads the documents with `network-only` when the screen mounts, unless `environment.check()` reports them fetched less than 2 s ago, which is the mount's own suspending read.
+- **Read on every mount**: `useLazyLoadQuery` does not fetch a query that another mounted reader still retains, such as `MainLayout`'s `userConfig` read. An effect therefore reads the documents with `network-only` every time the screen mounts. A screen that wants to skip that read takes the value from state set at sign-in instead of calling this hook.
 - **Merged view per name**: `useMyAppConfig` asks `myAppConfigs` for its one config name, so the `domainConfig` readers can reuse the `myAppConfigs(["domainConfig"])` result that the sign-in query (`loginSessionAuth.ts`) or `AnnouncementBanner` in `MainLayout` left in the store.
 - **Domain slice**: `publicConfigByDomain` holds one slice per domain, so callers pass the domain name as the first path segment, both to a change's `subKey` (`[domainName, key]`) and to `useMyAppConfig('publicConfigByDomain', [domainName, key])`.
 
@@ -87,7 +87,7 @@ flowchart LR
 
 ## Consequences
 
-- **Request count**: A change costs one upsert per scope; a `domainConfig` change costs one more request for the merged refetch. A screen reads its requested scopes in one request per mount.
+- **Request count**: A change costs one upsert per scope; a `domainConfig` change costs one more request for the merged refetch. A screen reads its requested scopes once per mount, and twice when the store held nothing for them: the suspending read and the mount read.
 - **Lost concurrent edits**: The next write overwrites a change that the CLI, another admin, or another tab of the same account made after the screen mounted. Remounting the screen or reloading the page picks the change up.
 - **Defaults from DOMAIN-scope `userConfig`**: A `userConfig` value written at DOMAIN scope no longer reaches the screens, because they read the USER raw document.
 - **Same-kind scopes**: The query has one field per scope kind, so one call reads one domain and one user, the signed-in ones. Reading another domain's or user's document needs a new field or a new hook.
