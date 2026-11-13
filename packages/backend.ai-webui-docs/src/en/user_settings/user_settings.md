@@ -247,8 +247,7 @@ provided. If you click the button on the right of the SSH Keypair Management
 section, the following dialog appears. The **Public Key** field shows the SSH
 public key currently registered, and you can edit it directly.
 
-![=528px](../images/ssh_keypair_dialog.png)
-<!-- TODO: Recapture the single Public Key field dialog -->
+![=520px](../images/ssh_keypair_dialog.png)
 
 :::note
 Backend.AI uses SSH keypair based on OpenSSH. On Windows, you may need to convert
