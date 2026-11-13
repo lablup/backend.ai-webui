@@ -248,21 +248,6 @@ describe('useScopedAppConfig', () => {
     }
   });
 
-  it('reads the document on mount for a setter that shows nothing', async () => {
-    const { useScopedAppConfigSetter } = await loadHooks();
-    const environment = createMockEnvironment();
-    renderHook(
-      () =>
-        useScopedAppConfigSetter(
-          { scopeType: 'PUBLIC' },
-          'publicConfigByDomain',
-        ),
-      { wrapper: wrapperFor(environment) },
-    );
-    const read = await waitForOperation(environment, 'useAppConfigScopedQuery');
-    expect(read.request.variables.scope).toEqual({ scopeType: 'PUBLIC' });
-  });
-
   it('follows the fragment the upsert returned when its id changed', async () => {
     const { environment, result } = await mountScoped(
       { scopeType: 'USER' },

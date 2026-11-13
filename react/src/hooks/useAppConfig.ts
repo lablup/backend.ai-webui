@@ -272,22 +272,6 @@ const makeSetKey =
     );
 
 /**
- * `setKey` alone, for a screen that writes one scope's document without
- * showing it: nothing suspends, and the document is read once on mount so
- * the write does not build on an older copy. Post-login surfaces only.
- */
-export const useScopedAppConfigSetter = (
-  scope: AppConfigScope,
-  configName: AppConfigName,
-) => {
-  'use memo';
-  const relayEnv = useRelayEnvironment();
-  const variables = useScopeVariables(scope, configName);
-  useRefreshOnMount(relayEnv, variables);
-  return makeSetKey(relayEnv, variables);
-};
-
-/**
  * One scope's raw document, read once per mount and kept current from the
  * upsert responses. `setKey` sends that document with one sub-key replaced
  * (`undefined` removes it) as a single upsert. A `domainConfig` write also
