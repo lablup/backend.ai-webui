@@ -2,12 +2,17 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import {
+  launcherValueFromHistory,
+  reviewStepOf,
+} from '../../../helper/sessionLauncherHistory';
 import { useWebUINavigate } from '../../../hooks';
 import { useIsPersonalProject } from '../../../hooks/useAccessibleProjects';
 import { useProjectPath } from '../../../hooks/useRouteScope';
 import type { SessionLauncherFormValue } from '../../../pages/SessionLauncherPage/SessionLauncherPage';
 import DeploymentSettingModal from '../../DeploymentSettingModal';
 import FolderCreateModal from '../../FolderCreateModal';
+import SessionTemplateModal from '../../SessionTemplateModal';
 import StartFromURLModal from '../../StartFromURLModal';
 import PanelFrame from '../PanelFrame';
 import type { PanelComponentProps } from '../types';
@@ -22,7 +27,7 @@ import {
   BAIUnmountAfterClose,
   BAIURLStartIcon,
 } from 'backend.ai-ui';
-import { Grid2x2Plus } from 'lucide-react';
+import { Grid2x2Plus, History } from 'lucide-react';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -52,6 +57,42 @@ const StartActionCard: React.FC<StartActionCardProps> = ({
         <Button variant="primary" label={buttonLabel} onClick={onClick} />
       </BAIFlex>
     </PanelFrame>
+  );
+};
+
+/** Opens the launcher's recent history; a pick lands on the launcher's review step with that session's settings. */
+export const RecentHistoryPanel: React.FC<PanelComponentProps> = () => {
+  'use memo';
+  const { t } = useTranslation();
+  const webuiNavigate = useWebUINavigate();
+  const buildProjectPath = useProjectPath();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  return (
+    <>
+      <StartActionCard
+        title={t('start.StartSessionFromRecentHistory')}
+        description={t('start.RecentHistoryDesc')}
+        buttonLabel={t('start.button.ViewRecentHistory')}
+        icon={<History size="1em" />}
+        onClick={() => setIsModalOpen(true)}
+      />
+      <BAIUnmountAfterClose>
+        <SessionTemplateModal
+          open={isModalOpen}
+          onRequestClose={(formValue) => {
+            setIsModalOpen(false);
+            if (!formValue) return;
+            const params = new URLSearchParams({
+              step: String(reviewStepOf(formValue.sessionType)),
+              formValues: JSON.stringify(launcherValueFromHistory(formValue)),
+            });
+            webuiNavigate(
+              `${buildProjectPath('session/start')}?${params.toString()}`,
+            );
+          }}
+        />
+      </BAIUnmountAfterClose>
+    </>
   );
 };
 

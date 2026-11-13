@@ -834,6 +834,8 @@
   "dashboard": {
     "Edit": "编辑",
     "Free": "自由的",
+    "InUsePercent": "使用中 {{percent}}%",
+    "MemoryInUsePercent": "内存使用 {{percent}}%",
     "Used": "用过的",
     "boards": {
       "BoardName": "看板名称",
@@ -873,6 +875,7 @@
       "FailuresOfType": "失败记录：{{type}}",
       "FailuresOnly": "仅显示失败",
       "FolderLimit": "上限: {{max}}",
+      "FoldersByUsageMode": "按使用方式的文件夹",
       "Healthy": "正常",
       "Insufficient": "资源不足",
       "LatestSchedulingReason": "最近调度原因",
@@ -918,6 +921,8 @@
       "SchedulingResult": "结果",
       "SessionStatus": "会话状态",
       "SessionStatusTooltip": "当前会话按状态显示，活动会话按会话类型显示。",
+      "SessionsByStatus": "按状态的会话",
+      "SessionsCreated": "已创建的会话",
       "Share": "占比",
       "StartedBefore": "{{time}} 之前启动",
       "Starting": "启动中",
@@ -3778,6 +3783,7 @@
     "CreateFolder": "创建新的存储文件夹",
     "CreateFolderDesc": "创建文件夹和上传文件对于训练模型或对外提供服务至关重要。\n请首先上传文件。",
     "NoStartItems": "没有可用的开始项目。",
+    "RecentHistoryDesc": "使用最近创建的会话的设置启动新会话。",
     "StartBatchSession": "开始批量会话",
     "StartBatchSessionDesc": "对于预定义文件或计划任务，请尝试批处理会话。\n输入命令，设置日期和时间，然后根据需要运行。",
     "StartDeployment": "启动部署",
@@ -3788,12 +3794,14 @@
     "StartFromURLDesc": "从各种环境（例如 GitHub、GitLab、Notebook 等）导入您的项目和代码。",
     "StartSession": "开始互动会话",
     "StartSessionDesc": "想训练模型吗？\n单击该按钮即可立即创建会话。\n选择您喜欢的环境和资源来运行代码和其他任务。",
+    "StartSessionFromRecentHistory": "从最近记录开始会话",
     "button": {
       "CreateFolder": "创建文件夹",
       "StartBatchSession": "从 URL 开始",
       "StartDeployment": "创建部署",
       "StartNow": "现在开始",
-      "StartSession": "开始会话"
+      "StartSession": "开始会话",
+      "ViewRecentHistory": "查看历史"
     }
   },
   "statistics": {

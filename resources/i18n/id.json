@@ -834,6 +834,8 @@
   "dashboard": {
     "Edit": "Sunting",
     "Free": "Bebas",
+    "InUsePercent": "Terpakai {{percent}}%",
+    "MemoryInUsePercent": "Memori terpakai {{percent}}%",
     "Used": "Digunakan",
     "boards": {
       "BoardName": "Nama papan",
@@ -873,6 +875,7 @@
       "FailuresOfType": "Entri gagal: {{type}}",
       "FailuresOnly": "Tampilkan kegagalan saja",
       "FolderLimit": "Batas: {{max}}",
+      "FoldersByUsageMode": "Folder per mode penggunaan",
       "Healthy": "Sehat",
       "Insufficient": "Sumber daya tidak cukup",
       "LatestSchedulingReason": "Alasan penjadwalan terakhir",
@@ -918,6 +921,8 @@
       "SchedulingResult": "Hasil",
       "SessionStatus": "Status Sesi",
       "SessionStatusTooltip": "Sesi saat ini menurut status, dan sesi aktif menurut jenis sesi.",
+      "SessionsByStatus": "Sesi per status",
+      "SessionsCreated": "Sesi yang dibuat",
       "Share": "Porsi",
       "StartedBefore": "Dimulai sebelum {{time}}",
       "Starting": "Memulai",
@@ -3780,6 +3785,7 @@
     "CreateFolder": "Buat Folder Penyimpanan Baru",
     "CreateFolderDesc": "Membuat folder dan mengunggah file sangat penting untuk melatih model atau menyediakan layanan secara eksternal. \nSilakan mulai dengan mengunggah file.",
     "NoStartItems": "Tidak ada item mulai yang tersedia.",
+    "RecentHistoryDesc": "Mulai sesi baru dengan pengaturan sesi yang baru-baru ini Anda buat.",
     "StartBatchSession": "Mulai Sesi Batch",
     "StartBatchSessionDesc": "Untuk file yang telah ditentukan sebelumnya atau tugas terjadwal, cobalah sesi Batch. \nMasukkan perintah, atur tanggal dan waktu, dan jalankan sesuai kebutuhan.",
     "StartDeployment": "Mulai Penerapan",
@@ -3790,12 +3796,14 @@
     "StartFromURLDesc": "Impor proyek dan kode Anda dari berbagai lingkungan seperti GitHub, GitLab, Notebook, dll.",
     "StartSession": "Mulai Sesi Interaktif",
     "StartSessionDesc": "Ingin melatih model? \nKlik tombol untuk membuat sesi secara instan. \nPilih lingkungan dan sumber daya pilihan Anda untuk menjalankan kode dan tugas lainnya.",
+    "StartSessionFromRecentHistory": "Mulai Sesi dari Riwayat Terbaru",
     "button": {
       "CreateFolder": "Buat folder",
       "StartBatchSession": "Mulai dari URL",
       "StartDeployment": "Buat Penerapan",
       "StartNow": "Mulai Sekarang",
-      "StartSession": "Mulai Sesi"
+      "StartSession": "Mulai Sesi",
+      "ViewRecentHistory": "Lihat riwayat"
     }
   },
   "statistics": {

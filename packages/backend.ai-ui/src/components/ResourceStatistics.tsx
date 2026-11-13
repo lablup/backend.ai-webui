@@ -1,5 +1,6 @@
 import { convertToBinaryUnit, getDisplayUnitToInputSizeUnit } from '../helper';
 import { useBAIi18n } from '../hooks/useBAIi18n';
+import { useIsInBAIBoardItem } from './BAIBoard';
 import BAIFlex from './BAIFlex';
 import BAIRowWrapWithDividers from './BAIRowWrapWithDividers';
 import BAIStatistic, { BAIStatisticProps } from './BAIStatistic';
@@ -32,6 +33,8 @@ interface ResourceStatisticsProps {
   progressMode?: BAIStatisticProps['progressMode'];
   precision?: number;
   progressSteps?: number;
+  /** A line under an item, keyed `cpu`, `memory` or an accelerator's `key`. */
+  notes?: Partial<Record<string, React.ReactNode>>;
 }
 
 export const processMemoryValue = (value: any, displayUnit: string): number => {
@@ -53,15 +56,31 @@ export const convertToNumber = (value: any): number => {
   return Number(value) || 0;
 };
 
+/** An item with an optional line under it; without one, the item alone. */
+const WithNote: React.FC<{
+  note?: React.ReactNode;
+  children: React.ReactNode;
+}> = ({ note, children }) =>
+  note ? (
+    <BAIFlex direction="column" align="start" gap="xxs">
+      {children}
+      {note}
+    </BAIFlex>
+  ) : (
+    <>{children}</>
+  );
+
 const ResourceStatistics: React.FC<ResourceStatisticsProps> = ({
   resourceData,
   displayType,
   progressMode = 'hidden',
   progressSteps,
   precision = 2,
+  notes,
 }) => {
   const { t } = useBAIi18n();
   const { token } = useTheme();
+  const isInBoard = useIsInBAIBoardItem();
 
   const hasResources =
     resourceData.cpu ||
@@ -80,38 +99,44 @@ const ResourceStatistics: React.FC<ResourceStatisticsProps> = ({
     );
   }
 
+  const acceleratorPadding = token(notes ? '--spacing-3' : '--spacing-4');
   return (
-    <BAIFlex direction="row" wrap="wrap" gap={'lg'}>
+    // With notes the rows are taller, so they sit closer to keep the same footprint.
+    <BAIFlex direction="row" wrap="wrap" gap={notes ? 'sm' : 'lg'}>
       <BAIRowWrapWithDividers>
         {resourceData.cpu && (
-          <BAIStatistic
-            current={resourceData.cpu[displayType].current}
-            total={resourceData.cpu[displayType].total}
-            title={resourceData.cpu.metadata.title}
-            unit={resourceData.cpu.metadata.displayUnit}
-            progressMode={progressMode}
-            progressSteps={progressSteps}
-            precision={precision}
-            style={{
-              color:
-                displayType === 'free' ? token('--color-success') : undefined,
-            }}
-          />
+          <WithNote note={notes?.['cpu']}>
+            <BAIStatistic
+              current={resourceData.cpu[displayType].current}
+              total={resourceData.cpu[displayType].total}
+              title={resourceData.cpu.metadata.title}
+              unit={resourceData.cpu.metadata.displayUnit}
+              progressMode={progressMode}
+              progressSteps={progressSteps}
+              precision={precision}
+              style={{
+                color:
+                  displayType === 'free' ? token('--color-success') : undefined,
+              }}
+            />
+          </WithNote>
         )}
         {resourceData.memory && (
-          <BAIStatistic
-            current={resourceData.memory[displayType].current}
-            total={resourceData.memory[displayType].total}
-            title={resourceData.memory.metadata.title}
-            unit={resourceData.memory.metadata.displayUnit}
-            progressMode={progressMode}
-            progressSteps={progressSteps}
-            precision={precision}
-            style={{
-              color:
-                displayType === 'free' ? token('--color-success') : undefined,
-            }}
-          />
+          <WithNote note={notes?.['memory']}>
+            <BAIStatistic
+              current={resourceData.memory[displayType].current}
+              total={resourceData.memory[displayType].total}
+              title={resourceData.memory.metadata.title}
+              unit={resourceData.memory.metadata.displayUnit}
+              progressMode={progressMode}
+              progressSteps={progressSteps}
+              precision={precision}
+              style={{
+                color:
+                  displayType === 'free' ? token('--color-success') : undefined,
+              }}
+            />
+          </WithNote>
         )}
       </BAIRowWrapWithDividers>
 
@@ -121,24 +146,31 @@ const ResourceStatistics: React.FC<ResourceStatisticsProps> = ({
           style={{
             backgroundColor: token('--color-background-body'),
             borderRadius: token('--radius-element'),
-            padding: token('--spacing-4'),
+            padding: acceleratorPadding,
+            // On a dashboard card the box reaches out by its padding, so its items start in line with CPU and memory.
+            marginInline: isInBoard
+              ? `calc(-1 * ${acceleratorPadding})`
+              : undefined,
           }}
         >
           {resourceData.accelerators.map((acc) => (
-            <BAIStatistic
-              key={acc.key}
-              current={acc[displayType].current}
-              total={acc[displayType].total}
-              title={acc.metadata.title}
-              unit={acc.metadata.displayUnit}
-              progressMode={progressMode}
-              progressSteps={progressSteps}
-              precision={precision}
-              style={{
-                color:
-                  displayType === 'free' ? token('--color-success') : undefined,
-              }}
-            />
+            <WithNote key={acc.key} note={notes?.[acc.key]}>
+              <BAIStatistic
+                current={acc[displayType].current}
+                total={acc[displayType].total}
+                title={acc.metadata.title}
+                unit={acc.metadata.displayUnit}
+                progressMode={progressMode}
+                progressSteps={progressSteps}
+                precision={precision}
+                style={{
+                  color:
+                    displayType === 'free'
+                      ? token('--color-success')
+                      : undefined,
+                }}
+              />
+            </WithNote>
           ))}
         </BAIRowWrapWithDividers>
       )}

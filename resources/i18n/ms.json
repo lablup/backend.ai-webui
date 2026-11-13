@@ -834,6 +834,8 @@
   "dashboard": {
     "Edit": "Edit",
     "Free": "Percuma",
+    "InUsePercent": "Digunakan {{percent}}%",
+    "MemoryInUsePercent": "Memori digunakan {{percent}}%",
     "Used": "digunakan",
     "boards": {
       "BoardName": "Nama papan",
@@ -873,6 +875,7 @@
       "FailuresOfType": "Entri gagal: {{type}}",
       "FailuresOnly": "Tunjukkan kegagalan sahaja",
       "FolderLimit": "Had: {{max}}",
+      "FoldersByUsageMode": "Folder mengikut mod penggunaan",
       "Healthy": "Sihat",
       "Insufficient": "Sumber tidak mencukupi",
       "LatestSchedulingReason": "Sebab penjadualan terkini",
@@ -918,6 +921,8 @@
       "SchedulingResult": "Keputusan",
       "SessionStatus": "Status Sesi",
       "SessionStatusTooltip": "Sesi semasa mengikut status, dan sesi aktif mengikut jenis sesi.",
+      "SessionsByStatus": "Sesi mengikut status",
+      "SessionsCreated": "Sesi yang dicipta",
       "Share": "Bahagian",
       "StartedBefore": "Dimulakan sebelum {{time}}",
       "Starting": "Bermula",
@@ -3776,6 +3781,7 @@
     "CreateFolder": "Buat Folder Storan Baharu",
     "CreateFolderDesc": "Mencipta folder dan memuat naik fail adalah penting untuk model latihan atau menyediakan perkhidmatan secara luaran. \nSila mulakan dengan memuat naik fail.",
     "NoStartItems": "Tiada item permulaan yang boleh didapati.",
+    "RecentHistoryDesc": "Mulakan sesi baharu dengan tetapan sesi yang anda cipta baru-baru ini.",
     "StartBatchSession": "Mulakan Sesi Kelompok",
     "StartBatchSessionDesc": "Untuk fail yang dipratentukan atau tugasan yang dijadualkan, cuba sesi Kelompok. \nMasukkan arahan, tetapkan tarikh dan masa, dan jalankan seperti yang diperlukan.",
     "StartDeployment": "Mulakan Penggunaan",
@@ -3786,12 +3792,14 @@
     "StartFromURLDesc": "Import projek dan kod anda daripada pelbagai persekitaran seperti GitHub, GitLab, Notebook, dsb.",
     "StartSession": "Mulakan Sesi Interaktif",
     "StartSessionDesc": "Ingin melatih model? \nKlik butang untuk membuat sesi serta-merta. \nPilih persekitaran dan sumber pilihan anda untuk menjalankan kod dan tugasan lain.",
+    "StartSessionFromRecentHistory": "Mulakan Sesi daripada Sejarah Terkini",
     "button": {
       "CreateFolder": "Buat folder",
       "StartBatchSession": "Mulakan daripada URL",
       "StartDeployment": "Cipta Penggunaan",
       "StartNow": "Mulakan Sekarang",
-      "StartSession": "Mulakan Sesi"
+      "StartSession": "Mulakan Sesi",
+      "ViewRecentHistory": "Lihat sejarah"
     }
   },
   "statistics": {

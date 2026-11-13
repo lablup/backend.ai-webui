@@ -834,6 +834,8 @@
   "dashboard": {
     "Edit": "Muokkaa",
     "Free": "Ilmainen",
+    "InUsePercent": "Käytössä {{percent}} %",
+    "MemoryInUsePercent": "Muistia käytössä {{percent}} %",
     "Used": "Käytetty",
     "boards": {
       "BoardName": "Taulun nimi",
@@ -873,6 +875,7 @@
       "FailuresOfType": "Epäonnistuneet merkinnät: {{type}}",
       "FailuresOnly": "Näytä vain epäonnistuneet",
       "FolderLimit": "Raja: {{max}}",
+      "FoldersByUsageMode": "Kansiot käyttötiloittain",
       "Healthy": "Kunnossa",
       "Insufficient": "Resurssit eivät riitä",
       "LatestSchedulingReason": "Viimeisin ajoituksen syy",
@@ -918,6 +921,8 @@
       "SchedulingResult": "Tulos",
       "SessionStatus": "Istuntojen tila",
       "SessionStatusTooltip": "Nykyiset istunnot tilan mukaan ja aktiiviset istuntotyypin mukaan.",
+      "SessionsByStatus": "Istunnot tiloittain",
+      "SessionsCreated": "Luodut istunnot",
       "Share": "Osuus",
       "StartedBefore": "Aloitettu ennen {{time}}",
       "Starting": "Käynnistymässä",
@@ -3776,6 +3781,7 @@
     "CreateFolder": "Luo uusi tallennuskansio",
     "CreateFolderDesc": "Kansion luominen ja tiedostojen lataaminen ovat tärkeitä koulutusmallien tai palvelujen tarjoamisen kannalta. \nAloita lataamalla tiedostot.",
     "NoStartItems": "Ei käytettävissä olevia aloitustuotteita.",
+    "RecentHistoryDesc": "Käynnistä uusi istunto äskettäin luomasi istunnon asetuksilla.",
     "StartBatchSession": "Aloita eräistunto",
     "StartBatchSessionDesc": "Jos haluat käyttää ennalta määritettyjä tiedostoja tai ajoitettuja tehtäviä, kokeile eräistuntoja. \nAnna komento, aseta päivämäärä ja aika ja suorita tarvittaessa.",
     "StartDeployment": "Käynnistä käyttöönotto",
@@ -3786,12 +3792,14 @@
     "StartFromURLDesc": "Tuo projektisi ja koodisi eri ympäristöistä, kuten GitHubista, GitLabista, Notebookista jne.",
     "StartSession": "Aloita interaktiivinen istunto",
     "StartSessionDesc": "Haluatko kouluttaa mallia? \nNapsauta painiketta luodaksesi istunnon välittömästi. \nValitse haluamasi ympäristö ja resurssit koodin ja muiden tehtävien suorittamista varten.",
+    "StartSessionFromRecentHistory": "Aloita istunto viimeaikaisesta historiasta",
     "button": {
       "CreateFolder": "Luo kansio",
       "StartBatchSession": "Aloita URL-osoitteesta",
       "StartDeployment": "Luo käyttöönotto",
       "StartNow": "Aloita nyt",
-      "StartSession": "Aloita istunto"
+      "StartSession": "Aloita istunto",
+      "ViewRecentHistory": "Näytä historia"
     }
   },
   "statistics": {

@@ -834,6 +834,8 @@
   "dashboard": {
     "Edit": "編集",
     "Free": "無料",
+    "InUsePercent": "使用中 {{percent}}%",
+    "MemoryInUsePercent": "メモリ使用 {{percent}}%",
     "Used": "使用済み",
     "boards": {
       "BoardName": "ボード名",
@@ -873,6 +875,7 @@
       "FailuresOfType": "失敗した記録: {{type}}",
       "FailuresOnly": "失敗のみ表示",
       "FolderLimit": "上限: {{max}}",
+      "FoldersByUsageMode": "使用モード別のフォルダー",
       "Healthy": "正常",
       "Insufficient": "リソース不足",
       "LatestSchedulingReason": "最新のスケジューリング理由",
@@ -918,6 +921,8 @@
       "SchedulingResult": "結果",
       "SessionStatus": "セッションの状況",
       "SessionStatusTooltip": "現在のセッションを状態別に、アクティブなセッションをセッションタイプ別に表示します。",
+      "SessionsByStatus": "状態別のセッション",
+      "SessionsCreated": "作成されたセッション",
       "Share": "割合",
       "StartedBefore": "{{time}} より前に開始",
       "Starting": "開始中",
@@ -3778,6 +3783,7 @@
     "CreateFolder": "保存フォルダー作成",
     "CreateFolderDesc": "フォルダーを作成してファイルをアップロードします。モデルの学習や外部サービス提供の準備に必要です。",
     "NoStartItems": "利用可能なスタートアイテムはありません。",
+    "RecentHistoryDesc": "最近作成したセッションの設定で新しいセッションを開始します。",
     "StartBatchSession": "バッチセッション開始",
     "StartBatchSessionDesc": "準備済みのタスクやファイルを一括実行します。コマンド入力後、設定を行って開始します。",
     "StartDeployment": "デプロイ開始",
@@ -3788,12 +3794,14 @@
     "StartFromURLDesc": "GitHub、GitLab、Notebook などのさまざまな環境からプロジェクトとコードをインポートします。",
     "StartSession": "インタラクティブセッション開始",
     "StartSessionDesc": "コード実行やモデル学習のための対話型セッションを開始します。必要なリソースを選択して実行します。",
+    "StartSessionFromRecentHistory": "最近の履歴からセッション開始",
     "button": {
       "CreateFolder": "フォルダー作成",
       "StartBatchSession": "URLから開始",
       "StartDeployment": "デプロイを作成",
       "StartNow": "今すぐ始めましょう",
-      "StartSession": "セッション開始"
+      "StartSession": "セッション開始",
+      "ViewRecentHistory": "履歴を見る"
     }
   },
   "statistics": {

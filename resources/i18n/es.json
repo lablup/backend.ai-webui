@@ -834,6 +834,8 @@
   "dashboard": {
     "Edit": "Editar",
     "Free": "Gratis",
+    "InUsePercent": "En uso {{percent}} %",
+    "MemoryInUsePercent": "Memoria en uso {{percent}} %",
     "Used": "Usado",
     "boards": {
       "BoardName": "Nombre del tablero",
@@ -873,6 +875,7 @@
       "FailuresOfType": "Entradas fallidas: {{type}}",
       "FailuresOnly": "Mostrar solo fallos",
       "FolderLimit": "Límite: {{max}}",
+      "FoldersByUsageMode": "Carpetas por modo de uso",
       "Healthy": "Correcto",
       "Insufficient": "Recursos insuficientes",
       "LatestSchedulingReason": "Último motivo de programación",
@@ -918,6 +921,8 @@
       "SchedulingResult": "Resultado",
       "SessionStatus": "Estado de las sesiones",
       "SessionStatusTooltip": "Las sesiones actuales por estado y las activas por tipo de sesión.",
+      "SessionsByStatus": "Sesiones por estado",
+      "SessionsCreated": "Sesiones creadas",
       "Share": "Proporción",
       "StartedBefore": "Iniciada antes de {{time}}",
       "Starting": "Iniciando",
@@ -3776,6 +3781,7 @@
     "CreateFolder": "Crear una nueva carpeta de almacenamiento",
     "CreateFolderDesc": "Crear una carpeta y cargar archivos es crucial para entrenar modelos o brindar servicios externamente. \nComience subiendo los archivos.",
     "NoStartItems": "Sin exceso de artículos de inicio.",
+    "RecentHistoryDesc": "Inicie una nueva sesión con la configuración de una que creó recientemente.",
     "StartBatchSession": "Iniciar sesión por lotes",
     "StartBatchSessionDesc": "Para archivos predefinidos o tareas programadas, pruebe las sesiones por lotes. \nIngrese el comando, establezca la fecha y la hora y ejecútelo según sea necesario.",
     "StartDeployment": "Iniciar despliegue",
@@ -3786,12 +3792,14 @@
     "StartFromURLDesc": "Importe su proyecto y código desde varios entornos como GitHub, GitLab, Notebook, etc.",
     "StartSession": "Iniciar una sesión interactiva",
     "StartSessionDesc": "¿Quieres entrenar un modelo? \nHaga clic en el botón para crear una sesión al instante. \nElija su entorno y recursos preferidos para ejecutar código y otras tareas.",
+    "StartSessionFromRecentHistory": "Iniciar una sesión desde el historial reciente",
     "button": {
       "CreateFolder": "Crear carpeta",
       "StartBatchSession": "Comenzar desde una URL",
       "StartDeployment": "Crear despliegue",
       "StartNow": "Empezar ahora",
-      "StartSession": "Iniciar sesión"
+      "StartSession": "Iniciar sesión",
+      "ViewRecentHistory": "Ver historial"
     }
   },
   "statistics": {

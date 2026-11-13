@@ -834,6 +834,8 @@
   "dashboard": {
     "Edit": "Chỉnh sửa",
     "Free": "Miễn phí",
+    "InUsePercent": "Đang dùng {{percent}}%",
+    "MemoryInUsePercent": "Bộ nhớ đang dùng {{percent}}%",
     "Used": "Đã sử dụng",
     "boards": {
       "BoardName": "Tên bảng",
@@ -873,6 +875,7 @@
       "FailuresOfType": "Mục thất bại: {{type}}",
       "FailuresOnly": "Chỉ hiện lỗi",
       "FolderLimit": "Giới hạn: {{max}}",
+      "FoldersByUsageMode": "Thư mục theo chế độ sử dụng",
       "Healthy": "Ổn định",
       "Insufficient": "Không đủ tài nguyên",
       "LatestSchedulingReason": "Lý do lập lịch gần nhất",
@@ -918,6 +921,8 @@
       "SchedulingResult": "Kết quả",
       "SessionStatus": "Trạng thái phiên",
       "SessionStatusTooltip": "Các phiên hiện tại theo trạng thái và các phiên đang hoạt động theo loại phiên.",
+      "SessionsByStatus": "Phiên theo trạng thái",
+      "SessionsCreated": "Phiên đã tạo",
       "Share": "Tỷ lệ",
       "StartedBefore": "Bắt đầu trước {{time}}",
       "Starting": "Đang khởi động",
@@ -3778,6 +3783,7 @@
     "CreateFolder": "Tạo thư mục lưu trữ mới",
     "CreateFolderDesc": "Việc tạo thư mục và tải tệp lên là rất quan trọng đối với việc đào tạo mô hình hoặc cung cấp dịch vụ bên ngoài. \nHãy bắt đầu bằng cách tải lên các tập tin.",
     "NoStartItems": "Không có mục bắt đầu có sẵn.",
+    "RecentHistoryDesc": "Bắt đầu phiên mới với cài đặt của phiên bạn vừa tạo gần đây.",
     "StartBatchSession": "Bắt đầu phiên hàng loạt",
     "StartBatchSessionDesc": "Đối với các tệp được xác định trước hoặc các tác vụ đã lên lịch, hãy thử phiên Batch. \nNhập lệnh, đặt ngày giờ và chạy khi cần.",
     "StartDeployment": "Bắt đầu triển khai",
@@ -3788,12 +3794,14 @@
     "StartFromURLDesc": "Nhập dự án và mã của bạn từ nhiều môi trường khác nhau như GitHub, GitLab, Notebook, v.v.",
     "StartSession": "Bắt đầu một phiên tương tác",
     "StartSessionDesc": "Bạn muốn đào tạo một người mẫu? \nNhấp vào nút để tạo phiên ngay lập tức. \nChọn môi trường và tài nguyên ưa thích của bạn để chạy mã và các tác vụ khác.",
+    "StartSessionFromRecentHistory": "Bắt đầu phiên từ lịch sử gần đây",
     "button": {
       "CreateFolder": "Tạo thư mục",
       "StartBatchSession": "Bắt đầu từ một URL",
       "StartDeployment": "Tạo triển khai",
       "StartNow": "Bắt đầu ngay bây giờ",
-      "StartSession": "Bắt đầu phiên"
+      "StartSession": "Bắt đầu phiên",
+      "ViewRecentHistory": "Xem lịch sử"
     }
   },
   "statistics": {

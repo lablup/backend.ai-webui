@@ -834,6 +834,8 @@
   "dashboard": {
     "Edit": "Bearbeiten",
     "Free": "Frei",
+    "InUsePercent": "Belegt {{percent}} %",
+    "MemoryInUsePercent": "Speicher belegt {{percent}} %",
     "Used": "Gebraucht",
     "boards": {
       "BoardName": "Board-Name",
@@ -873,6 +875,7 @@
       "FailuresOfType": "Fehlgeschlagene Einträge: {{type}}",
       "FailuresOnly": "Nur Fehler anzeigen",
       "FolderLimit": "Limit: {{max}}",
+      "FoldersByUsageMode": "Ordner nach Nutzungsmodus",
       "Healthy": "Fehlerfrei",
       "Insufficient": "Nicht genug Ressourcen",
       "LatestSchedulingReason": "Letzter Scheduling-Grund",
@@ -918,6 +921,8 @@
       "SchedulingResult": "Ergebnis",
       "SessionStatus": "Sitzungsstatus",
       "SessionStatusTooltip": "Aktuelle Sitzungen nach Status und die aktiven nach Sitzungstyp.",
+      "SessionsByStatus": "Sitzungen nach Status",
+      "SessionsCreated": "Erstellte Sitzungen",
       "Share": "Anteil",
       "StartedBefore": "Vor {{time}} gestartet",
       "Starting": "Wird gestartet",
@@ -3778,6 +3783,7 @@
     "CreateFolder": "Erstellen Sie einen neuen Speicherordner",
     "CreateFolderDesc": "Für das Training von Modellen oder die externe Bereitstellung von Diensten sind das Erstellen eines Ordners und das Hochladen von Dateien von entscheidender Bedeutung. \nBitte beginnen Sie mit dem Hochladen der Dateien.",
     "NoStartItems": "Keine verfügbaren Startartikel.",
+    "RecentHistoryDesc": "Starten Sie eine neue Sitzung mit den Einstellungen einer kürzlich erstellten Sitzung.",
     "StartBatchSession": "Starten Sie die Batch-Sitzung",
     "StartBatchSessionDesc": "Versuchen Sie für vordefinierte Dateien oder geplante Aufgaben Batch-Sitzungen. \nGeben Sie den Befehl ein, stellen Sie Datum und Uhrzeit ein und führen Sie ihn nach Bedarf aus.",
     "StartDeployment": "Bereitstellung starten",
@@ -3788,12 +3794,14 @@
     "StartFromURLDesc": "Importieren Sie Ihr Projekt und Ihren Code aus verschiedenen Umgebungen wie GitHub, GitLab, Notebook usw.",
     "StartSession": "Starten Sie eine interaktive Sitzung",
     "StartSessionDesc": "Möchten Sie ein Model trainieren? \nKlicken Sie auf die Schaltfläche, um sofort eine Sitzung zu erstellen. \nWählen Sie Ihre bevorzugte Umgebung und Ressourcen zum Ausführen von Code und anderen Aufgaben.",
+    "StartSessionFromRecentHistory": "Sitzung aus dem Verlauf starten",
     "button": {
       "CreateFolder": "Ordner erstellen",
       "StartBatchSession": "Beginnen Sie mit einer URL",
       "StartDeployment": "Bereitstellung erstellen",
       "StartNow": "Beginnen Sie jetzt",
-      "StartSession": "Sitzung starten"
+      "StartSession": "Sitzung starten",
+      "ViewRecentHistory": "Verlauf anzeigen"
     }
   },
   "statistics": {

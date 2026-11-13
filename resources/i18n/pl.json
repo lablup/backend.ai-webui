@@ -834,6 +834,8 @@
   "dashboard": {
     "Edit": "Edytuj",
     "Free": "Bezpłatny",
+    "InUsePercent": "Używane {{percent}}%",
+    "MemoryInUsePercent": "Używana pamięć {{percent}}%",
     "Used": "Używany",
     "boards": {
       "BoardName": "Nazwa tablicy",
@@ -873,6 +875,7 @@
       "FailuresOfType": "Nieudane wpisy: {{type}}",
       "FailuresOnly": "Pokaż tylko niepowodzenia",
       "FolderLimit": "Limit: {{max}}",
+      "FoldersByUsageMode": "Foldery według trybu użytkowania",
       "Healthy": "Sprawny",
       "Insufficient": "Za mało zasobów",
       "LatestSchedulingReason": "Ostatni powód planowania",
@@ -918,6 +921,8 @@
       "SchedulingResult": "Wynik",
       "SessionStatus": "Stan sesji",
       "SessionStatusTooltip": "Bieżące sesje według stanu, a aktywne według typu sesji.",
+      "SessionsByStatus": "Sesje według statusu",
+      "SessionsCreated": "Utworzone sesje",
       "Share": "Udział",
       "StartedBefore": "Uruchomiona przed {{time}}",
       "Starting": "Uruchamianie",
@@ -3779,6 +3784,7 @@
     "CreateFolder": "Utwórz nowy folder przechowywania",
     "CreateFolderDesc": "Utworzenie folderu i przesłanie plików jest kluczowe w przypadku uczenia modeli lub świadczenia usług na zewnątrz. \nRozpocznij od przesłania plików.",
     "NoStartItems": "Bez dostępnych elementów startowych.",
+    "RecentHistoryDesc": "Uruchom nową sesję z ustawieniami ostatnio utworzonej sesji.",
     "StartBatchSession": "Rozpocznij sesję wsadową",
     "StartBatchSessionDesc": "W przypadku wstępnie zdefiniowanych plików lub zaplanowanych zadań wypróbuj sesje wsadowe. \nWprowadź polecenie, ustaw datę i godzinę i uruchom w razie potrzeby.",
     "StartDeployment": "Uruchom wdrożenie",
@@ -3789,12 +3795,14 @@
     "StartFromURLDesc": "Zaimportuj swój projekt i kod z różnych środowisk, takich jak GitHub, GitLab, Notatnik itp.",
     "StartSession": "Rozpocznij sesję interaktywną",
     "StartSessionDesc": "Chcesz wyszkolić modelkę? \nKliknij przycisk, aby natychmiast utworzyć sesję. \nWybierz preferowane środowisko i zasoby do uruchamiania kodu i innych zadań.",
+    "StartSessionFromRecentHistory": "Rozpocznij sesję z ostatniej historii",
     "button": {
       "CreateFolder": "Utwórz folder",
       "StartBatchSession": "Zacznij od adresu URL",
       "StartDeployment": "Utwórz wdrożenie",
       "StartNow": "Zacznij teraz",
-      "StartSession": "Rozpocznij sesję"
+      "StartSession": "Rozpocznij sesję",
+      "ViewRecentHistory": "Pokaż historię"
     }
   },
   "statistics": {

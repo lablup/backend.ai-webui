@@ -834,6 +834,8 @@
   "dashboard": {
     "Edit": "Düzenle",
     "Free": "Özgür",
+    "InUsePercent": "Kullanımda %{{percent}}",
+    "MemoryInUsePercent": "Bellek kullanımda %{{percent}}",
     "Used": "Kullanılmış",
     "boards": {
       "BoardName": "Pano adı",
@@ -873,6 +875,7 @@
       "FailuresOfType": "Başarısız kayıtlar: {{type}}",
       "FailuresOnly": "Yalnızca hataları göster",
       "FolderLimit": "Sınır: {{max}}",
+      "FoldersByUsageMode": "Kullanım moduna göre klasörler",
       "Healthy": "Sağlıklı",
       "Insufficient": "Yetersiz kaynak",
       "LatestSchedulingReason": "Son zamanlama nedeni",
@@ -918,6 +921,8 @@
       "SchedulingResult": "Sonuç",
       "SessionStatus": "Oturum Durumu",
       "SessionStatusTooltip": "Şu anki oturumlar duruma göre, etkin olanlar oturum türüne göre.",
+      "SessionsByStatus": "Duruma göre oturumlar",
+      "SessionsCreated": "Oluşturulan oturumlar",
       "Share": "Pay",
       "StartedBefore": "{{time}} öncesinde başladı",
       "Starting": "Başlatılıyor",
@@ -3776,6 +3781,7 @@
     "CreateFolder": "Yeni Bir Depolama Klasörü Oluşturun",
     "CreateFolderDesc": "Bir klasör oluşturmak ve dosyaları yüklemek, modellerin eğitimi veya dışarıdan hizmet sağlanması için çok önemlidir. \nLütfen dosyaları yükleyerek başlayın.",
     "NoStartItems": "Kullanılabilir başlangıç öğeleri yok.",
+    "RecentHistoryDesc": "Yakın zamanda oluşturduğunuz bir oturumun ayarlarıyla yeni bir oturum başlatın.",
     "StartBatchSession": "Toplu Oturumu Başlat",
     "StartBatchSessionDesc": "Önceden tanımlanmış dosyalar veya zamanlanmış görevler için Toplu oturumları deneyin. \nKomutu girin, tarih ve saati ayarlayın ve gerektiği gibi çalıştırın.",
     "StartDeployment": "Dağıtımı Başlat",
@@ -3786,12 +3792,14 @@
     "StartFromURLDesc": "Projenizi ve kodunuzu GitHub, GitLab, Notebook vb. çeşitli ortamlardan içe aktarın.",
     "StartSession": "Etkileşimli Bir Oturum Başlatın",
     "StartSessionDesc": "Bir model yetiştirmek ister misiniz? \nAnında oturum oluşturmak için düğmeye tıklayın. \nKod çalıştırmak ve diğer görevler için tercih ettiğiniz ortamı ve kaynakları seçin.",
+    "StartSessionFromRecentHistory": "Son Geçmişten Oturum Başlat",
     "button": {
       "CreateFolder": "Klasör Oluştur",
       "StartBatchSession": "Bir URL'den başlayın",
       "StartDeployment": "Dağıtım Oluştur",
       "StartNow": "Şimdi Başla",
-      "StartSession": "Oturumu Başlat"
+      "StartSession": "Oturumu Başlat",
+      "ViewRecentHistory": "Geçmişi görüntüle"
     }
   },
   "statistics": {

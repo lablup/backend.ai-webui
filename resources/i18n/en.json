@@ -821,6 +821,8 @@
   "dashboard": {
     "Edit": "Edit",
     "Free": "Free",
+    "InUsePercent": "In use {{percent}}%",
+    "MemoryInUsePercent": "Memory in use {{percent}}%",
     "Used": "Used",
     "boards": {
       "BoardName": "Board name",
@@ -860,6 +862,7 @@
       "FailuresOfType": "Failed entries: {{type}}",
       "FailuresOnly": "Show failures only",
       "FolderLimit": "Limit: {{max}}",
+      "FoldersByUsageMode": "Folders by Usage Mode",
       "Healthy": "Healthy",
       "Insufficient": "Not enough resources",
       "LatestSchedulingReason": "Latest Scheduling Reason",
@@ -905,6 +908,8 @@
       "SchedulingResult": "Result",
       "SessionStatus": "Session Status",
       "SessionStatusTooltip": "Sessions right now by status, and the active ones by session type.",
+      "SessionsByStatus": "Sessions by Status",
+      "SessionsCreated": "Sessions Created",
       "Share": "Share",
       "StartedBefore": "Started before {{time}}",
       "Starting": "Starting",
@@ -3763,6 +3768,7 @@
     "CreateFolder": "Create New Storage Folder",
     "CreateFolderDesc": "Create folders and upload files. To train models or provide external services, it is essential to create folders and upload files.",
     "NoStartItems": "No availiable Start items.",
+    "RecentHistoryDesc": "Start a new session with the settings of one you created recently.",
     "StartBatchSession": "Start Batch Session",
     "StartBatchSessionDesc": "Create a batch session for predefined files or scheduled tasks. Enter the command, set the date and time, and run the session on demand.",
     "StartDeployment": "Start Deployment",
@@ -3773,12 +3779,14 @@
     "StartFromURLDesc": "Import your project and code from various environments such as GitHub, GitLab, Notebook, etc.",
     "StartSession": "Start Interactive Session",
     "StartSessionDesc": "Create a session to train a model. Choose your preferred environment and resources to run a code.",
+    "StartSessionFromRecentHistory": "Start Session from Recent History",
     "button": {
       "CreateFolder": "Create Folder",
       "StartBatchSession": "Start from a URL",
       "StartDeployment": "Create Deployment",
       "StartNow": "Start Now",
-      "StartSession": "Start Session"
+      "StartSession": "Start Session",
+      "ViewRecentHistory": "View History"
     }
   },
   "statistics": {

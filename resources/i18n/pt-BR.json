@@ -834,6 +834,8 @@
   "dashboard": {
     "Edit": "Editar",
     "Free": "Livre",
+    "InUsePercent": "Em uso {{percent}}%",
+    "MemoryInUsePercent": "Memória em uso {{percent}}%",
     "Used": "Usado",
     "boards": {
       "BoardName": "Nome do painel",
@@ -873,6 +875,7 @@
       "FailuresOfType": "Entradas com falha: {{type}}",
       "FailuresOnly": "Mostrar apenas falhas",
       "FolderLimit": "Limite: {{max}}",
+      "FoldersByUsageMode": "Pastas por modo de uso",
       "Healthy": "Íntegro",
       "Insufficient": "Recursos insuficientes",
       "LatestSchedulingReason": "Último motivo de agendamento",
@@ -918,6 +921,8 @@
       "SchedulingResult": "Resultado",
       "SessionStatus": "Status das sessões",
       "SessionStatusTooltip": "As sessões atuais por status e as ativas por tipo de sessão.",
+      "SessionsByStatus": "Sessões por estado",
+      "SessionsCreated": "Sessões criadas",
       "Share": "Proporção",
       "StartedBefore": "Iniciada antes de {{time}}",
       "Starting": "Iniciando",
@@ -3776,6 +3781,7 @@
     "CreateFolder": "Crie uma nova pasta de armazenamento",
     "CreateFolderDesc": "Criar uma pasta e fazer upload de arquivos são cruciais para treinar modelos ou fornecer serviços externamente. \nComece enviando os arquivos.",
     "NoStartItems": "Sem itens de início disponíveis.",
+    "RecentHistoryDesc": "Inicie uma nova sessão com as configurações de uma criada recentemente.",
     "StartBatchSession": "Iniciar sessão em lote",
     "StartBatchSessionDesc": "Para arquivos predefinidos ou tarefas agendadas, experimente sessões em lote. \nDigite o comando, defina a data e a hora e execute conforme necessário.",
     "StartDeployment": "Iniciar implantação",
@@ -3786,12 +3792,14 @@
     "StartFromURLDesc": "Importe seu projeto e código de vários ambientes como GitHub, GitLab, Notebook, etc.",
     "StartSession": "Iniciar uma sessão interativa",
     "StartSessionDesc": "Quer treinar um modelo? \nClique no botão para criar uma sessão instantaneamente. \nEscolha seu ambiente e recursos preferidos para executar código e outras tarefas.",
+    "StartSessionFromRecentHistory": "Iniciar sessão a partir do histórico recente",
     "button": {
       "CreateFolder": "Criar pasta",
       "StartBatchSession": "Comece a partir de um URL",
       "StartDeployment": "Criar implantação",
       "StartNow": "Comece agora",
-      "StartSession": "Iniciar sessão"
+      "StartSession": "Iniciar sessão",
+      "ViewRecentHistory": "Ver histórico"
     }
   },
   "statistics": {

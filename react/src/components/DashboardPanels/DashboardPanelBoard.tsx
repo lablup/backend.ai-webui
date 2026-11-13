@@ -34,11 +34,27 @@ import {
   BAIFlex,
   BAISkeleton,
   BAIUnmountAfterClose,
+  type BAIBoardProps,
 } from 'backend.ai-ui';
 import { useAtom, useSetAtom } from 'jotai';
 import * as _ from 'lodash-es';
 import React, { Suspense, useRef, useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
+
+/**
+ * Narrower than ui-common's: six columns from 1100px (not 2100px) so a laptop
+ * board is not four wide, and four from 640px (not 912px) so the ~680px board
+ * beside the edit sider still puts two 2-column cards in a row.
+ */
+const DASHBOARD_COLUMN_BREAKPOINTS: BAIBoardProps['columnBreakpoints'] = [
+  { minWidth: 0, columns: 1 },
+  { minWidth: 480, columns: 2 },
+  { minWidth: 640, columns: 4 },
+  { minWidth: 1100, columns: 6 },
+  { minWidth: 2400, columns: 8 },
+  { minWidth: 3000, columns: 10 },
+  { minWidth: 3600, columns: 12 },
+];
 
 export interface DashboardPanelBoardProps {
   page: PanelPage;
@@ -195,6 +211,7 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
                 movable
                 resizable
                 bordered
+                columnBreakpoints={DASHBOARD_COLUMN_BREAKPOINTS}
                 items={scopedItems}
                 // The board is controlled: the next render must hand back exactly
                 // what it reported, or it snaps back.

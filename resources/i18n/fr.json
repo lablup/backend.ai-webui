@@ -834,6 +834,8 @@
   "dashboard": {
     "Edit": "Éditer",
     "Free": "Gratuit",
+    "InUsePercent": "Utilisé {{percent}} %",
+    "MemoryInUsePercent": "Mémoire utilisée {{percent}} %",
     "Used": "Utilisé",
     "boards": {
       "BoardName": "Nom du tableau",
@@ -873,6 +875,7 @@
       "FailuresOfType": "Entrées en échec : {{type}}",
       "FailuresOnly": "Afficher les échecs uniquement",
       "FolderLimit": "Limite : {{max}}",
+      "FoldersByUsageMode": "Dossiers par mode d'utilisation",
       "Healthy": "Sain",
       "Insufficient": "Ressources insuffisantes",
       "LatestSchedulingReason": "Dernier motif de planification",
@@ -918,6 +921,8 @@
       "SchedulingResult": "Résultat",
       "SessionStatus": "État des sessions",
       "SessionStatusTooltip": "Les sessions actuelles par statut, et les sessions actives par type.",
+      "SessionsByStatus": "Sessions par statut",
+      "SessionsCreated": "Sessions créées",
       "Share": "Part",
       "StartedBefore": "Démarrée avant {{time}}",
       "Starting": "Démarrage",
@@ -3779,6 +3784,7 @@
     "CreateFolder": "Créer un nouveau dossier de stockage",
     "CreateFolderDesc": "La création d'un dossier et le téléchargement de fichiers sont cruciaux pour former des modèles ou fournir des services en externe. \nVeuillez commencer par télécharger les fichiers.",
     "NoStartItems": "Pas d'articles de démarrage disponibles.",
+    "RecentHistoryDesc": "Démarrez une nouvelle session avec les paramètres d'une session créée récemment.",
     "StartBatchSession": "Démarrer une session par lots",
     "StartBatchSessionDesc": "Pour les fichiers prédéfinis ou les tâches planifiées, essayez les sessions par lots. \nEntrez la commande, définissez la date et l'heure et exécutez-la selon vos besoins.",
     "StartDeployment": "Démarrer le déploiement",
@@ -3789,12 +3795,14 @@
     "StartFromURLDesc": "Importez votre projet et votre code depuis divers environnements tels que GitHub, GitLab, Notebook, etc.",
     "StartSession": "Démarrer une session interactive",
     "StartSessionDesc": "Vous souhaitez former un modèle ? \nCliquez sur le bouton pour créer une session instantanément. \nChoisissez votre environnement et vos ressources préférés pour exécuter du code et d'autres tâches.",
+    "StartSessionFromRecentHistory": "Démarrer une session depuis l'historique récent",
     "button": {
       "CreateFolder": "Créer un dossier",
       "StartBatchSession": "Commencer à partir d'une URL",
       "StartDeployment": "Créer un déploiement",
       "StartNow": "Commencez maintenant",
-      "StartSession": "Démarrer la session"
+      "StartSession": "Démarrer la session",
+      "ViewRecentHistory": "Voir l'historique"
     }
   },
   "statistics": {
