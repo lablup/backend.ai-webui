@@ -5,44 +5,41 @@
  * catalog bump that redraws a glyph fails here instead of shipping two looks.
  */
 import { ICON_NODES, icon, type IconName } from './icons.js';
-import { __iconNode as check } from 'lucide-react/dist/esm/icons/check.mjs';
-import { __iconNode as chevronDown } from 'lucide-react/dist/esm/icons/chevron-down.mjs';
-import { __iconNode as chevronUp } from 'lucide-react/dist/esm/icons/chevron-up.mjs';
-import { __iconNode as clipboard } from 'lucide-react/dist/esm/icons/clipboard.mjs';
-import { __iconNode as copy } from 'lucide-react/dist/esm/icons/copy.mjs';
-import { __iconNode as crosshair } from 'lucide-react/dist/esm/icons/crosshair.mjs';
-import { __iconNode as externalLink } from 'lucide-react/dist/esm/icons/external-link.mjs';
-import { __iconNode as eyeOff } from 'lucide-react/dist/esm/icons/eye-off.mjs';
-import { __iconNode as eye } from 'lucide-react/dist/esm/icons/eye.mjs';
-import { __iconNode as files } from 'lucide-react/dist/esm/icons/files.mjs';
-import { __iconNode as gripVertical } from 'lucide-react/dist/esm/icons/grip-vertical.mjs';
-import { __iconNode as mapPin } from 'lucide-react/dist/esm/icons/map-pin.mjs';
-import { __iconNode as pencil } from 'lucide-react/dist/esm/icons/pencil.mjs';
-import { __iconNode as trash2 } from 'lucide-react/dist/esm/icons/trash-2.mjs';
-import { __iconNode as userX } from 'lucide-react/dist/esm/icons/user-x.mjs';
-import { __iconNode as user } from 'lucide-react/dist/esm/icons/user.mjs';
-import { __iconNode as x } from 'lucide-react/dist/esm/icons/x.mjs';
-import { describe, expect, it } from 'vitest';
+import { beforeAll, describe, expect, it } from 'vitest';
 
-const UPSTREAM: Record<IconName, unknown> = {
-  check,
-  'chevron-down': chevronDown,
-  'chevron-up': chevronUp,
-  clipboard,
-  copy,
-  crosshair,
-  'external-link': externalLink,
-  eye,
-  'eye-off': eyeOff,
-  files,
-  'grip-vertical': gripVertical,
-  'map-pin': mapPin,
-  pencil,
-  'trash-2': trash2,
-  user,
-  'user-x': userX,
-  x,
-};
+// lucide 1.70 types its per-icon modules as a default export only, so the
+// node data (`__iconData.node`) is read through a dynamic import.
+// trash-2 became an alias of trash, whose module holds the data.
+const MODULE_OF: Partial<Record<IconName, string>> = { 'trash-2': 'trash' };
+// The names the overlay draws, listed by hand so the coverage test below means something.
+const DRAWN: ReadonlyArray<string> = [
+  'check',
+  'chevron-down',
+  'chevron-up',
+  'clipboard',
+  'copy',
+  'crosshair',
+  'external-link',
+  'eye',
+  'eye-off',
+  'files',
+  'grip-vertical',
+  'map-pin',
+  'pencil',
+  'trash-2',
+  'user',
+  'user-x',
+  'x',
+];
+const UPSTREAM = {} as Record<IconName, unknown>;
+beforeAll(async () => {
+  for (const name of DRAWN as IconName[]) {
+    const mod = (await import(
+      `lucide-react/dist/esm/icons/${MODULE_OF[name] ?? name}.mjs`
+    )) as unknown as { __iconData: { node: unknown } };
+    UPSTREAM[name] = mod.__iconData.node;
+  }
+});
 
 describe('the inlined icon data', () => {
   it.each(Object.keys(ICON_NODES) as IconName[])(
@@ -55,9 +52,7 @@ describe('the inlined icon data', () => {
   // A name the overlay stopped drawing is dead weight the parity test still
   // pays for; a name it draws without a copy would throw at render time.
   it('covers exactly the names the overlay draws', () => {
-    expect(Object.keys(ICON_NODES).sort()).toEqual(
-      Object.keys(UPSTREAM).sort(),
-    );
+    expect(Object.keys(ICON_NODES).sort()).toEqual([...DRAWN].sort());
   });
 });
 
