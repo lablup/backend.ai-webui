@@ -1550,9 +1550,6 @@
     "SubpathTooltip": "Monta uma subpasta dentro da pasta como origem em vez da sua raiz. Clique no campo para navegar pela pasta e escolher uma; deixe vazio para montar a raiz da pasta.",
     "UnmountableFoldersRemoved": "As pastas que já não pode montar foram removidas da seleção."
   },
-  "comp:BAIVFolderSelect": {
-    "SelectFolder": "Selecionar pasta"
-  },
   "comp:FileExplorer": {
     "ArchiveDownloadStarted": "O download de {{count}} item(s) foi iniciado.",
     "ChangeFileExtension": "Alterar a extensão do arquivo",

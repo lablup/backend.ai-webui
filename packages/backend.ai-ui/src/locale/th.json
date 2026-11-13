@@ -1550,9 +1550,6 @@
     "SubpathTooltip": "mount โฟลเดอร์ย่อยภายในโฟลเดอร์เป็นแหล่งข้อมูลแทน root คลิกที่ช่องนี้เพื่อเรียกดูโฟลเดอร์และเลือกโฟลเดอร์ย่อย หากเว้นว่างไว้จะ mount root ของโฟลเดอร์",
     "UnmountableFoldersRemoved": "โฟลเดอร์ที่คุณไม่สามารถเมานต์ได้อีกต่อไปถูกนำออกจากรายการที่เลือกแล้ว"
   },
-  "comp:BAIVFolderSelect": {
-    "SelectFolder": "เลือกโฟลเดอร์"
-  },
   "comp:FileExplorer": {
     "ArchiveDownloadStarted": "การดาวน์โหลด {{count}} รายการเริ่มแล้ว",
     "ChangeFileExtension": "เปลี่ยนนามสกุลไฟล์",

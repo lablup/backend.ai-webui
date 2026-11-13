@@ -1550,9 +1550,6 @@
     "SubpathTooltip": "Mount một thư mục con bên trong thư mục làm nguồn thay vì thư mục gốc. Nhấp vào trường này để duyệt thư mục và chọn một thư mục con; để trống để mount thư mục gốc.",
     "UnmountableFoldersRemoved": "Các thư mục bạn không còn gắn kết được đã bị loại khỏi lựa chọn."
   },
-  "comp:BAIVFolderSelect": {
-    "SelectFolder": "Chọn thư mục"
-  },
   "comp:FileExplorer": {
     "ArchiveDownloadStarted": "Đã bắt đầu tải xuống {{count}} mục.",
     "ChangeFileExtension": "Thay đổi phần mở rộng tệp",

@@ -153,7 +153,7 @@ vi.mock('../../../components/DeploymentPresetDetailModal', () => ({
 let presetSelectMounts = 0;
 
 // The model-folder picker is the probe for the folder-picker side of the
-// contract: it surfaces the `currentProjectId` it was scoped to.
+// contract: it surfaces the project its `scope` reads.
 vi.mock('backend.ai-ui', async (importOriginal) => {
   const React = await import('react');
   const originalModule = await importOriginal<typeof import('backend.ai-ui')>();
@@ -164,12 +164,12 @@ vi.mock('backend.ai-ui', async (importOriginal) => {
       autoMountedFolders: [],
       refetch: () => {},
     }),
-    BAIVFolderSelect: (props: any) =>
+    BAIScopedVFolderSelect: (props: any) =>
       React.createElement(
         'button',
         {
           'data-testid': 'mock-vfolder-select',
-          'data-current-project-id': props.currentProjectId ?? '',
+          'data-scope-project-id': props.scope?.project?.[0]?.value ?? '',
           disabled: props.isDisabled ?? props.disabled,
           type: 'button',
         },
@@ -272,7 +272,7 @@ describe('DeploymentAddRevisionModal project derivation contract (ADR-0001)', ()
     const folderSelect = await screen.findByTestId('mock-vfolder-select');
     // The picker follows the deployment's project — never the ambient one.
     expect(folderSelect).toHaveAttribute(
-      'data-current-project-id',
+      'data-scope-project-id',
       'deployment-project-id',
     );
     expect(folderSelect).toBeEnabled();
@@ -326,7 +326,7 @@ describe('DeploymentAddRevisionModal project derivation contract (ADR-0001)', ()
     const folderSelect = screen.getByTestId('mock-vfolder-select');
     expect(folderSelect).toBeDisabled();
     expect(folderSelect).not.toHaveAttribute(
-      'data-current-project-id',
+      'data-scope-project-id',
       'ambient-project-id',
     );
     // ...and the resource form (non-null project required) is not rendered.

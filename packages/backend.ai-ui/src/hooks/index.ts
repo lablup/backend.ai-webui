@@ -198,6 +198,7 @@ export {
   isAutoMountFolderName,
   mountableVFolderFilter,
   mountableVFolderScope,
+  notDeletedVFolderFilter,
   useSuspendedAutoMountedVFolders,
 } from './useMountableVFolders';
 export type {

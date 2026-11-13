@@ -18,6 +18,7 @@ import {
   BAIAdminProjectSelect,
   BAIAdminResourceGroupSelect,
   BAIAdminSessionSelect,
+  BAIScopedVFolderSelect,
   BAIFlex,
   BAIKeypairSelect,
   BAIModal,
@@ -26,7 +27,6 @@ import {
   BAISelect,
   BAIStorageHostSelect,
   BAIAdminUserV2Select,
-  BAIVFolderSelect,
   useBAILogger,
   BAICheckboxInput,
   BAITextArea,
@@ -123,6 +123,7 @@ export const ScopeIdSelect: React.FC<ScopeIdSelectProps> = ({
   'use memo';
   const { t } = useTranslation();
   const scopeType = rawScopeType?.toUpperCase();
+  const { id: domainId } = useCurrentDomain();
   // The surrounding `Form.Item` already prints "Scope ID", so the Astryx
   // field's own label is the accessible name only.
   const branchProps: ScopeIdBranchProps = {
@@ -157,7 +158,10 @@ export const ScopeIdSelect: React.FC<ScopeIdSelectProps> = ({
   if (scopeType === 'VFOLDER') {
     return (
       <Suspense fallback={fallback}>
-        <BAIVFolderSelect {...branchProps} />
+        <BAIScopedVFolderSelect
+          {...branchProps}
+          scope={{ domain: [{ value: domainId }] }}
+        />
       </Suspense>
     );
   }
