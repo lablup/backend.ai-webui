@@ -519,10 +519,8 @@ export const CSSTokenVariables = () => {
 const DismissSplashOnMount = () => {
   'use memo';
   useSuspendedBackendaiClient();
-  const userConfigFamily = useScopedAppConfig(
-    { scopeType: 'USER' },
-    'userConfig',
-  ).doc?.themeFamily;
+  const userConfigFamily = useScopedAppConfig({ user: ['userConfig'] }).user
+    ?.userConfig?.themeFamily;
   const { setActiveThemeFamily } = useCustomThemeConfig();
   const syncThemeFamilyMirror = useEffectEvent(() => {
     setActiveThemeFamily(

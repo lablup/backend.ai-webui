@@ -167,8 +167,7 @@ test.describe(
           }
           const response = await route.fetch();
           const body = await response.json();
-          for (const entry of body?.data?.scopedAppConfigFragmentsByNames ??
-            []) {
+          for (const entry of body?.data?.user ?? []) {
             if (entry?.configName !== 'userConfig') continue;
             const isString = typeof entry.config === 'string';
             const config = isString

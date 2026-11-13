@@ -24,8 +24,8 @@ const useSessionHistoryStore = (key: SessionHistoryKey) => {
   'use memo';
   const { message } = App.useApp();
   const { getErrorMessage } = useErrorMessageResolver();
-  const userConfig = useScopedAppConfig({ scopeType: 'USER' }, 'userConfig');
-  const serverValue = userConfig.doc?.[key] as
+  const userConfig = useScopedAppConfig({ user: ['userConfig'] });
+  const serverValue = userConfig.user?.userConfig?.[key] as
     Array<SessionHistory> | undefined;
   const [localValue] = useBAISettingUserState(key);
   // Shows the written value while the write is in flight.
@@ -34,7 +34,12 @@ const useSessionHistoryStore = (key: SessionHistoryKey) => {
   const setValue = async (next: Array<SessionHistory>) => {
     setPending({ value: next });
     try {
-      await userConfig.setKey(key, next);
+      await userConfig.upsert({
+        scope: 'user',
+        configName: 'userConfig',
+        subKey: key,
+        value: next,
+      });
     } catch (error) {
       message.error(getErrorMessage(error));
     } finally {

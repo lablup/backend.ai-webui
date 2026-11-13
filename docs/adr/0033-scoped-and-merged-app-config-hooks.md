@@ -4,15 +4,15 @@
 
 > Unfamiliar terms are collected in the [Glossary](#glossary) at the end.
 
-- `react/src/hooks/useAppConfig.ts` exposes two hooks. `useScopedAppConfig(scope, configName)` reads and writes one scope's [raw document](#glossary). `useMyAppConfig(configName, subKey)` reads the [merged view](#glossary) and never writes.
-- A write is one upsert. `setKey` builds the whole document from the copy in the Relay store and lets the upsert response update that copy. A write reads the document from the network first only when Relay has already collected the stored copy.
-- Every `userConfig` reader reads the USER raw document, so a write shows on screen from the upsert response alone. Only `domainConfig` and `publicConfigByDomain` readers use the merged view, and a `domainConfig` write refetches the merged `domainConfig` view.
-- The write base is the copy in the Relay store, kept current by this tab's upserts. `MainLayout` keeps the USER `userConfig` read from sign-in, so for `userConfig` that copy is the one read at sign-in. A change that the CLI, another admin, or another tab makes after the copy was read is overwritten by the next write.
+- `react/src/hooks/useAppConfig.ts` exposes two hooks. `useScopedAppConfig({ public?, domain?, user? })` reads the [raw documents](#glossary) of the PUBLIC, current DOMAIN and own USER scopes in one request and writes them with `upsert`. `useMyAppConfig(configName, subKey)` reads the [merged view](#glossary) and never writes.
+- A write is one upsert per scope. `upsert` builds each whole document from the copy the hook holds and lets the upsert response update that copy.
+- The hook renders the store's copy first and reads the documents once more on every mount, so the write base is the document as it stood when the screen mounted. A change that the CLI, another admin, or another tab makes after that is overwritten by the next write.
+- Every `userConfig` reader reads the USER raw document. Only `domainConfig` and `publicConfigByDomain` readers use the merged view, and a `domainConfig` write refetches it.
 
 ## Context
 
 - **Upsert replaces**: `scopedAtomicBulkUpsertAppConfigFragments` stores the `config` it receives as the whole document of `(configName, scope)`; the manager does no JSON merge. A client that changes one key must send every other key too.
-- **Per-scope setters**: Before this decision, each setter read the raw document from the network before its upsert, and some callers refetched the merged view afterwards, so one change cost two or three requests.
+- **One scope per field**: `scopedAppConfigFragmentsByNames` and the upsert input take one `AppConfigScopeRef { scopeType, scopeId }`, not the OR'd scope lists other `scoped*` queries take (`ProjectScope`). Several scopes in one request need one aliased field per scope.
 - **Read permissions**: `scopedAppConfigFragmentsByNames` answers PUBLIC and the caller's own USER scope for every role. It answers the DOMAIN scope only for a superadmin; a domain admin and a regular user are denied `READ` on `app_config_fragment`.
 - **Merged view has no id**: `myAppConfigs` returns `AppConfig { configName config }` with no `id`, so Relay cannot match it to the fragment an upsert returns. The merged view keeps its old value until the client fetches it again.
 - **Merged view includes PUBLIC**: `myAppConfigs` merges the public, domain, and own-user fragments the caller can see (`VisibleAppConfigFragmentTarget` in the manager), so it returns `publicConfigByDomain` as well.
@@ -22,17 +22,17 @@
 ```mermaid
 flowchart LR
   subgraph manager["Manager"]
-    raw["scopedAppConfigFragmentsByNames<br/>one scope, with id"]
+    raw["scopedAppConfigFragmentsByNames<br/>public, domain, user aliases"]
     merged["myAppConfigs<br/>merged, no id"]
     upsert["scopedAtomicBulkUpsertAppConfigFragments"]
   end
   subgraph store["Relay store"]
-    rawRec["AppConfigFragment record"]
+    rawRec["AppConfigFragment records"]
     mergedRec["myAppConfigs result"]
   end
-  raw -- "store-and-network read" --> rawRec
-  rawRec -- "doc" --> scoped["useScopedAppConfig"]
-  scoped -- "setKey: whole document with one sub-key changed" --> upsert
+  raw -- "one request per mount, store-and-network" --> rawRec
+  rawRec -- "public, domain, user" --> scoped["useScopedAppConfig"]
+  scoped -- "upsert: one mutation per scope" --> upsert
   upsert -- "response with the same id" --> rawRec
   upsert -- "first write: updater links the created fragment" --> rawRec
   upsert -. "domainConfig write: network-only refetch, not awaited" .-> merged
@@ -44,51 +44,53 @@ flowchart LR
 
 ### 1. Two hooks in `useAppConfig.ts`
 
-| Hook                                    | Reads                                                               | Writes                   | Fetch policy        |
-| --------------------------------------- | ------------------------------------------------------------------- | ------------------------ | ------------------- |
-| `useScopedAppConfig(scope, configName)` | `scopedAppConfigFragmentsByNames` for one scope and one config name | `setKey(subKey, update)` | `store-and-network` |
-| `useMyAppConfig(configName, subKey?)`   | `myAppConfigs` for one config name per request                      | none                     | `store-or-network`  |
+| Hook                                  | Reads                                                                    | Writes            | Fetch policy                                                                  |
+| ------------------------------------- | ------------------------------------------------------------------------ | ----------------- | ----------------------------------------------------------------------------- |
+| `useScopedAppConfig(request)`         | `scopedAppConfigFragmentsByNames` once per requested scope, in one query | `upsert(changes)` | `store-and-network`, plus one `network-only` read on a mount the store served |
+| `useMyAppConfig(configName, subKey?)` | `myAppConfigs` for one config name per request                           | none              | `store-or-network`                                                            |
 
-- **Scope type**: `AppConfigScope` is `{ scopeType: 'PUBLIC' }`, `{ scopeType: 'DOMAIN'; scopeId? }` or `{ scopeType: 'USER'; scopeId? }`. A missing `scopeId` becomes the signed-in user's domain id (`useCurrentDomain().id`, DOMAIN) or user id (USER).
-- **Return shape**: `useScopedAppConfig` returns `{ doc, setKey }`. `doc` is the raw document, or `undefined` when the scope holds no fragment for that name.
-- **Refresh rule**: `useLazyLoadQuery` with `store-and-network` reads the document from the network only when a mount creates the query's cache entry, that is, when no other mounted reader retains it. `MainLayout` retains the USER `userConfig` read from sign-in, so the `userConfig` readers reuse that copy until the page reloads.
+- **Request shape**: `ScopedAppConfigRequest` is `{ public?: AppConfigName[]; domain?: AppConfigName[]; user?: AppConfigName[] }`. `domain` is the signed-in user's domain (`useCurrentDomain().id`) and `user` is the signed-in user; a caller cannot name another id.
+- **One query**: `useAppConfigScopedQuery` holds three aliased `scopedAppConfigFragmentsByNames` fields (`public`, `domain`, `user`). Each carries `@skip(if:)` for a scope the request leaves out and `@catch(to: NULL)`, so a scope the caller may not read comes back `undefined` without failing the others.
+- **Return shape**: the hook returns `{ public, domain, user, upsert }`. Each scope is a map from the requested names to the raw document, `undefined` for a name the scope holds no fragment for, and the whole scope is `undefined` when it was not requested or not readable.
+- **Read once per mount**: `useLazyLoadQuery` does not fetch a query that another mounted reader still retains, such as `MainLayout`'s `userConfig` read. An effect therefore reads the documents with `network-only` when the screen mounts, unless `environment.check()` reports them fetched less than 2 s ago, which is the mount's own suspending read.
 - **Merged view per name**: `useMyAppConfig` asks `myAppConfigs` for its one config name, so the `domainConfig` readers can reuse the `myAppConfigs(["domainConfig"])` result that the sign-in query (`loginSessionAuth.ts`) or `AnnouncementBanner` in `MainLayout` left in the store.
-- **Domain slice**: `publicConfigByDomain` holds one slice per domain, so callers pass the domain name as the first path segment, both to `setKey([domainName, key], …)` and to `useMyAppConfig('publicConfigByDomain', [domainName, key])`.
+- **Domain slice**: `publicConfigByDomain` holds one slice per domain, so callers pass the domain name as the first path segment, both to a change's `subKey` (`[domainName, key]`) and to `useMyAppConfig('publicConfigByDomain', [domainName, key])`.
 
-### 2. One upsert per write
+### 2. One upsert per scope
 
-- **Write base**: `setKey` waits for a read of the same document still in flight, reads the document from the Relay store, applies the sub-key change with `applySubKey`, and sends the result as one `scopedAtomicBulkUpsertAppConfigFragments`. When Relay has already collected the record, it reads the document from the network instead.
-- **Store update**: The upsert selects `{ id configName config }`, so the response updates the returned record. The mutation's `updater` points the read at the returned fragment, which covers a first write and a write after the fragment was purged, and the next write builds on it.
-- **Ordering**: `serializeWrite` queues the writes to one document (`scopeType`, `scopeId`, and `configName`), so a write starts after the previous one settles and builds on its response.
-- **Value update**: `update` is the next value, or a function of the current value at `subKey`. `undefined` removes the key.
+- **Change shape**: `AppConfigChange` is `{ scope, configName, subKey, value }`. `value` is the next value, or a function of the current value at `subKey`; `undefined` removes the key. `upsert` takes one change or an array.
+- **Write base**: `upsert` groups the changes by scope. For each scope it waits for a read of the hook's query still in flight, takes the documents from the Relay store, applies the changes in order with `applySubKey`, and sends the touched documents as one `scopedAtomicBulkUpsertAppConfigFragments`. When Relay has already collected the records, it reads them from the network instead.
+- **Unreadable scope**: `upsert` throws, and sends nothing, for a scope that came back unreadable or a name the hook did not request, because the base would be empty.
+- **Store update**: The upsert selects `{ id configName config }`, so the response updates the returned records. The mutation's `updater` points the read at each returned fragment, which covers a first write and a write after the fragment was purged.
+- **Ordering**: `serializeWrite` queues the writes to one scope (`scopeType` and `scopeId`), so a write starts after the previous one settles and builds on its response. Several scopes in one `upsert` are written one after another and are not atomic.
 
 ### 3. Who reads which view
 
-| Config name            | Readers and writers                                                                                | Hook                                                                  |
-| ---------------------- | -------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
-| `userConfig`           | `MainLayout` (`themeFamily`), `useDashboardBoards`, `FolderCreateModal`, `useRecentSessionHistory` | `useScopedAppConfig({ scopeType: 'USER' }, 'userConfig')`             |
-| `userConfig`           | `UserSettingsGeneralPane` (writes only)                                                            | `useScopedAppConfig({ scopeType: 'USER' }, 'userConfig')`             |
-| `domainConfig`         | `AnnouncementBanner`, `useDashboardBoards` (templates)                                             | `useMyAppConfig('domainConfig', …)`                                   |
-| `domainConfig`         | `AnnouncementEditModal`, `WebUISettingsPage` (superadmin only)                                     | `useScopedAppConfig({ scopeType: 'DOMAIN' }, 'domainConfig')`         |
-| `publicConfigByDomain` | `useDashboardBoards` (templates)                                                                   | `useMyAppConfig('publicConfigByDomain', …)`                           |
-| `publicConfigByDomain` | `WebUISettingsPage` (superadmin only)                                                              | `useScopedAppConfig({ scopeType: 'PUBLIC' }, 'publicConfigByDomain')` |
-| `publicConfigByDomain` | `BrandingSettingList` (superadmin only, writes only)                                               | `useScopedAppConfig({ scopeType: 'PUBLIC' }, 'publicConfigByDomain')` |
+| Config name            | Readers and writers                                                                                                                         | Hook                                                                                 |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| `userConfig`           | `MainLayout` (`themeFamily`), `useDashboardBoards`, `FolderCreateModal`, `useRecentSessionHistory`, `UserSettingsGeneralPane` (writes only) | `useScopedAppConfig({ user: ['userConfig'] })`                                       |
+| `domainConfig`         | `AnnouncementBanner`, `useDashboardBoards` (templates)                                                                                      | `useMyAppConfig('domainConfig', …)`                                                  |
+| `domainConfig`         | `AnnouncementEditModal` (superadmin only)                                                                                                   | `useScopedAppConfig({ domain: ['domainConfig'] })`                                   |
+| `publicConfigByDomain` | `useDashboardBoards` (templates)                                                                                                            | `useMyAppConfig('publicConfigByDomain', …)`                                          |
+| `publicConfigByDomain` | `BrandingSettingList` (superadmin only, writes only)                                                                                        | `useScopedAppConfig({ public: ['publicConfigByDomain'] })`                           |
+| both                   | `WebUISettingsPage` (superadmin only)                                                                                                       | `useScopedAppConfig({ domain: ['domainConfig'], public: ['publicConfigByDomain'] })` |
 
 - **Merged refetch**: A `domainConfig` write starts a `network-only` read of the merged `domainConfig` view after its upsert lands, because every user reads `domainConfig` through it. The write does not wait for that read, and a failed read leaves the merged view stale without failing the write. A `publicConfigByDomain` write does not refetch; the Branding page and System Settings reload the page after they apply.
-- **Draft follows the refresh**: `WebUISettingList` seeds its draft from the saved documents. When the `store-and-network` background read changes them and the draft still equals the previous saved value, the draft takes the refreshed value instead of showing it as an edit.
+- **Draft follows the refresh**: `WebUISettingList` seeds its draft from the saved documents. When the mount's read changes them and the draft still equals the previous saved value, the draft takes the refreshed value instead of showing it as an edit.
 
 ## Rejected alternatives
 
 - **Re-read before each write**: Each setter reads the raw document from the network before its upsert. A change another tab made a moment ago survives. Rejected because every change costs an extra request, and System Settings will save on every change (#10941).
 - **Merged view for `userConfig`**: `userConfig` readers keep `useMyAppConfig` and each write refetches the merged view. DOMAIN-scope `userConfig` defaults keep applying. Rejected because every write then costs a second request, and nothing in the WebUI writes DOMAIN-scope `userConfig`; ADR 0026 keeps the dashboard out of it.
+- **One hook call per scope**: `useScopedAppConfig(scope, configName)` reads one scope per call, and a page that edits two scopes calls it twice. Each call stays small. Rejected because the second call suspends only after the first read lands, so System Settings read its two documents one after the other.
 - **`my*` mutation for USER**: The own-user write goes through `myAtomicBulkUpsertAppConfigFragments`. Rejected because the scoped mutation accepts the caller's own USER scope, so one mutation serves every scope.
 
 ## Consequences
 
-- **Request count**: A change costs one upsert; a `domainConfig` change costs one more request for the merged refetch. A screen reads a raw document only when no other mounted reader holds it.
-- **Lost concurrent edits**: The next write overwrites a change that the CLI, another admin, or another tab of the same account made after this tab read the document; for `userConfig` that is any change since sign-in. Reloading the page picks the change up.
+- **Request count**: A change costs one upsert per scope; a `domainConfig` change costs one more request for the merged refetch. A screen reads its requested scopes in one request per mount.
+- **Lost concurrent edits**: The next write overwrites a change that the CLI, another admin, or another tab of the same account made after the screen mounted. Remounting the screen or reloading the page picks the change up.
 - **Defaults from DOMAIN-scope `userConfig`**: A `userConfig` value written at DOMAIN scope no longer reaches the screens, because they read the USER raw document.
-- **Superadmin-only raw reads**: For anyone but a superadmin, the manager denies a DOMAIN-scope read and `useLazyLoadQuery` raises the error to the nearest error boundary, so only superadmin routes (`access: 'superadmin'`) and superadmin-gated components may call it.
+- **Same-kind scopes**: The query has one field per scope kind, so one call reads one domain and one user, the signed-in ones. Reading another domain's or user's document needs a new field or a new hook.
 
 ## Sources
 

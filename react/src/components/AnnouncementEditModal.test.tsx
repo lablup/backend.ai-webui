@@ -24,12 +24,14 @@ vi.mock('react-i18next', () => ({
 // chunk is still loading.
 vi.mock('../hooks/useAppConfig', () => ({
   useScopedAppConfig: () => ({
-    doc: {
-      settings: {
-        announcement: { enabled: true, title: 'hello', body: 'world' },
+    domain: {
+      domainConfig: {
+        settings: {
+          announcement: { enabled: true, title: 'hello', body: 'world' },
+        },
       },
     },
-    setKey: async () => undefined,
+    upsert: async () => undefined,
   }),
 }));
 

@@ -158,9 +158,9 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
         ? createPermission?.canCreate
         : undefined;
 
-  const userConfig = useScopedAppConfig({ scopeType: 'USER' }, 'userConfig');
+  const userConfig = useScopedAppConfig({ user: ['userConfig'] });
   const skipSharedFolderConfirm =
-    !!userConfig.doc?.[SKIP_PROJECT_FOLDER_CONFIRM_KEY];
+    !!userConfig.user?.userConfig?.[SKIP_PROJECT_FOLDER_CONFIRM_KEY];
   const [isSharedConfirmOpen, setIsSharedConfirmOpen] = useState(false);
   const [dontAskAgain, setDontAskAgain] = useState(false);
   const [isConfirmPending, setIsConfirmPending] = useState(false);
@@ -663,7 +663,12 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
             if (dontAskAgain) {
               // A failed preference write must not block the creation.
               await userConfig
-                .setKey(SKIP_PROJECT_FOLDER_CONFIRM_KEY, true)
+                .upsert({
+                  scope: 'user',
+                  configName: 'userConfig',
+                  subKey: SKIP_PROJECT_FOLDER_CONFIRM_KEY,
+                  value: true,
+                })
                 .catch((error) => logger.error(error));
             }
           } finally {

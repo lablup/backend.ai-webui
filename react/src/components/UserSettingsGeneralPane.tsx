@@ -50,10 +50,9 @@ const UserSettingsGeneralPane = () => {
   } = useCustomThemeConfig();
   // `userConfig.themeFamily` is the authoritative store; the localStorage
   // FOUC mirror is written only after the server accepts (FR-1964).
-  const { setKey: setUserConfigKey } = useScopedAppConfig(
-    { scopeType: 'USER' },
-    'userConfig',
-  );
+  const { upsert: upsertUserConfig } = useScopedAppConfig({
+    user: ['userConfig'],
+  });
   // The select shows the chosen family while the write is in flight.
   const [pendingThemeFamily, setPendingThemeFamily] = useState<{
     family: string | undefined;
@@ -61,7 +60,12 @@ const UserSettingsGeneralPane = () => {
   const persistThemeFamily = async (next: string | undefined) => {
     setPendingThemeFamily({ family: next });
     try {
-      await setUserConfigKey('themeFamily', next);
+      await upsertUserConfig({
+        scope: 'user',
+        configName: 'userConfig',
+        subKey: 'themeFamily',
+        value: next,
+      });
       setThemeFamily(next);
     } catch (error) {
       message.error(getErrorMessage(error));

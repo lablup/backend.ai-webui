@@ -26,20 +26,36 @@ const tabParser = parseAsStringLiteral([
 const SavedWebUISettingList: React.FC = () => {
   'use memo';
   const { name: domainName } = useCurrentDomain();
-  const domain = useScopedAppConfig({ scopeType: 'DOMAIN' }, 'domainConfig');
-  const pub = useScopedAppConfig(
-    { scopeType: 'PUBLIC' },
-    'publicConfigByDomain',
-  );
+  // One request for both documents the page edits.
+  const config = useScopedAppConfig({
+    domain: ['domainConfig'],
+    public: ['publicConfigByDomain'],
+  });
   return (
     <WebUISettingList
-      savedDomainSettings={domain.doc?.[WEBUI_SETTINGS_CONFIG_KEY]}
-      savedPublicSettings={pub.doc?.[domainName]?.[WEBUI_SETTINGS_CONFIG_KEY]}
-      setDomainSettings={(update) =>
-        domain.setKey(WEBUI_SETTINGS_CONFIG_KEY, update)
+      savedDomainSettings={
+        config.domain?.domainConfig?.[WEBUI_SETTINGS_CONFIG_KEY]
       }
-      setPublicSettings={(update) =>
-        pub.setKey([domainName, WEBUI_SETTINGS_CONFIG_KEY], update)
+      savedPublicSettings={
+        config.public?.publicConfigByDomain?.[domainName]?.[
+          WEBUI_SETTINGS_CONFIG_KEY
+        ]
+      }
+      setDomainSettings={(value) =>
+        config.upsert({
+          scope: 'domain',
+          configName: 'domainConfig',
+          subKey: WEBUI_SETTINGS_CONFIG_KEY,
+          value,
+        })
+      }
+      setPublicSettings={(value) =>
+        config.upsert({
+          scope: 'public',
+          configName: 'publicConfigByDomain',
+          subKey: [domainName, WEBUI_SETTINGS_CONFIG_KEY],
+          value,
+        })
       }
     />
   );
