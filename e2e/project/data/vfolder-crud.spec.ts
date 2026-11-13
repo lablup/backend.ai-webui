@@ -158,14 +158,16 @@ test.describe(
         // confirm modal; report it unset without touching the stored value.
         await page.route('**/admin/gql', async (route) => {
           if (
-            !(route.request().postData() ?? '').includes('useAppConfigMyQuery')
+            !(route.request().postData() ?? '').includes(
+              'useAppConfigScopedQuery',
+            )
           ) {
             await route.fallback();
             return;
           }
           const response = await route.fetch();
           const body = await response.json();
-          for (const entry of body?.data?.myAppConfigs ?? []) {
+          for (const entry of body?.data?.user ?? []) {
             if (entry?.configName !== 'userConfig') continue;
             const isString = typeof entry.config === 'string';
             const config = isString

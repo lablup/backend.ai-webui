@@ -8,7 +8,8 @@ import {
   APPEARANCE_SCHEMA_VERSION,
   DOMAIN_APPEARANCE_CONFIG_KEY,
 } from '../../../helper/customThemeConfig';
-import { useUpdatePublicDomainAppConfig } from '../../../hooks/useAppConfig';
+import { useCurrentDomainValue } from '../../../hooks';
+import { useScopedAppConfig } from '../../../hooks/useAppConfig';
 import { usePreviewThemeConfig } from '../../../hooks/usePreviewThemeConfig';
 import FontFamilySettingItem from './BrandingSettingItems/FontFamilySettingItem';
 import LogoPreviewer, {
@@ -52,7 +53,8 @@ const BrandingSettingList: React.FC<BrandingSettingListProps> = () => {
   } = usePreviewThemeConfig();
   // Saved WHOLE — families included — as this domain's slice of the public
   // document; reads replace wholesale rather than merging (FR-1964).
-  const updatePublicDomainAppConfig = useUpdatePublicDomainAppConfig();
+  const domainName = useCurrentDomainValue();
+  const { upsert } = useScopedAppConfig({ public: ['publicConfigByDomain'] });
 
   // Edits live only while this page is open: an entry (refresh included)
   // starts from the applied document, and leaving drops them.
@@ -114,9 +116,11 @@ const BrandingSettingList: React.FC<BrandingSettingListProps> = () => {
       cancelText: t('button.Cancel'),
       onOk: async () => {
         try {
-          await updatePublicDomainAppConfig(DOMAIN_APPEARANCE_CONFIG_KEY, {
-            ...themeConfig,
-            schemaVersion: APPEARANCE_SCHEMA_VERSION,
+          await upsert({
+            scope: 'public',
+            configName: 'publicConfigByDomain',
+            subKey: [domainName, DOMAIN_APPEARANCE_CONFIG_KEY],
+            value: { ...themeConfig, schemaVersion: APPEARANCE_SCHEMA_VERSION },
           });
           // The reloaded page renders the applied document — that IS the
           // feedback; the anonymous read path has no refresh API (FR-1964).

@@ -3,11 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { App } from '../app-shim';
-import {
-  useMyAppConfig,
-  useRefetchMyAppConfig,
-  useUpdateMyUserAppConfig,
-} from './useAppConfig';
+import { useScopedAppConfig } from './useAppConfig';
 import { SessionHistory, useBAISettingUserState } from './useBAISetting';
 import {
   useEventNotStable,
@@ -19,10 +15,6 @@ import { useState } from 'react';
 
 type SessionHistoryKey = 'recentSessionHistory' | 'pinnedSessionHistory';
 
-// Each write replaces the whole `userConfig` document, so concurrent writes
-// (a rename updates both lists) must run one after another.
-let writeQueue: Promise<unknown> = Promise.resolve();
-
 /**
  * Session history lives in the user's server-side `userConfig` so it follows
  * the user across browsers. A history this browser kept in localStorage is
@@ -32,22 +24,22 @@ const useSessionHistoryStore = (key: SessionHistoryKey) => {
   'use memo';
   const { message } = App.useApp();
   const { getErrorMessage } = useErrorMessageResolver();
-  const serverValue = useMyAppConfig<Array<SessionHistory>>(key);
+  const userConfig = useScopedAppConfig({ user: ['userConfig'] });
+  const serverValue = userConfig.user?.userConfig?.[key] as
+    Array<SessionHistory> | undefined;
   const [localValue] = useBAISettingUserState(key);
-  const updateMyUserAppConfig = useUpdateMyUserAppConfig();
-  const refetchMyAppConfig = useRefetchMyAppConfig();
-  // Shows the written value while the write and the refetch are in flight.
+  // Shows the written value while the write is in flight.
   const [pending, setPending] = useState<{ value: Array<SessionHistory> }>();
 
   const setValue = async (next: Array<SessionHistory>) => {
     setPending({ value: next });
-    const write = writeQueue.then(async () => {
-      await updateMyUserAppConfig(key, next);
-      await refetchMyAppConfig();
-    });
-    writeQueue = write.catch(() => {});
     try {
-      await write;
+      await userConfig.upsert({
+        scope: 'user',
+        configName: 'userConfig',
+        subKey: key,
+        value: next,
+      });
     } catch (error) {
       message.error(getErrorMessage(error));
     } finally {

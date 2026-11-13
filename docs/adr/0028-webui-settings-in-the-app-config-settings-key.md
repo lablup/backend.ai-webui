@@ -1,5 +1,7 @@
 # 0028 — WebUI settings in the app config settings key
 
+> The write hooks this ADR names (**Write scope**) are replaced by [ADR 0033](0033-scoped-and-merged-app-config-hooks.md): a save changes `settings` on the raw document the page read, without reading it again.
+
 ## Summary
 
 > Unfamiliar terms are collected in the [Glossary](#glossary) at the end.

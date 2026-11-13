@@ -4,11 +4,12 @@
  */
 import BAIErrorBoundary from '../../components/BAIErrorBoundary';
 import { WEBUI_SETTINGS_CONFIG_KEY } from '../../helper/webuiSettings';
-import { useSuspendedBackendaiClient, useTabQuerySnapshot } from '../../hooks';
 import {
-  useDomainAppConfig,
-  useRawPublicDomainAppConfig,
-} from '../../hooks/useAppConfig';
+  useCurrentDomain,
+  useSuspendedBackendaiClient,
+  useTabQuerySnapshot,
+} from '../../hooks';
+import { useScopedAppConfig } from '../../hooks/useAppConfig';
 import ConfigurationsSettingList from './components/ConfigurationsSettingList';
 import WebUISettingList from './components/WebUISettingList';
 import { BAICard, BAIFlex, BAISkeleton } from 'backend.ai-ui';
@@ -24,14 +25,38 @@ const tabParser = parseAsStringLiteral([
 /** Reads both saved documents: the public (pre-login) slice and the domain one. */
 const SavedWebUISettingList: React.FC = () => {
   'use memo';
-  const savedDomainSettings = useDomainAppConfig(WEBUI_SETTINGS_CONFIG_KEY);
-  const savedPublicSettings = useRawPublicDomainAppConfig(
-    WEBUI_SETTINGS_CONFIG_KEY,
-  );
+  const { name: domainName } = useCurrentDomain();
+  // One request for both documents the page edits.
+  const config = useScopedAppConfig({
+    domain: ['domainConfig'],
+    public: ['publicConfigByDomain'],
+  });
   return (
     <WebUISettingList
-      savedDomainSettings={savedDomainSettings}
-      savedPublicSettings={savedPublicSettings}
+      savedDomainSettings={
+        config.domain?.domainConfig?.[WEBUI_SETTINGS_CONFIG_KEY]
+      }
+      savedPublicSettings={
+        config.public?.publicConfigByDomain?.[domainName]?.[
+          WEBUI_SETTINGS_CONFIG_KEY
+        ]
+      }
+      setDomainSettings={(value) =>
+        config.upsert({
+          scope: 'domain',
+          configName: 'domainConfig',
+          subKey: WEBUI_SETTINGS_CONFIG_KEY,
+          value,
+        })
+      }
+      setPublicSettings={(value) =>
+        config.upsert({
+          scope: 'public',
+          configName: 'publicConfigByDomain',
+          subKey: [domainName, WEBUI_SETTINGS_CONFIG_KEY],
+          value,
+        })
+      }
     />
   );
 };

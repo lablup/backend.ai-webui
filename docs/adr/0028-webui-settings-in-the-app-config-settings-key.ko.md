@@ -1,5 +1,7 @@
 # 0028 — WebUI settings in the app config settings key
 
+> 이 ADR이 이름으로 부르는 쓰기 hook(**Write scope**)은 [ADR 0033](0033-scoped-and-merged-app-config-hooks.ko.md)이 대체한다. 이제 저장은 page가 읽은 원본 문서에서 다시 읽지 않고 `settings`를 바꾼다.
+
 ## Summary
 
 > 낯선 용어는 문서 맨 아래 [용어](#용어)에 모아 두었다.

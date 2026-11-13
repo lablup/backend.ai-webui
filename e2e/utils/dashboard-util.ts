@@ -46,7 +46,7 @@ export const setFailuresOnly = async (
   if ((await toggle.isChecked()) === checked) return;
   const saved = waitForGraphQL(
     page,
-    'useAppConfigMyUpsertMutation',
+    'useAppConfigUpsertMutation',
     (variables) => JSON.stringify(variables).includes('DENIED') === checked,
     10_000,
   ).catch((error: Error) => {
