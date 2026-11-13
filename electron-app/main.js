@@ -558,14 +558,7 @@ function createWindow() {
     // title-bar height to clear them (`electron-macos` rules in the web
     // styles). Elsewhere 'hidden' would drop the native window controls.
     ...(process.platform === 'darwin' ? { titleBarStyle: 'hidden' } : {}),
-    webPreferences: {
-      nativeWindowOpen: true,
-      nodeIntegration: false,
-      preload: path.join(electronPath, 'preload.js'),
-      devTools: debugMode === true,
-      worldSafeExecuteJavaScript: false,
-      contextIsolation: true,
-    },
+    webPreferences: appWebPreferences(),
   });
   // and load the index.html of the app.
   if (process.env.LIVE_DEBUG === '1') {
@@ -659,8 +652,74 @@ function createWindow() {
   });
 
   mainWindow.webContents.setWindowOpenHandler((details) => {
-    return newPopupWindow(details);
+    return openWindowFrom(mainWindow.webContents, details);
   });
+  mainWindow.webContents.on('did-create-window', setupActAsWindow);
+}
+
+function appWebPreferences() {
+  return {
+    nativeWindowOpen: true,
+    nodeIntegration: false,
+    preload: path.join(electronPath, 'preload.js'),
+    devTools: debugMode === true,
+    worldSafeExecuteJavaScript: false,
+    contextIsolation: true,
+  };
+}
+
+// Must match ACT_AS_HANDOFF_PARAM in react/src/helper/actAs.ts.
+const ACT_AS_HANDOFF_PARAM = 'actAsHandoff';
+
+function isActAsURL(targetURL, opener) {
+  try {
+    const target = new URL(targetURL);
+    const origin = new URL(opener.getURL());
+    return (
+      target.searchParams.has(ACT_AS_HANDOFF_PARAM) &&
+      target.protocol === origin.protocol &&
+      target.host === origin.host
+    );
+  } catch {
+    return false;
+  }
+}
+
+function openWindowFrom(opener, details) {
+  // An act-as window is the app itself: the renderer needs the real handle
+  // from `window.open`, so let Chromium create it with the main preload.
+  if (isActAsURL(details.url, opener)) {
+    return {
+      action: 'allow',
+      overrideBrowserWindowOptions: {
+        width: windowWidth,
+        height: windowHeight,
+        title: 'Backend.AI',
+        frame: true,
+        ...(process.platform === 'darwin' ? { titleBarStyle: 'hidden' } : {}),
+        webPreferences: appWebPreferences(),
+      },
+    };
+  }
+  return newPopupWindow(details);
+}
+
+function setupActAsWindow(win) {
+  const contents = win.webContents;
+  contents.on('did-finish-load', () => {
+    const sendProxyReady = () => {
+      if (!contents.isDestroyed()) {
+        contents.send('proxy-ready', 'http://localhost:' + manager.port + '/');
+      }
+    };
+    if (manager.port) {
+      sendProxyReady();
+    } else {
+      manager.once('ready', sendProxyReady);
+    }
+  });
+  contents.setWindowOpenHandler((details) => openWindowFrom(contents, details));
+  contents.on('did-create-window', setupActAsWindow);
 }
 
 function newPopupWindow(details) {
@@ -741,7 +800,8 @@ app.on('ready', () => {
   getTrustedCerts(); // hands the pins to the wsproxy before any session starts
   // Registering the 'file' protocol
   protocol.handle('file', async (request) => {
-    let url = request.url.substr(7); // strip 'file://' from the URL
+    // strip 'file://' and the query (the act-as hand-off rides on index.html)
+    let url = request.url.substr(7).split(/[?#]/)[0];
 
     // file:/// URLs have a leading slash - remove it for path resolution
     if (url.startsWith('/')) {

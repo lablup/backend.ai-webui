@@ -51,6 +51,25 @@ describe('act-as hand-off', () => {
     expect(openedTab.opener).toBeNull();
   });
 
+  it('opens the Electron entry page instead of the root', () => {
+    const g = globalThis as Record<string, unknown>;
+    g.isElectron = true;
+    const entry = `${window.location.origin}/app/index.html`;
+    g.electronInitialHref = entry;
+    try {
+      openActAsTab(TARGET);
+      const url = handoffUrl();
+      expect(url.pathname).toBe('/app/index.html');
+      visit(url);
+      adoptActAsHandoff();
+      expect(getActAsTarget()).toEqual(TARGET);
+      expect(g.electronInitialHref).toBe(entry);
+    } finally {
+      delete g.isElectron;
+      delete g.electronInitialHref;
+    }
+  });
+
   it('reports a blocked popup and drops its hand-off', () => {
     vi.mocked(window.open).mockReturnValue(null);
     expect(openActAsTab(TARGET)).toBe(false);
