@@ -808,14 +808,16 @@ app.on(
       callback(true);
       return;
     }
+    // The error-kind check must come first: a stored fingerprint alone never
+    // bypasses a refused error such as ERR_CERT_REVOKED or ERR_CERT_INVALID.
+    if (!TRUSTABLE_CERT_ERRORS.has(error)) {
+      callback(false);
+      return;
+    }
     const host = new URL(url).host;
     const previous = getTrustedCerts()[host]?.fingerprint;
     if (previous === certificate.fingerprint) {
       callback(true);
-      return;
-    }
-    if (!TRUSTABLE_CERT_ERRORS.has(error)) {
-      callback(false);
       return;
     }
     const parent = BrowserWindow.fromWebContents(webContents) ?? mainWindow;
