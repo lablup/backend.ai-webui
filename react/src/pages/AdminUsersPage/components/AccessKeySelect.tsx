@@ -10,28 +10,35 @@ import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
 export interface AccessKeySelectProps extends BAISelectProps {
-  userEmail: string;
+  userId: string;
   fetchKey?: string;
 }
 
 const AccessKeySelect: React.FC<AccessKeySelectProps> = ({
-  userEmail,
+  userId,
   fetchKey,
   ...selectProps
 }) => {
   const { t } = useTranslation();
 
-  const { keypairs } = useLazyLoadQuery<AccessKeySelectQuery>(
+  // Only the user edit modal mounts this, and it is superadmin-only (ADR 0012).
+  // TODO: Switch to infinite scroll; keypairs past the first 100 are not listed.
+  const { adminKeypairsV2 } = useLazyLoadQuery<AccessKeySelectQuery>(
     graphql`
-      query AccessKeySelectQuery($email: String!) {
-        keypairs(email: $email) {
-          access_key
-          is_active
+      query AccessKeySelectQuery($userId: UUID!) {
+        adminKeypairsV2(filter: { userId: { equals: $userId } }, limit: 100) {
+          edges {
+            node {
+              id
+              accessKey
+              isActive
+            }
+          }
         }
       }
     `,
     {
-      email: userEmail,
+      userId,
     },
     {
       fetchPolicy: 'store-and-network',
@@ -39,10 +46,10 @@ const AccessKeySelect: React.FC<AccessKeySelectProps> = ({
     },
   );
 
-  const options = _.map(keypairs, (kp) => ({
-    value: kp?.access_key,
-    label: kp?.access_key,
-    disabled: kp?.is_active
+  const options = _.map(adminKeypairsV2?.edges, ({ node: kp }) => ({
+    value: kp.accessKey,
+    label: kp.accessKey,
+    disabled: kp.isActive
       ? false
       : { reason: t('credential.KeypairIsInactive') },
   }));

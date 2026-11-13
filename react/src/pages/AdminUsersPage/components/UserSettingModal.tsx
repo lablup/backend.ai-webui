@@ -1284,10 +1284,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                 name="main_access_key"
                 label={t('credential.MainAccessKey')}
               >
-                <AccessKeySelect
-                  userEmail={user.basicInfo.email}
-                  fetchKey={fetchKey}
-                />
+                <AccessKeySelect userId={user.entityId} fetchKey={fetchKey} />
               </BAIFormItem>
             </Suspense>
           )}

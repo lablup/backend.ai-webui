@@ -23,6 +23,7 @@ export const useKeyPairLazyLoadQuery = (
   },
 ) => {
   const [fetchKey, updateFetchKey] = useUpdatableState('first');
+  // TODO(needs-backend): #11102 KeyPairV2 has no `concurrency_used`, so this stays on legacy `keypair`.
   const { keypair } = useLazyLoadQuery<hooksUsingRelay_KeyPairQuery>(
     graphql`
       query hooksUsingRelay_KeyPairQuery($accessKey: String!) {

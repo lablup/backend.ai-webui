@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<47c7c476ec2f8c3cee908c079e25f33a>>
+ * @generated SignedSource<<9524de6e0f97b6869bf85ca58049b5a4>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,20 +9,67 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
+export type KeypairFilter = {
+  AND?: ReadonlyArray<KeypairFilter> | null | undefined;
+  NOT?: ReadonlyArray<KeypairFilter> | null | undefined;
+  OR?: ReadonlyArray<KeypairFilter> | null | undefined;
+  accessKey?: StringFilter | null | undefined;
+  createdAt?: DateTimeFilter | null | undefined;
+  fieldId?: UUIDFilter | null | undefined;
+  isActive?: boolean | null | undefined;
+  isAdmin?: boolean | null | undefined;
+  isDefault?: boolean | null | undefined;
+  lastUsed?: DateTimeFilter | null | undefined;
+  resourcePolicy?: StringFilter | null | undefined;
+  userId?: UUIDFilter | null | undefined;
+};
+export type StringFilter = {
+  contains?: string | null | undefined;
+  endsWith?: string | null | undefined;
+  equals?: string | null | undefined;
+  iContains?: string | null | undefined;
+  iEndsWith?: string | null | undefined;
+  iEquals?: string | null | undefined;
+  iIn?: ReadonlyArray<string> | null | undefined;
+  iNotContains?: string | null | undefined;
+  iNotEndsWith?: string | null | undefined;
+  iNotEquals?: string | null | undefined;
+  iNotIn?: ReadonlyArray<string> | null | undefined;
+  iNotStartsWith?: string | null | undefined;
+  iStartsWith?: string | null | undefined;
+  in?: ReadonlyArray<string> | null | undefined;
+  notContains?: string | null | undefined;
+  notEndsWith?: string | null | undefined;
+  notEquals?: string | null | undefined;
+  notIn?: ReadonlyArray<string> | null | undefined;
+  notStartsWith?: string | null | undefined;
+  startsWith?: string | null | undefined;
+};
+export type UUIDFilter = {
+  equals?: string | null | undefined;
+  in?: ReadonlyArray<string> | null | undefined;
+  notEquals?: string | null | undefined;
+  notIn?: ReadonlyArray<string> | null | undefined;
+};
+export type DateTimeFilter = {
+  after?: string | null | undefined;
+  before?: string | null | undefined;
+  equals?: string | null | undefined;
+  notEquals?: string | null | undefined;
+};
 export type BAIKeypairSelectValueQuery$variables = {
-  filter?: string | null | undefined;
+  filter?: KeypairFilter | null | undefined;
   limit: number;
-  offset: number;
   skipSelected: boolean;
 };
 export type BAIKeypairSelectValueQuery$data = {
-  readonly keypair_list?: {
-    readonly items: ReadonlyArray<{
-      readonly access_key: string | null | undefined;
-      readonly is_active: boolean | null | undefined;
-      readonly user_id: string | null | undefined;
-    } | null | undefined>;
-    readonly total_count: number;
+  readonly adminKeypairsV2?: {
+    readonly edges: ReadonlyArray<{
+      readonly node: {
+        readonly accessKey: string;
+        readonly id: string;
+      };
+    }>;
   } | null | undefined;
 };
 export type BAIKeypairSelectValueQuery = {
@@ -45,100 +92,83 @@ var v0 = [
   {
     "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "offset"
-  },
-  {
-    "defaultValue": null,
-    "kind": "LocalArgument",
     "name": "skipSelected"
   }
 ],
 v1 = [
   {
-    "kind": "Variable",
-    "name": "filter",
-    "variableName": "filter"
-  },
-  {
-    "kind": "Variable",
-    "name": "limit",
-    "variableName": "limit"
-  },
-  {
-    "kind": "Variable",
-    "name": "offset",
-    "variableName": "offset"
+    "condition": "skipSelected",
+    "kind": "Condition",
+    "passingValue": false,
+    "selections": [
+      {
+        "alias": null,
+        "args": [
+          {
+            "kind": "Variable",
+            "name": "filter",
+            "variableName": "filter"
+          },
+          {
+            "kind": "Variable",
+            "name": "limit",
+            "variableName": "limit"
+          }
+        ],
+        "concreteType": "KeyPairConnection",
+        "kind": "LinkedField",
+        "name": "adminKeypairsV2",
+        "plural": false,
+        "selections": [
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "KeyPairV2Edge",
+            "kind": "LinkedField",
+            "name": "edges",
+            "plural": true,
+            "selections": [
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "KeyPairV2",
+                "kind": "LinkedField",
+                "name": "node",
+                "plural": false,
+                "selections": [
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "id",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "accessKey",
+                    "storageKey": null
+                  }
+                ],
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
+          }
+        ],
+        "storageKey": null
+      }
+    ]
   }
-],
-v2 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "access_key",
-  "storageKey": null
-},
-v3 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "user_id",
-  "storageKey": null
-},
-v4 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "is_active",
-  "storageKey": null
-},
-v5 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "total_count",
-  "storageKey": null
-};
+];
 return {
   "fragment": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
     "name": "BAIKeypairSelectValueQuery",
-    "selections": [
-      {
-        "condition": "skipSelected",
-        "kind": "Condition",
-        "passingValue": false,
-        "selections": [
-          {
-            "alias": null,
-            "args": (v1/*: any*/),
-            "concreteType": "KeyPairList",
-            "kind": "LinkedField",
-            "name": "keypair_list",
-            "plural": false,
-            "selections": [
-              {
-                "alias": null,
-                "args": null,
-                "concreteType": "KeyPair",
-                "kind": "LinkedField",
-                "name": "items",
-                "plural": true,
-                "selections": [
-                  (v2/*: any*/),
-                  (v3/*: any*/),
-                  (v4/*: any*/)
-                ],
-                "storageKey": null
-              },
-              (v5/*: any*/)
-            ],
-            "storageKey": null
-          }
-        ]
-      }
-    ],
+    "selections": (v1/*: any*/),
     "type": "Query",
     "abstractKey": null
   },
@@ -147,60 +177,19 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "BAIKeypairSelectValueQuery",
-    "selections": [
-      {
-        "condition": "skipSelected",
-        "kind": "Condition",
-        "passingValue": false,
-        "selections": [
-          {
-            "alias": null,
-            "args": (v1/*: any*/),
-            "concreteType": "KeyPairList",
-            "kind": "LinkedField",
-            "name": "keypair_list",
-            "plural": false,
-            "selections": [
-              {
-                "alias": null,
-                "args": null,
-                "concreteType": "KeyPair",
-                "kind": "LinkedField",
-                "name": "items",
-                "plural": true,
-                "selections": [
-                  (v2/*: any*/),
-                  (v3/*: any*/),
-                  (v4/*: any*/),
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "id",
-                    "storageKey": null
-                  }
-                ],
-                "storageKey": null
-              },
-              (v5/*: any*/)
-            ],
-            "storageKey": null
-          }
-        ]
-      }
-    ]
+    "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "395813332d6c96ca7181792cabb9c0d9",
+    "cacheID": "cc2f71b3b5cbefaff83157663d4054d0",
     "id": null,
     "metadata": {},
     "name": "BAIKeypairSelectValueQuery",
     "operationKind": "query",
-    "text": "query BAIKeypairSelectValueQuery(\n  $filter: String\n  $limit: Int!\n  $offset: Int!\n  $skipSelected: Boolean!\n) {\n  keypair_list(filter: $filter, limit: $limit, offset: $offset) @skip(if: $skipSelected) {\n    items {\n      access_key\n      user_id\n      is_active\n      id\n    }\n    total_count\n  }\n}\n"
+    "text": "query BAIKeypairSelectValueQuery(\n  $filter: KeypairFilter\n  $limit: Int!\n  $skipSelected: Boolean!\n) {\n  adminKeypairsV2(filter: $filter, limit: $limit) @skip(if: $skipSelected) {\n    edges {\n      node {\n        id\n        accessKey\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "3d7f305b5f6569eac5ccbcbf3f988bba";
+(node as any).hash = "a28ac3a310ae9d17b4e6d3269a7dce33";
 
 export default node;

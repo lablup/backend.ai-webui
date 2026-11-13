@@ -298,7 +298,7 @@ describe('STokenLoginBoundary', () => {
       client,
       clientConfig: {},
     }));
-    const bootstrap = { keypair: null, user: null, groups: null };
+    const bootstrap = { myKeypairs: null, myUserV2: null, groups: null };
     mockedProbeLoginSession.mockResolvedValueOnce(bootstrap);
     const onSuccess = vi.fn();
     renderBoundary({ onSuccess });
@@ -340,8 +340,8 @@ describe('STokenLoginBoundary', () => {
       clientConfig: {},
     }));
     mockedProbeLoginSession.mockResolvedValueOnce({
-      keypair: null,
-      user: null,
+      myKeypairs: null,
+      myUserV2: null,
       groups: null,
     });
     const incomplete = new LoginBootstrapIncompleteError('version read 502');

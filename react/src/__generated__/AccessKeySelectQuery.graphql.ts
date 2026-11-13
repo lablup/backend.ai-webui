@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<eb75aa5fdca09e23b97955fbf69b32c0>>
+ * @generated SignedSource<<4fa7f040decfe0fd2717f1838ebf7c63>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,13 +10,18 @@
 
 import { ConcreteRequest } from 'relay-runtime';
 export type AccessKeySelectQuery$variables = {
-  email: string;
+  userId: string;
 };
 export type AccessKeySelectQuery$data = {
-  readonly keypairs: ReadonlyArray<{
-    readonly access_key: string | null | undefined;
-    readonly is_active: boolean | null | undefined;
-  } | null | undefined> | null | undefined;
+  readonly adminKeypairsV2: {
+    readonly edges: ReadonlyArray<{
+      readonly node: {
+        readonly accessKey: string;
+        readonly id: string;
+        readonly isActive: boolean | null | undefined;
+      };
+    }>;
+  } | null | undefined;
 };
 export type AccessKeySelectQuery = {
   response: AccessKeySelectQuery$data;
@@ -28,51 +33,95 @@ var v0 = [
   {
     "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "email"
+    "name": "userId"
   }
 ],
 v1 = [
   {
-    "kind": "Variable",
-    "name": "email",
-    "variableName": "email"
+    "alias": null,
+    "args": [
+      {
+        "fields": [
+          {
+            "fields": [
+              {
+                "kind": "Variable",
+                "name": "equals",
+                "variableName": "userId"
+              }
+            ],
+            "kind": "ObjectValue",
+            "name": "userId"
+          }
+        ],
+        "kind": "ObjectValue",
+        "name": "filter"
+      },
+      {
+        "kind": "Literal",
+        "name": "limit",
+        "value": 100
+      }
+    ],
+    "concreteType": "KeyPairConnection",
+    "kind": "LinkedField",
+    "name": "adminKeypairsV2",
+    "plural": false,
+    "selections": [
+      {
+        "alias": null,
+        "args": null,
+        "concreteType": "KeyPairV2Edge",
+        "kind": "LinkedField",
+        "name": "edges",
+        "plural": true,
+        "selections": [
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "KeyPairV2",
+            "kind": "LinkedField",
+            "name": "node",
+            "plural": false,
+            "selections": [
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "id",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "accessKey",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "isActive",
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
+          }
+        ],
+        "storageKey": null
+      }
+    ],
+    "storageKey": null
   }
-],
-v2 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "access_key",
-  "storageKey": null
-},
-v3 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "is_active",
-  "storageKey": null
-};
+];
 return {
   "fragment": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
     "name": "AccessKeySelectQuery",
-    "selections": [
-      {
-        "alias": null,
-        "args": (v1/*: any*/),
-        "concreteType": "KeyPair",
-        "kind": "LinkedField",
-        "name": "keypairs",
-        "plural": true,
-        "selections": [
-          (v2/*: any*/),
-          (v3/*: any*/)
-        ],
-        "storageKey": null
-      }
-    ],
+    "selections": (v1/*: any*/),
     "type": "Query",
     "abstractKey": null
   },
@@ -81,40 +130,19 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "AccessKeySelectQuery",
-    "selections": [
-      {
-        "alias": null,
-        "args": (v1/*: any*/),
-        "concreteType": "KeyPair",
-        "kind": "LinkedField",
-        "name": "keypairs",
-        "plural": true,
-        "selections": [
-          (v2/*: any*/),
-          (v3/*: any*/),
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "id",
-            "storageKey": null
-          }
-        ],
-        "storageKey": null
-      }
-    ]
+    "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "f8b8c1a3ee357c66b8050c241b494312",
+    "cacheID": "3624c017c482f55230a5803fdfaa1f20",
     "id": null,
     "metadata": {},
     "name": "AccessKeySelectQuery",
     "operationKind": "query",
-    "text": "query AccessKeySelectQuery(\n  $email: String!\n) {\n  keypairs(email: $email) {\n    access_key\n    is_active\n    id\n  }\n}\n"
+    "text": "query AccessKeySelectQuery(\n  $userId: UUID!\n) {\n  adminKeypairsV2(filter: {userId: {equals: $userId}}, limit: 100) {\n    edges {\n      node {\n        id\n        accessKey\n        isActive\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "7facb8a400bfd30d710d936f1551e2fb";
+(node as any).hash = "e4865f9e5a17b5c9d243e40f04f677ca";
 
 export default node;

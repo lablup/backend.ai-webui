@@ -50,6 +50,7 @@ vi.mock('../hooks', async (importOriginal) => {
     useSuspendedBackendaiClient: () => ({
       _config: {},
     }),
+    useCurrentDomain: () => ({ name: 'default', id: 'domain-uuid' }),
     useWebUINavigate: () => vi.fn(),
   };
 });

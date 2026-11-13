@@ -55,6 +55,8 @@ import {
   type UseQueryLoaderLoadQueryOptions,
 } from 'react-relay';
 
+// TODO(needs-backend): #11102 KeyPairV2 has no `concurrency_used` (column and
+// KeypairInfoModal), so the list stays on legacy `keypair_list`.
 export const AdminUserCredentialListQuery = graphql`
   query AdminUserCredentialListQuery(
     $limit: Int!
