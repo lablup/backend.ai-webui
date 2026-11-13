@@ -41,6 +41,7 @@ import {
   filterOutNullAndUndefined,
   useFetchKey,
   BAITextArea,
+  useErrorMessageResolver,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { PlusIcon } from 'lucide-react';
@@ -125,15 +126,19 @@ const scanImageMutation = graphql`
 
 const enableRegistryMutation = graphql`
   mutation ImportImageModalEnableRegistryMutation(
-    $domain: String!
-    $allowed_docker_registries: [String]!
+    $id: UUID!
+    $allowedDockerRegistries: [String!]!
   ) {
-    modify_domain(
-      name: $domain
-      props: { allowed_docker_registries: $allowed_docker_registries }
+    updateDomainV2(
+      id: $id
+      input: { allowedDockerRegistries: $allowedDockerRegistries }
     ) {
-      ok
-      msg
+      domain {
+        id
+        registry {
+          allowedDockerRegistries
+        }
+      }
     }
   }
 `;
@@ -256,9 +261,11 @@ const ImportImageModalContent: React.FC<{
   'use memo';
   const { t } = useTranslation();
   const { message } = App.useApp();
+  const { getErrorMessage } = useErrorMessageResolver();
   const painKiller = usePainKiller();
   const baiClient = useSuspendedBackendaiClient();
   const domainName: string = baiClient._config.domainName;
+  const domainId: string = baiClient._config.domainId;
 
   const [text, setText] = useState('');
   // An empty field is only an error once the reader has tried to import.
@@ -312,19 +319,15 @@ const ImportImageModalContent: React.FC<{
     }
     commitEnableRegistry({
       variables: {
-        domain: domainName,
-        allowed_docker_registries: _.uniq([
+        id: domainId,
+        allowedDockerRegistries: _.uniq([
           ...(allowedRegistries ?? []),
           registryName,
         ]),
       },
-      onCompleted: (res, errors) => {
-        if (!res?.modify_domain?.ok || (errors && errors.length > 0)) {
-          message.error(
-            res?.modify_domain?.msg ||
-              errors?.[0]?.message ||
-              t('dialog.ErrorOccurred'),
-          );
+      onCompleted: (_res, errors) => {
+        if (errors && errors.length > 0) {
+          message.error(errors[0]?.message || t('dialog.ErrorOccurred'));
         } else {
           message.success({
             key: 'registry-enabled',
@@ -334,7 +337,10 @@ const ImportImageModalContent: React.FC<{
         refreshRegistries();
       },
       onError: (error) => {
-        message.error(describeError(error));
+        // A Relay error carries the server's `errors` on `source`.
+        message.error(
+          'source' in error ? getErrorMessage(error) : describeError(error),
+        );
         refreshRegistries();
       },
     });

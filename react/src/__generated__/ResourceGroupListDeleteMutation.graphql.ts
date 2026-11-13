@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<efe69204cdeff1f49ad41b0b8f11f2ce>>
+ * @generated SignedSource<<d8bacdd54a7a3602d1b9b913a2843b51>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,13 +10,12 @@
 
 import { ConcreteRequest } from 'relay-runtime';
 export type ResourceGroupListDeleteMutation$variables = {
-  name: string;
+  id: string;
 };
 export type ResourceGroupListDeleteMutation$data = {
-  readonly delete_scaling_group: {
-    readonly msg: string | null | undefined;
-    readonly ok: boolean | null | undefined;
-  } | null | undefined;
+  readonly purgeResourceGroupV2: {
+    readonly entityId: string;
+  };
 };
 export type ResourceGroupListDeleteMutation = {
   response: ResourceGroupListDeleteMutation$data;
@@ -28,7 +27,7 @@ var v0 = [
   {
     "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "name"
+    "name": "id"
   }
 ],
 v1 = [
@@ -37,27 +36,20 @@ v1 = [
     "args": [
       {
         "kind": "Variable",
-        "name": "name",
-        "variableName": "name"
+        "name": "id",
+        "variableName": "id"
       }
     ],
-    "concreteType": "DeleteScalingGroup",
+    "concreteType": "PurgeResourceGroupPayload",
     "kind": "LinkedField",
-    "name": "delete_scaling_group",
+    "name": "purgeResourceGroupV2",
     "plural": false,
     "selections": [
       {
         "alias": null,
         "args": null,
         "kind": "ScalarField",
-        "name": "ok",
-        "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "msg",
+        "name": "entityId",
         "storageKey": null
       }
     ],
@@ -82,16 +74,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "fdcd5026b9668171b8d52998b2c16c6d",
+    "cacheID": "ecfca1f9d94242762809e448e86faa19",
     "id": null,
     "metadata": {},
     "name": "ResourceGroupListDeleteMutation",
     "operationKind": "mutation",
-    "text": "mutation ResourceGroupListDeleteMutation(\n  $name: String!\n) {\n  delete_scaling_group(name: $name) {\n    ok\n    msg\n  }\n}\n"
+    "text": "mutation ResourceGroupListDeleteMutation(\n  $id: UUID!\n) {\n  purgeResourceGroupV2(id: $id) {\n    entityId\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "40de35d5afd64c8d906e4970b10b722d";
+(node as any).hash = "ce8aaa6e694ff818a21d515d2cf6c1f3";
 
 export default node;

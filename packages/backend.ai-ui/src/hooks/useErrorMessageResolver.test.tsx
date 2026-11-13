@@ -76,6 +76,20 @@ describe('useErrorMessageResolver', () => {
     expect(getErrorMessage(error)).toBe('First problem.\nSecond problem.');
   });
 
+  it('unwraps the server errors from a Relay no-data error', () => {
+    const { result } = renderHook(() => useGetErrorMessage());
+    const getErrorMessage = result.current;
+
+    const error = Object.assign(
+      new Error(
+        'No data returned for operation `ResourceGroupListDeleteMutation`, got error(s):\nResource group is in use.\n\nSee the error `source` property for more information.',
+      ),
+      { source: { errors: [{ message: 'Resource group is in use.' }] } },
+    );
+
+    expect(getErrorMessage(error)).toBe('Resource group is in use.');
+  });
+
   it('falls back to msg / message / title when no GraphQL detail is present', () => {
     const { result } = renderHook(() => useGetErrorMessage());
     const getErrorMessage = result.current;
