@@ -36,8 +36,9 @@ type MetricValues =
 
 const lastValue = (metric: MetricValues) =>
   _.toNumber(
+    // `_.toNumber(null)` is 0, so an empty sample must not count as a measurement.
     _.findLast(metric?.metrics?.[0]?.values ?? [], (point) =>
-      _.isFinite(_.toNumber(point?.value)),
+      point?.value ? _.isFinite(_.toNumber(point.value)) : false,
     )?.value,
   );
 
