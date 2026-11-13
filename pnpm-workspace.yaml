@@ -68,7 +68,7 @@ catalog:
   relay-compiler: ^20.1.1
   relay-runtime: ^20.1.1
   relay-test-utils: ^20.1.1
-  smol-toml: ^1.9.0
+  smol-toml: ^1.7.1
   ts-jest: ^29.4.9
   tus-js-client: ^4.3.1
   typescript-eslint: ^8.66.0
@@ -192,8 +192,8 @@ overrides:
   # #11151. qs ships in the pkg local proxy via express (ranges ~6.14.0) and
   # body-parser (ranges ~6.16.0); stay on the 6.16 line body-parser asks for.
   qs: ~6.16.1 # crash on null in comma-format arrays (#388); comma-format DoS, parse mutating its input (#541)
-  pbkdf2: ^3.1.7 # rehashes long passwords on every iteration (#527); in the bundle via vite-plugin-node-polyfills
-  "@dicebear/initials": ^9.4.3 # SVG injection via unescaped options (#482); @dicebear/collection pins 9.4.2
+  "pbkdf2@^3": ^3.1.7 # rehashes long passwords on every iteration (#527); in the bundle via vite-plugin-node-polyfills
+  "@dicebear/initials@^9": ^9.4.3 # SVG injection via unescaped options (#482); @dicebear/collection pins 9.4.2
   # Dev-only transitive security overrides — FR-3014. These ship only in
   # dev/build tooling (not the production bundle), but Dependabot still
   # surfaces them. Remove an entry when every upstream consumer ranges to
@@ -210,14 +210,15 @@ overrides:
   "yaml@^1": ^1.10.3 # stack overflow on deeply nested YAML (#292)
   lodash: ^4.18.0 # _.template RCE + _.unset prototype pollution (#321, #322 high)
   # #11151.
-  shell-quote: ^1.9.0 # quote() newline injection (#391 critical), quadratic parse() (#421 high)
-  tar: ^7.5.21 # file smuggling, crash on PAX headers (#406, #425; GHSA-23hp-3jrh-7fpw critical)
+  "shell-quote@^1": ^1.9.0 # quote() newline injection (#391 critical), quadratic parse() (#421 high)
+  "tar@^7": ^7.5.21 # file smuggling, crash on PAX headers (#406, #425; GHSA-23hp-3jrh-7fpw critical)
   "brace-expansion@^1": ^1.1.21 # exponential / recursive expansion DoS (#523)
   "brace-expansion@^2": ^2.1.7 # same (#420, #516, #519 high, #522)
   "brace-expansion@^5": ^5.0.12 # same (#417, #515, #518 high, #521)
-  browserslist: ^4.28.7 # prototype write via custom stats (#473 high)
-  compression: ^1.8.2 # memory leak on premature close (#524 high); serve pins 1.8.1
+  "browserslist@^4": ^4.28.7 # prototype write via custom stats (#473 high)
+  "compression@^1": ^1.8.2 # memory leak on premature close (#524 high); serve pins 1.8.1
   # The e2e agent runner pins both exactly; e2e 0.23.0 itself moved to these.
+  # Remove both when e2e is bumped to >= 0.23.0.
   "e2e>@modelcontextprotocol/server": ^2.3.0 # cross-client message delivery (#531 high), bearer audience (#529)
   "e2e>zod": ^4.6.6 # GHSA-mrhx-c7xc-m3w5 (high)
 
