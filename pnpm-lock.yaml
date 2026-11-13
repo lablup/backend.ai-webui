@@ -324,8 +324,8 @@ catalogs:
       specifier: ^20.1.1
       version: 20.1.1
     smol-toml:
-      specifier: ^1.7.1
-      version: 1.7.1
+      specifier: ^1.9.0
+      version: 1.9.0
     tus-js-client:
       specifier: ^4.3.1
       version: 4.3.1
@@ -1062,8 +1062,8 @@ importers:
         specifier: ^1.1.0
         version: 1.1.0(jotai@2.20.2(@babel/core@7.29.7(supports-color@8.1.1))(@babel/template@7.29.7)(@types/react@19.3.0)(react@19.3.1))
       katex:
-        specifier: ^0.16.47
-        version: 0.16.47
+        specifier: ^0.18.2
+        version: 0.18.2
       lodash-es:
         specifier: 'catalog:'
         version: 4.18.1
@@ -1144,7 +1144,7 @@ importers:
         version: 3.23.0
       smol-toml:
         specifier: 'catalog:'
-        version: 1.7.1
+        version: 1.9.0
       swr:
         specifier: ^2.5.0
         version: 2.5.0(react@19.3.1)
@@ -7952,6 +7952,10 @@ packages:
     resolution: {integrity: sha512-Eeo8Ys1doU1z+x8AZsPpQu+p/QcZBI5PeOo7QGQdy2x2m0MU/hYagBbGOmXwr5KVbEfVuWv9LpnQWeehogurjg==}
     hasBin: true
 
+  katex@0.18.2:
+    resolution: {integrity: sha512-3snve4y0SXTMequLim1FMiPvLGElySam0blN5xQZBqEY3lOJz1TnuaaiugnBZBqHzlSAGmFTYL7MCQkORuLKCA==}
+    hasBin: true
+
   keyv@4.5.4:
     resolution: {integrity: sha512-oxVHkHR/EJf2CNXnWxRLW6mg7JyCCUcG0DtEGmL2ctUo1PNTin1PUil+r/+4r5MpVgC/fn1kjsx7mjSujKqIpw==}
 
@@ -9784,8 +9788,8 @@ packages:
     resolution: {integrity: sha512-RQsvleCbF8cVHEv+xuDGaA4pOizFqJ0GgjtMSRo6oP8pnN7WsigHgVGey6aILRBKv4W2YOMHLqbKdnB6hpB9fw==}
     engines: {node: '>=20.0.0'}
 
-  smol-toml@1.7.1:
-    resolution: {integrity: sha512-PPlsspAZ4jbMBu5DMFhfUGDQLu/vrL4SyBROVS37x8ynnVmFIs1VPBz1Co8Xks3TvpIaZXmU85y4DrQ+UyVFoQ==}
+  smol-toml@1.9.0:
+    resolution: {integrity: sha512-hpd+HLON7HdZXqYchMM/+LaTTbdK0AU3NngIJ4KVyWbY9bfQqdL9cD+4yf6dUoU2Ap4VsU0JkQi6FxAI1B2mXQ==}
     engines: {node: '>= 18'}
 
   snake-case@3.0.4:
@@ -18916,6 +18920,10 @@ snapshots:
     dependencies:
       commander: 8.3.0
 
+  katex@0.18.2:
+    dependencies:
+      commander: 8.3.0
+
   keyv@4.5.4:
     dependencies:
       json-buffer: 3.0.1
@@ -21234,7 +21242,7 @@ snapshots:
 
   smob@1.6.2: {}
 
-  smol-toml@1.7.1: {}
+  smol-toml@1.9.0: {}
 
   snake-case@3.0.4:
     dependencies:
@@ -22915,7 +22923,7 @@ time:
   jotai@2.20.2: '2026-07-14T13:52:11.083Z'
   jsdom@29.1.1: '2026-04-30T08:52:48.353Z'
   jsonc-eslint-parser@2.4.2: '2025-12-07T09:11:57.763Z'
-  katex@0.16.47: '2026-05-16T07:48:35.236Z'
+  katex@0.18.2: '2026-08-08T11:55:16.681Z'
   lightningcss@1.33.0: '2026-07-20T05:11:09.509Z'
   lint-staged@15.5.2: '2025-05-06T10:11:25.711Z'
   lodash-es@4.18.1: '2026-04-01T21:04:15.518Z'
@@ -22963,7 +22971,7 @@ time:
   sharp@0.35.5: '2026-09-27T13:46:24.509Z'
   shiki@1.29.2: '2025-01-30T09:34:47.582Z'
   shiki@3.23.0: '2026-02-25T05:41:26.011Z'
-  smol-toml@1.7.1: '2026-07-26T08:34:54.252Z'
+  smol-toml@1.9.0: '2026-09-22T17:15:34.756Z'
   storybook@10.6.2: '2026-10-12T18:22:29.069Z'
   swr@2.5.0: '2026-08-03T13:26:01.129Z'
   ts-md5@2.0.1: '2025-07-02T03:40:42.951Z'

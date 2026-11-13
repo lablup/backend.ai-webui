@@ -37,7 +37,7 @@
     "jotai": "^2.20.2",
     "jotai-effect": "^2.4.1",
     "jotai-family": "^1.1.0",
-    "katex": "^0.16.47",
+    "katex": "^0.18.2",
     "lodash-es": "catalog:",
     "lucide-react": "catalog:",
     "markdown-to-jsx": "^9.10.2",
