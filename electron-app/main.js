@@ -149,7 +149,13 @@ function applyCertCheckOptIn(config) {
 function showMessage(options, parent = mainWindow) {
   // A dialog attached to a hidden window (e.g. a show:false app popup) never
   // becomes visible on macOS, so fall back to the main window or to none.
-  if (parent && !parent.isDestroyed() && !parent.isVisible()) {
+  // macOS only: elsewhere a dialog attached to a hidden window still presents.
+  if (
+    process.platform === 'darwin' &&
+    parent &&
+    !parent.isDestroyed() &&
+    !parent.isVisible()
+  ) {
     parent = mainWindow && !mainWindow.isDestroyed() && mainWindow.isVisible()
       ? mainWindow
       : null;
