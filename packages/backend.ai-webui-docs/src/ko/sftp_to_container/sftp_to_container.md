@@ -18,20 +18,19 @@ Backend.AI는 생성된 연산 세션(컨테이너)에 SSH/SFTP 접속을 지원
 이 아이콘을 클릭하기 전에는 해당 세션에 SSH/SFTP 접속을 할 수 없습니다. WebUI 앱을 껐다가 다시 켜면 로컬 proxy와 WebUI 앱 사이의 연결이 초기화되므로 SSH/SFTP 아이콘을 다시 한 번 클릭해야 합니다.
 :::
 
-다음으로 SSH/SFTP 접속 정보가 담긴 대화상자가 팝업됩니다. 이 대화상자에는 접속에 사용할 **사용자**, **호스트**, **포트** 값과 바로 사용할 수 있는 `sftp`, `scp`, `rsync` 예시 명령이 표시됩니다. 접속에는 본인의 SSH 키페어를 사용합니다. 세션을 생성하기 전에 사용자 설정 페이지의 [SSH 키페어 관리](#user-ssh-keypair-management)에서 공개 키를 등록하고, 짝이 되는 개인 키는 로컬 머신에 보관하세요.
+다음으로 SSH/SFTP 접속 정보가 담긴 대화상자가 팝업됩니다. 이 대화상자에는 접속에 사용할 **사용자**, **호스트**, **포트** 값과 바로 사용할 수 있는 `sftp`, `scp`, `rsync` 예시 명령, 그리고 `id_container` 파일을 로컬 머신에 저장하는 **SSH 키 다운로드** 버튼이 표시됩니다. 이 파일은 자동으로 생성된 SSH 개인 키입니다. 버튼을 쓰는 대신 웹 터미널이나 Jupyter Notebook을 통해 이 파일을 직접 다운로드해도 됩니다. `id_container` 파일은 `/home/work/` 아래에 있습니다. 자동 생성된 SSH 키는 새 세션이 생성되면 바뀔 수 있으며, 그 경우 다시 다운로드해야 합니다.
 
 ![=800px](../images/SSH_SFTP_connection.png)
-<!-- TODO: Recapture the dialog without the Download SSH Key button -->
 
 ![](../images/sftp_app.png)
 
 접속 주소는 항상 이 대화상자의 **호스트**와 **포트** 필드에서 확인하세요. 이 값은 Backend.AI를 사용하는 방식에 따라 달라집니다. 접속 정보를 확인할 수 없는 경우 대화상자 자체가 열리지 않고 오류 알림으로 그 이유를 안내합니다. [접속 오류](#connection-errors) 절을 참고하세요.
 
-본인의 SSH 개인 키로 연산 세션에 SSH 접속하려면 쉘 환경에서 다음 명령을 실행합니다. `-i` 옵션 뒤에 개인 키 파일의 경로를, `-p` 옵션 뒤에 대화상자에 표시된 포트 번호를 입력하고, 대화상자에 표시된 호스트를 접속 주소로 사용합니다. 연산 세션 내부의 사용자 계정은 보통 `work`으로 설정되어 있지만, 세션이 다른 계정을 사용한다면 `work@<호스트>`에서 `work` 부분을 실제 세션 계정으로 바꿔야 합니다. 명령을 올바르게 실행하면 연산 세션에 SSH 접속이 이루어지고 컨테이너의 쉘 환경이 표시됩니다. 아래 예시의 호스트와 포트는 실제 대화상자에 표시된 호스트와 포트로 바꿔서 사용하세요.
+다운로드한 SSH 개인 키로 연산 세션에 SSH 접속하려면 쉘 환경에서 다음 명령을 실행합니다. `-i` 옵션 뒤에 다운로드한 `id_container` 파일의 경로를, `-p` 옵션 뒤에 대화상자에 표시된 포트 번호를 입력하고, 대화상자에 표시된 호스트를 접속 주소로 사용합니다. 연산 세션 내부의 사용자 계정은 보통 `work`으로 설정되어 있지만, 세션이 다른 계정을 사용한다면 `work@<호스트>`에서 `work` 부분을 실제 세션 계정으로 바꿔야 합니다. 명령을 올바르게 실행하면 연산 세션에 SSH 접속이 이루어지고 컨테이너의 쉘 환경이 표시됩니다. 아래 예시의 호스트와 포트는 실제 대화상자에 표시된 호스트와 포트로 바꿔서 사용하세요.
 
 ```shellsession
 $ ssh \
-    -i ~/.ssh/id_ed25519 -p 30722 \
+    -i ~/.ssh/id_container -p 30722 \
     -o StrictHostKeyChecking=no \
     -o UserKnownHostsFile=/dev/null \
     work@127.0.0.1
@@ -39,18 +38,18 @@ Warning: Permanently added '[127.0.0.1]:30722' (RSA) to the list of known hosts.
 f310e8dbce83:~$
 ```
 
-SFTP로 접속하는 방법도 거의 동일합니다. SFTP 클라이언트를 실행한 후 공개 키 기반 접속 방식을 설정하고, SSH 개인 키로 본인의 개인 키 파일을 지정합니다. FTP 클라이언트마다 설정 방법이 다르므로 자세한 내용은 해당 FTP 클라이언트의 매뉴얼을 참고하세요.
+SFTP로 접속하는 방법도 거의 동일합니다. SFTP 클라이언트를 실행한 후 공개 키 기반 접속 방식을 설정하고, SSH 개인 키로 `id_container`를 지정합니다. FTP 클라이언트마다 설정 방법이 다르므로 자세한 내용은 해당 FTP 클라이언트의 매뉴얼을 참고하세요.
 
 :::note
 SSH/SFTP 접속 포트 번호는 세션이 생성될 때마다 무작위로 할당됩니다. 특정 SSH/SFTP 포트 번호를 쓰려면 사용자 설정 메뉴의 "선호하는 SSH 포트" 필드에 원하는 포트 번호를 입력하면 됩니다. 연산 세션 내의 다른 서비스와 충돌하지 않도록 10000-65000 사이의 포트 번호를 지정하는 것이 좋습니다. 단, 두 개 이상의 연산 세션에서 동시에 SSH/SFTP 접속을 하면 두 번째 SSH/SFTP 접속은 지정된 포트를 쓸 수 없어(첫 번째 SSH/SFTP 접속이 이미 그 포트를 사용 중이므로) 무작위 포트 번호가 할당됩니다.
 :::
 
 :::note
-`.ssh`라는 이름의 사용자 타입 폴더를 생성하고 그 폴더의 `authorized_keys` 파일에 공개 키를 추가하면, 추가한 공개 키로도 접속할 수 있습니다.
+`id_container` 대신 자체 SSH 키페어를 쓰려면 `.ssh`라는 이름의 사용자 타입 폴더를 생성합니다. 그 폴더에 `authorized_keys` 파일을 만들고 SSH 공개 키의 내용을 추가하면, 연산 세션 생성 후 `id_container`를 다운로드하지 않고도 자체 SSH 개인 키로 SSH/SFTP 접속을 할 수 있습니다.
 :::
 
 :::note
-다음과 같은 경고 메시지가 표시되면 개인 키 파일의 퍼미션을 600으로 변경한 후 다시 시도하세요. (`chmod 600 "<개인 키 경로>"`)
+다음과 같은 경고 메시지가 표시되면 `id_container`의 퍼미션을 600으로 변경한 후 다시 시도하세요. (`chmod 600 <id_container 경로>`)
 
 ![](../images/bad_permissions.png)
 :::
@@ -71,11 +70,11 @@ SSH/SFTP 접속 정보는 세션이 실행 중인 자원 그룹의 App Proxy를 
 
 Backend.AI WebUI 앱은 OpenSSH 기반 공개 키 접속(RSA2048)을 지원합니다. Windows에서 PuTTY와 같은 클라이언트로 접속하려면 PuTTYgen과 같은 프로그램으로 개인 키를 `ppk` 파일로 변환해야 합니다. 변환 방법은 다음 링크를 참고하세요: https://wiki.filezilla-project.org/Howto. 이 절에서는 Windows에서 FileZilla 클라이언트로 SFTP에 접속하는 방법을 설명합니다.
 
-Linux/Mac에서의 접속 방법을 참고하여, 연산 세션을 생성하고 접속 포트를 확인한 후, 사용자 설정에 등록한 키페어의 개인 키를 준비합니다. 개인 키가 OpenSSH 기반 키이고 Windows 전용이거나 ppk 타입 키만 지원하는 클라이언트를 쓴다면 변환이 필요합니다. 여기서는 PuTTY와 함께 설치되는 PuTTYgen 프로그램으로 변환합니다. PuTTYgen을 실행한 후 Conversions 메뉴에서 import key를 클릭합니다. 파일 열기 대화상자에서 개인 키 파일을 선택합니다. PuTTYgen의 Save private key 버튼을 클릭하고 파일을 `.ppk` 파일(예: `my_key.ppk`)로 저장합니다.
+Linux/Mac에서의 접속 방법을 참고하여, 연산 세션을 생성하고 접속 포트를 확인한 후 `id_container`를 다운로드합니다. `id_container`는 OpenSSH 기반 키이므로, Windows 전용이거나 ppk 타입 키만 지원하는 클라이언트를 쓴다면 변환이 필요합니다. 여기서는 PuTTY와 함께 설치되는 PuTTYgen 프로그램으로 변환합니다. PuTTYgen을 실행한 후 Conversions 메뉴에서 import key를 클릭합니다. 파일 열기 대화상자에서 다운로드한 `id_container` 파일을 선택합니다. PuTTYgen의 Save private key 버튼을 클릭하고 파일을 `id_container.ppk`라는 이름으로 저장합니다.
 
 ![](../images/puttygen_conversion.png)
 
-FileZilla 클라이언트를 실행한 후, 설정-연결-SFTP로 이동하여 변환한 `.ppk` 키 파일(OpenSSH를 지원하는 클라이언트의 경우 원래 개인 키 파일)을 등록합니다.
+FileZilla 클라이언트를 실행한 후, 설정-연결-SFTP로 이동하여 키 파일 `id_container.ppk`(OpenSSH를 지원하는 클라이언트의 경우 `id_container`)를 등록합니다.
 
 ![=628px](../images/filezilla_setting.png)
 
@@ -266,7 +265,7 @@ $ backend.ai ssh ibnFmWim-session
 work@main1[ibnFmWim-session]:~$
 ```
 
-본인의 SSH 개인 키로 ssh 명령을 직접 실행하려면, 먼저 다음 명령을 실행하여 로컬 머신에서 연산 세션으로 가는 연결을 중계하는 로컬 proxy 서비스를 시작해야 합니다. `-b` 옵션으로 로컬 머신에서 사용할 포트(9922)를 지정합니다.
+SSH 키 파일을 다운로드하고 ssh 명령을 직접 실행하려면, 먼저 다음 명령을 실행하여 로컬 머신에서 연산 세션으로 가는 연결을 중계하는 로컬 proxy 서비스를 시작해야 합니다. `-b` 옵션으로 로컬 머신에서 사용할 포트(9922)를 지정합니다.
 
 ```shellsession
 $ backend.ai app ibnFmWim-session sshd -b 9922
@@ -274,13 +273,22 @@ $ backend.ai app ibnFmWim-session sshd -b 9922
 tcp://127.0.0.1:9922
 ```
 
-로컬 머신에서 다른 터미널 창을 엽니다. [SSH 키페어 관리](#user-ssh-keypair-management)에 등록한 키페어의 개인 키로 다음과 같이 SSH 접속합니다. 로컬 proxy를 포트 9922에서 실행했으므로, 접속 주소는 127.0.0.1, 포트는 9922로 설정합니다. 접속 사용자 계정은 `work`을 사용합니다.
+로컬 머신에서 다른 터미널 창을 엽니다. `.env` 파일이 있는 작업 디렉토리로 이동하고, 연산 세션에서 자동으로 생성된 SSH 키를 다운로드합니다.
+
+```shellsession
+$ source .venv/bin/activate  # 다른 터미널이므로 Python 가상 환경을 다시 활성화합니다
+$ backend.ai session download ibnFmWim-session id_container
+Downloading files: 3.58kbytes [00:00, 352kbytes/s]
+✓ Downloaded to /*/client.
+```
+
+다운로드한 키로 다음과 같이 SSH 접속합니다. 로컬 proxy를 포트 9922에서 실행했으므로, 접속 주소는 127.0.0.1, 포트는 9922로 설정합니다. 접속 사용자 계정은 `work`을 사용합니다.
 
 ```shellsession
 $ ssh \
 -o StrictHostKeyChecking=no \
 -o UserKnownHostsFile=/dev/null \
--i ~/.ssh/id_ed25519 \
+-i ./id_container \
 -p 9922 \
 work@127.0.0.1
 Warning: Permanently added '[127.0.0.1]:9922' (RSA) to the list of known hosts.
@@ -293,7 +301,7 @@ work@
 $ scp \
 -o StrictHostKeyChecking=no \
 -o UserKnownHostsFile=/dev/null \
--i ~/.ssh/id_ed25519 \
+-i ./id_container \
 -P 9922 \
 test_file.xlsx work@127.0.0.1:/home/work/myfolder/
 Warning: Permanently added '[127.0.0.1]:9922' (RSA) to the list of known hosts.

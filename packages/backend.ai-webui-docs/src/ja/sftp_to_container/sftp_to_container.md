@@ -20,13 +20,15 @@ SSH/SFTP接続は、SSH/SFTPアイコンをクリックするまで、セッシ�
 
 次に、SSH/SFTP接続情報が記載されたダイアログが表示されます。
 このダイアログには、接続に使用する**ユーザー**、**ホスト**、**ポート**の値と、
-そのまま使用できる`sftp`、`scp`、`rsync`のコマンド例が表示されます。
-接続にはご自身のSSHキーペアを使用します。セッションを作成する前に、
-ユーザー設定ページの[SSHキーペア管理](#user-ssh-keypair-management)で公開鍵を登録し、
-対応する秘密鍵をローカルマシンに保管してください。
+そのまま使用できる`sftp`、`scp`、`rsync`のコマンド例、そして
+ローカルマシンに`id_container`ファイルを保存する**SSHキーをダウンロード**ボタンが表示されます。
+このファイルは、自動生成されたSSH秘密鍵です。
+ボタンを使用する代わりに、ウェブターミナルやJupyter Notebookを使用して、
+`/home/work/`配下にある`id_container`ファイルをダウンロードすることもできます。
+自動生成されたSSH鍵は、新しいセッションが作成されたときに変更される可能性があります。
+その場合は、再度ダウンロードする必要があります。
 
 ![=800px](../images/SSH_SFTP_connection.png)
-<!-- TODO: Recapture the dialog without the Download SSH Key button -->
 
 ![](../images/sftp_app.png)
 
@@ -35,9 +37,9 @@ SSH/SFTP接続は、SSH/SFTPアイコンをクリックするまで、セッシ�
 接続情報を解決できない場合、ダイアログは開かず、エラー通知でその理由が示されます。
 [接続エラー](#connection-errors)を参照してください。
 
-ご自身のSSH秘密鍵でコンピュートセッションにSSH接続するには、
+ダウンロードしたSSH秘密鍵でコンピュートセッションにSSH接続するには、
 シェル環境で次のコマンドを実行します。
-`-i`オプションの後に秘密鍵ファイルのパスを、
+`-i`オプションの後にダウンロードした`id_container`ファイルのパスを、
 `-p`オプションの後にダイアログに表示されたポート番号を記述し、
 ダイアログに表示されたホストを接続先アドレスとして使用します。
 コンピュートセッション内のユーザーは通常`work`に設定されていますが、
@@ -50,7 +52,7 @@ SSH/SFTP接続は、SSH/SFTPアイコンをクリックするまで、セッシ�
 
 ```shellsession
 $ ssh \
-    -i ~/.ssh/id_ed25519 -p 30722 \
+    -i ~/.ssh/id_container -p 30722 \
     -o StrictHostKeyChecking=no \
     -o UserKnownHostsFile=/dev/null \
     work@127.0.0.1
@@ -59,7 +61,7 @@ f310e8dbce83:~$
 ```
 
 SFTPで接続する方法もほぼ同じです。SFTPクライアントを実行し、公開鍵ベースの接続方法を設定した後、
-SSH秘密鍵としてご自身の秘密鍵ファイルを指定するだけです。
+SSH秘密鍵として`id_container`を指定するだけです。
 各FTPクライアントによって設定方法が異なる場合があるため、詳細は各FTPクライアントのマニュアルを参照してください。
 
 :::note
@@ -73,13 +75,15 @@ SSH/SFTP接続ポート番号は、セッションが作成されるたびにラ
 :::
 
 :::note
-`.ssh`という名前のユーザータイプのフォルダを作成し、そのフォルダの`authorized_keys`ファイルに
-公開鍵を追記すると、追記した公開鍵でも接続できます。
+`id_container`の代わりに独自のSSH鍵ペアを使用したい場合は、`.ssh`という名前のユーザータイプのフォルダを作成します。
+そのフォルダに`authorized_keys`ファイルを作成し、SSH公開鍵の内容を追記すると、
+コンピュートセッション作成後に`id_container`をダウンロードすることなく、
+独自のSSH秘密鍵でSSH/SFTP接続が可能になります。
 :::
 
 :::note
-次のような警告メッセージが表示された場合は、秘密鍵ファイルのパーミッションを600に変更してから再度お試しください。
-（`chmod 600 "<秘密鍵のパス>"`）
+次のような警告メッセージが表示された場合は、`id_container`のパーミッションを600に変更してから再度お試しください。
+（`chmod 600 <id_containerのパス>`）
 
 ![](../images/bad_permissions.png)
 :::
@@ -120,17 +124,17 @@ https://wiki.filezilla-project.org/Howto 。
 SFTPに接続する方法を紹介します。
 
 Linux/Macでの接続方法を参考に、コンピュートセッションを作成し、接続ポートを確認して、
-ユーザー設定で登録したキーペアの秘密鍵を用意します。秘密鍵がOpenSSHベースの鍵で、
+`id_container`をダウンロードします。`id_container`はOpenSSHベースの鍵のため、
 Windows専用またはppk形式の鍵のみをサポートするクライアントを使用する場合は、変換が必要です。
 ここでは、PuTTYと共にインストールされるPuTTYgenプログラムを使用して変換します。
 PuTTYgenを実行した後、Conversionsメニューの「import key」をクリックします。
-ファイルオープンダイアログで、秘密鍵ファイルを選択します。
-PuTTYgenの「Save private key」ボタンをクリックし、`.ppk`ファイル（例: `my_key.ppk`）として保存します。
+ファイルオープンダイアログで、ダウンロードした`id_container`ファイルを選択します。
+PuTTYgenの「Save private key」ボタンをクリックし、`id_container.ppk`という名前でファイルを保存します。
 
 ![](../images/puttygen_conversion.png)
 
 FileZillaクライアントを起動した後、「Settings-Connection-SFTP」に移動し、
-変換した`.ppk`鍵ファイル（OpenSSHをサポートするクライアントの場合は元の秘密鍵ファイル）を登録します。
+鍵ファイル`id_container.ppk`（OpenSSHをサポートするクライアントの場合は`id_container`）を登録します。
 
 ![=628px](../images/filezilla_setting.png)
 
@@ -359,7 +363,7 @@ $ backend.ai ssh ibnFmWim-session
 work@main1[ibnFmWim-session]:~$
 ```
 
-ご自身のSSH秘密鍵で明示的にsshコマンドを実行したい場合は、
+SSH鍵ファイルをダウンロードして、明示的にsshコマンドを実行したい場合は、
 まず次のコマンドを実行して、ローカルマシンからコンピュートセッションへの接続を中継する
 ローカルプロキシサービスを起動する必要があります。`-b`オプションを使用することで、
 ローカルマシンで使用するポート（9922）を指定できます。
@@ -370,16 +374,24 @@ $ backend.ai app ibnFmWim-session sshd -b 9922
 tcp://127.0.0.1:9922
 ```
 
-ローカルマシンで別のターミナルウィンドウを開きます。
-[SSHキーペア管理](#user-ssh-keypair-management)で登録したキーペアの秘密鍵を使用して、
-次のようにSSH接続できます。ローカルプロキシをポート9922で起動したため、
+ローカルマシンで別のターミナルウィンドウを開きます。`.env`ファイルがある作業ディレクトリに移動し、
+コンピュートセッションで自動生成されたSSH鍵をダウンロードします。
+
+```shellsession
+$ source .venv/bin/activate  # 別のターミナルのため、Python仮想環境を再度アクティブにします
+$ backend.ai session download ibnFmWim-session id_container
+Downloading files: 3.58kbytes [00:00, 352kbytes/s]
+✓ Downloaded to /*/client.
+```
+
+ダウンロードした鍵を使用して、次のようにSSH接続できます。ローカルプロキシをポート9922で起動したため、
 接続先アドレスは127.0.0.1、ポートは9922にする必要があります。接続には、ユーザーアカウント`work`を使用します。
 
 ```shellsession
 $ ssh \
 -o StrictHostKeyChecking=no \
 -o UserKnownHostsFile=/dev/null \
--i ~/.ssh/id_ed25519 \
+-i ./id_container \
 -p 9922 \
 work@127.0.0.1
 Warning: Permanently added '[127.0.0.1]:9922' (RSA) to the list of known hosts.
@@ -394,7 +406,7 @@ work@
 $ scp \
 -o StrictHostKeyChecking=no \
 -o UserKnownHostsFile=/dev/null \
--i ~/.ssh/id_ed25519 \
+-i ./id_container \
 -P 9922 \
 test_file.xlsx work@127.0.0.1:/home/work/myfolder/
 Warning: Permanently added '[127.0.0.1]:9922' (RSA) to the list of known hosts.

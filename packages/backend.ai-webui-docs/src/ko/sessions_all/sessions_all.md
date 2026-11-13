@@ -465,6 +465,8 @@ Jupyter Notebook 을 클릭해봅시다.
 
 새로운 창이 뜨면서 Jupyter Notebook 이 실행되는 것을 확인할 수 있습니다. 이 Notebook 은 실행 중인 연산 세션 내부에서 생성된 것으로, 별다른 설정 없이 버튼 클릭만으로 손쉽게 사용할 수 있습니다. 또한, 연산 세션이 기본적으로 제공하는 언어 환경 및 라이브러리를 그대로 활용할 수 있어 별도의 패키지 설치 과정이 필요 없습니다. 자세한 Jupyter Notebook 사용법은 공식 문서 등을 참고하시기 바랍니다.
 
+Notebook 의 파일 탐색기에서 `id_container file` 에는 개인 SSH 키가 포함되어 있습니다. 필요한 경우, 이 파일을 다운로드하여 컨테이너에 대한 SSH / SFTP 접속에 사용할 수 있습니다.
+
 우측 상단의 NEW 버튼을 클릭한 후 Backend.AI 용 Notebook 을 선택하면 새로운 코드를 입력할 수 있는 ipynb 창이 뜹니다.
 
 ![=404px](../images/backendai_notebook_menu.png)
