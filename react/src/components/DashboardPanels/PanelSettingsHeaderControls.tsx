@@ -54,7 +54,14 @@ const PanelSettingsHeaderControls: React.FC = () => {
     : (allowed?.defaultResourceGroup ?? undefined);
 
   return (
-    <BAIFlex align="center" gap="xxs" data-testid="panel-header-settings">
+    // The row shrinks with the card and wraps its controls onto their own lines; each control keeps its own width.
+    <BAIFlex
+      align="center"
+      gap="xxs"
+      wrap="wrap"
+      style={{ flexShrink: 1, minWidth: 0 }}
+      data-testid="panel-header-settings"
+    >
       {hasSetting(definition, 'resourceGroup') ? (
         <Suspense fallback={null}>
           {/* To the right, so it never covers the select's own "Clear" tooltip above. */}

@@ -6,6 +6,7 @@
  CircleHelp tooltip glyph. In an untitled `BAIBoard` item, the first one renders
  in the item's header row (ui-common `Board`); `inline` keeps it in the body.
 */
+import BAIFlex from './BAIFlex';
 import {
   BoardItemTitle,
   type BoardItemTitleProps,
@@ -26,9 +27,25 @@ const BAIBoardItemTitle: React.FC<BAIBoardItemTitleProps> = ({
   ...titleProps
 }) => {
   'use memo';
+  const { title } = titleProps;
   return (
     <BoardItemTitle
       {...titleProps}
+      title={
+        typeof title === 'string' || title == null ? (
+          title
+        ) : (
+          // A node title (often a `BAIFlex` row, which never shrinks) gets a block
+          // that does, so the row wraps inside a narrow item instead of overflowing.
+          <BAIFlex
+            direction="column"
+            align="stretch"
+            style={{ flex: '0 1 auto', minWidth: 0 }}
+          >
+            {title}
+          </BAIFlex>
+        )
+      }
       tooltipIcon={tooltipIcon}
       endContent={extra}
     />
