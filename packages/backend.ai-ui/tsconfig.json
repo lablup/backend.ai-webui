@@ -22,6 +22,15 @@
       "react-dom/*": ["./node_modules/@types/react-dom/*"]
     }
   },
-  "include": ["src/**/*", "svg.d.ts", "vite-env.d.ts", "vite.config.ts", "setupTests.ts"],
+  "include": [
+    "src/**/*",
+    "svg.d.ts",
+    "vite-env.d.ts",
+    "vite.config.ts",
+    "setupTests.ts",
+    "vitest.visual.config.ts",
+    "test/**/*",
+    ".storybook/vite.config.ts"
+  ],
   "exclude": ["node_modules"]
 }

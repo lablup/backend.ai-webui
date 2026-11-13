@@ -12,7 +12,7 @@ import { useState } from 'react';
 const meta: Meta<typeof BAISessionPinwheelMeadow> = {
   title: 'Lab/BAISessionPinwheelMeadow',
   component: BAISessionPinwheelMeadow,
-  tags: ['autodocs'],
+  tags: ['autodocs', 'no-vrt'],
   parameters: {
     layout: 'padded',
     docs: {

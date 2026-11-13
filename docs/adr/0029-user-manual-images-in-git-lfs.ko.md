@@ -1,5 +1,7 @@
 # 0029 — User manual images in Git LFS
 
+> Decision 1절과 Summary는 [ADR 0031](0031-visual-regression-tests-for-backend-ai-ui-stories.ko.md)이 넓힌다. backend.ai-ui visual test baseline(`packages/backend.ai-ui/test/visual/__screenshots__/**/*.png`)도 LFS로 추적하며, `.lfsconfig`는 매뉴얼 이미지 옆에서 이 파일들도 기본적으로 pointer file로 둔다. 이 파일들은 backend.ai-ui 자체 script가 받으며, 이 ADR이 말하는 script는 매뉴얼에만 쓰인다. 나머지 결정은 그대로 발효 중이다.
+
 ## Summary
 
 > 낯선 용어는 문서 맨 아래 [용어](#용어)에 모아 두었다.
@@ -86,9 +88,9 @@ flowchart LR
 
 ## 용어
 
-| 용어 | 뜻 |
-|---|---|
-| Git LFS | Git Large File Storage. 파일 바이트를 별도 서버에 저장하고 그 자리에 작은 pointer file을 커밋하는 확장 |
-| pointer file | Git LFS가 파일 대신 커밋하는 텍스트. `version https://git-lfs.github.com/spec/v1`, `oid sha256:` 줄, `size` 줄로 이루어진다 |
-| smudge / clean filter | checkout 시 pointer를 실제 파일로, stage 시 실제 파일을 pointer로 바꾸는 Git filter |
-| `fetchexclude` | 기본으로 object를 내려받지 않을 경로를 지정하는 git-lfs 설정 |
+| 용어                  | 뜻                                                                                                                          |
+| --------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| Git LFS               | Git Large File Storage. 파일 바이트를 별도 서버에 저장하고 그 자리에 작은 pointer file을 커밋하는 확장                      |
+| pointer file          | Git LFS가 파일 대신 커밋하는 텍스트. `version https://git-lfs.github.com/spec/v1`, `oid sha256:` 줄, `size` 줄로 이루어진다 |
+| smudge / clean filter | checkout 시 pointer를 실제 파일로, stage 시 실제 파일을 pointer로 바꾸는 Git filter                                         |
+| `fetchexclude`        | 기본으로 object를 내려받지 않을 경로를 지정하는 git-lfs 설정                                                                |
