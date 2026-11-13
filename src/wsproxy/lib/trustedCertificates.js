@@ -17,8 +17,9 @@ function fingerprintOf(rawDer) {
 
 // TLS options for a WebSocket URL whose host the user pinned: the pinned
 // certificate is trusted in addition to the default roots, so a server that later
-// moves to a publicly valid certificate still passes the normal checks. Anything
-// else fails the handshake before a header (session cookie) is sent.
+// moves to a publicly valid certificate still passes the normal checks. The pin
+// bypasses the untrusted-authority and name-mismatch parts only; the validity
+// window is still enforced, and no revocation check exists on this path.
 function pinnedTlsOptions(url) {
   let host;
   try {
