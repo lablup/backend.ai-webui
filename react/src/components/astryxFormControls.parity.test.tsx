@@ -246,6 +246,59 @@ describe('AstryxFormTagsInput — tokenSeparators', () => {
   });
 });
 
+describe('AstryxFormTagsInput — commit on blur', () => {
+  const Harness = ({
+    onChange,
+    maxEntries,
+  }: {
+    onChange: (next: Array<string>) => void;
+    maxEntries?: number;
+  }) => {
+    const [tags, setTags] = useState<Array<string>>(['a']);
+    return (
+      <>
+        <AstryxFormTagsInput
+          label="IPs"
+          value={tags}
+          maxEntries={maxEntries}
+          onChange={(next) => {
+            setTags(next);
+            onChange(next);
+          }}
+          tokenSeparators={[',', ' ']}
+        />
+        <button type="button">outside</button>
+      </>
+    );
+  };
+
+  it('keeps typed text as tags when focus leaves the field', async () => {
+    const user = userEvent.setup();
+    const onChange = vi.fn();
+    render(<Harness onChange={onChange} />);
+    const combobox = screen.getByRole('combobox', { name: /IPs/ });
+    await user.click(combobox);
+    await user.paste('1.2.3.4,5.6.7.8');
+    await user.click(screen.getByRole('button', { name: 'outside' }));
+
+    expect(onChange).toHaveBeenLastCalledWith(['a', '1.2.3.4', '5.6.7.8']);
+    expect(combobox).toHaveValue('');
+  });
+
+  it('does not exceed `maxEntries`', async () => {
+    const user = userEvent.setup();
+    const onChange = vi.fn();
+    render(<Harness onChange={onChange} maxEntries={1} />);
+    const combobox = screen.getByRole('combobox', { name: /IPs/ });
+    await user.click(combobox);
+    await user.paste('b');
+    await user.click(screen.getByRole('button', { name: 'outside' }));
+
+    expect(onChange).not.toHaveBeenCalled();
+    expect(combobox).toHaveValue('');
+  });
+});
+
 describe('Form.Item status reaches the control', () => {
   it('paints the control with the item’s error status', async () => {
     const Harness = () => {

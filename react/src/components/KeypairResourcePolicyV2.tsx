@@ -26,6 +26,7 @@ import {
   type BAIKeypairResourcePolicyV2TableProps,
   BAINameActionCell,
   BAISkeleton,
+  BAIUnmountAfterClose,
   BAIUserSelect,
   filterOutNullAndUndefined,
   useFetchKey,
@@ -449,66 +450,72 @@ const KeypairResourcePolicyV2 = ({
         {...tableProps}
       />
       <Suspense>
-        <KeypairResourcePolicyV2SettingModal
-          open={!!editingKeypairResourcePolicy || isCreatingPolicySetting}
-          keypairResourcePolicyFrgmt={editingKeypairResourcePolicy}
-          onOk={() => {
-            // A create adds a new row the offset query can't know about, so it
-            // needs a refetch. An update returns every field, so Relay merges the
-            // record by id into the store and the list reflects it without one.
-            if (isCreatingPolicySetting) {
-              onReload(queryRef.variables, { fetchPolicy: 'network-only' });
-            }
-            setEditingKeypairResourcePolicy(null);
-            setIsCreatingPolicySetting(false);
-          }}
-          onCancel={() => {
-            setEditingKeypairResourcePolicy(null);
-            setIsCreatingPolicySetting(false);
-          }}
-        />
+        <BAIUnmountAfterClose>
+          <KeypairResourcePolicyV2SettingModal
+            open={!!editingKeypairResourcePolicy || isCreatingPolicySetting}
+            keypairResourcePolicyFrgmt={editingKeypairResourcePolicy}
+            onOk={() => {
+              // A create adds a new row the offset query can't know about, so it
+              // needs a refetch. An update returns every field, so Relay merges the
+              // record by id into the store and the list reflects it without one.
+              if (isCreatingPolicySetting) {
+                onReload(queryRef.variables, { fetchPolicy: 'network-only' });
+              }
+              setEditingKeypairResourcePolicy(null);
+              setIsCreatingPolicySetting(false);
+            }}
+            onCancel={() => {
+              setEditingKeypairResourcePolicy(null);
+              setIsCreatingPolicySetting(false);
+            }}
+          />
+        </BAIUnmountAfterClose>
       </Suspense>
-      <BAIDeleteConfirmModal
-        open={!!deletingPolicyName}
-        items={
-          deletingPolicyName
-            ? [{ key: deletingPolicyName, label: deletingPolicyName }]
-            : []
-        }
-        title={t('resourcePolicy.DeletePolicy')}
-        target={t('resourcePolicy.ResourcePolicy')}
-        confirmText={deletingPolicyName ?? ''}
-        requireConfirmInput
-        onOk={() => {
-          if (deletingPolicyName) {
-            return new Promise<void>((resolve) => {
-              commitDelete({
-                variables: { name: deletingPolicyName },
-                onCompleted: (_res, errors) => {
-                  if (errors && errors.length > 0) {
-                    for (const error of errors) {
-                      message.error(error.message);
-                    }
-                  } else {
-                    onReload(queryRef.variables, {
-                      fetchPolicy: 'network-only',
-                    });
-                    message.success(t('resourcePolicy.ResourcePolicyDeleted'));
-                  }
-                  setDeletingPolicyName(null);
-                  resolve();
-                },
-                onError(err) {
-                  message.error(err?.message);
-                  setDeletingPolicyName(null);
-                  resolve();
-                },
-              });
-            });
+      <BAIUnmountAfterClose>
+        <BAIDeleteConfirmModal
+          open={!!deletingPolicyName}
+          items={
+            deletingPolicyName
+              ? [{ key: deletingPolicyName, label: deletingPolicyName }]
+              : []
           }
-        }}
-        onCancel={() => setDeletingPolicyName(null)}
-      />
+          title={t('resourcePolicy.DeletePolicy')}
+          target={t('resourcePolicy.ResourcePolicy')}
+          confirmText={deletingPolicyName ?? ''}
+          requireConfirmInput
+          onOk={() => {
+            if (deletingPolicyName) {
+              return new Promise<void>((resolve) => {
+                commitDelete({
+                  variables: { name: deletingPolicyName },
+                  onCompleted: (_res, errors) => {
+                    if (errors && errors.length > 0) {
+                      for (const error of errors) {
+                        message.error(error.message);
+                      }
+                    } else {
+                      onReload(queryRef.variables, {
+                        fetchPolicy: 'network-only',
+                      });
+                      message.success(
+                        t('resourcePolicy.ResourcePolicyDeleted'),
+                      );
+                    }
+                    setDeletingPolicyName(null);
+                    resolve();
+                  },
+                  onError(err) {
+                    message.error(err?.message);
+                    setDeletingPolicyName(null);
+                    resolve();
+                  },
+                });
+              });
+            }
+          }}
+          onCancel={() => setDeletingPolicyName(null)}
+        />
+      </BAIUnmountAfterClose>
     </BAIFlex>
   );
 };

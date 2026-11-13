@@ -81,10 +81,11 @@ const AgentList: React.FC<AgentListProps> = ({
     defaultValue: INITIAL_FETCH_KEY,
   });
 
+  // Any value other than ALIVE (including the old `status=TERMINATED` links)
+  // opens the second tab, which lists LOST, RESTARTING and TERMINATED agents.
+  const statusTab = queryParams.status === 'ALIVE' ? 'ALIVE' : 'INACTIVE';
   const statusFilter =
-    queryParams.status === 'ALIVE'
-      ? 'status == "ALIVE"'
-      : 'status == "TERMINATED"';
+    statusTab === 'ALIVE' ? 'status == "ALIVE"' : 'status != "ALIVE"';
 
   const queryVariables: AgentListQuery$variables = {
     offset: baiPaginationOption.offset,
@@ -219,11 +220,11 @@ const AgentList: React.FC<AgentListProps> = ({
                 value: 'ALIVE',
               },
               {
-                label: t('agent.Terminated'),
-                value: 'TERMINATED',
+                label: t('general.Inactive'),
+                value: 'INACTIVE',
               },
             ]}
-            value={queryParams.status}
+            value={statusTab}
             onChange={(e) => {
               setQueryParams({ status: e.target.value });
               setTablePaginationOption({ current: 1 });

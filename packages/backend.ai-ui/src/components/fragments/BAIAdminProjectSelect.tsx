@@ -70,9 +70,11 @@ export interface BAIAdminProjectSelectProps extends Omit<
     value: string | Array<string> | undefined,
     option?: BAILabeledValue | Array<BAILabeledValue>,
   ) => void;
-  filter?: {
-    type?: { equals?: 'GENERAL' | 'MODEL_STORE' };
-  };
+  /** Spread into the page query filter; the search term owns `name`. */
+  filter?: Omit<
+    NonNullable<BAIAdminProjectSelectPaginatedQuery['variables']['filter']>,
+    'name'
+  >;
   ref?: React.Ref<BAIAdminProjectSelectRef>;
 }
 

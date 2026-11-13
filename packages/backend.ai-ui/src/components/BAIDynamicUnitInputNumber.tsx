@@ -64,7 +64,10 @@ import {
   type StepDirection,
 } from './astryxNumberStepper';
 import { InputGroup, InputGroupText } from '@astryxdesign/core/InputGroup';
-import { NumberInput } from '@astryxdesign/core/NumberInput';
+import {
+  NumberInput,
+  type NumberInputProps,
+} from '@astryxdesign/core/NumberInput';
 import { Selector } from '@astryxdesign/core/Selector';
 import * as _ from 'lodash-es';
 import React from 'react';
@@ -77,7 +80,23 @@ const ASTRYX_SIZE = {
   large: 'lg',
 } as const;
 
-export interface BAIDynamicUnitInputNumberProps {
+// The omitted keys are redefined in size-string form or owned by the wrapper;
+// `style` / `className` land on the surrounding InputGroup.
+export interface BAIDynamicUnitInputNumberProps extends Omit<
+  NumberInputProps,
+  | 'ref'
+  | 'value'
+  | 'onChange'
+  | 'min'
+  | 'max'
+  | 'units'
+  | 'size'
+  | 'label'
+  | 'isDisabled'
+  | 'width'
+  | 'onBlur'
+  | 'onKeyDown'
+> {
   dynamicSteps?: Array<number>;
   disableAutoUnit?: boolean;
   max?: string;
@@ -112,6 +131,7 @@ const BAIDynamicUnitInputNumber: React.FC<BAIDynamicUnitInputNumberProps> = ({
   addonSuffix,
   defaultUnit,
   disabled,
+  hasClear,
   placeholder,
   size,
   label,
@@ -273,10 +293,11 @@ const BAIDynamicUnitInputNumber: React.FC<BAIDynamicUnitInputNumberProps> = ({
     >
       {addonPrefix ? <InputGroupText>{addonPrefix}</InputGroupText> : null}
       <NumberInput
+        {..._.omit(restProps, ['value', 'onChange', 'defaultValue'])}
         label={accessibleLabel}
         isLabelHidden
         value={numValue}
-        onChange={(next) =>
+        onChange={(next: number | null) =>
           setValue(_.isNil(next) ? undefined : `${next}${unit}`)
         }
         onBlur={handleBlur}
@@ -293,6 +314,7 @@ const BAIDynamicUnitInputNumber: React.FC<BAIDynamicUnitInputNumberProps> = ({
             ? minNumValue
             : convertToBinaryUnit(min, unit as SizeUnit)?.number
         }
+        hasClear={hasClear}
         placeholder={placeholder}
         isDisabled={disabled}
         width="100%"

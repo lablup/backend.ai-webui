@@ -27,6 +27,7 @@ import {
   BAINameActionCell,
   BAIPropertyFilter,
   BAITable,
+  BAIUnmountAfterClose,
   BAIBooleanToken,
   INITIAL_FETCH_KEY,
   filterOutNullAndUndefined,
@@ -568,31 +569,33 @@ const ContainerRegistryList: React.FC<{
           ) as BAIColumnType<ContainerRegistry>[]
         }
       />
-      <ContainerRegistryEditorModal
-        containerRegistryFrgmt={editingRegistry}
-        open={!!editingRegistry || isNewModalOpen}
-        onOk={(type) => {
-          if (type === 'create') {
-            message.success({
-              key: 'registry-added',
-              content: t('registry.RegistrySuccessfullyAdded'),
-            });
-            updateFetchKey();
-          } else if (type === 'modify') {
-            message.success({
-              key: 'registry-modified',
-              content: t('registry.RegistrySuccessfullyModified'),
-            });
-          }
-          setEditingRegistry(null);
-          setIsNewModalOpen(false);
-        }}
-        onCancel={() => {
-          setEditingRegistry(null);
-          setIsNewModalOpen(false);
-        }}
-        centered={false}
-      />
+      <BAIUnmountAfterClose>
+        <ContainerRegistryEditorModal
+          containerRegistryFrgmt={editingRegistry}
+          open={!!editingRegistry || isNewModalOpen}
+          onOk={(type) => {
+            if (type === 'create') {
+              message.success({
+                key: 'registry-added',
+                content: t('registry.RegistrySuccessfullyAdded'),
+              });
+              updateFetchKey();
+            } else if (type === 'modify') {
+              message.success({
+                key: 'registry-modified',
+                content: t('registry.RegistrySuccessfullyModified'),
+              });
+            }
+            setEditingRegistry(null);
+            setIsNewModalOpen(false);
+          }}
+          onCancel={() => {
+            setEditingRegistry(null);
+            setIsNewModalOpen(false);
+          }}
+          centered={false}
+        />
+      </BAIUnmountAfterClose>
       <BAIDeleteConfirmModal
         open={!!deletingRegistry}
         title={t('dialog.title.DeleteSomething', {
