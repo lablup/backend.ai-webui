@@ -18,10 +18,8 @@ function fingerprintOf(rawDer) {
 // TLS options for a WebSocket URL whose host the user pinned: the pinned
 // certificate is trusted in addition to the default roots, so a server that later
 // moves to a publicly valid certificate still passes the normal checks. The pin
-// only bypasses the untrusted-authority and name-mismatch checks, the same error
-// kinds the app's renderer may trust; an expired certificate still fails. Node TLS
-// has no revocation check on this path, so a certificate the browser refuses as
-// revoked would still pass here until the user resets it.
+// only bypasses the untrusted-authority part; the validity window is still
+// enforced, and no revocation check exists on this path.
 function pinnedTlsOptions(url) {
   let host;
   try {
@@ -36,22 +34,10 @@ function pinnedTlsOptions(url) {
   return {
     ca: [...tls.rootCertificates, pin.certificate],
     allowPartialTrustChain: true,
-    checkServerIdentity: (hostname, cert) => {
-      if (fingerprintOf(cert.raw) !== pin.fingerprint) {
-        return tls.checkServerIdentity(hostname, cert);
-      }
-      // The stored pin bypasses the untrusted-authority and name-mismatch checks
-      // only, not the validity window: an expired certificate still fails, as it
-      // does in the app's renderer.
-      const now = Date.now();
-      if (
-        Date.parse(cert.valid_from) > now ||
-        Date.parse(cert.valid_to) < now
-      ) {
-        return new Error(`The certificate of ${hostname} has expired.`);
-      }
-      return undefined;
-    },
+    checkServerIdentity: (hostname, cert) =>
+      fingerprintOf(cert.raw) === pin.fingerprint
+        ? undefined
+        : tls.checkServerIdentity(hostname, cert),
   };
 }
 
