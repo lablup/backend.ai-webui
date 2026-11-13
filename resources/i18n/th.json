@@ -2533,6 +2533,7 @@
     "ActivateProject": "เปิดใช้งานโครงการ",
     "Active": "ใช้งาน",
     "BulkEdit": "แก้ไขแบบกลุ่ม",
+    "BulkUpdatePartialFailure": "อัปเดตโปรเจกต์ {{count}} รายการไม่สำเร็จ",
     "CreateProject": "สร้างโปรเจกต์",
     "Deactivate": "ปิดใช้งาน",
     "DeactivateProject": "ปิดการใช้งานโครงการ",

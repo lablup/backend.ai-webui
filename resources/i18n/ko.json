@@ -2543,6 +2543,7 @@
     "ActivateProject": "프로젝트 활성화",
     "Active": "활성",
     "BulkEdit": "일괄 수정",
+    "BulkUpdatePartialFailure": "{{count}}개 프로젝트를 수정하지 못했습니다.",
     "CreateProject": "프로젝트 생성",
     "Deactivate": "비활성화",
     "DeactivateProject": "프로젝트 비활성화",

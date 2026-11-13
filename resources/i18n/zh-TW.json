@@ -2545,6 +2545,7 @@
     "ActivateProject": "啟用專案",
     "Active": "啟用",
     "BulkEdit": "批次編輯",
+    "BulkUpdatePartialFailure": "{{count}} 個專案更新失敗。",
     "CreateProject": "建立專案",
     "Deactivate": "停用",
     "DeactivateProject": "停用專案",

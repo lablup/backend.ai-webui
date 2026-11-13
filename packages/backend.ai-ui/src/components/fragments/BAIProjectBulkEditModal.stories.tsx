@@ -15,7 +15,7 @@ import { graphql, useLazyLoadQuery } from 'react-relay';
  * - Relay mutation for updating project resource policies
  * - Shows list of selected projects
  * - Form with resource policy selection
- * - Parallel mutation execution with Promise.all
+ * - One partial bulk mutation for every selected project
  * - Suspense boundary for loading state
  *
  * @see BAIProjectBulkEditModal.tsx for implementation details
@@ -35,13 +35,13 @@ const meta: Meta<typeof BAIProjectBulkEditModal> = {
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | \`selectedProjectFragments\` | \`BAIProjectBulkEditModalFragment$key\` | - | GraphQL fragment reference for selected projects (required) |
-| \`onOk\` | \`(e: React.MouseEvent) => void\` | - | Called after all mutations complete successfully |
+| \`onCompleted\` | \`(result: BAIProjectBulkEditResult) => void\` | - | Called when the mutation settles, with the updated ids and the failed projects |
 | \`onCancel\` | \`(e: React.MouseEvent) => void\` | - | Called when modal is cancelled |
 
 ## Features
 - **Project List**: Shows all selected projects in an info alert
 - **Resource Policy Selection**: Form field for changing project resource policy
-- **Parallel Mutations**: Executes mutations for all projects simultaneously using Promise.all
+- **Partial Bulk Mutation**: Updates every selected project in one \`partialBulkUpdateProjectsV2\` call
 - **Loading State**: Shows loading spinner in select field while data loads (Suspense)
 - **Confirm Loading**: Save button shows loading state during mutation execution
 - **Auto Cleanup**: Wrap in \`BAIUnmountAfterClose\` to unmount the component when closed
@@ -70,11 +70,12 @@ Mutation is mocked and will execute successfully, closing the modal on completio
         defaultValue: { summary: 'false' },
       },
     },
-    onOk: {
+    onCompleted: {
       control: false,
-      description: 'Called after all mutations complete successfully',
+      description:
+        'Called when the mutation settles, with `succeededIds` and `failures` (id, name, message)',
       table: {
-        type: { summary: '(e: React.MouseEvent) => void' },
+        type: { summary: '(result: BAIProjectBulkEditResult) => void' },
       },
     },
     onCancel: {
@@ -119,7 +120,7 @@ const QueryResolver = () => {
         <BAIProjectBulkEditModal
           selectedProjectFragments={projectNodes}
           open={open}
-          onOk={() => setOpen(false)}
+          onCompleted={() => setOpen(false)}
           onCancel={() => setOpen(false)}
         />
       </BAIFlex>
@@ -149,8 +150,8 @@ export const Default: Story = {
             { id: 'policy-3', name: 'unlimited' },
           ],
         }),
-        ModifyGroup: () => ({
-          ok: true,
+        PartialBulkProjectsPayload: () => ({
+          failed: [],
         }),
       }}
     >

@@ -4,7 +4,7 @@ import {
   BAIDynamicUnitInputNumber,
   ResourceSlotName,
 } from '..';
-import { BAIProjectSettingModalAssociateMutation } from '../../__generated__/BAIProjectSettingModalAssociateMutation.graphql';
+import { BAIProjectSettingModalAllowResourceGroupsMutation } from '../../__generated__/BAIProjectSettingModalAllowResourceGroupsMutation.graphql';
 import { BAIProjectSettingModalCreateMutation } from '../../__generated__/BAIProjectSettingModalCreateMutation.graphql';
 import { BAIProjectSettingModalFragment$key } from '../../__generated__/BAIProjectSettingModalFragment.graphql';
 import { BAIProjectSettingModalModifyMutation } from '../../__generated__/BAIProjectSettingModalModifyMutation.graphql';
@@ -105,6 +105,8 @@ const BAIProjectSettingModal = ({
       },
     );
 
+  // TODO(needs-backend): #11105 Create/UpdateProjectInput lack resource slots,
+  // vfolder hosts, registry and is_active; create/edit stay on *_group.
   const [commitCreateProject, isInFlightCreateProject] =
     useMutation<BAIProjectSettingModalCreateMutation>(graphql`
       mutation BAIProjectSettingModalCreateMutation(
@@ -121,18 +123,13 @@ const BAIProjectSettingModal = ({
       }
     `);
 
-  const [commitAssociateProjects, isInFlightAssociateProjects] =
-    useMutation<BAIProjectSettingModalAssociateMutation>(graphql`
-      mutation BAIProjectSettingModalAssociateMutation(
-        $scaling_groups: [String]!
-        $user_group: UUID!
+  const [commitAllowResourceGroups, isInFlightAllowResourceGroups] =
+    useMutation<BAIProjectSettingModalAllowResourceGroupsMutation>(graphql`
+      mutation BAIProjectSettingModalAllowResourceGroupsMutation(
+        $input: UpdateAllowedResourceGroupsForProjectInput!
       ) {
-        associate_scaling_groups_with_user_group(
-          scaling_groups: $scaling_groups
-          user_group: $user_group
-        ) {
-          ok
-          msg
+        adminUpdateAllowedResourceGroupsForProjectV2(input: $input) {
+          items
         }
       }
     `);
@@ -142,9 +139,8 @@ const BAIProjectSettingModal = ({
       mutation BAIProjectSettingModalModifyMutation(
         $gid: UUID!
         $props: ModifyGroupInput!
-        $scaling_groups: [String]!
-        $isFetchedResourceGroupsEmpty: Boolean!
-        $isResourceGroupsEmpty: Boolean!
+        $resourceGroupsInput: UpdateAllowedResourceGroupsForProjectInput!
+        $isResourceGroupsUnchanged: Boolean!
       ) {
         modify_group(gid: $gid, props: $props) {
           ok
@@ -154,17 +150,10 @@ const BAIProjectSettingModal = ({
             scaling_groups
           }
         }
-        disassociate_all_scaling_groups_with_group(user_group: $gid)
-          @skip(if: $isFetchedResourceGroupsEmpty) {
-          ok
-          msg
-        }
-        associate_scaling_groups_with_user_group(
-          scaling_groups: $scaling_groups
-          user_group: $gid
-        ) @skip(if: $isResourceGroupsEmpty) {
-          ok
-          msg
+        adminUpdateAllowedResourceGroupsForProjectV2(
+          input: $resourceGroupsInput
+        ) @skip(if: $isResourceGroupsUnchanged) {
+          items
         }
       }
     `);
@@ -248,12 +237,14 @@ const BAIProjectSettingModal = ({
                 return;
               }
               if (!_.isEmpty(values?.scaling_groups)) {
-                commitAssociateProjects({
+                commitAllowResourceGroups({
                   variables: {
-                    scaling_groups: values?.scaling_groups || [],
-                    user_group: response?.create_group?.group?.id || '',
+                    input: {
+                      projectId: response?.create_group?.group?.id || '',
+                      add: values?.scaling_groups,
+                    },
                   },
-                  onCompleted: (response, errors) => {
+                  onCompleted: (_response, errors) => {
                     if (errors && errors.length > 0) {
                       errors.forEach((error) =>
                         message.error(
@@ -264,18 +255,6 @@ const BAIProjectSettingModal = ({
                             ),
                           ),
                         ),
-                      );
-                      return;
-                    }
-                    if (
-                      !response?.associate_scaling_groups_with_user_group?.ok
-                    ) {
-                      message.error(
-                        response?.associate_scaling_groups_with_user_group
-                          ?.msg ||
-                          t(
-                            'comp:BAIProjectSettingModal.FailedToCreateProject',
-                          ),
                       );
                       return;
                     }
@@ -297,6 +276,16 @@ const BAIProjectSettingModal = ({
             },
           });
         } else {
+          const prevResourceGroups = _.compact(project?.scaling_groups);
+          const nextResourceGroups = values.scaling_groups ?? [];
+          const addResourceGroups = _.difference(
+            nextResourceGroups,
+            prevResourceGroups,
+          );
+          const removeResourceGroups = _.difference(
+            prevResourceGroups,
+            nextResourceGroups,
+          );
           commitModifyProject({
             variables: {
               gid: project?.row_id || project?.id || '',
@@ -314,11 +303,13 @@ const BAIProjectSettingModal = ({
                   'project',
                 ],
               ),
-              scaling_groups: values.scaling_groups || [],
-              // skip disassociation if project has no resource groups
-              isFetchedResourceGroupsEmpty: _.isEmpty(project?.scaling_groups),
-              // skip association if no resource groups are provided
-              isResourceGroupsEmpty: _.isEmpty(values.scaling_groups),
+              resourceGroupsInput: {
+                projectId: project?.row_id || '',
+                add: addResourceGroups,
+                remove: removeResourceGroups,
+              },
+              isResourceGroupsUnchanged:
+                _.isEmpty(addResourceGroups) && _.isEmpty(removeResourceGroups),
             },
             onCompleted: (response, errors) => {
               if (errors && errors.length > 0) {
@@ -332,23 +323,9 @@ const BAIProjectSettingModal = ({
                 );
                 return;
               }
-              if (
-                !response?.modify_group?.ok ||
-                (!_.isEmpty(project?.scaling_groups) &&
-                  !response?.disassociate_all_scaling_groups_with_group?.ok) ||
-                (!_.isEmpty(values.scaling_groups) &&
-                  !response?.associate_scaling_groups_with_user_group?.ok)
-              ) {
-                // show error message in reverse order of execution to make it more intuitive
+              if (!response?.modify_group?.ok) {
                 message.error(
-                  !_.isEmpty(
-                    values.scaling_groups &&
-                      response?.associate_scaling_groups_with_user_group?.msg,
-                  ) ||
-                    (!_.isEmpty(values.scaling_groups) &&
-                      response?.disassociate_all_scaling_groups_with_group
-                        ?.msg) ||
-                    response?.modify_group?.msg ||
+                  response?.modify_group?.msg ||
                     t('comp:BAIProjectSettingModal.FailedToUpdateProject'),
                 );
                 return;
@@ -382,7 +359,7 @@ const BAIProjectSettingModal = ({
         loading:
           isInFlightCreateProject ||
           isInFlightModifyProject ||
-          isInFlightAssociateProjects,
+          isInFlightAllowResourceGroups,
       }}
     >
       <Form
@@ -544,16 +521,8 @@ const BAIProjectSettingModal = ({
             }),
           ]}
         >
-          {/* QA-FINDINGS Q-29: the two inputs need an explicit row.
-              Under antd these were `Input`s — `display: inline-block` — so two
-              of them at `calc(50% - 8px)` shared a line by pure inline flow,
-              and the gap was a `marginRight` on the first. `TextInput`
-              renders Astryx's `.astryx-field` wrapper, which is a BLOCK
-              (`display: flex`), so the same two widths simply stacked: measured
-              at y916 and y948, 32px apart, each still correctly 228px wide.
-              The widths were never the problem; the FLOW was. An `HStack` states
-              the row explicitly and owns the gap, so both fields go to
-              `width="100%"` of their half and the margin hack disappears. */}
+          {/* `TextInput`'s field wrapper is a block, so the two inputs need an
+              explicit row to sit side by side (QA-FINDINGS Q-29). */}
           <HStack gap={2} align="start" width="100%">
             <Form.Item
               name="registry"

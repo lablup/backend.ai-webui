@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<9144bdbeff0d19f1b6cbc286305e10ec>>
+ * @generated SignedSource<<4350295cb0ac4ee20005f6a285f0e3bd>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,13 +10,14 @@
 
 import { ConcreteRequest } from 'relay-runtime';
 export type ProjectPageDeactivateMutation$variables = {
-  gid: string;
+  id: string;
 };
 export type ProjectPageDeactivateMutation$data = {
-  readonly delete_group: {
-    readonly msg: string | null | undefined;
-    readonly ok: boolean | null | undefined;
-  } | null | undefined;
+  readonly deleteProjectV2: {
+    readonly project: {
+      readonly id: string;
+    };
+  };
 };
 export type ProjectPageDeactivateMutation = {
   response: ProjectPageDeactivateMutation$data;
@@ -28,7 +29,7 @@ var v0 = [
   {
     "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "gid"
+    "name": "id"
   }
 ],
 v1 = [
@@ -37,27 +38,31 @@ v1 = [
     "args": [
       {
         "kind": "Variable",
-        "name": "gid",
-        "variableName": "gid"
+        "name": "id",
+        "variableName": "id"
       }
     ],
-    "concreteType": "DeleteGroup",
+    "concreteType": "DeleteProjectPayload",
     "kind": "LinkedField",
-    "name": "delete_group",
+    "name": "deleteProjectV2",
     "plural": false,
     "selections": [
       {
         "alias": null,
         "args": null,
-        "kind": "ScalarField",
-        "name": "msg",
-        "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "ok",
+        "concreteType": "ProjectV2",
+        "kind": "LinkedField",
+        "name": "project",
+        "plural": false,
+        "selections": [
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "id",
+            "storageKey": null
+          }
+        ],
         "storageKey": null
       }
     ],
@@ -82,16 +87,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "d6ed21e753502936b1809dd7ec534481",
+    "cacheID": "0396050d7f10e4855578b0bf04ee2c21",
     "id": null,
     "metadata": {},
     "name": "ProjectPageDeactivateMutation",
     "operationKind": "mutation",
-    "text": "mutation ProjectPageDeactivateMutation(\n  $gid: UUID!\n) {\n  delete_group(gid: $gid) {\n    msg\n    ok\n  }\n}\n"
+    "text": "mutation ProjectPageDeactivateMutation(\n  $id: UUID!\n) {\n  deleteProjectV2(id: $id) {\n    project {\n      id\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "efff8899d9363e384d85951b348bfe03";
+(node as any).hash = "4ce588c13912add6da82cd55be5d43bc";
 
 export default node;

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<8e86e554628f7a4ca280fc4c8f233541>>
+ * @generated SignedSource<<e5f4cbfd8847b7140aee8659e6f0dfd4>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -121,6 +121,13 @@ return {
                     "alias": null,
                     "args": null,
                     "kind": "ScalarField",
+                    "name": "id",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
                     "name": "name",
                     "storageKey": null
                   },
@@ -129,13 +136,6 @@ return {
                     "args": null,
                     "kind": "ScalarField",
                     "name": "row_id",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "id",
                     "storageKey": null
                   }
                 ],
@@ -150,12 +150,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "e95e83787e4e85b2c9d30b1fe5e4d330",
+    "cacheID": "681bcc2fc043801367139278748459f5",
     "id": null,
     "metadata": {},
     "name": "BAIProjectBulkEditModalStoriesQuery",
     "operationKind": "query",
-    "text": "query BAIProjectBulkEditModalStoriesQuery {\n  group_nodes(offset: 0, first: 3) {\n    edges {\n      node {\n        ...BAIProjectBulkEditModalFragment\n        id\n      }\n    }\n  }\n}\n\nfragment BAIProjectBulkEditModalFragment on GroupNode {\n  name\n  row_id\n}\n"
+    "text": "query BAIProjectBulkEditModalStoriesQuery {\n  group_nodes(offset: 0, first: 3) {\n    edges {\n      node {\n        ...BAIProjectBulkEditModalFragment\n        id\n      }\n    }\n  }\n}\n\nfragment BAIProjectBulkEditModalFragment on GroupNode {\n  id\n  name\n  row_id\n}\n"
   }
 };
 })();

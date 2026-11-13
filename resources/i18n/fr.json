@@ -2543,6 +2543,7 @@
     "ActivateProject": "Activer le projet",
     "Active": "actif",
     "BulkEdit": "Modification groupée",
+    "BulkUpdatePartialFailure": "Échec de la mise à jour de {{count}} projet(s).",
     "CreateProject": "Créer un projet",
     "Deactivate": "Désactiver",
     "DeactivateProject": "Désactiver le projet",

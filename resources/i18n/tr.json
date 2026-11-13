@@ -2541,6 +2541,7 @@
     "ActivateProject": "Projeyi etkinleştir",
     "Active": "Aktif",
     "BulkEdit": "Toplu Düzenle",
+    "BulkUpdatePartialFailure": "{{count}} proje güncellenemedi.",
     "CreateProject": "Proje Oluştur",
     "Deactivate": "Devre dışı bırak",
     "DeactivateProject": "Projeyi devre dışı bırak",

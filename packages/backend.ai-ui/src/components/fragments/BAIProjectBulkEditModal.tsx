@@ -1,7 +1,8 @@
 import { BAIProjectBulkEditModalFragment$key } from '../../__generated__/BAIProjectBulkEditModalFragment.graphql';
 import { BAIProjectBulkEditModalProjectMutation } from '../../__generated__/BAIProjectBulkEditModalProjectMutation.graphql';
+import { App } from '../../app-shim';
 import { Form } from '../../form-engine';
-import { useMutationWithPromise } from '../../hooks';
+import { useErrorMessageResolver, useMutationWithPromise } from '../../hooks';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import BAIFlex from '../BAIFlex';
 import BAIListAlert from '../BAIListAlert';
@@ -12,25 +13,53 @@ import * as _ from 'lodash-es';
 import { Suspense, useState } from 'react';
 import { graphql, useFragment } from 'react-relay';
 
-export interface BAIProjectBulkEditModalProps extends BAIModalProps {
+/** One project the bulk update did not apply to. `id` is the `GroupNode` id. */
+export interface BAIProjectBulkEditFailure {
+  id: string;
+  name: string;
+  message: string;
+}
+
+/** Per-project outcome of one save; ids are `GroupNode` ids. */
+export interface BAIProjectBulkEditResult {
+  succeededIds: string[];
+  failures: BAIProjectBulkEditFailure[];
+}
+
+export interface BAIProjectBulkEditModalProps extends Omit<
+  BAIModalProps,
+  'onOk'
+> {
   selectedProjectFragments: BAIProjectBulkEditModalFragment$key;
+  /** Called once the request settles; a rejected request fails every project. */
+  onCompleted?: (result: BAIProjectBulkEditResult) => void;
 }
 
 const BAIProjectBulkEditModal = ({
   selectedProjectFragments,
-  ...tableProps
+  onCompleted,
+  ...modalProps
 }: BAIProjectBulkEditModalProps) => {
+  'use memo';
   const { t } = useBAIi18n();
+  const { message } = App.useApp();
+  const { getErrorMessage } = useErrorMessageResolver();
   const [form] = Form.useForm();
   const [isSaving, setIsSaving] = useState(false);
   const mutateProjectWithPromise =
     useMutationWithPromise<BAIProjectBulkEditModalProjectMutation>(graphql`
       mutation BAIProjectBulkEditModalProjectMutation(
-        $gid: UUID!
-        $props: ModifyGroupInput!
+        $input: PartialBulkUpdateProjectsInput!
       ) {
-        modify_group(gid: $gid, props: $props) {
-          ok
+        partialBulkUpdateProjectsV2(input: $input) {
+          successes {
+            id
+            entityId
+          }
+          failed {
+            id
+            message
+          }
         }
       }
     `);
@@ -39,6 +68,7 @@ const BAIProjectBulkEditModal = ({
     graphql`
       fragment BAIProjectBulkEditModalFragment on GroupNode
       @relay(plural: true) {
+        id
         name
         row_id
       }
@@ -48,28 +78,59 @@ const BAIProjectBulkEditModal = ({
 
   return (
     <BAIModal
-      {...tableProps}
+      {...modalProps}
       confirmLoading={isSaving}
       title={t('comp:BAIProjectBulkEditModal.UpdateMultipleProjects')}
       okText={t('general.button.Save')}
-      onOk={(e) => {
+      onOk={() => {
         setIsSaving(true);
         form
           .validateFields()
           .then((values) => {
-            const promises = _.map(
-              _.compact(_.map(selectedProjects, (project) => project.row_id)),
-              (id) => {
-                return mutateProjectWithPromise({
-                  gid: id,
-                  props: {
-                    resource_policy: values.resource_policy,
-                  },
+            const targets = _.filter(selectedProjects, (project) =>
+              Boolean(project.row_id),
+            );
+            const byRowId = _.keyBy(targets, 'row_id');
+            return mutateProjectWithPromise({
+              input: {
+                items: _.map(targets, (project) => ({
+                  id: project.row_id as string,
+                  input: { resourcePolicy: values.resource_policy },
+                })),
+              },
+            }).then(
+              ({ partialBulkUpdateProjectsV2: result }) => {
+                onCompleted?.({
+                  succeededIds: _.compact(
+                    _.map(
+                      result.successes,
+                      (project) => byRowId[project.entityId]?.id,
+                    ),
+                  ),
+                  failures: _.map(result.failed, (failure) => ({
+                    id: byRowId[failure.id]?.id ?? failure.id,
+                    name: byRowId[failure.id]?.name ?? failure.id,
+                    message: failure.message,
+                  })),
+                });
+              },
+              (error) => {
+                const reason = getErrorMessage(error);
+                onCompleted?.({
+                  succeededIds: [],
+                  failures: _.map(targets, (project) => ({
+                    id: project.id,
+                    name: project.name ?? project.id,
+                    message: reason,
+                  })),
                 });
               },
             );
-
-            return Promise.all(promises).then(() => tableProps.onOk?.(e));
+          })
+          .catch((error) => {
+            // `validateFields` rejects with `errorFields`; the form shows those.
+            if (error?.errorFields) return;
+            message.error(getErrorMessage(error));
           })
           .finally(() => setIsSaving(false));
       }}

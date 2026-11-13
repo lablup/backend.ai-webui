@@ -2542,6 +2542,7 @@
     "ActivateProject": "Төслийг идэвхжүүлэх",
     "Active": "Идэвхтэй",
     "BulkEdit": "Бөөнөөр засах",
+    "BulkUpdatePartialFailure": "{{count}} төслийг шинэчлэхэд алдаа гарлаа.",
     "CreateProject": "Төсөл үүсгэх",
     "Deactivate": "Идэвхгүй болгох",
     "DeactivateProject": "Төслийг идэвхгүй болгох",

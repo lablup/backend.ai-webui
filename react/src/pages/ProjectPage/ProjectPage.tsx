@@ -4,13 +4,13 @@
  */
 import { ProjectAdminSettingModalQuery } from '../../__generated__/ProjectAdminSettingModalQuery.graphql';
 import { ProjectPageDeactivateMutation } from '../../__generated__/ProjectPageDeactivateMutation.graphql';
-import { ProjectPageModifyMutation } from '../../__generated__/ProjectPageModifyMutation.graphql';
 import { ProjectPagePurgeMutation } from '../../__generated__/ProjectPagePurgeMutation.graphql';
 import {
   ProjectPageQuery,
   ProjectPageQuery$data,
   ProjectPageQuery$variables,
 } from '../../__generated__/ProjectPageQuery.graphql';
+import { ProjectPageRestoreMutation } from '../../__generated__/ProjectPageRestoreMutation.graphql';
 import { App } from '../../app-shim';
 import { useSuspendedBackendaiClient } from '../../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../../hooks/reactPaginationQueryOptions';
@@ -23,6 +23,7 @@ import ProjectAdminSettingModal, {
 } from './components/ProjectAdminSettingModal';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
+  BAIBulkErrorModal,
   BAIButton,
   BAICard,
   BAIDeleteConfirmModal,
@@ -40,6 +41,9 @@ import {
   filterOutEmpty,
   isValidUUID,
   mergeFilterValues,
+  type BAIColumnsType,
+  type BAIProjectBulkEditFailure,
+  type BAIProjectBulkEditResult,
   type ProjectInList,
   useBAILogger,
   useErrorMessageResolver,
@@ -99,6 +103,10 @@ const ProjectPage = () => {
   const [selectedProject, setSelectedProject] = useState<ProjectNode | null>(
     null,
   );
+  // Projects the last bulk edit could not update; the error modal is open while non-empty.
+  const [bulkEditFailures, setBulkEditFailures] = useState<
+    BAIProjectBulkEditFailure[]
+  >([]);
   const [purgingProject, setPurgingProject] = useState<ProjectInList | null>(
     null,
   );
@@ -197,29 +205,32 @@ const ProjectPage = () => {
 
   const [commitDeactivateGroup] = useMutation<ProjectPageDeactivateMutation>(
     graphql`
-      mutation ProjectPageDeactivateMutation($gid: UUID!) {
-        delete_group(gid: $gid) {
-          msg
-          ok
+      mutation ProjectPageDeactivateMutation($id: UUID!) {
+        deleteProjectV2(id: $id) {
+          project {
+            id
+          }
         }
       }
     `,
   );
 
-  const [commitModifyGroup] = useMutation<ProjectPageModifyMutation>(graphql`
-    mutation ProjectPageModifyMutation($gid: UUID!, $props: ModifyGroupInput!) {
-      modify_group(gid: $gid, props: $props) {
-        ok
-        msg
+  const [commitRestoreProject] = useMutation<ProjectPageRestoreMutation>(
+    graphql`
+      mutation ProjectPageRestoreMutation($id: UUID!) {
+        restoreProjectV2(id: $id) {
+          project {
+            id
+          }
+        }
       }
-    }
-  `);
+    `,
+  );
 
   const [commitPurgeGroup] = useMutation<ProjectPagePurgeMutation>(graphql`
-    mutation ProjectPagePurgeMutation($gid: UUID!) {
-      purge_group(gid: $gid) {
-        ok
-        msg
+    mutation ProjectPagePurgeMutation($projectId: UUID!) {
+      adminPurgeProjectV2(projectId: $projectId) {
+        purged
       }
     }
   `);
@@ -272,6 +283,46 @@ const ProjectPage = () => {
     );
   };
 
+  const handleBulkEditCompleted = ({
+    succeededIds,
+    failures,
+  }: BAIProjectBulkEditResult) => {
+    toggleBulkEditModal();
+    if (!_.isEmpty(succeededIds)) {
+      updateFetchKey();
+    }
+    if (_.isEmpty(failures)) {
+      message.success(t('notification.SuccessfullyUpdated'));
+      setSelectedProjectList([]);
+      return;
+    }
+    failures.forEach((failure) =>
+      logger.error('Failed to update project', failure.message),
+    );
+    // Keep only the failed projects selected so the next bulk edit retries them.
+    const failedIds = _.map(failures, 'id');
+    setSelectedProjectList((prev) =>
+      prev.filter((project) => failedIds.includes(project.id)),
+    );
+    message.error(
+      t('project.BulkUpdatePartialFailure', { count: failures.length }),
+    );
+    setBulkEditFailures(failures);
+  };
+
+  const bulkEditFailureColumns: BAIColumnsType<BAIProjectBulkEditFailure> = [
+    {
+      key: 'name',
+      title: t('project.Name'),
+      dataIndex: 'name',
+    },
+    {
+      key: 'message',
+      title: t('rbac.ErrorMessage'),
+      dataIndex: 'message',
+    },
+  ];
+
   const handleDeactivateProject = (project: ProjectInList) =>
     new Promise<void>((resolve) => {
       if (!project.row_id) {
@@ -279,8 +330,8 @@ const ProjectPage = () => {
         return;
       }
       commitDeactivateGroup({
-        variables: { gid: project.row_id },
-        onCompleted: (response, errors) => {
+        variables: { id: project.row_id },
+        onCompleted: (_response, errors) => {
           if (errors && errors.length > 0) {
             errors.forEach((error) => {
               message.error(
@@ -290,16 +341,9 @@ const ProjectPage = () => {
             resolve();
             return;
           }
-          if (response.delete_group?.ok) {
-            message.success(t('project.ProjectDeactivated'));
-            removeFromSelection(project.id);
-            updateFetchKey();
-          } else {
-            message.error(
-              response.delete_group?.msg ||
-                t('project.FailedToDeactivateProject'),
-            );
-          }
+          message.success(t('project.ProjectDeactivated'));
+          removeFromSelection(project.id);
+          updateFetchKey();
           resolve();
         },
         onError: (error) => {
@@ -318,12 +362,9 @@ const ProjectPage = () => {
         resolve();
         return;
       }
-      commitModifyGroup({
-        variables: {
-          gid: project.row_id,
-          props: { is_active: true },
-        },
-        onCompleted: (response, errors) => {
+      commitRestoreProject({
+        variables: { id: project.row_id },
+        onCompleted: (_response, errors) => {
           if (errors && errors.length > 0) {
             errors.forEach((error) => {
               message.error(
@@ -333,16 +374,9 @@ const ProjectPage = () => {
             resolve();
             return;
           }
-          if (response.modify_group?.ok) {
-            message.success(t('project.ProjectActivated'));
-            removeFromSelection(project.id);
-            updateFetchKey();
-          } else {
-            message.error(
-              response.modify_group?.msg ||
-                t('project.FailedToActivateProject'),
-            );
-          }
+          message.success(t('project.ProjectActivated'));
+          removeFromSelection(project.id);
+          updateFetchKey();
           resolve();
         },
         onError: (error) => {
@@ -361,7 +395,7 @@ const ProjectPage = () => {
       }
       const projectId = purgingProject.id;
       commitPurgeGroup({
-        variables: { gid: purgingProject.row_id },
+        variables: { projectId: purgingProject.row_id },
         onCompleted: (response, errors) => {
           if (errors && errors.length > 0) {
             errors.forEach((error) => {
@@ -372,15 +406,13 @@ const ProjectPage = () => {
             resolve();
             return;
           }
-          if (response.purge_group?.ok) {
+          if (response.adminPurgeProjectV2?.purged) {
             message.success(t('project.ProjectPurged'));
             removeFromSelection(projectId);
             setPurgingProject(null);
             updateFetchKey();
           } else {
-            message.error(
-              response.purge_group?.msg || t('project.FailedToPurgeProject'),
-            );
+            message.error(t('project.FailedToPurgeProject'));
           }
           resolve();
         },
@@ -675,14 +707,19 @@ const ProjectPage = () => {
         <BAIProjectBulkEditModal
           open={openBulkEditModal}
           selectedProjectFragments={selectedProjectList}
-          onOk={() => {
-            updateFetchKey();
-            toggleBulkEditModal();
-            setSelectedProjectList([]);
-          }}
+          onCompleted={handleBulkEditCompleted}
           onCancel={() => {
             toggleBulkEditModal();
           }}
+        />
+        <BAIBulkErrorModal<BAIProjectBulkEditFailure>
+          open={!_.isEmpty(bulkEditFailures)}
+          alertDescription={t('project.BulkUpdatePartialFailure', {
+            count: bulkEditFailures.length,
+          })}
+          columns={bulkEditFailureColumns}
+          dataSource={bulkEditFailures}
+          onRequestClose={() => setBulkEditFailures([])}
         />
         {projectAdminQueryRef != null && (
           <BAIUnmountAfterClose>

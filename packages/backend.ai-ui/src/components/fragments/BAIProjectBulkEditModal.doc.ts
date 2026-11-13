@@ -15,7 +15,7 @@ export const docs = {
   ],
   usage: {
     description:
-      'Modal that applies one project resource policy to several projects at once. It reads the plural fragment `BAIProjectBulkEditModalFragment` on `GroupNode` (`name`, `row_id`), so the caller spreads that fragment on the project nodes in its list query and passes the selected array as `selectedProjectFragments`. The body lists the affected project names in an info alert and offers a single field, backed by BAIProjectResourcePolicySelect inside a Suspense boundary. Confirming validates the form and fires one `modify_group` mutation per selected `row_id`, calling `onOk` only when every mutation has SUCCEEDED — the mutations run through `Promise.all`, and `useMutationWithPromise` rejects on a GraphQL or network error, so one failure skips `onOk` and leaves the modal open. Remaining props go to BAIModal, but `title`, `okText` and `confirmLoading` are applied after the spread and cannot be overridden.',
+      'Modal that applies one project resource policy to several projects at once. It reads the plural fragment `BAIProjectBulkEditModalFragment` on `GroupNode` (`id`, `name`, `row_id`), so the caller spreads that fragment on the project nodes in its list query and passes the selected array as `selectedProjectFragments`. The body lists the affected project names in an info alert and offers a single field, backed by BAIProjectResourcePolicySelect inside a Suspense boundary. Confirming validates the form and sends one `partialBulkUpdateProjectsV2` mutation with an item per selected `row_id`, then reports the outcome through `onCompleted` as `{ succeededIds, failures }`, keyed by `GroupNode` id; a rejected request reports every project as failed with the request error. The modal shows no result message itself: the caller follows the bulk-mutation rule (success message, or a count error plus `BAIBulkErrorModal` with the failed projects kept selected). Remaining props go to BAIModal except `onOk`, which the modal owns; `title`, `okText` and `confirmLoading` are applied after the spread and cannot be overridden.',
     bestPractices: [
       {
         guidance: true,
@@ -25,7 +25,12 @@ export const docs = {
       {
         guidance: true,
         description:
-          'Refetch the project list and clear the selection in `onOk` — the mutation returns only `ok`, so nothing the table shows is updated on its own.',
+          'In `onCompleted`, refetch the project list when `succeededIds` is non-empty — the mutation returns `ProjectV2` records, so the `GroupNode` rows the table shows are not updated on their own.',
+      },
+      {
+        guidance: true,
+        description:
+          'When `failures` is non-empty, keep only those projects selected for a retry, show one error message with the count and list `name` and `message` of each in `BAIBulkErrorModal`.',
       },
       {
         guidance: true,
@@ -35,12 +40,12 @@ export const docs = {
       {
         guidance: false,
         description:
-          'Assume `onOk` runs no matter what: a single failed mutation rejects the `Promise.all` and `onOk` never fires, so the projects that did update are left without the refetch it would have triggered.',
+          'Wait for `failures` to be empty before refetching: the projects in `succeededIds` were already updated even when others failed.',
       },
       {
         guidance: false,
         description:
-          'Reach for it to change anything other than the resource policy; the mutation sends only `resource_policy`, and any other field would be silently dropped.',
+          'Reach for it to change anything other than the resource policy; the mutation sends only `resourcePolicy`, and any other field would be silently dropped.',
       },
     ],
   },
@@ -49,14 +54,14 @@ export const docs = {
       name: 'selectedProjectFragments',
       type: 'BAIProjectBulkEditModalFragment$key',
       description:
-        'Plural fragment reference for the projects to update. Their `name` drives the info alert and their `row_id` becomes the `gid` of each mutation; entries without a `row_id` are skipped.',
+        'Plural fragment reference for the projects to update. Their `name` drives the info alert and their `row_id` becomes the `id` of each mutation item; entries without a `row_id` are skipped.',
       required: true,
     },
     {
-      name: 'onOk',
-      type: '(e: React.MouseEvent<HTMLButtonElement>) => void',
+      name: 'onCompleted',
+      type: '(result: BAIProjectBulkEditResult) => void',
       description:
-        'Called only when every `modify_group` mutation resolved. Close the modal, clear the selection and refetch here — and note that a partial failure skips this entirely, even though some projects were already modified.',
+        'Called once the mutation settles, with `succeededIds` (the `GroupNode` ids updated) and `failures` (`{ id, name, message }` per project not updated). A rejected request lists every selected project in `failures`. Not called when form validation fails. Close the modal here.',
     },
     {
       name: 'title',
@@ -83,10 +88,22 @@ export const docs = {
       code: `<BAIProjectBulkEditModal
   open={openBulkEditModal}
   selectedProjectFragments={selectedProjectList}
-  onOk={() => {
-    updateFetchKey();
+  onCompleted={({ succeededIds, failures }) => {
     toggleBulkEditModal();
-    setSelectedProjectList([]);
+    if (succeededIds.length > 0) updateFetchKey();
+    if (failures.length === 0) {
+      message.success(t('notification.SuccessfullyUpdated'));
+      setSelectedProjectList([]);
+      return;
+    }
+    const failedIds = failures.map((failure) => failure.id);
+    setSelectedProjectList((prev) =>
+      prev.filter((project) => failedIds.includes(project.id)),
+    );
+    message.error(
+      t('project.BulkUpdatePartialFailure', { count: failures.length }),
+    );
+    setBulkEditFailures(failures); // listed in BAIBulkErrorModal
   }}
   onCancel={() => toggleBulkEditModal()}
 />`,

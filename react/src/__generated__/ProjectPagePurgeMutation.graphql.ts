@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<37c0672a91a98e598a977a98eeeeb3d2>>
+ * @generated SignedSource<<3d370296e3985b3e39e03f89bb10df4b>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,12 +10,11 @@
 
 import { ConcreteRequest } from 'relay-runtime';
 export type ProjectPagePurgeMutation$variables = {
-  gid: string;
+  projectId: string;
 };
 export type ProjectPagePurgeMutation$data = {
-  readonly purge_group: {
-    readonly msg: string | null | undefined;
-    readonly ok: boolean | null | undefined;
+  readonly adminPurgeProjectV2: {
+    readonly purged: boolean;
   } | null | undefined;
 };
 export type ProjectPagePurgeMutation = {
@@ -28,7 +27,7 @@ var v0 = [
   {
     "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "gid"
+    "name": "projectId"
   }
 ],
 v1 = [
@@ -37,27 +36,20 @@ v1 = [
     "args": [
       {
         "kind": "Variable",
-        "name": "gid",
-        "variableName": "gid"
+        "name": "projectId",
+        "variableName": "projectId"
       }
     ],
-    "concreteType": "PurgeGroup",
+    "concreteType": "PurgeProjectPayload",
     "kind": "LinkedField",
-    "name": "purge_group",
+    "name": "adminPurgeProjectV2",
     "plural": false,
     "selections": [
       {
         "alias": null,
         "args": null,
         "kind": "ScalarField",
-        "name": "ok",
-        "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "msg",
+        "name": "purged",
         "storageKey": null
       }
     ],
@@ -82,16 +74,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "2b7041be70850a44e664027677b56872",
+    "cacheID": "dcf118c8bf890919ac4b343191526dfa",
     "id": null,
     "metadata": {},
     "name": "ProjectPagePurgeMutation",
     "operationKind": "mutation",
-    "text": "mutation ProjectPagePurgeMutation(\n  $gid: UUID!\n) {\n  purge_group(gid: $gid) {\n    ok\n    msg\n  }\n}\n"
+    "text": "mutation ProjectPagePurgeMutation(\n  $projectId: UUID!\n) {\n  adminPurgeProjectV2(projectId: $projectId) {\n    purged\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "76ab9c9d44f872f3b6928c61c5bdabb2";
+(node as any).hash = "5d49b3468b32bb0051199584b39df811";
 
 export default node;

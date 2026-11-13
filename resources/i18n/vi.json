@@ -2543,6 +2543,7 @@
     "ActivateProject": "Kích hoạt dự án",
     "Active": "Hoạt động",
     "BulkEdit": "Chỉnh sửa hàng loạt",
+    "BulkUpdatePartialFailure": "Không thể cập nhật {{count}} dự án.",
     "CreateProject": "Tạo dự án",
     "Deactivate": "Vô hiệu hóa",
     "DeactivateProject": "Vô hiệu hóa dự án",
