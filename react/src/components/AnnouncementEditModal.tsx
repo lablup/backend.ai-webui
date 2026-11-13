@@ -109,14 +109,16 @@ const AnnouncementEditModalContent: React.FC<AnnouncementEditModalProps> = ({
   const { logger } = useBAILogger();
   const { getErrorMessage } = useErrorMessageResolver();
 
-  const { doc: domainConfig, setKey } = useScopedAppConfig(
-    { scopeType: 'DOMAIN' },
-    'domainConfig',
-  );
-  const announcement = readDomainAnnouncement(domainConfig?.settings);
+  const { domain, upsert } = useScopedAppConfig({ domain: ['domainConfig'] });
+  const announcement = readDomainAnnouncement(domain?.domainConfig?.settings);
   // Keeps the System Settings keys beside the announcement.
   const writeAnnouncement = (next: DomainAnnouncement | undefined) =>
-    setKey('settings', (current: unknown) => withAnnouncement(current, next));
+    upsert({
+      scope: 'domain',
+      configName: 'domainConfig',
+      subKey: 'settings',
+      value: (current: unknown) => withAnnouncement(current, next),
+    });
 
   const formRef = useRef<FormInstance<AnnouncementFormValues>>(null);
   const [bodyDraft, setBodyDraft] = useState<string>();

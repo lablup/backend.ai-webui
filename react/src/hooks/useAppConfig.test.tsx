@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import type { AppConfigName, AppConfigScope } from './useAppConfig';
+import type { AppConfigScopeKey, ScopedAppConfigRequest } from './useAppConfig';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { ReactNode, Suspense } from 'react';
 import { RelayEnvironmentProvider } from 'react-relay';
@@ -28,8 +28,12 @@ const loadHooks = async () => {
   vi.resetModules();
   return import('./useAppConfig');
 };
+type Hooks = Awaited<ReturnType<typeof loadHooks>>;
 
 type MockEnvironment = ReturnType<typeof createMockEnvironment>;
+type Doc = Record<string, unknown>;
+/** Per scope: the documents by name (`null`: no fragment), or `'denied'`. */
+type ScopeAnswer = Record<string, Doc | null> | 'denied';
 
 const operationsNamed = (environment: MockEnvironment, name: string) =>
   environment.mock
@@ -43,7 +47,6 @@ const waitForOperation = async (environment: MockEnvironment, name: string) => {
   return operationsNamed(environment, name)[0];
 };
 
-/** Mounts the hook and answers its read with `config` (`null`: no fragment yet). */
 const wrapperFor = (environment: MockEnvironment) => {
   const RelayWrapper = ({ children }: { children: ReactNode }) => (
     <RelayEnvironmentProvider environment={environment}>
@@ -53,36 +56,42 @@ const wrapperFor = (environment: MockEnvironment) => {
   return RelayWrapper;
 };
 
+/** Mounts the hook and answers its one read with `answers`. */
 const mountScoped = async (
-  scope: AppConfigScope,
-  configName: AppConfigName,
-  config: Record<string, unknown> | null,
-  hooks?: Awaited<ReturnType<typeof loadHooks>>,
+  request: ScopedAppConfigRequest,
+  answers: Partial<Record<AppConfigScopeKey, ScopeAnswer>>,
+  hooks?: Hooks,
+  environment = createMockEnvironment(),
 ) => {
   const { useScopedAppConfig } = hooks ?? (await loadHooks());
-  const environment = createMockEnvironment();
-  const { result } = renderHook(() => useScopedAppConfig(scope, configName), {
+  const { result } = renderHook(() => useScopedAppConfig(request), {
     wrapper: wrapperFor(environment),
   });
   const read = await waitForOperation(environment, 'useAppConfigScopedQuery');
+  const data: Record<string, unknown> = {};
+  const errors: Array<{ message: string; path: Array<string> }> = [];
+  for (const [key, answer] of Object.entries(answers)) {
+    if (answer === 'denied') {
+      data[key] = null;
+      errors.push({ message: `${key}: denied`, path: [key] });
+    } else {
+      data[key] = Object.entries(answer).map(([configName, config], index) =>
+        config ? { id: `${key}-${index}`, configName, config } : null,
+      );
+    }
+  }
   act(() => {
     environment.mock.resolve(read, {
-      data: {
-        scopedAppConfigFragmentsByNames: [
-          config ? { id: 'fragment-1', configName, config } : null,
-        ],
-      },
-    });
+      data,
+      ...(errors.length ? { errors } : {}),
+    } as any);
   });
   await waitFor(() => expect(result.current).not.toBeNull());
   return { environment, result, read };
 };
 
-/** Answers the next upsert with the document it sent, as the manager does. */
-const answerUpsert = async (
-  environment: MockEnvironment,
-  id = 'fragment-1',
-) => {
+/** Answers the next upsert with the documents it sent, as the manager does. */
+const answerUpsert = async (environment: MockEnvironment, id?: string) => {
   const upsert = await waitForOperation(
     environment,
     'useAppConfigUpsertMutation',
@@ -92,7 +101,12 @@ const answerUpsert = async (
     environment.mock.resolve(upsert, {
       data: {
         scopedAtomicBulkUpsertAppConfigFragments: {
-          items: [{ id, ...sent.items[0] }],
+          items: sent.items.map(
+            (item: { configName: string }, index: number) => ({
+              id: id ?? `written-${item.configName}-${index}`,
+              ...item,
+            }),
+          ),
         },
       },
     });
@@ -101,118 +115,229 @@ const answerUpsert = async (
 };
 
 describe('useScopedAppConfig', () => {
-  it('fills the scope id from the signed-in user and domain', async () => {
-    const user = await mountScoped({ scopeType: 'USER' }, 'userConfig', {});
-    expect(user.read.request.variables.scope).toEqual({
-      scopeType: 'USER',
-      scopeId: 'user-1',
-    });
-    const domain = await mountScoped(
-      { scopeType: 'DOMAIN' },
-      'domainConfig',
-      {},
+  it('reads every requested scope in one request and skips the rest', async () => {
+    const { read, result } = await mountScoped(
+      { domain: ['domainConfig'], public: ['publicConfigByDomain'] },
+      {
+        domain: { domainConfig: { settings: { a: 1 } } },
+        public: { publicConfigByDomain: { default: { b: 2 } } },
+      },
     );
-    expect(domain.read.request.variables.scope).toEqual({
-      scopeType: 'DOMAIN',
-      scopeId: 'domain-1',
+    expect(read.request.variables).toMatchObject({
+      domainScope: { scopeType: 'DOMAIN', scopeId: 'domain-1' },
+      domainNames: ['domainConfig'],
+      skipDomain: false,
+      publicScope: { scopeType: 'PUBLIC' },
+      skipPublic: false,
+      skipUser: true,
     });
-    const pub = await mountScoped(
-      { scopeType: 'PUBLIC' },
-      'publicConfigByDomain',
-      {},
-    );
-    expect(pub.read.request.variables.scope).toEqual({ scopeType: 'PUBLIC' });
+    expect(result.current.domain).toEqual({
+      domainConfig: { settings: { a: 1 } },
+    });
+    expect(result.current.public?.publicConfigByDomain).toEqual({
+      default: { b: 2 },
+    });
+    expect(result.current.user).toBeUndefined();
   });
 
   it('writes one domain slice with a single upsert and keeps other domains', async () => {
     const otherDomain = { appearance: { brand: 'other' } };
     const { environment, result } = await mountScoped(
-      { scopeType: 'PUBLIC' },
-      'publicConfigByDomain',
+      { public: ['publicConfigByDomain'] },
       {
-        other: otherDomain,
-        default: { appearance: { brand: 'old' }, keep: 1 },
+        public: {
+          publicConfigByDomain: {
+            other: otherDomain,
+            default: { appearance: { brand: 'old' }, keep: 1 },
+          },
+        },
       },
     );
     let pending!: Promise<void>;
     act(() => {
-      pending = result.current.setKey(['default', 'appearance'], {
-        brand: 'new',
+      pending = result.current.upsert({
+        scope: 'public',
+        configName: 'publicConfigByDomain',
+        subKey: ['default', 'appearance'],
+        value: { brand: 'new' },
       });
     });
     const sent = await answerUpsert(environment);
     await act(() => pending);
 
     expect(sent.scope).toEqual({ scopeType: 'PUBLIC' });
-    expect(sent.items[0].config).toEqual({
-      other: otherDomain,
-      default: { appearance: { brand: 'new' }, keep: 1 },
-    });
+    expect(sent.items).toEqual([
+      {
+        configName: 'publicConfigByDomain',
+        config: {
+          other: otherDomain,
+          default: { appearance: { brand: 'new' }, keep: 1 },
+        },
+      },
+    ]);
     expect(operationsNamed(environment, 'useAppConfigScopedQuery')).toEqual([]);
-    expect(result.current.doc?.default.appearance).toEqual({ brand: 'new' });
+    expect(
+      result.current.public?.publicConfigByDomain?.default.appearance,
+    ).toEqual({ brand: 'new' });
   });
 
-  it('passes the current value to an updater and removes a key set to undefined', async () => {
+  it('applies several changes to one scope in one upsert, in order', async () => {
     const { environment, result } = await mountScoped(
-      { scopeType: 'USER' },
-      'userConfig',
-      { settings: { debug: true, extra: 1 }, themeFamily: 'ocean' },
+      { user: ['userConfig'] },
+      {
+        user: {
+          userConfig: { settings: { debug: true, extra: 1 }, themeFamily: 'x' },
+        },
+      },
+    );
+    let pending!: Promise<void>;
+    act(() => {
+      pending = result.current.upsert([
+        {
+          scope: 'user',
+          configName: 'userConfig',
+          subKey: 'settings',
+          value: (current: unknown) => ({
+            ...(current as Doc),
+            debug: false,
+          }),
+        },
+        {
+          scope: 'user',
+          configName: 'userConfig',
+          subKey: 'themeFamily',
+          value: undefined,
+        },
+      ]);
+    });
+    expect((await answerUpsert(environment)).items).toEqual([
+      {
+        configName: 'userConfig',
+        config: { settings: { debug: false, extra: 1 } },
+      },
+    ]);
+    await act(() => pending);
+  });
+
+  it('builds a later write on the earlier one when both are queued', async () => {
+    const { environment, result } = await mountScoped(
+      { user: ['userConfig'] },
+      { user: { userConfig: { a: 1 } } },
     );
     let first!: Promise<void>;
     let second!: Promise<void>;
     act(() => {
-      first = result.current.setKey('settings', (current: unknown) => ({
-        ...(current as Record<string, unknown>),
-        debug: false,
-      }));
-      second = result.current.setKey('themeFamily', undefined);
+      first = result.current.upsert({
+        scope: 'user',
+        configName: 'userConfig',
+        subKey: 'b',
+        value: 2,
+      });
+      second = result.current.upsert({
+        scope: 'user',
+        configName: 'userConfig',
+        subKey: 'c',
+        value: 3,
+      });
     });
-    expect((await answerUpsert(environment)).items[0].config).toEqual({
-      settings: { debug: false, extra: 1 },
-      themeFamily: 'ocean',
-    });
-    // The second write waits for the first and builds on its response.
-    expect((await answerUpsert(environment)).items[0].config).toEqual({
-      settings: { debug: false, extra: 1 },
-    });
+    await answerUpsert(environment, 'user-0');
+    expect((await answerUpsert(environment, 'user-0')).items[0].config).toEqual(
+      { a: 1, b: 2, c: 3 },
+    );
     await act(() => Promise.all([first, second]));
   });
 
   it('links a first write into the read so the next write builds on it', async () => {
     const { environment, result } = await mountScoped(
-      { scopeType: 'USER' },
-      'userConfig',
-      null,
+      { user: ['userConfig'] },
+      { user: { userConfig: null } },
     );
-    expect(result.current.doc).toBeUndefined();
+    expect(result.current.user).toEqual({ userConfig: undefined });
     let first!: Promise<void>;
     act(() => {
-      first = result.current.setKey('themeFamily', 'ocean');
+      first = result.current.upsert({
+        scope: 'user',
+        configName: 'userConfig',
+        subKey: 'themeFamily',
+        value: 'ocean',
+      });
     });
     await answerUpsert(environment, 'created');
     await act(() => first);
-    expect(result.current.doc).toEqual({ themeFamily: 'ocean' });
-
-    let second!: Promise<void>;
-    act(() => {
-      second = result.current.setKey('language', 'ko');
-    });
-    expect(
-      (await answerUpsert(environment, 'created')).items[0].config,
-    ).toEqual({ themeFamily: 'ocean', language: 'ko' });
-    await act(() => second);
+    expect(result.current.user?.userConfig).toEqual({ themeFamily: 'ocean' });
   });
 
-  it('refetches the merged view after a domainConfig write', async () => {
+  it('follows the fragment the upsert returned when its id changed', async () => {
     const { environment, result } = await mountScoped(
-      { scopeType: 'DOMAIN' },
-      'domainConfig',
-      { settings: {} },
+      { user: ['userConfig'] },
+      { user: { userConfig: { themeFamily: 'ocean' } } },
     );
     let pending!: Promise<void>;
     act(() => {
-      pending = result.current.setKey(['settings', 'announcement'], {
-        title: 'hi',
+      pending = result.current.upsert({
+        scope: 'user',
+        configName: 'userConfig',
+        subKey: 'language',
+        value: 'ko',
+      });
+    });
+    await answerUpsert(environment, 'recreated');
+    await act(() => pending);
+    expect(result.current.user?.userConfig).toEqual({
+      themeFamily: 'ocean',
+      language: 'ko',
+    });
+  });
+
+  it('leaves a scope it may not read undefined and refuses to write it', async () => {
+    const { environment, result } = await mountScoped(
+      { domain: ['domainConfig'], public: ['publicConfigByDomain'] },
+      { domain: 'denied', public: { publicConfigByDomain: { default: {} } } },
+    );
+    expect(result.current.domain).toBeUndefined();
+    expect(result.current.public).toEqual({
+      publicConfigByDomain: { default: {} },
+    });
+    await expect(
+      result.current.upsert({
+        scope: 'domain',
+        configName: 'domainConfig',
+        subKey: 'settings',
+        value: {},
+      }),
+    ).rejects.toThrow('domain could not be read');
+    expect(operationsNamed(environment, 'useAppConfigUpsertMutation')).toEqual(
+      [],
+    );
+  });
+
+  it('refuses a change to a name the hook did not request', async () => {
+    const { result } = await mountScoped(
+      { user: ['userConfig'] },
+      { user: { userConfig: {} } },
+    );
+    await expect(
+      result.current.upsert({
+        scope: 'public',
+        configName: 'publicConfigByDomain',
+        subKey: 'x',
+        value: 1,
+      }),
+    ).rejects.toThrow('public.publicConfigByDomain was not requested');
+  });
+
+  it('refetches the merged domainConfig view after a domainConfig write', async () => {
+    const { environment, result } = await mountScoped(
+      { domain: ['domainConfig'] },
+      { domain: { domainConfig: { settings: {} } } },
+    );
+    let pending!: Promise<void>;
+    act(() => {
+      pending = result.current.upsert({
+        scope: 'domain',
+        configName: 'domainConfig',
+        subKey: ['settings', 'announcement'],
+        value: { title: 'hi' },
       });
     });
     await answerUpsert(environment);
@@ -224,33 +349,43 @@ describe('useScopedAppConfig', () => {
     expect(merged.request.variables.configNames).toEqual(['domainConfig']);
   });
 
-  it('follows the fragment the upsert returned when its id changed', async () => {
-    const { environment, result } = await mountScoped(
-      { scopeType: 'USER' },
-      'userConfig',
-      { themeFamily: 'ocean' },
+  it('reads the documents again when another reader mounts on the stored copy', async () => {
+    const hooks = await loadHooks();
+    const { environment } = await mountScoped(
+      { user: ['userConfig'] },
+      { user: { userConfig: { themeFamily: 'ocean' } } },
+      hooks,
     );
-    let pending!: Promise<void>;
-    act(() => {
-      pending = result.current.setKey('language', 'ko');
-    });
-    await answerUpsert(environment, 'recreated');
-    await act(() => pending);
-    expect(result.current.doc).toEqual({
-      themeFamily: 'ocean',
-      language: 'ko',
-    });
+    // The first mount's own read just landed, so it reads nothing more.
+    expect(operationsNamed(environment, 'useAppConfigScopedQuery')).toEqual([]);
+    const now = vi.spyOn(Date, 'now').mockReturnValue(Date.now() + 5000);
+    try {
+      const second = renderHook(
+        () => hooks.useScopedAppConfig({ user: ['userConfig'] }),
+        { wrapper: wrapperFor(environment) },
+      );
+      expect(second.result.current.user?.userConfig).toEqual({
+        themeFamily: 'ocean',
+      });
+      await waitForOperation(environment, 'useAppConfigScopedQuery');
+    } finally {
+      now.mockRestore();
+    }
   });
 
   it('rejects with the server message when the write fails', async () => {
     const { environment, result } = await mountScoped(
-      { scopeType: 'PUBLIC' },
-      'publicConfigByDomain',
-      {},
+      { public: ['publicConfigByDomain'] },
+      { public: { publicConfigByDomain: {} } },
     );
     let pending!: Promise<void>;
     act(() => {
-      pending = result.current.setKey(['default', 'appearance'], {});
+      pending = result.current.upsert({
+        scope: 'public',
+        configName: 'publicConfigByDomain',
+        subKey: ['default', 'appearance'],
+        value: {},
+      });
     });
     const upsert = await waitForOperation(
       environment,
