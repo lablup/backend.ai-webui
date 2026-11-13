@@ -44,15 +44,15 @@ flowchart LR
 
 ### 1. `useAppConfig.ts`의 hook 두 개
 
-| Hook                                  | 읽는 것                                                                  | 쓰는 것           | Fetch policy                                                               |
-| ------------------------------------- | ------------------------------------------------------------------------ | ----------------- | -------------------------------------------------------------------------- |
-| `useScopedAppConfig(request)`         | 요청한 scope마다 `scopedAppConfigFragmentsByNames` 한 번씩, query 하나로 | `upsert(changes)` | `store-and-network`, store가 내준 mount에서는 `network-only` 읽기 1회 추가 |
-| `useMyAppConfig(configName, subKey?)` | 요청마다 config name 하나에 대한 `myAppConfigs`                          | 없음              | `store-or-network`                                                         |
+| Hook                                  | 읽는 것                                                                  | 쓰는 것           | Fetch policy                                                |
+| ------------------------------------- | ------------------------------------------------------------------------ | ----------------- | ----------------------------------------------------------- |
+| `useScopedAppConfig(request)`         | 요청한 scope마다 `scopedAppConfigFragmentsByNames` 한 번씩, query 하나로 | `upsert(changes)` | `store-and-network`, mount마다 `network-only` 읽기 1회 추가 |
+| `useMyAppConfig(configName, subKey?)` | 요청마다 config name 하나에 대한 `myAppConfigs`                          | 없음              | `store-or-network`                                          |
 
 - **Request shape**: `ScopedAppConfigRequest`는 `{ public?: AppConfigName[]; domain?: AppConfigName[]; user?: AppConfigName[] }`다. `domain`은 로그인한 사용자의 domain(`useCurrentDomain().id`), `user`는 로그인한 사용자이고, 호출부는 다른 id를 지정할 수 없다.
 - **One query**: `useAppConfigScopedQuery`는 `scopedAppConfigFragmentsByNames` alias field 세 개(`public`, `domain`, `user`)를 둔다. 각 field에는 요청에 없는 scope를 위한 `@skip(if:)`과 `@catch(to: NULL)`이 붙어, 호출자가 읽을 수 없는 scope는 다른 scope를 실패시키지 않고 `undefined`가 된다.
 - **Return shape**: hook은 `{ public, domain, user, upsert }`를 돌려준다. 각 scope는 요청한 이름에서 raw document로 가는 map이고, scope에 fragment가 없는 이름은 `undefined`다. 요청하지 않았거나 읽을 수 없는 scope는 통째로 `undefined`다.
-- **Read once per mount**: `useLazyLoadQuery`는 `MainLayout`의 `userConfig` 읽기처럼 다른 mount된 reader가 아직 retain한 query를 다시 가져오지 않는다. 그래서 effect가 화면이 mount될 때 문서를 `network-only`로 읽는다. 단, `environment.check()`가 2초 안에 가져왔다고 알리면 그것이 그 mount 자신의 suspend 읽기이므로 다시 읽지 않는다.
+- **Read on every mount**: `useLazyLoadQuery`는 `MainLayout`의 `userConfig` 읽기처럼 다른 mount된 reader가 아직 retain한 query를 다시 가져오지 않는다. 그래서 effect가 화면이 mount될 때마다 문서를 `network-only`로 읽는다. 이 읽기를 피하려는 화면은 이 hook을 부르지 않고, 로그인 때 설정한 state에서 값을 가져온다.
 - **Merged view per name**: `useMyAppConfig`는 자기 config name 하나로 `myAppConfigs`를 물으므로, `domainConfig` reader는 sign-in query(`loginSessionAuth.ts`)나 `MainLayout`의 `AnnouncementBanner`가 store에 남긴 `myAppConfigs(["domainConfig"])` 결과를 다시 쓸 수 있다.
 - **Domain slice**: `publicConfigByDomain`은 domain마다 slice 하나를 두므로, 호출부는 change의 `subKey`(`[domainName, key]`)와 `useMyAppConfig('publicConfigByDomain', [domainName, key])` 모두에 domain 이름을 첫 경로로 넘긴다.
 
@@ -87,7 +87,7 @@ flowchart LR
 
 ## Consequences
 
-- **Request count**: 변경은 scope마다 upsert 한 번이고, `domainConfig` 변경은 merged refetch로 요청이 하나 더 나간다. 화면은 요청한 scope를 mount마다 요청 한 번으로 읽는다.
+- **Request count**: 변경은 scope마다 upsert 한 번이고, `domainConfig` 변경은 merged refetch로 요청이 하나 더 나간다. 화면은 요청한 scope를 mount마다 한 번 읽고, store에 아무것도 없었으면 suspend 읽기와 mount 읽기로 두 번 읽는다.
 - **Lost concurrent edits**: 화면이 mount된 뒤 CLI, 다른 관리자, 같은 계정의 다른 탭이 바꾼 값은 다음 쓰기가 덮어쓴다. 화면을 다시 mount하거나 page를 새로고침하면 그 값을 가져온다.
 - **Defaults from DOMAIN-scope `userConfig`**: 화면이 USER raw document를 읽으므로, DOMAIN scope에 쓴 `userConfig` 값은 더 이상 화면에 닿지 않는다.
 - **Same-kind scopes**: query에 scope 종류마다 field가 하나뿐이라, 호출 한 번은 로그인한 domain 하나와 user 하나만 읽는다. 다른 domain이나 user의 문서를 읽으려면 field나 hook을 새로 둬야 한다.

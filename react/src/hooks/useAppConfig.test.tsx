@@ -80,13 +80,19 @@ const mountScoped = async (
       );
     }
   }
+  const payload = { data, ...(errors.length ? { errors } : {}) } as any;
   act(() => {
-    environment.mock.resolve(read, {
-      data,
-      ...(errors.length ? { errors } : {}),
-    } as any);
+    environment.mock.resolve(read, payload);
   });
   await waitFor(() => expect(result.current).not.toBeNull());
+  // The mount reads the documents once more; answer it the same way.
+  const mountRead = await waitForOperation(
+    environment,
+    'useAppConfigScopedQuery',
+  );
+  act(() => {
+    environment.mock.resolve(mountRead, payload);
+  });
   return { environment, result, read };
 };
 
@@ -356,21 +362,14 @@ describe('useScopedAppConfig', () => {
       { user: { userConfig: { themeFamily: 'ocean' } } },
       hooks,
     );
-    // The first mount's own read just landed, so it reads nothing more.
-    expect(operationsNamed(environment, 'useAppConfigScopedQuery')).toEqual([]);
-    const now = vi.spyOn(Date, 'now').mockReturnValue(Date.now() + 5000);
-    try {
-      const second = renderHook(
-        () => hooks.useScopedAppConfig({ user: ['userConfig'] }),
-        { wrapper: wrapperFor(environment) },
-      );
-      expect(second.result.current.user?.userConfig).toEqual({
-        themeFamily: 'ocean',
-      });
-      await waitForOperation(environment, 'useAppConfigScopedQuery');
-    } finally {
-      now.mockRestore();
-    }
+    const second = renderHook(
+      () => hooks.useScopedAppConfig({ user: ['userConfig'] }),
+      { wrapper: wrapperFor(environment) },
+    );
+    expect(second.result.current.user?.userConfig).toEqual({
+      themeFamily: 'ocean',
+    });
+    await waitForOperation(environment, 'useAppConfigScopedQuery');
   });
 
   it('rejects with the server message when the write fails', async () => {
