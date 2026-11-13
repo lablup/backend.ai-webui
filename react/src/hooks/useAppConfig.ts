@@ -10,7 +10,6 @@ import {
 } from '../__generated__/useAppConfigScopedQuery.graphql';
 import { useAppConfigUpsertMutation } from '../__generated__/useAppConfigUpsertMutation.graphql';
 import * as _ from 'lodash-es';
-import { useEffect, useEffectEvent } from 'react';
 import {
   commitMutation,
   fetchQuery,
@@ -216,42 +215,6 @@ const useScopeVariables = (
   };
 };
 
-// A fetch younger than this was the mount's own suspending read.
-const JUST_FETCHED_MS = 2000;
-
-/**
- * Reads the document once when a screen mounts, unless that mount's own
- * suspending read just landed: useLazyLoadQuery does not fetch a query another
- * mounted reader (MainLayout) still retains.
- */
-const useRefreshOnMount = (
-  relayEnv: IEnvironment,
-  variables: useAppConfigScopedQuery$variables,
-) => {
-  const operation = createOperationDescriptor(
-    getRequest(scopedQuery),
-    variables,
-  );
-  const refresh = useEffectEvent(() => {
-    const availability = relayEnv.check(operation);
-    if (
-      availability.status === 'available' &&
-      availability.fetchTime != null &&
-      Date.now() - availability.fetchTime < JUST_FETCHED_MS
-    ) {
-      return;
-    }
-    fetchQuery<useAppConfigScopedQuery>(relayEnv, scopedQuery, variables, {
-      fetchPolicy: 'network-only',
-    })
-      .toPromise()
-      .catch(() => undefined);
-  });
-  useEffect(() => {
-    refresh();
-  }, [operation.request.identifier]);
-};
-
 const makeSetKey =
   (relayEnv: IEnvironment, variables: useAppConfigScopedQuery$variables) =>
   (subKey: AppConfigSubKey, update: AppConfigUpdate) =>
@@ -272,8 +235,8 @@ const makeSetKey =
     );
 
 /**
- * One scope's raw document, read once per mount and kept current from the
- * upsert responses. `setKey` sends that document with one sub-key replaced
+ * One scope's raw document, read with `store-and-network` and kept current
+ * from the upsert responses. `setKey` sends that document with one sub-key replaced
  * (`undefined` removes it) as a single upsert. A `domainConfig` write also
  * refetches the merged view its every-user readers use. Suspends; post-login
  * surfaces only. DOMAIN is readable by superadmins only.
@@ -290,7 +253,6 @@ export const useScopedAppConfig = <T = AppConfigDocument>(
     variables,
     { fetchPolicy: 'store-and-network' },
   );
-  useRefreshOnMount(relayEnv, variables);
   const doc = (data.scopedAppConfigFragmentsByNames[0]?.config ?? undefined) as
     T | undefined;
   return { doc, setKey: makeSetKey(relayEnv, variables) };

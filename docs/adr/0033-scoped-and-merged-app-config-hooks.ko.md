@@ -7,7 +7,7 @@
 - `react/src/hooks/useAppConfig.ts`는 hook 두 개를 둔다. `useScopedAppConfig(scope, configName)`는 scope 하나의 [raw document](#용어)를 읽고 쓴다. `useMyAppConfig(configName, subKey)`는 [merged view](#용어)를 읽기만 한다.
 - 쓰기 한 번은 upsert 한 번이다. `setKey`는 Relay store에 있는 사본으로 문서 전체를 만들고, upsert 응답이 그 사본을 갱신하게 둔다. Relay가 저장된 사본을 이미 수거했을 때만 쓰기 전에 network에서 문서를 읽는다.
 - 모든 `userConfig` reader가 USER raw document를 읽으므로, 쓰기 결과는 upsert 응답만으로 화면에 나타난다. merged view는 `domainConfig`와 `publicConfigByDomain` reader만 쓰고, `domainConfig` 쓰기가 merged `domainConfig` view를 다시 가져온다.
-- 쓰기의 기준은 화면이 mount될 때 읽은 문서다. 그 mount 뒤에 CLI, 다른 관리자, 같은 계정의 다른 탭이 바꾼 값은 다음 쓰기가 덮어쓴다.
+- 쓰기의 기준은 Relay store의 사본이고, 이 탭의 upsert가 그 사본을 갱신한다. `MainLayout`이 로그인 때 읽은 USER `userConfig`를 계속 들고 있으므로, `userConfig`의 사본은 로그인 때 읽은 것이다. 사본을 읽은 뒤 CLI, 다른 관리자, 다른 탭이 바꾼 값은 다음 쓰기가 덮어쓴다.
 
 ## Context
 
@@ -30,7 +30,7 @@ flowchart LR
     rawRec["AppConfigFragment record"]
     mergedRec["myAppConfigs 결과"]
   end
-  raw -- "mount마다 1회 읽기, store-and-network" --> rawRec
+  raw -- "store-and-network 읽기" --> rawRec
   rawRec -- "doc" --> scoped["useScopedAppConfig"]
   scoped -- "setKey: sub-key 하나만 바꾼 문서 전체" --> upsert
   upsert -- "같은 id의 응답" --> rawRec
@@ -44,14 +44,14 @@ flowchart LR
 
 ### 1. `useAppConfig.ts`의 hook 두 개
 
-| Hook                                    | 읽는 것                                                                              | 쓰는 것                  | Fetch policy                                                               |
-| --------------------------------------- | ------------------------------------------------------------------------------------ | ------------------------ | -------------------------------------------------------------------------- |
-| `useScopedAppConfig(scope, configName)` | scope 하나, config name 하나에 대한 `scopedAppConfigFragmentsByNames`, mount마다 1회 | `setKey(subKey, update)` | `store-and-network`, store가 내준 mount에서는 `network-only` 읽기 1회 추가 |
-| `useMyAppConfig(configName, subKey?)`   | 요청마다 config name 하나에 대한 `myAppConfigs`                                      | 없음                     | `store-or-network`                                                         |
+| Hook                                    | 읽는 것                                                               | 쓰는 것                  | Fetch policy        |
+| --------------------------------------- | --------------------------------------------------------------------- | ------------------------ | ------------------- |
+| `useScopedAppConfig(scope, configName)` | scope 하나, config name 하나에 대한 `scopedAppConfigFragmentsByNames` | `setKey(subKey, update)` | `store-and-network` |
+| `useMyAppConfig(configName, subKey?)`   | 요청마다 config name 하나에 대한 `myAppConfigs`                       | 없음                     | `store-or-network`  |
 
 - **Scope type**: `AppConfigScope`는 `{ scopeType: 'PUBLIC' }`, `{ scopeType: 'DOMAIN'; scopeId? }`, `{ scopeType: 'USER'; scopeId? }` 중 하나다. `scopeId`가 없으면 로그인한 사용자의 domain id(`useCurrentDomain().id`, DOMAIN) 또는 user id(USER)가 된다.
 - **Return shape**: `useScopedAppConfig`는 `{ doc, setKey }`를 돌려준다. `doc`은 raw document이고, scope에 그 이름의 fragment가 없으면 `undefined`다.
-- **Read once per mount**: `useLazyLoadQuery`는 `MainLayout`의 `userConfig` 읽기처럼 다른 mount된 reader가 아직 retain한 query를 다시 가져오지 않는다. 그래서 `useScopedAppConfig`의 effect가 화면이 mount될 때 문서를 `network-only`로 읽는다. 단, `environment.check()`가 2초 안에 가져왔다고 알리면 그것이 그 mount 자신의 suspend 읽기이므로 다시 읽지 않는다.
+- **Refresh rule**: `store-and-network`의 `useLazyLoadQuery`는 mount가 query의 cache entry를 새로 만들 때, 즉 다른 mount된 reader가 그 query를 retain하지 않을 때만 network에서 문서를 읽는다. `MainLayout`이 로그인 때 읽은 USER `userConfig`를 retain하므로, `userConfig` reader는 page를 새로고침할 때까지 그 사본을 다시 쓴다.
 - **Merged view per name**: `useMyAppConfig`는 자기 config name 하나로 `myAppConfigs`를 물으므로, `domainConfig` reader는 sign-in query(`loginSessionAuth.ts`)나 `MainLayout`의 `AnnouncementBanner`가 store에 남긴 `myAppConfigs(["domainConfig"])` 결과를 다시 쓸 수 있다.
 - **Domain slice**: `publicConfigByDomain`은 domain마다 slice 하나를 두므로, 호출부는 `setKey([domainName, key], …)`와 `useMyAppConfig('publicConfigByDomain', [domainName, key])` 모두에 domain 이름을 첫 경로로 넘긴다.
 
@@ -75,7 +75,7 @@ flowchart LR
 | `publicConfigByDomain` | `BrandingSettingList`(superadmin 전용, 쓰기만)                                                    | `useScopedAppConfig({ scopeType: 'PUBLIC' }, 'publicConfigByDomain')` |
 
 - **Merged refetch**: 모든 사용자가 `domainConfig`를 merged view로 읽으므로, `domainConfig` 쓰기는 upsert가 끝난 뒤 merged `domainConfig` view를 `network-only`로 읽기 시작한다. 쓰기는 그 읽기를 기다리지 않고, 읽기가 실패해도 쓰기는 실패하지 않으며 merged view만 옛 값으로 남는다. `publicConfigByDomain` 쓰기는 다시 가져오지 않는다. Branding page와 System Settings는 적용 뒤 page를 새로고침한다.
-- **Draft follows the refresh**: `WebUISettingList`는 저장된 문서로 draft를 채운다. mount의 refresh가 저장된 문서를 바꾸고 draft가 이전 저장값과 같으면, draft는 그 값을 수정으로 보여 주지 않고 갱신된 값을 받는다.
+- **Draft follows the refresh**: `WebUISettingList`는 저장된 문서로 draft를 채운다. `store-and-network`의 background 읽기가 저장된 문서를 바꾸고 draft가 이전 저장값과 같으면, draft는 그 값을 수정으로 보여 주지 않고 갱신된 값을 받는다.
 
 ## 대안과 기각 사유
 
@@ -85,8 +85,8 @@ flowchart LR
 
 ## Consequences
 
-- **Request count**: 변경 한 번은 upsert 한 번이고, `domainConfig` 변경은 merged refetch로 요청이 하나 더 나간다. 화면은 raw document마다 mount당 한 번 읽는다.
-- **Lost concurrent edits**: 화면이 mount된 뒤 CLI, 다른 관리자, 같은 계정의 다른 탭이 바꾼 값은 다음 쓰기가 덮어쓴다. 화면을 새로고침하면 그 값을 가져온다.
+- **Request count**: 변경 한 번은 upsert 한 번이고, `domainConfig` 변경은 merged refetch로 요청이 하나 더 나간다. 화면은 다른 mount된 reader가 raw document를 들고 있지 않을 때만 읽는다.
+- **Lost concurrent edits**: 이 탭이 문서를 읽은 뒤 CLI, 다른 관리자, 같은 계정의 다른 탭이 바꾼 값은 다음 쓰기가 덮어쓴다. `userConfig`에서는 로그인 뒤의 모든 변경이 해당한다. page를 새로고침하면 그 값을 가져온다.
 - **Defaults from DOMAIN-scope `userConfig`**: 화면이 USER raw document를 읽으므로, DOMAIN scope에 쓴 `userConfig` 값은 더 이상 화면에 닿지 않는다.
 - **Superadmin-only raw reads**: superadmin이 아니면 manager가 DOMAIN scope 읽기를 거부하고 `useLazyLoadQuery`가 그 오류를 가장 가까운 error boundary로 올리므로, superadmin route(`access: 'superadmin'`)와 superadmin으로 막은 component만 이를 부른다.
 

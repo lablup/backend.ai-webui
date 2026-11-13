@@ -224,30 +224,6 @@ describe('useScopedAppConfig', () => {
     expect(merged.request.variables.configNames).toEqual(['domainConfig']);
   });
 
-  it('reads the document again when another reader mounts on the stored copy', async () => {
-    const hooks = await loadHooks();
-    const { environment } = await mountScoped(
-      { scopeType: 'USER' },
-      'userConfig',
-      { themeFamily: 'ocean' },
-      hooks,
-    );
-    // The first mount's own read just landed, so it reads nothing more.
-    expect(operationsNamed(environment, 'useAppConfigScopedQuery')).toEqual([]);
-    const later = Date.now() + 5000;
-    const now = vi.spyOn(Date, 'now').mockReturnValue(later);
-    try {
-      const second = renderHook(
-        () => hooks.useScopedAppConfig({ scopeType: 'USER' }, 'userConfig'),
-        { wrapper: wrapperFor(environment) },
-      );
-      expect(second.result.current.doc).toEqual({ themeFamily: 'ocean' });
-      await waitForOperation(environment, 'useAppConfigScopedQuery');
-    } finally {
-      now.mockRestore();
-    }
-  });
-
   it('follows the fragment the upsert returned when its id changed', async () => {
     const { environment, result } = await mountScoped(
       { scopeType: 'USER' },

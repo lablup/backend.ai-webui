@@ -1,6 +1,6 @@
 # 0026 — Dashboard boards in manager app config
 
-> 이 ADR이 이름으로 부르는 app config hook과 쓰기 기준(**Optimistic state**, **Replay on the server value**, **Same-panel edits**, **Shared queue scope**)은 [ADR 0033](0033-scoped-and-merged-app-config-hooks.ko.md)이 대체한다. 이제 쓰기는 대시보드가 mount될 때 읽은 USER 문서 위에서 만든다.
+> 이 ADR이 이름으로 부르는 app config hook과 쓰기 기준(**Optimistic state**, **Replay on the server value**, **Same-panel edits**, **Shared queue scope**)은 [ADR 0033](0033-scoped-and-merged-app-config-hooks.ko.md)이 대체한다. 이제 쓰기는 이 탭이 로그인 때 읽고 자기 upsert로 갱신한 USER 문서 위에서 만든다.
 
 ## Summary
 
