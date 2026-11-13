@@ -10,8 +10,28 @@ const {
   fingerprintOf,
 } = require('./trustedCertificates');
 
-// Public halves of two throwaway self-signed certificates (no keys).
+// Public halves of throwaway self-signed certificates (no keys). PEM_A is valid
+// until 2036; PEM_EXPIRED lapsed on 2026-10-29, PEM_B on 2026-10-30.
 const PEM_A = `-----BEGIN CERTIFICATE-----
+MIIDCTCCAfGgAwIBAgIUEbtBTEgo/GfKagbFJF04NWWcelUwDQYJKoZIhvcNAQEL
+BQAwFDESMBAGA1UEAwwJbG9jYWxob3N0MB4XDTI2MTExMzA4MjcyN1oXDTM2MTEx
+MDA4MjcyN1owFDESMBAGA1UEAwwJbG9jYWxob3N0MIIBIjANBgkqhkiG9w0BAQEF
+AAOCAQ8AMIIBCgKCAQEAkn4AmtoEEhz7U6lMpy34eC6YE3tJVAtwJBG7hP+AuCev
+YTD9Iq5x3Mv/WJKakdl+VSk3cdTVqO8HQvk0YZMY7hUR8AAIfdoN/AYHyGN9crsf
+XGJigPO5s9Gi7tTHjSVM7gF9xXxbee6mHVr8jxHtvsHNVzNVnVKP8u/MCgJu7Srw
+0hTq4gTw8VrQukFq0n87NLdhSaQWjzIfTtz0zDVUM63R2UZIN4MTvXSb5sgpIVlM
+prU9TyZIpn4f8I7kTN3286HIau7IoBI5TicnjZYrL0jTZa9F7YZP+LDtsigZja0B
+QCjrnOuGgAzQvVAwLLbaoWovA0Q38qkibafPFxLTBwIDAQABo1MwUTAdBgNVHQ4E
+FgQUcL13OeIgTIk6OKsqTveS+XgilEwwHwYDVR0jBBgwFoAUcL13OeIgTIk6OKsq
+TveS+XgilEwwDwYDVR0TAQH/BAUwAwEB/zANBgkqhkiG9w0BAQsFAAOCAQEAQa5K
+6oR5pSvLztzboVWBM6wmVQIdDfgN8QrJ2YxAyHcEEDzNiSdu5aji9pL6jrUTOJWY
+uim4xbLhVIsPUthYvPEZFBZvGFjVENB7jt9cOkKY9i9JR0Oh9eRnq1TsvJh7g+LP
+4oG41DBRrHlh6oY51T1WpAdyxfiGZXnt6sqXwPDrhsvZcb1mXOcQxtjk/ueIZx4C
+nMlR3mkNU3ooc64ny5FPnKFUyoCLfNP4vQ/gygmzabIEk+hGbYIUIWdSOnSbW/49
+0wAVfwSgLlUSgoTDxsuqzHjVpjGfcADbeZLH1pjRmNexakdzDy3wIrEAxzBYMfc/
+8n4mHmWNd46wbArw4Q==
+-----END CERTIFICATE-----`;
+const PEM_EXPIRED = `-----BEGIN CERTIFICATE-----
 MIIDCTCCAfGgAwIBAgIUZ/Lp+vo5tD0CzpjSEB1egkTQmcEwDQYJKoZIhvcNAQEL
 BQAwFDESMBAGA1UEAwwJbG9jYWxob3N0MB4XDTI2MTAyODIxNDgwN1oXDTI2MTAy
 OTIxNDgwN1owFDESMBAGA1UEAwwJbG9jYWxob3N0MIIBIjANBgkqhkiG9w0BAQEF
@@ -51,6 +71,11 @@ q+j4g7cVCHPKZkTszjvt5ded2Dr6FfBAA8UrgnYznCPbEmf0cqJt+60VwiZikUBj
 -----END CERTIFICATE-----`;
 const rawOf = (pem: string) => new X509Certificate(pem).raw;
 const pinA = { fingerprint: fingerprintOf(rawOf(PEM_A)), certificate: PEM_A };
+// A peer certificate as Node TLS hands it to checkServerIdentity: raw + validity.
+const peerOf = (pem: string) => {
+  const x = new X509Certificate(pem);
+  return { raw: x.raw, valid_from: x.validFrom, valid_to: x.validTo };
+};
 
 describe('wsproxy trusted certificate pinning', () => {
   afterEach(() => setTrustedCertificates({}));
@@ -73,7 +98,7 @@ describe('wsproxy trusted certificate pinning', () => {
     expect(options.allowPartialTrustChain).toBe(true);
     // The pinned certificate is accepted even though its name does not match.
     expect(
-      options.checkServerIdentity('bai.local', { raw: rawOf(PEM_A) }),
+      options.checkServerIdentity('bai.local', peerOf(PEM_A)),
     ).toBeUndefined();
   });
 
@@ -91,6 +116,19 @@ describe('wsproxy trusted certificate pinning', () => {
     ).toBeUndefined();
     expect(
       checkServerIdentity('bai.local', other('evil.example')),
+    ).toBeInstanceOf(Error);
+  });
+
+  it('refuses an expired certificate even when its fingerprint is pinned', () => {
+    setTrustedCertificates({
+      'bai.local:8090': {
+        fingerprint: fingerprintOf(rawOf(PEM_EXPIRED)),
+        certificate: PEM_EXPIRED,
+      },
+    });
+    const { checkServerIdentity } = pinnedTlsOptions('wss://bai.local:8090/');
+    expect(
+      checkServerIdentity('bai.local', peerOf(PEM_EXPIRED)),
     ).toBeInstanceOf(Error);
   });
 
