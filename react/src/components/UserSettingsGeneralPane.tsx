@@ -8,7 +8,7 @@
 */
 import { App } from '../app-shim';
 import { useSuspendedBackendaiClient } from '../hooks';
-import { useScopedAppConfigSetter } from '../hooks/useAppConfig';
+import { useScopedAppConfig } from '../hooks/useAppConfig';
 import {
   useBAISettingGeneralState,
   useBAISettingUserState,
@@ -50,7 +50,7 @@ const UserSettingsGeneralPane = () => {
   } = useCustomThemeConfig();
   // `userConfig.themeFamily` is the authoritative store; the localStorage
   // FOUC mirror is written only after the server accepts (FR-1964).
-  const setUserConfigKey = useScopedAppConfigSetter(
+  const { setKey: setUserConfigKey } = useScopedAppConfig(
     { scopeType: 'USER' },
     'userConfig',
   );
