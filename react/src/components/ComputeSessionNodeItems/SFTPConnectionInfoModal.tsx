@@ -79,24 +79,6 @@ const SFTPConnectionInfoModal: React.FC<SFTPConnectionInfoModalProps> = ({
     enabled: _.isEmpty(host) || _.isEmpty(port),
   });
 
-  const readAndDownloadSSHKey = async () => {
-    const path = '/home/work/id_container';
-    const blob = await baiClient?.download_single(session?.row_id, path);
-    const rawText = await blob?.text();
-    // The raw text may contain some extra characters before the key start.
-    // So find the start point and slice it.
-    const index = rawText?.indexOf('-----');
-    const cleanedKey = rawText?.slice(index);
-    const element = document.createElement('a');
-    const file = new Blob([cleanedKey || ''], {
-      type: 'application/octet-stream',
-    });
-    element.href = URL.createObjectURL(file);
-    element.download = 'id_container';
-    document.body.appendChild(element);
-    element.click();
-  };
-
   const displayHost = host || directAccessInfo?.public_host;
   const displayPorts = port || directAccessInfo?.sshd_ports.join(', ');
   const firstSshdPort = port || directAccessInfo?.sshd_ports[0];
@@ -107,9 +89,8 @@ const SFTPConnectionInfoModal: React.FC<SFTPConnectionInfoModalProps> = ({
     <BAIModal
       width={800}
       title={t('session.SFTPConnection')}
+      footer={null}
       {...modalProps}
-      okText={t('session.appLauncher.DownloadSSHKey')}
-      onOk={readAndDownloadSSHKey}
     >
       <BAIFlex direction="column" align="stretch" gap="md">
         <Banner
@@ -154,13 +135,13 @@ const SFTPConnectionInfoModal: React.FC<SFTPConnectionInfoModalProps> = ({
           >
             <SourceCodeView
               language={'shell'}
-            >{`sftp -i ./id_container -P ${firstSshdPort} -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null work@${displayHost}`}</SourceCodeView>
+            >{`sftp -i /path/to/private_key -P ${firstSshdPort} -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null work@${displayHost}`}</SourceCodeView>
             <SourceCodeView
               language={'shell'}
-            >{`scp -i ./id_container -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -P ${firstSshdPort} -rp /path/to/source work@${displayHost}:~/${mountFolderName}`}</SourceCodeView>
+            >{`scp -i /path/to/private_key -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -P ${firstSshdPort} -rp /path/to/source work@${displayHost}:~/${mountFolderName}`}</SourceCodeView>
             <SourceCodeView
               language={'shell'}
-            >{`rsync -av -e "ssh -i ./id_container -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p ${firstSshdPort}" /path/to/source/ work@${displayHost}:~/${mountFolderName ? `${mountFolderName}/` : ''}`}</SourceCodeView>
+            >{`rsync -av -e "ssh -i /path/to/private_key -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p ${firstSshdPort}" /path/to/source/ work@${displayHost}:~/${mountFolderName ? `${mountFolderName}/` : ''}`}</SourceCodeView>
           </BAIFlex>
         </BAIFlex>
       </BAIFlex>
