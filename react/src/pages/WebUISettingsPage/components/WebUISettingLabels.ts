@@ -55,10 +55,6 @@ export const useWebUISettingLabels = (): {
         title: t('webuiSettings.PluginPage'),
         description: t('webuiSettings.DescPluginPage'),
       },
-      debug: {
-        title: t('webuiSettings.Debug'),
-        description: t('webuiSettings.DescDebug'),
-      },
       defaultSessionEnvironment: {
         title: t('webuiSettings.DefaultSessionEnvironment'),
         description: t('webuiSettings.DescDefaultSessionEnvironment'),

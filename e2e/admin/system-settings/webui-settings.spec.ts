@@ -496,7 +496,6 @@ test.describe(
         allowAnonymousChangePassword: !defaultAnonymousPassword,
         singleSignOnVendors: ['saml', 'openid'],
         ssoRealmName: 'e2e-realm',
-        debug: true,
       });
 
       await enablePublicSlice(page, request, api.domainName);
@@ -523,8 +522,6 @@ test.describe(
       await expect(
         page.getByRole('button', { name: 'Login with e2e-realm' }),
       ).toBeVisible();
-      // `debug` turns on the i18n key markers next to every translated string.
-      await expect(i18nKeyMarkers(page).first()).toBeVisible();
     });
 
     test('a key absent from the public document keeps the login page default', async ({
@@ -577,13 +574,7 @@ test.describe(
       } else {
         await expect(samlButton).toBeHidden();
       }
-      const defaultDebug =
-        (defaultValueOf(rowByKey('debug')) as boolean | undefined) ?? false;
-      if (defaultDebug) {
-        await expect(i18nKeyMarkers(page).first()).toBeVisible();
-      } else {
-        await expect(i18nKeyMarkers(page)).toHaveCount(0);
-      }
+      await expect(i18nKeyMarkers(page)).toHaveCount(0);
     });
   },
 );

@@ -244,7 +244,7 @@ describe('findIgnoredConfigTomlKeys', () => {
         }),
         'settingKey',
       ),
-    ).toEqual(['autoLogout', 'debug', 'maxCPUCoresPerContainer']);
+    ).toEqual(['autoLogout', 'maxCPUCoresPerContainer']);
   });
 
   it('leaves out an empty or placeholder value, which sets nothing', () => {

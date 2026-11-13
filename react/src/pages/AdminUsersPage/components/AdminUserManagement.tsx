@@ -11,12 +11,13 @@ import {
 import { AdminUserManagementUpdateUserMutation } from '../../../__generated__/AdminUserManagementUpdateUserMutation.graphql';
 import { App } from '../../../app-shim';
 import { convertFirstOrderByToString, convertToOrderBy } from '../../../helper';
-import { openActAsTab } from '../../../helper/actAs';
+import { type ActAsTarget } from '../../../helper/actAs';
 import { buildUserCSVExportFilter } from '../../../helper/userCSVExportFilter';
 import { useSuspendedBackendaiClient } from '../../../hooks';
 import { useBAISettingUserState } from '../../../hooks/useBAISetting';
 import { useCSVExport } from '../../../hooks/useCSVExport';
 import { useUnblockUserLogin } from '../../../hooks/useUnblockUserLogin';
+import ActAsConfirmModal from './ActAsConfirmModal';
 import BulkCreateUserFromCSVModal from './BulkCreateUserFromCSVModal';
 import PurgeUsersModal from './PurgeUsersModal';
 import UpdateUsersModal from './UpdateUsersModal';
@@ -131,7 +132,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
   const isLabelable = useIsLabelableEntityType('user');
 
   const bailClient = useSuspendedBackendaiClient();
-  const { message, modal } = App.useApp();
+  const { message } = App.useApp();
 
   const [selectedUserForInfoModal, setSelectedUserForInfoModal] = useState<
     UserNode['node'] | null
@@ -149,6 +150,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
   const [purgeTargetId, setPurgeTargetId] = useState<string | null>(null);
   const [openUpdateUsersModal, { toggle: toggleUpdateUsersModal }] =
     useToggle(false);
+  const [actAsTarget, setActAsTarget] = useState<ActAsTarget | null>(null);
 
   // The page owns URL state and the fetch; this component derives every
   // filter/order/pagination control from the last requested variables and
@@ -211,20 +213,6 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
   const isSuperAdmin = bailClient.is_superadmin;
 
   const canActAs = isSuperAdmin;
-
-  const confirmActAs = (userId: string, email: string, name: string) => {
-    modal.confirm({
-      title: t('actAs.ConfirmTitle', { name: name || email }),
-      content: t('actAs.ConfirmDescription', { email }),
-      okText: t('actAs.OpenInNewTab'),
-      cancelText: t('button.Cancel'),
-      onOk: () => {
-        if (!openActAsTab({ userId, email, name })) {
-          message.error(t('actAs.FailedToOpen'));
-        }
-      },
-    });
-  };
 
   const renderEmailWithActions = (__: unknown, record: UserV2InList) => {
     const email = record.basicInfo?.email ?? '';
@@ -315,13 +303,14 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
               icon: <UserRoundCheckIcon />,
               showInMenu: 'always' as const,
               onClick: () =>
-                confirmActAs(
+                setActAsTarget({
                   userId,
                   email,
-                  record.basicInfo?.fullName ||
+                  name:
+                    record.basicInfo?.fullName ||
                     record.basicInfo?.username ||
                     '',
-                ),
+                }),
             },
           isSuperAdmin && {
             key: 'unblock-login',
@@ -744,6 +733,13 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
             : undefined
         }
       />
+      <BAIUnmountAfterClose>
+        <ActAsConfirmModal
+          open={!!actAsTarget}
+          target={actAsTarget}
+          onRequestClose={() => setActAsTarget(null)}
+        />
+      </BAIUnmountAfterClose>
       <BAIUnmountAfterClose>
         <UserInfoModal
           userInfoFrgmt={selectedUserForInfoModal}

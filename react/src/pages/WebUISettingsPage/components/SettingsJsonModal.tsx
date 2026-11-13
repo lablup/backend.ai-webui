@@ -39,7 +39,7 @@ const SettingsJsonEditor: React.FC<Omit<SettingsJsonModalProps, 'open'>> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { message } = App.useApp();
+  const { message, modal } = App.useApp();
   const { logger } = useBAILogger();
   const current = () => JSON.stringify(toSettingsJson(currentValueOf), null, 2);
   const [text, setText] = useState(current);
@@ -71,6 +71,22 @@ const SettingsJsonEditor: React.FC<Omit<SettingsJsonModalProps, 'open'>> = ({
     const result = parseSettingsJson(text);
     if (result.ok) {
       onLoad(result.values);
+      if (result.skipped.length > 0) {
+        modal.warning({
+          title: t('webuiSettings.JsonUnknownSkipped'),
+          content: (
+            <BAIFlex
+              direction="column"
+              align="stretch"
+              data-testid="webui-settings-json-skipped"
+            >
+              {result.skipped.map((path) => (
+                <Text key={path}>{path}</Text>
+              ))}
+            </BAIFlex>
+          ),
+        });
+      }
     } else if ('error' in result) {
       setParseError(result.error);
     } else {

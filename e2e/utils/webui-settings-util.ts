@@ -99,7 +99,6 @@ export const WEBUI_SETTING_ROWS: ReadonlyArray<WebUISettingRow> = [
   row('enableInteractiveLoginAccountSwitch', 'public', 'boolean', 'login'),
   row('singleSignOnVendors', 'public', 'stringList', 'login'),
   row('ssoRealmName', 'public', 'string', 'login'),
-  row('debug', 'public', 'boolean', 'diagnostics', undefined, null),
   row('storageWarningThreshold', 'domain', 'number', 'diagnostics', [
     'resources',
     'storageWarningThreshold',
@@ -592,7 +591,7 @@ export function allSettingRows(page: Page): Locator {
   );
 }
 
-/** Key markers the `debug` setting adds next to every translated string. */
+/** Key markers debug mode adds next to every translated string. */
 export function i18nKeyMarkers(page: Page): Locator {
   return page.locator('[data-i18n-key-anchor]');
 }

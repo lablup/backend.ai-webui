@@ -96,7 +96,8 @@ describe('applyWebUISettings', () => {
     const next = applyWebUISettings(state, doc, 'public');
     expect(next.change_signin_support).toBe(true);
     expect(next.ssoRealmName).toBe('Corp');
-    expect(next.debug).toBe(true);
+    // Debug mode is an act-as tab option, not a setting.
+    expect(next).not.toHaveProperty('debug');
     expect(next.autoLogout).toBe(true);
     expect(next.loginPlugin).toBe('signup-cloud');
     expect(next.pluginPages).toEqual(['test-plugin1', 'test-plugin2']);
