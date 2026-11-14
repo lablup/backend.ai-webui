@@ -23,6 +23,10 @@
 // ---------------------------------------------------------------------------
 import { generateUUID } from './helper/uuid';
 import * as ai from 'backend.ai-client';
+import { isPlainObject } from 'lodash-es';
+
+// Keys that would reach Object.prototype when copied with `o[k] = …`.
+const UNSAFE_MERGE_KEYS = new Set(['__proto__', 'constructor', 'prototype']);
 
 (globalThis as any).BackendAIClient = ai.backend.Client;
 (globalThis as any).BackendAIClientConfig = ai.backend.ClientConfig;
@@ -448,13 +452,18 @@ class BackendAICommonUtils {
     nestedKey: string,
     sep = '.',
   ) {
-    if (!obj || obj.constructor !== Object || !nestedKey) {
+    // isPlainObject accepts null-prototype objects (smol-toml >= 1.9 tables).
+    if (!isPlainObject(obj) || !nestedKey) {
       return obj;
     }
     const keys = nestedKey.split(sep);
     const lastKey = keys.pop();
-    if (lastKey) {
-      delete keys.reduce((o: any, k: string) => o[k], obj)[lastKey];
+    const parent = keys.reduce<any>(
+      (o, k) => (isPlainObject(o) && Object.hasOwn(o, k) ? o[k] : undefined),
+      obj,
+    );
+    if (lastKey && isPlainObject(parent)) {
+      delete parent[lastKey];
     }
     return obj;
   }
@@ -463,14 +472,14 @@ class BackendAICommonUtils {
     if (!obj1 || !obj2) {
       return obj1 || obj2 || {};
     }
-    function _merge(a: any, b: any) {
-      return Object.entries(b).reduce((o: any, [k, v]: [string, any]) => {
-        o[k] =
-          v && v.constructor === Object
-            ? _merge((o[k] = o[k] || (Array.isArray(v) ? [] : {})), v)
-            : v;
-        return o;
-      }, a);
+    function _merge(a: Record<string, any>, b: Record<string, any>) {
+      for (const [k, v] of Object.entries(b)) {
+        if (UNSAFE_MERGE_KEYS.has(k)) continue;
+        a[k] = isPlainObject(v)
+          ? _merge(isPlainObject(a[k]) ? a[k] : {}, v)
+          : v;
+      }
+      return a;
     }
     return [obj1, obj2].reduce(_merge, {});
   }
