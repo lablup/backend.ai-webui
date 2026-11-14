@@ -7,6 +7,7 @@ import {
   fetchAppConfigOnce,
 } from '../hooks/useWebUIConfig';
 import { loadConfigFromWebServer } from './loginSessionAuth';
+import { parse } from 'smol-toml';
 import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const store = new Map<unknown, unknown>();
@@ -30,12 +31,27 @@ vi.mock('../RelayEnvironment', async () => {
   return { RelayEnvironment: createMockEnvironment() };
 });
 
-const serverConfigs: Record<string, Record<string, any>> = {
-  'https://a.example/config.toml': {
-    general: { signupSupport: true },
-    plugin: { login: 'a-login' },
-  },
-  'https://b.example/config.toml': { general: { allowSignout: true } },
+// Real parser output: smol-toml >= 1.9 returns null-prototype tables.
+const serverConfigs: Record<string, string> = {
+  'https://a.example/config.toml': `
+[general]
+signupSupport = true
+apiEndpoint = "https://a-webserver.example"
+
+[plugin]
+login = "a-login"
+
+[wsproxy]
+proxyURL = "https://a-proxy.example"
+`,
+  'https://b.example/config.toml': `
+[general]
+allowSignout = true
+`,
+  'https://c.example/config.toml': `
+[resources]
+maxCPUCoresPerContainer = 32
+`,
 };
 
 describe('loadConfigFromWebServer', () => {
@@ -48,11 +64,22 @@ describe('loadConfigFromWebServer', () => {
     store.clear();
     const { rawConfigState } = await import('../hooks/useWebUIConfig');
     vi.mocked(fetchAppConfigOnce).mockResolvedValue({
-      config: { general: { apiEndpoint: '' }, plugin: { login: 'bundled' } },
+      config: parse(`
+[general]
+apiEndpoint = ""
+
+[plugin]
+login = "bundled"
+
+[wsproxy]
+proxyURL = "https://bundled-proxy.example"
+`),
     } as any);
     vi.mocked(fetchAndParseConfig).mockImplementation(
       async (url: string) =>
-        ({ config: structuredClone(serverConfigs[url]) }) as any,
+        ({
+          config: url in serverConfigs ? parse(serverConfigs[url]) : null,
+        }) as any,
     );
     // Whatever the app settled on before; the merge must not build on it.
     store.set(rawConfigState, { general: { stale: true } });
@@ -68,6 +95,30 @@ describe('loadConfigFromWebServer', () => {
     await loadConfigFromWebServer('https://b.example');
     const merged = store.get(rawConfigState) as Record<string, any>;
     expect(merged.general).toEqual({ apiEndpoint: '', allowSignout: true });
+    expect(merged.plugin).toEqual({ login: 'bundled' });
+  });
+
+  it('feeds null-prototype tables, as smol-toml returns them', () => {
+    const parsed = parse(serverConfigs['https://a.example/config.toml']);
+    expect(Object.getPrototypeOf(parsed.general)).toBeNull();
+  });
+
+  it("strips the webserver's own endpoint and wsproxy before merging", async () => {
+    const { rawConfigState } = await import('../hooks/useWebUIConfig');
+    await loadConfigFromWebServer('https://a.example');
+    const merged = store.get(rawConfigState) as Record<string, any>;
+    expect(merged.general).toEqual({ apiEndpoint: '', signupSupport: true });
+    expect(merged.wsproxy).toEqual({
+      proxyURL: 'https://bundled-proxy.example',
+    });
+  });
+
+  it('deep-merges sections the bundled config also has', async () => {
+    const { rawConfigState } = await import('../hooks/useWebUIConfig');
+    await loadConfigFromWebServer('https://c.example');
+    const merged = store.get(rawConfigState) as Record<string, any>;
+    expect(merged.general).toEqual({ apiEndpoint: '' });
+    expect(merged.resources).toEqual({ maxCPUCoresPerContainer: 32 });
     expect(merged.plugin).toEqual({ login: 'bundled' });
   });
 
