@@ -225,5 +225,5 @@ overrides:
   "e2e>zod": ^4.6.6 # GHSA-mrhx-c7xc-m3w5 (high)
 
 patchedDependencies:
-  portless@0.15.5: react/patches/portless@0.15.5.patch
+  portless@0.16.0: react/patches/portless@0.16.0.patch
   relay-runtime@20.1.1: react/patches/relay-runtime@20.1.1.patch

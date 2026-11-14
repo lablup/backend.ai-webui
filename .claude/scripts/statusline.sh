@@ -349,7 +349,7 @@ def portless_links(claim_root):
     except Exception:
         pass
     # proxy.tls is an EXISTENCE marker, not a value: portless writes "1" when TLS is on
-    # and unlinks the file when it is off (readTlsMarker/writeTlsMarker, pinned 0.15.5).
+    # and unlinks the file when it is off (readTlsMarker/writeTlsMarker, pinned 0.16.0).
     # Reading its contents would hand `proxy start --no-tls` an https link that is dead.
     scheme = "https" if os.path.exists(os.path.join(state, "proxy.tls")) else "http"
 
