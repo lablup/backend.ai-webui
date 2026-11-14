@@ -1,6 +1,6 @@
 import { expect, unique } from "e2e";
-import { test } from "../utils/cleanup";
-import { findRunnableImage } from "../utils/session-image";
+import { test } from "../../utils/cleanup";
+import { findRunnableImage } from "../../utils/session-image";
 
 const resourceGroup = "default";
 

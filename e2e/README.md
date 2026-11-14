@@ -124,6 +124,25 @@ When `E2E_PART` or `E2E_ENV_FILE` is set, the config prints one
 teardown runs after whichever part ran, against that part's server; keep
 `--no-deps` for targeted runs on a shared server.
 
+The agent suite (`e2e-agent/`, run with the `e2e` CLI through `e2e.config.ts`)
+has the same part folders, `e2e-agent/{admin,project,project-admin,common}/<page>/`,
+and the same folder rule; `auth.setup.e2e.ts` (the sign-in sessions) and
+`utils/` stay at its root, and the setup belongs to every part. `E2E_PART` and
+`E2E_ENV_FILE` select its folders and env file the same way (`e2eAgentPartGlobs`
+and `resolveE2EEnvFile` in `e2e-parts.ts`, paths relative to the repository root).
+A chosen env file (`admin` in the part list, or `E2E_ENV_FILE`) wins over `E2E_*`
+values already exported in the shell. `e2e/envs/.env.e2e-agent` is read after the
+env file for the model; with a chosen env file the config refuses endpoints,
+accounts, `E2E_AGENT_APP_URL` and `E2E_DEFAULT_IMAGE` there, so each part opens its
+own `E2E_WEBUI_ENDPOINT` (an exported `E2E_AGENT_APP_URL` still overrides it). A
+part other than `all` writes to `.e2e/<parts>/` (`E2E_PART=project,admin` →
+`.e2e/admin+project/`), and the config prints the same `[e2e] part=…` line.
+
+```bash
+E2E_PART=user  E2E_TELEMETRY_DISABLED=1 pnpm exec e2e list
+E2E_PART=admin pnpm run e2e:agent --exclude-tag draft
+```
+
 ### Smoke run against an installed cluster
 
 `e2e/playwright.smoke.config.ts` runs the `@smoke` subset against an already

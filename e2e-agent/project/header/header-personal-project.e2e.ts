@@ -1,6 +1,6 @@
 import { test } from "@e2e-dev/web";
 import { expect } from "e2e";
-import { currentProjectName, personalProjectName } from "../utils/project";
+import { currentProjectName, personalProjectName } from "../../utils/project";
 
 const escapeRegExp = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 

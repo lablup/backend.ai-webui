@@ -1,10 +1,10 @@
 import { expect, unique } from "e2e";
-import { test, vfolderInfo } from "../utils/cleanup";
+import { test, vfolderInfo } from "../../utils/cleanup";
 import {
   currentProjectName,
   personalProjectName,
   projectId,
-} from "../utils/project";
+} from "../../utils/project";
 
 const escapeRegExp = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 

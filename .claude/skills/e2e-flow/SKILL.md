@@ -72,12 +72,22 @@ automation's job.
 ### The draft test
 
 Update the `e2e-agent/` test that covers the flow; otherwise add
-`e2e-agent/<feature>/<flow>.e2e.ts`, following the folder names in `e2e/`.
+`e2e-agent/<part>/<page>/<flow>.e2e.ts`. The part and page folders are the
+ones `e2e/` uses (folder rule in `e2e/README.md`): `admin/` for the admin
+console (`/admin/*`), `project-admin/` for `/project/:projectName/admin/*`,
+`project/` for the user console, `common/` for auth, `config.toml` behaviour
+and plugins; the page is the first route segment after the scope. The part
+decides which server the nightly run uses (`E2E_PART`, `e2e/e2e-parts.ts`):
+a file outside these folders (the root, or an old `e2e-agent/<feature>/`
+path) still runs, in the `user` part on the user server, so never put one
+there. Import `e2e-agent/utils/` by the relative path from the file's folder
+(`../../utils/...` from `<part>/<page>/`).
 
 **A Playwright spec in `e2e/` covers the flow → port it, then delete it**,
 whether or not an `e2e-agent/` test already covers the flow, so the old
 steps never run after the merge. Port the whole spec file, not just the
-changed test, into one `e2e-agent/<feature>/<same-stem>.e2e.ts`:
+changed test, into one `e2e-agent/<part>/<page>/<same-stem>.e2e.ts` (the
+spec's own `e2e/<part>/<page>/` folders):
 
 - each `test(...)` becomes a draft test with the same name, its steps
   rewritten as the user scenario they walk, in `agent.act` sentences only;
@@ -135,7 +145,7 @@ Compared: e2e/project/session/session-creation.spec.ts › <test name>
 Result: flow changed
 Change: <old step> → <new step>
 Intended: yes
-Agent flow: e2e-agent/session/<flow>.e2e.ts
+Agent flow: e2e-agent/project/session/<flow>.e2e.ts
 Ported from: e2e/project/session/session-creation.spec.ts (deleted)
 ```
 
