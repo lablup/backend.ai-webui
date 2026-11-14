@@ -138,7 +138,8 @@
     "resources/i18n/*.json": [
       "eslint --max-warnings=0 --cache",
       "prettier --write"
-    ]
+    ],
+    "pnpm-lock.yaml": "node scripts/check-pm-lockfile.mjs"
   },
   "husky": {
     "hooks": {
