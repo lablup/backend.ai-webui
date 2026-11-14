@@ -11,6 +11,7 @@ on:
       - "pnpm-workspace.yaml"
       - "scripts/audit-gate.mjs"
       - "scripts/audit-allowlist.json"
+      - "scripts/check-pm-lockfile.mjs"
       - ".github/workflows/dependency-audit.yml"
   schedule:
     # Mondays 00:00 UTC (09:00 KST): new advisories and expiring allowlist entries.
@@ -38,5 +39,7 @@ jobs:
       - uses: actions/setup-node@v7.0.0
         with:
           node-version-file: ".nvmrc"
+      - name: Check the package-manager document of pnpm-lock.yaml
+        run: node scripts/check-pm-lockfile.mjs
       - name: Run audit gate
         run: node scripts/audit-gate.mjs

@@ -175,6 +175,12 @@ scripts/                # Build and dev utility scripts
 
 ### Initializing
 
+Use pnpm 11.20 or newer as the `pnpm` on your PATH, however it was installed;
+`pnpm self-update` brings an older one up. It switches to the version pinned in `package.json`
+(`packageManager`) on its own. A pnpm older than 11.20 adds an `@pnpm/exe`
+entry to the first document of `pnpm-lock.yaml`, which
+`scripts/check-pm-lockfile.mjs` rejects at commit and in CI.
+
 ```console
 $ pnpm i
 ```
