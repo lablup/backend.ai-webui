@@ -10,6 +10,7 @@ import type { LoginSessionQuery as LoginSessionQueryType } from '../__generated_
 import type { UserSettingsCategory } from '../helper/userSettingsModal';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
+import { AUTO_MOUNT_SETTING_MANAGER_VERSION } from '../hooks/useVFolderAutoMountsByVFolderId';
 import ErrorLogList from './ErrorLogList';
 import LoginHistory, { LoginHistoryQuery } from './LoginHistory';
 import LoginSession, { LoginSessionQuery } from './LoginSession';
@@ -27,8 +28,9 @@ const UserSettingsModalPane: React.FC<{
   const [currentUser] = useCurrentUserInfo();
   // The rail hides the auto-mount category without this manager version; this
   // fallback covers a direct `?settings=auto-mount` restore.
-  const supportsAutoMount =
-    baiClient.isManagerVersionCompatibleWith('26.10.0a5');
+  const supportsAutoMount = baiClient.isManagerVersionCompatibleWith(
+    AUTO_MOUNT_SETTING_MANAGER_VERSION,
+  );
   const [loginSessionQueryRef, loadLoginSessionQuery] =
     useQueryLoader<LoginSessionQueryType>(LoginSessionQuery);
   const [loginHistoryQueryRef, loadLoginHistoryQuery] =

@@ -16,6 +16,7 @@ import { useSuspendedBackendaiClient } from '../../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
 import { useCSVExport } from '../../hooks/useCSVExport';
+import { AUTO_MOUNT_SETTING_MANAGER_VERSION } from '../../hooks/useVFolderAutoMountsByVFolderId';
 import ProjectAdminSettingModal, {
   ProjectAdminSettingQuery,
   buildProjectAdminRoleFilter,
@@ -93,8 +94,9 @@ const ProjectPage = () => {
   const relayEnvironment = useRelayEnvironment();
   const baiClient = useSuspendedBackendaiClient();
   const supportsTypeFilter = baiClient.isManagerVersionCompatibleWith('26.9.0');
-  const supportsAutoMount =
-    baiClient.isManagerVersionCompatibleWith('26.10.0a5');
+  const supportsAutoMount = baiClient.isManagerVersionCompatibleWith(
+    AUTO_MOUNT_SETTING_MANAGER_VERSION,
+  );
   // The project outlives `open` so the closing modal does not re-query with an empty id.
   const [autoMount, setAutoMount] = useState<{
     open: boolean;
