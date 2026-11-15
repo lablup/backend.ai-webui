@@ -7,8 +7,8 @@
   // gate the next edit to any client module silently breaks the vendored
   // build and phase B finds out in its own repository.
   //
-  // Run it with the ROOT TypeScript (5.5.4), never react's (6.x): TypeScript 6
-  // moved the iterable DOM declarations into the base `DOM` lib, so on 6 the
+  // Run it with the root's `typescript-5` (5.5.4), never `tsc` (7.x): TypeScript
+  // 6+ moved the iterable DOM declarations into the base `DOM` lib, so there the
   // `DOM.Iterable` half of this gate cannot fail at all. `scripts/verify.sh`
   // pins the binary for that reason.
   "compilerOptions": {

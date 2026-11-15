@@ -65,9 +65,10 @@
   },
   "devDependencies": {
     "@types/fontkit": "^2.0.9",
+    "@typescript/native": "npm:typescript@~7.0.2",
     "playwright": "^1.58.2",
     "sharp": "^0.35.5",
     "tsx": "^4.21.0",
-    "typescript": "~5.5.4"
+    "typescript": "npm:@typescript/typescript6@~6.0.2"
   }
 }
