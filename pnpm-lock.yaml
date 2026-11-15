@@ -564,9 +564,6 @@ importers:
       typescript:
         specifier: npm:@typescript/typescript6@~6.0.2
         version: '@typescript/typescript6@6.0.2'
-      typescript-5:
-        specifier: npm:typescript@~5.5.4
-        version: typescript@5.5.4
       vitest:
         specifier: ^4.1.12
         version: 4.1.12(@opentelemetry/api@1.9.0)(@types/node@22.20.1)(@vitest/coverage-v8@4.1.12)(happy-dom@20.11.1(bufferutil@4.1.0)(utf-8-validate@6.0.6))(jsdom@29.1.1)(vite@8.3.4(@types/node@22.20.1)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.2)(tsx@4.21.0)(yaml@2.9.0))
@@ -10410,11 +10407,6 @@ packages:
     peerDependencies:
       eslint: ^8.57.0 || ^9.0.0 || ^10.0.0
       typescript: '>=4.8.4 <6.1.0'
-
-  typescript@5.5.4:
-    resolution: {integrity: sha512-Mtq29sKDAEYP7aljRgtPOpTvOfbwRWlS6dPRzwjdE+C0R4brX/GUyhHSecbHMFLNBLcJIPt9nl9yG5TZ1weH+Q==}
-    engines: {node: '>=14.17'}
-    hasBin: true
 
   typescript@5.9.3:
     resolution: {integrity: sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw==}
@@ -21668,8 +21660,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  typescript@5.5.4: {}
-
   typescript@5.9.3: {}
 
   typescript@6.0.3: {}
@@ -22728,7 +22718,6 @@ time:
   tsx@4.21.0: '2025-11-30T15:56:09.488Z'
   tus-js-client@4.3.1: '2025-01-16T11:27:34.379Z'
   typescript-eslint@8.66.0: '2026-08-03T17:36:21.323Z'
-  typescript@5.5.4: '2024-07-22T23:02:51.857Z'
   typescript@7.0.2: '2026-07-08T15:55:18.431Z'
   unplugin@2.3.11: '2025-11-22T05:04:44.067Z'
   utf-8-validate@6.0.6: '2025-12-18T16:38:00.865Z'
