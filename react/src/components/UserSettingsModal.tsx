@@ -14,6 +14,7 @@ import {
   type UserSettingsCategory,
 } from '../helper/userSettingsModal';
 import { useSuspendedBackendaiClient } from '../hooks';
+import { AUTO_MOUNT_SETTING_MANAGER_VERSION } from '../hooks/useVFolderAutoMountsByVFolderId';
 import BAIErrorBoundary from './BAIErrorBoundary';
 import WEBUIHelpButton from './WEBUIHelpButton';
 import { Button } from '@lablup/ui-common/Button';
@@ -97,8 +98,9 @@ const UserSettingsModal: React.FC<UserSettingsModalProps> = ({
   const baiClient = useSuspendedBackendaiClient();
   // The rail hides the auto-mount category without this manager version; the
   // pane falls back to General on a direct `?settings=auto-mount` restore.
-  const supportsAutoMount =
-    baiClient.isManagerVersionCompatibleWith('26.10.0a5');
+  const supportsAutoMount = baiClient.isManagerVersionCompatibleWith(
+    AUTO_MOUNT_SETTING_MANAGER_VERSION,
+  );
   const settingCategories: Array<UserSettingsCategory> = supportsAutoMount
     ? ['general', 'auto-mount']
     : ['general'];

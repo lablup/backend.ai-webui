@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<2f44a402d1aeef679d49da12f285c86e>>
+ * @generated SignedSource<<cbf6ce9749139b4b2f190e6b8c39122f>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,7 +11,6 @@
 import { ConcreteRequest } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type MountPermission = "READ_ONLY" | "READ_WRITE" | "RW_DELETE" | "%future added value";
-export type VFolderAutoMountScopeType = "PROJECT" | "USER" | "%future added value";
 export type VFolderAutoMountScope = {
   project?: ReadonlyArray<UUIDScope> | null | undefined;
   user?: ReadonlyArray<UUIDScope> | null | undefined;
@@ -19,75 +18,7 @@ export type VFolderAutoMountScope = {
 export type UUIDScope = {
   value: string;
 };
-export type VFolderAutoMountFilter = {
-  AND?: ReadonlyArray<VFolderAutoMountFilter> | null | undefined;
-  NOT?: ReadonlyArray<VFolderAutoMountFilter> | null | undefined;
-  OR?: ReadonlyArray<VFolderAutoMountFilter> | null | undefined;
-  createdAt?: DateTimeFilter | null | undefined;
-  deletedAt?: NullableDateTimeFilter | null | undefined;
-  entityId?: UUIDFilter | null | undefined;
-  mountDestination?: StringFilter | null | undefined;
-  mountPermission?: VFolderAutoMountPermissionFilter | null | undefined;
-  scopeId?: UUIDFilter | null | undefined;
-  scopeType?: VFolderAutoMountScopeTypeFilter | null | undefined;
-  updatedAt?: DateTimeFilter | null | undefined;
-  vfolderId?: UUIDFilter | null | undefined;
-};
-export type UUIDFilter = {
-  equals?: string | null | undefined;
-  in?: ReadonlyArray<string> | null | undefined;
-  notEquals?: string | null | undefined;
-  notIn?: ReadonlyArray<string> | null | undefined;
-};
-export type VFolderAutoMountScopeTypeFilter = {
-  equals?: VFolderAutoMountScopeType | null | undefined;
-  in?: ReadonlyArray<VFolderAutoMountScopeType> | null | undefined;
-  notEquals?: VFolderAutoMountScopeType | null | undefined;
-  notIn?: ReadonlyArray<VFolderAutoMountScopeType> | null | undefined;
-};
-export type StringFilter = {
-  contains?: string | null | undefined;
-  endsWith?: string | null | undefined;
-  equals?: string | null | undefined;
-  iContains?: string | null | undefined;
-  iEndsWith?: string | null | undefined;
-  iEquals?: string | null | undefined;
-  iIn?: ReadonlyArray<string> | null | undefined;
-  iNotContains?: string | null | undefined;
-  iNotEndsWith?: string | null | undefined;
-  iNotEquals?: string | null | undefined;
-  iNotIn?: ReadonlyArray<string> | null | undefined;
-  iNotStartsWith?: string | null | undefined;
-  iStartsWith?: string | null | undefined;
-  in?: ReadonlyArray<string> | null | undefined;
-  notContains?: string | null | undefined;
-  notEndsWith?: string | null | undefined;
-  notEquals?: string | null | undefined;
-  notIn?: ReadonlyArray<string> | null | undefined;
-  notStartsWith?: string | null | undefined;
-  startsWith?: string | null | undefined;
-};
-export type VFolderAutoMountPermissionFilter = {
-  equals?: MountPermission | null | undefined;
-  in?: ReadonlyArray<MountPermission> | null | undefined;
-  notEquals?: MountPermission | null | undefined;
-  notIn?: ReadonlyArray<MountPermission> | null | undefined;
-};
-export type DateTimeFilter = {
-  after?: string | null | undefined;
-  before?: string | null | undefined;
-  equals?: string | null | undefined;
-  notEquals?: string | null | undefined;
-};
-export type NullableDateTimeFilter = {
-  after?: string | null | undefined;
-  before?: string | null | undefined;
-  equals?: string | null | undefined;
-  isNull?: boolean | null | undefined;
-  notEquals?: string | null | undefined;
-};
 export type VFolderAutoMountListQuery$variables = {
-  filter?: VFolderAutoMountFilter | null | undefined;
   limit?: number | null | undefined;
   offset?: number | null | undefined;
   scope: VFolderAutoMountScope;
@@ -122,29 +53,19 @@ const node: ConcreteRequest = (function(){
 var v0 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "filter"
+  "name": "limit"
 },
 v1 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "limit"
+  "name": "offset"
 },
 v2 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "offset"
-},
-v3 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
   "name": "scope"
 },
-v4 = [
-  {
-    "kind": "Variable",
-    "name": "filter",
-    "variableName": "filter"
-  },
+v3 = [
   {
     "kind": "Variable",
     "name": "limit",
@@ -171,56 +92,56 @@ v4 = [
     "variableName": "scope"
   }
 ],
-v5 = {
+v4 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "count",
   "storageKey": null
 },
-v6 = {
+v5 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
 },
-v7 = {
+v6 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "entityId",
   "storageKey": null
 },
-v8 = {
+v7 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "vfolderId",
   "storageKey": null
 },
-v9 = {
+v8 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "mountDestination",
   "storageKey": null
 },
-v10 = {
+v9 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "subpath",
   "storageKey": null
 },
-v11 = {
+v10 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "mountPermission",
   "storageKey": null
 },
-v12 = {
+v11 = {
   "alias": null,
   "args": null,
   "concreteType": "VFolderMetadataInfo",
@@ -243,8 +164,7 @@ return {
     "argumentDefinitions": [
       (v0/*: any*/),
       (v1/*: any*/),
-      (v2/*: any*/),
-      (v3/*: any*/)
+      (v2/*: any*/)
     ],
     "kind": "Fragment",
     "metadata": null,
@@ -252,13 +172,13 @@ return {
     "selections": [
       {
         "alias": null,
-        "args": (v4/*: any*/),
+        "args": (v3/*: any*/),
         "concreteType": "VFolderAutoMountConnection",
         "kind": "LinkedField",
         "name": "scopedVfolderAutoMounts",
         "plural": false,
         "selections": [
-          (v5/*: any*/),
+          (v4/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -275,12 +195,12 @@ return {
                 "name": "node",
                 "plural": false,
                 "selections": [
+                  (v5/*: any*/),
                   (v6/*: any*/),
                   (v7/*: any*/),
                   (v8/*: any*/),
                   (v9/*: any*/),
                   (v10/*: any*/),
-                  (v11/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -289,7 +209,7 @@ return {
                     "name": "vfolder",
                     "plural": false,
                     "selections": [
-                      (v12/*: any*/)
+                      (v11/*: any*/)
                     ],
                     "storageKey": null
                   },
@@ -314,23 +234,22 @@ return {
   "kind": "Request",
   "operation": {
     "argumentDefinitions": [
-      (v3/*: any*/),
+      (v2/*: any*/),
       (v0/*: any*/),
-      (v1/*: any*/),
-      (v2/*: any*/)
+      (v1/*: any*/)
     ],
     "kind": "Operation",
     "name": "VFolderAutoMountListQuery",
     "selections": [
       {
         "alias": null,
-        "args": (v4/*: any*/),
+        "args": (v3/*: any*/),
         "concreteType": "VFolderAutoMountConnection",
         "kind": "LinkedField",
         "name": "scopedVfolderAutoMounts",
         "plural": false,
         "selections": [
-          (v5/*: any*/),
+          (v4/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -347,12 +266,12 @@ return {
                 "name": "node",
                 "plural": false,
                 "selections": [
+                  (v5/*: any*/),
                   (v6/*: any*/),
                   (v7/*: any*/),
                   (v8/*: any*/),
                   (v9/*: any*/),
                   (v10/*: any*/),
-                  (v11/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -361,8 +280,8 @@ return {
                     "name": "vfolder",
                     "plural": false,
                     "selections": [
-                      (v12/*: any*/),
-                      (v6/*: any*/)
+                      (v11/*: any*/),
+                      (v5/*: any*/)
                     ],
                     "storageKey": null
                   }
@@ -378,16 +297,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "6f240497a8c86874c431d87e832d3805",
+    "cacheID": "eb7dd881309ee1c51e300dca71665901",
     "id": null,
     "metadata": {},
     "name": "VFolderAutoMountListQuery",
     "operationKind": "query",
-    "text": "query VFolderAutoMountListQuery(\n  $scope: VFolderAutoMountScope!\n  $filter: VFolderAutoMountFilter\n  $limit: Int\n  $offset: Int\n) {\n  scopedVfolderAutoMounts(scope: $scope, filter: $filter, orderBy: [{field: MOUNT_DESTINATION, direction: ASC}], limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        entityId\n        vfolderId\n        mountDestination\n        subpath\n        mountPermission\n        vfolder {\n          metadata {\n            name\n          }\n          id\n        }\n        ...VFolderAutoMountSettingModalFragment\n      }\n    }\n  }\n}\n\nfragment VFolderAutoMountSettingModalFragment on VFolderAutoMount {\n  entityId\n  vfolderId\n  mountDestination\n  subpath\n  mountPermission\n  vfolder {\n    metadata {\n      name\n    }\n    id\n  }\n}\n"
+    "text": "query VFolderAutoMountListQuery(\n  $scope: VFolderAutoMountScope!\n  $limit: Int\n  $offset: Int\n) {\n  scopedVfolderAutoMounts(scope: $scope, orderBy: [{field: MOUNT_DESTINATION, direction: ASC}], limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        entityId\n        vfolderId\n        mountDestination\n        subpath\n        mountPermission\n        vfolder {\n          metadata {\n            name\n          }\n          id\n        }\n        ...VFolderAutoMountSettingModalFragment\n      }\n    }\n  }\n}\n\nfragment VFolderAutoMountSettingModalFragment on VFolderAutoMount {\n  entityId\n  vfolderId\n  mountDestination\n  subpath\n  mountPermission\n  vfolder {\n    metadata {\n      name\n    }\n    id\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "7793316ead94bbbf0583f869d8a87459";
+(node as any).hash = "ba2e02553f146c844f108f93405e5b26";
 
 export default node;
