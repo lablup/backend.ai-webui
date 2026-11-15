@@ -13,6 +13,7 @@ import {
   USER_SETTINGS_CATEGORIES,
   type UserSettingsCategory,
 } from '../helper/userSettingsModal';
+import { useSuspendedBackendaiClient } from '../hooks';
 import BAIErrorBoundary from './BAIErrorBoundary';
 import WEBUIHelpButton from './WEBUIHelpButton';
 import { Button } from '@lablup/ui-common/Button';
@@ -25,6 +26,7 @@ import { BAIModal, BAISkeleton, useBAIBreakpoint } from 'backend.ai-ui';
 import {
   ArrowLeft,
   ChevronRight,
+  FolderSync,
   History,
   MonitorSmartphone,
   ScrollText,
@@ -61,6 +63,7 @@ const CATEGORY_ICONS: Record<
   React.ComponentProps<typeof Icon>['icon']
 > = {
   general: SlidersHorizontal,
+  'auto-mount': FolderSync,
   logs: ScrollText,
   'login-sessions': MonitorSmartphone,
   'login-history': History,
@@ -68,6 +71,7 @@ const CATEGORY_ICONS: Record<
 
 const CATEGORY_LABEL_KEYS: Record<UserSettingsCategory, string> = {
   general: 'userSettings.General',
+  'auto-mount': 'userSettings.AutoMount',
   logs: 'userSettings.Logs',
   'login-sessions': 'userSettings.LoginSessions',
   'login-history': 'userSettings.LoginHistory',
@@ -90,6 +94,14 @@ const UserSettingsModal: React.FC<UserSettingsModalProps> = ({
   const { md } = useBAIBreakpoint();
   const isNarrow = !md;
   const [narrowView, setNarrowView] = useState<'nav' | 'detail'>('detail');
+  const baiClient = useSuspendedBackendaiClient();
+  // The rail hides the auto-mount category without this manager version; the
+  // pane falls back to General on a direct `?settings=auto-mount` restore.
+  const supportsAutoMount =
+    baiClient.isManagerVersionCompatibleWith('26.10.0a5');
+  const settingCategories: Array<UserSettingsCategory> = supportsAutoMount
+    ? ['general', 'auto-mount']
+    : ['general'];
 
   // Narrow drill-down: picking a category in the rail reveals its pane, the
   // back button returns to the rail (same idiom as `SettingList`).
@@ -98,39 +110,31 @@ const UserSettingsModal: React.FC<UserSettingsModalProps> = ({
     onCategoryChange(next);
   };
 
+  const renderCategoryItem = (key: UserSettingsCategory) => (
+    <ListItem
+      key={key}
+      label={t(CATEGORY_LABEL_KEYS[key])}
+      startContent={<Icon icon={CATEGORY_ICONS[key]} size="sm" />}
+      endContent={
+        isNarrow ? (
+          <Icon icon={ChevronRight} size="sm" color="secondary" />
+        ) : undefined
+      }
+      isSelected={!isNarrow && category === key}
+      onClick={() => selectCategory(key)}
+    />
+  );
+
   const categoryNav = (
     <VStack gap={2}>
       <List density="spacious">
-        <ListItem
-          label={t(CATEGORY_LABEL_KEYS.general)}
-          startContent={<Icon icon={CATEGORY_ICONS.general} size="sm" />}
-          endContent={
-            isNarrow ? (
-              <Icon icon={ChevronRight} size="sm" color="secondary" />
-            ) : undefined
-          }
-          isSelected={!isNarrow && category === 'general'}
-          onClick={() => selectCategory('general')}
-        />
+        {settingCategories.map(renderCategoryItem)}
       </List>
       <Divider />
       <List density="spacious">
-        {USER_SETTINGS_CATEGORIES.filter((key) => key !== 'general').map(
-          (key) => (
-            <ListItem
-              key={key}
-              label={t(CATEGORY_LABEL_KEYS[key])}
-              startContent={<Icon icon={CATEGORY_ICONS[key]} size="sm" />}
-              endContent={
-                isNarrow ? (
-                  <Icon icon={ChevronRight} size="sm" color="secondary" />
-                ) : undefined
-              }
-              isSelected={!isNarrow && category === key}
-              onClick={() => selectCategory(key)}
-            />
-          ),
-        )}
+        {USER_SETTINGS_CATEGORIES.filter(
+          (key) => key !== 'general' && key !== 'auto-mount',
+        ).map(renderCategoryItem)}
       </List>
     </VStack>
   );

@@ -26,6 +26,10 @@ import { useAccessibleProjects } from '../../hooks/useAccessibleProjects';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
 import { useCreateActionArrival } from '../../hooks/useCreateActionArrival';
 import { useCurrentProjectValue } from '../../hooks/useCurrentProject';
+import {
+  AUTO_MOUNT_SETTING_MANAGER_VERSION,
+  useVFolderAutoMountsByVFolderId,
+} from '../../hooks/useVFolderAutoMountsByVFolderId';
 import { useVFolderInvitations } from '../../hooks/useVFolderInvitations';
 import { useEffectiveLoginConfig } from '../../hooks/useWebUIConfig';
 import { toProjectContext } from '../../types/projectContext';
@@ -199,7 +203,15 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
     };
   }, [queryParams, tablePaginationOption]);
 
-  const usageModeFilter = USAGE_MODE_FILTERS[queryParams.mode];
+  // Auto-mount is a setting on any folder there, shown as a column, not a mode.
+  const hasAutoMountSetting = baiClient.isManagerVersionCompatibleWith(
+    AUTO_MOUNT_SETTING_MANAGER_VERSION,
+  );
+  const mode =
+    hasAutoMountSetting && queryParams.mode === 'automount'
+      ? 'all'
+      : queryParams.mode;
+  const usageModeFilter = USAGE_MODE_FILTERS[mode];
 
   const [fetchKey, updateFetchKey] = useFetchKey();
 
@@ -310,6 +322,12 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
   const vfolderNodes = filterOutNullAndUndefined(
     _.map(scopedVFoldersV2?.edges, 'node'),
   );
+  const { isSupported: supportsAutoMount, autoMountsByVFolderId } =
+    useVFolderAutoMountsByVFolderId({
+      userId: currentUser.uuid,
+      projectId: currentProject.id ?? undefined,
+      fetchKey: deferredFetchKey,
+    });
 
   return (
     <VStack align="stretch" gap={5} {...props}>
@@ -374,7 +392,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
           <HStack justify="between" wrap="wrap" gap={3}>
             <HStack gap={3} align="start" style={{ flexShrink: 1 }} wrap="wrap">
               <BAISegmentedControl
-                value={queryParams.mode}
+                value={mode}
                 onChange={(value) => {
                   setQuery({ mode: value as typeof queryParams.mode });
                   setTablePaginationOption({ current: 1 });
@@ -547,6 +565,9 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
               order={queryParams.order}
               loading={deferredQueryVariables !== queryVariables}
               project={projectContext}
+              autoMountsByVFolderId={
+                supportsAutoMount ? autoMountsByVFolderId : undefined
+              }
               vfoldersFrgmt={vfolderNodes}
               rowSelection={{
                 type: 'checkbox',

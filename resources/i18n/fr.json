@@ -4158,6 +4158,7 @@
     "AIAgents": "Agents IA",
     "ApplyThemeToDomain": "Appliquer le thème au domaine",
     "ApplyThemeToDomainDesc": "Ce thème sera appliqué à tous les utilisateurs de ce domaine.",
+    "AutoMount": "Dossiers montés automatiquement",
     "AutomaticUpdateCheck": "Vérification automatique des mises à jour",
     "BetaFeatures": "Fonctionnalités bêta",
     "BootstrapScriptDeleted": "Script d'amorçage supprimé",

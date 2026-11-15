@@ -24,6 +24,7 @@ import { useSuspenseTanQuery, useTanQuery } from '../hooks/reactQueryAlias';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useCurrentUserProjectRoles } from '../hooks/useCurrentUserProjectRoles';
 import { useProjectPath } from '../hooks/useRouteScope';
+import type { VFolderAutoMountEntry } from '../hooks/useVFolderAutoMountsByVFolderId';
 import { ProjectContextOrNull } from '../types/projectContext';
 import DeleteForeverVFolderModalV2 from './DeleteForeverVFolderModalV2';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
@@ -339,6 +340,52 @@ const VFolderAutoMountCell: React.FC<{
 // plain-text fallback rendered identically on the loaded-without-usage path,
 // so rows would get stuck in the fallback branch and never pick up the badge
 // after the query resolved.
+const VFolderAutoMountCell: React.FC<{
+  autoMounts?: Array<VFolderAutoMountEntry>;
+}> = ({ autoMounts }) => {
+  'use memo';
+  const { t } = useTranslation();
+  if (_.isEmpty(autoMounts)) return <Text color="secondary">-</Text>;
+  const permissionLabel = (permission: string) =>
+    permission === 'READ_ONLY'
+      ? t('data.ReadOnly')
+      : permission === 'READ_WRITE'
+        ? t('data.ReadWrite')
+        : t('autoMount.ReadWriteDelete');
+  return (
+    <BAIIconWithTooltip
+      icon={<FolderSyncIcon size="1em" />}
+      aria-label={t('autoMount.AutoMount')}
+      content={
+        <VStack gap={2}>
+          {_.map(autoMounts, (autoMount) => (
+            <VStack
+              key={`${autoMount.scopeType}-${autoMount.mountDestination}`}
+            >
+              {/* Inherit the tooltip's own colour; the default is page text. */}
+              <Text color="inherit" weight="semibold">
+                {autoMount.scopeType === 'USER'
+                  ? t('autoMount.ScopeUser')
+                  : t('autoMount.ScopeProject')}
+              </Text>
+              <Text color="inherit">
+                {t('autoMount.MountDestination')}: {autoMount.mountDestination}
+              </Text>
+              <Text color="inherit">
+                {t('autoMount.Subpath')}: {autoMount.subpath}
+              </Text>
+              <Text color="inherit">
+                {t('autoMount.MountPermission')}:{' '}
+                {permissionLabel(autoMount.mountPermission)}
+              </Text>
+            </VStack>
+          ))}
+        </VStack>
+      }
+    />
+  );
+};
+
 const VFolderHostCell: React.FC<VFolderHostCellProps> = ({ host }) => {
   'use memo';
   const { t } = useTranslation();
@@ -526,6 +573,8 @@ interface VFolderNodesV2Props extends Omit<
    * service" row action renders disabled with this string as its tooltip.
    */
   noDeployTooltip?: string;
+  /** Adds the Auto-mount column, keyed by vfolder UUID. */
+  autoMountsByVFolderId?: Record<string, Array<VFolderAutoMountEntry>>;
 }
 
 const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
@@ -536,6 +585,7 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
   showLabelsByDefault = false,
   project,
   noDeployTooltip,
+  autoMountsByVFolderId,
   ...tableProps
 }) => {
   'use memo';
@@ -862,6 +912,19 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
                 ? vfolder?.ownership?.user?.basicInfo?.email
                 : vfolder?.ownership?.project?.basicInfo?.name,
           },
+          ...(autoMountsByVFolderId
+            ? [
+                {
+                  key: 'auto_mount',
+                  title: t('autoMount.AutoMount'),
+                  render: (__: unknown, vfolder: VFolderNodeInList) => (
+                    <VFolderAutoMountCell
+                      autoMounts={autoMountsByVFolderId[vfolder.entityId]}
+                    />
+                  ),
+                },
+              ]
+            : []),
           {
             key: 'auto_mount',
             title: t('autoMount.AutoMount'),
