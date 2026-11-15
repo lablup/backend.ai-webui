@@ -169,7 +169,6 @@ export const useSuspendedAutoMountedVFolders = ({
       );
   return {
     autoMountedFolders,
-    isAutoMountSetting,
     refetch: () => updateFetchKey(),
   };
 };
