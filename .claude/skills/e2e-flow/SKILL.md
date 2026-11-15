@@ -120,6 +120,13 @@ test(
 - A ported test's first line names its source: `// ported from:
   e2e/<path>.spec.ts › <test name>`. An updated draft keeps the line it
   already had.
+- **No steps on admin console pages for preparation** (`/admin/*`, the old
+  flat URLs that redirect there, or "Switch to Admin Console"). Admin-side
+  preparation of a user console or project admin flow (a user or keypair, a
+  project, a resource policy) is not a step: automation does it and its
+  cleanup through the API helpers in `e2e-agent/utils/`
+  (`.claude/rules/e2e-admin-prep-via-api.md`).
+  A flow of the admin console itself acts on its pages as usual.
 
 ## 3. PR body
 
