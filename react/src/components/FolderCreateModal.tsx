@@ -16,6 +16,7 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useAccessibleProjects } from '../hooks/useAccessibleProjects';
 import { useMyAppConfig } from '../hooks/useAppConfig';
 import { useSetBAINotification } from '../hooks/useBAINotification';
+import { AUTO_MOUNT_SETTING_MANAGER_VERSION } from '../hooks/useVFolderAutoMountsByVFolderId';
 import { ProjectContext, ProjectContextOrNull } from '../types/projectContext';
 import BAIFormItem from './BAIFormItem';
 import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';

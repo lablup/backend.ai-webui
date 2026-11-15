@@ -59,11 +59,11 @@ const VFolderAutoMountList: React.FC<VFolderAutoMountListProps> = ({
   }>({ open: false, node: null });
 
   const variables = {
+    // The scope already restricts the read to that one project (or user).
     scope:
       scopeType === 'PROJECT'
         ? { project: [{ value: scopeId }] }
         : { user: [{ value: scopeId }] },
-    filter: { scopeType: { equals: scopeType } },
     limit: pagination.pageSize,
     offset: (pagination.current - 1) * pagination.pageSize,
   };
@@ -75,13 +75,11 @@ const VFolderAutoMountList: React.FC<VFolderAutoMountListProps> = ({
       graphql`
         query VFolderAutoMountListQuery(
           $scope: VFolderAutoMountScope!
-          $filter: VFolderAutoMountFilter
           $limit: Int
           $offset: Int
         ) {
           scopedVfolderAutoMounts(
             scope: $scope
-            filter: $filter
             orderBy: [{ field: MOUNT_DESTINATION, direction: ASC }]
             limit: $limit
             offset: $offset
