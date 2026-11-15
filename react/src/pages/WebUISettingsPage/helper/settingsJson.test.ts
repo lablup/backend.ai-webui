@@ -29,6 +29,18 @@ describe('toSettingsJson', () => {
       );
     }
   });
+
+  it('holds only the public and domain scopes, each with only its own settings', () => {
+    const json = toSettingsJson((d) => sample(d.key));
+    expect(Object.keys(json).sort()).toEqual(['domain', 'public']);
+    for (const scope of ['public', 'domain'] as const) {
+      expect(Object.keys(json[scope]).sort()).toEqual(
+        WEBUI_SETTING_DEFINITIONS.filter((d) => d.scope === scope)
+          .map((d) => d.key)
+          .sort(),
+      );
+    }
+  });
 });
 
 describe('parseSettingsJson', () => {
@@ -65,6 +77,39 @@ describe('parseSettingsJson', () => {
         { path: 'public.debug', reason: 'invalid' },
         { path: 'domain.debug', reason: 'unknown' },
         { path: 'other', reason: 'unknown' },
+      ],
+    });
+  });
+
+  it('applies nothing when any entry cannot be applied', () => {
+    // A valid entry next to a wrong one must not slip through on its own.
+    const result = parseSettingsJson(
+      JSON.stringify({
+        public: { debug: true },
+        domain: { maxCPUCoresPerContainer: 'many', e2eUnknownSetting: 1 },
+      }),
+    );
+    expect(result).toEqual({
+      ok: false,
+      issues: [
+        { path: 'domain.maxCPUCoresPerContainer', reason: 'invalid' },
+        { path: 'domain.e2eUnknownSetting', reason: 'unknown' },
+      ],
+    });
+  });
+
+  it('rejects a document or a scope that is not an object', () => {
+    for (const text of ['[]', 'null', '1']) {
+      expect(parseSettingsJson(text)).toEqual({
+        ok: false,
+        issues: [{ path: '(root)', reason: 'invalid' }],
+      });
+    }
+    expect(parseSettingsJson('{"domain": 5, "public": []}')).toEqual({
+      ok: false,
+      issues: [
+        { path: 'domain', reason: 'invalid' },
+        { path: 'public', reason: 'invalid' },
       ],
     });
   });
