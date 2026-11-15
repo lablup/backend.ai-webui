@@ -717,19 +717,8 @@ export default defineConfig(({ command, mode }) => {
   // `isDevTypecheckEnabled` definition above.
   const runTypeChecker = command !== 'serve' || isDevTypecheckEnabled;
 
-  // vite-plugin-checker's build mode spawns a bare `tsc` with a PATH built by
-  // npm-run-path, which PREPENDS every ancestor `node_modules/.bin` of cwd
-  // that is not already literally on PATH. In a git worktree under
-  // `.claude/worktrees/<name>/` that walk-up passes through the MAIN
-  // checkout's `<repo>/node_modules/.bin`, whose `tsc` can be an older
-  // TypeScript (5.5.4 hit 296 parse errors in gpt-tokenizer@3.4.0's `.d.ts`
-  // alone) — while this workspace's own `.bin` entries, already placed on PATH
-  // by pnpm, are skipped by npm-run-path's dedupe and stay BEHIND the
-  // prepended ancestors. Net effect: `pnpm run build:react-only` inside a
-  // worktree type-checks with the wrong compiler and fails. Removing react/'s
-  // own `.bin` from the inherited PATH makes npm-run-path re-prepend it at the
-  // very front (the walk-up starts at `react/`), so the spawned `tsc` is always
-  // react/'s TypeScript 7 (`@typescript/native`).
+  // npm-run-path puts ancestor `.bin`s (the main checkout's, from a worktree) ahead of
+  // react/'s own; dropping it here makes the checker's bare `tsc` react/'s TS7 again.
   if (runTypeChecker && command === 'build' && process.env.PATH) {
     const ownBinDir = join(__dirname, 'node_modules', '.bin');
     process.env.PATH = process.env.PATH.split(delimiter)

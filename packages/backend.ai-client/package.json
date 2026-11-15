@@ -58,6 +58,7 @@
   },
   "devDependencies": {
     "@eslint/js": "catalog:",
+    "@types/node": "catalog:",
     "@typescript/native": "npm:typescript@~7.0.2",
     "crypto-es": "^2.1.0",
     "eslint-config-bai": "workspace:*",

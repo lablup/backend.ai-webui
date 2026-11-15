@@ -340,6 +340,7 @@ catalogs:
       version: 5.106.2
 
 overrides:
+  '@typescript/typescript6>@typescript/old': npm:typescript@~6.0.3
   '@astryxdesign/lab>@astryxdesign/core': 0.7.11
   tar-fs@2: 2.1.4
   yauzl: ^3.3.1
@@ -629,6 +630,9 @@ importers:
       '@eslint/js':
         specifier: 'catalog:'
         version: 9.39.5
+      '@types/node':
+        specifier: 'catalog:'
+        version: 22.20.1
       '@typescript/native':
         specifier: npm:typescript@~7.0.2
         version: typescript@7.0.2
@@ -675,6 +679,9 @@ importers:
       '@types/fontkit':
         specifier: ^2.0.9
         version: 2.0.9
+      '@types/node':
+        specifier: 'catalog:'
+        version: 22.20.1
       '@typescript/native':
         specifier: npm:typescript@~7.0.2
         version: typescript@7.0.2
@@ -687,9 +694,6 @@ importers:
       tsx:
         specifier: ^4.21.0
         version: 4.21.0
-      typescript:
-        specifier: npm:@typescript/typescript6@~6.0.2
-        version: '@typescript/typescript6@6.0.2'
 
   packages/backend.ai-docs-toolkit-example:
     devDependencies:
