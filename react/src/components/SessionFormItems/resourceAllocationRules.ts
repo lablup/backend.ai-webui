@@ -481,7 +481,9 @@ const findPresetOn = (
  * values were edited reads `custom`, and a value edit that lands on an
  * allocatable preset reads that preset. A preset the group cannot serve, or
  * one the check-presets response lacks (scoped to another group), keeps its
- * label for the preset validator. Preset-only mode has no `custom`.
+ * label for the preset validator. A form with no label (prefilled `resource`,
+ * as in Add Revision) reads `custom` after a value edit. Preset-only mode has
+ * no `custom`.
  */
 export const deriveAllocationPreset = (
   values: ResourceValues,
@@ -492,7 +494,6 @@ export const deriveAllocationPreset = (
   if (ctx.mode !== 'free' || _.isUndefined(ctx.slotsInRG)) {
     return label;
   }
-  // A form prefilled with `resource` starts with no label; an edit makes it custom.
   if (!label) return valueEdited ? 'custom' : label;
   const resource = values.resource ?? {};
   if (label === 'custom') {
