@@ -20,6 +20,7 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useAccessibleProjects } from '../hooks/useAccessibleProjects';
 import { useMyAppConfig } from '../hooks/useAppConfig';
 import { useSetBAINotification } from '../hooks/useBAINotification';
+import { AUTO_MOUNT_SETTING_MANAGER_VERSION } from '../hooks/useVFolderAutoMountsByVFolderId';
 import { ProjectContext, ProjectContextOrNull } from '../types/projectContext';
 import BAIFormItem from './BAIFormItem';
 import ProjectSelectForAdminPage from './ProjectSelectForAdminPage';
@@ -190,8 +191,9 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
   const isFolderTypeLocked = folderType === 'model_project';
   // The folder is a project folder, so its auto-mount is set on that project.
   const supportsAutoMountSetting =
-    baiClient.isManagerVersionCompatibleWith('26.10.0a5') &&
-    !isFolderTypeLocked;
+    baiClient.isManagerVersionCompatibleWith(
+      AUTO_MOUNT_SETTING_MANAGER_VERSION,
+    ) && !isFolderTypeLocked;
   // A personal project's folder auto-mounts for the user, any other for its project.
   const isPersonalTarget =
     !!effectiveProject && effectiveProject.id === personalProject?.id;
