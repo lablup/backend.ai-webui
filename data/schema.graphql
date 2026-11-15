@@ -16113,6 +16113,21 @@ type Mutation
   """
   createVFolderInProject(projectId: UUID!, input: CreateVFolderInScopeInput!): CreateVFolderV2Payload @join__field(graph: STRAWBERRY)
 
+  """
+  Added in 26.10.0. Auto-mount a vfolder into every session created in a project or by a user. The vfolder must belong to the project, or be owned by the user, and the caller needs the auto-mount create permission on that project or user.
+  """
+  createVfolderAutoMount(input: CreateVFolderAutoMountInput!): CreateVFolderAutoMountPayload @join__field(graph: STRAWBERRY)
+
+  """
+  Added in 26.10.0. Change where and how an auto-mounted vfolder is mounted. Sessions created afterwards follow the change.
+  """
+  updateVfolderAutoMount(input: UpdateVFolderAutoMountInput!): UpdateVFolderAutoMountPayload @join__field(graph: STRAWBERRY)
+
+  """
+  Added in 26.10.0. Mark a vfolder auto-mount deleted. Sessions created afterwards no longer mount it.
+  """
+  deleteVfolderAutoMount(input: DeleteVFolderAutoMountInput!): DeleteVFolderAutoMountPayload @join__field(graph: STRAWBERRY)
+
   """Added in 26.4.2. Soft-delete a virtual folder (move to trash)."""
   deleteVfolderV2(vfolderId: UUID!): DeleteVFolderV2Payload @join__field(graph: STRAWBERRY)
 
@@ -22349,6 +22364,11 @@ type Query
     limit: Int = null
     offset: Int = null
   ): VFolderConnection @join__field(graph: STRAWBERRY)
+
+  """
+  Added in 26.10.0. Page through the vfolder auto-mounts of the named projects and users, combined with OR. Every project is authorized before the read runs. Auto-mounts marked deleted are left out unless the filter names `deletedAt`.
+  """
+  scopedVfolderAutoMounts(scope: VFolderAutoMountScope!, filter: VFolderAutoMountFilter = null, orderBy: [VFolderAutoMountOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): VFolderAutoMountConnection @join__field(graph: STRAWBERRY)
 
   """
   Added in 26.9.0. Page through the virtual folders the named scopes reach, combined with OR. Every scope is authorized before the read runs.

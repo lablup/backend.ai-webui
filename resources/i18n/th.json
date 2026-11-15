@@ -4147,6 +4147,7 @@
     "AIAgents": "เอเจนต์ AI",
     "ApplyThemeToDomain": "นำธีมไปใช้กับโดเมน",
     "ApplyThemeToDomainDesc": "ธีมนี้จะถูกนำไปใช้กับผู้ใช้ทุกคนในโดเมนนี้",
+    "AutoMount": "โฟลเดอร์เมานต์อัตโนมัติ",
     "AutomaticUpdateCheck": "ตรวจสอบการอัปเดตอัตโนมัติ",
     "BetaFeatures": "คุณสมบัติเบต้า",
     "BootstrapScriptDeleted": "ลบสคริปต์บูตสแตรปแล้ว",

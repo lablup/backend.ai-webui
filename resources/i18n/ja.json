@@ -4163,6 +4163,7 @@
     "AIAgents": "AIエージェント",
     "ApplyThemeToDomain": "ドメインにテーマを適用",
     "ApplyThemeToDomainDesc": "このテーマはこのドメインのすべてのユーザーに適用されます。",
+    "AutoMount": "自動マウントフォルダ",
     "AutomaticUpdateCheck": "自動更新チェック",
     "BetaFeatures": "ベータ機能",
     "BootstrapScriptDeleted": "ブートストラップ スクリプトが削除されました",

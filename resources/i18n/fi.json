@@ -4161,6 +4161,7 @@
     "AIAgents": "Tekoälyagentit",
     "ApplyThemeToDomain": "Käytä teemaa toimialueella",
     "ApplyThemeToDomainDesc": "Tätä teemaa käytetään kaikille tämän toimialueen käyttäjille.",
+    "AutoMount": "Automaattisesti liitettävät kansiot",
     "AutomaticUpdateCheck": "Automaattinen päivityksen tarkistus",
     "BetaFeatures": "Beta-ominaisuudet",
     "BootstrapScriptDeleted": "Bootstrap-skripti poistettu",

@@ -11,11 +11,15 @@
 import { ConcreteRequest } from 'relay-runtime';
 import { FragmentRefs, Result } from "relay-runtime";
 export type PermissionBit = "CREATE" | "HARD_DELETE" | "READ" | "SOFT_DELETE" | "UPDATE" | "%future added value";
+export type VFolderOwnershipType = "GROUP" | "USER" | "%future added value";
 export type FolderExplorerModalV2Query$variables = {
   vfolderId: string;
 };
 export type FolderExplorerModalV2Query$data = {
   readonly vfolderNode: Result<{
+    readonly accessControl: {
+      readonly ownershipType: VFolderOwnershipType;
+    };
     readonly entityId: string;
     readonly host: string;
     readonly id: string;
@@ -24,6 +28,7 @@ export type FolderExplorerModalV2Query$data = {
     };
     readonly ownership: {
       readonly projectId: string | null | undefined;
+      readonly userId: string | null | undefined;
     };
     readonly permissions: ReadonlyArray<PermissionBit>;
     readonly unmanagedPath: string | null | undefined;
@@ -97,6 +102,20 @@ v8 = {
   "args": null,
   "kind": "ScalarField",
   "name": "projectId",
+  "storageKey": null
+},
+v10 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "userId",
+  "storageKey": null
+},
+v11 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "ownershipType",
   "storageKey": null
 };
 return {
@@ -277,13 +296,6 @@ return {
                 "alias": null,
                 "args": null,
                 "kind": "ScalarField",
-                "name": "userId",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
                 "name": "creatorId",
                 "storageKey": null
               },
@@ -322,6 +334,25 @@ return {
                   },
                   (v4/*: any*/)
                 ],
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "VFolderAccessControlInfo",
+            "kind": "LinkedField",
+            "name": "accessControl",
+            "plural": false,
+            "selections": [
+              (v11/*: any*/),
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "permission",
                 "storageKey": null
               }
             ],

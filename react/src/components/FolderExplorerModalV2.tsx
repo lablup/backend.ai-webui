@@ -209,6 +209,10 @@ const useFolderExplorerQuery = (vfolderID: string) => {
           permissions @since(version: "26.9.0rc1")
           ownership {
             projectId
+            userId
+          }
+          accessControl {
+            ownershipType
           }
           ...FolderExplorerModalV2OwnershipFragment
           ...FolderExplorerHeaderV2Fragment
@@ -356,6 +360,26 @@ const FolderExplorerBody: React.FC<{
   const [activeTab, setActiveTab] = useState<'metadata' | 'auditLog'>(
     'metadata',
   );
+  // A project folder auto-mounts for its project, a user folder for its owner.
+  // A user folder still carries its personal project's id, so read the type.
+  const autoMountScope =
+    baiClient.isManagerVersionCompatibleWith(
+      AUTO_MOUNT_SETTING_MANAGER_VERSION,
+    ) && vfolderNode
+      ? vfolderNode.accessControl?.ownershipType === 'USER'
+        ? vfolderNode.ownership?.userId
+          ? {
+              scopeType: 'USER' as const,
+              scopeId: vfolderNode.ownership.userId,
+            }
+          : null
+        : vfolderNode.ownership?.projectId
+          ? {
+              scopeType: 'PROJECT' as const,
+              scopeId: vfolderNode.ownership.projectId,
+            }
+          : null
+      : null;
   const [auditLogQueryRef, loadAuditLogQuery] =
     useQueryLoader<ScopedAuditLogQueryType>(ScopedAuditLogQuery);
 
