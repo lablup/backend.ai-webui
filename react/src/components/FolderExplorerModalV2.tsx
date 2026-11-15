@@ -30,6 +30,7 @@ import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useIsProjectAgnosticPage } from '../hooks/useIsProjectAgnosticPage';
 import { useMergedAllowedStorageHostPermission } from '../hooks/useMergedAllowedStorageHostPermission';
 import { useEffectiveLoginConfig } from '../hooks/useWebUIConfig';
+import { AUTO_MOUNT_SETTING_MANAGER_VERSION } from '../hooks/useVFolderAutoMountsByVFolderId';
 import { toProjectContext } from '../types/projectContext';
 import BAIErrorBoundary from './BAIErrorBoundary';
 import BAITabs from './BAITabs';
@@ -39,6 +40,7 @@ import type { RcFile } from './FileUploadManager';
 import FolderExplorerHeaderV2 from './FolderExplorerHeaderV2';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import ScopedAuditLog, { ScopedAuditLogQuery } from './ScopedAuditLog';
+import VFolderAutoMountMetadataSection from './VFolderAutoMountMetadataSection';
 import VFolderNodeDescriptionV2 from './VFolderNodeDescriptionV2';
 import VFolderTextFileEditorModal from './VFolderTextFileEditorModal';
 import { Banner } from '@lablup/ui-common/Banner';
@@ -208,6 +210,10 @@ const useFolderExplorerQuery = (vfolderID: string) => {
           permissions @since(version: "26.9.0rc1")
           ownership {
             projectId
+            userId
+          }
+          accessControl {
+            ownershipType
           }
           ...FolderExplorerModalV2OwnershipFragment
           ...FolderExplorerHeaderV2Fragment
@@ -354,6 +360,26 @@ const FolderExplorerBody: React.FC<{
   const [activeTab, setActiveTab] = useState<'metadata' | 'auditLog'>(
     'metadata',
   );
+  // A project folder auto-mounts for its project, a user folder for its owner.
+  // A user folder still carries its personal project's id, so read the type.
+  const autoMountScope =
+    baiClient.isManagerVersionCompatibleWith(
+      AUTO_MOUNT_SETTING_MANAGER_VERSION,
+    ) && vfolderNode
+      ? vfolderNode.accessControl?.ownershipType === 'USER'
+        ? vfolderNode.ownership?.userId
+          ? {
+              scopeType: 'USER' as const,
+              scopeId: vfolderNode.ownership.userId,
+            }
+          : null
+        : vfolderNode.ownership?.projectId
+          ? {
+              scopeType: 'PROJECT' as const,
+              scopeId: vfolderNode.ownership.projectId,
+            }
+          : null
+      : null;
   const [auditLogQueryRef, loadAuditLogQuery] =
     useQueryLoader<ScopedAuditLogQueryType>(ScopedAuditLogQuery);
 
@@ -562,11 +588,25 @@ const FolderExplorerBody: React.FC<{
           key: 'metadata',
           label: t('explorer.Metadata'),
           children: (
-            <div style={infoPanelPanelStyle}>
+            <VStack gap={5} align="stretch" style={infoPanelPanelStyle}>
               {vfolderNode ? (
                 <VFolderNodeDescriptionV2 vfolderNodeFrgmt={vfolderNode} />
               ) : null}
-            </div>
+              {autoMountScope && vfolderNode ? (
+                <BAIErrorBoundary>
+                  <Suspense fallback={<BAISkeleton rows={3} />}>
+                    <VFolderAutoMountMetadataSection
+                      scopeType={autoMountScope.scopeType}
+                      scopeId={autoMountScope.scopeId}
+                      vfolder={{
+                        id: vfolderNode.entityId,
+                        name: vfolderNode.metadata?.name ?? '',
+                      }}
+                    />
+                  </Suspense>
+                </BAIErrorBoundary>
+              ) : null}
+            </VStack>
           ),
         },
         {
