@@ -8,10 +8,13 @@
 import type { LoginHistoryQuery as LoginHistoryQueryType } from '../__generated__/LoginHistoryQuery.graphql';
 import type { LoginSessionQuery as LoginSessionQueryType } from '../__generated__/LoginSessionQuery.graphql';
 import type { UserSettingsCategory } from '../helper/userSettingsModal';
+import { useSuspendedBackendaiClient } from '../hooks';
+import { useCurrentUserInfo } from '../hooks/backendai';
 import ErrorLogList from './ErrorLogList';
 import LoginHistory, { LoginHistoryQuery } from './LoginHistory';
 import LoginSession, { LoginSessionQuery } from './LoginSession';
 import UserSettingsGeneralPane from './UserSettingsGeneralPane';
+import VFolderAutoMountList from './VFolderAutoMountList';
 import { BAISkeleton } from 'backend.ai-ui';
 import React, { useEffect, useEffectEvent } from 'react';
 import { useQueryLoader } from 'react-relay';
@@ -20,6 +23,12 @@ const UserSettingsModalPane: React.FC<{
   category: UserSettingsCategory;
 }> = ({ category }) => {
   'use memo';
+  const baiClient = useSuspendedBackendaiClient();
+  const [currentUser] = useCurrentUserInfo();
+  // The rail hides the auto-mount category without this manager version; this
+  // fallback covers a direct `?settings=auto-mount` restore.
+  const supportsAutoMount =
+    baiClient.isManagerVersionCompatibleWith('26.10.0a5');
   const [loginSessionQueryRef, loadLoginSessionQuery] =
     useQueryLoader<LoginSessionQueryType>(LoginSessionQuery);
   const [loginHistoryQueryRef, loadLoginHistoryQuery] =
@@ -58,6 +67,12 @@ const UserSettingsModalPane: React.FC<{
 
   if (category === 'general') {
     return <UserSettingsGeneralPane />;
+  }
+  if (category === 'auto-mount') {
+    if (!supportsAutoMount) {
+      return <UserSettingsGeneralPane />;
+    }
+    return <VFolderAutoMountList scopeType="USER" scopeId={currentUser.uuid} />;
   }
   if (category === 'logs') {
     return <ErrorLogList />;
