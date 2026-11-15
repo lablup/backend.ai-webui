@@ -489,9 +489,11 @@ export const deriveAllocationPreset = (
   { valueEdited = false } = {},
 ): string | null | undefined => {
   const label = values.allocationPreset;
-  if (ctx.mode !== 'free' || !label || _.isUndefined(ctx.slotsInRG)) {
+  if (ctx.mode !== 'free' || _.isUndefined(ctx.slotsInRG)) {
     return label;
   }
+  // A form prefilled with `resource` starts with no label; an edit makes it custom.
+  if (!label) return valueEdited ? 'custom' : label;
   const resource = values.resource ?? {};
   if (label === 'custom') {
     if (!valueEdited || !ctx.enableResourcePresets) return label;
