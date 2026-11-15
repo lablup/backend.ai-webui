@@ -1,24 +1,11 @@
 import { type Browser, test } from "@e2e-dev/web";
 import { expect } from "e2e";
+import { skipAdminViewSwitchTours } from "../../utils/admin-view-tours";
 import {
   findNotInstalledEnvironment,
   isImageInstalled,
-} from "../utils/session-image";
-import { overrideWebUISettings } from "../utils/webui-settings";
-
-// The first-use tours on the user menu cover the header and the side menu.
-const seedToursSeen = (browser: Browser) =>
-  browser.addInitScript(() => {
-    for (const key of [
-      "has_opened_tour_back_to_user_view",
-      "has_opened_tour_back_to_admin_settings",
-    ]) {
-      window.localStorage.setItem(
-        `backendaiwebui.settings.user.${key}`,
-        "true",
-      );
-    }
-  });
+} from "../../utils/session-image";
+import { overrideWebUISettings } from "../../utils/webui-settings";
 
 const clientConfig = (browser: Browser, key: string) =>
   browser
@@ -36,7 +23,7 @@ test(
     await overrideWebUISettings(browser, {
       menuBlocklist: ["start", "deployments", "session"],
     });
-    await seedToursSeen(browser);
+    await skipAdminViewSwitchTours(browser);
 
     const sideMenu = screen.getByRole("navigation", "Side navigation");
     const entries = {
@@ -95,7 +82,7 @@ test(
       menuBlocklist: [],
       showNonInstalledImages: true,
     });
-    await seedToursSeen(browser);
+    await skipAdminViewSwitchTours(browser);
 
     await app.open("/start");
     await expect(screen.getByTestId("user-dropdown-button")).toBeVisible({

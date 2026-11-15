@@ -1,7 +1,11 @@
-import { e2ePartFilter, resolveE2EParts } from "./e2e/e2e-parts";
+import {
+  e2ePartFilter,
+  e2eRunLine,
+  resolveE2EEnvFile,
+  resolveE2EParts,
+} from "./e2e/e2e-parts";
 import { defineConfig, devices } from "@playwright/test";
 import * as dotenv from "dotenv";
-import * as fs from "fs";
 import * as path from "path";
 
 /*
@@ -13,20 +17,9 @@ import * as path from "path";
 const requestedPart = process.env.E2E_PART;
 const requestedEnvFile = process.env.E2E_ENV_FILE;
 const e2eParts = resolveE2EParts(requestedPart);
-const defaultEnvFile = "./e2e/envs/.env.playwright";
-const adminEnvFile = "./e2e/envs/.env.playwright.admin";
-const includesAdmin = e2eParts.includes("admin");
-if (!requestedEnvFile && includesAdmin && !fs.existsSync(adminEnvFile)) {
-  throw new Error(
-    `E2E_PART=${e2eParts.join(",")} needs ${adminEnvFile} (copy ` +
-      `e2e/envs/.env.playwright.admin.sample) or an explicit E2E_ENV_FILE`,
-  );
-}
-const e2eEnvFile =
-  requestedEnvFile || (includesAdmin ? adminEnvFile : defaultEnvFile);
-if (requestedEnvFile && !fs.existsSync(e2eEnvFile)) {
-  throw new Error(`E2E_ENV_FILE not found: ${e2eEnvFile}`);
-}
+const e2eEnvFile = resolveE2EEnvFile(e2eParts, requestedEnvFile, {
+  root: __dirname,
+});
 dotenv.config({ path: e2eEnvFile, override: true });
 // Workers re-evaluate this file, so an env file must not change the selection.
 for (const [key, value] of [
@@ -37,17 +30,14 @@ for (const [key, value] of [
   else process.env[key] = value;
 }
 if (!process.env.TEST_WORKER_INDEX && (requestedPart || requestedEnvFile)) {
-  const host = (url?: string) => {
-    try {
-      return new URL(url ?? "").host;
-    } catch {
-      return "(unset)";
-    }
-  };
   console.error(
-    `[e2e] part=${e2eParts.join(",")} env=${e2eEnvFile}` +
-      ` webui=${host(process.env.E2E_WEBUI_ENDPOINT)}` +
-      ` webserver=${host(process.env.E2E_WEBSERVER_ENDPOINT)}`,
+    e2eRunLine(
+      e2eParts,
+      e2eEnvFile,
+      __dirname,
+      process.env.E2E_WEBUI_ENDPOINT,
+      process.env.E2E_WEBSERVER_ENDPOINT,
+    ),
   );
 }
 
