@@ -27,7 +27,6 @@ import {
   resolvePublicConfigTarget,
 } from './publicAppConfig';
 import {
-  applyWebUISettings,
   readDomainWebUISettings,
   WEBUI_SETTINGS_CONFIG_KEY,
 } from './webuiSettings';
@@ -374,10 +373,15 @@ export async function connectViaGQL(
   // The domain's `settings` document overrides the base config for the keys
   // it carries (#10436).
   const domainSettings = readDomainWebUISettings(response?.myAppConfigs);
-  const effectiveCfg = applyWebUISettings(cfg, domainSettings, 'domain');
   const { jotaiStore } = await import('../components/DefaultProviders');
-  const { loginConfigState } = await import('../hooks/useWebUIConfig');
-  jotaiStore.set(loginConfigState, effectiveCfg);
+  const { baseLoginConfigState, domainWebUISettingsState, loginConfigState } =
+    await import('../hooks/useWebUIConfig');
+  // `cfg` is the effective config callers read from the store; it seeds the base only before config.toml loaded.
+  if (!jotaiStore.get(baseLoginConfigState)) {
+    jotaiStore.set(baseLoginConfigState, cfg);
+  }
+  jotaiStore.set(domainWebUISettingsState, domainSettings);
+  const effectiveCfg = jotaiStore.get(loginConfigState) ?? cfg;
 
   applyConfigToClient({
     ...effectiveCfg,
@@ -596,8 +600,12 @@ export async function loadConfigFromWebServer(
 
   // Re-process the merged config
   const { refreshConfigFromToml } = await import('./loginConfig');
-  const { loginConfigState, autoLogoutState } =
-    await import('../hooks/useWebUIConfig');
+  const {
+    autoLogoutState,
+    baseLoginConfigState,
+    loginConfigState,
+    publicWebUISettingsState,
+  } = await import('../hooks/useWebUIConfig');
   // `mergedConfig` keeps this page's own endpoint (the webserver's was
   // stripped above); the public slice belongs to the server being joined.
   const publicTarget = resolvePublicConfigTarget({
@@ -607,12 +615,12 @@ export async function loadConfigFromWebServer(
   const publicSlice = await fetchPublicDomainConfigOnce(publicTarget);
   const { applyJoinedServerAppearance } = await import('./customThemeConfig');
   await applyJoinedServerAppearance(publicSlice, publicTarget);
-  const effectiveLoginConfig = applyWebUISettings(
-    refreshConfigFromToml(mergedConfig),
+  jotaiStore.set(baseLoginConfigState, refreshConfigFromToml(mergedConfig));
+  jotaiStore.set(
+    publicWebUISettingsState,
     publicSlice?.[WEBUI_SETTINGS_CONFIG_KEY],
-    'public',
   );
-  jotaiStore.set(loginConfigState, effectiveLoginConfig);
+  const effectiveLoginConfig = jotaiStore.get(loginConfigState)!;
   jotaiStore.set(autoLogoutState, effectiveLoginConfig.autoLogout);
   // loginPluginState stays on the bundled value; whether the joined
   // server's login plugin should load is still open (#10872).

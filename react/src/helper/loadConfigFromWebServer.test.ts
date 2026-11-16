@@ -15,13 +15,19 @@ vi.mock('../hooks/useWebUIConfig', () => ({
   fetchAndParseConfig: vi.fn(),
   fetchAppConfigOnce: vi.fn(),
   rawConfigState: Symbol('rawConfigState'),
+  baseLoginConfigState: Symbol('baseLoginConfigState'),
+  publicWebUISettingsState: Symbol('publicWebUISettingsState'),
   loginConfigState: Symbol('loginConfigState'),
   autoLogoutState: Symbol('autoLogoutState'),
   loginPluginState: Symbol('loginPluginState'),
 }));
 vi.mock('../components/DefaultProviders', () => ({
   jotaiStore: {
-    get: (atom: unknown) => store.get(atom),
+    // The effective config is derived in the real module; these tests only read rawConfigState.
+    get: (atom: unknown) =>
+      String(atom) === 'Symbol(loginConfigState)'
+        ? { autoLogout: false }
+        : store.get(atom),
     set: (atom: unknown, value: unknown) => store.set(atom, value),
   },
 }));
