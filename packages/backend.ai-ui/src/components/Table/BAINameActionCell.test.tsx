@@ -240,4 +240,40 @@ describe('BAINameActionCell — minTitleWidth reserves width for the title', () 
     expect(screen.queryByRole('button', { name: /Delete/ })).toBeNull();
     expect(screen.getAllByRole('button')).toHaveLength(1);
   });
+
+  it.each(['always', 'hover'] as const)(
+    'keeps a single action as its own button instead of a More button of the same width (showActions=%s)',
+    (showActions) => {
+      render(
+        <BAINameActionCell
+          title="label-a, label-b"
+          showActions={showActions}
+          minTitleWidth={NARROW_CELL_WIDTH}
+          actions={[{ key: 'edit-labels', title: 'Edit labels' }]}
+        />,
+      );
+
+      expect(
+        screen.getByRole('button', { name: /Edit labels/ }),
+      ).toBeInTheDocument();
+      expect(screen.getAllByRole('button')).toHaveLength(1);
+    },
+  );
+
+  it('still folds a single action when a menu-only action already shows the More button', () => {
+    render(
+      <BAINameActionCell
+        title="a-very-long-file-name.tar.gz"
+        showActions="always"
+        minTitleWidth={NARROW_CELL_WIDTH}
+        actions={[
+          { key: 'download', title: 'Download' },
+          { key: 'delete', title: 'Delete', showInMenu: 'always' },
+        ]}
+      />,
+    );
+
+    expect(screen.queryByRole('button', { name: /Download/ })).toBeNull();
+    expect(screen.getAllByRole('button')).toHaveLength(1);
+  });
 });

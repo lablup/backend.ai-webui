@@ -286,9 +286,14 @@ const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
         menuOnlyActions.length > 0 ? MORE_BUTTON_WIDTH + ACTIONS_GAP : 0;
       const availableWidth =
         containerWidth - minTitleReserve - moreButtonReserve;
+      // Folding one action alone only swaps its button for an equally wide More button.
+      const settle = (count: number) =>
+        menuOnlyActions.length === 0 && autoActionCount - count === 1
+          ? autoActionCount
+          : count;
 
       if (availableWidth <= 0) {
-        setVisibleCount(Math.max(0, minVisibleActions));
+        setVisibleCount(settle(Math.max(0, minVisibleActions)));
         return;
       }
 
@@ -317,7 +322,7 @@ const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
         }
       }
 
-      setVisibleCount(Math.max(count, minVisibleActions));
+      setVisibleCount(settle(Math.max(count, minVisibleActions)));
     },
   );
 

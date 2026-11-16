@@ -16,7 +16,7 @@ export const docs = {
   ],
   usage: {
     description:
-      'The name column of a table row: an optional leading icon, the row title (plain text, a react-router link via `to`, or a click handler via `onTitleClick`), and a set of row actions on the right. The actions render as small icon buttons and collapse into an Astryx DropdownMenu (…) as the column narrows — a ResizeObserver measures the cell and moves the ones that no longer fit into the menu, so a narrow table never clips its actions. An action carrying `popConfirm` is gated by an anchored Astryx Popover confirm while it is a visible button, and falls back to `modal.confirm` with the same copy once it overflows into the menu.',
+      'The name column of a table row: an optional leading icon, the row title (plain text, a react-router link via `to`, or a click handler via `onTitleClick`), and a set of row actions on the right. The actions render as small icon buttons and collapse into an Astryx DropdownMenu (…) as the column narrows — a ResizeObserver measures the cell and moves the ones that no longer fit into the menu, so a narrow table never clips its actions. A lone action never folds on its own, because the More button would take the same width. An action carrying `popConfirm` is gated by an anchored Astryx Popover confirm while it is a visible button, and falls back to `modal.confirm` with the same copy once it overflows into the menu.',
     bestPractices: [
       {
         guidance: true,
