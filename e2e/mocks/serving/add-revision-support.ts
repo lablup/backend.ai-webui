@@ -172,15 +172,27 @@ export async function selectAvailableResourcePreset(
   modal: Locator,
 ): Promise<void> {
   const trigger = modal.getByRole('button', { name: 'Resource Presets' });
+  // Opening the select refetches availability; rows are enabled until it lands.
+  const refetched = page
+    .waitForResponse(
+      (response) =>
+        (response.request().postData() ?? '').includes(
+          'query useSessionResourcePresetsQuery',
+        ),
+      { timeout: 15000 },
+    )
+    .catch(() => undefined);
   await trigger.click();
-  const option = page
-    .getByRole('listbox')
+  await refetched;
+  const listbox = page.getByRole('listbox').filter({ visible: true });
+  const option = listbox
     .getByRole('option', { disabled: false })
     .filter({ hasNotText: /^(Custom allocation|Minimum requirements)/ })
     .first();
   await expect(option).toBeVisible();
   const name = (await option.innerText()).split('\n')[0].trim();
   await option.click();
+  await expect(listbox).toHaveCount(0);
   await expect(trigger).toContainText(name);
 }
 
