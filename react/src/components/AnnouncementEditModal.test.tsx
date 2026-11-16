@@ -28,14 +28,16 @@ vi.mock('../hooks', async (importOriginal) => ({
 }));
 vi.mock('../hooks/useAppConfig', () => ({
   useScopedAppConfig: () => ({
-    domain: {
-      domainConfig: {
-        settings: {
-          announcement: { enabled: true, title: 'hello', body: 'world' },
+    scopedAppConfig: {
+      domain: {
+        domainConfig: {
+          settings: {
+            announcement: { enabled: true, title: 'hello', body: 'world' },
+          },
         },
       },
     },
-    upsert: async () => undefined,
+    upsertScopedAppConfig: async () => ({}),
   }),
 }));
 

@@ -33,42 +33,42 @@ const SavedWebUISettingList: React.FC = () => {
   const { id: domainId, name: domainName } = useCurrentDomain();
   const domainScope = { type: 'domain', id: domainId } as const;
   // One request for both documents the page edits.
-  const config = useScopedAppConfig([
+  const { scopedAppConfig, upsertScopedAppConfig } = useScopedAppConfig([
     { scope: domainScope, configNames: ['domainConfig'] },
     { scope: PUBLIC_SCOPE, configNames: ['publicConfigByDomain'] },
   ]);
-  const setDomainLayer = useSetAtom(domainWebUISettingsState);
-  const setPublicLayer = useSetAtom(publicWebUISettingsState);
+  const setDomainWebUISettings = useSetAtom(domainWebUISettingsState);
+  const setPublicWebUISettings = useSetAtom(publicWebUISettingsState);
   return (
     <WebUISettingList
       savedDomainSettings={
-        config.domain?.domainConfig?.[WEBUI_SETTINGS_CONFIG_KEY]
+        scopedAppConfig.domain?.domainConfig?.[WEBUI_SETTINGS_CONFIG_KEY]
       }
       savedPublicSettings={
-        config.public?.publicConfigByDomain?.[domainName]?.[
+        scopedAppConfig.public?.publicConfigByDomain?.[domainName]?.[
           WEBUI_SETTINGS_CONFIG_KEY
         ]
       }
       setDomainSettings={async (value) => {
-        const written = await config.upsert({
+        const writtenDocuments = await upsertScopedAppConfig({
           scope: domainScope,
           configName: 'domainConfig',
           subKey: WEBUI_SETTINGS_CONFIG_KEY,
           value,
         });
-        setDomainLayer(
-          written.domain?.domainConfig?.[WEBUI_SETTINGS_CONFIG_KEY],
+        setDomainWebUISettings(
+          writtenDocuments.domain?.domainConfig?.[WEBUI_SETTINGS_CONFIG_KEY],
         );
       }}
       setPublicSettings={async (value) => {
-        const written = await config.upsert({
+        const writtenDocuments = await upsertScopedAppConfig({
           scope: PUBLIC_SCOPE,
           configName: 'publicConfigByDomain',
           subKey: [domainName, WEBUI_SETTINGS_CONFIG_KEY],
           value,
         });
-        setPublicLayer(
-          written.public?.publicConfigByDomain?.[domainName]?.[
+        setPublicWebUISettings(
+          writtenDocuments.public?.publicConfigByDomain?.[domainName]?.[
             WEBUI_SETTINGS_CONFIG_KEY
           ],
         );

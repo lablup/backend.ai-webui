@@ -525,8 +525,8 @@ export const CSSTokenVariables = () => {
 const DismissSplashOnMount = () => {
   'use memo';
   useSuspendedBackendaiClient();
-  const userConfigFamily = useMyAppConfigFragments(['userConfig']).documents
-    .userConfig?.themeFamily;
+  const userConfigFamily = useMyAppConfigFragments(['userConfig'])
+    .myAppConfigFragments.userConfig?.themeFamily;
   const { setActiveThemeFamily } = useCustomThemeConfig();
   const syncThemeFamilyMirror = useEffectEvent(() => {
     setActiveThemeFamily(

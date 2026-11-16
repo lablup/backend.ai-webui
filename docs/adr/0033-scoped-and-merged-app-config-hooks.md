@@ -5,7 +5,7 @@
 > Unfamiliar terms are collected in the [Glossary](#glossary) at the end.
 
 - `react/src/hooks/useAppConfig.ts` exposes three hooks. `useScopedAppConfig(request)` reads and writes the [raw documents](#glossary) of the scopes the caller names, each as a [scope object](#glossary) `{ type, id }`. `useMyAppConfigFragments(configNames)` reads and writes the signed-in user's own USER documents through the `my*` fields. `useMyAppConfig(configName, subKey)` reads the [merged view](#glossary) and never writes.
-- A write is one upsert per scope. `upsert` builds each whole document from the copy the hook holds, lets the upsert response update that copy, and resolves with the documents it wrote.
+- A write is one upsert per scope. `upsertScopedAppConfig` and `upsertMyAppConfigFragments` build each whole document from the copy the hook holds, let the upsert response update that copy, and resolve with the documents they wrote.
 - A hook renders the store's copy first and reads the documents once more on every mount, so the write base is the document as it stood when the screen mounted. A change that the CLI, another admin, or another tab makes after that is overwritten by the next write.
 - `loginConfigState` is a derived atom over three atoms: the base config, the public `settings` document, and the domain `settings` document. System Settings sets the layer it wrote, and a subscription copies every change into `baiClient._config`.
 
@@ -67,15 +67,15 @@ flowchart LR
 
 | Hook                                   | Reads                                                                    | Writes                             | Fetch policy                                                     |
 | -------------------------------------- | ------------------------------------------------------------------------ | ---------------------------------- | ---------------------------------------------------------------- |
-| `useScopedAppConfig(request)`          | `scopedAppConfigFragmentsByNames` once per requested scope, in one query | `upsert(changes)`, scoped mutation | `store-and-network`, plus one `network-only` read on every mount |
-| `useMyAppConfigFragments(configNames)` | `myAppConfigFragmentsByNames`                                            | `upsert(changes)`, `my*` mutation  | `store-and-network`, plus one `network-only` read on every mount |
+| `useScopedAppConfig(request)`          | `scopedAppConfigFragmentsByNames` once per requested scope, in one query | `upsertScopedAppConfig(changes)`, scoped mutation | `store-and-network`, plus one `network-only` read on every mount |
+| `useMyAppConfigFragments(configNames)` | `myAppConfigFragmentsByNames`                                            | `upsertMyAppConfigFragments(changes)`, `my*` mutation | `store-and-network`, plus one `network-only` read on every mount |
 | `useMyAppConfig(configName, subKey?)`  | `myAppConfigs` for one config name per request                           | none                               | `store-or-network`                                               |
 
 - **Lifecycle**: every hook suspends, so a caller sits under a `Suspense` boundary, and every hook runs only after sign-in.
 - **Scope object**: `AppConfigScope` is `{ type: 'public' }` or `{ type: 'domain' | 'user'; id: string }`. The caller passes the domain id (`useCurrentDomain().id`) or the user id; `PUBLIC_SCOPE` is the exported PUBLIC object.
 - **Request shape**: `ScopedAppConfigRequest` is one `{ scope, configNames }` item or an array of them, with at most one item per scope type. `useScopedAppConfig` throws during render when a type appears twice, because the query holds one field per type.
 - **One query**: `useAppConfigScopedQuery` holds three aliased `scopedAppConfigFragmentsByNames` fields (`public`, `domain`, `user`). Each carries `@skip(if:)` and `@catch(to: NULL)`. A skipped field gets `{ scopeType }` with no `scopeId`, which the input type allows.
-- **Return shape**: `useScopedAppConfig` returns `{ public, domain, user, upsert }`. Each scope is a map from the requested names to the raw document, `undefined` for a name the scope holds no fragment for, and the whole scope is `undefined` when it was not requested, was requested with no names, or was not readable. `useMyAppConfigFragments` returns `{ documents, upsert }` with the same map; its query has no `@catch`, so a read error reaches the error boundary.
+- **Return shape**: `useScopedAppConfig` returns `{ scopedAppConfig: { public, domain, user }, upsertScopedAppConfig }`. Each scope in `scopedAppConfig` is a map from the requested names to the raw document, `undefined` for a name the scope holds no fragment for, and the whole scope is `undefined` when it was not requested, was requested with no names, or was not readable. `useMyAppConfigFragments` returns `{ myAppConfigFragments, upsertMyAppConfigFragments }`, where `myAppConfigFragments` is the same map; its query has no `@catch`, so a read error reaches the error boundary.
 - **Own USER scope**: every screen that reads or writes only the signed-in user's `userConfig` uses `useMyAppConfigFragments`. `useScopedAppConfig` with a `user` scope is for a document of a user the caller names.
 - **Read on every mount**: `useLazyLoadQuery` does not fetch a query that another mounted reader still retains, such as `MainLayout`'s `userConfig` read. An effect in each raw-document hook therefore reads the documents with `network-only` every time the screen mounts.
 - **Merged view per name**: `useMyAppConfig` asks `myAppConfigs` for its one config name, so a `domainConfig` reader reuses the `myAppConfigs(["domainConfig"])` result that the sign-in query (`loginSessionAuth.ts`) or `AnnouncementBanner` wrote, while the store still holds it. `MergedAppConfigName` limits `configName` to `domainConfig` and `publicConfigByDomain`.
@@ -83,13 +83,13 @@ flowchart LR
 
 ### 2. One upsert per scope
 
-- **Change shape**: `AppConfigChange` is `{ scope, configName, subKey, value }`; `subKey` is a lodash path (`string | string[]`) into the document, where `scope` is the scope object the hook was called with. `MyAppConfigChange` is the same without `scope`. `value` is the next value, or a function of the current value at `subKey`; `undefined` removes the key. `upsert` takes one change or an array.
-- **Write base**: `upsert` groups the changes by scope. For each scope it waits for a read of the hook's query still in flight, takes the documents from the Relay store, applies the changes in order with `applySubKey`, and sends the touched documents as one mutation. When Relay has already collected the records, it reads them from the network instead.
-- **Refused changes**: `upsert` checks every change before it sends anything, and throws for a name the hook did not request or a scope id that differs from the requested one.
-- **Unreadable scope**: `upsert` throws when a scope came back unreadable, because the base would be empty. That check runs when the scope's turn comes, so scopes earlier in the same call are already written.
-- **Result**: `upsert` resolves with the documents it wrote: `WrittenAppConfigDocuments` keyed by scope type from `useScopedAppConfig`, a map of names from `useMyAppConfigFragments`. A GraphQL error rejects the promise with the error messages.
+- **Change shape**: `AppConfigChange` is `{ scope, configName, subKey, value }`, where `scope` is the scope object the hook was called with and `subKey` is a lodash path (`string | string[]`) into the document. `MyAppConfigChange` is the same without `scope`. `value` is the next value, or a function of the current value at `subKey`; `undefined` removes the key. Both upsert functions take one change or an array.
+- **Write base**: each upsert function groups the changes by scope. For each scope it waits for a read of the hook's query still in flight, takes the documents from the Relay store, applies the changes in order with `applySubKey`, and sends the touched documents as one mutation. When Relay has already collected the records, it reads them from the network instead.
+- **Refused changes**: each upsert function checks every change before it sends anything, and throws for a name the hook did not request or a scope id that differs from the requested one.
+- **Unreadable scope**: `upsertScopedAppConfig` throws when a scope came back unreadable, because the base would be empty. That check runs when the scope's turn comes, so scopes earlier in the same call are already written.
+- **Result**: `upsertScopedAppConfig` resolves with `WrittenAppConfigDocuments`, the written documents keyed by scope type; `upsertMyAppConfigFragments` resolves with a map of the written names. A GraphQL error rejects the promise with the error messages.
 - **Store update**: both mutations select `{ id configName config }`, so the response updates the returned records. Each mutation's `updater` points the hook's read field at the returned fragments, which covers a first write and a write after the fragment was purged.
-- **Ordering**: `serializeWrite` keeps one module-level queue per scope, keyed `<SCOPE_TYPE>:<scopeId>` or `USER:me` for `useMyAppConfigFragments`, and queues the writes to that scope, so a write starts after the previous one settles and builds on its response. Several scopes in one `upsert` are written one after another and are not atomic.
+- **Ordering**: `serializeWrite` keeps one module-level queue per scope, keyed `<SCOPE_TYPE>:<scopeId>` or `USER:me` for `useMyAppConfigFragments`, and queues the writes to that scope, so a write starts after the previous one settles and builds on its response. Several scopes in one `upsertScopedAppConfig` call are written one after another and are not atomic.
 
 ### 3. Who reads which view
 
@@ -114,7 +114,7 @@ flowchart LR
 | `domainWebUISettingsState` | the signed-in domain's `domainConfig.settings`                                              | `connectViaGQL`, `WebUISettingsPage`                                                |
 | `loginConfigState`         | derived: the base with the public, then the domain document applied by `applyWebUISettings` | nothing; read only                                                                  |
 
-- **Layer write**: `WebUISettingsPage` sets `domainWebUISettingsState` or `publicWebUISettingsState` from the `settings` document `upsert` returned, so `loginConfigState` and its readers update without a refetch.
+- **Layer write**: `WebUISettingsPage` sets `domainWebUISettingsState` or `publicWebUISettingsState` from the `settings` document `upsertScopedAppConfig` returned, so `loginConfigState` and its readers update without a refetch.
 - **Client mirror**: `syncLoginConfigToClient`, installed once on `jotaiStore` in `DefaultProviders.tsx`, calls `applySettingsToClient` on every change of `loginConfigState` while `baiClient.ready` is true and `baiClient._config` exists. `applySettingsToClient` writes the settings fields only; `applyConfigToClient` still writes the identity and connection fields and sets `ready` at sign-in.
 - **Reload after Apply**: `WebUISettingList` still reloads the page after Apply, because screens that read `baiClient._config` once at mount keep the old value until they mount again.
 

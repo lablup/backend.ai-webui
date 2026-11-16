@@ -42,12 +42,12 @@ const clientState = vi.hoisted(() => ({
 
 vi.mock('../hooks/useAppConfig', () => ({
   useMyAppConfigFragments: () => ({
-    documents: {
+    myAppConfigFragments: {
       userConfig: {
         skip_project_folder_confirm: clientState.skipSharedConfirm,
       },
     },
-    upsert: () => Promise.resolve({}),
+    upsertMyAppConfigFragments: () => Promise.resolve({}),
   }),
 }));
 

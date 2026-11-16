@@ -74,8 +74,9 @@ export const useDashboardBoards = (
   const { message } = App.useApp();
   const { getErrorMessage } = useErrorMessageResolver();
   const domainName = useCurrentDomainValue();
-  const userConfig = useMyAppConfigFragments(['userConfig']);
-  const storedDashboard = userConfig.documents.userConfig?.dashboard as
+  const { myAppConfigFragments, upsertMyAppConfigFragments } =
+    useMyAppConfigFragments(['userConfig']);
+  const storedDashboard = myAppConfigFragments.userConfig?.dashboard as
     Record<string, unknown> | undefined;
   const domainTemplates = useMyAppConfig('domainConfig', 'dashboardTemplates');
   const publicTemplates = useMyAppConfig('publicConfigByDomain', [
@@ -115,7 +116,7 @@ export const useDashboardBoards = (
           { update, resolve: resolveStored, keep },
         ] of batch) {
           // Replayed on the latest stored document, so this tab's earlier writes survive.
-          await userConfig.upsert({
+          await upsertMyAppConfigFragments({
             configName: 'userConfig',
             subKey: ['dashboard', writtenPage],
             value: (stored: unknown) => {

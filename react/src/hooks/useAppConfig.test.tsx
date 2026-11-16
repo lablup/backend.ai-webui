@@ -139,13 +139,15 @@ describe('useScopedAppConfig', () => {
       skipPublic: false,
       skipUser: true,
     });
-    expect(result.current.domain).toEqual({
+    expect(result.current.scopedAppConfig.domain).toEqual({
       domainConfig: { settings: { a: 1 } },
     });
-    expect(result.current.public?.publicConfigByDomain).toEqual({
-      default: { b: 2 },
-    });
-    expect(result.current.user).toBeUndefined();
+    expect(result.current.scopedAppConfig.public?.publicConfigByDomain).toEqual(
+      {
+        default: { b: 2 },
+      },
+    );
+    expect(result.current.scopedAppConfig.user).toBeUndefined();
   });
 
   it('writes one domain slice with a single upsert and keeps other domains', async () => {
@@ -163,7 +165,7 @@ describe('useScopedAppConfig', () => {
     );
     let pending!: Promise<unknown>;
     act(() => {
-      pending = result.current.upsert({
+      pending = result.current.upsertScopedAppConfig({
         scope: PUBLIC,
         configName: 'publicConfigByDomain',
         subKey: ['default', 'appearance'],
@@ -185,7 +187,8 @@ describe('useScopedAppConfig', () => {
     ]);
     expect(operationsNamed(environment, 'useAppConfigScopedQuery')).toEqual([]);
     expect(
-      result.current.public?.publicConfigByDomain?.default.appearance,
+      result.current.scopedAppConfig.public?.publicConfigByDomain?.default
+        .appearance,
     ).toEqual({ brand: 'new' });
   });
 
@@ -200,7 +203,7 @@ describe('useScopedAppConfig', () => {
     );
     let pending!: Promise<unknown>;
     act(() => {
-      pending = result.current.upsert([
+      pending = result.current.upsertScopedAppConfig([
         {
           scope: USER,
           configName: 'userConfig',
@@ -235,13 +238,13 @@ describe('useScopedAppConfig', () => {
     let first!: Promise<unknown>;
     let second!: Promise<unknown>;
     act(() => {
-      first = result.current.upsert({
+      first = result.current.upsertScopedAppConfig({
         scope: USER,
         configName: 'userConfig',
         subKey: 'b',
         value: 2,
       });
-      second = result.current.upsert({
+      second = result.current.upsertScopedAppConfig({
         scope: USER,
         configName: 'userConfig',
         subKey: 'c',
@@ -260,10 +263,12 @@ describe('useScopedAppConfig', () => {
       { scope: USER, configNames: ['userConfig'] },
       { user: { userConfig: null } },
     );
-    expect(result.current.user).toEqual({ userConfig: undefined });
+    expect(result.current.scopedAppConfig.user).toEqual({
+      userConfig: undefined,
+    });
     let first!: Promise<unknown>;
     act(() => {
-      first = result.current.upsert({
+      first = result.current.upsertScopedAppConfig({
         scope: USER,
         configName: 'userConfig',
         subKey: 'themeFamily',
@@ -272,7 +277,9 @@ describe('useScopedAppConfig', () => {
     });
     await answerUpsert(environment, 'created');
     await act(() => first);
-    expect(result.current.user?.userConfig).toEqual({ themeFamily: 'ocean' });
+    expect(result.current.scopedAppConfig.user?.userConfig).toEqual({
+      themeFamily: 'ocean',
+    });
   });
 
   it('follows the fragment the upsert returned when its id changed', async () => {
@@ -282,7 +289,7 @@ describe('useScopedAppConfig', () => {
     );
     let pending!: Promise<unknown>;
     act(() => {
-      pending = result.current.upsert({
+      pending = result.current.upsertScopedAppConfig({
         scope: USER,
         configName: 'userConfig',
         subKey: 'language',
@@ -291,7 +298,7 @@ describe('useScopedAppConfig', () => {
     });
     await answerUpsert(environment, 'recreated');
     await act(() => pending);
-    expect(result.current.user?.userConfig).toEqual({
+    expect(result.current.scopedAppConfig.user?.userConfig).toEqual({
       themeFamily: 'ocean',
       language: 'ko',
     });
@@ -305,12 +312,12 @@ describe('useScopedAppConfig', () => {
       ],
       { domain: 'denied', public: { publicConfigByDomain: { default: {} } } },
     );
-    expect(result.current.domain).toBeUndefined();
-    expect(result.current.public).toEqual({
+    expect(result.current.scopedAppConfig.domain).toBeUndefined();
+    expect(result.current.scopedAppConfig.public).toEqual({
       publicConfigByDomain: { default: {} },
     });
     await expect(
-      result.current.upsert({
+      result.current.upsertScopedAppConfig({
         scope: DOMAIN,
         configName: 'domainConfig',
         subKey: 'settings',
@@ -328,7 +335,7 @@ describe('useScopedAppConfig', () => {
       { user: { userConfig: {} } },
     );
     await expect(
-      result.current.upsert({
+      result.current.upsertScopedAppConfig({
         scope: PUBLIC,
         configName: 'publicConfigByDomain',
         subKey: 'x',
@@ -344,7 +351,7 @@ describe('useScopedAppConfig', () => {
     );
     let pending!: Promise<unknown>;
     act(() => {
-      pending = result.current.upsert({
+      pending = result.current.upsertScopedAppConfig({
         scope: DOMAIN,
         configName: 'domainConfig',
         subKey: ['settings', 'announcement'],
@@ -372,7 +379,7 @@ describe('useScopedAppConfig', () => {
         hooks.useScopedAppConfig({ scope: USER, configNames: ['userConfig'] }),
       { wrapper: wrapperFor(environment) },
     );
-    expect(second.result.current.user?.userConfig).toEqual({
+    expect(second.result.current.scopedAppConfig.user?.userConfig).toEqual({
       themeFamily: 'ocean',
     });
     await waitForOperation(environment, 'useAppConfigScopedQuery');
@@ -408,7 +415,7 @@ describe('useScopedAppConfig', () => {
       scopeId: 'user-9',
     });
     await expect(
-      result.current.upsert({
+      result.current.upsertScopedAppConfig({
         scope: USER,
         configName: 'userConfig',
         subKey: 'x',
@@ -424,7 +431,7 @@ describe('useScopedAppConfig', () => {
     );
     let pending!: Promise<unknown>;
     act(() => {
-      pending = result.current.upsert({
+      pending = result.current.upsertScopedAppConfig({
         scope: DOMAIN,
         configName: 'domainConfig',
         subKey: ['settings', 'b'],
@@ -449,7 +456,7 @@ describe('useScopedAppConfig', () => {
       },
     );
     await expect(
-      result.current.upsert([
+      result.current.upsertScopedAppConfig([
         {
           scope: PUBLIC,
           configName: 'publicConfigByDomain',
@@ -476,7 +483,7 @@ describe('useScopedAppConfig', () => {
     );
     let pending!: Promise<unknown>;
     act(() => {
-      pending = result.current.upsert({
+      pending = result.current.upsertScopedAppConfig({
         scope: PUBLIC,
         configName: 'publicConfigByDomain',
         subKey: ['default', 'appearance'],
@@ -555,13 +562,13 @@ describe('useMyAppConfigFragments', () => {
     const { environment, result } = await mountMine({
       userConfig: { themeFamily: 'ocean', dashboard: { a: 1 } },
     });
-    expect(result.current.documents.userConfig).toEqual({
+    expect(result.current.myAppConfigFragments.userConfig).toEqual({
       themeFamily: 'ocean',
       dashboard: { a: 1 },
     });
     let pending!: Promise<unknown>;
     act(() => {
-      pending = result.current.upsert({
+      pending = result.current.upsertMyAppConfigFragments({
         configName: 'userConfig',
         subKey: ['dashboard', 'b'],
         value: 2,
@@ -586,10 +593,12 @@ describe('useMyAppConfigFragments', () => {
 
   it('links a first write into the read so the next write builds on it', async () => {
     const { environment, result } = await mountMine({ userConfig: null });
-    expect(result.current.documents).toEqual({ userConfig: undefined });
+    expect(result.current.myAppConfigFragments).toEqual({
+      userConfig: undefined,
+    });
     let first!: Promise<unknown>;
     act(() => {
-      first = result.current.upsert({
+      first = result.current.upsertMyAppConfigFragments({
         configName: 'userConfig',
         subKey: 'themeFamily',
         value: 'ocean',
@@ -597,12 +606,12 @@ describe('useMyAppConfigFragments', () => {
     });
     await answerMyUpsert(environment, 'created');
     await act(() => first);
-    expect(result.current.documents.userConfig).toEqual({
+    expect(result.current.myAppConfigFragments.userConfig).toEqual({
       themeFamily: 'ocean',
     });
     let second!: Promise<unknown>;
     act(() => {
-      second = result.current.upsert({
+      second = result.current.upsertMyAppConfigFragments({
         configName: 'userConfig',
         subKey: 'language',
         value: 'ko',
@@ -617,7 +626,7 @@ describe('useMyAppConfigFragments', () => {
   it('refuses a change to a name the hook did not request', async () => {
     const { result } = await mountMine({ userConfig: {} });
     await expect(
-      result.current.upsert({
+      result.current.upsertMyAppConfigFragments({
         configName: 'domainConfig',
         subKey: 'x',
         value: 1,

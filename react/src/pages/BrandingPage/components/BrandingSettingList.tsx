@@ -54,7 +54,7 @@ const BrandingSettingList: React.FC<BrandingSettingListProps> = () => {
   // Saved WHOLE — families included — as this domain's slice of the public
   // document; reads replace wholesale rather than merging (FR-1964).
   const domainName = useCurrentDomainValue();
-  const { upsert } = useScopedAppConfig({
+  const { upsertScopedAppConfig } = useScopedAppConfig({
     scope: PUBLIC_SCOPE,
     configNames: ['publicConfigByDomain'],
   });
@@ -119,7 +119,7 @@ const BrandingSettingList: React.FC<BrandingSettingListProps> = () => {
       cancelText: t('button.Cancel'),
       onOk: async () => {
         try {
-          await upsert({
+          await upsertScopedAppConfig({
             scope: PUBLIC_SCOPE,
             configName: 'publicConfigByDomain',
             subKey: [domainName, DOMAIN_APPEARANCE_CONFIG_KEY],

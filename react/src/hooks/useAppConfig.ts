@@ -75,7 +75,7 @@ export interface AppConfigChange {
   value: AppConfigUpdate;
 }
 
-/** Each written scope's documents after `upsert`, keyed by scope type. */
+/** Each written scope's documents after `upsertScopedAppConfig`, keyed by scope type. */
 export type WrittenAppConfigDocuments = Partial<
   Record<AppConfigScopeKey, ScopedAppConfigDocuments>
 >;
@@ -220,7 +220,7 @@ const SCOPE_TYPE = {
 const scopeIdOf = (scope: AppConfigScope) =>
   scope.type === 'public' ? undefined : scope.id;
 
-const toVariables = (
+const toScopedQueryVariables = (
   request: ScopedAppConfigRequest,
 ): useAppConfigScopedQuery$variables => {
   const items = _.castArray(request);
@@ -243,7 +243,7 @@ const toVariables = (
 };
 
 /** Each requested name's document in one scope's answer; `undefined` when the scope was not readable. */
-const documentsOf = (
+const scopedDocumentsOf = (
   fragments: useAppConfigScopedQuery$data['public'],
   names: ReadonlyArray<string>,
 ): ScopedAppConfigDocuments | undefined => {
@@ -261,7 +261,7 @@ const documentsOf = (
  * flight lands (a late read would otherwise put an older copy back); read
  * again when Relay has collected it.
  */
-const readCurrent = async <Q extends OperationType>(
+const readCurrentDocuments = async <Q extends OperationType>(
   environment: IEnvironment,
   query: GraphQLTaggedNode,
   operation: OperationDescriptor,
@@ -282,7 +282,7 @@ const readCurrent = async <Q extends OperationType>(
 };
 
 /** Points the read at each written fragment: a first write, or one after a purge, returns an id the read does not hold. */
-const linkWritten = (
+const linkWrittenFragments = (
   root: RecordProxy,
   readField: string,
   args: Record<string, unknown>,
@@ -302,7 +302,7 @@ const linkWritten = (
   );
 };
 
-const upsertScope = (
+const commitScopedUpsert = (
   environment: IEnvironment,
   variables: useAppConfigScopedQuery$variables,
   key: AppConfigScopeKey,
@@ -315,7 +315,7 @@ const upsertScope = (
       mutation: upsertMutation,
       variables: { input: { scope, items } },
       updater: (store) =>
-        linkWritten(
+        linkWrittenFragments(
           store.getRoot(),
           'scopedAppConfigFragmentsByNames',
           { scope, configNames: names },
@@ -335,7 +335,7 @@ const upsertScope = (
     });
   });
 
-const fetchMergedView = (
+const refetchMergedAppConfig = (
   environment: IEnvironment,
   configName: MergedAppConfigName,
 ) =>
@@ -356,7 +356,7 @@ const fetchMergedView = (
 export const useScopedAppConfig = (request: ScopedAppConfigRequest) => {
   'use memo';
   const relayEnv = useRelayEnvironment();
-  const variables = toVariables(request);
+  const variables = toScopedQueryVariables(request);
   const operation = createOperationDescriptor(
     getRequest(scopedQuery),
     variables,
@@ -378,7 +378,7 @@ export const useScopedAppConfig = (request: ScopedAppConfigRequest) => {
     refreshOnMount();
   }, [operation.request.identifier]);
 
-  const upsert = async (
+  const upsertScopedAppConfig = async (
     changes: AppConfigChange | Array<AppConfigChange>,
   ): Promise<WrittenAppConfigDocuments> => {
     const written: WrittenAppConfigDocuments = {};
@@ -407,7 +407,7 @@ export const useScopedAppConfig = (request: ScopedAppConfigRequest) => {
         `${scope.scopeType}:${scope.scopeId ?? ''}`,
         async () => {
           const current = (
-            await readCurrent<useAppConfigScopedQuery>(
+            await readCurrentDocuments<useAppConfigScopedQuery>(
               relayEnv,
               scopedQuery,
               operation,
@@ -417,7 +417,7 @@ export const useScopedAppConfig = (request: ScopedAppConfigRequest) => {
           if (!current) {
             throw new Error(`useScopedAppConfig: ${key} could not be read`);
           }
-          const docs = documentsOf(current, names) ?? {};
+          const docs = scopedDocumentsOf(current, names) ?? {};
           for (const change of scopeChanges) {
             docs[change.configName] = applySubKey(
               docs[change.configName] ?? {},
@@ -427,7 +427,7 @@ export const useScopedAppConfig = (request: ScopedAppConfigRequest) => {
           }
           const touched = _.uniq(scopeChanges.map((c) => c.configName));
           written[key] = _.pick(docs, touched);
-          await upsertScope(
+          await commitScopedUpsert(
             relayEnv,
             variables,
             key,
@@ -438,7 +438,9 @@ export const useScopedAppConfig = (request: ScopedAppConfigRequest) => {
           );
           if (touched.includes('domainConfig')) {
             // Not awaited: the write has landed, and a failed refetch only leaves the merged view stale.
-            fetchMergedView(relayEnv, 'domainConfig').catch(() => undefined);
+            refetchMergedAppConfig(relayEnv, 'domainConfig').catch(
+              () => undefined,
+            );
           }
         },
       );
@@ -447,17 +449,19 @@ export const useScopedAppConfig = (request: ScopedAppConfigRequest) => {
   };
 
   return {
-    public: documentsOf(data.public, variables.publicNames),
-    domain: documentsOf(data.domain, variables.domainNames),
-    user: documentsOf(data.user, variables.userNames),
-    upsert,
+    scopedAppConfig: {
+      public: scopedDocumentsOf(data.public, variables.publicNames),
+      domain: scopedDocumentsOf(data.domain, variables.domainNames),
+      user: scopedDocumentsOf(data.user, variables.userNames),
+    },
+    upsertScopedAppConfig,
   };
 };
 
 /** A change to the signed-in user's own document: the scope is implied. */
 export type MyAppConfigChange = Omit<AppConfigChange, 'scope'>;
 
-const myDocumentsOf = (
+const myFragmentDocumentsOf = (
   fragments: useAppConfigMyFragmentsQuery$data['myAppConfigFragmentsByNames'],
   names: ReadonlyArray<string>,
 ): ScopedAppConfigDocuments =>
@@ -501,7 +505,7 @@ export const useMyAppConfigFragments = (configNames: Array<AppConfigName>) => {
     refreshOnMount();
   }, [operation.request.identifier]);
 
-  const upsert = async (
+  const upsertMyAppConfigFragments = async (
     changes: MyAppConfigChange | Array<MyAppConfigChange>,
   ): Promise<ScopedAppConfigDocuments> => {
     const list = _.castArray(changes);
@@ -512,12 +516,12 @@ export const useMyAppConfigFragments = (configNames: Array<AppConfigName>) => {
       );
     }
     return serializeWrite('USER:me', async () => {
-      const current = await readCurrent<useAppConfigMyFragmentsQuery>(
+      const current = await readCurrentDocuments<useAppConfigMyFragmentsQuery>(
         relayEnv,
         myFragmentsQuery,
         operation,
       );
-      const docs = myDocumentsOf(
+      const docs = myFragmentDocumentsOf(
         current.myAppConfigFragmentsByNames,
         configNames,
       );
@@ -541,7 +545,7 @@ export const useMyAppConfigFragments = (configNames: Array<AppConfigName>) => {
             },
           },
           updater: (store) =>
-            linkWritten(
+            linkWrittenFragments(
               store.getRoot(),
               'myAppConfigFragmentsByNames',
               { configNames },
@@ -565,8 +569,11 @@ export const useMyAppConfigFragments = (configNames: Array<AppConfigName>) => {
   };
 
   return {
-    documents: myDocumentsOf(data.myAppConfigFragmentsByNames, configNames),
-    upsert,
+    myAppConfigFragments: myFragmentDocumentsOf(
+      data.myAppConfigFragmentsByNames,
+      configNames,
+    ),
+    upsertMyAppConfigFragments,
   };
 };
 
