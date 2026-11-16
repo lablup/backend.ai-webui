@@ -63,7 +63,7 @@ jobs:
           run_install: false
 
       - name: Install Node.js
-        uses: actions/setup-node@v7.0.0
+        uses: actions/setup-node@v7.1.0
         with:
           node-version-file: '.nvmrc'
           cache: 'pnpm'
@@ -120,7 +120,7 @@ jobs:
       # hits, and the post-save spent 72-189s uploading a ~500 MB macOS store
       # no ref can ever read.
       - name: Install Node.js
-        uses: actions/setup-node@v7.0.0
+        uses: actions/setup-node@v7.1.0
         with:
           node-version-file: '.nvmrc'
 
@@ -186,7 +186,7 @@ jobs:
           run_install: false
 
       - name: Install Node.js
-        uses: actions/setup-node@v7.0.0
+        uses: actions/setup-node@v7.1.0
         with:
           node-version-file: '.nvmrc'
           cache: 'pnpm'
@@ -311,7 +311,7 @@ jobs:
       # No `cache: 'pnpm'`: never hits (tag-scoped run inside a container
       # whose key namespace nothing shares) and the post-save cost ~80s.
       - name: Install Node.js
-        uses: actions/setup-node@v7.0.0
+        uses: actions/setup-node@v7.1.0
         with:
           node-version-file: '.nvmrc'
 
