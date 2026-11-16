@@ -499,8 +499,6 @@ interface VFolderNodesV2Props extends Omit<
    * service" row action renders disabled with this string as its tooltip.
    */
   noDeployTooltip?: string;
-  /** Shows the Auto-mount column, read from each row's own connection. */
-  showAutoMountColumn?: boolean;
 }
 
 const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
@@ -511,7 +509,6 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
   showLabelsByDefault = false,
   project,
   noDeployTooltip,
-  showAutoMountColumn,
   ...tableProps
 }) => {
   'use memo';
@@ -557,11 +554,7 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
   // The Status column key + V2 OrderField sort value stay `status`.
   const vfolders = useFragment(
     graphql`
-      fragment VFolderNodesV2Fragment on VFolder
-      @relay(plural: true)
-      @argumentDefinitions(
-        withAutoMount: { type: "Boolean", defaultValue: false }
-      ) {
+      fragment VFolderNodesV2Fragment on VFolder @relay(plural: true) {
         id @required(action: NONE)
         entityId
         vfolderStatus: status
@@ -612,7 +605,7 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
           ...BAIEntityLabelSettingModalFragment
         }
         # Duplicate mounts are blocked, so a folder has at most one auto-mount (ADR 0031).
-        vfolderAutoMounts(limit: 1) @include(if: $withAutoMount) {
+        vfolderAutoMounts(limit: 1) {
           edges {
             node {
               scopeType
@@ -852,19 +845,13 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
                 ? vfolder?.ownership?.user?.basicInfo?.email
                 : vfolder?.ownership?.project?.basicInfo?.name,
           },
-          ...(showAutoMountColumn
-            ? [
-                {
-                  key: 'auto_mount',
-                  title: t('autoMount.AutoMount'),
-                  render: (__: unknown, vfolder: VFolderNodeInList) => (
-                    <VFolderAutoMountCell
-                      autoMounts={vfolder.vfolderAutoMounts}
-                    />
-                  ),
-                },
-              ]
-            : []),
+          {
+            key: 'auto_mount',
+            title: t('autoMount.AutoMount'),
+            render: (__, vfolder) => (
+              <VFolderAutoMountCell autoMounts={vfolder.vfolderAutoMounts} />
+            ),
+          },
           {
             key: 'usage_mode',
             title: t('data.UsageMode'),

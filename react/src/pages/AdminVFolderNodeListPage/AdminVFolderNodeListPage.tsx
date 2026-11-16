@@ -77,7 +77,7 @@ const STATUS_FILTER_DELETED = {
 
 const DEFAULT_ORDER = '-created_at';
 const statusCategoryValues = ['active', 'deleted'] as const;
-const modeValues = ['all', 'general', 'data', 'automount', 'model'] as const;
+const modeValues = ['all', 'general', 'data', 'model'] as const;
 
 // Module constants so each mode's filter keeps a stable identity; a fresh object
 // re-fires the deferred-value loading flash every render (FR-3594).
@@ -91,7 +91,6 @@ const USAGE_MODE_FILTERS: Partial<
     ],
   },
   data: { usageMode: { equals: 'DATA' } },
-  automount: { name: { iStartsWith: '.' } },
   model: { usageMode: { equals: 'MODEL' } },
 };
 
@@ -339,10 +338,6 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
                     loginConfig.fasttrackEndpoint && {
                       label: t('data.Pipeline'),
                       value: 'data',
-                    },
-                    {
-                      label: t('data.AutoMount'),
-                      value: 'automount',
                     },
                     loginConfig.enableModelFolders && {
                       label: t('data.Models'),
