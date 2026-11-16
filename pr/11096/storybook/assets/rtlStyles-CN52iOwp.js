@@ -1,1 +1,0 @@
-import{n as e}from"./rolldown-runtime-sJBDdmOt.js";var t,n;function r(){return(r=e((()=>{t={kbCHJM:`x1nrll8i`,k3aq6I:`xsqj5wx`,$$css:!0},n={mirror:{k3aq6I:`xgtlewx`,$$css:!0},centerInline:e=>[t,{"--x-transform":`translate(-50%, ${e})`==null?void 0:`translate(-50%, ${e})`}]}})))()}export{n,r as t};
