@@ -224,7 +224,7 @@ export const WEBUI_SETTING_DEFINITIONS: ReadonlyArray<WebUISettingDefinition> =
       unit: 'Bytes',
     },
 
-    // Model serving.
+    // Deployments.
     def('hideModelDefinitionPath', 'domain', 'boolean', 'deployments'),
 
     // Sidebar.

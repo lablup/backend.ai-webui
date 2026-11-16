@@ -165,7 +165,7 @@ export const WEBUI_SETTING_ROWS: ReadonlyArray<WebUISettingRow> = [
     resources('maxFileUploadSize'),
   ),
 
-  // Model serving.
+  // Deployments.
   row('hideModelDefinitionPath', 'domain', 'boolean', 'deployments', null),
 
   // Sidebar.
