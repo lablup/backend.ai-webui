@@ -183,7 +183,9 @@ const SettingsJsonEditor: React.FC<Omit<SettingsJsonModalProps, 'open'>> = ({
                   <Text key={path}>
                     {reason === 'unknown'
                       ? t('webuiSettings.JsonIssueUnknown', { key: path })
-                      : t('webuiSettings.JsonIssueInvalid', { key: path })}
+                      : reason === 'notInteger'
+                        ? t('webuiSettings.JsonIssueNotInteger', { key: path })
+                        : t('webuiSettings.JsonIssueInvalid', { key: path })}
                   </Text>
                 ))}
               </BAIFlex>

@@ -3145,6 +3145,7 @@
         "webuiSettings.JsonConfigDesc",
         "webuiSettings.JsonInvalid",
         "webuiSettings.JsonIssueInvalid",
+        "webuiSettings.JsonIssueNotInteger",
         "webuiSettings.JsonIssueUnknown",
         "webuiSettings.JsonIssues",
         "webuiSettings.JsonLoaded",

@@ -101,6 +101,29 @@ describe('parseSettingsJson', () => {
     });
   });
 
+  it('names a fraction given to a whole-number setting', () => {
+    const result = parseSettingsJson(
+      '{"domain": {"fileUploadChunkSize": 32.5, "maxMemoryPerContainer": 1.5}}',
+    );
+    expect(result).toEqual({
+      ok: false,
+      issues: [{ path: 'domain.fileUploadChunkSize', reason: 'notInteger' }],
+    });
+  });
+
+  it('blocks the document on a fraction even with only unknown keys beside it', () => {
+    const result = parseSettingsJson(
+      '{"domain": {"maxCountForPreopenPorts": 2.5, "noSuchKey": 1}}',
+    );
+    expect(result).toEqual({
+      ok: false,
+      issues: [
+        { path: 'domain.maxCountForPreopenPorts', reason: 'notInteger' },
+        { path: 'domain.noSuchKey', reason: 'unknown' },
+      ],
+    });
+  });
+
   it('returns the parse error of a document that is not JSON', () => {
     const result = parseSettingsJson('{ nope');
     expect(result.ok).toBe(false);

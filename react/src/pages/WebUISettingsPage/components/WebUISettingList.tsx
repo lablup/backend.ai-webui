@@ -380,6 +380,7 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
               placeholder={String(rowDefault ?? '')}
               min={definition.min}
               max={definition.max}
+              isIntegerOnly={definition.isInteger}
               units={definition.unit}
               onChange={(value) =>
                 setValue(definition, value === null ? undefined : value)

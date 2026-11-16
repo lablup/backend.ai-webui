@@ -48,6 +48,8 @@ export interface WebUISettingDefinition {
   /** For a `number`: the valid range, inclusive; a value outside it is ignored. */
   min?: number;
   max?: number;
+  /** For a `number`: only whole numbers are valid (counts, cores, bytes, MiB). */
+  isInteger?: boolean;
 }
 
 /** The SSO vendors the login form renders a button for. */
@@ -118,11 +120,13 @@ export const WEBUI_SETTING_DEFINITIONS: ReadonlyArray<WebUISettingDefinition> =
       ...def('maxCountForPreopenPorts', 'domain', 'number', 'session'),
       min: 0,
       max: 100,
+      isInteger: true,
     },
     {
       ...def('maxCPUCoresPerContainer', 'domain', 'number', 'session'),
       min: 1,
       max: 8192,
+      isInteger: true,
     },
     {
       ...def('maxMemoryPerContainer', 'domain', 'number', 'session'),
@@ -140,6 +144,7 @@ export const WEBUI_SETTING_DEFINITIONS: ReadonlyArray<WebUISettingDefinition> =
       ...def('maxCUDADevicesPerContainer', 'domain', 'number', 'session'),
       min: 0,
       max: 64,
+      isInteger: true,
     },
     {
       ...def('maxCUDASharesPerContainer', 'domain', 'number', 'session'),
@@ -150,41 +155,49 @@ export const WEBUI_SETTING_DEFINITIONS: ReadonlyArray<WebUISettingDefinition> =
       ...def('maxROCMDevicesPerContainer', 'domain', 'number', 'session'),
       min: 0,
       max: 64,
+      isInteger: true,
     },
     {
       ...def('maxTPUDevicesPerContainer', 'domain', 'number', 'session'),
       min: 0,
       max: 64,
+      isInteger: true,
     },
     {
       ...def('maxIPUDevicesPerContainer', 'domain', 'number', 'session'),
       min: 0,
       max: 64,
+      isInteger: true,
     },
     {
       ...def('maxATOMDevicesPerContainer', 'domain', 'number', 'session'),
       min: 0,
       max: 64,
+      isInteger: true,
     },
     {
       ...def('maxATOMPLUSDevicesPerContainer', 'domain', 'number', 'session'),
       min: 0,
       max: 64,
+      isInteger: true,
     },
     {
       ...def('maxGaudi2DevicesPerContainer', 'domain', 'number', 'session'),
       min: 0,
       max: 64,
+      isInteger: true,
     },
     {
       ...def('maxWarboyDevicesPerContainer', 'domain', 'number', 'session'),
       min: 0,
       max: 64,
+      isInteger: true,
     },
     {
       ...def('maxRNGDDevicesPerContainer', 'domain', 'number', 'session'),
       min: 0,
       max: 64,
+      isInteger: true,
     },
     {
       ...def(
@@ -195,6 +208,7 @@ export const WEBUI_SETTING_DEFINITIONS: ReadonlyArray<WebUISettingDefinition> =
       ),
       min: 0,
       max: 64,
+      isInteger: true,
     },
     def('showNonInstalledImages', 'domain', 'boolean', 'session'),
 
@@ -222,12 +236,14 @@ export const WEBUI_SETTING_DEFINITIONS: ReadonlyArray<WebUISettingDefinition> =
       min: -1,
       max: 107374182400,
       unit: 'Bytes',
+      isInteger: true,
     },
     {
       ...def('fileUploadChunkSize', 'domain', 'number', 'storage'),
       min: 0,
       max: 1024,
       unit: 'MiB',
+      isInteger: true,
     },
 
     // Deployments.
@@ -281,7 +297,7 @@ export const restrictToOptions = (
       )
     : value;
 
-/** The value has the definition's type and, for a number, lies in its range. */
+/** The value has the definition's type and, for a number, lies in its range (whole when `isInteger`). */
 export const isValidWebUISetting = (
   definition: WebUISettingDefinition,
   value: unknown,
@@ -289,7 +305,8 @@ export const isValidWebUISetting = (
   isValidWebUISettingValue(definition.type, value) &&
   (definition.type !== 'number' ||
     ((definition.min === undefined || (value as number) >= definition.min) &&
-      (definition.max === undefined || (value as number) <= definition.max)));
+      (definition.max === undefined || (value as number) <= definition.max) &&
+      (!definition.isInteger || Number.isInteger(value))));
 
 export const isValidWebUISettingValue = (
   type: WebUISettingType,

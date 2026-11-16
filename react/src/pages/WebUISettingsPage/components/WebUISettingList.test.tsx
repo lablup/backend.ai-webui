@@ -127,6 +127,23 @@ describe('WebUISettingList', () => {
     expect(modalError).not.toHaveBeenCalled();
   });
 
+  it('saves a whole number when a fraction is typed into a whole-number row', async () => {
+    domainWrite.mockResolvedValue();
+    renderList();
+    const input = within(
+      screen.getByTestId('webui-setting-fileUploadChunkSize'),
+    ).getByRole('spinbutton');
+
+    fireEvent.change(input, { target: { value: '2.5' } });
+    fireEvent.blur(input);
+
+    expect(domainWrite).toHaveBeenCalledTimes(1);
+    const saved = (
+      writtenDoc(domainWrite, 0) as { fileUploadChunkSize: number }
+    ).fileUploadChunkSize;
+    expect(Number.isInteger(saved)).toBe(true);
+  });
+
   it('rolls the row and the atom back when the write fails', async () => {
     domainWrite.mockRejectedValue(new Error('denied'));
     const store = renderList();
