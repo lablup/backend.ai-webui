@@ -623,6 +623,7 @@ export async function createDeploymentWithRevisionViaApi(
   for (;;) {
     try {
       const { deployment } = await read();
+      lastError = '';
       const identity = deployment?.currentRevision?.imageV2?.identity;
       if (identity?.canonicalName) {
         return {

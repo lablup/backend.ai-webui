@@ -80,7 +80,10 @@ async function openAdvancedAddRevisionWithManualImage(
   // so the submitted form carries the resource configuration.
   const cpuSpin = modal
     .locator('.uic-form-item')
-    .filter({ has: page.locator('.uic-form-item__label', { hasText: 'CPU' }) })
+    .filter({
+      has: page.locator('.uic-form-item__label', { hasText: /^CPU$/ }),
+    })
+    .locator('.uic-form-item__control-input')
     .getByRole('spinbutton')
     .first();
   await expect(cpuSpin).toBeVisible({ timeout: 30_000 });
@@ -137,7 +140,9 @@ test.describe(
       if (deploymentId) {
         const api = await createAdminApiContext();
         try {
-          await deleteDeploymentViaApi(api, deploymentId);
+          if (!(await deleteDeploymentViaApi(api, deploymentId))) {
+            throw new Error(`Could not delete deployment ${deploymentId}`);
+          }
         } finally {
           await api.dispose();
         }
