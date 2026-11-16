@@ -44,8 +44,7 @@ LANE_SLUGS=()
 # actually checked (changed files vs full tree, fallbacks, skipped parts).
 note() { echo ">> $*"; }
 
-# Run a package-local binary directly: `pnpm exec` costs ~1.5s of start-up per
-# call, and each package's `tsc` must be its own, not the root one.
+# Run a package-local binary directly: `pnpm exec` costs ~1.5s of start-up per call.
 bin() { # bin <package dir> <binary> [args...]
   local dir="$1" name="$2"
   shift 2
