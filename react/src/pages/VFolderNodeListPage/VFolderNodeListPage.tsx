@@ -549,7 +549,6 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
               order={queryParams.order}
               loading={deferredQueryVariables !== queryVariables}
               project={projectContext}
-              showAutoMountColumn
               vfoldersFrgmt={vfolderNodes}
               rowSelection={{
                 type: 'checkbox',
