@@ -4,7 +4,6 @@
  */
 import { TotalResourceWithinResourceGroupFragment$key } from '../__generated__/TotalResourceWithinResourceGroupFragment.graphql';
 import { TotalResourceWithinResourceGroupRemainingAgentsQuery } from '../__generated__/TotalResourceWithinResourceGroupRemainingAgentsQuery.graphql';
-import { useSuspendedBackendaiClient } from '../hooks';
 import {
   useCurrentUserRole,
   useResourceSlotsDetails,
@@ -206,7 +205,6 @@ interface TotalResourceWithinResourceGroupProps extends BAIFlexProps {
 }
 
 export const useIsAvailableTotalResourceWithinResourceGroup = () => {
-  useSuspendedBackendaiClient();
   const loginConfig = useEffectiveLoginConfig();
   const userRole = useCurrentUserRole();
   const isHiddenAgents = !!loginConfig.hideAgents;

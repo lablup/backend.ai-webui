@@ -13,7 +13,6 @@ import {
   type PageToolRow,
   type ViewParamValue,
 } from '../../../helper/webmcpPageTools';
-import { useSuspendedBackendaiClient } from '../../../hooks';
 import { useCurrentUserRole } from '../../../hooks/backendai';
 import { useEffectiveLoginConfig } from '../../../hooks/useWebUIConfig';
 import {
@@ -73,7 +72,6 @@ const SessionListToolsRegistrar: React.FC<WebMCPSessionListToolsProps> = ({
   viewParams,
 }) => {
   'use memo';
-  useSuspendedBackendaiClient();
   const loginConfig = useEffectiveLoginConfig();
   const userRole = useCurrentUserRole();
   const { pathname, search } = useLocation();

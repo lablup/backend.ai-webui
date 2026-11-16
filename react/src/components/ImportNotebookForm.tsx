@@ -4,7 +4,7 @@
  */
 import { App } from '../app-shim';
 import { Form, FormInstance, FormProps } from '../form-engine';
-import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
+import { useWebUINavigate } from '../hooks';
 import { useProjectPath } from '../hooks/useRouteScope';
 import {
   StartSessionWithDefaultValue,
@@ -64,7 +64,6 @@ const ImportNotebookForm: React.FC<ImportNotebookFormProps> = ({
   const app = App.useApp();
   const webuiNavigate = useWebUINavigate();
   const buildProjectPath = useProjectPath();
-  useSuspendedBackendaiClient();
   const loginConfig = useEffectiveLoginConfig();
   const { startSessionWithDefault, upsertSessionNotification } =
     useStartSession();

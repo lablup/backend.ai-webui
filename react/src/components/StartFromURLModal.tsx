@@ -2,7 +2,6 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useEffectiveLoginConfig } from '../hooks/useWebUIConfig';
 import BAITabs from './BAITabs';
@@ -36,7 +35,6 @@ const StartFromURLModal: React.FC<StartFromURLModalProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  useSuspendedBackendaiClient();
   const loginConfig = useEffectiveLoginConfig();
   const [experimentalImportFromHuggingFace] = useBAISettingUserState(
     'experimental_import_from_huggingface',

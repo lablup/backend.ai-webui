@@ -7,8 +7,7 @@
  child modals — so the move from page to modal stays a UI change only.
 */
 import { App } from '../app-shim';
-import { useSuspendedBackendaiClient } from '../hooks';
-import { useMyAppConfig } from '../hooks/useAppConfig';
+import { useMyAppConfigFragments } from '../hooks/useAppConfig';
 import {
   useBAISettingGeneralState,
   useBAISettingUserState,
@@ -41,7 +40,6 @@ const UserSettingsGeneralPane = () => {
   const { t } = useTranslation();
   const { message } = App.useApp();
   const { getErrorMessage } = useErrorMessageResolver();
-  useSuspendedBackendaiClient();
   const loginConfig = useEffectiveLoginConfig();
 
   const { themeMode, setThemeMode } = useThemeMode();
@@ -52,10 +50,9 @@ const UserSettingsGeneralPane = () => {
   } = useCustomThemeConfig();
   // `userConfig.themeFamily` is the authoritative store; the localStorage
   // FOUC mirror is written only after the server accepts (FR-1964).
-  const [, setUserConfigThemeFamily] = useMyAppConfig<string>(
+  const { upsertMyAppConfigFragments } = useMyAppConfigFragments([
     'userConfig',
-    'themeFamily',
-  );
+  ]);
   // The select shows the chosen family while the write is in flight.
   const [pendingThemeFamily, setPendingThemeFamily] = useState<{
     family: string | undefined;
@@ -63,7 +60,11 @@ const UserSettingsGeneralPane = () => {
   const persistThemeFamily = async (next: string | undefined) => {
     setPendingThemeFamily({ family: next });
     try {
-      await setUserConfigThemeFamily(next);
+      await upsertMyAppConfigFragments({
+        configName: 'userConfig',
+        subKey: 'themeFamily',
+        value: next,
+      });
       setThemeFamily(next);
     } catch (error) {
       message.error(getErrorMessage(error));

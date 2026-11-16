@@ -3,7 +3,6 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { SessionStatusDetailModalFragment$key } from '../../__generated__/SessionStatusDetailModalFragment.graphql';
-import { useSuspendedBackendaiClient } from '../../hooks';
 import { useCurrentUserRole } from '../../hooks/backendai';
 import { useEffectiveLoginConfig } from '../../hooks/useWebUIConfig';
 import SessionStatusBadge from './SessionStatusBadge';
@@ -78,7 +77,6 @@ const SessionStatusDetailModal: React.FC<SessionStatusDetailModalProps> = ({
 }) => {
   const { t } = useTranslation();
   const userRole = useCurrentUserRole();
-  useSuspendedBackendaiClient();
   const loginConfig = useEffectiveLoginConfig();
 
   const session = useFragment(

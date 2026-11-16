@@ -8,7 +8,6 @@ import {
 } from '../__generated__/ImportRepoFormCreateVFolderMutation.graphql';
 import { App } from '../app-shim';
 import { Form, FormInstance, FormProps } from '../form-engine';
-import { useSuspendedBackendaiClient } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import {
   StartSessionWithDefaultValue,
@@ -107,7 +106,6 @@ const ImportRepoForm: React.FC<ImportFromURLFormProps> = ({
   'use memo';
   const { logger } = useBAILogger();
   const formRef = useRef<FormInstance<ImportFromURLFormValues> | null>(null);
-  useSuspendedBackendaiClient();
   const loginConfig = useEffectiveLoginConfig();
   const { upsertNotification } = useSetBAINotification();
   const app = App.useApp();

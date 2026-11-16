@@ -30,11 +30,7 @@ import {
 } from '../../helper/sessionLauncherHistory';
 import { normalizeLegacyMountFields } from '../../helper/vfolderMounts';
 import { AGENT_PREFILL_PARAM } from '../../helper/webmcpConstants';
-import {
-  useSuspendedBackendaiClient,
-  useWebUILocation,
-  useWebUINavigate,
-} from '../../hooks';
+import { useWebUILocation, useWebUINavigate } from '../../hooks';
 import {
   useCurrentProjectValue,
   useCurrentResourceGroupState,
@@ -254,7 +250,6 @@ const SessionLauncherPageContent: React.FC<{
   const { getErrorMessage } = useErrorMessageResolver();
 
   const mainContentDivRef = useAtomValue(mainContentDivRefState);
-  useSuspendedBackendaiClient();
   const loginConfig = useEffectiveLoginConfig();
   const [, setCurrentGlobalResourceGroup] = useCurrentResourceGroupState();
   // ADR-0001 (FR-3411): pages are the only readers of the ambient current

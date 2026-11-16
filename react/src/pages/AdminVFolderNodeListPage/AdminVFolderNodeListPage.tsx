@@ -21,7 +21,6 @@ import VFolderNodesV2, {
 } from '../../components/VFolderNodesV2';
 import { convertToOrderBy, handleRowSelectionChange } from '../../helper';
 import { isDeletedCategory } from '../../helper/vfolderStatus';
-import { useSuspendedBackendaiClient } from '../../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
 import { useEffectiveLoginConfig } from '../../hooks/useWebUIConfig';
@@ -110,7 +109,6 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
 
   const { t } = useTranslation();
   const isLabelable = useIsLabelableEntityType('vfolder');
-  useSuspendedBackendaiClient();
   const loginConfig = useEffectiveLoginConfig();
 
   const [columnOverrides, setColumnOverrides] = useBAISettingUserState(

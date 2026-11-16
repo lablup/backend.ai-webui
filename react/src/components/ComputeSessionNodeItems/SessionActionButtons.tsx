@@ -7,7 +7,6 @@ import {
   SessionActionButtonsFragment$key,
 } from '../../__generated__/SessionActionButtonsFragment.graphql';
 import { isNotYetAllocatedSession } from '../../helper/sessionResourceGridData';
-import { useSuspendedBackendaiClient } from '../../hooks';
 import { useCurrentUserInfo } from '../../hooks/backendai';
 import { useSuspendedAppTemplateConfig } from '../../hooks/useAppTemplate';
 import { useBackendAIAppLauncher } from '../../hooks/useBackendAIAppLauncher';
@@ -110,7 +109,6 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
   onAction,
 }) => {
   const { t } = useTranslation();
-  useSuspendedBackendaiClient();
   const loginConfig = useEffectiveLoginConfig();
   const { hideAppsOnBatchSession } = useSuspendedAppTemplateConfig();
 

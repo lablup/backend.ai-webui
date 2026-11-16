@@ -2,7 +2,6 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { useSuspendedBackendaiClient } from '.';
 import { useSuspenseTanQuery } from './reactQueryAlias';
 import { useEffectiveLoginConfig } from './useWebUIConfig';
 import * as _ from 'lodash-es';
@@ -65,7 +64,6 @@ export const useSuspendedFilteredAppTemplate = (
   'use memo';
   const { appTemplate } = useSuspendedAppTemplateConfig();
 
-  useSuspendedBackendaiClient();
   const loginConfig = useEffectiveLoginConfig();
   const allowTCPApps = globalThis.isElectron || loginConfig.allowNonAuthTCP;
 

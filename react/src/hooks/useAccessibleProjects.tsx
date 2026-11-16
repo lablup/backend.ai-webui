@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { useCurrentDomainValue, useSuspendedBackendaiClient } from '.';
+import { useCurrentDomainValue } from '.';
 import { useAccessibleProjectsQuery } from '../__generated__/useAccessibleProjectsQuery.graphql';
 import { useCurrentUserRole } from './backendai';
 import { useEffectiveLoginConfig } from './useWebUIConfig';
@@ -45,7 +45,6 @@ export const useAccessibleProjects = (
   options?: UseAccessibleProjectsOptions,
 ) => {
   'use memo';
-  useSuspendedBackendaiClient();
   const loginConfig = useEffectiveLoginConfig();
   const currentDomainName = useCurrentDomainValue();
   const userRole = useCurrentUserRole();

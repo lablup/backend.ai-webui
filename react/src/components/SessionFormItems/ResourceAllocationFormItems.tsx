@@ -10,7 +10,6 @@ import {
   isUnifiedAcceleratorSlot,
   UNIFIED_SLOT_TAG_PREFIX,
 } from '../../helper/unifiedAcceleratorSlot';
-import { useSuspendedBackendaiClient } from '../../hooks';
 import {
   useResourceSlots,
   useResourceSlotsDetails,
@@ -245,7 +244,6 @@ const ResourceAllocationFormItems: React.FC<
   const { t } = useTranslation();
   const { token } = useTheme();
 
-  useSuspendedBackendaiClient();
   const loginConfig = useEffectiveLoginConfig();
 
   const [{ keypairResourcePolicy }] =

@@ -2,7 +2,6 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { useSuspendedBackendaiClient } from '../../hooks';
 import { useIsProjectAgnosticPage } from '../../hooks/useIsProjectAgnosticPage';
 import { useRouteScope } from '../../hooks/useRouteScope';
 import { sessionMonitorScopeAtom } from '../../hooks/useSessionMonitor';
@@ -47,7 +46,6 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = () => {
   const bandOverlays =
     ANTD_REVERSED_BAND_OVERLAYS[isDarkMode ? 'dark' : 'light'];
   const { t } = useTranslation();
-  useSuspendedBackendaiClient();
   const loginConfig = useEffectiveLoginConfig();
   // Supplementary information, so it gives its width to the project on mobile.
   const sessionMonitorScope = useAtomValue(sessionMonitorScopeAtom);

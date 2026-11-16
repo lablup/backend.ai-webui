@@ -4,11 +4,7 @@
  */
 import BAIErrorBoundary from '../../components/BAIErrorBoundary';
 import { WEBUI_SETTINGS_CONFIG_KEY } from '../../helper/webuiSettings';
-import {
-  useCurrentDomain,
-  useSuspendedBackendaiClient,
-  useTabQuerySnapshot,
-} from '../../hooks';
+import { useCurrentDomain, useTabQuerySnapshot } from '../../hooks';
 import { PUBLIC_SCOPE, useScopedAppConfig } from '../../hooks/useAppConfig';
 import { useEffectiveLoginConfig } from '../../hooks/useWebUIConfig';
 import ConfigurationsSettingList from './components/ConfigurationsSettingList';
@@ -73,7 +69,6 @@ const SavedWebUISettingList: React.FC = () => {
 const WebUISettingsPage: React.FC = () => {
   'use memo';
   const { t } = useTranslation();
-  useSuspendedBackendaiClient();
   const loginConfig = useEffectiveLoginConfig();
   const { currentTab, onTabChange } = useTabQuerySnapshot(tabParser);
 

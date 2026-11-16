@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { UserDropdownMenuQuery } from '../__generated__/UserDropdownMenuQuery.graphql';
-import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
+import { useWebUINavigate } from '../hooks';
 import {
   useCurrentUserInfo,
   useCurrentUserRole,
@@ -79,7 +79,6 @@ const UserDropdownMenu: React.FC<{
   const screens = useBAIBreakpoint();
   const { isDarkMode, setThemeMode } = useThemeMode();
   const openHelp = useOpenHelp();
-  useSuspendedBackendaiClient();
   const loginConfig = useEffectiveLoginConfig();
 
   const [isOpenUserSettingModal, { set: setIsOpenUserSettingModal }] =

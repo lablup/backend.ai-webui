@@ -20,7 +20,6 @@ import VFolderNodesV2, {
 } from '../../components/VFolderNodesV2';
 import { convertToOrderBy, handleRowSelectionChange } from '../../helper';
 import { isDeletedCategory } from '../../helper/vfolderStatus';
-import { useSuspendedBackendaiClient } from '../../hooks';
 import { useCurrentUserInfo } from '../../hooks/backendai';
 import { useBAIPaginationOptionStateOnSearchParam } from '../../hooks/reactPaginationQueryOptions';
 import { useIsPersonalProject } from '../../hooks/useAccessibleProjects';
@@ -140,7 +139,6 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
   const projectContext = toProjectContext(currentProject);
   const isPersonalProject = useIsPersonalProject(currentProject.id);
   const [currentUser] = useCurrentUserInfo();
-  useSuspendedBackendaiClient();
   const loginConfig = useEffectiveLoginConfig();
   const [invitations] = useVFolderInvitations();
   const [, setInvitationOpen] = useQueryState(

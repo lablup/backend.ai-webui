@@ -157,6 +157,8 @@ function MainLayout() {
   return (
     <>
       <CSSTokenVariables />
+      {/* DismissSplashOnMount suspends until sign-in has applied the domain
+          settings, so nothing below mounts before then: pages need no wait of their own. */}
       <Suspense fallback={null}>
         <DismissSplashOnMount />
         <PrefetchLabelableEntityTypes />

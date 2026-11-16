@@ -7,7 +7,6 @@ import { App } from '../../app-shim';
 import { Form, FormInstance } from '../../form-engine';
 import { isValidIPOrCidr } from '../../helper';
 import { isActAsDebugMode } from '../../helper/actAs';
-import { useSuspendedBackendaiClient } from '../../hooks';
 import {
   ServicePort,
   TemplateItem,
@@ -80,7 +79,6 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
   'use memo';
   const { t } = useTranslation();
   const { logger } = useBAILogger();
-  useSuspendedBackendaiClient();
   const loginConfig = useEffectiveLoginConfig();
   const isDebugMode = isActAsDebugMode();
   const formRef = useRef<FormInstance>(null);

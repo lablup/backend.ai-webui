@@ -5,7 +5,6 @@
 import { ImportHuggingFaceModelFormWritableFoldersQuery } from '../__generated__/ImportHuggingFaceModelFormWritableFoldersQuery.graphql';
 import { App } from '../app-shim';
 import { Form, FormInstance, FormProps } from '../form-engine';
-import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import {
   StartSessionWithDefaultValue,
@@ -240,7 +239,6 @@ const ImportHuggingFaceModelForm: React.FC<ImportHuggingFaceModelFormProps> = ({
   const formRef = useRef<FormInstance<ImportHuggingFaceModelFormValues> | null>(
     null,
   );
-  useSuspendedBackendaiClient();
   const loginConfig = useEffectiveLoginConfig();
   const currentProject = useCurrentProjectValue();
   const { startSessionWithDefault, upsertSessionNotification } =

@@ -228,7 +228,6 @@ const CLIDownloadTab: React.FC = () => {
 const DownloadModalContent: React.FC = () => {
   'use memo';
   const { t } = useTranslation();
-  useSuspendedBackendaiClient();
   const loginConfig = useEffectiveLoginConfig();
 
   const showDesktopApp = loginConfig.allowAppDownloadPanel;

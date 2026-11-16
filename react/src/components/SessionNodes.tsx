@@ -6,7 +6,6 @@ import {
   SessionNodesFragment$data,
   SessionNodesFragment$key,
 } from '../__generated__/SessionNodesFragment.graphql';
-import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo, useCurrentUserRole } from '../hooks/backendai';
 import { useSuspendedAppTemplateConfig } from '../hooks/useAppTemplate';
 import { useEffectiveLoginConfig } from '../hooks/useWebUIConfig';
@@ -93,7 +92,6 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
   'use memo';
   const { t } = useTranslation();
   const userRole = useCurrentUserRole();
-  useSuspendedBackendaiClient();
   const loginConfig = useEffectiveLoginConfig();
   const { hideAppsOnBatchSession } = useSuspendedAppTemplateConfig();
   const [userInfo] = useCurrentUserInfo();

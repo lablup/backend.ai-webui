@@ -5,7 +5,7 @@
 import { DeploymentDetailPageQuery } from '../../__generated__/DeploymentDetailPageQuery.graphql';
 import { ErrorWithGraphQL } from '../../components/BAIErrorBoundary';
 import DeploymentRevisionDetailDrawer from '../../components/DeploymentRevisionDetailDrawer';
-import { useSuspendedBackendaiClient, useWebUINavigate } from '../../hooks';
+import { useWebUINavigate } from '../../hooks';
 import { useCurrentUserInfo } from '../../hooks/backendai';
 import { useCurrentProjectValue } from '../../hooks/useCurrentProject';
 import { useIsProjectAgnosticPage } from '../../hooks/useIsProjectAgnosticPage';
@@ -77,7 +77,6 @@ const DeploymentDetailPage: React.FC = () => {
   const { token } = useTheme();
   const [currentUser] = useCurrentUserInfo();
   const webuiNavigate = useWebUINavigate();
-  useSuspendedBackendaiClient();
   const loginConfig = useEffectiveLoginConfig();
   const currentProject = useCurrentProjectValue();
   // This shared page serves three URL spaces

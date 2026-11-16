@@ -2,7 +2,6 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { useSuspendedBackendaiClient } from '../../hooks';
 import { useCustomThemeConfig } from '../../hooks/useCustomThemeConfig';
 import { useEffectiveLoginConfig } from '../../hooks/useWebUIConfig';
 import AboutBackendAIModal from '../AboutBackendAIModal';
@@ -41,7 +40,6 @@ const WebUISiderFooter: React.FC = () => {
   const { t } = useTranslation();
   const { token } = useTheme();
   const { rawThemeConfig } = useCustomThemeConfig();
-  useSuspendedBackendaiClient();
   const loginConfig = useEffectiveLoginConfig();
 
   const [isOpenSignoutModal, { toggle: toggleSignoutModal }] = useToggle(false);

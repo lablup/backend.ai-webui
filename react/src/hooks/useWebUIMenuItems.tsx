@@ -2,7 +2,6 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { useSuspendedBackendaiClient } from '.';
 import {
   buildPath,
   type MenuAdminRole,
@@ -254,7 +253,6 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
   // `/admin/<feature>` for admin keys, where the name is ignored).
   const activeProjectName = useActiveProjectName();
   const { t } = useTranslation();
-  useSuspendedBackendaiClient();
   const loginConfig = useEffectiveLoginConfig();
   const isHideAgents = loginConfig.hideAgents ?? true;
   const fasttrackEndpoint = loginConfig.fasttrackEndpoint ?? null;

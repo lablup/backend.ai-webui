@@ -616,7 +616,6 @@ export const useBackendAIImageMetaData = () => {
 };
 
 export const useAppDownloadMap = () => {
-  useSuspendedBackendaiClient();
   const loginConfig = useEffectiveLoginConfig();
   const appDownloadUrl = loginConfig.appDownloadUrl || '';
 
@@ -651,7 +650,6 @@ export const useAppDownloadMap = () => {
 
 export const useCliDownloadMap = () => {
   'use memo';
-  useSuspendedBackendaiClient();
   const loginConfig = useEffectiveLoginConfig();
   const cliDownloadUrl = loginConfig.cliDownloadUrl || '';
 

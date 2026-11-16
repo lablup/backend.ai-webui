@@ -2,7 +2,6 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { useSuspendedBackendaiClient } from '../../hooks';
 import { useCurrentUserRole } from '../../hooks/backendai';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
 import { useIsCurrentProjectAdmin } from '../../hooks/useCurrentUserProjectRoles';
@@ -161,7 +160,6 @@ export const useDashboardBoard = ({
   const { t } = useTranslation();
   const role = useCurrentUserRole();
   const isProjectAdmin = useIsCurrentProjectAdmin();
-  useSuspendedBackendaiClient();
   const loginConfig = useEffectiveLoginConfig();
   const [gridEnabled] = useBAISettingUserState(
     'experimental_session_resource_grid',

@@ -2,7 +2,6 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { useSuspendedBackendaiClient } from '.';
 import {
   useDefaultImagesWithFallbackQuery,
   useDefaultImagesWithFallbackQuery$data,
@@ -180,7 +179,6 @@ export const useDefaultSystemSSHImageWithFallback = () => {
 export const useResolveImageReference = () => {
   'use memo';
   const relayEnv = useRelayEnvironment();
-  useSuspendedBackendaiClient();
   const loginConfig = useEffectiveLoginConfig();
   const { logger } = useBAILogger();
   // Mirror the candidate set `ImageEnvironmentSelectFormItems` queries, so both

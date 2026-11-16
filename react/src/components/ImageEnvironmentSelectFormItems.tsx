@@ -15,10 +15,7 @@ import {
   parseImageString,
   removeArchitectureFromImageFullName,
 } from '../helper';
-import {
-  useBackendAIImageMetaData,
-  useSuspendedBackendaiClient,
-} from '../hooks';
+import { useBackendAIImageMetaData } from '../hooks';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useThemeMode } from '../hooks/useThemeMode';
 import { useEffectiveLoginConfig } from '../hooks/useWebUIConfig';
@@ -104,7 +101,6 @@ const ImageEnvironmentSelectFormItems: React.FC<
   'use memo';
   const form = Form.useFormInstance<ImageEnvironmentFormInput>();
   const environments = Form.useWatch('environments', { form, preserve: true });
-  useSuspendedBackendaiClient();
   const loginConfig = useEffectiveLoginConfig();
 
   const [environmentSearch, setEnvironmentSearch] = useState(
