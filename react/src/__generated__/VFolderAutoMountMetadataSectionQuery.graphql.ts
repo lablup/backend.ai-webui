@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<50043605135d63e9d4c7a1476f5e8d41>>
+ * @generated SignedSource<<d95d43b07bf6a8f33eef100acb6255c0>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -348,44 +348,7 @@ return {
                   (v7/*: any*/),
                   (v8/*: any*/),
                   (v9/*: any*/),
-                  (v10/*: any*/),
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "vfolderId",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "concreteType": "VFolder",
-                    "kind": "LinkedField",
-                    "name": "vfolder",
-                    "plural": false,
-                    "selections": [
-                      {
-                        "alias": null,
-                        "args": null,
-                        "concreteType": "VFolderMetadataInfo",
-                        "kind": "LinkedField",
-                        "name": "metadata",
-                        "plural": false,
-                        "selections": [
-                          {
-                            "alias": null,
-                            "args": null,
-                            "kind": "ScalarField",
-                            "name": "name",
-                            "storageKey": null
-                          }
-                        ],
-                        "storageKey": null
-                      },
-                      (v6/*: any*/)
-                    ],
-                    "storageKey": null
-                  }
+                  (v10/*: any*/)
                 ],
                 "storageKey": null
               }
@@ -398,12 +361,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "f92d472a3667f0e0e8e651875e83d1c2",
+    "cacheID": "8054f5a9b284b8bba67461d2a8c1e548",
     "id": null,
     "metadata": {},
     "name": "VFolderAutoMountMetadataSectionQuery",
     "operationKind": "query",
-    "text": "query VFolderAutoMountMetadataSectionQuery(\n  $scope: VFolderAutoMountScope!\n  $filter: VFolderAutoMountFilter\n  $permissionScopeType: String!\n  $permissionScopeId: UUID!\n) {\n  myScopePermissions(input: {target: {scopeType: $permissionScopeType, scopeId: $permissionScopeId, entityType: \"vfolder_auto_mount\"}}) {\n    item {\n      permissions\n    }\n  }\n  scopedVfolderAutoMounts(scope: $scope, filter: $filter, limit: 1) {\n    edges {\n      node {\n        id\n        entityId\n        mountDestination\n        subpath\n        mountPermission\n        ...VFolderAutoMountSettingModalFragment\n      }\n    }\n  }\n}\n\nfragment VFolderAutoMountSettingModalFragment on VFolderAutoMount {\n  entityId\n  vfolderId\n  mountDestination\n  subpath\n  mountPermission\n  vfolder {\n    metadata {\n      name\n    }\n    id\n  }\n}\n"
+    "text": "query VFolderAutoMountMetadataSectionQuery(\n  $scope: VFolderAutoMountScope!\n  $filter: VFolderAutoMountFilter\n  $permissionScopeType: String!\n  $permissionScopeId: UUID!\n) {\n  myScopePermissions(input: {target: {scopeType: $permissionScopeType, scopeId: $permissionScopeId, entityType: \"vfolder_auto_mount\"}}) {\n    item {\n      permissions\n    }\n  }\n  scopedVfolderAutoMounts(scope: $scope, filter: $filter, limit: 1) {\n    edges {\n      node {\n        id\n        entityId\n        mountDestination\n        subpath\n        mountPermission\n        ...VFolderAutoMountSettingModalFragment\n      }\n    }\n  }\n}\n\nfragment VFolderAutoMountSettingModalFragment on VFolderAutoMount {\n  entityId\n  mountDestination\n  subpath\n  mountPermission\n}\n"
   }
 };
 })();

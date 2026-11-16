@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<5d68cf3d7a0f84f076d6fde864bc2130>>
+ * @generated SignedSource<<860456c74bdfb7ac930f7d398eebd4ae>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -128,13 +128,6 @@ return {
                 "alias": null,
                 "args": null,
                 "kind": "ScalarField",
-                "name": "vfolderId",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
                 "name": "mountDestination",
                 "storageKey": null
               },
@@ -151,36 +144,6 @@ return {
                 "kind": "ScalarField",
                 "name": "mountPermission",
                 "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "concreteType": "VFolder",
-                "kind": "LinkedField",
-                "name": "vfolder",
-                "plural": false,
-                "selections": [
-                  {
-                    "alias": null,
-                    "args": null,
-                    "concreteType": "VFolderMetadataInfo",
-                    "kind": "LinkedField",
-                    "name": "metadata",
-                    "plural": false,
-                    "selections": [
-                      {
-                        "alias": null,
-                        "args": null,
-                        "kind": "ScalarField",
-                        "name": "name",
-                        "storageKey": null
-                      }
-                    ],
-                    "storageKey": null
-                  },
-                  (v2/*: any*/)
-                ],
-                "storageKey": null
               }
             ],
             "storageKey": null
@@ -191,12 +154,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "3bb050d66767715aa1fd056c37adfd81",
+    "cacheID": "8b0d9cb011ae0aeda13f6a46d741a73d",
     "id": null,
     "metadata": {},
     "name": "VFolderAutoMountSettingModalUpdateMutation",
     "operationKind": "mutation",
-    "text": "mutation VFolderAutoMountSettingModalUpdateMutation(\n  $input: UpdateVFolderAutoMountInput!\n) {\n  updateVfolderAutoMount(input: $input) {\n    vfolderAutoMount {\n      id\n      ...VFolderAutoMountSettingModalFragment\n    }\n  }\n}\n\nfragment VFolderAutoMountSettingModalFragment on VFolderAutoMount {\n  entityId\n  vfolderId\n  mountDestination\n  subpath\n  mountPermission\n  vfolder {\n    metadata {\n      name\n    }\n    id\n  }\n}\n"
+    "text": "mutation VFolderAutoMountSettingModalUpdateMutation(\n  $input: UpdateVFolderAutoMountInput!\n) {\n  updateVfolderAutoMount(input: $input) {\n    vfolderAutoMount {\n      id\n      ...VFolderAutoMountSettingModalFragment\n    }\n  }\n}\n\nfragment VFolderAutoMountSettingModalFragment on VFolderAutoMount {\n  entityId\n  mountDestination\n  subpath\n  mountPermission\n}\n"
   }
 };
 })();

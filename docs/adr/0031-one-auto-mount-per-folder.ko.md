@@ -24,8 +24,8 @@ flowchart LR
     projectFolder["프로젝트 폴더"]
   end
   subgraph set["WebUI가 설정하는 곳"]
-    personal["개인 프로젝트<br/>FolderCreateModal, 사용자 설정, 탐색기"]
-    admin["프로젝트 어드민<br/>FolderCreateModal, ProjectAutoMountSettingModal, 탐색기"]
+    personal["개인 프로젝트<br/>FolderCreateModal, 탐색기"]
+    admin["프로젝트 어드민<br/>FolderCreateModal, 탐색기"]
   end
   subgraph manager["Manager"]
     userScope["소유자의 USER scope"]
@@ -51,7 +51,7 @@ flowchart LR
 
 - **Scope choice**: auto-mount를 만드는 WebUI의 모든 경로는 폴더 소유자로부터 scope를 정한다. `accessControl.ownershipType`이 `USER`인 폴더는 `ownership.userId`의 `USER` scope를 받는다. 그 밖의 폴더는 `ownership.projectId`의 `PROJECT` scope를 받는다.
 - **Creation paths**: `FolderCreateModal`은 개인 프로젝트에서 만든 폴더를 사용자 소유 폴더로 만들고 그 사용자에게 auto-mount한다. 다른 프로젝트에서는 폴더를 그 프로젝트에 auto-mount한다.
-- **Folder pickers**: `VFolderAutoMountSettingModal`은 같은 scope를 넘긴 `BAIScopedVFolderSelect`로, 편집하는 scope의 폴더만 보여준다. 그래서 사용자 설정 목록은 사용자가 소유한 폴더만, 프로젝트 목록은 그 프로젝트의 폴더만 고른다.
+- **Folder entry points**: auto-mount는 폴더에서만 추가한다. `FolderCreateModal`과 폴더 탐색기의 `VFolderAutoMountMetadataSection`이 그곳이다. `VFolderAutoMountSettingModal`은 항상 그 폴더를 받고, 폴더 선택 박스를 보여주지 않는다.
 
 ### 2. 읽을 때는 폴더당 한 행
 
