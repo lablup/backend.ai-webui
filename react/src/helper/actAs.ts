@@ -17,6 +17,8 @@ export interface ActAsTarget {
   userId: string;
   email: string;
   name: string;
+  /** Debug mode for this act-as tab only; never written to any app config. */
+  debug?: boolean;
 }
 
 export const ACT_AS_HANDOFF_PARAM = 'actAsHandoff';
@@ -35,7 +37,8 @@ const isActAsTarget = (value: unknown): value is ActAsTarget => {
     typeof v?.userId === 'string' &&
     v.userId.length > 0 &&
     typeof v.email === 'string' &&
-    typeof v.name === 'string'
+    typeof v.name === 'string' &&
+    (v.debug === undefined || typeof v.debug === 'boolean')
   );
 };
 
@@ -71,14 +74,29 @@ const appEntryURL = () =>
     window.location.href,
   );
 
+// The i18n post-processor reads this on every `t()`, so parse only on change.
+let cachedRaw: string | null | undefined;
+let cachedTarget: ActAsTarget | null = null;
+
 export const getActAsTarget = (): ActAsTarget | null => {
   try {
-    const value = parseJSON(sessionStorage.getItem(SESSION_KEY));
-    return isActAsTarget(value) ? value : null;
+    const raw = sessionStorage.getItem(SESSION_KEY);
+    if (raw !== cachedRaw) {
+      const value = parseJSON(raw);
+      cachedRaw = raw;
+      cachedTarget = isActAsTarget(value) ? value : null;
+    }
+    return cachedTarget;
   } catch {
     return null;
   }
 };
+
+/**
+ * Debug mode (i18n key markers, raw errors, app-launcher proxy options, error
+ * details) is on only in an act-as tab opened with it checked.
+ */
+export const isActAsDebugMode = (): boolean => getActAsTarget()?.debug === true;
 
 /**
  * Opens a new tab that acts as `target`. Returns false if storage is

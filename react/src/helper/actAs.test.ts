@@ -6,7 +6,9 @@ import {
   ACT_AS_HANDOFF_PARAM,
   adoptActAsHandoff,
   applyActAsTitle,
+  exitActAs,
   getActAsTarget,
+  isActAsDebugMode,
   openActAsTab,
 } from './actAs';
 
@@ -108,6 +110,45 @@ describe('act-as hand-off', () => {
     visit(url);
     adoptActAsHandoff();
     expect(getActAsTarget()).toBeNull();
+  });
+
+  it('turns debug mode on only in an act-as tab opened with it', () => {
+    expect(isActAsDebugMode()).toBe(false);
+
+    openActAsTab(TARGET);
+    visit(handoffUrl());
+    adoptActAsHandoff();
+    expect(isActAsDebugMode()).toBe(false);
+
+    sessionStorage.clear();
+    openActAsTab({ ...TARGET, debug: true });
+    visit(handoffUrl());
+    adoptActAsHandoff();
+    expect(getActAsTarget()).toEqual({ ...TARGET, debug: true });
+    expect(isActAsDebugMode()).toBe(true);
+    // The flag lives in this tab only; nothing is left for other tabs.
+    expect(localStorage.length).toBe(0);
+  });
+
+  it('turns debug mode off when the act-as tab exits', () => {
+    vi.useFakeTimers();
+    vi.spyOn(window, 'close').mockImplementation(() => {});
+    openActAsTab({ ...TARGET, debug: true });
+    visit(handoffUrl());
+    adoptActAsHandoff();
+    expect(isActAsDebugMode()).toBe(true);
+
+    exitActAs();
+    expect(isActAsDebugMode()).toBe(false);
+  });
+
+  it('rejects a stored target whose debug flag is not a boolean', () => {
+    sessionStorage.setItem(
+      'backendaiwebui.actAs',
+      JSON.stringify({ ...TARGET, debug: 'yes' }),
+    );
+    expect(getActAsTarget()).toBeNull();
+    expect(isActAsDebugMode()).toBe(false);
   });
 
   it('prefixes the tab title once', () => {

@@ -53,13 +53,16 @@ export type SettingsJsonParse =
   | {
       ok: true;
       values: Array<{ definition: WebUISettingDefinition; value: unknown }>;
+      /** Unknown entries left out, e.g. `public.debug` from an older export. */
+      skipped: string[];
     }
   | { ok: false; error: string }
   | { ok: false; issues: SettingsJsonIssue[] };
 
 /**
  * The settings a JSON document of `toSettingsJson`'s shape sets. A key left
- * out keeps its value; anything that cannot be applied is reported instead.
+ * out keeps its value. Unknown entries alone are skipped; an invalid value
+ * blocks the document and every entry that cannot be applied is reported.
  */
 export const parseSettingsJson = (text: string): SettingsJsonParse => {
   let doc: unknown;
@@ -99,5 +102,8 @@ export const parseSettingsJson = (text: string): SettingsJsonParse => {
       values.push({ definition, value });
     }
   }
-  return issues.length > 0 ? { ok: false, issues } : { ok: true, values };
+  if (issues.some(({ reason }) => reason === 'invalid')) {
+    return { ok: false, issues };
+  }
+  return { ok: true, values, skipped: issues.map(({ path }) => path) };
 };

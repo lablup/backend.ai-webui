@@ -110,13 +110,11 @@ export interface LoginConfigState {
   loginPlugin: string;
   domain_name: string;
   domain_id: string;
-  debug: boolean;
   autoLogout: boolean;
 }
 
 export function getDefaultLoginConfig(): LoginConfigState {
   return {
-    debug: false,
     autoLogout: false,
     signup_support: false,
     allowAnonymousChangePassword: false,

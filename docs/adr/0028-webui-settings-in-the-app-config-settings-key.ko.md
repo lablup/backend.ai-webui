@@ -4,8 +4,8 @@
 
 > 낯선 용어는 문서 맨 아래 [용어](#용어)에 모아 두었다.
 
-- `config.toml`에만 있던 WebUI 설정 53개를 관리자가 시스템 설정 페이지(`/admin/system-settings`)에서 바꾼다. 값은 manager의 [app config](#용어) 문서에 저장된다.
-- 각 [스코프](#용어) 문서에는 평탄한 키 `settings` 하나만 둔다. 로그인 전에 필요한 10개는 `publicConfigByDomain.<domain>.settings`, 로그인 뒤에 쓰는 43개는 `domainConfig.settings`에 둔다.
+- `config.toml`에만 있던 WebUI 설정 52개를 관리자가 시스템 설정 페이지(`/admin/system-settings`)에서 바꾼다. 값은 manager의 [app config](#용어) 문서에 저장된다.
+- 각 [스코프](#용어) 문서에는 평탄한 키 `settings` 하나만 둔다. 로그인 전에 필요한 9개는 `publicConfigByDomain.<domain>.settings`, 로그인 뒤에 쓰는 43개는 `domainConfig.settings`에 둔다.
 - 두 문서는 서로 다른 키를 가진다. 문서에 있고 타입이 맞는 키만 설정의 코드 기본값(`getDefaultLoginConfig`)을 덮고, 문서가 없거나 읽지 못하면 코드 기본값을 쓴다.
 - `config.toml`은 이 설정들을 더 이상 담지 않는다(#10664). 문서를 읽기 전에 필요한 값과 webserver가 함께 강제하는 값만 파일에 남는다(3절).
 - 키마다 스코프와 타입은 `react/src/helper/webuiSettings.ts`의 [정의표](#용어) `WEBUI_SETTING_DEFINITIONS`가 정한다. 화면, 병합, 저장이 모두 이 표를 읽는다.
@@ -30,7 +30,7 @@ flowchart LR
   client["backendaiclient._config"]
   defaults -- "every setting's default" --> state
   toml -- "the section 3 keys only (refreshConfigFromToml)" --> state
-  pub -- "10 public keys, before sign-in" --> state
+  pub -- "9 public keys, before sign-in" --> state
   dom -- "43 domain keys, at sign-in" --> state
   state -- "applyConfigToClient" --> client
 ```
@@ -50,14 +50,14 @@ flowchart LR
 
 ### 1. 스코프별 평탄 `settings` 키
 
-| 스코프 | 문서 경로                                | 읽는 시점   | 키                                                                                                                                                                                                                          |
-| ------ | ---------------------------------------- | ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| PUBLIC | `publicConfigByDomain.<domain>.settings` | 로그인 전   | `autoLogout`, `allowChangeSigninMode`, `allowAnonymousChangePassword`, `allowSignupWithoutConfirmation`, `enableInteractiveLoginAccountSwitch`, `singleSignOnVendors`, `ssoRealmName`, `debug`, `pluginLogin`, `pluginPage` |
-| DOMAIN | `domainConfig.settings`                  | 로그인할 때 | 정의표의 나머지 43개                                                                                                                                                                                                        |
+| 스코프 | 문서 경로                                | 읽는 시점   | 키                                                                                                                                                                                                                 |
+| ------ | ---------------------------------------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| PUBLIC | `publicConfigByDomain.<domain>.settings` | 로그인 전   | `autoLogout`, `allowChangeSigninMode`, `allowAnonymousChangePassword`, `allowSignupWithoutConfirmation`, `enableInteractiveLoginAccountSwitch`, `singleSignOnVendors`, `ssoRealmName`, `pluginLogin`, `pluginPage` |
+| DOMAIN | `domainConfig.settings`                  | 로그인할 때 | 정의표의 나머지 43개                                                                                                                                                                                               |
 
 - **Document shape**: `settings`의 값은 `WebUISettingsDocument`(`Record<string, unknown>`)다. 안에 섹션이나 그룹 단계를 두지 않는다. 화면의 그룹은 정의표의 `group` 필드로만 표현한다.
 - **Key names**: 키 이름은 `config.toml`에서 쓰던 이름을 그대로 쓴다. 예외는 `menuBlocklist`/`menuInactivelist`(파일의 `menu.blocklist`/`inactivelist`), `fasttrackEndpoint`(파일의 `pipeline.frontendEndpoint`), `pluginLogin`/`pluginPage`(파일의 `plugin.login`/`page`)다. 파일에서 쉼표로 이은 문자열은 문자열 배열이다.
-- **Public scope criterion**: 로그인 화면이 쓰는 키와, 로그인 전에 한 번 적용되는 키(`debug`, 부트 때 한 번 로드되는 `pluginPage`)만 PUBLIC이다.
+- **Public scope criterion**: 로그인 화면이 쓰는 키와, 로그인 전에 한 번 적용되는 키(부트 때 한 번 로드되는 `pluginPage`)만 PUBLIC이다.
 - **Domain lookup**: PUBLIC 문서의 `<domain>`은 `config.toml`의 `general.apiDomainName`이다(`resolvePublicConfigTarget`).
 - **Write scope**: 쓰기는 문서 전체가 아니라 `settings` 서브키만 바꾼다. 쓰기 hook(`useUpdateDomainAppConfig`, `useUpdatePublicDomainAppConfig`)은 [read-modify-write](#용어)로 manager의 원본 문서를 다시 읽고 `settings`만 바꾼다.
 
@@ -68,7 +68,7 @@ flowchart LR
 - **No seeding**: 저장은 관리자가 설정한 키를 문서에 쓰며, 코드 기본값과 같은 값도 쓴다(`buildWebUISettingsDocument`). 입력을 비우거나 행을 초기화하면 키가 지워지고, 그 키는 계속 기본값을 따른다. 남은 키가 없으면 `settings` 서브키를 지운다.
 - **Read failures**: 문서를 읽지 못하면 경고만 남기고 코드 기본값으로 진행한다. DOMAIN 문서는 로그인 query(`loginSessionAuthMyUserQuery`의 `myAppConfigs … @catch(to: NULL)`, `readDomainWebUISettings`)에 실려 오고, PUBLIC 문서는 `fetchPublicDomainConfigOnce`가 읽는다.
 - **Merge points**: PUBLIC 문서는 부트(`initializeConfigOnce`)와 다른 webserver의 설정을 받을 때(`loadConfigFromWebServer`) 병합한다. 후자는 그 webserver의 `apiEndpoint`로 문서를 찾고, 그 서버의 파일 키를 내장 `config.toml` 위에 병합한다. DOMAIN 문서는 로그인(`connectViaGQL`) 때 병합한다.
-- **One store**: 병합을 마친 값은 `loginConfigState`에만 있다. `debug`처럼 React 밖에서 읽는 값도 `jotaiStore.get(loginConfigState)`로 읽고, `globalThis` 사본을 두지 않는다. 파일을 해석하는 `refreshConfigFromToml`은 부작용이 없다.
+- **One store**: 병합을 마친 값은 `loginConfigState`에만 있다. React 밖에서 읽는 값도 `jotaiStore.get(loginConfigState)`로 읽고, `globalThis` 사본을 두지 않는다. 파일을 해석하는 `refreshConfigFromToml`은 부작용이 없다.
 
 ### 3. `config.toml`에만 남는 키
 
@@ -95,6 +95,11 @@ flowchart LR
 - **Who may write**: 저장 가능 여부는 manager의 RBAC가 정한다. PUBLIC 문서는 superadmin만 쓸 수 있다. 저장이 거부되면 저장되지 않은 설정을 목록으로 알린다.
 - **Reset**: 툴바의 Reset은 보이는 스코프의 `settings`에서 정의표의 키를 지운다. 되돌릴 수 없으므로 `BAIDeleteConfirmModal`에 버튼 이름(`button.Reset`)을 입력해야 실행된다.
 - **Self-hiding**: `menuBlocklist`/`menuInactivelist`의 `system-settings`는 무시한다(`useWebUIMenuItems`). 이 페이지를 숨기면 같은 화면에서 되돌릴 수 없다.
+
+### 6. 디버그 모드는 설정이 아니다
+
+- **Where it lives**: 디버그 모드(i18n 키 마커, 원본 오류 메시지, 앱 런처 프록시 옵션, 오류 상세)는 정의표에 없고 어떤 문서에도 저장하지 않는다. 저장된 `debug` 키는 무시한다. superadmin이 "이 사용자로 이용하기" 모달의 "디버그 모드" 체크박스로 켜며, 그 act-as 탭에서만 적용된다(`ActAsTarget.debug`, `isActAsDebugMode`가 읽음).
+- **Why**: PUBLIC 키는 로그인 화면을 포함해 도메인의 모든 사용자에게 이 정보를 보여 줬고(#10952), 대상 사용자의 USER 문서에 쓰면 그 사용자에게도 켜진다. act-as 탭의 `sessionStorage`에만 두므로 act-as 탭을 종료하거나 닫으면 꺼진다. 브라우저가 탭을 복제하거나 닫은 탭을 다시 열면 `sessionStorage`와 함께 이 플래그도 복사된다.
 
 ## 대안과 기각 사유
 

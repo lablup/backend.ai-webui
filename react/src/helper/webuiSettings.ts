@@ -85,8 +85,6 @@ export const WEBUI_SETTING_DEFINITIONS: ReadonlyArray<WebUISettingDefinition> =
       options: SSO_VENDOR_OPTIONS,
     },
     def('ssoRealmName', 'public', 'string', 'login'),
-    // Also anonymous: the diagnostics surfaces run on the login page too.
-    def('debug', 'public', 'boolean', 'diagnostics'),
     {
       ...def('storageWarningThreshold', 'domain', 'number', 'diagnostics'),
       min: 0,

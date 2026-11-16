@@ -2,8 +2,8 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { isActAsDebugMode } from '../helper/actAs';
 import { useActiveErrorBoundaryControl } from '../hooks/useActiveErrorBoundary';
-import { useLoginConfig } from '../hooks/useWebUIConfig';
 import { isLoginSessionExpiredState } from './LoginSessionExtendButton';
 import { Banner } from '@lablup/ui-common/Banner';
 import { Button } from '@lablup/ui-common/Button';
@@ -83,7 +83,7 @@ const BAIErrorBoundary: React.FC<BAIErrorBoundaryProps> = ({
   const { token } = useTheme();
   const isExpiredLoginSession = useAtomValue(isLoginSessionExpiredState);
   const { markTriggered, markReset } = useActiveErrorBoundaryControl();
-  const isDebugMode = useLoginConfig()?.debug === true;
+  const isDebugMode = isActAsDebugMode();
   return (
     <ErrorBoundary
       {...props}
