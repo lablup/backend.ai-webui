@@ -319,6 +319,22 @@ function buildPresetNode(
   };
 }
 
+/** The multi-preset card's two presets, shared by the drawer and dropdown mocks. */
+const MULTI_PRESET_NODES = [
+  buildPresetNode(
+    'preset-uuid-011',
+    'gpu-small',
+    RUNTIME_VARIANT_VLLM_LOCAL_ID,
+    'vllm',
+  ),
+  buildPresetNode(
+    'preset-uuid-012',
+    'gpu-medium',
+    RUNTIME_VARIANT_TGI_LOCAL_ID,
+    'huggingface-tgi',
+  ),
+];
+
 /**
  * Returns a ModelCardDrawerQuery mock for the multi-preset model card.
  * Used for Groups A and C (drawer open, deploy modal).
@@ -340,24 +356,7 @@ export function modelCardDrawerQueryWithMultiPresetsMock() {
         // VFolderNodeIdenticonV2Fragment only needs id
       },
       availablePresets: {
-        edges: [
-          {
-            node: buildPresetNode(
-              'preset-uuid-011',
-              'gpu-small',
-              RUNTIME_VARIANT_VLLM_LOCAL_ID,
-              'vllm',
-            ),
-          },
-          {
-            node: buildPresetNode(
-              'preset-uuid-012',
-              'gpu-medium',
-              RUNTIME_VARIANT_TGI_LOCAL_ID,
-              'huggingface-tgi',
-            ),
-          },
-        ],
+        edges: MULTI_PRESET_NODES.map((node) => ({ node })),
       },
     },
   });
@@ -431,20 +430,10 @@ export function modelCardDrawerQueryWithSinglePresetMock() {
 // ─────────────────────────────────────────────────────────────────────────────
 
 /** The multi-preset card's presets, as the dropdown's own queries return them. */
-const SELECTABLE_PRESETS = [
-  buildPresetNode(
-    'preset-uuid-011',
-    'gpu-small',
-    RUNTIME_VARIANT_VLLM_LOCAL_ID,
-    'vllm',
-  ),
-  buildPresetNode(
-    'preset-uuid-012',
-    'gpu-medium',
-    RUNTIME_VARIANT_TGI_LOCAL_ID,
-    'huggingface-tgi',
-  ),
-].map((preset, index) => ({ ...preset, rank: index + 1 }));
+const SELECTABLE_PRESETS = MULTI_PRESET_NODES.map((preset, index) => ({
+  ...preset,
+  rank: index + 1,
+}));
 
 /**
  * Mocks for the dropdown's option list (`BAIAvailablePresetSelectPaginatedQuery`)
