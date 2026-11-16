@@ -15,14 +15,16 @@ import {
   WEBUI_ASSISTANT_MODEL_CARD_LABEL,
 } from './webUIAssistantPrompt';
 import { Banner } from '@lablup/ui-common/Banner';
+import { Field } from '@lablup/ui-common/Field';
 import { Text } from '@lablup/ui-common/Text';
 import {
   BAIFlex,
   BAIModal,
+  BAISelect,
   BAIUnmountAfterClose,
   type BAIModalProps,
 } from 'backend.ai-ui';
-import { Suspense, useState } from 'react';
+import { Suspense, useId, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
@@ -41,7 +43,23 @@ export interface WebUIAssistantSetupModalProps extends Omit<
   onRequestClose: () => void;
 }
 
-/** "Start WebUI Assistant": finds the assistant's model card and deploys it. */
+const isRecommended = (card: AssistantCard) =>
+  !!card.metadata?.label?.includes(WEBUI_ASSISTANT_MODEL_CARD_LABEL);
+const isTextGeneration = (card: AssistantCard) =>
+  /text[-_ ]?generation|chat|llm/i.test(card.metadata?.task ?? '');
+
+/** Recommended cards first, then chat-capable ones, then the rest by name. */
+export function sortAssistantCards<T extends AssistantCard>(cards: T[]): T[] {
+  const rank = (card: T) =>
+    isRecommended(card) ? 0 : isTextGeneration(card) ? 1 : 2;
+  return [...cards].sort(
+    (a, b) =>
+      rank(a) - rank(b) ||
+      (a.metadata?.title || a.name).localeCompare(b.metadata?.title || b.name),
+  );
+}
+
+/** "Start WebUI Assistant": the user picks a model-store card and deploys it. */
 const WebUIAssistantSetupModal: React.FC<WebUIAssistantSetupModalProps> = (
   props,
 ) => {
@@ -51,7 +69,7 @@ const WebUIAssistantSetupModal: React.FC<WebUIAssistantSetupModalProps> = (
   return storeProjectId ? (
     <SetupModalWithStore storeProjectId={storeProjectId} {...props} />
   ) : (
-    <SetupModalView card={null} hasStore={false} {...props} />
+    <SetupModalView cards={[]} hasStore={false} {...props} />
   );
 };
 
@@ -72,6 +90,7 @@ const SetupModalWithStore: React.FC<
                 metadata {
                   title
                   description
+                  task
                   label
                 }
                 ...ModelCardDeployModalFragment
@@ -83,34 +102,37 @@ const SetupModalWithStore: React.FC<
       { projectId: storeProjectId },
       { fetchPolicy: 'network-only' },
     );
-  // ModelCardV2Filter has no label filter, so the match happens here.
-  const card =
-    projectModelCardsV2?.edges
+  const cards = sortAssistantCards(
+    (projectModelCardsV2?.edges ?? [])
       .map((edge) => edge?.node)
-      .find((node) =>
-        node?.metadata?.label?.includes(WEBUI_ASSISTANT_MODEL_CARD_LABEL),
-      ) ?? null;
+      .filter((node): node is AssistantCard => !!node),
+  );
 
-  return <SetupModalView card={card} hasStore {...props} />;
+  return <SetupModalView cards={cards} hasStore {...props} />;
 };
 
 const SetupModalView: React.FC<
   WebUIAssistantSetupModalProps & {
-    card: AssistantCard | null;
+    cards: AssistantCard[];
     hasStore: boolean;
   }
-> = ({ card, hasStore, onRequestClose, ...modalProps }) => {
+> = ({ cards, hasStore, onRequestClose, ...modalProps }) => {
   'use memo';
 
   const { t } = useTranslation();
+  const selectId = useId();
   const { name: projectName } = useCurrentProjectValue();
   const { upsertEndpointBinding } = useAIAgent();
   const [isDeployOpen, setIsDeployOpen] = useState(false);
+  const [pickedId, setPickedId] = useState<string>();
+  // ModelCardV2Filter has no label filter, so the recommended card is found here.
+  const recommendedId = cards.find(isRecommended)?.id;
+  const card = cards.find((c) => c.id === (pickedId ?? recommendedId));
 
   return (
     <BAIModal
       title={t('webuiAssistant.SetupTitle')}
-      width={480}
+      width={520}
       okText={t('webuiAssistant.StartModel')}
       okButtonProps={{ disabled: !card }}
       onOk={() => setIsDeployOpen(true)}
@@ -125,18 +147,43 @@ const SetupModalView: React.FC<
             title={t('webuiAssistant.NoModelStore')}
             description={t('webuiAssistant.AskAdministrator')}
           />
-        ) : !card ? (
+        ) : cards.length === 0 ? (
           <Banner
             status="warning"
             title={t('webuiAssistant.NoModelCard')}
-            description={t('webuiAssistant.NoModelCardDesc', {
-              label: WEBUI_ASSISTANT_MODEL_CARD_LABEL,
-            })}
+            description={t('webuiAssistant.NoModelCardDesc')}
           />
         ) : (
-          <BAIFlex direction="column" align="stretch" gap="xs">
-            <Text weight="semibold">{card.metadata?.title || card.name}</Text>
-            {card.metadata?.description && (
+          <>
+            <Field
+              label={t('webuiAssistant.Model')}
+              inputID={selectId}
+              description={t('webuiAssistant.ModelHint', {
+                label: WEBUI_ASSISTANT_MODEL_CARD_LABEL,
+              })}
+            >
+              <BAISelect
+                id={selectId}
+                data-testid="webui-assistant-model-select"
+                aria-label={t('webuiAssistant.Model')}
+                showSearch
+                placeholder={t('webuiAssistant.SelectModel')}
+                style={{ width: '100%' }}
+                value={card?.id}
+                onChange={(value) => setPickedId(value as string)}
+                options={cards.map((c) => ({
+                  value: c.id,
+                  label: c.metadata?.title || c.name,
+                  description: [
+                    isRecommended(c) ? t('webuiAssistant.Recommended') : '',
+                    c.metadata?.task ?? '',
+                  ]
+                    .filter(Boolean)
+                    .join(' · '),
+                }))}
+              />
+            </Field>
+            {card?.metadata?.description && (
               <Text color="secondary" size="sm">
                 {card.metadata.description}
               </Text>
@@ -148,13 +195,14 @@ const SetupModalView: React.FC<
                 components={{ strong: <strong /> }}
               />
             </Text>
-          </BAIFlex>
+          </>
         )}
       </BAIFlex>
       {card && (
         <Suspense fallback={null}>
           <BAIUnmountAfterClose>
             <ModelCardDeployModal
+              key={card.id}
               open={isDeployOpen}
               modelCardFrgmt={card}
               navigateOnDeployed={false}

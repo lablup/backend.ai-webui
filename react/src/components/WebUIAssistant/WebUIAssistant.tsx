@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { WebUIAssistantDeploymentQuery } from '../../__generated__/WebUIAssistantDeploymentQuery.graphql';
 import { useAIAgent } from '../../hooks/useAIAgent';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
 import { useCurrentLanguage } from '../DefaultProviders';
@@ -11,17 +12,32 @@ import WebUIAssistantChat from './WebUIAssistantChat';
 import WebUIAssistantProvisioner from './WebUIAssistantProvisioner';
 import WebUIAssistantSetupModal from './WebUIAssistantSetupModal';
 import { WEBUI_ASSISTANT_AGENT_ID } from './webUIAssistantPrompt';
-import { webUIAssistantSetupOpenAtom } from './webUIAssistantState';
 import { Banner } from '@lablup/ui-common/Banner';
 import { Button } from '@lablup/ui-common/Button';
 import { IconButton } from '@lablup/ui-common/IconButton';
 import { Spinner } from '@lablup/ui-common/Spinner';
 import { Text } from '@lablup/ui-common/Text';
-import { BAICard, BAIFlex, BAIUnmountAfterClose } from 'backend.ai-ui';
-import { useAtom } from 'jotai';
+import {
+  BAICard,
+  BAIFlex,
+  BAIUnmountAfterClose,
+  toGlobalId,
+} from 'backend.ai-ui';
 import { MessageCircle, RotateCcw, X } from 'lucide-react';
 import { Suspense, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { fetchQuery, graphql, useRelayEnvironment } from 'react-relay';
+
+const deploymentQuery = graphql`
+  query WebUIAssistantDeploymentQuery($id: ID!) {
+    deployment(id: $id) {
+      id
+      metadata {
+        status
+      }
+    }
+  }
+`;
 
 /** The floating WebUI Assistant; renders nothing until the user turns it on. */
 const WebUIAssistant: React.FC = () => {
@@ -37,7 +53,8 @@ const WebUIAssistantFloating: React.FC = () => {
   const { t } = useTranslation();
   const [lang] = useCurrentLanguage();
   const { agents, getEndpointBinding, upsertEndpointBinding } = useAIAgent();
-  const [isSetupOpen, setIsSetupOpen] = useAtom(webUIAssistantSetupOpenAtom);
+  const relayEnvironment = useRelayEnvironment();
+  const [isSetupOpen, setIsSetupOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [conversationKey, setConversationKey] = useState(0);
   const [problem, setProblem] = useState<'missing' | 'token' | null>(null);
@@ -66,6 +83,36 @@ const WebUIAssistantFloating: React.FC = () => {
     document.addEventListener('keydown', onKeyDown);
     return () => document.removeEventListener('keydown', onKeyDown);
   }, [isOpen]);
+
+  // The button opens the chat only over a live deployment; otherwise it starts setup.
+  const toggleAssistant = async () => {
+    if (isOpen) {
+      setIsOpen(false);
+      return;
+    }
+    if (!deploymentId) {
+      setIsSetupOpen(true);
+      return;
+    }
+    const result = await fetchQuery<WebUIAssistantDeploymentQuery>(
+      relayEnvironment,
+      deploymentQuery,
+      { id: toGlobalId('ModelDeployment', deploymentId) },
+      { fetchPolicy: 'network-only' },
+    )
+      .toPromise()
+      // A failed lookup is not proof the deployment is gone; keep the binding.
+      .catch(() => undefined);
+    const status = result?.deployment?.metadata.status;
+    if (
+      result &&
+      (!result.deployment || status === 'STOPPING' || status === 'STOPPED')
+    ) {
+      startAgain();
+      return;
+    }
+    setIsOpen(true);
+  };
 
   const startAgain = () => {
     upsertEndpointBinding(WEBUI_ASSISTANT_AGENT_ID, null);
@@ -215,7 +262,7 @@ const WebUIAssistantFloating: React.FC = () => {
         label={isOpen ? t('button.Close') : t('webuiAssistant.Open')}
         tooltip={isOpen ? undefined : title}
         aria-expanded={isOpen}
-        onClick={() => setIsOpen((open) => !open)}
+        clickAction={toggleAssistant}
       />
       <Suspense fallback={null}>
         <BAIUnmountAfterClose>

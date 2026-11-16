@@ -10,17 +10,17 @@ test(
   async ({ app, agent }) => {
     await app.open("/start");
     await agent.act("Open User Settings from the user menu in the header");
+    await agent.act('Under "Experimental features", turn on "WebUI Assistant"');
+    await agent.act("Close User Settings");
     await agent.act(
-      'Under "Experimental features", turn on "WebUI Assistant"',
+      'Press the round "Open WebUI Assistant" button at the bottom right',
     );
     await agent.act(
-      'In the "Start WebUI Assistant" dialog, press "Start model"',
+      'In the "Start WebUI Assistant" dialog, choose a chat model in the "Model" field',
     );
+    await agent.act('Press "Start model"');
     await agent.act(
       "If a preset and resource group are asked for, keep the defaults and deploy",
-    );
-    await agent.act(
-      'Open the round "Open WebUI Assistant" button at the bottom right',
     );
     await agent.act('Ask "How do I mount a folder to a session?" and send it');
   },

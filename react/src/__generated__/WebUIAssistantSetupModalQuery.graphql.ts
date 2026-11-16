@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<7fbbcc58621524c13242364c3d5d6f2c>>
+ * @generated SignedSource<<ae3e74c2e2d58b2b64fdfe88230f305c>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -21,6 +21,7 @@ export type WebUIAssistantSetupModalQuery$data = {
         readonly metadata: {
           readonly description: string | null | undefined;
           readonly label: ReadonlyArray<string>;
+          readonly task: string | null | undefined;
           readonly title: string | null | undefined;
         };
         readonly name: string;
@@ -98,6 +99,13 @@ v6 = {
       "storageKey": null
     },
     (v5/*: any*/),
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "task",
+      "storageKey": null
+    },
     {
       "alias": null,
       "args": null,
@@ -596,16 +604,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "ff248d9773ae141903fe1abee4f1af31",
+    "cacheID": "54e195c6b50ac1184686c0bfa9ab7caf",
     "id": null,
     "metadata": {},
     "name": "WebUIAssistantSetupModalQuery",
     "operationKind": "query",
-    "text": "query WebUIAssistantSetupModalQuery(\n  $projectId: UUID!\n) {\n  projectModelCardsV2(scope: {projectId: $projectId}, limit: 100) {\n    edges {\n      node {\n        id\n        name\n        metadata {\n          title\n          description\n          label\n        }\n        ...ModelCardDeployModalFragment\n      }\n    }\n  }\n}\n\nfragment DeploymentPresetDetailModalFragment on DeploymentRevisionPreset {\n  id\n  entityId\n  name\n  description\n  runtimeVariantId\n  runtimeVariant {\n    id\n    name\n  }\n  cluster {\n    clusterMode\n    clusterSize\n  }\n  execution {\n    imageId\n    startupCommand\n    bootstrapScript\n    environ {\n      key\n      value\n    }\n  }\n  image {\n    id\n    identity {\n      canonicalName\n    }\n  }\n  resource {\n    resourceOpts {\n      name\n      value\n    }\n  }\n  resourceSlots {\n    slotName\n    quantity\n  }\n  deploymentDefaults {\n    openToPublic\n    replicaCount\n    revisionHistoryLimit\n    deploymentStrategy\n  }\n  presetValues {\n    presetId\n    value\n  }\n  modelDefinition {\n    models {\n      name\n      service {\n        healthCheck {\n          enable\n          interval\n          path\n          maxRetries\n          maxWaitTime\n          expectedStatusCode\n          initialDelay\n        }\n      }\n    }\n  }\n}\n\nfragment ModelCardDeployModalFragment on ModelCardV2 {\n  id\n  entityId\n  availablePresets(orderBy: [{field: RANK, direction: \"ASC\"}], limit: 100) {\n    edges {\n      node {\n        id\n        entityId\n        name\n        runtimeVariantId\n        ...DeploymentPresetDetailModalFragment\n      }\n    }\n  }\n}\n"
+    "text": "query WebUIAssistantSetupModalQuery(\n  $projectId: UUID!\n) {\n  projectModelCardsV2(scope: {projectId: $projectId}, limit: 100) {\n    edges {\n      node {\n        id\n        name\n        metadata {\n          title\n          description\n          task\n          label\n        }\n        ...ModelCardDeployModalFragment\n      }\n    }\n  }\n}\n\nfragment DeploymentPresetDetailModalFragment on DeploymentRevisionPreset {\n  id\n  entityId\n  name\n  description\n  runtimeVariantId\n  runtimeVariant {\n    id\n    name\n  }\n  cluster {\n    clusterMode\n    clusterSize\n  }\n  execution {\n    imageId\n    startupCommand\n    bootstrapScript\n    environ {\n      key\n      value\n    }\n  }\n  image {\n    id\n    identity {\n      canonicalName\n    }\n  }\n  resource {\n    resourceOpts {\n      name\n      value\n    }\n  }\n  resourceSlots {\n    slotName\n    quantity\n  }\n  deploymentDefaults {\n    openToPublic\n    replicaCount\n    revisionHistoryLimit\n    deploymentStrategy\n  }\n  presetValues {\n    presetId\n    value\n  }\n  modelDefinition {\n    models {\n      name\n      service {\n        healthCheck {\n          enable\n          interval\n          path\n          maxRetries\n          maxWaitTime\n          expectedStatusCode\n          initialDelay\n        }\n      }\n    }\n  }\n}\n\nfragment ModelCardDeployModalFragment on ModelCardV2 {\n  id\n  entityId\n  availablePresets(orderBy: [{field: RANK, direction: \"ASC\"}], limit: 100) {\n    edges {\n      node {\n        id\n        entityId\n        name\n        runtimeVariantId\n        ...DeploymentPresetDetailModalFragment\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "23ed2181be48fe4ac0ec83edc320ef2c";
+(node as any).hash = "d30c571944bab8f5d92ba93bb69adca0";
 
 export default node;
