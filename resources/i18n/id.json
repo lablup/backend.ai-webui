@@ -361,6 +361,7 @@
     "AutoMountAdded": "Mount otomatis ditambahkan.",
     "AutoMountFailedAfterCreation": "Folder sudah dibuat, tetapi mount otomatisnya tidak dapat diatur. Coba lagi dari bagian Mount otomatis di detail folder.",
     "AutoMountInSessionsDesc": "Mount folder ini ke setiap sesi yang dibuat di proyek ini.",
+    "AutoMountInUserSessionsDesc": "Memasang folder ini ke setiap sesi yang Anda buat, di proyek mana pun.",
     "AutoMountRemoved": "Mount otomatis dihapus.",
     "AutoMountSettings": "Pengaturan mount otomatis",
     "AutoMountUpdated": "Mount otomatis diperbarui.",

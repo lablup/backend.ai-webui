@@ -361,6 +361,7 @@
     "AutoMountAdded": "Automaattinen liitos lisätty.",
     "AutoMountFailedAfterCreation": "Kansio luotiin, mutta sen automaattista liitosta ei voitu asettaa. Yritä uudelleen kansion tietojen Automaattinen liitos -osiosta.",
     "AutoMountInSessionsDesc": "Liitä tämä kansio jokaiseen tässä projektissa luotuun istuntoon.",
+    "AutoMountInUserSessionsDesc": "Liittää tämän kansion jokaiseen luomaasi istuntoon missä tahansa projektissa.",
     "AutoMountRemoved": "Automaattinen liitos poistettu.",
     "AutoMountSettings": "Automaattisen liitoksen asetukset",
     "AutoMountUpdated": "Automaattinen liitos päivitetty.",

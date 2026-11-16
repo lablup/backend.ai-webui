@@ -361,6 +361,7 @@
     "AutoMountAdded": "Dodano automatyczne montowanie.",
     "AutoMountFailedAfterCreation": "Folder został utworzony, ale nie udało się ustawić jego automatycznego montowania. Spróbuj ponownie w sekcji automatycznego montowania w szczegółach folderu.",
     "AutoMountInSessionsDesc": "Montuj ten folder w każdej sesji utworzonej w tym projekcie.",
+    "AutoMountInUserSessionsDesc": "Montuje ten folder w każdej tworzonej przez Ciebie sesji, w dowolnym projekcie.",
     "AutoMountRemoved": "Usunięto automatyczne montowanie.",
     "AutoMountSettings": "Ustawienia automatycznego montowania",
     "AutoMountUpdated": "Zaktualizowano automatyczne montowanie.",

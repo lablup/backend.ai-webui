@@ -361,6 +361,7 @@
     "AutoMountAdded": "Lekap automatik ditambah.",
     "AutoMountFailedAfterCreation": "Folder telah dicipta, tetapi lekap automatiknya tidak dapat ditetapkan. Cuba lagi dari bahagian Lekap automatik dalam butiran folder.",
     "AutoMountInSessionsDesc": "Lekapkan folder ini ke setiap sesi yang dicipta dalam projek ini.",
+    "AutoMountInUserSessionsDesc": "Lekapkan folder ini ke setiap sesi yang anda cipta, dalam mana-mana projek.",
     "AutoMountRemoved": "Lekap automatik dialih keluar.",
     "AutoMountSettings": "Tetapan lekap automatik",
     "AutoMountUpdated": "Lekap automatik dikemas kini.",

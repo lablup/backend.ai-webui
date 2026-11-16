@@ -361,6 +361,7 @@
     "AutoMountAdded": "Auto-Mount hinzugefügt.",
     "AutoMountFailedAfterCreation": "Der Ordner wurde erstellt, aber sein Auto-Mount konnte nicht festgelegt werden. Versuchen Sie es im Auto-Mount-Bereich der Ordnerdetails erneut.",
     "AutoMountInSessionsDesc": "Diesen Ordner in jede Sitzung dieses Projekts einhängen.",
+    "AutoMountInUserSessionsDesc": "Hängt diesen Ordner in jede Sitzung ein, die Sie erstellen, in jedem Projekt.",
     "AutoMountRemoved": "Auto-Mount entfernt.",
     "AutoMountSettings": "Auto-Mount-Einstellungen",
     "AutoMountUpdated": "Auto-Mount aktualisiert.",
