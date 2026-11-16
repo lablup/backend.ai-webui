@@ -238,7 +238,7 @@ const VFolderAutoMountMetadataSection: React.FC<
         scopeType={scopeType}
         scopeId={scopeId}
         vfolder={vfolder}
-        autoMountFrgmt={autoMount}
+        vfolderAutoMountFrgmt={autoMount}
         onRequestClose={(success) => {
           setIsModalOpen(false);
           if (success && !autoMount) updateFetchKey();
