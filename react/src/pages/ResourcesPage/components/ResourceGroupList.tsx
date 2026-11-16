@@ -327,6 +327,14 @@ const ResourceGroupList: React.FC = () => {
                         message.success(
                           t('resourceGroup.ResourceGroupModified'),
                         );
+                        // Toggling `isActive` moves the row to the other
+                        // Active/Inactive list, so the membership changes.
+                        setSelectedRowKeys((keys) =>
+                          keys.filter((key) => key !== record.name),
+                        );
+                        startRefetchTransition(() => {
+                          updateFetchKey();
+                        });
                         resolve();
                       },
                       onError: (err) => {
@@ -339,8 +347,9 @@ const ResourceGroupList: React.FC = () => {
               },
             },
             // Deletion is only offered for deactivated groups (Inactive tab);
-            // active groups are deactivated first.
-            ...(activeType === 'inactive'
+            // active groups are deactivated first. The row's own status also
+            // gates it while a just-activated row waits for the refetch.
+            ...(activeType === 'inactive' && !record.status.isActive
               ? [
                   {
                     key: 'delete',
