@@ -38,6 +38,7 @@ import {
   installDeploymentFlagOverride,
   openAddRevisionAdvanced,
   selectRuntimeVariant,
+  selectAvailableResourcePreset,
   submitAddRevision,
 } from '../../mocks/serving/add-revision-support';
 import { setupGraphQLMocks } from '../../mocks/session/graphql-interceptor';
@@ -234,6 +235,7 @@ test.describe(
         // selecting the deterministically-provisioned model folder by name.
         await selectRevisionModalOption(page, 'Model Folder', folderName!);
         await fillManualImageName(modal, MOCK_MANUAL_IMAGE_REFERENCE);
+        await selectAvailableResourcePreset(page, modal);
         await disableAutoApply(modal);
 
         await submitAddRevision(modal);
@@ -296,6 +298,7 @@ test.describe(
 
         await selectRevisionModalOption(page, 'Model Folder', folderName!);
         await fillManualImageName(modal, MOCK_MANUAL_IMAGE_REFERENCE);
+        await selectAvailableResourcePreset(page, modal);
         await disableAutoApply(modal);
         await submitAddRevision(modal);
 
@@ -354,6 +357,7 @@ test.describe(
         await shellInput.blur();
 
         await fillManualImageName(modal, MOCK_MANUAL_IMAGE_REFERENCE);
+        await selectAvailableResourcePreset(page, modal);
         await disableAutoApply(modal);
         await submitAddRevision(modal);
 
@@ -398,6 +402,7 @@ test.describe(
 
         await selectRevisionModalOption(page, 'Model Folder', folderName!);
         await fillManualImageName(modal, MOCK_MANUAL_IMAGE_REFERENCE);
+        await selectAvailableResourcePreset(page, modal);
         await disableAutoApply(modal);
         await submitAddRevision(modal);
 

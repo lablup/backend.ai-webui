@@ -51,6 +51,7 @@ import {
   installDeploymentFlagOverride,
   openAddRevisionAdvanced,
   selectRuntimeVariant,
+  selectAvailableResourcePreset,
   submitAddRevision,
 } from '../../mocks/serving/add-revision-support';
 import { setupGraphQLMocks } from '../../mocks/session/graphql-interceptor';
@@ -490,6 +491,7 @@ test.describe(
         await selectRuntimeVariant(page, modal, 'custom');
         await selectRevisionModalOption(page, 'Model Folder', folderName);
         await fillManualImageName(modal, MOCK_MANUAL_IMAGE_REFERENCE);
+        await selectAvailableResourcePreset(page, modal);
         await disableAutoApply(modal);
 
         await modal
@@ -523,13 +525,6 @@ test.describe(
           await expect(input).toHaveAttribute('placeholder', placeholder);
           await expect(input).toHaveValue('');
         }
-
-        // No resource preset is picked for a manually typed image; entering
-        // memory switches the allocation to Custom so the form validates.
-        // TODO: give the memory input a real label (BUI's doubled fallback name).
-        await modal
-          .getByRole('spinbutton', { name: 'Select Select', exact: true })
-          .fill('1');
 
         await submitAddRevision(modal);
 
