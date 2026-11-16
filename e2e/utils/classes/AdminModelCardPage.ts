@@ -97,14 +97,28 @@ export class AdminModelCardPage {
     });
   }
 
+  // The token names its remove button "Remove Name: contains <value>", with
+  // the value cut to fit the token, so match on a prefix of it.
+  getNameFilterChip(value: string): Locator {
+    return this.page.getByRole('button', {
+      name: new RegExp(
+        `^Remove Name: contains ${this.escapeRegExp(value.slice(0, 24))}`,
+      ),
+    });
+  }
+
   async applyNameFilter(value: string): Promise<void> {
     // PowerSearch has no submit button — typing opens a quoted free-text
     // suggestion, and clicking it commits the condition. A table refresh
-    // still settling can reset the input, so re-type until the suggestion can be clicked.
+    // still settling can reset the input, so re-type until the chip appears,
+    // and stop as soon as it does: typing again after the commit times out.
     const option = this.getFilterSearchResultOption(value);
+    const chip = this.getNameFilterChip(value);
     await expect(async () => {
+      if (await chip.isVisible()) return;
       await this.getFilterSearchInput().fill(value);
       await option.click({ timeout: 3000 });
+      await expect(chip).toBeVisible({ timeout: 3000 });
     }).toPass({ timeout: 30000 });
     await this.page.waitForURL(new RegExp(`filter=`));
   }
