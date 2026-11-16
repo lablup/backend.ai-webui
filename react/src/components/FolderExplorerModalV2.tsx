@@ -25,6 +25,7 @@ import type { ScopedAuditLogQuery as ScopedAuditLogQueryType } from '../__genera
 import { formatToUUID } from '../helper';
 import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
+import { useAccessibleProjects } from '../hooks/useAccessibleProjects';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useIsProjectAgnosticPage } from '../hooks/useIsProjectAgnosticPage';
@@ -286,6 +287,7 @@ const FolderExplorerBody: React.FC<{
   const [fetchKey, updateFetchKey] = useFetchKey();
   const baiClient = useSuspendedBackendaiClient();
   const loginConfig = useEffectiveLoginConfig();
+  const { personalProject } = useAccessibleProjects();
   const currentDomain = useCurrentDomainValue();
   const { pageProject } = usePageProject();
   const currentUserAccessKey = baiClient?._config?.accessKey;
@@ -360,23 +362,22 @@ const FolderExplorerBody: React.FC<{
   const [activeTab, setActiveTab] = useState<'metadata' | 'auditLog'>(
     'metadata',
   );
-  // A project folder auto-mounts for its project, a user folder for its owner.
-  // A user folder still carries its personal project's id, so read the type.
-  const autoMountScope = vfolderNode
-    ? vfolderNode.accessControl?.ownershipType === 'USER'
+  // A personal project's folder auto-mounts for the user, as FolderCreateModal sets it.
+  const autoMountScope = !vfolderNode
+    ? null
+    : vfolderNode.accessControl?.ownershipType === 'USER'
       ? vfolderNode.ownership?.userId
-        ? {
-            scopeType: 'USER' as const,
-            scopeId: vfolderNode.ownership.userId,
-          }
+        ? { scopeType: 'USER' as const, scopeId: vfolderNode.ownership.userId }
         : null
-      : vfolderNode.ownership?.projectId
-        ? {
-            scopeType: 'PROJECT' as const,
-            scopeId: vfolderNode.ownership.projectId,
-          }
-        : null
-    : null;
+      : vfolderNode.ownership?.projectId &&
+          vfolderNode.ownership.projectId === personalProject?.id
+        ? { scopeType: 'USER' as const, scopeId: baiClient.user_uuid }
+        : vfolderNode.ownership?.projectId
+          ? {
+              scopeType: 'PROJECT' as const,
+              scopeId: vfolderNode.ownership.projectId,
+            }
+          : null;
   const [auditLogQueryRef, loadAuditLogQuery] =
     useQueryLoader<ScopedAuditLogQueryType>(ScopedAuditLogQuery);
 
