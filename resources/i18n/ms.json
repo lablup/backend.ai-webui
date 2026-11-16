@@ -4136,6 +4136,7 @@
     "DescThemeFamily": "Tetapkan tema.",
     "DescThemeMode": "Tetapkan mod paparan.",
     "DescUseCompactSidebar": "Bar sisi padat menyediakan lebih banyak ruang kerja. <br />Apabila dibolehkan, bar sisi padat akan menjadi UI lalai semasa permulaan.",
+    "DescWebUIAssistant": "Menambah butang sembang di bahagian bawah kanan yang menjawab soalan tentang WebUI berdasarkan manual pengguna. Menghidupkannya akan memulakan penggunaan model untuk anda.",
     "DesktopNotification": "Bolehkan Pemberitahuan Desktop",
     "DetailLogo": "Logo CI Terperinci",
     "DialogDiscardOrSave": "Fail dan skrip semasa akan diubah tanpa menyimpan, Adakah anda mahu meneruskan?",
@@ -4186,6 +4187,7 @@
     "UseCompactSidebar": "Tetapkan Bar Sisi Padat sebagai Lalai",
     "UseSystemSetting": "Gunakan Tetapan Sistem",
     "UserConfigScript": "Skrip konfigurasi pengguna",
+    "WebUIAssistant": "Pembantu WebUI",
     "font": {
       "FontCustomizationDesc": "Tetapkan fon yang akan digunakan dalam WebUI. Fon mesti dipasang pada sistem tempatan anda untuk dipaparkan dalam pratonton.",
       "FontFamily": "Keluarga Fon",
@@ -4419,6 +4421,32 @@
         "ProjectAdministration": "Pentadbiran projek"
       }
     }
+  },
+  "webuiAssistant": {
+    "AlsoDeleteDeployment": "Padam juga penggunaan pembantu untuk membebaskan sumbernya",
+    "AskAdministrator": "Minta pentadbir anda menyediakan Model Store.",
+    "ClearConversation": "Kosongkan perbualan",
+    "DeployTarget": "Satu penggunaan milik anda dicipta dalam projek <strong>{{project}}</strong> dan menggunakan sumbernya sehingga anda mematikan pembantu.",
+    "DeploymentMissing": "Penggunaan pembantu tidak lagi wujud.",
+    "EmptyState": "Tanya cara melakukan sesuatu dalam WebUI. Jawapan diambil daripada manual pengguna.",
+    "ManualUnavailable": "Manual pengguna tidak dapat dimuatkan, jadi jawapan mungkin kurang tepat.",
+    "ModelLoading": "Model sedang dimuatkan…",
+    "ModelLoadingDesc": "Ini mungkin mengambil masa beberapa minit selepas penggunaan bermula.",
+    "NoModelCard": "Tiada model pembantu dalam Model Store",
+    "NoModelCardDesc": "Minta pentadbir anda menambah kad model berlabel \"{{label}}\" ke dalam Model Store.",
+    "NoModelStore": "Domain ini tiada Model Store.",
+    "NotStarted": "Model pembantu tidak berjalan.",
+    "Open": "Buka Pembantu WebUI",
+    "Placeholder": "Tanya soalan tentang WebUI",
+    "SetupDescription": "Pembantu WebUI menjawab soalan tentang WebUI berdasarkan manual pengguna. Ia berjalan pada model di bawah daripada Model Store.",
+    "SetupTitle": "Mulakan Pembantu WebUI",
+    "StartModel": "Mulakan model",
+    "Starting": "Memulakan penggunaan model…",
+    "StartingDesc": "Anda boleh menutup tetingkap ini; pembantu terus dimulakan.",
+    "TokenRejected": "Token akses pembantu ditolak.",
+    "TurnOff": "Matikan",
+    "TurnOffDescription": "Butang sembang akan hilang. Anda boleh menghidupkan pembantu semula dalam Tetapan Pengguna.",
+    "TurnOffTitle": "Matikan Pembantu WebUI"
   },
   "webuiSettings": {
     "AllowAnonymousChangePassword": "Benarkan tetapan semula kata laluan",

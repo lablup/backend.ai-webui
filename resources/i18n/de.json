@@ -4138,6 +4138,7 @@
     "DescThemeFamily": "Thema festlegen.",
     "DescThemeMode": "Anzeigemodus festlegen.",
     "DescUseCompactSidebar": "Die kompakte Seitenleiste bietet mehr Arbeitsbereich. <br />Wenn aktiviert, wird die kompakte Seitenleiste beim Start zur Standard-UI.",
+    "DescWebUIAssistant": "Fügt unten rechts eine Chat-Schaltfläche hinzu, die Fragen zur WebUI anhand des Benutzerhandbuchs beantwortet. Beim Einschalten wird eine Modellbereitstellung für Sie gestartet.",
     "DesktopNotification": "Desktop-Benachrichtigungen aktivieren",
     "DetailLogo": "Detail-Logo CI",
     "DialogDiscardOrSave": "Aktuelle Datei und Skript werden ohne Speichern geändert. Möchten Sie fortfahren?",
@@ -4188,6 +4189,7 @@
     "UseCompactSidebar": "Kompakte Seitenleiste als Standard festlegen",
     "UseSystemSetting": "Verwenden Sie die Systemeinstellungen",
     "UserConfigScript": "Benutzerkonfigurationsskript",
+    "WebUIAssistant": "WebUI-Assistent",
     "font": {
       "FontCustomizationDesc": "Legen Sie die im WebUI zu verwendende Schriftart fest. Die Schriftarten müssen auf Ihrem lokalen System installiert sein, damit sie in der Vorschau angezeigt werden.",
       "FontFamily": "Schriftfamilie",
@@ -4421,6 +4423,32 @@
         "ProjectAdministration": "Projektverwaltung"
       }
     }
+  },
+  "webuiAssistant": {
+    "AlsoDeleteDeployment": "Auch die Bereitstellung des Assistenten löschen, um ihre Ressourcen freizugeben",
+    "AskAdministrator": "Bitten Sie Ihren Administrator, einen Model Store einzurichten.",
+    "ClearConversation": "Unterhaltung löschen",
+    "DeployTarget": "Im Projekt <strong>{{project}}</strong> wird eine Bereitstellung in Ihrem Besitz erstellt, die dessen Ressourcen nutzt, bis Sie den Assistenten ausschalten.",
+    "DeploymentMissing": "Die Bereitstellung des Assistenten existiert nicht mehr.",
+    "EmptyState": "Fragen Sie, wie Sie etwas in der WebUI erledigen. Die Antworten stammen aus dem Benutzerhandbuch.",
+    "ManualUnavailable": "Das Benutzerhandbuch konnte nicht geladen werden; die Antworten sind daher möglicherweise ungenauer.",
+    "ModelLoading": "Das Modell wird geladen…",
+    "ModelLoadingDesc": "Nach dem Start der Bereitstellung kann das einige Minuten dauern.",
+    "NoModelCard": "Kein Assistenzmodell im Model Store",
+    "NoModelCardDesc": "Bitten Sie Ihren Administrator, dem Model Store eine Modellkarte mit dem Label \"{{label}}\" hinzuzufügen.",
+    "NoModelStore": "In dieser Domäne gibt es keinen Model Store.",
+    "NotStarted": "Das Modell des Assistenten läuft nicht.",
+    "Open": "WebUI-Assistent öffnen",
+    "Placeholder": "Stellen Sie eine Frage zur WebUI",
+    "SetupDescription": "Der WebUI-Assistent beantwortet Fragen zur WebUI anhand des Benutzerhandbuchs. Er läuft auf dem unten stehenden Modell aus dem Model Store.",
+    "SetupTitle": "WebUI-Assistent starten",
+    "StartModel": "Modell starten",
+    "Starting": "Die Modellbereitstellung wird gestartet…",
+    "StartingDesc": "Sie können dieses Fenster schließen; der Assistent startet weiter.",
+    "TokenRejected": "Das Zugriffstoken des Assistenten wurde abgelehnt.",
+    "TurnOff": "Ausschalten",
+    "TurnOffDescription": "Die Chat-Schaltfläche verschwindet. Sie können den Assistenten in den Benutzereinstellungen wieder einschalten.",
+    "TurnOffTitle": "WebUI-Assistent ausschalten"
   },
   "webuiSettings": {
     "AllowAnonymousChangePassword": "Zurücksetzen des Passworts erlauben",

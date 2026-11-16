@@ -4138,6 +4138,7 @@
     "DescThemeFamily": "设置主题。",
     "DescThemeMode": "设置显示模式。",
     "DescUseCompactSidebar": "紧凑侧边栏提供更多工作空间。<br />启用后，紧凑侧边栏将成为启动时的默认界面。",
+    "DescWebUIAssistant": "在右下角添加聊天按钮，根据用户手册回答 WebUI 使用问题。开启后会为你启动一个模型部署。",
     "DesktopNotification": "启用桌面通知",
     "DetailLogo": "详细徽标（CI）",
     "DialogDiscardOrSave": "当前文件和脚本将被更改而不保存，要继续吗？",
@@ -4188,6 +4189,7 @@
     "UseCompactSidebar": "将紧凑侧边栏设为默认",
     "UseSystemSetting": "使用系统设置",
     "UserConfigScript": "用户配置脚本",
+    "WebUIAssistant": "WebUI 助手",
     "font": {
       "FontCustomizationDesc": "设置用于 WebUI 的字体。字体必须安装在本地系统上才能在预览中显示。",
       "FontFamily": "字体系列",
@@ -4421,6 +4423,32 @@
         "ProjectAdministration": "项目管理"
       }
     }
+  },
+  "webuiAssistant": {
+    "AlsoDeleteDeployment": "同时删除助手的部署以释放资源",
+    "AskAdministrator": "请联系管理员设置模型商店。",
+    "ClearConversation": "清空对话",
+    "DeployTarget": "将在项目 <strong>{{project}}</strong> 中创建一个归你所有的部署，在关闭助手之前会占用该项目的资源。",
+    "DeploymentMissing": "助手的部署已不存在。",
+    "EmptyState": "询问如何在 WebUI 中完成操作。回答基于用户手册。",
+    "ManualUnavailable": "无法加载用户手册，回答可能不够准确。",
+    "ModelLoading": "正在加载模型…",
+    "ModelLoadingDesc": "部署启动后可能需要几分钟。",
+    "NoModelCard": "模型商店中没有助手模型",
+    "NoModelCardDesc": "请让管理员在模型商店中添加标签为 \"{{label}}\" 的模型卡片。",
+    "NoModelStore": "此域中没有模型商店。",
+    "NotStarted": "助手的模型未在运行。",
+    "Open": "打开 WebUI 助手",
+    "Placeholder": "询问关于 WebUI 的问题",
+    "SetupDescription": "WebUI 助手根据用户手册回答 WebUI 使用问题，运行在模型商店中的以下模型上。",
+    "SetupTitle": "启动 WebUI 助手",
+    "StartModel": "启动模型",
+    "Starting": "正在启动模型部署…",
+    "StartingDesc": "你可以关闭此窗口，助手会继续启动。",
+    "TokenRejected": "助手的访问令牌被拒绝。",
+    "TurnOff": "关闭",
+    "TurnOffDescription": "聊天按钮将消失。你可以随时在用户设置中重新开启助手。",
+    "TurnOffTitle": "关闭 WebUI 助手"
   },
   "webuiSettings": {
     "AllowAnonymousChangePassword": "允许重置密码",

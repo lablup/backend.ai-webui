@@ -4138,6 +4138,7 @@
     "DescThemeFamily": "テーマを設定します。",
     "DescThemeMode": "表示モードを設定します。",
     "DescUseCompactSidebar": "コンパクトサイドバーはより多くのワークスペースを提供します。<br />有効にすると、起動時にコンパクトサイドバーがデフォルトUIになります。",
+    "DescWebUIAssistant": "画面右下にチャットボタンを追加し、ユーザーマニュアルに基づいて WebUI の使い方に答えます。有効にすると、自分のモデルデプロイが開始されます。",
     "DesktopNotification": "デスクトップ通知を有効にする",
     "DetailLogo": "詳細ロゴ CI",
     "DialogDiscardOrSave": "現在のファイルとスクリプトは保存せずに変更されます。続行しますか？",
@@ -4188,6 +4189,7 @@
     "UseCompactSidebar": "コンパクトサイドバーをデフォルトに設定",
     "UseSystemSetting": "システム設定を使用する",
     "UserConfigScript": "ユーザー構成スクリプト",
+    "WebUIAssistant": "WebUI アシスタント",
     "font": {
       "FontCustomizationDesc": "WebUIで使用するフォントを設定します。プレビューに表示するには、フォントがローカルシステムにインストールされている必要があります。",
       "FontFamily": "フォントファミリー",
@@ -4421,6 +4423,32 @@
         "ProjectAdministration": "プロジェクト管理者"
       }
     }
+  },
+  "webuiAssistant": {
+    "AlsoDeleteDeployment": "アシスタントのデプロイも削除してリソースを解放する",
+    "AskAdministrator": "管理者にモデルストアの設定を依頼してください。",
+    "ClearConversation": "会話をクリア",
+    "DeployTarget": "プロジェクト <strong>{{project}}</strong> に自分が所有するデプロイが作成され、アシスタントを無効にするまでそのリソースを使用します。",
+    "DeploymentMissing": "アシスタントのデプロイが存在しません。",
+    "EmptyState": "WebUI でやりたいことを質問してください。回答はユーザーマニュアルに基づきます。",
+    "ManualUnavailable": "ユーザーマニュアルを読み込めなかったため、回答の精度が下がる可能性があります。",
+    "ModelLoading": "モデルを読み込み中…",
+    "ModelLoadingDesc": "デプロイ開始後、数分かかることがあります。",
+    "NoModelCard": "モデルストアにアシスタント用のモデルがありません",
+    "NoModelCardDesc": "ラベル \"{{label}}\" のモデルカードをモデルストアに追加するよう管理者に依頼してください。",
+    "NoModelStore": "このドメインにはモデルストアがありません。",
+    "NotStarted": "アシスタントのモデルが実行されていません。",
+    "Open": "WebUI アシスタントを開く",
+    "Placeholder": "WebUI について質問する",
+    "SetupDescription": "WebUI アシスタントはユーザーマニュアルに基づいて WebUI の使い方に答えます。モデルストアの以下のモデルで動作します。",
+    "SetupTitle": "WebUI アシスタントを開始",
+    "StartModel": "モデルを開始",
+    "Starting": "モデルのデプロイを開始しています…",
+    "StartingDesc": "このウィンドウを閉じても、アシスタントの開始は続きます。",
+    "TokenRejected": "アシスタントのアクセストークンが拒否されました。",
+    "TurnOff": "無効にする",
+    "TurnOffDescription": "チャットボタンが表示されなくなります。ユーザー設定からいつでも再度有効にできます。",
+    "TurnOffTitle": "WebUI アシスタントを無効にする"
   },
   "webuiSettings": {
     "AllowAnonymousChangePassword": "パスワードの再設定を許可",

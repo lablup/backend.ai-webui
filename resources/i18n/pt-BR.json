@@ -4136,6 +4136,7 @@
     "DescThemeFamily": "Definir o tema.",
     "DescThemeMode": "Definir o modo de exibição.",
     "DescUseCompactSidebar": "A barra lateral compacta fornece mais espaço de trabalho. <br />Quando habilitada, a barra lateral compacta será a interface padrão na inicialização.",
+    "DescWebUIAssistant": "Adiciona no canto inferior direito um botão de chat que responde a perguntas sobre a WebUI com base no manual do usuário. Ao ativá-lo, uma implantação de modelo é iniciada para você.",
     "DesktopNotification": "Habilitar Notificações da Área de Trabalho",
     "DetailLogo": "Logo CI detalhado",
     "DialogDiscardOrSave": "O arquivo e o script atuais serão alterados sem salvar. Deseja continuar?",
@@ -4186,6 +4187,7 @@
     "UseCompactSidebar": "Definir Barra Lateral Compacta como Padrão",
     "UseSystemSetting": "Usar configuração do sistema",
     "UserConfigScript": "Script de configuração do usuário",
+    "WebUIAssistant": "Assistente da WebUI",
     "font": {
       "FontCustomizationDesc": "Defina a fonte a ser usada na WebUI. As fontes devem estar instaladas no seu sistema local para serem exibidas na pré-visualização.",
       "FontFamily": "Família de fontes",
@@ -4419,6 +4421,32 @@
         "ProjectAdministration": "Administração do projeto"
       }
     }
+  },
+  "webuiAssistant": {
+    "AlsoDeleteDeployment": "Excluir também a implantação do assistente para liberar os recursos",
+    "AskAdministrator": "Peça ao seu administrador para configurar um Model Store.",
+    "ClearConversation": "Limpar conversa",
+    "DeployTarget": "Uma implantação sua é criada no projeto <strong>{{project}}</strong> e usa os recursos dele até você desativar o assistente.",
+    "DeploymentMissing": "A implantação do assistente não existe mais.",
+    "EmptyState": "Pergunte como fazer algo na WebUI. As respostas vêm do manual do usuário.",
+    "ManualUnavailable": "Não foi possível carregar o manual do usuário; as respostas podem ser menos precisas.",
+    "ModelLoading": "Carregando o modelo…",
+    "ModelLoadingDesc": "Isso pode levar alguns minutos depois que a implantação iniciar.",
+    "NoModelCard": "Não há modelo de assistente no Model Store",
+    "NoModelCardDesc": "Peça ao seu administrador para adicionar ao Model Store um cartão de modelo com o rótulo \"{{label}}\".",
+    "NoModelStore": "Este domínio não tem Model Store.",
+    "NotStarted": "O modelo do assistente não está em execução.",
+    "Open": "Abrir o assistente da WebUI",
+    "Placeholder": "Faça uma pergunta sobre a WebUI",
+    "SetupDescription": "O assistente da WebUI responde a perguntas sobre a WebUI com base no manual do usuário. Ele é executado no modelo abaixo do Model Store.",
+    "SetupTitle": "Iniciar o assistente da WebUI",
+    "StartModel": "Iniciar modelo",
+    "Starting": "Iniciando a implantação do modelo…",
+    "StartingDesc": "Você pode fechar esta janela; o assistente continua iniciando.",
+    "TokenRejected": "O token de acesso do assistente foi recusado.",
+    "TurnOff": "Desativar",
+    "TurnOffDescription": "O botão de chat desaparece. Você pode reativar o assistente nas configurações do usuário.",
+    "TurnOffTitle": "Desativar o assistente da WebUI"
   },
   "webuiSettings": {
     "AllowAnonymousChangePassword": "Permitir redefinição de senha",

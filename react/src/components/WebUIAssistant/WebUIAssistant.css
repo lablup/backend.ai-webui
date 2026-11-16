@@ -1,0 +1,67 @@
+/*
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ The floating button and chat panel sit on the ladder's `assistant` rung
+ (packages/backend.ai-ui/src/styles/zIndexLadder.ts): over page content, under
+ drawers, dialogs and notifications.
+*/
+@layer components {
+  :root {
+    --webui-assistant-fab-size: 48px;
+    --webui-assistant-inset: var(--spacing-6);
+  }
+
+  /* The notification stack would otherwise cover the button. */
+  :root:has(.webui-assistant-fab) {
+    --bai-notification-stack-inset-bottom: calc(
+      var(--webui-assistant-fab-size) + var(--spacing-2)
+    );
+  }
+
+  .webui-assistant-fab {
+    position: fixed;
+    inset-block-end: calc(
+      var(--webui-assistant-inset) + env(safe-area-inset-bottom, 0px)
+    );
+    inset-inline-end: calc(
+      var(--webui-assistant-inset) + env(safe-area-inset-right, 0px)
+    );
+    z-index: var(--bai-z-assistant);
+    width: var(--webui-assistant-fab-size);
+    height: var(--webui-assistant-fab-size);
+    border-radius: 50%;
+  }
+
+  .webui-assistant-panel {
+    position: fixed;
+    inset-block-end: calc(
+      var(--webui-assistant-inset) + var(--webui-assistant-fab-size) +
+        var(--spacing-3) + env(safe-area-inset-bottom, 0px)
+    );
+    inset-inline-end: calc(
+      var(--webui-assistant-inset) + env(safe-area-inset-right, 0px)
+    );
+    z-index: var(--bai-z-assistant);
+    width: min(400px, calc(100vw - var(--webui-assistant-inset) * 2));
+    box-shadow: var(--shadow-high, 0 8px 24px rgb(0 0 0 / 16%));
+    border-radius: var(--radius-container, 8px);
+  }
+
+  .webui-assistant-panel__body {
+    height: min(
+      520px,
+      calc(
+        100dvh - var(--webui-header-height, 60px) -
+          var(--webui-assistant-fab-size) - var(--spacing-6) * 4 - 56px
+      )
+    );
+    min-height: 240px;
+  }
+
+  .webui-assistant-panel__messages {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+  }
+}

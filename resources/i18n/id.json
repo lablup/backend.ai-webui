@@ -4140,6 +4140,7 @@
     "DescThemeFamily": "Atur tema.",
     "DescThemeMode": "Atur mode tampilan.",
     "DescUseCompactSidebar": "Sidebar kompak menyediakan ruang kerja lebih banyak. <br />Ketika diaktifkan, sidebar kompak akan menjadi UI default saat startup.",
+    "DescWebUIAssistant": "Menambahkan tombol obrolan di kanan bawah yang menjawab pertanyaan tentang WebUI berdasarkan panduan pengguna. Mengaktifkannya akan memulai penerapan model untuk Anda.",
     "DesktopNotification": "Aktifkan Notifikasi Desktop",
     "DetailLogo": "Detail Logo CI",
     "DialogDiscardOrSave": "File dan skrip saat ini akan diubah tanpa disimpan, Apakah Anda ingin melanjutkan?",
@@ -4190,6 +4191,7 @@
     "UseCompactSidebar": "Atur Sidebar Kompak sebagai Default",
     "UseSystemSetting": "Gunakan Pengaturan Sistem",
     "UserConfigScript": "Skrip konfigurasi pengguna",
+    "WebUIAssistant": "Asisten WebUI",
     "font": {
       "FontCustomizationDesc": "Atur font yang akan digunakan di WebUI. Font harus terpasang di sistem lokal Anda agar dapat ditampilkan dalam pratinjau.",
       "FontFamily": "Jenis huruf",
@@ -4423,6 +4425,32 @@
         "ProjectAdministration": "Administrasi proyek"
       }
     }
+  },
+  "webuiAssistant": {
+    "AlsoDeleteDeployment": "Hapus juga penerapan asisten untuk membebaskan sumber dayanya",
+    "AskAdministrator": "Minta administrator Anda untuk menyiapkan Model Store.",
+    "ClearConversation": "Hapus percakapan",
+    "DeployTarget": "Penerapan milik Anda dibuat di proyek <strong>{{project}}</strong> dan memakai sumber dayanya sampai Anda menonaktifkan asisten.",
+    "DeploymentMissing": "Penerapan asisten sudah tidak ada.",
+    "EmptyState": "Tanyakan cara melakukan sesuatu di WebUI. Jawaban berasal dari panduan pengguna.",
+    "ManualUnavailable": "Panduan pengguna tidak dapat dimuat sehingga jawaban mungkin kurang akurat.",
+    "ModelLoading": "Memuat model…",
+    "ModelLoadingDesc": "Ini dapat memakan waktu beberapa menit setelah penerapan dimulai.",
+    "NoModelCard": "Tidak ada model asisten di Model Store",
+    "NoModelCardDesc": "Minta administrator Anda menambahkan kartu model berlabel \"{{label}}\" ke Model Store.",
+    "NoModelStore": "Domain ini tidak memiliki Model Store.",
+    "NotStarted": "Model asisten tidak berjalan.",
+    "Open": "Buka Asisten WebUI",
+    "Placeholder": "Ajukan pertanyaan tentang WebUI",
+    "SetupDescription": "Asisten WebUI menjawab pertanyaan tentang WebUI berdasarkan panduan pengguna. Asisten berjalan pada model di bawah ini dari Model Store.",
+    "SetupTitle": "Mulai Asisten WebUI",
+    "StartModel": "Mulai model",
+    "Starting": "Memulai penerapan model…",
+    "StartingDesc": "Anda dapat menutup jendela ini; asisten tetap dimulai.",
+    "TokenRejected": "Token akses asisten ditolak.",
+    "TurnOff": "Nonaktifkan",
+    "TurnOffDescription": "Tombol obrolan akan hilang. Anda dapat mengaktifkan asisten lagi di Pengaturan Pengguna.",
+    "TurnOffTitle": "Nonaktifkan Asisten WebUI"
   },
   "webuiSettings": {
     "AllowAnonymousChangePassword": "Izinkan pengaturan ulang kata sandi",

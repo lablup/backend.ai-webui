@@ -5890,6 +5890,16 @@
           "groupId": "group-preferences",
           "testId": "items-use-compact-sidebar",
           "descriptionKeys": []
+        },
+        {
+          "key": "userSettings.WebUIAssistant",
+          "tab": "general",
+          "groupKey": "userSettings.ExperimentalFeatures",
+          "groupId": "group-experimental-features",
+          "testId": "items-experimental-webui-assistant",
+          "descriptionKeys": [
+            "userSettings.DescWebUIAssistant"
+          ]
         }
       ],
       "keys": [
@@ -6009,7 +6019,11 @@
         "userSettings.UserConfigScript",
         "webui.menu.GoBack",
         "webui.menu.Help",
-        "webui.menu.Settings"
+        "webui.menu.Settings",
+        "webuiAssistant.AlsoDeleteDeployment",
+        "webuiAssistant.TurnOff",
+        "webuiAssistant.TurnOffDescription",
+        "webuiAssistant.TurnOffTitle"
       ]
     }
   ]

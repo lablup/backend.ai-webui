@@ -8,6 +8,7 @@
 */
 import { App } from '../app-shim';
 import { useSuspendedBackendaiClient } from '../hooks';
+import { useAIAgent } from '../hooks/useAIAgent';
 import { useUpdateMyUserAppConfig } from '../hooks/useAppConfig';
 import {
   useBAISettingGeneralState,
@@ -22,13 +23,18 @@ import MyKeypairManagementModal from './MyKeypairManagementModal';
 import SSHKeypairManagementModal from './SSHKeypairManagementModal';
 import SettingList, { SettingGroup } from './SettingList';
 import ShellScriptEditModal, { ShellScriptType } from './ShellScriptEditModal';
+import WebUIAssistantTurnOffModal from './WebUIAssistant/WebUIAssistantTurnOffModal';
+import { WEBUI_ASSISTANT_AGENT_ID } from './WebUIAssistant/webUIAssistantPrompt';
+import { webUIAssistantSetupOpenAtom } from './WebUIAssistant/webUIAssistantState';
 import { Button } from '@lablup/ui-common/Button';
 import {
+  BAIUnmountAfterClose,
   filterOutEmpty,
   useErrorMessageResolver,
   useSessionStorageState,
   useToggle,
 } from 'backend.ai-ui';
+import { useSetAtom } from 'jotai';
 import * as _ from 'lodash-es';
 import { Settings } from 'lucide-react';
 import { useState } from 'react';
@@ -101,6 +107,11 @@ const UserSettingsGeneralPane = () => {
     useBAISettingUserState('experimental_session_resource_grid');
   const [experimentalSessionMonitor, setExperimentalSessionMonitor] =
     useBAISettingUserState('experimental_session_monitor');
+  const [experimentalWebUIAssistant, setExperimentalWebUIAssistant] =
+    useBAISettingUserState('experimental_webui_assistant');
+  const { getEndpointBinding } = useAIAgent();
+  const setIsAssistantSetupOpen = useSetAtom(webUIAssistantSetupOpenAtom);
+  const [isAssistantTurnOffOpen, setIsAssistantTurnOffOpen] = useState(false);
   const [shellInfo, setShellInfo] = useState<ShellScriptType>('bootstrap');
   const [isOpenShellScriptEditModal, { toggle: toggleShellScriptEditModal }] =
     useToggle(false);
@@ -445,6 +456,26 @@ const UserSettingsGeneralPane = () => {
           value: experimentalSessionMonitor,
           onChange: setExperimentalSessionMonitor,
         },
+        {
+          'data-testid': 'items-experimental-webui-assistant',
+          type: 'checkbox',
+          title: t('userSettings.WebUIAssistant'),
+          description: t('userSettings.DescWebUIAssistant'),
+          defaultValue: false,
+          value: experimentalWebUIAssistant,
+          onChange: (checked?: boolean) => {
+            if (checked) {
+              setExperimentalWebUIAssistant(true);
+              if (!getEndpointBinding(WEBUI_ASSISTANT_AGENT_ID)) {
+                setIsAssistantSetupOpen(true);
+              }
+            } else if (getEndpointBinding(WEBUI_ASSISTANT_AGENT_ID)) {
+              setIsAssistantTurnOffOpen(true);
+            } else {
+              setExperimentalWebUIAssistant(false);
+            }
+          },
+        },
       ],
     },
   ];
@@ -466,6 +497,12 @@ const UserSettingsGeneralPane = () => {
         open={isOpenSSHKeypairManagementModal}
         onRequestClose={toggleSSHKeypairManagementModal}
       />
+      <BAIUnmountAfterClose>
+        <WebUIAssistantTurnOffModal
+          open={isAssistantTurnOffOpen}
+          onRequestClose={() => setIsAssistantTurnOffOpen(false)}
+        />
+      </BAIUnmountAfterClose>
       {shellInfo && (
         <ShellScriptEditModal
           open={isOpenShellScriptEditModal}

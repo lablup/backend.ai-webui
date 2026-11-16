@@ -47,12 +47,15 @@ interface ModelCardDeployModalProps extends Omit<
    */
   modelCardFrgmt: ModelCardDeployModalFragment$key | null | undefined;
   onDeployed: (deploymentId: string) => void;
+  /** Open the new deployment's page after deploying; default true. */
+  navigateOnDeployed?: boolean;
 }
 
 const ModelCardDeployModal: React.FC<ModelCardDeployModalProps> = ({
   onClose,
   modelCardFrgmt,
   onDeployed,
+  navigateOnDeployed = true,
   // `open` and `afterClose` come in via `BAIModalProps` (the latter is
   // typically injected by `BAIUnmountAfterClose`'s `cloneElement`). We
   // destructure them here so the auto-deploy effect can read `open` for
@@ -191,9 +194,11 @@ const ModelCardDeployModal: React.FC<ModelCardDeployModalProps> = ({
           }
           message.success(t('modelStore.DeploySuccess'));
           onDeployed(payload.deploymentId);
-          webuiNavigate(
-            buildProjectPath(`deployments/${payload.deploymentId}`),
-          );
+          if (navigateOnDeployed) {
+            webuiNavigate(
+              buildProjectPath(`deployments/${payload.deploymentId}`),
+            );
+          }
           resolve();
         },
         onError: (error) => {

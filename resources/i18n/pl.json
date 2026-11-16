@@ -4139,6 +4139,7 @@
     "DescThemeFamily": "Ustaw temat.",
     "DescThemeMode": "Ustaw tryb wyświetlania.",
     "DescUseCompactSidebar": "Kompaktowy pasek boczny zapewnia więcej przestrzeni roboczej. <br />Po włączeniu kompaktowy pasek boczny będzie domyślnym interfejsem użytkownika przy uruchomieniu.",
+    "DescWebUIAssistant": "Dodaje w prawym dolnym rogu przycisk czatu, który odpowiada na pytania o WebUI na podstawie podręcznika użytkownika. Włączenie go uruchamia dla Ciebie wdrożenie modelu.",
     "DesktopNotification": "Włącz Powiadomienia Pulpitu",
     "DetailLogo": "Szczegółowe logo CI",
     "DialogDiscardOrSave": "Bieżący plik i skrypt zostaną zmienione bez zapisywania. Czy chcesz kontynuować?",
@@ -4189,6 +4190,7 @@
     "UseCompactSidebar": "Ustaw Kompaktowy Pasek Boczny jako Domyślny",
     "UseSystemSetting": "Użyj ustawień systemowych",
     "UserConfigScript": "Skrypt konfiguracji użytkownika",
+    "WebUIAssistant": "Asystent WebUI",
     "font": {
       "FontCustomizationDesc": "Ustaw czcionkę używaną w WebUI. Czcionki muszą być zainstalowane w systemie lokalnym, aby wyświetlały się w podglądzie.",
       "FontFamily": "Rodzina czcionek",
@@ -4422,6 +4424,32 @@
         "ProjectAdministration": "Administracja projektu"
       }
     }
+  },
+  "webuiAssistant": {
+    "AlsoDeleteDeployment": "Usuń także wdrożenie asystenta, aby zwolnić jego zasoby",
+    "AskAdministrator": "Poproś administratora o skonfigurowanie Model Store.",
+    "ClearConversation": "Wyczyść rozmowę",
+    "DeployTarget": "W projekcie <strong>{{project}}</strong> zostanie utworzone Twoje wdrożenie, które korzysta z jego zasobów, dopóki nie wyłączysz asystenta.",
+    "DeploymentMissing": "Wdrożenie asystenta już nie istnieje.",
+    "EmptyState": "Zapytaj, jak coś zrobić w WebUI. Odpowiedzi pochodzą z podręcznika użytkownika.",
+    "ManualUnavailable": "Nie udało się wczytać podręcznika użytkownika, więc odpowiedzi mogą być mniej dokładne.",
+    "ModelLoading": "Wczytywanie modelu…",
+    "ModelLoadingDesc": "Po uruchomieniu wdrożenia może to potrwać kilka minut.",
+    "NoModelCard": "Brak modelu asystenta w Model Store",
+    "NoModelCardDesc": "Poproś administratora o dodanie do Model Store karty modelu z etykietą \"{{label}}\".",
+    "NoModelStore": "W tej domenie nie ma Model Store.",
+    "NotStarted": "Model asystenta nie działa.",
+    "Open": "Otwórz asystenta WebUI",
+    "Placeholder": "Zadaj pytanie o WebUI",
+    "SetupDescription": "Asystent WebUI odpowiada na pytania o WebUI na podstawie podręcznika użytkownika. Działa na poniższym modelu z Model Store.",
+    "SetupTitle": "Uruchom asystenta WebUI",
+    "StartModel": "Uruchom model",
+    "Starting": "Uruchamianie wdrożenia modelu…",
+    "StartingDesc": "Możesz zamknąć to okno; asystent nadal się uruchamia.",
+    "TokenRejected": "Token dostępu asystenta został odrzucony.",
+    "TurnOff": "Wyłącz",
+    "TurnOffDescription": "Przycisk czatu zniknie. Asystenta możesz ponownie włączyć w ustawieniach użytkownika.",
+    "TurnOffTitle": "Wyłącz asystenta WebUI"
   },
   "webuiSettings": {
     "AllowAnonymousChangePassword": "Zezwalaj na resetowanie hasła",

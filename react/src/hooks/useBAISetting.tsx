@@ -45,6 +45,8 @@ export interface UserSettings {
   experimental_session_resource_grid?: boolean;
   /** Header session monitor (chip, polling, idle alerts); default off. */
   experimental_session_monitor?: boolean;
+  /** Floating WebUI Assistant chat; default off. */
+  experimental_webui_assistant?: boolean;
   extra_ai_agents?: Array<AgentProfile>;
   agent_endpoints?: AgentEndpointBindings;
   session_metrics_board_items?: Array<Omit<BAIBoardItem, 'data'>>;

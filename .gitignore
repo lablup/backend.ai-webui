@@ -193,3 +193,6 @@ e2e/recordings/
 
 # smoke run reports (e2e/playwright.smoke.config.ts)
 e2e/smoke-report/
+
+# WebUI Assistant manual index (scripts/build-assistant-manual.mjs)
+resources/webui-assistant/

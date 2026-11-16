@@ -4139,6 +4139,7 @@
     "DescThemeFamily": "Définir le thème.",
     "DescThemeMode": "Définir le mode d'affichage.",
     "DescUseCompactSidebar": "La barre latérale compacte fournit plus d'espace de travail. <br />Quand activée, la barre latérale compacte sera l'interface par défaut au démarrage.",
+    "DescWebUIAssistant": "Ajoute en bas à droite un bouton de discussion qui répond aux questions sur la WebUI à partir du manuel utilisateur. L'activer démarre un déploiement de modèle pour vous.",
     "DesktopNotification": "Activer les Notifications de Bureau",
     "DetailLogo": "Logo CI détaillé",
     "DialogDiscardOrSave": "Le fichier et le script actuels seront modifiés sans enregistrer. Voulez-vous continuer ?",
@@ -4189,6 +4190,7 @@
     "UseCompactSidebar": "Utiliser la barre latérale compacte",
     "UseSystemSetting": "Utiliser les paramètres du système",
     "UserConfigScript": "Script de configuration utilisateur",
+    "WebUIAssistant": "Assistant WebUI",
     "font": {
       "FontCustomizationDesc": "Définissez la police à utiliser dans le WebUI. Les polices doivent être installées sur votre système local pour être affichées dans l'aperçu.",
       "FontFamily": "Famille de polices",
@@ -4422,6 +4424,32 @@
         "ProjectAdministration": "Administration du projet"
       }
     }
+  },
+  "webuiAssistant": {
+    "AlsoDeleteDeployment": "Supprimer aussi le déploiement de l'assistant pour libérer ses ressources",
+    "AskAdministrator": "Demandez à votre administrateur de configurer un Model Store.",
+    "ClearConversation": "Effacer la conversation",
+    "DeployTarget": "Un déploiement qui vous appartient est créé dans le projet <strong>{{project}}</strong> et utilise ses ressources jusqu'à ce que vous désactiviez l'assistant.",
+    "DeploymentMissing": "Le déploiement de l'assistant n'existe plus.",
+    "EmptyState": "Demandez comment faire quelque chose dans la WebUI. Les réponses proviennent du manuel utilisateur.",
+    "ManualUnavailable": "Le manuel utilisateur n'a pas pu être chargé ; les réponses peuvent être moins précises.",
+    "ModelLoading": "Chargement du modèle…",
+    "ModelLoadingDesc": "Cela peut prendre quelques minutes après le démarrage du déploiement.",
+    "NoModelCard": "Aucun modèle d'assistant dans le Model Store",
+    "NoModelCardDesc": "Demandez à votre administrateur d'ajouter au Model Store une fiche de modèle portant le label \"{{label}}\".",
+    "NoModelStore": "Ce domaine n'a pas de Model Store.",
+    "NotStarted": "Le modèle de l'assistant n'est pas en cours d'exécution.",
+    "Open": "Ouvrir l'assistant WebUI",
+    "Placeholder": "Posez une question sur la WebUI",
+    "SetupDescription": "L'assistant WebUI répond aux questions sur la WebUI à partir du manuel utilisateur. Il fonctionne avec le modèle ci-dessous du Model Store.",
+    "SetupTitle": "Démarrer l'assistant WebUI",
+    "StartModel": "Démarrer le modèle",
+    "Starting": "Démarrage du déploiement du modèle…",
+    "StartingDesc": "Vous pouvez fermer cette fenêtre ; l'assistant continue de démarrer.",
+    "TokenRejected": "Le jeton d'accès de l'assistant a été refusé.",
+    "TurnOff": "Désactiver",
+    "TurnOffDescription": "Le bouton de discussion disparaît. Vous pouvez réactiver l'assistant dans les paramètres utilisateur.",
+    "TurnOffTitle": "Désactiver l'assistant WebUI"
   },
   "webuiSettings": {
     "AllowAnonymousChangePassword": "Autoriser la réinitialisation du mot de passe",
