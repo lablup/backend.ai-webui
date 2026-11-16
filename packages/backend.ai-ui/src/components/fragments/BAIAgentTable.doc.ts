@@ -80,7 +80,7 @@ export const docs = {
       name: 'hiddenLiveStatKeys',
       type: 'ReadonlyArray<string>',
       description:
-        'Live-stat keys the utilization cell leaves out, such as `net_rx` and `net_tx`. Left unset, every stat the agent reports is shown.',
+        '`live_stat.node` keys the utilization cell leaves out, such as `net_rx` and `net_tx`, on top of the CPU, memory and disk stats it never lists. Left unset, it hides nothing more.',
     },
   ],
   examples: [

@@ -355,7 +355,10 @@ const UtilizationCell: React.FC<{
           />
         </BAIFlex>
         {_.map(_.keys(parsedValue?.node), (statKey) => {
-          if (['cpu_util', 'mem', 'disk'].includes(statKey)) {
+          if (
+            ['cpu_util', 'mem', 'disk'].includes(statKey) ||
+            _.includes(hiddenLiveStatKeys, statKey)
+          ) {
             return;
           }
           if (_.includes(statKey, '_util')) {
@@ -471,9 +474,6 @@ const UtilizationCell: React.FC<{
                 <BAIText>{`${toFixedFloorWithoutTrailingZeros(parsedValue.node[statKey]?.current, 2)} °C`}</BAIText>
               </BAIFlex>
             );
-          }
-          if (_.includes(hiddenLiveStatKeys, statKey)) {
-            return null;
           }
           if (_.includes(['net_rx', 'net_tx'], statKey)) {
             const convertedValue = convertToDecimalUnit(
@@ -609,7 +609,7 @@ export interface BAIAgentTableProps extends Omit<
   customizeColumns?: (
     baseColumns: BAIColumnType<AgentNodeInList>[],
   ) => BAIColumnType<AgentNodeInList>[];
-  /** Live-stat keys the utilization cell leaves out (`net_rx`, `net_tx`). */
+  /** `live_stat.node` keys the utilization cell leaves out, such as `net_rx` and `net_tx`. */
   hiddenLiveStatKeys?: ReadonlyArray<string>;
 }
 

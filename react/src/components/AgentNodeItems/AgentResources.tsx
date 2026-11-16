@@ -296,7 +296,10 @@ const AgentResources: React.FC<AgentResourcesProps> = ({ agentNodeFrgmt }) => {
                   )}%)`}
                 />
                 {_.map(_.keys(parsedLiveStat?.node), (statKey) => {
-                  if (['cpu_util', 'mem', 'disk'].includes(statKey)) {
+                  if (
+                    ['cpu_util', 'mem', 'disk'].includes(statKey) ||
+                    hiddenAgentLiveStats.includes(statKey)
+                  ) {
                     return null;
                   }
                   if (_.includes(statKey, '_util')) {
@@ -371,9 +374,6 @@ const AgentResources: React.FC<AgentResourcesProps> = ({ agentNodeFrgmt }) => {
                         <BAIText>{`${toFixedFloorWithoutTrailingZeros(parsedLiveStat?.node?.[statKey]?.current, 2)} °C`}</BAIText>
                       </BAIFlex>
                     );
-                  }
-                  if (hiddenAgentLiveStats.includes(statKey)) {
-                    return null;
                   }
                   if (['net_rx', 'net_tx'].includes(statKey)) {
                     const convertedValue = convertToDecimalUnit(
