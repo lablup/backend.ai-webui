@@ -281,10 +281,14 @@ test.describe('Basic Chat Flow', { tag: ['@chat', '@functional'] }, () => {
       .first()
       .click();
 
-    // The message thread should now be empty
-    await expect(page.getByText('What is Backend.AI?')).not.toBeVisible({
+    // The message thread should now be empty; the chat keeps the title it
+    // took from its first message, so that heading is the only match left.
+    await expect(page.getByText('What is Backend.AI?')).toHaveCount(1, {
       timeout: 10000,
     });
+    await expect(
+      page.getByRole('heading', { name: 'What is Backend.AI?' }),
+    ).toBeVisible();
     await expect(page.getByText('Hello from mock!')).not.toBeVisible();
 
     // Input area is still enabled
@@ -426,11 +430,14 @@ test.describe(
       // Click on the first history entry
       await drawer.getByText('First session message').click();
 
-      // The first session's messages are restored
-      await expect(page.getByText('First session message').first()).toBeVisible(
-        { timeout: 10000 },
-      );
-      await expect(page.getByText('Second session message')).not.toBeVisible();
+      // The first session is open again: titled after, and showing, its message
+      await expect(
+        page.getByRole('heading', { name: 'First session message' }),
+      ).toBeVisible({ timeout: 10000 });
+      await expect(page.getByText('First session message')).toHaveCount(3);
+      // Only the second chat's history entry still shows its text.
+      await expect(page.getByText('Second session message')).toHaveCount(1);
+      await expect(drawer.getByText('Second session message')).toBeVisible();
     });
 
     test('User can rename a chat session from the page title', async ({
