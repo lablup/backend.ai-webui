@@ -377,8 +377,13 @@ test.describe(
     test.beforeAll(async () => {
       const api = await createAdminApiContext();
       try {
-        // Leftovers of a killed run; the global teardown sweeps their users.
-        await sweepStaleKeypairResourcePoliciesViaApi(api, /^e2e-zero-slots-/);
+        // Leftovers of a killed run; best effort, never blocks the setup.
+        await sweepStaleKeypairResourcePoliciesViaApi(
+          api,
+          /^e2e-zero-slots-/,
+        ).catch((error) =>
+          console.warn('[session-creation] stale policy sweep failed:', error),
+        );
         await createKeypairResourcePolicyViaApi(api, policyName, {
           cpu: '0',
           mem: '0',

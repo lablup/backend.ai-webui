@@ -302,7 +302,8 @@ export async function deleteKeypairResourcePolicyViaApi(
 
 /**
  * Deletes keypair resource policies matching `pattern` that are older than
- * `minAgeMs`, so a hard-killed run cannot leak them.
+ * `minAgeMs`, so a hard-killed run cannot leak them. Stale users matching the
+ * same pattern are purged first, since their keypairs block the delete.
  */
 export async function sweepStaleKeypairResourcePoliciesViaApi(
   api: APIRequestContext,
@@ -323,6 +324,20 @@ export async function sweepStaleKeypairResourcePoliciesViaApi(
       Date.now() - createdAt > minAgeMs
     );
   });
+  if (stale.length === 0) return 0;
+  const { users } = await gqlAdmin<{
+    users: Array<{ email: string; created_at: string }> | null;
+  }>(api, `query { users(is_active: null) { email created_at } }`);
+  for (const { email, created_at } of users ?? []) {
+    const createdAt = new Date(created_at).getTime();
+    if (
+      pattern.test(email) &&
+      Number.isFinite(createdAt) &&
+      Date.now() - createdAt > minAgeMs
+    ) {
+      await purgeUserViaApi(api, email);
+    }
+  }
   let deleted = 0;
   for (const { name } of stale) {
     if (await deleteKeypairResourcePolicyViaApi(api, name)) deleted++;
@@ -350,9 +365,7 @@ export async function createUserViaApi(
   }>(
     api,
     `query($domain: String) {
-      groups(domain_name: $domain, is_active: true, type: ["GENERAL"]) {
-        id name
-      }
+      groups(domain_name: $domain, is_active: true) { id name }
     }`,
     { domain: user.domainName },
   );
