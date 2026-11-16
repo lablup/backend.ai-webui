@@ -200,37 +200,44 @@ export function useHistory(id: string, provider: ChatProviderData) {
         return;
       }
 
-      const index = chat.chats.findIndex((item) => item.id === id);
+      // ChatCard's transport keeps the callback of the render that created
+      // it, so `chat` here can be an old copy. Once the chat is cached, the
+      // cache holds its latest messages and label; read and write that.
+      const cachedChat = getChatById(chat.id);
+      const baseChat = cachedChat ?? chat;
+
+      const index = baseChat.chats.findIndex((item) => item.id === id);
       if (index === -1) {
         logger.error(`Chat with id ${id} not found in cache.`);
         return;
       }
 
-      const chatData = chat.chats[index];
+      const chatData = baseChat.chats[index];
       const lastMessage = chatData.messages.at(-1);
 
       // Overwrite the last message if it is the same message
-      if (lastMessage?.id === id) {
-        // eslint-disable-next-line react-hooks/immutability -- intentional in-place mutation of cached chat data
-        chat.chats[index].messages = [
-          ...chatData.messages.slice(0, -1),
-          _.merge({}, lastMessage, {
-            parts: message.parts,
-          }),
-        ];
-      } else {
-        chat.chats[index].messages = [...chatData.messages, message];
-      }
+      const messages =
+        lastMessage?.id === message.id
+          ? [
+              ...chatData.messages.slice(0, -1),
+              _.merge({}, lastMessage, {
+                parts: message.parts,
+              }),
+            ]
+          : [...chatData.messages, message];
+
+      const chats = [...baseChat.chats];
+      chats[index] = { ...chatData, messages };
 
       // Update the chat label with the first chat data message content
+      let label = baseChat.label;
       if (
         index === 0 &&
-        chat.chats[index].messages.length === 2 &&
+        messages.length === 2 &&
         message.role === 'assistant'
       ) {
         // Change the chat label to the first user message content
-        const firstMessage = chat.chats[0].messages[0];
-        const textContent = firstMessage.parts
+        const textContent = messages[0].parts
           ?.filter((part) => part.type === 'text')
           .map((part) => part.text)
           .join('')
@@ -238,18 +245,12 @@ export function useHistory(id: string, provider: ChatProviderData) {
 
         // Only update label if there's actual text content
         if (textContent) {
-          // eslint-disable-next-line react-hooks/immutability -- intentional in-place mutation of cached chat data
-          chat.label = textContent;
+          label = textContent;
         }
       }
 
-      const currentChat = getChatById(chat.id);
-      if (currentChat) {
-        // If the chat is already in the cache, update it
-        currentChat.chats[index] = chat.chats[index];
-        updateHistory(currentChat);
-      } else {
-        updateHistory({ ...chat });
+      updateHistory({ ...baseChat, chats, label });
+      if (!cachedChat) {
         webuiNavigate(buildProjectPath(`chat/${chat.id}`), { replace: true });
       }
     },

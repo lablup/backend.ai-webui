@@ -342,15 +342,10 @@ test.describe(
       await expect(historyItems.first()).toBeVisible({ timeout: 10000 });
     });
 
-    test.fixme('Chat history label auto-updates to the first user message after the first assistant reply', async ({
+    test('Chat history label auto-updates to the first user message after the first assistant reply', async ({
       page,
       request,
     }) => {
-      // FIXME: The chat history label does not auto-update to the first user message.
-      // The saveChatMessage callback in useHistory uses a stale closure: when the
-      // assistant message arrives via onFinish, the chat state captured in the callback
-      // still shows empty messages (before the user message was persisted), so the
-      // condition (messages.length === 2 && role === 'assistant') is never met.
       // Setup: login, install mocks, navigate to /chat
       await setupChatPage(page, request);
 
@@ -380,15 +375,10 @@ test.describe(
       });
     });
 
-    test.fixme('User can navigate to a previous chat session from history', async ({
+    test('User can navigate to a previous chat session from history', async ({
       page,
       request,
     }) => {
-      // FIXME: The chat history entry labels remain as the default "Chat" instead
-      // of updating to the first user message text. This means the test cannot
-      // locate specific sessions by their message content in the history drawer.
-      // History navigation itself works correctly — selecting a chat restores
-      // its messages — but the label issue prevents reliable session identification.
       // Setup: login, install mocks, navigate to /chat
       await setupChatPage(page, request);
 
@@ -487,15 +477,10 @@ test.describe(
       });
     });
 
-    test.fixme('User can delete a chat session from history drawer', async ({
+    test('User can delete a chat session from history drawer', async ({
       page,
       request,
     }) => {
-      // FIXME: The chat history entry labels remain as the default "Chat" instead
-      // of updating to the user's message text, so the test cannot identify
-      // specific sessions by content in the history drawer. History selection
-      // and deletion work correctly, but the label issue prevents reliable
-      // targeting of specific entries for deletion.
       // Setup: login, install mocks, navigate to /chat
       await setupChatPage(page, request);
 
