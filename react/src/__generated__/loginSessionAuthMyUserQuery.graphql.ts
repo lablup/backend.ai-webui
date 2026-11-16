@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<6c6d9402f71501634342444bb2305e35>>
+ * @generated SignedSource<<1449fe5f795b939002251c8975fb1473>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -12,6 +12,7 @@ import { ConcreteRequest } from 'relay-runtime';
 export type UserRoleV2 = "ADMIN" | "MONITOR" | "SUPERADMIN" | "USER" | "%future added value";
 export type loginSessionAuthMyUserQuery$variables = {
   hasRecentProject: boolean;
+  needsAccessKey: boolean;
   recentProjectName: string;
 };
 export type loginSessionAuthMyUserQuery$data = {
@@ -19,6 +20,14 @@ export type loginSessionAuthMyUserQuery$data = {
     readonly config: any;
     readonly configName: string;
   }> | null | undefined;
+  readonly myKeypairs?: {
+    readonly edges: ReadonlyArray<{
+      readonly node: {
+        readonly accessKey: string;
+        readonly id: string;
+      };
+    }>;
+  } | null | undefined;
   readonly myUserV2: {
     readonly basicInfo: {
       readonly email: string;
@@ -74,23 +83,28 @@ var v0 = {
 v1 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "recentProjectName"
+  "name": "needsAccessKey"
 },
 v2 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "recentProjectName"
+},
+v3 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
 },
-v3 = {
+v4 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "entityId",
   "storageKey": null
 },
-v4 = {
+v5 = {
   "alias": null,
   "args": null,
   "concreteType": "UserV2BasicInfo",
@@ -115,7 +129,7 @@ v4 = {
   ],
   "storageKey": null
 },
-v5 = {
+v6 = {
   "alias": null,
   "args": null,
   "concreteType": "UserV2OrganizationInfo",
@@ -140,7 +154,7 @@ v5 = {
   ],
   "storageKey": null
 },
-v6 = [
+v7 = [
   {
     "alias": null,
     "args": null,
@@ -149,25 +163,25 @@ v6 = [
     "storageKey": null
   }
 ],
-v7 = {
+v8 = {
   "alias": null,
   "args": null,
   "concreteType": "DomainBasicInfo",
   "kind": "LinkedField",
   "name": "basicInfo",
   "plural": false,
-  "selections": (v6/*: any*/),
+  "selections": (v7/*: any*/),
   "storageKey": null
 },
-v8 = {
+v9 = {
   "equals": "GENERAL"
 },
-v9 = {
+v10 = {
   "kind": "Literal",
   "name": "limit",
   "value": 1
 },
-v10 = [
+v11 = [
   {
     "alias": null,
     "args": null,
@@ -184,8 +198,8 @@ v10 = [
         "name": "node",
         "plural": false,
         "selections": [
-          (v2/*: any*/),
           (v3/*: any*/),
+          (v4/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -193,7 +207,7 @@ v10 = [
             "kind": "LinkedField",
             "name": "basicInfo",
             "plural": false,
-            "selections": (v6/*: any*/),
+            "selections": (v7/*: any*/),
             "storageKey": null
           }
         ],
@@ -203,7 +217,7 @@ v10 = [
     "storageKey": null
   }
 ],
-v11 = {
+v12 = {
   "condition": "hasRecentProject",
   "kind": "Condition",
   "passingValue": true,
@@ -232,24 +246,24 @@ v11 = {
             {
               "kind": "Literal",
               "name": "type",
-              "value": (v8/*: any*/)
+              "value": (v9/*: any*/)
             }
           ],
           "kind": "ObjectValue",
           "name": "filter"
         },
-        (v9/*: any*/)
+        (v10/*: any*/)
       ],
       "concreteType": "ProjectV2Connection",
       "kind": "LinkedField",
       "name": "projects",
       "plural": false,
-      "selections": (v10/*: any*/),
+      "selections": (v11/*: any*/),
       "storageKey": null
     }
   ]
 },
-v12 = {
+v13 = {
   "alias": "defaultProject",
   "args": [
     {
@@ -257,10 +271,10 @@ v12 = {
       "name": "filter",
       "value": {
         "isActive": true,
-        "type": (v8/*: any*/)
+        "type": (v9/*: any*/)
       }
     },
-    (v9/*: any*/),
+    (v10/*: any*/),
     {
       "kind": "Literal",
       "name": "orderBy",
@@ -276,10 +290,67 @@ v12 = {
   "kind": "LinkedField",
   "name": "projects",
   "plural": false,
-  "selections": (v10/*: any*/),
+  "selections": (v11/*: any*/),
   "storageKey": "projects(filter:{\"isActive\":true,\"type\":{\"equals\":\"GENERAL\"}},limit:1,orderBy:[{\"direction\":\"ASC\",\"field\":\"NAME\"}])"
 },
-v13 = {
+v14 = {
+  "condition": "needsAccessKey",
+  "kind": "Condition",
+  "passingValue": true,
+  "selections": [
+    {
+      "alias": null,
+      "args": [
+        {
+          "kind": "Literal",
+          "name": "filter",
+          "value": {
+            "isDefault": true
+          }
+        },
+        (v10/*: any*/)
+      ],
+      "concreteType": "KeyPairConnection",
+      "kind": "LinkedField",
+      "name": "myKeypairs",
+      "plural": false,
+      "selections": [
+        {
+          "alias": null,
+          "args": null,
+          "concreteType": "KeyPairV2Edge",
+          "kind": "LinkedField",
+          "name": "edges",
+          "plural": true,
+          "selections": [
+            {
+              "alias": null,
+              "args": null,
+              "concreteType": "KeyPairV2",
+              "kind": "LinkedField",
+              "name": "node",
+              "plural": false,
+              "selections": [
+                (v3/*: any*/),
+                {
+                  "alias": null,
+                  "args": null,
+                  "kind": "ScalarField",
+                  "name": "accessKey",
+                  "storageKey": null
+                }
+              ],
+              "storageKey": null
+            }
+          ],
+          "storageKey": null
+        }
+      ],
+      "storageKey": "myKeypairs(filter:{\"isDefault\":true},limit:1)"
+    }
+  ]
+},
+v15 = {
   "alias": null,
   "args": [
     {
@@ -316,7 +387,8 @@ return {
   "fragment": {
     "argumentDefinitions": [
       (v0/*: any*/),
-      (v1/*: any*/)
+      (v1/*: any*/),
+      (v2/*: any*/)
     ],
     "kind": "Fragment",
     "metadata": null,
@@ -330,10 +402,10 @@ return {
         "name": "myUserV2",
         "plural": false,
         "selections": [
-          (v2/*: any*/),
           (v3/*: any*/),
           (v4/*: any*/),
           (v5/*: any*/),
+          (v6/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -342,19 +414,20 @@ return {
             "name": "domain",
             "plural": false,
             "selections": [
-              (v3/*: any*/),
-              (v7/*: any*/)
+              (v4/*: any*/),
+              (v8/*: any*/)
             ],
             "storageKey": null
           },
-          (v11/*: any*/),
-          (v12/*: any*/)
+          (v12/*: any*/),
+          (v13/*: any*/)
         ],
         "storageKey": null
       },
+      (v14/*: any*/),
       {
         "kind": "CatchField",
-        "field": (v13/*: any*/),
+        "field": (v15/*: any*/),
         "to": "NULL"
       }
     ],
@@ -364,8 +437,9 @@ return {
   "kind": "Request",
   "operation": {
     "argumentDefinitions": [
-      (v1/*: any*/),
-      (v0/*: any*/)
+      (v2/*: any*/),
+      (v0/*: any*/),
+      (v1/*: any*/)
     ],
     "kind": "Operation",
     "name": "loginSessionAuthMyUserQuery",
@@ -378,10 +452,10 @@ return {
         "name": "myUserV2",
         "plural": false,
         "selections": [
-          (v2/*: any*/),
           (v3/*: any*/),
           (v4/*: any*/),
           (v5/*: any*/),
+          (v6/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -390,31 +464,32 @@ return {
             "name": "domain",
             "plural": false,
             "selections": [
-              (v3/*: any*/),
-              (v7/*: any*/),
-              (v2/*: any*/)
+              (v4/*: any*/),
+              (v8/*: any*/),
+              (v3/*: any*/)
             ],
             "storageKey": null
           },
-          (v11/*: any*/),
-          (v12/*: any*/)
+          (v12/*: any*/),
+          (v13/*: any*/)
         ],
         "storageKey": null
       },
-      (v13/*: any*/)
+      (v14/*: any*/),
+      (v15/*: any*/)
     ]
   },
   "params": {
-    "cacheID": "33ea6b2667a33956765d5e57df19e716",
+    "cacheID": "04f3ad9178f19fccbd456339c590fc18",
     "id": null,
     "metadata": {},
     "name": "loginSessionAuthMyUserQuery",
     "operationKind": "query",
-    "text": "query loginSessionAuthMyUserQuery(\n  $recentProjectName: String!\n  $hasRecentProject: Boolean!\n) {\n  myUserV2 {\n    id\n    entityId\n    basicInfo {\n      email\n      fullName\n    }\n    organization {\n      domainName\n      role\n    }\n    domain {\n      entityId\n      basicInfo {\n        name\n      }\n      id\n    }\n    recentProject: projects(filter: {isActive: true, type: {equals: GENERAL}, name: {equals: $recentProjectName}}, limit: 1) @include(if: $hasRecentProject) {\n      edges {\n        node {\n          id\n          entityId\n          basicInfo {\n            name\n          }\n        }\n      }\n    }\n    defaultProject: projects(filter: {isActive: true, type: {equals: GENERAL}}, orderBy: [{field: NAME, direction: ASC}], limit: 1) {\n      edges {\n        node {\n          id\n          entityId\n          basicInfo {\n            name\n          }\n        }\n      }\n    }\n  }\n  myAppConfigs(configNames: [\"domainConfig\"]) {\n    configName\n    config\n  }\n}\n"
+    "text": "query loginSessionAuthMyUserQuery(\n  $recentProjectName: String!\n  $hasRecentProject: Boolean!\n  $needsAccessKey: Boolean!\n) {\n  myUserV2 {\n    id\n    entityId\n    basicInfo {\n      email\n      fullName\n    }\n    organization {\n      domainName\n      role\n    }\n    domain {\n      entityId\n      basicInfo {\n        name\n      }\n      id\n    }\n    recentProject: projects(filter: {isActive: true, type: {equals: GENERAL}, name: {equals: $recentProjectName}}, limit: 1) @include(if: $hasRecentProject) {\n      edges {\n        node {\n          id\n          entityId\n          basicInfo {\n            name\n          }\n        }\n      }\n    }\n    defaultProject: projects(filter: {isActive: true, type: {equals: GENERAL}}, orderBy: [{field: NAME, direction: ASC}], limit: 1) {\n      edges {\n        node {\n          id\n          entityId\n          basicInfo {\n            name\n          }\n        }\n      }\n    }\n  }\n  myKeypairs(filter: {isDefault: true}, limit: 1) @include(if: $needsAccessKey) {\n    edges {\n      node {\n        id\n        accessKey\n      }\n    }\n  }\n  myAppConfigs(configNames: [\"domainConfig\"]) {\n    configName\n    config\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "c81b7cab827ff3def49849789c8ad221";
+(node as any).hash = "0e05a1a48023d853991cc948f18ecbf3";
 
 export default node;

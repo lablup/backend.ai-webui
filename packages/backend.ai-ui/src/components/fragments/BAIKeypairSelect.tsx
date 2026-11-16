@@ -27,8 +27,12 @@
   - P26-7 antd's `notFoundContent={<Skeleton.Input/>}` first-load placeholder
     is dropped (see `BAIComplexSelect` header, general policy).
 */
-import { BAIKeypairSelectPaginatedQuery } from '../../__generated__/BAIKeypairSelectPaginatedQuery.graphql';
+import {
+  BAIKeypairSelectPaginatedQuery,
+  KeypairFilter,
+} from '../../__generated__/BAIKeypairSelectPaginatedQuery.graphql';
 import { BAIKeypairSelectValueQuery } from '../../__generated__/BAIKeypairSelectValueQuery.graphql';
+import { combineFilters } from '../../helper';
 import useDebouncedDeferredValue from '../../helper/useDebouncedDeferredValue';
 import { useControllableValue, useFetchKey } from '../../hooks';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
@@ -38,7 +42,6 @@ import BAIComplexSelect, {
   type BAIComplexSelectValue,
   type BAILabeledValue,
 } from '../BAIComplexSelect';
-import { mergeFilterValues } from '../BAIPropertyFilter';
 import * as _ from 'lodash-es';
 import {
   useDeferredValue,
@@ -49,10 +52,8 @@ import {
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
 export type AstryxKeypairNode = NonNullable<
-  NonNullable<
-    BAIKeypairSelectPaginatedQuery['response']['keypair_list']
-  >['items'][number]
->;
+  BAIKeypairSelectPaginatedQuery['response']['adminKeypairsV2']
+>['edges'][number]['node'];
 
 export interface BAIKeypairSelectRef {
   refetch: () => void;
@@ -65,7 +66,7 @@ export interface BAIKeypairSelectProps extends Omit<
   /** Plain key(s), as the antd `BAIKeypairSelect` exposes. */
   value?: string | Array<string> | null;
   onChange?: (value: string | Array<string> | undefined) => void;
-  filter?: string;
+  filter?: KeypairFilter;
   ref?: React.Ref<BAIKeypairSelectRef>;
 }
 
@@ -104,35 +105,34 @@ const BAIKeypairSelect: React.FC<BAIKeypairSelectProps> = ({
   const deferredControllableValue = useDeferredValue(controllableValue);
   const selectedKeys = _.compact(_.castArray(deferredControllableValue ?? []));
 
-  const { keypair_list: selectedKeypairList } =
+  // Keypair management is superadmin-only (ADR 0012), so the reads are admin*.
+  const { adminKeypairsV2: selectedKeypairs } =
     useLazyLoadQuery<BAIKeypairSelectValueQuery>(
       graphql`
         query BAIKeypairSelectValueQuery(
-          $filter: String
+          $filter: KeypairFilter
           $limit: Int!
-          $offset: Int!
           $skipSelected: Boolean!
         ) {
-          keypair_list(filter: $filter, limit: $limit, offset: $offset)
+          adminKeypairsV2(filter: $filter, limit: $limit)
             @skip(if: $skipSelected) {
-            items {
-              access_key
-              user_id
-              is_active
+            edges {
+              node {
+                id
+                accessKey
+              }
             }
-            total_count
           }
         }
       `,
       {
         filter: selectedKeys.length
-          ? mergeFilterValues(
-              _.map(selectedKeys, (value) => `access_key == "${value}"`),
-              '|',
-            )
-          : undefined,
+          ? combineFilters<KeypairFilter>([
+              { accessKey: { in: selectedKeys } },
+              filter,
+            ])
+          : null,
         limit: Math.max(selectedKeys.length, 1),
-        offset: 0,
         skipSelected: selectedKeys.length === 0,
       },
       {
@@ -147,29 +147,32 @@ const BAIKeypairSelect: React.FC<BAIKeypairSelectProps> = ({
         query BAIKeypairSelectPaginatedQuery(
           $offset: Int!
           $limit: Int!
-          $filter: String
+          $filter: KeypairFilter
         ) {
-          keypair_list(
+          adminKeypairsV2(
             offset: $offset
             limit: $limit
             filter: $filter
-            order: "-created_at"
+            orderBy: [{ field: CREATED_AT, direction: DESC }]
           ) {
-            items {
-              access_key
-              user_id
-              is_active
+            count
+            edges {
+              node {
+                id
+                accessKey
+                userId
+                isActive
+              }
             }
-            total_count
           }
         }
       `,
       { limit: 10 },
       {
-        filter: mergeFilterValues([
+        filter: combineFilters<KeypairFilter>([
           filter,
           debouncedDeferredValue
-            ? `access_key ilike "%${debouncedDeferredValue}%"`
+            ? { accessKey: { iContains: debouncedDeferredValue } }
             : null,
         ]),
       },
@@ -178,9 +181,9 @@ const BAIKeypairSelect: React.FC<BAIKeypairSelectProps> = ({
         fetchKey: deferredFetchKey,
       },
       {
-        getTotal: (r) => r.keypair_list?.total_count ?? undefined,
-        getItem: (r) => r.keypair_list?.items,
-        getId: (item) => item?.access_key,
+        getTotal: (r) => r.adminKeypairsV2?.count ?? undefined,
+        getItem: (r) => _.map(r.adminKeypairsV2?.edges, 'node'),
+        getId: (item) => item?.accessKey,
       },
     );
 
@@ -198,7 +201,7 @@ const BAIKeypairSelect: React.FC<BAIKeypairSelectProps> = ({
 
   const options = _.compact(
     _.map(paginationData, (item) => {
-      const key = item?.access_key;
+      const key = item?.accessKey;
       return key
         ? {
             value: key,
@@ -211,10 +214,10 @@ const BAIKeypairSelect: React.FC<BAIKeypairSelectProps> = ({
   const labeledValue: BAIComplexSelectValue = (() => {
     const labeled: Array<BAILabeledValue> = _.map(selectedKeys, (key) => {
       const item = _.find(
-        selectedKeypairList?.items,
-        (i) => i?.access_key === key,
+        selectedKeypairs?.edges,
+        (edge) => edge.node.accessKey === key,
       );
-      return { label: item?.access_key ?? key, value: key };
+      return { label: item?.node.accessKey ?? key, value: key };
     });
     if (multiple) return labeled;
     return labeled[0] ?? null;
@@ -236,7 +239,7 @@ const BAIKeypairSelect: React.FC<BAIKeypairSelectProps> = ({
         isPendingRefetch
       }
       isLoadingNext={isLoadingNext}
-      total={result.keypair_list?.total_count ?? undefined}
+      total={result.adminKeypairsV2?.count ?? undefined}
       options={options}
       value={labeledValue}
       onChange={(next) => {

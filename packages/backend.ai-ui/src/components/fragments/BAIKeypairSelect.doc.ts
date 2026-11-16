@@ -15,7 +15,7 @@ export const docs = {
   ],
   usage: {
     description:
-      'Picks one or more keypairs by access key. It runs its own Relay queries rather than taking a fragment reference — a paginated `keypair_list` query (ten rows per page, newest first, extended as the popup is scrolled) plus a second `keypair_list` lookup that resolves the labels of whatever is already selected — so the caller spreads no fragment and only has to mount it inside a Suspense boundary. Its outer value is the plain access key string (an array when `multiple` is set), not a label-in-value object, so a BAIFormItem binding and a mutation payload both receive exactly what the API expects. Typing in the popup searches server-side on `access_key`; everything not listed below passes through to BAIComplexSelect.',
+      'Picks one or more keypairs by access key. It runs its own Relay queries rather than taking a fragment reference — a paginated `adminKeypairsV2` query (ten rows per page, newest first, extended as the popup is scrolled) plus a second `adminKeypairsV2` lookup that resolves the labels of whatever is already selected — so the caller spreads no fragment and only has to mount it inside a Suspense boundary. Its outer value is the plain access key string (an array when `multiple` is set), not a label-in-value object, so a BAIFormItem binding and a mutation payload both receive exactly what the API expects. Both reads are `admin*` fields, so only a superadmin can use it (ADR 0012). Typing in the popup searches server-side on `accessKey`; everything not listed below passes through to BAIComplexSelect.',
     bestPractices: [
       {
         guidance: true,
@@ -30,7 +30,7 @@ export const docs = {
       {
         guidance: true,
         description:
-          'Narrow the list with `filter`, a backend filter expression merged with the search clause, instead of post-filtering options — only one page is loaded at a time.',
+          'Narrow the list with `filter`, a typed `KeypairFilter` AND-ed with the search clause, instead of post-filtering options — only one page is loaded at a time.',
       },
       {
         guidance: true,
@@ -64,9 +64,9 @@ export const docs = {
     },
     {
       name: 'filter',
-      type: 'string',
+      type: 'KeypairFilter',
       description:
-        'Backend filter expression applied to both queries. It is merged with the `access_key ilike` clause the search box produces, so the two narrow the list together.',
+        'Typed keypair filter applied to both queries. It is AND-ed with the `accessKey` `iContains` clause the search box produces, so the two narrow the list together.',
     },
     {
       name: 'multiple',
@@ -123,7 +123,7 @@ export const docs = {
       code: `<BAIKeypairSelect
   label={t('credential.AccessKey')}
   multiple
-  filter='is_active == true'
+  filter={{ isActive: true }}
   value={accessKeys}
   onChange={(value) => setAccessKeys(value as Array<string>)}
 />`,

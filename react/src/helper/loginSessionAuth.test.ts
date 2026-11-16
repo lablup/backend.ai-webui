@@ -156,7 +156,7 @@ describe('connectViaGQL', () => {
     await connectViaGQL(makeClient(), cfg, []);
 
     expect(variables).toEqual([
-      { recentProjectName: '', hasRecentProject: false },
+      { recentProjectName: '', hasRecentProject: false, needsAccessKey: false },
     ]);
 
     expect(g.backendaiclient.email).toBe('me@example.com');
@@ -231,7 +231,11 @@ describe('connectViaGQL', () => {
     await connectViaGQL(makeClient(), cfg, []);
 
     expect(variables).toEqual([
-      { recentProjectName: 'zeta', hasRecentProject: true },
+      {
+        recentProjectName: 'zeta',
+        hasRecentProject: true,
+        needsAccessKey: false,
+      },
     ]);
     expect(g.backendaiclient.current_group).toBe('zeta');
     expect(g.backendaiclient.current_group_id()).toBe(PROJECT_B);
@@ -483,8 +487,8 @@ describe('connectViaGQL — cancelled attempt', () => {
     const current = { ready: true };
     (globalThis as Record<string, unknown>).backendaiclient = current;
     const bootstrap = {
-      keypair: { access_key: 'AKIA', resource_policy: 'default' },
-      user: { email: 'stale@example.test', groups: [], role: 'user' },
+      myKeypairs: { edges: [{ node: { accessKey: 'AKIA' } }] },
+      myUserV2: { basicInfo: { email: 'stale@example.test' } },
       groups: [],
     } as unknown as Parameters<typeof connectViaGQL>[3];
 
@@ -555,44 +559,55 @@ describe('connectViaGQL — act-as tab (FR-4111)', () => {
   });
 
   it("adopts the target's access key over the webserver session's", async () => {
-    queueResponses([meWith({ default: [[PROJECT_A, 'alpha']] })]);
-    const client = actAsClient(
-      vi.fn().mockResolvedValue({ keypair: { access_key: 'TARGET_KEY' } }),
-    );
+    const variables = queueResponses([
+      {
+        ...meWith({ default: [[PROJECT_A, 'alpha']] }),
+        myKeypairs: {
+          edges: [
+            {
+              node: { id: globalId('KeyPairV2', 'k'), accessKey: 'TARGET_KEY' },
+            },
+          ],
+        },
+      },
+    ]);
+    const client = actAsClient();
     (client._config as Record<string, unknown>)._accessKey = 'ADMIN_KEY';
 
     await connectViaGQL(client, cfg, []);
+    expect(variables[0].needsAccessKey).toBe(true);
+    expect(client.query).not.toHaveBeenCalled();
     expect((client._config as Record<string, unknown>)._accessKey).toBe(
       'TARGET_KEY',
     );
   });
 
   it("takes the target's access key from the probe's bootstrap without a keypair read", async () => {
-    queueResponses([meWith({ default: [[PROJECT_A, 'alpha']] })]);
+    const variables = queueResponses([
+      meWith({ default: [[PROJECT_A, 'alpha']] }),
+    ]);
     const client = actAsClient();
     (client._config as Record<string, unknown>)._accessKey = 'ADMIN_KEY';
     const bootstrap = {
-      keypair: { access_key: 'TARGET_KEY' },
+      myKeypairs: { edges: [{ node: { accessKey: 'TARGET_KEY' } }] },
     } as unknown as LoginBootstrap;
 
     await connectViaGQL(client, cfg, [], bootstrap);
-    expect(client.query).not.toHaveBeenCalledWith(
-      expect.stringContaining('keypair'),
-      expect.anything(),
-    );
+    expect(variables[0].needsAccessKey).toBe(false);
+    expect(client.query).not.toHaveBeenCalled();
     expect((client._config as Record<string, unknown>)._accessKey).toBe(
       'TARGET_KEY',
     );
   });
 
   it('keeps the session access key outside act-as', async () => {
-    queueResponses([meWith({ default: [[PROJECT_A, 'alpha']] })]);
+    const variables = queueResponses([
+      meWith({ default: [[PROJECT_A, 'alpha']] }),
+    ]);
     const client = { ...makeClient(), query: vi.fn() };
 
     await connectViaGQL(client, cfg, []);
-    expect(client.query).not.toHaveBeenCalledWith(
-      expect.stringContaining('keypair'),
-      expect.anything(),
-    );
+    expect(variables[0].needsAccessKey).toBe(false);
+    expect(client.query).not.toHaveBeenCalled();
   });
 });

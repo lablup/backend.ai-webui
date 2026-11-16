@@ -16,6 +16,7 @@ import {
 } from '../hooks/useWebUIConfig';
 import { getActAsTarget } from './actAs';
 import {
+  bootstrapAccessKey,
   LoginBootstrapIncompleteError,
   type LoginBootstrap,
 } from './loginBootstrap';
@@ -39,6 +40,7 @@ const myUserQuery = graphql`
   query loginSessionAuthMyUserQuery(
     $recentProjectName: String!
     $hasRecentProject: Boolean!
+    $needsAccessKey: Boolean!
   ) {
     myUserV2 {
       id
@@ -88,6 +90,16 @@ const myUserQuery = graphql`
               name
             }
           }
+        }
+      }
+    }
+    # Under act-as the manager authorizes with the target's default keypair.
+    myKeypairs(filter: { isDefault: true }, limit: 1)
+      @include(if: $needsAccessKey) {
+      edges {
+        node {
+          id
+          accessKey
         }
       }
     }
@@ -258,6 +270,7 @@ export async function connectViaGQL(
 
   const recentProjectName =
     (globalThis as any).backendaiutils._peekRecentProjectGroup() ?? '';
+  const bootstrappedAccessKey = bootstrapAccessKey(bootstrap);
   let response: loginSessionAuthMyUserQuery['response'] | undefined;
   try {
     // The manager tells its version only to an authenticated caller; the
@@ -267,7 +280,11 @@ export async function connectViaGQL(
     response = await fetchQuery<loginSessionAuthMyUserQuery>(
       RelayEnvironment,
       myUserQuery,
-      { recentProjectName, hasRecentProject: !!recentProjectName },
+      {
+        recentProjectName,
+        hasRecentProject: !!recentProjectName,
+        needsAccessKey: isActingAs && !bootstrappedAccessKey,
+      },
       { fetchPolicy: 'network-only' },
     ).toPromise();
   } catch (err) {
@@ -314,9 +331,7 @@ export async function connectViaGQL(
   // the super admin's; under act-as the manager answers with the target's.
   if (isActingAs) {
     const accessKey =
-      bootstrap?.keypair?.access_key ??
-      (await client.query('query { keypair { access_key } }', {}))?.keypair
-        ?.access_key;
+      bootstrappedAccessKey ?? response.myKeypairs?.edges[0]?.node.accessKey;
     if (accessKey) {
       client._config._accessKey = accessKey;
     }
