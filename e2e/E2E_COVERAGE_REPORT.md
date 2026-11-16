@@ -1,6 +1,6 @@
 # E2E Test Coverage Report
 
-> **Last Updated:** 2026-11-08
+> **Last Updated:** 2026-11-16
 > **Router Source:** [`react/src/routes.tsx`](../react/src/routes.tsx)
 > **E2E Root:** [`e2e/`](.)
 >
@@ -12,7 +12,7 @@
 
 **Scope:** Coverage metrics apply only to the routes listed below and do **not** include all entries from `react/src/routes.tsx`. Routes such as `/admin-dashboard` (not yet exposed in menu) and `/ai-agent` (experimental) are currently out of scope.
 
-**Overall (in-scope routes): 428 / 582 features covered (74%)**
+**Overall (in-scope routes): 427 / 582 features covered (73%)**
 
 | Page                     | Route                                            | Features | Covered | Status  |
 | ------------------------ | ------------------------------------------------ | :------: | :-----: | :-----: |
@@ -26,7 +26,7 @@
 | Endpoint Detail          | `/serving/:serviceId`                            |    19    |    8    | 🔶 42%  |
 | Service Launcher         | `/service/start`                                 |    5     |    1    | 🔶 20%  |
 | VFolder / Data           | `/data`                                          |    56    |   43    | 🔶 77%  |
-| Model Store              | `/model-store`                                   |    6     |    6    | ✅ 100% |
+| Model Store              | `/model-store`                                   |    5     |    5    | ✅ 100% |
 | Admin Model Store        | `/admin-model-store`                             |    28    |   28    | ✅ 100% |
 | Storage Host             | `/storage-settings/:hostname`                    |    3     |    0    |  ❌ 0%  |
 | My Environment           | `/my-environment`                                |    2     |    2    | ✅ 100% |
@@ -49,13 +49,13 @@
 | Plugin System            | (config-based)                                   |    12    |   12    | ✅ 100% |
 | RBAC Management          | `/rbac`                                          |    26    |   25    | 🔶 96%  |
 | Auto Scaling Rule Preset | `/admin-serving?tab=auto-scaling-rule`           |    33    |   32    | 🔶 97%  |
-| Deployments              | `/deployments`, `/deployments/:id`               |    25    |   22    | 🔶 88%  |
+| Deployments              | `/deployments`, `/deployments/:id`               |    26    |   22    | 🔶 85%  |
 | Admin Deployment Preset  | `/admin/deployments/deployment-presets/new`      |    5     |    5    | ✅ 100% |
 | Runtime Parameters       | `/admin/deployments?tab=runtime-variant-presets` |    5     |    5    | ✅ 100% |
 | Project-Agnostic Scope   | `/admin/*` (except `admin-dashboard`)            |    5     |    5    | ✅ 100% |
 | Global Search Palette    | (header, every route)                            |    8     |    8    | ✅ 100% |
 | System Settings          | `/admin/system-settings`                         |    37    |   33    | 🔶 89%  |
-| **Total**                |                                                  | **582**  | **428** | **74%** |
+| **Total**                |                                                  | **582**  | **427** | **73%** |
 
 ---
 
