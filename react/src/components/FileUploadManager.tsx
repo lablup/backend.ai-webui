@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { getDefaultLoginConfig } from '../helper/loginConfig';
 import { resolveUploadChunkSize } from '../helper/uploadChunkSize';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
@@ -477,7 +478,8 @@ export const useFileUploadManager = (id?: string, folderName?: string) => {
                   retryDelays: [0, 3000, 5000, 10000, 20000],
                   // Read when the queued upload starts, not when it was requested.
                   chunkSize: resolveUploadChunkSize(
-                    store.get(loginConfigState)?.fileUploadChunkSize ?? 0,
+                    (store.get(loginConfigState) ?? getDefaultLoginConfig())
+                      .fileUploadChunkSize,
                     file.size,
                   ),
                   storeFingerprintForResuming: false, // Disable localStorage storage
