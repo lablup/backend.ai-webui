@@ -4495,7 +4495,7 @@
     "DescEnableReservoir": "Show the Reservoir menu item.",
     "DescFasttrackEndpoint": "URL of the FastTrack service. It is offered as its own menu item.",
     "DescFileUploadChunkSize": "Size of each chunk sent when uploading a file to a folder. When set to Automatic, it is chosen automatically between 15 and 200 MiB based on the file size.",
-    "DescHiddenAgentLiveStats": "Live statistics left out of the agent list, the agent details and the agent's detailed information.",
+    "DescHiddenAgentLiveStats": "Live statistics hidden from the agent list, the Agent Info drawer and the Detailed Information modal.",
     "DescHideAgents": "Hide the Agent Summary menu and agent details from users who are not superadmins.",
     "DescIsDirectorySizeVisible": "Show the size of each directory in the folder explorer.",
     "DescManualUrl": "Sets the page URL the help button in the top header opens. Leave empty to hide the help button.",

@@ -4512,7 +4512,7 @@
     "DescEnableReservoir": "Hiển thị mục menu Reservoir.",
     "DescFasttrackEndpoint": "URL của dịch vụ FastTrack. Được cung cấp dưới dạng một mục menu riêng.",
     "DescFileUploadChunkSize": "Kích thước của mỗi phần được gửi khi tải tệp lên thư mục. Khi đặt là Tự động, kích thước được chọn tự động trong khoảng 15 đến 200 MiB theo kích thước tệp.",
-    "DescHiddenAgentLiveStats": "Các thống kê trực tiếp không hiển thị trong danh sách agent, chi tiết agent và thông tin chi tiết của agent.",
+    "DescHiddenAgentLiveStats": "Các thống kê trực tiếp được ẩn khỏi danh sách agent, bảng “Thông tin agent” và hộp thoại “Thông tin chi tiết”.",
     "DescHideAgents": "Ẩn menu Tóm tắt đại lý và chi tiết đại lý đối với người dùng không phải superadmin.",
     "DescIsDirectorySizeVisible": "Hiển thị kích thước của từng thư mục trong trình duyệt thư mục.",
     "DescManualUrl": "Đặt URL của trang mà nút trợ giúp trên thanh tiêu đề trên cùng sẽ mở. Để trống để ẩn nút trợ giúp.",

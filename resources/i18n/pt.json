@@ -4512,7 +4512,7 @@
     "DescEnableReservoir": "Mostra a entrada de menu Reservoir.",
     "DescFasttrackEndpoint": "URL do serviço FastTrack. É oferecido como um item de menu próprio.",
     "DescFileUploadChunkSize": "Tamanho de cada bloco enviado ao carregar um ficheiro para uma pasta. Quando definido como Automático, é escolhido automaticamente entre 15 e 200 MiB conforme o tamanho do ficheiro.",
-    "DescHiddenAgentLiveStats": "Estatísticas em tempo real omitidas da lista de agentes, dos detalhes do agente e das suas informações detalhadas.",
+    "DescHiddenAgentLiveStats": "Estatísticas em tempo real ocultadas da lista de agentes, do painel “Informações do Agente” e da janela “Informação detalhada”.",
     "DescHideAgents": "Oculta o menu Resumo dos agentes e os detalhes dos agentes aos utilizadores que não são superadmins.",
     "DescIsDirectorySizeVisible": "Mostra o tamanho de cada diretório no explorador de pastas.",
     "DescManualUrl": "Define o URL da página que o botão de ajuda do cabeçalho superior abre. Deixe vazio para ocultar o botão de ajuda.",

@@ -4512,7 +4512,7 @@
     "DescEnableReservoir": "Reservoir メニュー項目を表示します。",
     "DescFasttrackEndpoint": "FastTrack サービスの URL です。独立したメニュー項目として提供されます。",
     "DescFileUploadChunkSize": "フォルダーにファイルをアップロードするときに送信する1チャンクのサイズです。自動に設定すると、ファイルサイズに応じて15〜200MiBの間で自動的に設定されます。",
-    "DescHiddenAgentLiveStats": "エージェント一覧、エージェントの詳細、エージェントの詳細情報から除くリアルタイム統計の項目です。",
+    "DescHiddenAgentLiveStats": "エージェント一覧、「エージェント情報」パネル、「詳細な情報」モーダルで非表示にするリアルタイム統計の項目です。",
     "DescHideAgents": "スーパー管理者でないユーザーに対してエージェント概要メニューとエージェントの詳細を非表示にします。",
     "DescIsDirectorySizeVisible": "フォルダーエクスプローラーで各ディレクトリのサイズを表示します。",
     "DescManualUrl": "上部ヘッダーのヘルプボタンで開くページの URL を設定します。空にするとヘルプボタンを非表示にします。",

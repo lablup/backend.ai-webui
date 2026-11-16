@@ -4510,7 +4510,7 @@
     "DescEnableReservoir": "Reservoir menü öğesini gösterir.",
     "DescFasttrackEndpoint": "FastTrack hizmetinin URL'si. Ayrı bir menü öğesi olarak sunulur.",
     "DescFileUploadChunkSize": "Bir klasöre dosya yüklerken gönderilen her parçanın boyutu. Otomatik olarak ayarlandığında, dosya boyutuna göre 15 ile 200 MiB arasında otomatik olarak seçilir.",
-    "DescHiddenAgentLiveStats": "Ajan listesinde, ajan ayrıntılarında ve ajanın ayrıntılı bilgilerinde gösterilmeyen canlı istatistikler.",
+    "DescHiddenAgentLiveStats": "Ajan listesinde, “Ajan Bilgileri” panelinde ve “Detaylı bilgi” penceresinde gizlenen canlı istatistikler.",
     "DescHideAgents": "Süper yönetici olmayan kullanıcılardan Temsilci Özeti menüsünü ve temsilci ayrıntılarını gizler.",
     "DescIsDirectorySizeVisible": "Klasör gezgininde her dizinin boyutunu gösterir.",
     "DescManualUrl": "Üst başlıktaki yardım düğmesinin açacağı sayfanın URL'sini ayarlar. Yardım düğmesini gizlemek için boş bırakın.",

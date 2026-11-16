@@ -4510,7 +4510,7 @@
     "DescEnableReservoir": "Tunjukkan item menu Reservoir.",
     "DescFasttrackEndpoint": "URL perkhidmatan FastTrack. Ia ditawarkan sebagai item menu tersendiri.",
     "DescFileUploadChunkSize": "Saiz setiap cebisan yang dihantar semasa memuat naik fail ke folder. Jika ditetapkan kepada Automatik, saiz dipilih secara automatik antara 15 hingga 200 MiB mengikut saiz fail.",
-    "DescHiddenAgentLiveStats": "Statistik langsung yang tidak dipaparkan dalam senarai ejen, butiran ejen dan maklumat terperinci ejen.",
+    "DescHiddenAgentLiveStats": "Statistik langsung yang disembunyikan daripada senarai ejen, panel Maklumat Ejen dan modal Maklumat terperinci.",
     "DescHideAgents": "Sembunyikan menu Ringkasan Agen dan butiran agen daripada pengguna yang bukan superadmin.",
     "DescIsDirectorySizeVisible": "Tunjukkan saiz setiap direktori dalam penjelajah folder.",
     "DescManualUrl": "Menetapkan URL halaman yang dibuka oleh butang bantuan di pengepala atas. Biarkan kosong untuk menyembunyikan butang bantuan.",
