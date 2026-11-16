@@ -50,7 +50,7 @@ flowchart LR
 ### 1. 소유 scope만이 유일한 scope다
 
 - **Scope choice**: auto-mount를 만드는 WebUI의 모든 경로는 폴더 소유자로부터 scope를 정한다. `accessControl.ownershipType`이 `USER`인 폴더는 `ownership.userId`의 `USER` scope를 받는다. 사용자 개인 프로젝트의 프로젝트 소유 폴더는 `FolderCreateModal`이 그곳에서 쓰는 것과 같은 현재 사용자의 `USER` scope를 받는다. 그 밖의 폴더는 `ownership.projectId`의 `PROJECT` scope를 받는다.
-- **Creation paths**: `FolderCreateModal`은 개인 프로젝트에서 만든 폴더를 사용자 소유 폴더로 만들고 그 사용자에게 auto-mount한다. 다른 프로젝트에서는 폴더를 그 프로젝트에 auto-mount한다.
+- **Creation paths**: `FolderCreateModal`은 개인 프로젝트에서도 항상 `createVFolderInProject`로 프로젝트 폴더를 만든다. 개인 프로젝트에서는 그 폴더를 사용자에게 auto-mount하고, 다른 프로젝트에서는 그 프로젝트에 auto-mount한다.
 - **Folder entry points**: auto-mount는 폴더에서만 추가한다. `FolderCreateModal`과 폴더 탐색기의 `VFolderAutoMountMetadataSection`이 그곳이다. `VFolderAutoMountSettingModal`은 항상 그 폴더를 받고, 폴더 선택 박스를 보여주지 않는다.
 
 ### 2. 읽을 때는 폴더당 한 행

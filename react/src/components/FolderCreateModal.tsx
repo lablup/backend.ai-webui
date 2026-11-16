@@ -6,10 +6,6 @@ import { FolderCreateModalAutoMountMutation } from '../__generated__/FolderCreat
 import { FolderCreateModalAutoMountPermissionQuery } from '../__generated__/FolderCreateModalAutoMountPermissionQuery.graphql';
 import { FolderCreateModalPermissionQuery } from '../__generated__/FolderCreateModalPermissionQuery.graphql';
 import {
-  FolderCreateModalPersonalMutation,
-  FolderCreateModalPersonalMutation$data,
-} from '../__generated__/FolderCreateModalPersonalMutation.graphql';
-import {
   FolderCreateModalProjectMutation,
   FolderCreateModalProjectMutation$data,
 } from '../__generated__/FolderCreateModalProjectMutation.graphql';
@@ -67,14 +63,9 @@ interface FolderCreateFormItemsType {
   auto_mount_permission?: 'READ_ONLY' | 'READ_WRITE' | 'RW_DELETE';
 }
 
-// Both mutations select the same vfolder fields.
-export type FolderCreationResponse =
-  | NonNullable<
-      FolderCreateModalProjectMutation$data['createVFolderInProject']
-    >['vfolder']
-  | NonNullable<
-      FolderCreateModalPersonalMutation$data['createVfolderV2']
-    >['vfolder'];
+export type FolderCreationResponse = NonNullable<
+  FolderCreateModalProjectMutation$data['createVFolderInProject']
+>['vfolder'];
 
 export interface FolderCreateModalProps extends Omit<
   BAIModalProps,
@@ -255,40 +246,6 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
       }
     `);
 
-  // Without a project the manager lands the folder in the caller's personal
-  // project; the only path that accepts a dot-prefixed (AutoMount) name.
-  const commitCreatePersonalMutation =
-    useMutationWithPromise<FolderCreateModalPersonalMutation>(graphql`
-      mutation FolderCreateModalPersonalMutation(
-        $input: CreateVFolderV2Input!
-      ) {
-        createVfolderV2(input: $input) {
-          vfolder {
-            id
-            entityId
-            vfolderStatus: status
-            host
-            metadata {
-              name
-              usageMode
-              quotaScopeId
-              cloneable
-            }
-            accessControl {
-              permission
-              ownershipType
-            }
-            ownership {
-              userId
-              projectId
-              creatorEmail
-            }
-            ...BAINodeNotificationItemFragment @alias(as: "notificationFrgmt")
-          }
-        }
-      }
-    `);
-
   const commitCreateAutoMountMutation =
     useMutationWithPromise<FolderCreateModalAutoMountMutation>(graphql`
       mutation FolderCreateModalAutoMountMutation(
@@ -315,43 +272,29 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
 
     const folderName = values.name;
 
-    // Every folder starts read-only for shared users (#10647); the default
-    // mount permission is changed from the share modal.
     const wantsAutoMountSetting =
       supportsAutoMountSetting && !!values.auto_mount_enabled;
-    // A personal project's own auto-mounts are not the user's to set, so its
-    // folder is created as the user's and auto-mounted for the user.
+    // A personal project's folder auto-mounts for the user (ADR 0031).
     const autoMountsForUser =
       wantsAutoMountSetting &&
       !!personalProject?.id &&
       effectiveProject?.id === personalProject.id;
     let vfolderResults: FolderCreationResponse | undefined;
     try {
-      if (autoMountsForUser) {
-        vfolderResults = await commitCreatePersonalMutation({
-          input: {
-            name: folderName,
-            host: values.host ?? null,
-            cloneable: !!values.cloneable,
-            usageMode: values.usage_mode === 'model' ? 'model' : 'general',
-            permission: 'ro',
-            projectId: null,
-          },
-        }).then((res) => res?.createVfolderV2?.vfolder);
-      } else {
-        vfolderResults = await commitCreateInProjectMutation({
-          // Not `values.group`: the form snapshots initialValues at mount and
-          // never resyncs them to later `project` prop changes.
-          projectId: effectiveProject?.id ?? values.group ?? '',
-          input: {
-            name: folderName,
-            host: values.host ?? null,
-            cloneable: !!values.cloneable,
-            usageMode: values.usage_mode === 'model' ? 'MODEL' : 'GENERAL',
-            permission: 'READ_ONLY',
-          },
-        }).then((res) => res?.createVFolderInProject?.vfolder);
-      }
+      // Every folder starts read-only for shared users (#10647); the default
+      // mount permission is changed from the share modal.
+      vfolderResults = await commitCreateInProjectMutation({
+        // Not `values.group`: the form snapshots initialValues at mount and
+        // never resyncs them to later `project` prop changes.
+        projectId: effectiveProject?.id ?? values.group ?? '',
+        input: {
+          name: folderName,
+          host: values.host ?? null,
+          cloneable: !!values.cloneable,
+          usageMode: values.usage_mode === 'model' ? 'MODEL' : 'GENERAL',
+          permission: 'READ_ONLY',
+        },
+      }).then((res) => res?.createVFolderInProject?.vfolder);
     } catch (error) {
       const errorDetail = Array.isArray(error)
         ? _.map(error, 'message').join('\n')
