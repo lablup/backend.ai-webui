@@ -235,8 +235,8 @@ if (!existsSync(new URL('../config.toml', import.meta.url))) {
   );
 }
 
-// The WebUI Assistant reads its manual index from /resources/webui-assistant/.
-spawnSync(process.execPath, [fileURLToPath(new URL('./build-assistant-manual.mjs', import.meta.url))], {
+// The user manual's Markdown is served from /resources/manual/.
+spawnSync(process.execPath, [fileURLToPath(new URL('./copy-manual.mjs', import.meta.url))], {
   stdio: 'inherit',
 });
 

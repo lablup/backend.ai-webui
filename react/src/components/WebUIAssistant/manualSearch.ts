@@ -123,3 +123,100 @@ export function manualSectionURL(
 ): string {
   return `${manualBaseURL}${section.page}.html${section.anchor ? `#${section.anchor}` : ''}`;
 }
+
+const cleanMarkdownLine = (line: string) =>
+  line
+    .replace(/!\[[^\]]*\]\([^)]*\)/g, '')
+    .replace(
+      /^:::(\w+)\[(.*)\]\s*$/,
+      (_m, kind: string, title: string) => `${kind}: ${title}`,
+    )
+    .replace(/^:::\w*\s*$/, '')
+    .replace(/<\/?[a-zA-Z][^>]*>/g, '');
+
+/**
+ * Splits one manual page's Markdown into h1–h3 sections. The manual puts an
+ * `<a id="…"></a>` line before a heading; that id is the section's anchor.
+ */
+export function splitManualMarkdown(markdown: string): {
+  pageTitle: string;
+  sections: Array<{ heading: string; anchor?: string; text: string }>;
+} {
+  const frontMatter = /^---\n([\s\S]*?)\n---\n/.exec(markdown);
+  let pageTitle = /navTitle:\s*(.+)/.exec(frontMatter?.[1] ?? '')?.[1]?.trim();
+  const body = frontMatter ? markdown.slice(frontMatter[0].length) : markdown;
+  const raw: Array<{ heading: string; anchor?: string; lines: string[] }> = [];
+  let current: (typeof raw)[number] = { heading: '', lines: [] };
+  let pendingAnchor: string | undefined;
+  let inFence = false;
+
+  for (const line of body.split('\n')) {
+    if (/^\s*(```|~~~)/.test(line)) inFence = !inFence;
+    const anchor = !inFence && /^\s*<a id="([^"]+)"><\/a>\s*$/.exec(line);
+    if (anchor) {
+      pendingAnchor = anchor[1];
+      continue;
+    }
+    const heading = !inFence && /^(#{1,3})\s+(.+?)\s*#*\s*$/.exec(line);
+    if (heading) {
+      raw.push(current);
+      const title = heading[2].replace(/<[^>]+>/g, '').trim();
+      if (heading[1].length === 1 && !pageTitle) pageTitle = title;
+      current = { heading: title, anchor: pendingAnchor, lines: [] };
+      pendingAnchor = undefined;
+      continue;
+    }
+    if (line.trim() !== '') pendingAnchor = undefined;
+    current.lines.push(inFence ? line : cleanMarkdownLine(line));
+  }
+  raw.push(current);
+
+  return {
+    pageTitle: pageTitle ?? '',
+    sections: raw
+      .map(({ heading, anchor, lines }) => ({
+        heading,
+        anchor,
+        text: lines
+          .join('\n')
+          .replace(/\n{3,}/g, '\n\n')
+          .trim(),
+      }))
+      .filter((section) => section.text.length > 0),
+  };
+}
+
+/** The manual pages `scripts/copy-manual.mjs` serves under `resources/manual/<lang>/`. */
+export interface ManualPageIndex {
+  lang: string;
+  pages: Array<{ page: string; file: string }>;
+}
+
+/** Fetches every Markdown page of one language and splits it into sections. */
+export async function loadManual(
+  baseURL: string,
+  lang: string,
+): Promise<AssistantManual> {
+  const indexResponse = await fetch(`${baseURL}${lang}/index.json`);
+  if (!indexResponse.ok) throw new Error(`HTTP ${indexResponse.status}`);
+  const index = (await indexResponse.json()) as ManualPageIndex;
+  const pages = await Promise.all(
+    index.pages.map(async ({ page, file }) => {
+      const response = await fetch(`${baseURL}${lang}/${file}`);
+      return { page, markdown: response.ok ? await response.text() : '' };
+    }),
+  );
+  return {
+    lang,
+    sections: pages.flatMap(({ page, markdown }) => {
+      const { pageTitle, sections } = splitManualMarkdown(markdown);
+      return sections.map((section) => ({
+        page,
+        pageTitle,
+        heading: section.heading || pageTitle,
+        anchor: section.anchor,
+        text: section.text,
+      }));
+    }),
+  };
+}

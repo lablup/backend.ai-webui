@@ -30,6 +30,8 @@ interface CustomEndpointFormProps {
   /** Called only after `/models` answered with at least one model. */
   onSubmit: (values: CustomEndpointFormValues, models: ChatModel[]) => void;
   onCancel?: () => void;
+  /** Replaces the default "kept in memory only" note when the caller saves the key. */
+  apiKeyHint?: string;
 }
 
 type ProbeFailure = ModelsFetchError | { kind: 'no-models' };
@@ -47,6 +49,7 @@ const CustomEndpointForm: React.FC<CustomEndpointFormProps> = ({
   loading,
   onSubmit,
   onCancel,
+  apiKeyHint,
 }) => {
   'use memo';
   const { t } = useTranslation();
@@ -223,7 +226,7 @@ const CustomEndpointForm: React.FC<CustomEndpointFormProps> = ({
         <BAIFormItem
           label={t('chatui.customEndpoint.ApiKey')}
           name="apiKey"
-          extra={t('chatui.customEndpoint.ApiKeyHint')}
+          extra={apiKeyHint ?? t('chatui.customEndpoint.ApiKeyHint')}
         >
           <BAITextInput
             type="password"

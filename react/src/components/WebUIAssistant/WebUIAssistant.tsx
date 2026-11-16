@@ -2,42 +2,25 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { WebUIAssistantDeploymentQuery } from '../../__generated__/WebUIAssistantDeploymentQuery.graphql';
 import { useAIAgent } from '../../hooks/useAIAgent';
+import { useMyAppConfig } from '../../hooks/useAppConfig';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
 import { useCurrentLanguage } from '../DefaultProviders';
 import ErrorBoundaryWithNullFallback from '../ErrorBoundaryWithNullFallback';
 import './WebUIAssistant.css';
 import WebUIAssistantChat from './WebUIAssistantChat';
-import WebUIAssistantProvisioner from './WebUIAssistantProvisioner';
-import WebUIAssistantSetupModal from './WebUIAssistantSetupModal';
-import { WEBUI_ASSISTANT_AGENT_ID } from './webUIAssistantPrompt';
-import { Banner } from '@lablup/ui-common/Banner';
-import { Button } from '@lablup/ui-common/Button';
+import WebUIAssistantConnectModal from './WebUIAssistantConnectModal';
+import {
+  WEBUI_ASSISTANT_AGENT_ID,
+  WEBUI_ASSISTANT_CONFIG_KEY,
+  type WebUIAssistantConnection,
+} from './webUIAssistantPrompt';
 import { IconButton } from '@lablup/ui-common/IconButton';
 import { Spinner } from '@lablup/ui-common/Spinner';
-import { Text } from '@lablup/ui-common/Text';
-import {
-  BAICard,
-  BAIFlex,
-  BAIUnmountAfterClose,
-  toGlobalId,
-} from 'backend.ai-ui';
-import { MessageCircle, RotateCcw, X } from 'lucide-react';
-import { Suspense, useEffect, useRef, useState } from 'react';
+import { BAICard, BAIFlex, BAIUnmountAfterClose } from 'backend.ai-ui';
+import { MessageCircle, PlugZap, RotateCcw, X } from 'lucide-react';
+import { Suspense, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { fetchQuery, graphql, useRelayEnvironment } from 'react-relay';
-
-const deploymentQuery = graphql`
-  query WebUIAssistantDeploymentQuery($id: ID!) {
-    deployment(id: $id) {
-      id
-      metadata {
-        status
-      }
-    }
-  }
-`;
 
 /** The floating WebUI Assistant; renders nothing until the user turns it on. */
 const WebUIAssistant: React.FC = () => {
@@ -52,28 +35,18 @@ const WebUIAssistantFloating: React.FC = () => {
 
   const { t } = useTranslation();
   const [lang] = useCurrentLanguage();
-  const { agents, getEndpointBinding, upsertEndpointBinding } = useAIAgent();
-  const relayEnvironment = useRelayEnvironment();
-  const [isSetupOpen, setIsSetupOpen] = useState(false);
+  const { agents } = useAIAgent();
+  const connection = useMyAppConfig<WebUIAssistantConnection>(
+    WEBUI_ASSISTANT_CONFIG_KEY,
+  );
+  const [isConnectOpen, setIsConnectOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [conversationKey, setConversationKey] = useState(0);
-  const [problem, setProblem] = useState<'missing' | 'token' | null>(null);
-  // A second 401 right after a fresh token is not a stale token; stop retrying.
-  const hasReissuedRef = useRef(false);
 
   const profile = agents.find((agent) => agent.id === WEBUI_ASSISTANT_AGENT_ID);
-  const binding = getEndpointBinding(WEBUI_ASSISTANT_AGENT_ID);
-  const deploymentId = binding?.endpoint_id;
-  const isReady = !!(binding?.endpoint_url && binding.endpoint_token);
-  const isProvisioning = !!deploymentId && !isReady;
+  const isConnected = !!connection?.baseURL;
+  const isPanelShown = isOpen && isConnected;
   const title = profile?.translations?.[lang]?.name || profile?.name;
-
-  // A deployment that just started shows its progress in the panel.
-  const [seenDeploymentId, setSeenDeploymentId] = useState(deploymentId);
-  if (deploymentId !== seenDeploymentId) {
-    setSeenDeploymentId(deploymentId);
-    if (deploymentId) setIsOpen(true);
-  }
 
   useEffect(() => {
     if (!isOpen) return;
@@ -84,131 +57,15 @@ const WebUIAssistantFloating: React.FC = () => {
     return () => document.removeEventListener('keydown', onKeyDown);
   }, [isOpen]);
 
-  // The button opens the chat only over a live deployment; otherwise it starts setup.
-  const toggleAssistant = async () => {
-    if (isOpen) {
-      setIsOpen(false);
-      return;
-    }
-    if (!deploymentId) {
-      setIsSetupOpen(true);
-      return;
-    }
-    const result = await fetchQuery<WebUIAssistantDeploymentQuery>(
-      relayEnvironment,
-      deploymentQuery,
-      { id: toGlobalId('ModelDeployment', deploymentId) },
-      { fetchPolicy: 'network-only' },
-    )
-      .toPromise()
-      // A failed lookup is not proof the deployment is gone; keep the binding.
-      .catch(() => undefined);
-    const status = result?.deployment?.metadata.status;
-    if (
-      result &&
-      (!result.deployment || status === 'STOPPING' || status === 'STOPPED')
-    ) {
-      startAgain();
-      return;
-    }
-    setIsOpen(true);
-  };
-
-  const startAgain = () => {
-    upsertEndpointBinding(WEBUI_ASSISTANT_AGENT_ID, null);
-    setProblem(null);
-    setIsSetupOpen(true);
-  };
-
-  const renderBody = () => {
-    if (!profile) {
-      return <Spinner />;
-    }
-    if (problem === 'missing') {
-      return (
-        <SetupPrompt
-          message={t('webuiAssistant.DeploymentMissing')}
-          onStart={startAgain}
-        />
-      );
-    }
-    if (problem === 'token') {
-      return (
-        <SetupPrompt
-          message={t('webuiAssistant.TokenRejected')}
-          onStart={startAgain}
-        />
-      );
-    }
-    if (!deploymentId) {
-      return (
-        <SetupPrompt
-          message={t('webuiAssistant.NotStarted')}
-          onStart={() => setIsSetupOpen(true)}
-        />
-      );
-    }
-    if (isProvisioning) {
-      return (
-        <BAIFlex
-          direction="column"
-          align="center"
-          justify="center"
-          gap="sm"
-          style={{ flex: 1 }}
-        >
-          <Spinner />
-          <Text>{t('webuiAssistant.Starting')}</Text>
-          <Text color="secondary" size="sm">
-            {t('webuiAssistant.StartingDesc')}
-          </Text>
-        </BAIFlex>
-      );
-    }
-    return (
-      <ErrorBoundaryWithNullFallback>
-        <WebUIAssistantChat
-          key={conversationKey}
-          profile={profile}
-          endpointURL={binding?.endpoint_url ?? ''}
-          token={binding?.endpoint_token ?? ''}
-          onTokenRejected={() => {
-            if (hasReissuedRef.current || !deploymentId) {
-              setProblem('token');
-              return;
-            }
-            hasReissuedRef.current = true;
-            upsertEndpointBinding(WEBUI_ASSISTANT_AGENT_ID, {
-              endpoint_id: deploymentId,
-            });
-          }}
-        />
-      </ErrorBoundaryWithNullFallback>
-    );
-  };
-
   return (
     <>
-      {isProvisioning && deploymentId && (
-        <ErrorBoundaryWithNullFallback>
-          <Suspense fallback={null}>
-            <WebUIAssistantProvisioner
-              deploymentId={deploymentId}
-              onReady={(next) =>
-                upsertEndpointBinding(WEBUI_ASSISTANT_AGENT_ID, next)
-              }
-              onMissing={() => setProblem('missing')}
-            />
-          </Suspense>
-        </ErrorBoundaryWithNullFallback>
-      )}
       {/* Kept mounted while hidden so the conversation survives closing the panel. */}
       <BAIFlex
         direction="column"
         align="stretch"
         className="webui-assistant-panel"
         // BAIFlex's inline `position`/`display` would beat the class and `hidden`.
-        style={{ position: 'fixed', display: isOpen ? 'flex' : 'none' }}
+        style={{ position: 'fixed', display: isPanelShown ? 'flex' : 'none' }}
         role="dialog"
         aria-label={title}
       >
@@ -222,16 +79,22 @@ const WebUIAssistantFloating: React.FC = () => {
           }
           extra={
             <BAIFlex gap="xxs" align="center">
-              {isReady && (
-                <IconButton
-                  variant="ghost"
-                  size="sm"
-                  icon={<RotateCcw size="1em" />}
-                  label={t('webuiAssistant.ClearConversation')}
-                  tooltip={t('webuiAssistant.ClearConversation')}
-                  onClick={() => setConversationKey((key) => key + 1)}
-                />
-              )}
+              <IconButton
+                variant="ghost"
+                size="sm"
+                icon={<PlugZap size="1em" />}
+                label={t('webuiAssistant.ChangeConnection')}
+                tooltip={t('webuiAssistant.ChangeConnection')}
+                onClick={() => setIsConnectOpen(true)}
+              />
+              <IconButton
+                variant="ghost"
+                size="sm"
+                icon={<RotateCcw size="1em" />}
+                label={t('webuiAssistant.ClearConversation')}
+                tooltip={t('webuiAssistant.ClearConversation')}
+                onClick={() => setConversationKey((key) => key + 1)}
+              />
               <IconButton
                 variant="ghost"
                 size="sm"
@@ -248,7 +111,19 @@ const WebUIAssistantFloating: React.FC = () => {
             align="stretch"
             className="webui-assistant-panel__body"
           >
-            {renderBody()}
+            {!profile || !connection?.baseURL ? (
+              <Spinner />
+            ) : (
+              <ErrorBoundaryWithNullFallback>
+                <WebUIAssistantChat
+                  key={`${conversationKey}-${connection.baseURL}-${connection.apiKey ?? ''}`}
+                  profile={profile}
+                  baseURL={connection.baseURL}
+                  apiKey={connection.apiKey}
+                  onChangeConnection={() => setIsConnectOpen(true)}
+                />
+              </ErrorBoundaryWithNullFallback>
+            )}
           </BAIFlex>
         </BAICard>
       </BAIFlex>
@@ -258,46 +133,29 @@ const WebUIAssistantFloating: React.FC = () => {
         variant="primary"
         size="lg"
         elevation="med"
-        icon={isOpen ? <X /> : <MessageCircle />}
-        label={isOpen ? t('button.Close') : t('webuiAssistant.Open')}
-        tooltip={isOpen ? undefined : title}
-        aria-expanded={isOpen}
-        clickAction={toggleAssistant}
+        icon={isPanelShown ? <X /> : <MessageCircle />}
+        label={isPanelShown ? t('button.Close') : t('webuiAssistant.Open')}
+        tooltip={isPanelShown ? undefined : title}
+        aria-expanded={isPanelShown}
+        onClick={() => {
+          // Without a connection the button asks for one; the chat opens once it is saved.
+          if (!isConnected) {
+            setIsConnectOpen(true);
+            setIsOpen(true);
+            return;
+          }
+          setIsOpen((open) => !open);
+        }}
       />
       <Suspense fallback={null}>
         <BAIUnmountAfterClose>
-          <WebUIAssistantSetupModal
-            open={isSetupOpen}
-            onRequestClose={() => setIsSetupOpen(false)}
+          <WebUIAssistantConnectModal
+            open={isConnectOpen}
+            onRequestClose={() => setIsConnectOpen(false)}
           />
         </BAIUnmountAfterClose>
       </Suspense>
     </>
-  );
-};
-
-const SetupPrompt: React.FC<{ message: string; onStart: () => void }> = ({
-  message,
-  onStart,
-}) => {
-  'use memo';
-
-  const { t } = useTranslation();
-  return (
-    <BAIFlex
-      direction="column"
-      align="center"
-      justify="center"
-      gap="md"
-      style={{ flex: 1 }}
-    >
-      <Banner status="info" title={message} />
-      <Button
-        variant="primary"
-        label={t('webuiAssistant.StartModel')}
-        onClick={onStart}
-      />
-    </BAIFlex>
   );
 };
 

@@ -12,17 +12,19 @@ import { fetchOpenAIModels } from '../Chat/openAIModels';
 import { streamChatCompletion } from '../Chat/streamChatCompletion';
 import {
   createManualIndex,
+  loadManual,
   searchManual,
-  type AssistantManual,
   type ManualSection,
 } from './manualSearch';
 import {
+  MANUAL_RESOURCE_BASE,
   WEBUI_ASSISTANT_EXCERPT_COUNT,
   buildAssistantSystemPrompt,
   parseManualTarget,
 } from './webUIAssistantPrompt';
 import { useChat } from '@ai-sdk/react';
 import { Banner } from '@lablup/ui-common/Banner';
+import { Button } from '@lablup/ui-common/Button';
 import {
   ChatComposer,
   ChatMessage,
@@ -33,17 +35,17 @@ import { Spinner } from '@lablup/ui-common/Spinner';
 import { Text } from '@lablup/ui-common/Text';
 import { DefaultChatTransport } from 'ai';
 import { BAIFlex, useEventNotStable } from 'backend.ai-ui';
-import { useEffect, useEffectEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 
 const MODEL_POLL_INTERVAL_MS = 5000;
 
 interface WebUIAssistantChatProps {
   profile: AIAgent;
-  endpointURL: string;
-  token: string;
-  /** Fired when the endpoint answers 401, so the caller can issue a new token. */
-  onTokenRejected: () => void;
+  /** OpenAI-compatible base URL (`…/v1`). */
+  baseURL: string;
+  apiKey?: string;
+  /** Lets the user fix a connection the endpoint rejects or cannot be reached on. */
+  onChangeConnection: () => void;
 }
 
 const messageText = (message: ChatUIMessage) =>
@@ -52,19 +54,11 @@ const messageText = (message: ChatUIMessage) =>
     .map((part) => part.text)
     .join('');
 
-function createAPIBaseURL(endpointURL: string): string | undefined {
-  try {
-    return new URL('v1', endpointURL).toString();
-  } catch {
-    return undefined;
-  }
-}
-
 const WebUIAssistantChat: React.FC<WebUIAssistantChatProps> = ({
   profile,
-  endpointURL,
-  token,
-  onTokenRejected,
+  baseURL: apiBaseURL,
+  apiKey: token,
+  onChangeConnection,
 }) => {
   'use memo';
 
@@ -72,17 +66,11 @@ const WebUIAssistantChat: React.FC<WebUIAssistantChatProps> = ({
   const location = useWebUILocation();
   const helpURL = useHelpURL();
   const { baseURL: manualBaseURL, docsLang } = useManualBaseURL();
-  const apiBaseURL = createAPIBaseURL(endpointURL);
 
   const manualQuery = useTanQuery({
     queryKey: ['webui-assistant-manual', docsLang],
-    queryFn: async () => {
-      const response = await fetch(
-        `resources/webui-assistant/manual.${docsLang}.json`,
-      );
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
-      return createManualIndex((await response.json()) as AssistantManual);
-    },
+    queryFn: async () =>
+      createManualIndex(await loadManual(MANUAL_RESOURCE_BASE, docsLang)),
     staleTime: Infinity,
     retry: false,
   });
@@ -102,11 +90,6 @@ const WebUIAssistantChat: React.FC<WebUIAssistantChatProps> = ({
     models.find((model) => model.id === preferredModelId)?.id ?? models[0]?.id;
   const isTokenRejected =
     modelsError?.kind === 'http' && modelsError.status === 401;
-
-  const notifyTokenRejected = useEffectEvent(() => onTokenRejected());
-  useEffect(() => {
-    if (isTokenRejected) notifyTokenRejected();
-  }, [isTokenRejected]);
 
   const pickExcerpts = (question: string): ManualSection[] => {
     if (!manualIndex) return [];
@@ -170,7 +153,7 @@ const WebUIAssistantChat: React.FC<WebUIAssistantChatProps> = ({
         {isTokenRejected ? (
           <Banner
             status="error"
-            title={t('webuiAssistant.TokenRejected')}
+            title={t('webuiAssistant.ConnectionRejected')}
             role="alert"
           />
         ) : (
@@ -179,10 +162,17 @@ const WebUIAssistantChat: React.FC<WebUIAssistantChatProps> = ({
             <Text color="secondary">{t('webuiAssistant.ModelLoading')}</Text>
             {modelsError && (
               <Text color="secondary" size="sm">
-                {t('webuiAssistant.ModelLoadingDesc')}
+                {t('webuiAssistant.EndpointUnreachable', { url: apiBaseURL })}
               </Text>
             )}
           </>
+        )}
+        {(isTokenRejected || modelsError) && (
+          <Button
+            variant="secondary"
+            label={t('webuiAssistant.ChangeConnection')}
+            onClick={onChangeConnection}
+          />
         )}
       </BAIFlex>
     );

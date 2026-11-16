@@ -8,7 +8,6 @@
 */
 import { App } from '../app-shim';
 import { useSuspendedBackendaiClient } from '../hooks';
-import { useAIAgent } from '../hooks/useAIAgent';
 import { useUpdateMyUserAppConfig } from '../hooks/useAppConfig';
 import {
   useBAISettingGeneralState,
@@ -23,11 +22,8 @@ import MyKeypairManagementModal from './MyKeypairManagementModal';
 import SSHKeypairManagementModal from './SSHKeypairManagementModal';
 import SettingList, { SettingGroup } from './SettingList';
 import ShellScriptEditModal, { ShellScriptType } from './ShellScriptEditModal';
-import WebUIAssistantTurnOffModal from './WebUIAssistant/WebUIAssistantTurnOffModal';
-import { WEBUI_ASSISTANT_AGENT_ID } from './WebUIAssistant/webUIAssistantPrompt';
 import { Button } from '@lablup/ui-common/Button';
 import {
-  BAIUnmountAfterClose,
   filterOutEmpty,
   useErrorMessageResolver,
   useSessionStorageState,
@@ -107,8 +103,6 @@ const UserSettingsGeneralPane = () => {
     useBAISettingUserState('experimental_session_monitor');
   const [experimentalWebUIAssistant, setExperimentalWebUIAssistant] =
     useBAISettingUserState('experimental_webui_assistant');
-  const { getEndpointBinding } = useAIAgent();
-  const [isAssistantTurnOffOpen, setIsAssistantTurnOffOpen] = useState(false);
   const [shellInfo, setShellInfo] = useState<ShellScriptType>('bootstrap');
   const [isOpenShellScriptEditModal, { toggle: toggleShellScriptEditModal }] =
     useToggle(false);
@@ -460,15 +454,7 @@ const UserSettingsGeneralPane = () => {
           description: t('userSettings.DescWebUIAssistant'),
           defaultValue: false,
           value: experimentalWebUIAssistant,
-          onChange: (checked?: boolean) => {
-            if (checked) {
-              setExperimentalWebUIAssistant(true);
-            } else if (getEndpointBinding(WEBUI_ASSISTANT_AGENT_ID)) {
-              setIsAssistantTurnOffOpen(true);
-            } else {
-              setExperimentalWebUIAssistant(false);
-            }
-          },
+          onChange: setExperimentalWebUIAssistant,
         },
       ],
     },
@@ -491,12 +477,6 @@ const UserSettingsGeneralPane = () => {
         open={isOpenSSHKeypairManagementModal}
         onRequestClose={toggleSSHKeypairManagementModal}
       />
-      <BAIUnmountAfterClose>
-        <WebUIAssistantTurnOffModal
-          open={isAssistantTurnOffOpen}
-          onRequestClose={() => setIsAssistantTurnOffOpen(false)}
-        />
-      </BAIUnmountAfterClose>
       {shellInfo && (
         <ShellScriptEditModal
           open={isOpenShellScriptEditModal}

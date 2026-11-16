@@ -1,7 +1,7 @@
 import { test } from "@e2e-dev/web";
 
 test(
-  "the user turns on the WebUI Assistant and asks it a question",
+  "the user turns on the WebUI Assistant, connects it to a deployment and asks a question",
   {
     session: "user",
     tags: ["draft"],
@@ -16,18 +16,16 @@ test(
       'Press the round "Open WebUI Assistant" button at the bottom right',
     );
     await agent.act(
-      'In the "Start WebUI Assistant" dialog, choose a chat model in the "Model" field',
+      'In the "Connect WebUI Assistant" dialog, choose a running deployment in the "Model endpoint" field',
     );
-    await agent.act('Press "Start model"');
-    await agent.act(
-      "If a preset and resource group are asked for, keep the defaults and deploy",
-    );
+    await agent.act('Choose a token in the "Token" field');
+    await agent.act('Press "Connect"');
     await agent.act('Ask "How do I mount a folder to a session?" and send it');
   },
 );
 
 test(
-  "the user turns off the WebUI Assistant and deletes its deployment",
+  "the user connects the WebUI Assistant to a custom OpenAI-compatible endpoint",
   {
     session: "user",
     tags: ["draft"],
@@ -35,12 +33,13 @@ test(
   },
   async ({ app, agent }) => {
     await app.open("/start");
-    await agent.act("Open User Settings from the user menu in the header");
     await agent.act(
-      'Under "Experimental features", turn off "WebUI Assistant"',
+      'Press the round "Open WebUI Assistant" button at the bottom right',
     );
     await agent.act(
-      'In the "Turn off WebUI Assistant" dialog, keep "Also delete the assistant\'s deployment" checked and press "Turn off"',
+      'In the "Model endpoint" field, choose "Connect a custom endpoint…"',
     );
+    await agent.act('Enter the endpoint in "Base URL" and its "API key"');
+    await agent.act('Press "Connect"');
   },
 );

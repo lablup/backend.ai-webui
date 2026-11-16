@@ -4,6 +4,7 @@
  */
 import {
   createManualIndex,
+  splitManualMarkdown,
   manualSectionURL,
   searchManual,
   tokenize,
@@ -84,5 +85,42 @@ describe('manualSectionURL', () => {
     expect(manualSectionURL(base, manual.sections[2])).toBe(
       `${base}deployment.html`,
     );
+  });
+});
+
+describe('splitManualMarkdown', () => {
+  it('splits at h1–h3, takes the anchor line before a heading, drops images and front matter', () => {
+    const { pageTitle, sections } = splitManualMarkdown(
+      [
+        '---',
+        'navTitle: Sessions',
+        '---',
+        '',
+        '<a id="session-page"></a>',
+        '',
+        '# Session Page',
+        '',
+        'Intro text.',
+        '',
+        '![](../images/a.png)',
+        '<a id="session-list"></a>',
+        '## Session list',
+        '',
+        ':::note[Heads up]',
+        'Lists **every** session.',
+        ':::',
+        '```bash',
+        '# not a heading',
+        '```',
+      ].join('\n'),
+    );
+    expect(pageTitle).toBe('Sessions');
+    expect(sections.map((s) => [s.heading, s.anchor])).toEqual([
+      ['Session Page', 'session-page'],
+      ['Session list', 'session-list'],
+    ]);
+    expect(sections[0].text).toBe('Intro text.');
+    expect(sections[1].text).toContain('note: Heads up');
+    expect(sections[1].text).toContain('# not a heading');
   });
 });

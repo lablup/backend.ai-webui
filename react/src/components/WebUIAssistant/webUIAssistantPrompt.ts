@@ -4,11 +4,22 @@
  */
 import { manualSectionURL, type ManualSection } from './manualSearch';
 
-/** The built-in profile in `resources/ai-agents.json`. */
+/** The built-in profile in `resources/ai-agents.json`; its system prompt is the assistant's. */
 export const WEBUI_ASSISTANT_AGENT_ID = 'webui-assistant';
-/** A model-store card carrying this label is the one the assistant deploys. */
-export const WEBUI_ASSISTANT_MODEL_CARD_LABEL = 'webui-assistant';
-export const WEBUI_ASSISTANT_TOKEN_LIFETIME_DAYS = 30;
+/** `userConfig` key holding each user's own connection. */
+export const WEBUI_ASSISTANT_CONFIG_KEY = 'webuiAssistant';
+/** Where the user manual's Markdown is served (`scripts/copy-manual.mjs`). */
+export const MANUAL_RESOURCE_BASE = 'resources/manual/';
+
+/** An OpenAI-compatible endpoint, picked from a deployment or typed in. */
+export interface WebUIAssistantConnection {
+  /** OpenAI base URL, ending in `/v1` for a deployment. */
+  baseURL: string;
+  apiKey?: string;
+  /** Set when the endpoint is a Backend.AI deployment. */
+  deploymentId?: string;
+}
+
 export const WEBUI_ASSISTANT_EXCERPT_COUNT = 5;
 // ~1,800 chars ≈ 450–900 tokens per excerpt keeps five excerpts inside an 8k window.
 const MAX_EXCERPT_CHARS = 1800;

@@ -6019,11 +6019,7 @@
         "userSettings.UserConfigScript",
         "webui.menu.GoBack",
         "webui.menu.Help",
-        "webui.menu.Settings",
-        "webuiAssistant.AlsoDeleteDeployment",
-        "webuiAssistant.TurnOff",
-        "webuiAssistant.TurnOffDescription",
-        "webuiAssistant.TurnOffTitle"
+        "webui.menu.Settings"
       ]
     }
   ]
