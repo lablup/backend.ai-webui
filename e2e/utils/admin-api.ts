@@ -616,31 +616,40 @@ export async function createDeploymentWithRevisionViaApi(
       { id: Buffer.from(`ModelDeployment:${id}`).toString('base64') },
     );
   // The initial revision is only stored; activating it makes it current a few
-  // seconds to a minute later, even with zero replicas.
-  const revisionId = (await read()).deployment?.revisionHistory.edges[0]?.node
-    .id;
-  if (!revisionId) throw new Error(`Deployment ${id} has no revision`);
-  await gqlAdmin(
-    api,
-    `mutation($input: ActivateRevisionInput!) {
-      activateDeploymentRevision(input: $input) { activatedRevisionId }
-    }`,
-    { input: { deploymentId: id, revisionId: toRawUUID(revisionId) } },
-  );
+  // seconds to a minute later, even with zero replicas. Transient errors retry.
   const deadline = Date.now() + 120_000;
+  let activated = false;
+  let lastError = '';
   for (;;) {
-    const identity = (await read()).deployment?.currentRevision?.imageV2
-      ?.identity;
-    if (identity?.canonicalName) {
-      return {
-        id,
-        imageReference: identity.architecture
-          ? `${identity.canonicalName}@${identity.architecture}`
-          : identity.canonicalName,
-      };
+    try {
+      const { deployment } = await read();
+      const identity = deployment?.currentRevision?.imageV2?.identity;
+      if (identity?.canonicalName) {
+        return {
+          id,
+          imageReference: identity.architecture
+            ? `${identity.canonicalName}@${identity.architecture}`
+            : identity.canonicalName,
+        };
+      }
+      const revisionId = deployment?.revisionHistory.edges[0]?.node.id;
+      if (!activated && revisionId) {
+        await gqlAdmin(
+          api,
+          `mutation($input: ActivateRevisionInput!) {
+            activateDeploymentRevision(input: $input) { activatedRevisionId }
+          }`,
+          { input: { deploymentId: id, revisionId: toRawUUID(revisionId) } },
+        );
+        activated = true;
+      }
+    } catch (error) {
+      lastError = error instanceof Error ? error.message : String(error);
     }
     if (Date.now() > deadline) {
-      throw new Error(`Deployment ${id} got no current revision within 120s`);
+      throw new Error(
+        `Deployment ${id} got no current revision within 120s (activated=${activated}) ${lastError}`.trim(),
+      );
     }
     await new Promise((resolve) => setTimeout(resolve, 3000));
   }
