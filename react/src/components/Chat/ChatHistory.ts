@@ -92,16 +92,21 @@ const chatHistoryCache = createLocalStorageCache<ChatHistoryData>(
 );
 
 export function useHistory(id: string, provider: ChatProviderData) {
+  'use memo';
   const { logger } = useBAILogger();
   const [history, setHistory] = useState<ChatHistoryData[]>([]);
   const [chat, setChat] = useState<ChatHistoryData | undefined>(undefined);
   const webuiNavigate = useWebUINavigate();
   const buildProjectPath = useProjectPath();
-  // Read by saveChatMessage, whose `chat` can belong to a chat the user left.
+  // Set together with setChat and cleared on unmount; read by
+  // saveChatMessage, whose `chat` can belong to a chat the user has left.
   const activeChatIdRef = useRef<string | undefined>(undefined);
-  useEffect(() => {
-    activeChatIdRef.current = chat?.id;
-  }, [chat?.id]);
+  useEffect(
+    () => () => {
+      activeChatIdRef.current = undefined;
+    },
+    [],
+  );
 
   const removeHistory = useCallback((id: string) => {
     chatHistoryCache.delete(id);
@@ -110,15 +115,21 @@ export function useHistory(id: string, provider: ChatProviderData) {
     return chatHistoryCache.size();
   }, []);
 
-  const updateHistory = useCallback((data: ChatHistoryData) => {
-    const mergedData: ChatHistoryData = _.merge({}, data, {
-      updatedAt: new Date().toISOString(),
-    });
+  const updateHistory = useCallback(
+    (data: ChatHistoryData, { select = true }: { select?: boolean } = {}) => {
+      const mergedData: ChatHistoryData = _.merge({}, data, {
+        updatedAt: new Date().toISOString(),
+      });
 
-    chatHistoryCache.set(data.id, mergedData);
-    setChat({ ...mergedData });
-    setHistory([...chatHistoryCache.getAll().sort(sortHistoryByUpdatedAt)]);
-  }, []);
+      chatHistoryCache.set(data.id, mergedData);
+      if (select) {
+        activeChatIdRef.current = mergedData.id;
+        setChat({ ...mergedData });
+      }
+      setHistory([...chatHistoryCache.getAll().sort(sortHistoryByUpdatedAt)]);
+    },
+    [],
+  );
 
   const addChatData = useCallback(
     ({ provider, id }: ChatData) => {
@@ -200,84 +211,71 @@ export function useHistory(id: string, provider: ChatProviderData) {
     [chat, updateHistory, webuiNavigate, buildProjectPath, logger],
   );
 
-  const saveChatMessage = useCallback(
-    (id: string, message: ChatMessage) => {
-      if (!chat) {
-        logger.error('Chat history is not initialized.');
-        return;
+  const saveChatMessage = (id: string, message: ChatMessage) => {
+    if (!chat) {
+      logger.error('Chat history is not initialized.');
+      return;
+    }
+
+    // The reply's onFinish runs with the callback of the render that sent
+    // the request, so `chat` can be stale; the cache holds the latest copy.
+    const cachedChat = getChatById(chat.id);
+    const isActiveChat = activeChatIdRef.current === chat.id;
+    // Deleted, or left before its first save: do not bring it back.
+    if (!cachedChat && !isActiveChat) return;
+    const baseChat = cachedChat ?? chat;
+
+    const index = baseChat.chats.findIndex((item) => item.id === id);
+    if (index === -1) {
+      logger.error(`Chat with id ${id} not found in cache.`);
+      return;
+    }
+
+    const chatData = baseChat.chats[index];
+    const lastMessage = chatData.messages.at(-1);
+
+    // Overwrite the last message if it is the same message. Streamed
+    // replies carry an empty id, so only a real id counts as the same.
+    const messages =
+      message.id && lastMessage?.id === message.id
+        ? [
+            ...chatData.messages.slice(0, -1),
+            _.merge({}, lastMessage, {
+              parts: message.parts,
+            }),
+          ]
+        : [...chatData.messages, message];
+
+    const chats = [...baseChat.chats];
+    chats[index] = { ...chatData, messages };
+
+    // Name a chat that still has the default label after its first user
+    // message, once the first pane gets a reply; a user-set title stays.
+    let label = baseChat.label;
+    if (
+      index === 0 &&
+      message.role === 'assistant' &&
+      baseChat.label === DEFAULT_CHAT_LABEL
+    ) {
+      const textContent = messages
+        .find((item) => item.role === 'user')
+        ?.parts?.filter((part) => part.type === 'text')
+        .map((part) => part.text)
+        .join('')
+        .trim();
+
+      if (textContent) {
+        label = textContent;
       }
+    }
 
-      // The reply's onFinish runs with the callback of the render that sent
-      // the request, so `chat` can be stale; the cache holds the latest copy.
-      const cachedChat = getChatById(chat.id);
-      const isActiveChat = activeChatIdRef.current === chat.id;
-      // Deleted, or left before its first save: do not bring it back.
-      if (!cachedChat && !isActiveChat) return;
-      const baseChat = cachedChat ?? chat;
-
-      const index = baseChat.chats.findIndex((item) => item.id === id);
-      if (index === -1) {
-        logger.error(`Chat with id ${id} not found in cache.`);
-        return;
-      }
-
-      const chatData = baseChat.chats[index];
-      const lastMessage = chatData.messages.at(-1);
-
-      // Overwrite the last message if it is the same message. Streamed
-      // replies carry an empty id, so only a real id counts as the same.
-      const messages =
-        message.id && lastMessage?.id === message.id
-          ? [
-              ...chatData.messages.slice(0, -1),
-              _.merge({}, lastMessage, {
-                parts: message.parts,
-              }),
-            ]
-          : [...chatData.messages, message];
-
-      const chats = [...baseChat.chats];
-      chats[index] = { ...chatData, messages };
-
-      // Name a chat that still has the default label after its first user
-      // message, once the first pane gets a reply; a user-set title stays.
-      let label = baseChat.label;
-      if (
-        index === 0 &&
-        message.role === 'assistant' &&
-        baseChat.label === DEFAULT_CHAT_LABEL
-      ) {
-        const textContent = messages
-          .find((item) => item.role === 'user')
-          ?.parts?.filter((part) => part.type === 'text')
-          .map((part) => part.text)
-          .join('')
-          .trim();
-
-        if (textContent) {
-          label = textContent;
-        }
-      }
-
-      const nextChat = { ...baseChat, chats, label };
-      if (!isActiveChat) {
-        // A reply that finished after the user switched chats: store it
-        // without pulling the page back to that chat.
-        chatHistoryCache.set(nextChat.id, {
-          ...nextChat,
-          updatedAt: new Date().toISOString(),
-        });
-        setHistory([...chatHistoryCache.getAll().sort(sortHistoryByUpdatedAt)]);
-        return;
-      }
-
-      updateHistory(nextChat);
-      if (!cachedChat) {
-        webuiNavigate(buildProjectPath(`chat/${chat.id}`), { replace: true });
-      }
-    },
-    [chat, updateHistory, webuiNavigate, buildProjectPath, logger],
-  );
+    // A reply that finished after the user left its chat is stored without
+    // pulling the page back to that chat.
+    updateHistory({ ...baseChat, chats, label }, { select: isActiveChat });
+    if (isActiveChat && !cachedChat) {
+      webuiNavigate(buildProjectPath(`chat/${chat.id}`), { replace: true });
+    }
+  };
 
   const clearChatMessage = useCallback(
     (id: string) => {
@@ -311,6 +309,7 @@ export function useHistory(id: string, provider: ChatProviderData) {
     const cachedChat = getChatById(id);
     const chat = cachedChat ? cachedChat : createChat({ provider });
 
+    activeChatIdRef.current = chat.id;
     // eslint-disable-next-line react-hooks/set-state-in-effect -- legacy id-change re-init kept as-is
     setChat(chat);
     setHistory([...chatHistoryCache.getAll().sort(sortHistoryByUpdatedAt)]);

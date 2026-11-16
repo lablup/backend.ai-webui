@@ -286,6 +286,7 @@ test.describe('Basic Chat Flow', { tag: ['@chat', '@functional'] }, () => {
 
     // The message thread is empty; the chat keeps the title it took from
     // its first message.
+    await expect(messageList).toBeVisible();
     await expect(messageList.getByText('What is Backend.AI?')).toBeHidden({
       timeout: 10000,
     });
@@ -444,6 +445,7 @@ test.describe(
       await expect(
         messageList.getByText('Second session message'),
       ).toBeHidden();
+      await expect(drawer.getByText('Second session message')).toBeVisible();
     });
 
     test('User can rename a chat session from the page title', async ({
