@@ -12,11 +12,11 @@ import {
 // `Form.Item` IS `BAIFormItem` — the visual shell plus the engine binding.
 import { Form, FormInstance } from '../form-engine';
 import { buildPath } from '../helper/pathBuilder';
+import { AUTO_MOUNT_SETTING_MANAGER_VERSION } from '../helper/vfolderAutoMount';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useAccessibleProjects } from '../hooks/useAccessibleProjects';
 import { useMyAppConfig } from '../hooks/useAppConfig';
 import { useSetBAINotification } from '../hooks/useBAINotification';
-import { AUTO_MOUNT_SETTING_MANAGER_VERSION } from '../hooks/useVFolderAutoMountsByVFolderId';
 import { ProjectContext, ProjectContextOrNull } from '../types/projectContext';
 import BAIFormItem from './BAIFormItem';
 import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
