@@ -24,9 +24,23 @@ import { action } from 'storybook/actions';
 
 const DEMO_WIDTH = 420;
 
-// One folder per mount level and a model folder, newest first as the server
-// orders them, ahead of the shared mount fixture.
+// One folder per mount level, a model folder, one in the trash and one not
+// ready yet, newest first as the server orders them, ahead of the shared
+// mount fixture.
 const storyFolders: Array<MockMountFolder> = [
+  mockMountFolder({
+    id: 'aaaaaaaa-bbbb-cccc-dddd-eeeeffff0016',
+    name: 'restoring-data',
+    status: 'PROVISIONING',
+    createdAt: '2026-08-07T09:00:00+00:00',
+  }),
+  mockMountFolder({
+    id: 'aaaaaaaa-bbbb-cccc-dddd-eeeeffff0015',
+    name: 'trashed-checkpoint',
+    usageMode: 'MODEL',
+    status: 'DELETE_PENDING',
+    createdAt: '2026-08-06T09:00:00+00:00',
+  }),
   mockMountFolder({
     id: 'aaaaaaaa-bbbb-cccc-dddd-eeeeffff0014',
     name: 'llama-checkpoint',
@@ -65,7 +79,8 @@ const manyFolders: Array<MockMountFolder> = Array.from(
     return mockMountFolder({
       id: `bbbbbbbb-0000-4000-8000-${String(n).padStart(12, '0')}`,
       name: `experiment-${String(n).padStart(2, '0')}`,
-      createdAt: `2026-09-${String(Math.ceil(n / 2)).padStart(2, '0')}T09:00:00+00:00`,
+      // One day apart, so every option shows its own creation date.
+      createdAt: new Date(Date.UTC(2026, 6, 1 + n, 9)).toISOString(),
     });
   },
 );
@@ -101,16 +116,24 @@ const Sandbox: React.FC<SandboxProps> = ({
     initialValue,
   );
   const [resolution, setResolution] = useState<ScopedVFolderResolution>();
+  // Keeps the value an array iff `multiple` when the control flips it.
+  const shapedValue = args.multiple
+    ? value == null
+      ? []
+      : [value].flat()
+    : Array.isArray(value)
+      ? (value[0] ?? null)
+      : value;
   const selectRef = useRef<BAIScopedVFolderSelectRef>(null);
   return (
     <MockVFolderFileProviders folders={folders} suspenseFallback="Loading...">
       <BAIFlex direction="column" align="start" gap="md">
         <BAIScopedVFolderSelect
-          width={DEMO_WIDTH}
           {...args}
+          width={args.width ?? DEMO_WIDTH}
           ref={selectRef}
           scope={scope}
-          value={value}
+          value={shapedValue}
           onChange={(next, option) => {
             setValue(next ?? null);
             action('onChange')(next, option);
@@ -125,7 +148,7 @@ const Sandbox: React.FC<SandboxProps> = ({
         </BAIButton>
         <BAIFlex direction="column" align="start" gap="xxs">
           <BAIText type="secondary" code>
-            value: {JSON.stringify(value)}
+            value: {JSON.stringify(shapedValue)}
           </BAIText>
           <BAIText type="secondary" code>
             resolved:{' '}
@@ -206,7 +229,7 @@ export const SessionMountFolders: Story = {
     docs: {
       description: {
         story:
-          'Folders a session may mount: `filter` keeps folders on hosts that grant `mount-in-session` (so `cold-archive` is gone), `optionFilter` hides dotfile folders and folders that are not ready, and `disableUnmountable` lists `invited-no-mount` disabled with the reason.',
+          'Folders a session may mount: `filter` keeps folders on hosts that grant `mount-in-session` (so `cold-archive` is gone), `optionFilter` hides dotfile folders and folders that are not ready (`restoring-data`), and `disableUnmountable` lists `invited-no-mount` disabled with the reason.',
       },
     },
   },
@@ -254,7 +277,7 @@ export const ModelFolder: Story = {
     docs: {
       description: {
         story:
-          'A single model folder, as the deployment form picks it: `filter` leaves out deleted folders and keeps `usageMode: MODEL`.',
+          'A single model folder, as the deployment form picks it: `filter` keeps `usageMode: MODEL` and leaves out folders being deleted, so `trashed-checkpoint` (in the trash) is not offered.',
       },
     },
   },
