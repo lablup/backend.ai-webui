@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="การเชื่อมต่อ SFTP ไปยังเซสชันการคำนวณ" />
   <meta name="twitter:description" content="Backend.AI สนับสนุนการเชื่อมต่อ SSH/SFTP ไปยังเซสชันการคำนวณที่สร้างขึ้น (คอนเทนเนอร์) ในส่วนนี้เราจะเรียนรู้วิธีทำเช่นนั้น" />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"การเชื่อมต่อ SFTP ไปยังเซสชันการคำนวณ","inLanguage":"th","description":"Backend.AI สนับสนุนการเชื่อมต่อ SSH/SFTP ไปยังเซสชันการคำนวณที่สร้างขึ้น (คอนเทนเนอร์) ในส่วนนี้เราจะเรียนรู้วิธีทำเช่นนั้น","dateModified":"2026-11-16T01:59:38.000Z","url":"https://webui.docs.backend.ai/next/th/sftp_to_container.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"การเชื่อมต่อ SFTP ไปยังเซสชันการคำนวณ","inLanguage":"th","description":"Backend.AI สนับสนุนการเชื่อมต่อ SSH/SFTP ไปยังเซสชันการคำนวณที่สร้างขึ้น (คอนเทนเนอร์) ในส่วนนี้เราจะเรียนรู้วิธีทำเช่นนั้น","dateModified":"2026-11-16T15:55:38.000Z","url":"https://webui.docs.backend.ai/next/th/sftp_to_container.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/sftp_to_container.html" />
   <link rel="alternate" hreflang="en" href="../en/sftp_to_container.html" />
   <link rel="alternate" hreflang="ja" href="../ja/sftp_to_container.html" />
@@ -227,10 +227,7 @@
 ที่ใช้ในการเชื่อมต่อ พร้อมด้วยตัวอย่างคำสั่ง <code>sftp</code>, <code>scp</code> และ <code>rsync</code>
 ที่พร้อมใช้งาน โปรดลงทะเบียนคีย์สาธารณะ SSH ของคุณที่
 <a href="./user_settings.html#user-ssh-keypair-management">การจัดการคู่คีย์ SSH</a> ในการตั้งค่าผู้ใช้ก่อน
-จากนั้นเชื่อมต่อด้วยคีย์ส่วนตัวที่คู่กัน หรือคุณสามารถดาวน์โหลดคีย์ส่วนตัว
-<code>id_container</code> ที่สร้างขึ้นโดยอัตโนมัติซึ่งอยู่ภายใต้ <code>/home/work/</code>
-ด้วยเทอร์มินัลเว็บหรือ Jupyter Notebook ของคุณได้ คีย์นี้อาจเปลี่ยนแปลง
-เมื่อมีการสร้างเซสชันใหม่</p>
+จากนั้นเชื่อมต่อด้วยคีย์ส่วนตัวที่คู่กัน</p>
 <p><figure data-bai-block="7" class="doc-figure"><img src="./images/SSH_SFTP_connection.png" alt="" class="doc-image" style="width:800px" loading="lazy" decoding="async" width="1600" height="1532" /><figcaption>รูปที่ 18.1</figcaption></figure>
 </p>
 <p><figure data-bai-block="8" class="doc-figure"><img src="./images/sftp_app.png" alt="" class="doc-image" loading="lazy" decoding="async" width="913" height="1000" /><figcaption>รูปที่ 18.2</figcaption></figure>
@@ -249,12 +246,12 @@
 คุณเรียกใช้คำสั่งอย่างถูกต้อง คุณจะเห็นว่าการเชื่อมต่อ SSH ถูกสร้างขึ้นไปยัง
 เซสชันการคำนวณ และคุณจะได้รับการต้อนรับด้วยสภาพแวดล้อมเชลล์ของคอนเทนเนอร์
 โปรดแทนที่โฮสต์และพอร์ตในตัวอย่างด้านล่างด้วยโฮสต์และพอร์ตที่แสดงในกล่องโต้ตอบของคุณเอง</p>
-<div data-bai-block="11" class="code-block-wrapper"><div class="code-block-title"><span class="code-block-lang">shellsession</span><span class="code-block-title-text" aria-hidden="true"></span></div><pre class="language-shellsession shiki-host"><code><span class="line cmd-line" data-prompt="$"><span style="color:#B392F0">ssh</span><span style="color:#79B8FF">      -i</span><span style="color:#9ECBFF"> ~/.ssh/id_container</span><span style="color:#79B8FF"> -p</span><span style="color:#79B8FF"> 30722</span><span style="color:#79B8FF">      -o</span><span style="color:#9ECBFF"> StrictHostKeyChecking=no</span><span style="color:#79B8FF">      -o</span><span style="color:#9ECBFF"> UserKnownHostsFile=/dev/null</span><span style="color:#9ECBFF">      work@127.0.0.1</span></span>
+<div data-bai-block="11" class="code-block-wrapper"><div class="code-block-title"><span class="code-block-lang">shellsession</span><span class="code-block-title-text" aria-hidden="true"></span></div><pre class="language-shellsession shiki-host"><code><span class="line cmd-line" data-prompt="$"><span style="color:#B392F0">ssh</span><span style="color:#79B8FF">      -i</span><span style="color:#9ECBFF"> /path/to/private_key</span><span style="color:#79B8FF"> -p</span><span style="color:#79B8FF"> 30722</span><span style="color:#79B8FF">      -o</span><span style="color:#9ECBFF"> StrictHostKeyChecking=no</span><span style="color:#79B8FF">      -o</span><span style="color:#9ECBFF"> UserKnownHostsFile=/dev/null</span><span style="color:#9ECBFF">      work@127.0.0.1</span></span>
 <span class="line output-line">Warning: Permanently added '[127.0.0.1]:30722' (RSA) to the list of known hosts.</span>
 <span class="line output-line">f310e8dbce83:~$</span></code></pre></div>
 <p data-bai-block="12">การเชื่อมต่อด้วย SFTP ก็เกือบจะเหมือนกัน หลังจากเรียกใช้ไคลเอ็นต์ SFTP และ
-ตั้งค่าวิธีการเชื่อมต่อด้วยคีย์สาธารณะ เพียงระบุคีย์ส่วนตัวของคุณ
-เป็นคีย์ส่วนตัว SSH ไคลเอ็นต์ FTP แต่ละตัวอาจใช้วิธีที่แตกต่างกัน ดังนั้นให้ดู
+ตั้งค่าวิธีการเชื่อมต่อด้วยคีย์สาธารณะ เพียงระบุคีย์ส่วนตัว SSH ของคุณ
+ไคลเอ็นต์ FTP แต่ละตัวอาจใช้วิธีที่แตกต่างกัน ดังนั้นให้ดู
 คู่มือของไคลเอ็นต์ FTP แต่ละตัวสำหรับรายละเอียด</p>
 <div class="admonition admonition-note">
 <div data-bai-block="13" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
@@ -276,11 +273,10 @@
 <div data-bai-block="15" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
 <div class="admonition-content">
 
-<p data-bai-block="16">หากคุณต้องการใช้คีย์แพร์ SSH ของคุณเองแทน <code>id_container</code> ให้สร้าง
+<p data-bai-block="16">แทนที่จะลงทะเบียนคีย์ในการตั้งค่าผู้ใช้ คุณสามารถอนุญาตคีย์เฉพาะเซสชันได้ โดยสร้าง
 โฟลเดอร์ประเภท user ชื่อ <code>.ssh</code> หากคุณสร้างไฟล์ <code>authorized_keys</code> ใน
 โฟลเดอร์นั้นและเพิ่มเนื้อหาของคีย์สาธารณะ SSH ของคุณ คุณสามารถ
-เชื่อมต่อด้วย SSH/SFTP ผ่านคีย์ส่วนตัว SSH ของคุณเองได้โดยไม่ต้อง
-ดาวน์โหลด <code>id_container</code> หลังจากสร้างเซสชันการคำนวณ</p>
+เชื่อมต่อด้วย SSH/SFTP ผ่านคีย์ส่วนตัว SSH ที่คู่กันได้</p>
 </div></div>
 
 
@@ -289,7 +285,7 @@
 <div class="admonition-content">
 
 <p data-bai-block="18">หากคุณได้รับข้อความเตือนต่อไปนี้ ให้ลองอีกครั้งหลังจากเปลี่ยน
-สิทธิ์ของ <code>id_container</code> เป็น 600 (<code>chmod 600 &lt;id_container path&gt;</code>)</p>
+สิทธิ์ของไฟล์คีย์ส่วนตัวเป็น 600 (<code>chmod 600 &lt;private key path&gt;</code>)</p>
 <p><figure data-bai-block="19" class="doc-figure"><img src="./images/bad_permissions.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2583" height="646" /><figcaption>รูปที่ 18.3</figcaption></figure>
 </p>
 </div></div>
@@ -324,19 +320,17 @@
 <a href="https://wiki.filezilla-project.org/Howto">https://wiki.filezilla-project.org/Howto</a> เพื่อให้อธิบายง่ายขึ้น ส่วนนี้
 จะอธิบายวิธีการเชื่อมต่อ SFTP ผ่านไคลเอ็นต์ FileZilla บน Windows</p>
 <p data-bai-block="27">ดูที่วิธีการเชื่อมต่อบน Linux/Mac สร้างเซสชันการคำนวณ ตรวจสอบ
-พอร์ตการเชื่อมต่อ และเตรียมคีย์ส่วนตัว SSH ของคุณ หากคุณใช้คีย์
-<code>id_container</code> ที่สร้างขึ้นโดยอัตโนมัติ ให้นำมาจาก <code>/home/work/</code>
-ภายในเซสชัน <code>id_container</code> เป็นคีย์
+พอร์ตการเชื่อมต่อ และเตรียมคีย์ส่วนตัว SSH ของคุณ คีย์ส่วนตัวเป็นคีย์
 แบบ OpenSSH ดังนั้นหากคุณใช้ไคลเอ็นต์ที่รองรับเฉพาะ Windows หรือคีย์ประเภท ppk
 คุณต้องแปลงคีย์ ที่นี่เราจะแปลงผ่านโปรแกรม PuTTYgen
 ที่ติดตั้งพร้อมกับ PuTTY หลังจากเรียกใช้ PuTTYgen คลิกที่ import key ในเมนู
-Conversions เลือกไฟล์ <code>id_container</code> จากกล่องโต้ตอบเปิดไฟล์
+Conversions เลือกไฟล์คีย์ส่วนตัวของคุณจากกล่องโต้ตอบเปิดไฟล์
 คลิกปุ่ม Save private key ของ PuTTYGen และบันทึกไฟล์ด้วย
-ชื่อ <code>id_container.ppk</code></p>
+นามสกุล <code>ppk</code></p>
 <p><figure data-bai-block="28" class="doc-figure"><img src="./images/puttygen_conversion.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1758" height="898" /><figcaption>รูปที่ 18.4</figcaption></figure>
 </p>
 <p data-bai-block="29">หลังจากเรียกใช้ไคลเอ็นต์ FileZilla แล้ว ให้ไปที่ Settings-Connection-SFTP
-และลงทะเบียนไฟล์คีย์ <code>id_container.ppk</code> (<code>id_container</code> สำหรับไคลเอ็นต์
+และลงทะเบียนไฟล์คีย์ <code>ppk</code> ที่แปลงแล้ว (ไฟล์คีย์ส่วนตัว SSH สำหรับไคลเอ็นต์
 ที่รองรับ OpenSSH)</p>
 <p><figure data-bai-block="30" class="doc-figure"><img src="./images/filezilla_setting.png" alt="" class="doc-image" style="width:628px" loading="lazy" decoding="async" width="1257" height="910" /><figcaption>รูปที่ 18.5</figcaption></figure>
 </p>
@@ -501,7 +495,7 @@ Conversions เลือกไฟล์ <code>id_container</code> จากก�
 <div data-bai-block="94" class="code-block-wrapper"><div class="code-block-title"><span class="code-block-lang">shellsession</span><span class="code-block-title-text" aria-hidden="true"></span></div><pre class="language-shellsession shiki-host"><code><span class="line cmd-line" data-prompt="$"><span style="color:#B392F0">backend.ai</span><span style="color:#9ECBFF"> ssh</span><span style="color:#9ECBFF"> ibnFmWim-session</span></span>
 <span class="line output-line">∙ running a temporary sshd proxy at localhost:9922 ...</span>
 <span class="line output-line">work@main1[ibnFmWim-session]:~$</span></code></pre></div>
-<p data-bai-block="95">หากคุณต้องการดาวน์โหลดไฟล์คีย์ SSH และเรียกใช้คำสั่ง ssh อย่างชัดเจน คุณ
+<p data-bai-block="95">หากคุณต้องการเรียกใช้คำสั่ง ssh อย่างชัดเจน คุณ
 จำเป็นต้องเรียกใช้คำสั่งต่อไปนี้ก่อนเพื่อเริ่มต้นบริการพร็อกซีในพื้นที่ที่
 ถ่ายทอดการเชื่อมต่อจากเครื่องในพื้นที่ไปยังเซสชันการคำนวณ คุณสามารถ
 ระบุพอร์ต (9922) ที่จะใช้บนเครื่องในพื้นที่ได้ด้วยตัวเลือก b</p>
@@ -509,22 +503,18 @@ Conversions เลือกไฟล์ <code>id_container</code> จากก�
 <span class="line output-line">∙ A local proxy to the application &quot;sshd&quot; provided by the session &quot;ibnFmWim-session&quot; is available at:</span>
 <span class="line output-line">tcp://127.0.0.1:9922</span></code></pre></div>
 <p data-bai-block="97">เปิดหน้าต่างเทอร์มินัลใหม่บนเครื่องในพื้นที่ของคุณ ย้ายไปยังไดเรกทอรี
-การทำงานที่มีไฟล์ <code>.env</code> อยู่ และดาวน์โหลดคีย์ SSH
-ที่สร้างขึ้นโดยอัตโนมัติในเซสชันการคำนวณ</p>
-<div data-bai-block="98" class="code-block-wrapper"><div class="code-block-title"><span class="code-block-lang">shellsession</span><span class="code-block-title-text" aria-hidden="true"></span></div><pre class="language-shellsession shiki-host"><code><span class="line cmd-line" data-prompt="$"><span style="color:#79B8FF">source</span><span style="color:#9ECBFF"> .venv/bin/activate</span><span style="color:#6A737D">  # เปิดใช้งานสภาพแวดล้อมเสมือน Python อีกครั้ง เนื่องจากเป็นเทอร์มินัลคนละอัน</span></span>
-<span class="line cmd-line" data-prompt="$"><span style="color:#B392F0">backend.ai</span><span style="color:#9ECBFF"> session</span><span style="color:#9ECBFF"> download</span><span style="color:#9ECBFF"> ibnFmWim-session</span><span style="color:#9ECBFF"> id_container</span></span>
-<span class="line output-line">Downloading files: 3.58kbytes [00:00, 352kbytes/s]</span>
-<span class="line output-line">✓ Downloaded to /*/client.</span></code></pre></div>
-<p data-bai-block="99">คุณสามารถใช้คีย์ที่ดาวน์โหลดมาเพื่อ SSH ดังต่อไปนี้ เนื่องจากคุณเริ่มต้นพร็อกซี
+การทำงานที่มีไฟล์ <code>.env</code> อยู่</p>
+<div data-bai-block="98" class="code-block-wrapper"><div class="code-block-title"><span class="code-block-lang">shellsession</span><span class="code-block-title-text" aria-hidden="true"></span></div><pre class="language-shellsession shiki-host"><code><span class="line cmd-line" data-prompt="$"><span style="color:#79B8FF">source</span><span style="color:#9ECBFF"> .venv/bin/activate</span><span style="color:#6A737D">  # เปิดใช้งานสภาพแวดล้อมเสมือน Python อีกครั้ง เนื่องจากเป็นเทอร์มินัลคนละอัน</span></span></code></pre></div>
+<p data-bai-block="99">คุณสามารถใช้คีย์ส่วนตัว SSH ของคุณเพื่อ SSH ดังต่อไปนี้ เนื่องจากคุณเริ่มต้นพร็อกซี
 ในพื้นที่บนพอร์ต 9922 ที่อยู่การเชื่อมต่อควรเป็น 127.0.0.1 และพอร์ต
 ควรเป็น 9922 ใช้บัญชีผู้ใช้ <code>work</code> สำหรับการเชื่อมต่อ</p>
-<div data-bai-block="100" class="code-block-wrapper"><div class="code-block-title"><span class="code-block-lang">shellsession</span><span class="code-block-title-text" aria-hidden="true"></span></div><pre class="language-shellsession shiki-host"><code><span class="line cmd-line" data-prompt="$"><span style="color:#B392F0">ssh</span><span style="color:#79B8FF">  -o</span><span style="color:#9ECBFF"> StrictHostKeyChecking=no</span><span style="color:#79B8FF">  -o</span><span style="color:#9ECBFF"> UserKnownHostsFile=/dev/null</span><span style="color:#79B8FF">  -i</span><span style="color:#9ECBFF"> ./id_container</span><span style="color:#79B8FF">  -p</span><span style="color:#79B8FF"> 9922</span><span style="color:#9ECBFF">  work@127.0.0.1</span></span>
+<div data-bai-block="100" class="code-block-wrapper"><div class="code-block-title"><span class="code-block-lang">shellsession</span><span class="code-block-title-text" aria-hidden="true"></span></div><pre class="language-shellsession shiki-host"><code><span class="line cmd-line" data-prompt="$"><span style="color:#B392F0">ssh</span><span style="color:#79B8FF">  -o</span><span style="color:#9ECBFF"> StrictHostKeyChecking=no</span><span style="color:#79B8FF">  -o</span><span style="color:#9ECBFF"> UserKnownHostsFile=/dev/null</span><span style="color:#79B8FF">  -i</span><span style="color:#9ECBFF"> /path/to/private_key</span><span style="color:#79B8FF">  -p</span><span style="color:#79B8FF"> 9922</span><span style="color:#9ECBFF">  work@127.0.0.1</span></span>
 <span class="line output-line">Warning: Permanently added '[127.0.0.1]:9922' (RSA) to the list of known hosts.</span>
 <span class="line output-line">work@</span></code></pre></div>
 <p data-bai-block="101">ในทำนองเดียวกัน คุณสามารถใช้คำสั่ง <code>scp</code> เพื่อคัดลอกไฟล์ได้ ในกรณีนี้ คุณ
 ควรคัดลอกไฟล์ไปยังโฟลเดอร์ที่เมานต์ภายในเซสชันการคำนวณ เพื่อ
 รักษาไฟล์ไว้แม้หลังจากที่เซสชันสิ้นสุดลงแล้ว</p>
-<div data-bai-block="102" class="code-block-wrapper"><div class="code-block-title"><span class="code-block-lang">shellsession</span><span class="code-block-title-text" aria-hidden="true"></span></div><pre class="language-shellsession shiki-host"><code><span class="line cmd-line" data-prompt="$"><span style="color:#B392F0">scp</span><span style="color:#79B8FF">  -o</span><span style="color:#9ECBFF"> StrictHostKeyChecking=no</span><span style="color:#79B8FF">  -o</span><span style="color:#9ECBFF"> UserKnownHostsFile=/dev/null</span><span style="color:#79B8FF">  -i</span><span style="color:#9ECBFF"> ./id_container</span><span style="color:#79B8FF">  -P</span><span style="color:#79B8FF"> 9922</span><span style="color:#9ECBFF">  test_file.xlsx</span><span style="color:#9ECBFF"> work@127.0.0.1:/home/work/myfolder/</span></span>
+<div data-bai-block="102" class="code-block-wrapper"><div class="code-block-title"><span class="code-block-lang">shellsession</span><span class="code-block-title-text" aria-hidden="true"></span></div><pre class="language-shellsession shiki-host"><code><span class="line cmd-line" data-prompt="$"><span style="color:#B392F0">scp</span><span style="color:#79B8FF">  -o</span><span style="color:#9ECBFF"> StrictHostKeyChecking=no</span><span style="color:#79B8FF">  -o</span><span style="color:#9ECBFF"> UserKnownHostsFile=/dev/null</span><span style="color:#79B8FF">  -i</span><span style="color:#9ECBFF"> /path/to/private_key</span><span style="color:#79B8FF">  -P</span><span style="color:#79B8FF"> 9922</span><span style="color:#9ECBFF">  test_file.xlsx</span><span style="color:#9ECBFF"> work@127.0.0.1:/home/work/myfolder/</span></span>
 <span class="line output-line">Warning: Permanently added '[127.0.0.1]:9922' (RSA) to the list of known hosts.</span>
 <span class="line output-line">test_file.xlsx</span></code></pre></div>
 <p data-bai-block="103">เมื่องานทั้งหมดเสร็จสิ้นแล้ว กด <code>Ctrl-C</code> บนเทอร์มินัลแรกเพื่อ

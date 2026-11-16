@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="Storage Folders" />
   <meta name="twitter:description" content="Backend.AI supports dedicated storage to preserve user's files." />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Storage Folders","inLanguage":"en","description":"Backend.AI supports dedicated storage to preserve user's files.","dateModified":"2026-10-01T08:25:04.000Z","url":"https://webui.docs.backend.ai/next/en/vfolder.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Storage Folders","inLanguage":"en","description":"Backend.AI supports dedicated storage to preserve user's files.","dateModified":"2026-11-16T03:03:28.000Z","url":"https://webui.docs.backend.ai/next/en/vfolder.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/vfolder.html" />
   <link rel="alternate" hreflang="en" href="../en/vfolder.html" />
   <link rel="alternate" hreflang="ja" href="../ja/vfolder.html" />
@@ -560,30 +560,21 @@ Click the folder button or the folder name to open the file explorer.</p>
 automatically. (This session will not affect resource occupancy.)</p>
 <p><figure data-bai-block="143" class="doc-figure"><img src="./images/SSH_SFTP_connection.png" alt="" class="doc-image" style="width:800px" loading="lazy" decoding="async" width="1600" height="1576" /><figcaption>Figure 15.29</figcaption></figure>
 </p>
-<p data-bai-block="144">For the connection, click <code>Download SSH Key</code> button to download the SSH private key
-(<code>id_container</code>). Also, remember the host and port number. Then, you can copy your
-files to the session using the Connection Example code written in the dialog, or
-referring to the following guide: <a href="./sftp_to_container.html#ssh-sftp-container">SFTP Connection Guide</a>.
+<p data-bai-block="144">For the connection, remember the host and port number, and connect with the private
+key that matches the SSH public key you registered in
+<a href="./user_settings.html#user-ssh-keypair-management">User Settings &gt; SSH keypair management</a>. Then, you can
+copy your files to the session using the Connection Example code written in the
+dialog, or referring to the following guide:
+<a href="./sftp_to_container.html#ssh-sftp-container">SFTP Connection Guide</a>.
 To preserve the files, you need to transfer the files to the storage folder. Also,
 the session will be terminated when there is no transfer for some time.</p>
-<div class="admonition admonition-note">
-<div data-bai-block="145" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
-<div class="admonition-content">
-
-<p data-bai-block="146">If you upload your SSH keypair, the <code>id_container</code> will be set with your
-own SSH private key. So, you don&#39;t need to download it every time you
-want to connect via SSH to your container. Please refer to
-<a href="./user_settings.html#user-ssh-keypair-management">managing user&#39;s SSH keypair</a>.</p>
-</div></div>
-
-
-<h2 data-bai-block="147" id="vfolder-pipeline-folders">Pipeline folders<a class="hash-link" href="#vfolder-pipeline-folders" aria-label="Direct link to Pipeline folders">#</a></h2>
-<p data-bai-block="148">This tab shows the list of folders that are automatically created when executing a
+<h2 data-bai-block="145" id="vfolder-pipeline-folders">Pipeline folders<a class="hash-link" href="#vfolder-pipeline-folders" aria-label="Direct link to Pipeline folders">#</a></h2>
+<p data-bai-block="146">This tab shows the list of folders that are automatically created when executing a
 pipeline in FastTrack. When a pipeline is created, a new folder is created and mounted
 under <code>/pipeline</code> for each instance of work (computing session).</p>
 <p><a id="automount-folder"></a></p>
-<h2 data-bai-block="149" id="vfolder-automount-folders">Automount folders<a class="hash-link" href="#vfolder-automount-folders" aria-label="Direct link to Automount folders">#</a></h2>
-<p data-bai-block="150">Data page has an Automount Folders tab. Click this tab to see a
+<h2 data-bai-block="147" id="vfolder-automount-folders">Automount folders<a class="hash-link" href="#vfolder-automount-folders" aria-label="Direct link to Automount folders">#</a></h2>
+<p data-bai-block="148">Data page has an Automount Folders tab. Click this tab to see a
 list of folders whose names prefixed with a dot (<code>.</code>). When you create a folder,
 if you specify a name that starts with a dot (<code>.</code>), it is added to the Automount
 Folders tab, not the Folders tab. Automount Folders are special folders that are
@@ -592,22 +583,22 @@ manually when creating a compute session. By using this feature, creating and
 using Storage folders such as <code>.local</code>, <code>.linuxbrew</code>, <code>.pyenv</code>, etc.,
 you can configure a certain user packages or environments that do not change
 with different kinds of compute session.</p>
-<p data-bai-block="151">For more detailed information on the usage of Automount folders, refer to
+<p data-bai-block="149">For more detailed information on the usage of Automount folders, refer to
 <a href="./mount_vfolder.html#using-automount-folder">examples of using automount folders</a>.</p>
-<p><figure data-bai-block="152" class="doc-figure"><img src="./images/vfolder_automount_folders.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2304" height="584" /><figcaption>Figure 15.30</figcaption></figure>
+<p><figure data-bai-block="150" class="doc-figure"><img src="./images/vfolder_automount_folders.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2304" height="584" /><figcaption>Figure 15.30</figcaption></figure>
 </p>
 <p><a id="models"></a></p>
-<h2 data-bai-block="153" id="vfolder-models">Models<a class="hash-link" href="#vfolder-models" aria-label="Direct link to Models">#</a></h2>
-<p data-bai-block="154">The Models tab facilitates straightforward model serving.
+<h2 data-bai-block="151" id="vfolder-models">Models<a class="hash-link" href="#vfolder-models" aria-label="Direct link to Models">#</a></h2>
+<p data-bai-block="152">The Models tab facilitates straightforward model serving.
 You can store the necessary data, including input data for <a href="./deployment.html#model-serving">model serving</a> and training data, in the model folder.</p>
-<p><figure data-bai-block="155" class="doc-figure"><img src="./images/models.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2304" height="650" /><figcaption>Figure 15.31</figcaption></figure>
+<p><figure data-bai-block="153" class="doc-figure"><img src="./images/models.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2304" height="650" /><figcaption>Figure 15.31</figcaption></figure>
 </p>
 
 </section>
     <div class="page-footer">
       <div class="page-metadata">
   <a class="edit-link" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/en/vfolder/vfolder.md" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg> Edit this page</a>
-  <span class="last-updated">Last updated on Oct 1, 2026</span>
+  <span class="last-updated">Last updated on Nov 16, 2026</span>
 </div>
       <nav class="pagination-nav" aria-label="Docs pages">
   <a class="pagination-nav__link pagination-nav__link--prev" href="./my_environments.html">

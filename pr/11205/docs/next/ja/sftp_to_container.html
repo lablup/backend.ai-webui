@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="コンピュートセッションへのSFTP接続" />
   <meta name="twitter:description" content="Backend.AIは、作成したコンピュートセッション（コンテナ）へのSSH/SFTP接続をサポートしています。このセクションでは、その方法を学びます。" />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"コンピュートセッションへのSFTP接続","inLanguage":"ja","description":"Backend.AIは、作成したコンピュートセッション（コンテナ）へのSSH/SFTP接続をサポートしています。このセクションでは、その方法を学びます。","dateModified":"2026-11-16T01:59:38.000Z","url":"https://webui.docs.backend.ai/next/ja/sftp_to_container.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"コンピュートセッションへのSFTP接続","inLanguage":"ja","description":"Backend.AIは、作成したコンピュートセッション（コンテナ）へのSSH/SFTP接続をサポートしています。このセクションでは、その方法を学びます。","dateModified":"2026-11-16T15:55:38.000Z","url":"https://webui.docs.backend.ai/next/ja/sftp_to_container.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/sftp_to_container.html" />
   <link rel="alternate" hreflang="en" href="../en/sftp_to_container.html" />
   <link rel="alternate" hreflang="ja" href="../ja/sftp_to_container.html" />
@@ -226,10 +226,7 @@
 このダイアログには、接続に使用する<strong>ユーザー</strong>、<strong>ホスト</strong>、<strong>ポート</strong>の値と、
 そのまま使用できる<code>sftp</code>、<code>scp</code>、<code>rsync</code>のコマンド例が表示されます。
 まずユーザー設定の<a href="./user_settings.html#user-ssh-keypair-management">SSHキーペア管理</a>でご自身のSSH公開鍵を
-登録し、対応する秘密鍵で接続します。
-または、ウェブターミナルやJupyter Notebookを使用して、<code>/home/work/</code>配下にある
-自動生成された秘密鍵<code>id_container</code>をダウンロードすることもできます。
-この鍵は、新しいセッションが作成されたときに変更される可能性があります。</p>
+登録し、対応する秘密鍵で接続します。</p>
 <p><figure data-bai-block="7" class="doc-figure"><img src="./images/SSH_SFTP_connection.png" alt="" class="doc-image" style="width:800px" loading="lazy" decoding="async" width="1600" height="1576" /><figcaption>図 18.1</figcaption></figure>
 </p>
 <p><figure data-bai-block="8" class="doc-figure"><img src="./images/sftp_app.png" alt="" class="doc-image" loading="lazy" decoding="async" width="913" height="1000" /><figcaption>図 18.2</figcaption></figure>
@@ -250,7 +247,7 @@
 コンテナのシェル環境が表示されます。
 以下の例のホストとポートは、実際のダイアログに表示されたホストとポートに
 置き換えて使用してください。</p>
-<div data-bai-block="11" class="code-block-wrapper"><div class="code-block-title"><span class="code-block-lang">shellsession</span><span class="code-block-title-text" aria-hidden="true"></span></div><pre class="language-shellsession shiki-host"><code><span class="line cmd-line" data-prompt="$"><span style="color:#B392F0">ssh</span><span style="color:#79B8FF">      -i</span><span style="color:#9ECBFF"> ~/.ssh/id_container</span><span style="color:#79B8FF"> -p</span><span style="color:#79B8FF"> 30722</span><span style="color:#79B8FF">      -o</span><span style="color:#9ECBFF"> StrictHostKeyChecking=no</span><span style="color:#79B8FF">      -o</span><span style="color:#9ECBFF"> UserKnownHostsFile=/dev/null</span><span style="color:#9ECBFF">      work@127.0.0.1</span></span>
+<div data-bai-block="11" class="code-block-wrapper"><div class="code-block-title"><span class="code-block-lang">shellsession</span><span class="code-block-title-text" aria-hidden="true"></span></div><pre class="language-shellsession shiki-host"><code><span class="line cmd-line" data-prompt="$"><span style="color:#B392F0">ssh</span><span style="color:#79B8FF">      -i</span><span style="color:#9ECBFF"> /path/to/private_key</span><span style="color:#79B8FF"> -p</span><span style="color:#79B8FF"> 30722</span><span style="color:#79B8FF">      -o</span><span style="color:#9ECBFF"> StrictHostKeyChecking=no</span><span style="color:#79B8FF">      -o</span><span style="color:#9ECBFF"> UserKnownHostsFile=/dev/null</span><span style="color:#9ECBFF">      work@127.0.0.1</span></span>
 <span class="line output-line">Warning: Permanently added '[127.0.0.1]:30722' (RSA) to the list of known hosts.</span>
 <span class="line output-line">f310e8dbce83:~$</span></code></pre></div>
 <p data-bai-block="12">SFTPで接続する方法もほぼ同じです。SFTPクライアントを実行し、公開鍵ベースの接続方法を設定した後、
@@ -274,10 +271,9 @@ SSH秘密鍵としてご自身の秘密鍵を指定するだけです。
 <div data-bai-block="15" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
 <div class="admonition-content">
 
-<p data-bai-block="16"><code>id_container</code>の代わりに独自のSSH鍵ペアを使用したい場合は、<code>.ssh</code>という名前のユーザータイプのフォルダを作成します。
-そのフォルダに<code>authorized_keys</code>ファイルを作成し、SSH公開鍵の内容を追記すると、
-コンピュートセッション作成後に<code>id_container</code>をダウンロードすることなく、
-独自のSSH秘密鍵でSSH/SFTP接続が可能になります。</p>
+<p data-bai-block="16">ユーザー設定に鍵を登録する代わりに、セッションごとに鍵を許可することもできます。
+<code>.ssh</code>という名前のユーザータイプのフォルダを作成し、そのフォルダに<code>authorized_keys</code>ファイルを作成して
+SSH公開鍵の内容を追記すると、対応するSSH秘密鍵でSSH/SFTP接続が可能になります。</p>
 </div></div>
 
 
@@ -285,8 +281,8 @@ SSH秘密鍵としてご自身の秘密鍵を指定するだけです。
 <div data-bai-block="17" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
 <div class="admonition-content">
 
-<p data-bai-block="18">次のような警告メッセージが表示された場合は、<code>id_container</code>のパーミッションを600に変更してから再度お試しください。
-（<code>chmod 600 &lt;id_containerのパス&gt;</code>）</p>
+<p data-bai-block="18">次のような警告メッセージが表示された場合は、秘密鍵ファイルのパーミッションを600に変更してから再度お試しください。
+（<code>chmod 600 &lt;秘密鍵のパス&gt;</code>）</p>
 <p><figure data-bai-block="19" class="doc-figure"><img src="./images/bad_permissions.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2583" height="646" /><figcaption>図 18.3</figcaption></figure>
 </p>
 </div></div>
@@ -323,17 +319,16 @@ PuTTYgenなどのプログラムを使用して秘密鍵を<code>ppk</code>フ�
 本セクションでは、わかりやすく説明するために、WindowsでFileZillaクライアントを使用して
 SFTPに接続する方法を紹介します。</p>
 <p data-bai-block="27">Linux/Macでの接続方法を参考に、コンピュートセッションを作成し、接続ポートを確認して、
-SSH秘密鍵を準備します。自動生成された<code>id_container</code>鍵を使用する場合は、
-セッション内部の<code>/home/work/</code>から取得します。<code>id_container</code>はOpenSSHベースの鍵のため、
+SSH秘密鍵を準備します。秘密鍵はOpenSSHベースの鍵のため、
 Windows専用またはppk形式の鍵のみをサポートするクライアントを使用する場合は、変換が必要です。
 ここでは、PuTTYと共にインストールされるPuTTYgenプログラムを使用して変換します。
 PuTTYgenを実行した後、Conversionsメニューの「import key」をクリックします。
-ファイルオープンダイアログで、<code>id_container</code>ファイルを選択します。
-PuTTYgenの「Save private key」ボタンをクリックし、<code>id_container.ppk</code>という名前でファイルを保存します。</p>
+ファイルオープンダイアログで、秘密鍵ファイルを選択します。
+PuTTYgenの「Save private key」ボタンをクリックし、<code>ppk</code>拡張子でファイルを保存します。</p>
 <p><figure data-bai-block="28" class="doc-figure"><img src="./images/puttygen_conversion.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1758" height="898" /><figcaption>図 18.4</figcaption></figure>
 </p>
 <p data-bai-block="29">FileZillaクライアントを起動した後、「Settings-Connection-SFTP」に移動し、
-鍵ファイル<code>id_container.ppk</code>（OpenSSHをサポートするクライアントの場合は<code>id_container</code>）を登録します。</p>
+変換した<code>ppk</code>鍵ファイル（OpenSSHをサポートするクライアントの場合はSSH秘密鍵ファイル）を登録します。</p>
 <p><figure data-bai-block="30" class="doc-figure"><img src="./images/filezilla_setting.png" alt="" class="doc-image" style="width:628px" loading="lazy" decoding="async" width="1257" height="910" /><figcaption>図 18.5</figcaption></figure>
 </p>
 <p data-bai-block="31">サイトマネージャーを開き、新しいサイトを作成し、次のように接続情報を入力します。</p>
@@ -484,28 +479,24 @@ CLIを使用してセッションを作成することも可能ですが、便�
 <div data-bai-block="94" class="code-block-wrapper"><div class="code-block-title"><span class="code-block-lang">shellsession</span><span class="code-block-title-text" aria-hidden="true"></span></div><pre class="language-shellsession shiki-host"><code><span class="line cmd-line" data-prompt="$"><span style="color:#B392F0">backend.ai</span><span style="color:#9ECBFF"> ssh</span><span style="color:#9ECBFF"> ibnFmWim-session</span></span>
 <span class="line output-line">∙ running a temporary sshd proxy at localhost:9922 ...</span>
 <span class="line output-line">work@main1[ibnFmWim-session]:~$</span></code></pre></div>
-<p data-bai-block="95">SSH鍵ファイルをダウンロードして、明示的にsshコマンドを実行したい場合は、
+<p data-bai-block="95">明示的にsshコマンドを実行したい場合は、
 まず次のコマンドを実行して、ローカルマシンからコンピュートセッションへの接続を中継する
 ローカルプロキシサービスを起動する必要があります。<code>-b</code>オプションを使用することで、
 ローカルマシンで使用するポート（9922）を指定できます。</p>
 <div data-bai-block="96" class="code-block-wrapper"><div class="code-block-title"><span class="code-block-lang">shellsession</span><span class="code-block-title-text" aria-hidden="true"></span></div><pre class="language-shellsession shiki-host"><code><span class="line cmd-line" data-prompt="$"><span style="color:#B392F0">backend.ai</span><span style="color:#9ECBFF"> app</span><span style="color:#9ECBFF"> ibnFmWim-session</span><span style="color:#9ECBFF"> sshd</span><span style="color:#79B8FF"> -b</span><span style="color:#79B8FF"> 9922</span></span>
 <span class="line output-line">∙ A local proxy to the application &quot;sshd&quot; provided by the session &quot;ibnFmWim-session&quot; is available at:</span>
 <span class="line output-line">tcp://127.0.0.1:9922</span></code></pre></div>
-<p data-bai-block="97">ローカルマシンで別のターミナルウィンドウを開きます。<code>.env</code>ファイルがある作業ディレクトリに移動し、
-コンピュートセッションで自動生成されたSSH鍵をダウンロードします。</p>
-<div data-bai-block="98" class="code-block-wrapper"><div class="code-block-title"><span class="code-block-lang">shellsession</span><span class="code-block-title-text" aria-hidden="true"></span></div><pre class="language-shellsession shiki-host"><code><span class="line cmd-line" data-prompt="$"><span style="color:#79B8FF">source</span><span style="color:#9ECBFF"> .venv/bin/activate</span><span style="color:#6A737D">  # 別のターミナルのため、Python仮想環境を再度アクティブにします</span></span>
-<span class="line cmd-line" data-prompt="$"><span style="color:#B392F0">backend.ai</span><span style="color:#9ECBFF"> session</span><span style="color:#9ECBFF"> download</span><span style="color:#9ECBFF"> ibnFmWim-session</span><span style="color:#9ECBFF"> id_container</span></span>
-<span class="line output-line">Downloading files: 3.58kbytes [00:00, 352kbytes/s]</span>
-<span class="line output-line">✓ Downloaded to /*/client.</span></code></pre></div>
-<p data-bai-block="99">ダウンロードした鍵を使用して、次のようにSSH接続できます。ローカルプロキシをポート9922で起動したため、
+<p data-bai-block="97">ローカルマシンで別のターミナルウィンドウを開きます。<code>.env</code>ファイルがある作業ディレクトリに移動します。</p>
+<div data-bai-block="98" class="code-block-wrapper"><div class="code-block-title"><span class="code-block-lang">shellsession</span><span class="code-block-title-text" aria-hidden="true"></span></div><pre class="language-shellsession shiki-host"><code><span class="line cmd-line" data-prompt="$"><span style="color:#79B8FF">source</span><span style="color:#9ECBFF"> .venv/bin/activate</span><span style="color:#6A737D">  # 別のターミナルのため、Python仮想環境を再度アクティブにします</span></span></code></pre></div>
+<p data-bai-block="99">ご自身のSSH秘密鍵を使用して、次のようにSSH接続できます。ローカルプロキシをポート9922で起動したため、
 接続先アドレスは127.0.0.1、ポートは9922にする必要があります。接続には、ユーザーアカウント<code>work</code>を使用します。</p>
-<div data-bai-block="100" class="code-block-wrapper"><div class="code-block-title"><span class="code-block-lang">shellsession</span><span class="code-block-title-text" aria-hidden="true"></span></div><pre class="language-shellsession shiki-host"><code><span class="line cmd-line" data-prompt="$"><span style="color:#B392F0">ssh</span><span style="color:#79B8FF">  -o</span><span style="color:#9ECBFF"> StrictHostKeyChecking=no</span><span style="color:#79B8FF">  -o</span><span style="color:#9ECBFF"> UserKnownHostsFile=/dev/null</span><span style="color:#79B8FF">  -i</span><span style="color:#9ECBFF"> ./id_container</span><span style="color:#79B8FF">  -p</span><span style="color:#79B8FF"> 9922</span><span style="color:#9ECBFF">  work@127.0.0.1</span></span>
+<div data-bai-block="100" class="code-block-wrapper"><div class="code-block-title"><span class="code-block-lang">shellsession</span><span class="code-block-title-text" aria-hidden="true"></span></div><pre class="language-shellsession shiki-host"><code><span class="line cmd-line" data-prompt="$"><span style="color:#B392F0">ssh</span><span style="color:#79B8FF">  -o</span><span style="color:#9ECBFF"> StrictHostKeyChecking=no</span><span style="color:#79B8FF">  -o</span><span style="color:#9ECBFF"> UserKnownHostsFile=/dev/null</span><span style="color:#79B8FF">  -i</span><span style="color:#9ECBFF"> /path/to/private_key</span><span style="color:#79B8FF">  -p</span><span style="color:#79B8FF"> 9922</span><span style="color:#9ECBFF">  work@127.0.0.1</span></span>
 <span class="line output-line">Warning: Permanently added '[127.0.0.1]:9922' (RSA) to the list of known hosts.</span>
 <span class="line output-line">work@</span></code></pre></div>
 <p data-bai-block="101">同様に、<code>scp</code>コマンドを使用してファイルをコピーすることもできます。
 この場合は、セッションが終了した後もファイルを保持するために、コンピュートセッション内の
 マウントされたフォルダにファイルをコピーする必要があります。</p>
-<div data-bai-block="102" class="code-block-wrapper"><div class="code-block-title"><span class="code-block-lang">shellsession</span><span class="code-block-title-text" aria-hidden="true"></span></div><pre class="language-shellsession shiki-host"><code><span class="line cmd-line" data-prompt="$"><span style="color:#B392F0">scp</span><span style="color:#79B8FF">  -o</span><span style="color:#9ECBFF"> StrictHostKeyChecking=no</span><span style="color:#79B8FF">  -o</span><span style="color:#9ECBFF"> UserKnownHostsFile=/dev/null</span><span style="color:#79B8FF">  -i</span><span style="color:#9ECBFF"> ./id_container</span><span style="color:#79B8FF">  -P</span><span style="color:#79B8FF"> 9922</span><span style="color:#9ECBFF">  test_file.xlsx</span><span style="color:#9ECBFF"> work@127.0.0.1:/home/work/myfolder/</span></span>
+<div data-bai-block="102" class="code-block-wrapper"><div class="code-block-title"><span class="code-block-lang">shellsession</span><span class="code-block-title-text" aria-hidden="true"></span></div><pre class="language-shellsession shiki-host"><code><span class="line cmd-line" data-prompt="$"><span style="color:#B392F0">scp</span><span style="color:#79B8FF">  -o</span><span style="color:#9ECBFF"> StrictHostKeyChecking=no</span><span style="color:#79B8FF">  -o</span><span style="color:#9ECBFF"> UserKnownHostsFile=/dev/null</span><span style="color:#79B8FF">  -i</span><span style="color:#9ECBFF"> /path/to/private_key</span><span style="color:#79B8FF">  -P</span><span style="color:#79B8FF"> 9922</span><span style="color:#9ECBFF">  test_file.xlsx</span><span style="color:#9ECBFF"> work@127.0.0.1:/home/work/myfolder/</span></span>
 <span class="line output-line">Warning: Permanently added '[127.0.0.1]:9922' (RSA) to the list of known hosts.</span>
 <span class="line output-line">test_file.xlsx</span></code></pre></div>
 <p data-bai-block="103">すべての作業が完了したら、最初のターミナルで<code>Ctrl-C</code>を押してローカルプロキシサービスをキャンセルします。</p>

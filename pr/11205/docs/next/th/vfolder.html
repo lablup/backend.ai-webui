@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="โฟลเดอร์จัดเก็บ" />
   <meta name="twitter:description" content="Backend.AI มีพื้นที่จัดเก็บเฉพาะเพื่อเก็บไฟล์ของผู้ใช้ให้คงอยู่ เนื่องจากไฟล์และไดเรกทอรีของเซสชันการคำนวณจะถูกลบเมื่อเซสชันสิ้นสุดลง…" />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"โฟลเดอร์จัดเก็บ","inLanguage":"th","description":"Backend.AI มีพื้นที่จัดเก็บเฉพาะเพื่อเก็บไฟล์ของผู้ใช้ให้คงอยู่ เนื่องจากไฟล์และไดเรกทอรีของเซสชันการคำนวณจะถูกลบเมื่อเซสชันสิ้นสุดลง…","dateModified":"2026-10-01T08:25:04.000Z","url":"https://webui.docs.backend.ai/next/th/vfolder.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"โฟลเดอร์จัดเก็บ","inLanguage":"th","description":"Backend.AI มีพื้นที่จัดเก็บเฉพาะเพื่อเก็บไฟล์ของผู้ใช้ให้คงอยู่ เนื่องจากไฟล์และไดเรกทอรีของเซสชันการคำนวณจะถูกลบเมื่อเซสชันสิ้นสุดลง…","dateModified":"2026-11-16T03:03:28.000Z","url":"https://webui.docs.backend.ai/next/th/vfolder.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/vfolder.html" />
   <link rel="alternate" hreflang="en" href="../en/vfolder.html" />
   <link rel="alternate" hreflang="ja" href="../ja/vfolder.html" />
@@ -505,38 +505,28 @@ storage host นั้น คุณจะสามารถอัปโหลด
 <p data-bai-block="142">กล่องโต้ตอบการเชื่อมต่อ SSH / SFTP จะปรากฏขึ้น และเซสชัน SFTP ใหม่จะถูกสร้างขึ้นโดยอัตโนมัติ (เซสชันนี้จะไม่ส่งผลต่อการใช้ทรัพยากร)</p>
 <p><figure data-bai-block="143" class="doc-figure"><img src="./images/SSH_SFTP_connection.png" alt="" class="doc-image" style="width:800px" loading="lazy" decoding="async" width="1600" height="1532" /><figcaption>รูปที่ 15.29</figcaption></figure>
 </p>
-<p data-bai-block="144">สำหรับการเชื่อมต่อ ให้คลิกปุ่ม &#39;ดาวน์โหลดคีย์ SSH&#39; เพื่อดาวน์โหลดคีย์ส่วนตัว SSH (<code>id_container</code>) และโปรดจดจำโฮสต์และหมายเลขพอร์ตไว้ จากนั้นคุณสามารถคัดลอกไฟล์ไปยังเซสชันได้โดยใช้โค้ดตัวอย่างการเชื่อมต่อที่ระบุในกล่องโต้ตอบ หรือดูคู่มือต่อไปนี้: <a href="./sftp_to_container.html#ssh-sftp-container">คู่มือการเชื่อมต่อ SFTP</a> หากต้องการรักษาไฟล์ไว้ คุณต้องโอนไฟล์ไปยังโฟลเดอร์จัดเก็บ นอกจากนี้ เซสชันจะถูกยุติเมื่อไม่มีการถ่ายโอนข้อมูลเป็นระยะเวลาหนึ่ง</p>
-<div class="admonition admonition-note">
-<div data-bai-block="145" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
-<div class="admonition-content">
-
-<p data-bai-block="146">หากคุณอัปโหลดคีย์แพร์ SSH ของคุณเอง <code>id_container</code> จะถูกตั้งค่าเป็นคีย์ส่วนตัว SSH
-ของคุณ ดังนั้นคุณไม่จำเป็นต้องดาวน์โหลดคีย์ทุกครั้งที่ต้องการเชื่อมต่อกับคอนเทนเนอร์
-ผ่าน SSH โปรดดู<a href="./user_settings.html#user-ssh-keypair-management">การจัดการคีย์แพร์ SSH ของผู้ใช้</a></p>
-</div></div>
-
-
-<h2 data-bai-block="147" id="vfolder-โฟลเดอรไปปไลน">โฟลเดอร์ไปป์ไลน์<a class="hash-link" href="#vfolder-โฟลเดอรไปปไลน" aria-label="Direct link to โฟลเดอร์ไปป์ไลน์">#</a></h2>
-<p data-bai-block="148">แท็บนี้จะแสดงรายการโฟลเดอร์ที่ถูกสร้างขึ้นโดยอัตโนมัติเมื่อมีการดำเนินการไปป์ไลน์ใน FastTrack เมื่อมีการสร้างไปป์ไลน์ โฟลเดอร์ใหม่จะถูกสร้างและเมาท์ไว้ภายใต้ <code>/pipeline</code> สำหรับแต่ละอินสแตนซ์ของงาน (เซสชันการคำนวณ)</p>
+<p data-bai-block="144">สำหรับการเชื่อมต่อ ให้จดจำโฮสต์และหมายเลขพอร์ตไว้ และเชื่อมต่อด้วยคีย์ส่วนตัวที่คู่กับคีย์สาธารณะ SSH ที่คุณลงทะเบียนไว้ใน<a href="./user_settings.html#user-ssh-keypair-management">การตั้งค่าผู้ใช้ &gt; การจัดการคู่คีย์ SSH</a> จากนั้นคุณสามารถคัดลอกไฟล์ไปยังเซสชันได้โดยใช้โค้ดตัวอย่างการเชื่อมต่อที่ระบุในกล่องโต้ตอบ หรือดูคู่มือต่อไปนี้: <a href="./sftp_to_container.html#ssh-sftp-container">คู่มือการเชื่อมต่อ SFTP</a> หากต้องการรักษาไฟล์ไว้ คุณต้องโอนไฟล์ไปยังโฟลเดอร์จัดเก็บ นอกจากนี้ เซสชันจะถูกยุติเมื่อไม่มีการถ่ายโอนข้อมูลเป็นระยะเวลาหนึ่ง</p>
+<h2 data-bai-block="145" id="vfolder-โฟลเดอรไปปไลน">โฟลเดอร์ไปป์ไลน์<a class="hash-link" href="#vfolder-โฟลเดอรไปปไลน" aria-label="Direct link to โฟลเดอร์ไปป์ไลน์">#</a></h2>
+<p data-bai-block="146">แท็บนี้จะแสดงรายการโฟลเดอร์ที่ถูกสร้างขึ้นโดยอัตโนมัติเมื่อมีการดำเนินการไปป์ไลน์ใน FastTrack เมื่อมีการสร้างไปป์ไลน์ โฟลเดอร์ใหม่จะถูกสร้างและเมาท์ไว้ภายใต้ <code>/pipeline</code> สำหรับแต่ละอินสแตนซ์ของงาน (เซสชันการคำนวณ)</p>
 <p><a id="automount-folder"></a></p>
-<h2 data-bai-block="149" id="vfolder-โฟลเดอรเมาทอตโนมต">โฟลเดอร์เมาท์อัตโนมัติ<a class="hash-link" href="#vfolder-โฟลเดอรเมาทอตโนมต" aria-label="Direct link to โฟลเดอร์เมาท์อัตโนมัติ">#</a></h2>
-<p data-bai-block="150">หน้าข้อมูล (Data) มีแท็บโฟลเดอร์เมาท์อัตโนมัติ (Automount Folders) คลิกที่แท็บนี้เพื่อดูรายการโฟลเดอร์ที่มีชื่อขึ้นต้นด้วยจุด (<code>.</code>) เมื่อคุณสร้างโฟลเดอร์โดยระบุชื่อที่ขึ้นต้นด้วยจุด (<code>.</code>) โฟลเดอร์นั้นจะถูกเพิ่มเข้าไปในแท็บโฟลเดอร์เมาท์อัตโนมัติแทนที่จะเป็นแท็บโฟลเดอร์ โฟลเดอร์เมาท์อัตโนมัติเป็นโฟลเดอร์พิเศษที่จะถูกเมาท์ในไดเรกทอรีโฮมของคุณโดยอัตโนมัติ แม้ว่าคุณจะไม่ได้เมาท์ด้วยตนเองตอนสร้างเซสชันการคำนวณก็ตาม การใช้ฟีเจอร์นี้ในการสร้างและใช้โฟลเดอร์จัดเก็บ เช่น <code>.local</code>, <code>.linuxbrew</code>, <code>.pyenv</code> ฯลฯ จะช่วยให้คุณสามารถกำหนดค่าแพ็กเกจหรือสภาพแวดล้อมของผู้ใช้ที่จะไม่เปลี่ยนแปลงไปตามชนิดของเซสชันการคำนวณ</p>
-<p data-bai-block="151">สำหรับข้อมูลเพิ่มเติมเกี่ยวกับการใช้งานโฟลเดอร์เมาท์อัตโนมัติ โปรดดูที่
+<h2 data-bai-block="147" id="vfolder-โฟลเดอรเมาทอตโนมต">โฟลเดอร์เมาท์อัตโนมัติ<a class="hash-link" href="#vfolder-โฟลเดอรเมาทอตโนมต" aria-label="Direct link to โฟลเดอร์เมาท์อัตโนมัติ">#</a></h2>
+<p data-bai-block="148">หน้าข้อมูล (Data) มีแท็บโฟลเดอร์เมาท์อัตโนมัติ (Automount Folders) คลิกที่แท็บนี้เพื่อดูรายการโฟลเดอร์ที่มีชื่อขึ้นต้นด้วยจุด (<code>.</code>) เมื่อคุณสร้างโฟลเดอร์โดยระบุชื่อที่ขึ้นต้นด้วยจุด (<code>.</code>) โฟลเดอร์นั้นจะถูกเพิ่มเข้าไปในแท็บโฟลเดอร์เมาท์อัตโนมัติแทนที่จะเป็นแท็บโฟลเดอร์ โฟลเดอร์เมาท์อัตโนมัติเป็นโฟลเดอร์พิเศษที่จะถูกเมาท์ในไดเรกทอรีโฮมของคุณโดยอัตโนมัติ แม้ว่าคุณจะไม่ได้เมาท์ด้วยตนเองตอนสร้างเซสชันการคำนวณก็ตาม การใช้ฟีเจอร์นี้ในการสร้างและใช้โฟลเดอร์จัดเก็บ เช่น <code>.local</code>, <code>.linuxbrew</code>, <code>.pyenv</code> ฯลฯ จะช่วยให้คุณสามารถกำหนดค่าแพ็กเกจหรือสภาพแวดล้อมของผู้ใช้ที่จะไม่เปลี่ยนแปลงไปตามชนิดของเซสชันการคำนวณ</p>
+<p data-bai-block="149">สำหรับข้อมูลเพิ่มเติมเกี่ยวกับการใช้งานโฟลเดอร์เมาท์อัตโนมัติ โปรดดูที่
 <a href="./mount_vfolder.html#using-automount-folder">ตัวอย่างการใช้งานโฟลเดอร์เมาท์อัตโนมัติ</a></p>
-<p><figure data-bai-block="152" class="doc-figure"><img src="./images/vfolder_automount_folders.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2304" height="584" /><figcaption>รูปที่ 15.30</figcaption></figure>
+<p><figure data-bai-block="150" class="doc-figure"><img src="./images/vfolder_automount_folders.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2304" height="584" /><figcaption>รูปที่ 15.30</figcaption></figure>
 </p>
 <p><a id="models"></a></p>
-<h2 data-bai-block="153" id="vfolder-โฟลเดอรโมเดล">โฟลเดอร์โมเดล<a class="hash-link" href="#vfolder-โฟลเดอรโมเดล" aria-label="Direct link to โฟลเดอร์โมเดล">#</a></h2>
-<p data-bai-block="154">แท็บโมเดลช่วยให้การให้บริการโมเดลเป็นไปอย่างสะดวกและตรงไปตรงมา
+<h2 data-bai-block="151" id="vfolder-โฟลเดอรโมเดล">โฟลเดอร์โมเดล<a class="hash-link" href="#vfolder-โฟลเดอรโมเดล" aria-label="Direct link to โฟลเดอร์โมเดล">#</a></h2>
+<p data-bai-block="152">แท็บโมเดลช่วยให้การให้บริการโมเดลเป็นไปอย่างสะดวกและตรงไปตรงมา
 คุณสามารถจัดเก็บข้อมูลที่จำเป็น ซึ่งรวมถึงข้อมูลนำเข้าสำหรับ<a href="./deployment.html#model-serving">การให้บริการโมเดล</a> และข้อมูลสำหรับการฝึกสอน ไว้ในโฟลเดอร์โมเดลได้</p>
-<p><figure data-bai-block="155" class="doc-figure"><img src="./images/models.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2304" height="650" /><figcaption>รูปที่ 15.31</figcaption></figure>
+<p><figure data-bai-block="153" class="doc-figure"><img src="./images/models.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2304" height="650" /><figcaption>รูปที่ 15.31</figcaption></figure>
 </p>
 
 </section>
     <div class="page-footer">
       <div class="page-metadata">
   <a class="edit-link" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/th/vfolder/vfolder.md" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg> แก้ไขหน้านี้</a>
-  <span class="last-updated">อัปเดตล่าสุด 1 ต.ค. 2569</span>
+  <span class="last-updated">อัปเดตล่าสุด 16 พ.ย. 2569</span>
 </div>
       <nav class="pagination-nav" aria-label="Docs pages">
   <a class="pagination-nav__link pagination-nav__link--prev" href="./my_environments.html">

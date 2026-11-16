@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="ストレージフォルダ" />
   <meta name="twitter:description" content="Backend.AIは、ユーザーのファイルを安全に保管するための専用ストレージを提供しています。コンピュートセッションのファイルやディレクトリはセッション終了時に削除されるため、ストレージフォルダに保存することを推奨します。ストレージフォルダの一覧は、サイドバーのデータページを選択すると確認できます。" />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"ストレージフォルダ","inLanguage":"ja","description":"Backend.AIは、ユーザーのファイルを安全に保管するための専用ストレージを提供しています。コンピュートセッションのファイルやディレクトリはセッション終了時に削除されるため、ストレージフォルダに保存することを推奨します。ストレージフォルダの一覧は、サイドバーのデータページを選択すると確認できます。","dateModified":"2026-10-01T08:25:04.000Z","url":"https://webui.docs.backend.ai/next/ja/vfolder.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"ストレージフォルダ","inLanguage":"ja","description":"Backend.AIは、ユーザーのファイルを安全に保管するための専用ストレージを提供しています。コンピュートセッションのファイルやディレクトリはセッション終了時に削除されるため、ストレージフォルダに保存することを推奨します。ストレージフォルダの一覧は、サイドバーのデータページを選択すると確認できます。","dateModified":"2026-11-16T03:03:28.000Z","url":"https://webui.docs.backend.ai/next/ja/vfolder.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/vfolder.html" />
   <link rel="alternate" hreflang="en" href="../en/vfolder.html" />
   <link rel="alternate" hreflang="ja" href="../ja/vfolder.html" />
@@ -505,34 +505,26 @@
 <p data-bai-block="142">SSH / SFTP接続ダイアログが表示されます。新しいSFTPセッションが自動的に作成されます。（このセッションはリソース占有には影響しません。）</p>
 <p><figure data-bai-block="143" class="doc-figure"><img src="./images/SSH_SFTP_connection.png" alt="" class="doc-image" style="width:800px" loading="lazy" decoding="async" width="1600" height="1576" /><figcaption>図 15.29</figcaption></figure>
 </p>
-<p data-bai-block="144">接続のために、「SSHキーをダウンロード」ボタンをクリックしてSSH秘密鍵（<code>id_container</code>）をダウンロードします。また、ホスト名とポート番号を控えておいてください。その後、ダイアログに記載された接続例のコードを使用して、または以下のガイドを参照してファイルをセッションにコピーできます: <a href="./sftp_to_container.html#ssh-sftp-container">SFTP接続ガイド</a>。ファイルを保持するには、ストレージフォルダにファイルを転送する必要があります。また、一定時間転送がない場合、セッションは終了します。</p>
-<div class="admonition admonition-note">
-<div data-bai-block="145" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
-<div class="admonition-content">
-
-<p data-bai-block="146">SSHキーペアをアップロードすると、<code>id_container</code> はユーザー自身のSSH秘密鍵に設定されます。そのため、SSHでコンテナに接続するたびにダウンロードする必要はありません。詳細は<a href="./user_settings.html#user-ssh-keypair-management">ユーザーのSSHキーペア管理</a>を参照してください。</p>
-</div></div>
-
-
-<h2 data-bai-block="147" id="vfolder-パイプラインフォルダ">パイプラインフォルダ<a class="hash-link" href="#vfolder-パイプラインフォルダ" aria-label="Direct link to パイプラインフォルダ">#</a></h2>
-<p data-bai-block="148">このタブには、FastTrackでパイプラインを実行する際に自動的に作成されるフォルダの一覧が表示されます。パイプラインが作成されると、作業の各インスタンス（コンピュートセッション）ごとに新しいフォルダが作成され、<code>/pipeline</code> 配下にマウントされます。</p>
+<p data-bai-block="144">接続のために、ホスト名とポート番号を控えておき、<a href="./user_settings.html#user-ssh-keypair-management">ユーザー設定 &gt; SSHキーペア管理</a>で登録したSSH公開鍵に対応する秘密鍵で接続してください。その後、ダイアログに記載された接続例のコードを使用して、または以下のガイドを参照してファイルをセッションにコピーできます: <a href="./sftp_to_container.html#ssh-sftp-container">SFTP接続ガイド</a>。ファイルを保持するには、ストレージフォルダにファイルを転送する必要があります。また、一定時間転送がない場合、セッションは終了します。</p>
+<h2 data-bai-block="145" id="vfolder-パイプラインフォルダ">パイプラインフォルダ<a class="hash-link" href="#vfolder-パイプラインフォルダ" aria-label="Direct link to パイプラインフォルダ">#</a></h2>
+<p data-bai-block="146">このタブには、FastTrackでパイプラインを実行する際に自動的に作成されるフォルダの一覧が表示されます。パイプラインが作成されると、作業の各インスタンス（コンピュートセッション）ごとに新しいフォルダが作成され、<code>/pipeline</code> 配下にマウントされます。</p>
 <p><a id="automount-folder"></a></p>
-<h2 data-bai-block="149" id="vfolder-自動マウントフォルダ">自動マウントフォルダ<a class="hash-link" href="#vfolder-自動マウントフォルダ" aria-label="Direct link to 自動マウントフォルダ">#</a></h2>
-<p data-bai-block="150">データページには自動マウントフォルダタブがあります。このタブをクリックすると、名前がドット（<code>.</code>）で始まるフォルダの一覧が表示されます。フォルダを作成する際にドット（<code>.</code>）で始まる名前を指定すると、フォルダタブではなく自動マウントフォルダタブに追加されます。自動マウントフォルダは、コンピュートセッション作成時に手動でマウントしなくても、自動的にホームディレクトリにマウントされる特別なフォルダです。この機能を利用して、<code>.local</code>、<code>.linuxbrew</code>、<code>.pyenv</code> などのストレージフォルダを作成・使用することで、異なる種類のコンピュートセッションでも変わらないユーザーパッケージや環境を構成できます。</p>
-<p data-bai-block="151">自動マウントフォルダの使用方法の詳細については、<a href="./mount_vfolder.html#using-automount-folder">自動マウントフォルダの使用例</a>を参照してください。</p>
-<p><figure data-bai-block="152" class="doc-figure"><img src="./images/vfolder_automount_folders.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2304" height="584" /><figcaption>図 15.30</figcaption></figure>
+<h2 data-bai-block="147" id="vfolder-自動マウントフォルダ">自動マウントフォルダ<a class="hash-link" href="#vfolder-自動マウントフォルダ" aria-label="Direct link to 自動マウントフォルダ">#</a></h2>
+<p data-bai-block="148">データページには自動マウントフォルダタブがあります。このタブをクリックすると、名前がドット（<code>.</code>）で始まるフォルダの一覧が表示されます。フォルダを作成する際にドット（<code>.</code>）で始まる名前を指定すると、フォルダタブではなく自動マウントフォルダタブに追加されます。自動マウントフォルダは、コンピュートセッション作成時に手動でマウントしなくても、自動的にホームディレクトリにマウントされる特別なフォルダです。この機能を利用して、<code>.local</code>、<code>.linuxbrew</code>、<code>.pyenv</code> などのストレージフォルダを作成・使用することで、異なる種類のコンピュートセッションでも変わらないユーザーパッケージや環境を構成できます。</p>
+<p data-bai-block="149">自動マウントフォルダの使用方法の詳細については、<a href="./mount_vfolder.html#using-automount-folder">自動マウントフォルダの使用例</a>を参照してください。</p>
+<p><figure data-bai-block="150" class="doc-figure"><img src="./images/vfolder_automount_folders.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2304" height="584" /><figcaption>図 15.30</figcaption></figure>
 </p>
 <p><a id="models"></a></p>
-<h2 data-bai-block="153" id="vfolder-モデル">モデル<a class="hash-link" href="#vfolder-モデル" aria-label="Direct link to モデル">#</a></h2>
-<p data-bai-block="154">モデルタブは、シンプルなモデルサービングを実現します。<a href="./deployment.html#model-serving">モデルサービング</a>用の入力データやトレーニングデータなど、必要なデータをモデルフォルダに保存できます。</p>
-<p><figure data-bai-block="155" class="doc-figure"><img src="./images/models.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2304" height="650" /><figcaption>図 15.31</figcaption></figure>
+<h2 data-bai-block="151" id="vfolder-モデル">モデル<a class="hash-link" href="#vfolder-モデル" aria-label="Direct link to モデル">#</a></h2>
+<p data-bai-block="152">モデルタブは、シンプルなモデルサービングを実現します。<a href="./deployment.html#model-serving">モデルサービング</a>用の入力データやトレーニングデータなど、必要なデータをモデルフォルダに保存できます。</p>
+<p><figure data-bai-block="153" class="doc-figure"><img src="./images/models.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2304" height="650" /><figcaption>図 15.31</figcaption></figure>
 </p>
 
 </section>
     <div class="page-footer">
       <div class="page-metadata">
   <a class="edit-link" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/ja/vfolder/vfolder.md" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg> このページを編集</a>
-  <span class="last-updated">最終更新日 2026年10月1日</span>
+  <span class="last-updated">最終更新日 2026年11月16日</span>
 </div>
       <nav class="pagination-nav" aria-label="Docs pages">
   <a class="pagination-nav__link pagination-nav__link--prev" href="./my_environments.html">

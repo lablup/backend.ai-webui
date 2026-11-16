@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="SFTP to Container" />
   <meta name="twitter:description" content="Backend.AI supports SSH/SFTP connection to the created compute sessions (containers). In this section, we will learn how to do it." />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"SFTP to Container","inLanguage":"en","description":"Backend.AI supports SSH/SFTP connection to the created compute sessions (containers). In this section, we will learn how to do it.","dateModified":"2026-11-16T01:59:38.000Z","url":"https://webui.docs.backend.ai/next/en/sftp_to_container.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"SFTP to Container","inLanguage":"en","description":"Backend.AI supports SSH/SFTP connection to the created compute sessions (containers). In this section, we will learn how to do it.","dateModified":"2026-11-16T15:55:38.000Z","url":"https://webui.docs.backend.ai/next/en/sftp_to_container.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/sftp_to_container.html" />
   <link rel="alternate" hreflang="en" href="../en/sftp_to_container.html" />
   <link rel="alternate" hreflang="ja" href="../ja/sftp_to_container.html" />
@@ -233,10 +233,7 @@ SSH/SFTP icon must be clicked again.</p>
 dialog shows the <strong>User</strong>, <strong>Host</strong>, and <strong>Port</strong> to connect to and ready-made
 <code>sftp</code>, <code>scp</code>, and <code>rsync</code> example commands. Register your SSH public key in
 <a href="./user_settings.html#user-ssh-keypair-management">SSH keypair management</a> under User Settings
-first, then connect with the matching private key. Alternatively, you can
-download the automatically generated <code>id_container</code> private key located under
-<code>/home/work/</code> with your web terminal or Jupyter Notebook; that key may change
-when a new session is created.</p>
+first, then connect with the matching private key.</p>
 <p><figure data-bai-block="7" class="doc-figure"><img src="./images/SSH_SFTP_connection.png" alt="" class="doc-image" style="width:800px" loading="lazy" decoding="async" width="1600" height="1576" /><figcaption>Figure 18.1</figcaption></figure>
 </p>
 <p><figure data-bai-block="8" class="doc-figure"><img src="./images/sftp_app.png" alt="" class="doc-image" loading="lazy" decoding="async" width="913" height="1000" /><figcaption>Figure 18.2</figcaption></figure>
@@ -255,7 +252,7 @@ part in <code>work@&lt;host&gt;</code> should be changed to the actual session a
 you run the command correctly, you can see that SSH connection is made to the
 compute session and you are welcomed by the container&#39;s shell environment. Replace the
 host and port in the transcript below with the values shown in your own dialog.</p>
-<div data-bai-block="11" class="code-block-wrapper"><div class="code-block-title"><span class="code-block-lang">shellsession</span><span class="code-block-title-text" aria-hidden="true"></span></div><pre class="language-shellsession shiki-host"><code><span class="line cmd-line" data-prompt="$"><span style="color:#B392F0">ssh</span><span style="color:#79B8FF">      -i</span><span style="color:#9ECBFF"> ~/.ssh/id_container</span><span style="color:#79B8FF"> -p</span><span style="color:#79B8FF"> 30722</span><span style="color:#79B8FF">      -o</span><span style="color:#9ECBFF"> StrictHostKeyChecking=no</span><span style="color:#79B8FF">      -o</span><span style="color:#9ECBFF"> UserKnownHostsFile=/dev/null</span><span style="color:#9ECBFF">      work@127.0.0.1</span></span>
+<div data-bai-block="11" class="code-block-wrapper"><div class="code-block-title"><span class="code-block-lang">shellsession</span><span class="code-block-title-text" aria-hidden="true"></span></div><pre class="language-shellsession shiki-host"><code><span class="line cmd-line" data-prompt="$"><span style="color:#B392F0">ssh</span><span style="color:#79B8FF">      -i</span><span style="color:#9ECBFF"> /path/to/private_key</span><span style="color:#79B8FF"> -p</span><span style="color:#79B8FF"> 30722</span><span style="color:#79B8FF">      -o</span><span style="color:#9ECBFF"> StrictHostKeyChecking=no</span><span style="color:#79B8FF">      -o</span><span style="color:#9ECBFF"> UserKnownHostsFile=/dev/null</span><span style="color:#9ECBFF">      work@127.0.0.1</span></span>
 <span class="line output-line">Warning: Permanently added '[127.0.0.1]:30722' (RSA) to the list of known hosts.</span>
 <span class="line output-line">f310e8dbce83:~$</span></code></pre></div>
 <p data-bai-block="12">Connecting by SFTP would almost be the same. After running the SFTP client and
@@ -282,11 +279,11 @@ will be assigned.</p>
 <div data-bai-block="15" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
 <div class="admonition-content">
 
-<p data-bai-block="16">If you want to use your own SSH keypair instead of <code>id_container</code>, create a
-user-type folder named <code>.ssh</code>. If you create <code>authorized_keys</code> file in
-that folder and append it with the contents of your SSH public key, you can
-connect by SSH/SFTP through your own SSH private key without having to
-download the <code>id_container</code> after creating a compute session.</p>
+<p data-bai-block="16">Instead of registering a key in User Settings, you can authorize one for a
+single session: create a user-type folder named <code>.ssh</code>, create
+<code>authorized_keys</code> file in that folder, and append it with the contents of your
+SSH public key. You can then connect by SSH/SFTP through the matching SSH
+private key.</p>
 </div></div>
 
 
@@ -295,7 +292,7 @@ download the <code>id_container</code> after creating a compute session.</p>
 <div class="admonition-content">
 
 <p data-bai-block="18">If you receive the following warning message, try again after changing the
-permission of the <code>id_container</code> to 600. (<code>chmod 600 &lt;id_container path&gt;</code>)</p>
+permission of the private key file to 600. (<code>chmod 600 &lt;private key path&gt;</code>)</p>
 <p><figure data-bai-block="19" class="doc-figure"><img src="./images/bad_permissions.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2583" height="646" /><figcaption>Figure 18.3</figcaption></figure>
 </p>
 </div></div>
@@ -334,19 +331,18 @@ to the following link for the conversion method:
 <a href="https://wiki.filezilla-project.org/Howto">https://wiki.filezilla-project.org/Howto</a>. For easier explanation, this section
 will describe how to connect to SFTP through FileZilla client on Windows.</p>
 <p data-bai-block="27">Refer to the connection method on Linux/Mac, create a compute session, check the
-connection port and prepare your SSH private key. If you use the automatically
-generated <code>id_container</code> key, take it from <code>/home/work/</code> inside the session.
-<code>id_container</code> is an OpenSSH-based key, so if you use a client that supports
-only Windows or ppk type keys, you must convert it. Here, we will convert
-through the PuTTYgen program installed with PuTTY. After running the PuTTYgen,
-click on the import key in the Conversions menu. Select the <code>id_container</code> file
-from the file open dialog. Click the Save private key button of PuTTYGen and
-save the file with the name <code>id_container.ppk</code>.</p>
+connection port and prepare your SSH private key. The private key is an
+OpenSSH-based key, so if you use a client that supports only Windows or ppk
+type keys, you must convert it. Here, we will convert through the PuTTYgen
+program installed with PuTTY. After running the PuTTYgen, click on the import
+key in the Conversions menu. Select your private key file from the file open
+dialog. Click the Save private key button of PuTTYGen and save the file with
+the <code>ppk</code> extension.</p>
 <p><figure data-bai-block="28" class="doc-figure"><img src="./images/puttygen_conversion.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1758" height="898" /><figcaption>Figure 18.4</figcaption></figure>
 </p>
 <p data-bai-block="29">After launching the FileZilla client, go to the Settings-Connection-SFTP
-and register the key file <code>id_container.ppk</code> (<code>id_container</code> for clients
-supporting OpenSSH).</p>
+and register the converted <code>ppk</code> key file (the SSH private key itself for
+clients supporting OpenSSH).</p>
 <p><figure data-bai-block="30" class="doc-figure"><img src="./images/filezilla_setting.png" alt="" class="doc-image" style="width:628px" loading="lazy" decoding="async" width="1257" height="910" /><figcaption>Figure 18.5</figcaption></figure>
 </p>
 <p data-bai-block="31">Open Site Manager, create a new site, and enter the connection information as
@@ -512,30 +508,26 @@ the name of the created compute session. Here, we assume it is
 <div data-bai-block="94" class="code-block-wrapper"><div class="code-block-title"><span class="code-block-lang">shellsession</span><span class="code-block-title-text" aria-hidden="true"></span></div><pre class="language-shellsession shiki-host"><code><span class="line cmd-line" data-prompt="$"><span style="color:#B392F0">backend.ai</span><span style="color:#9ECBFF"> ssh</span><span style="color:#9ECBFF"> ibnFmWim-session</span></span>
 <span class="line output-line">∙ running a temporary sshd proxy at localhost:9922 ...</span>
 <span class="line output-line">work@main1[ibnFmWim-session]:~$</span></code></pre></div>
-<p data-bai-block="95">If you want to download the SSH key file and explicitly run the ssh command, you
-need to first run the following command to launch a local proxy service that
-relays connection from the local machine to the computation session. You can
-specify the port (9922) to use on the local machine with the b option.</p>
+<p data-bai-block="95">If you want to run the ssh command explicitly, you need to first run the
+following command to launch a local proxy service that relays connection from
+the local machine to the computation session. You can specify the port (9922)
+to use on the local machine with the b option.</p>
 <div data-bai-block="96" class="code-block-wrapper"><div class="code-block-title"><span class="code-block-lang">shellsession</span><span class="code-block-title-text" aria-hidden="true"></span></div><pre class="language-shellsession shiki-host"><code><span class="line cmd-line" data-prompt="$"><span style="color:#B392F0">backend.ai</span><span style="color:#9ECBFF"> app</span><span style="color:#9ECBFF"> ibnFmWim-session</span><span style="color:#9ECBFF"> sshd</span><span style="color:#79B8FF"> -b</span><span style="color:#79B8FF"> 9922</span></span>
 <span class="line output-line">∙ A local proxy to the application &quot;sshd&quot; provided by the session &quot;ibnFmWim-session&quot; is available at:</span>
 <span class="line output-line">tcp://127.0.0.1:9922</span></code></pre></div>
-<p data-bai-block="97">Open another terminal window on your local machine. Move to the working
-directory where the <code>.env</code> file is located, and download the SSH key
-automatically generated in the compute session.</p>
-<div data-bai-block="98" class="code-block-wrapper"><div class="code-block-title"><span class="code-block-lang">shellsession</span><span class="code-block-title-text" aria-hidden="true"></span></div><pre class="language-shellsession shiki-host"><code><span class="line cmd-line" data-prompt="$"><span style="color:#79B8FF">source</span><span style="color:#9ECBFF"> .venv/bin/activate</span><span style="color:#6A737D">  # Reactivate the Python virtual environment as this is a different terminal</span></span>
-<span class="line cmd-line" data-prompt="$"><span style="color:#B392F0">backend.ai</span><span style="color:#9ECBFF"> session</span><span style="color:#9ECBFF"> download</span><span style="color:#9ECBFF"> ibnFmWim-session</span><span style="color:#9ECBFF"> id_container</span></span>
-<span class="line output-line">Downloading files: 3.58kbytes [00:00, 352kbytes/s]</span>
-<span class="line output-line">✓ Downloaded to /*/client.</span></code></pre></div>
-<p data-bai-block="99">You can use the downloaded key to SSH as follows. Since you launched the local
+<p data-bai-block="97">Open another terminal window on your local machine and move to the working
+directory where the <code>.env</code> file is located.</p>
+<div data-bai-block="98" class="code-block-wrapper"><div class="code-block-title"><span class="code-block-lang">shellsession</span><span class="code-block-title-text" aria-hidden="true"></span></div><pre class="language-shellsession shiki-host"><code><span class="line cmd-line" data-prompt="$"><span style="color:#79B8FF">source</span><span style="color:#9ECBFF"> .venv/bin/activate</span><span style="color:#6A737D">  # Reactivate the Python virtual environment as this is a different terminal</span></span></code></pre></div>
+<p data-bai-block="99">You can use your SSH private key to SSH as follows. Since you launched the local
 proxy on port 9922, the connection address should be 127.0.0.1 and the port
 should be 9922. Use the user account <code>work</code> for the connection.</p>
-<div data-bai-block="100" class="code-block-wrapper"><div class="code-block-title"><span class="code-block-lang">shellsession</span><span class="code-block-title-text" aria-hidden="true"></span></div><pre class="language-shellsession shiki-host"><code><span class="line cmd-line" data-prompt="$"><span style="color:#B392F0">ssh</span><span style="color:#79B8FF">  -o</span><span style="color:#9ECBFF"> StrictHostKeyChecking=no</span><span style="color:#79B8FF">  -o</span><span style="color:#9ECBFF"> UserKnownHostsFile=/dev/null</span><span style="color:#79B8FF">  -i</span><span style="color:#9ECBFF"> ./id_container</span><span style="color:#79B8FF">  -p</span><span style="color:#79B8FF"> 9922</span><span style="color:#9ECBFF">  work@127.0.0.1</span></span>
+<div data-bai-block="100" class="code-block-wrapper"><div class="code-block-title"><span class="code-block-lang">shellsession</span><span class="code-block-title-text" aria-hidden="true"></span></div><pre class="language-shellsession shiki-host"><code><span class="line cmd-line" data-prompt="$"><span style="color:#B392F0">ssh</span><span style="color:#79B8FF">  -o</span><span style="color:#9ECBFF"> StrictHostKeyChecking=no</span><span style="color:#79B8FF">  -o</span><span style="color:#9ECBFF"> UserKnownHostsFile=/dev/null</span><span style="color:#79B8FF">  -i</span><span style="color:#9ECBFF"> /path/to/private_key</span><span style="color:#79B8FF">  -p</span><span style="color:#79B8FF"> 9922</span><span style="color:#9ECBFF">  work@127.0.0.1</span></span>
 <span class="line output-line">Warning: Permanently added '[127.0.0.1]:9922' (RSA) to the list of known hosts.</span>
 <span class="line output-line">work@</span></code></pre></div>
 <p data-bai-block="101">Similarly, you can use the <code>scp</code> command to copy files. In this case, you
 should copy the files to the mounted folder within the compute session to
 preserve them even after the session has been terminated.</p>
-<div data-bai-block="102" class="code-block-wrapper"><div class="code-block-title"><span class="code-block-lang">shellsession</span><span class="code-block-title-text" aria-hidden="true"></span></div><pre class="language-shellsession shiki-host"><code><span class="line cmd-line" data-prompt="$"><span style="color:#B392F0">scp</span><span style="color:#79B8FF">  -o</span><span style="color:#9ECBFF"> StrictHostKeyChecking=no</span><span style="color:#79B8FF">  -o</span><span style="color:#9ECBFF"> UserKnownHostsFile=/dev/null</span><span style="color:#79B8FF">  -i</span><span style="color:#9ECBFF"> ./id_container</span><span style="color:#79B8FF">  -P</span><span style="color:#79B8FF"> 9922</span><span style="color:#9ECBFF">  test_file.xlsx</span><span style="color:#9ECBFF"> work@127.0.0.1:/home/work/myfolder/</span></span>
+<div data-bai-block="102" class="code-block-wrapper"><div class="code-block-title"><span class="code-block-lang">shellsession</span><span class="code-block-title-text" aria-hidden="true"></span></div><pre class="language-shellsession shiki-host"><code><span class="line cmd-line" data-prompt="$"><span style="color:#B392F0">scp</span><span style="color:#79B8FF">  -o</span><span style="color:#9ECBFF"> StrictHostKeyChecking=no</span><span style="color:#79B8FF">  -o</span><span style="color:#9ECBFF"> UserKnownHostsFile=/dev/null</span><span style="color:#79B8FF">  -i</span><span style="color:#9ECBFF"> /path/to/private_key</span><span style="color:#79B8FF">  -P</span><span style="color:#79B8FF"> 9922</span><span style="color:#9ECBFF">  test_file.xlsx</span><span style="color:#9ECBFF"> work@127.0.0.1:/home/work/myfolder/</span></span>
 <span class="line output-line">Warning: Permanently added '[127.0.0.1]:9922' (RSA) to the list of known hosts.</span>
 <span class="line output-line">test_file.xlsx</span></code></pre></div>
 <p data-bai-block="103">When all the tasks are completed, press <code>Ctrl-C</code> on the first terminal to

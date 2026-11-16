@@ -2,7 +2,7 @@
   "version": 1,
   "channel": "next",
   "label": "PR preview",
-  "generatedAt": "2026-11-16T02:00:55.430Z",
+  "generatedAt": "2026-11-16T15:57:01.738Z",
   "languages": [
     "en",
     "ja",
@@ -13,9 +13,9 @@
     "en": {
       "totals": {
         "pages": 2,
-        "changes": 6,
+        "changes": 16,
         "added": 0,
-        "modified": 6,
+        "modified": 16,
         "removed": 0,
         "images": 2,
         "newPages": 0,
@@ -30,17 +30,27 @@
           "sourcePath": "packages/backend.ai-webui-docs/src/en/sftp_to_container/sftp_to_container.md",
           "counts": {
             "added": 0,
-            "modified": 5,
+            "modified": 15,
             "removed": 0,
             "images": 1,
-            "total": 5
+            "total": 15
           },
           "fingerprints": [
-            "6c12b2213d78",
+            "b6054cca31ab",
             "973deadbfbaf",
             "6031d8a0bc5f",
+            "0481ff5af532",
             "670d6cd3351d",
-            "e465e8fda4c1"
+            "9aef9c6d02ce",
+            "c92a70ac6365",
+            "898f849cac66",
+            "f254660983c0",
+            "5ace2bf3f96c",
+            "1fdf28ad88ff",
+            "0c2767771ce6",
+            "8608e7cee8ba",
+            "80f6812cc1ff",
+            "adb2a25f07ed"
           ]
         },
         {
@@ -65,9 +75,9 @@
     "ja": {
       "totals": {
         "pages": 2,
-        "changes": 6,
+        "changes": 16,
         "added": 0,
-        "modified": 6,
+        "modified": 16,
         "removed": 0,
         "images": 2,
         "newPages": 0,
@@ -82,17 +92,27 @@
           "sourcePath": "packages/backend.ai-webui-docs/src/ja/sftp_to_container/sftp_to_container.md",
           "counts": {
             "added": 0,
-            "modified": 5,
+            "modified": 15,
             "removed": 0,
             "images": 1,
-            "total": 5
+            "total": 15
           },
           "fingerprints": [
-            "bd5de4e28b0a",
+            "9e793b6bda67",
             "8b4f1a145843",
             "6462eb22bee5",
+            "0481ff5af532",
             "f5186ea0d2c9",
-            "79fe47baacb1"
+            "40df036f8e7f",
+            "abb86da51d50",
+            "f4b8f212956d",
+            "46aef9effd76",
+            "c155376539a1",
+            "f7d47a127845",
+            "dcddeeb042b3",
+            "9540c1f187c9",
+            "80f6812cc1ff",
+            "adb2a25f07ed"
           ]
         },
         {
@@ -117,9 +137,9 @@
     "ko": {
       "totals": {
         "pages": 2,
-        "changes": 6,
+        "changes": 16,
         "added": 0,
-        "modified": 6,
+        "modified": 16,
         "removed": 0,
         "images": 2,
         "newPages": 0,
@@ -134,17 +154,27 @@
           "sourcePath": "packages/backend.ai-webui-docs/src/ko/sftp_to_container/sftp_to_container.md",
           "counts": {
             "added": 0,
-            "modified": 5,
+            "modified": 15,
             "removed": 0,
             "images": 1,
-            "total": 5
+            "total": 15
           },
           "fingerprints": [
-            "4d277c23779c",
+            "f2381a304d13",
             "4ddfbc973a03",
             "72adc984164b",
-            "b20db8e8762f",
-            "ad22ccfd3b83"
+            "0481ff5af532",
+            "5726e9a63f39",
+            "3081b1e6fb02",
+            "8ebf18b0c99a",
+            "c21aee58ca8b",
+            "d967e21e1235",
+            "9792c0cd6509",
+            "35a92a58efa9",
+            "fa19a8cee25b",
+            "2513648fa9dd",
+            "80f6812cc1ff",
+            "adb2a25f07ed"
           ]
         },
         {
@@ -169,9 +199,9 @@
     "th": {
       "totals": {
         "pages": 2,
-        "changes": 6,
+        "changes": 16,
         "added": 0,
-        "modified": 6,
+        "modified": 16,
         "removed": 0,
         "images": 2,
         "newPages": 0,
@@ -186,17 +216,27 @@
           "sourcePath": "packages/backend.ai-webui-docs/src/th/sftp_to_container/sftp_to_container.md",
           "counts": {
             "added": 0,
-            "modified": 5,
+            "modified": 15,
             "removed": 0,
             "images": 1,
-            "total": 5
+            "total": 15
           },
           "fingerprints": [
-            "08251eb94ab0",
+            "9ae6d4320110",
             "7fa603a3355d",
             "4d30de577da3",
-            "c4ff67acad02",
-            "d13795640a3c"
+            "0481ff5af532",
+            "f9a22ffb4f96",
+            "b2e822c6023c",
+            "7d2e5056ef32",
+            "60ff7e12d769",
+            "422a3afe73c6",
+            "6c14f769fb90",
+            "0e4a89daf4a3",
+            "8ed9b95703a8",
+            "ea00c9476400",
+            "80f6812cc1ff",
+            "adb2a25f07ed"
           ]
         },
         {
