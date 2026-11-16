@@ -30442,6 +30442,11 @@ type VFolder implements Node
   Added in 26.9.0. The permission bits the current user holds on this vfolder.
   """
   permissions: [PermissionBit!]!
+
+  """
+  Added in 26.10.0. The auto-mounts set on this vfolder, in every project or user they are set on.
+  """
+  vfolderAutoMounts(filter: VFolderAutoMountFilter = null, orderBy: [VFolderAutoMountOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): VFolderAutoMountConnection
 }
 
 """

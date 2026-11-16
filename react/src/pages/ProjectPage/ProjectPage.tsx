@@ -12,11 +12,11 @@ import {
   ProjectPageQuery$variables,
 } from '../../__generated__/ProjectPageQuery.graphql';
 import { App } from '../../app-shim';
+import { AUTO_MOUNT_SETTING_MANAGER_VERSION } from '../../helper/vfolderAutoMount';
 import { useSuspendedBackendaiClient } from '../../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
 import { useCSVExport } from '../../hooks/useCSVExport';
-import { AUTO_MOUNT_SETTING_MANAGER_VERSION } from '../../hooks/useVFolderAutoMountsByVFolderId';
 import ProjectAdminSettingModal, {
   ProjectAdminSettingQuery,
   buildProjectAdminRoleFilter,

@@ -13,8 +13,8 @@ import {
   USER_SETTINGS_CATEGORIES,
   type UserSettingsCategory,
 } from '../helper/userSettingsModal';
+import { AUTO_MOUNT_SETTING_MANAGER_VERSION } from '../helper/vfolderAutoMount';
 import { useSuspendedBackendaiClient } from '../hooks';
-import { AUTO_MOUNT_SETTING_MANAGER_VERSION } from '../hooks/useVFolderAutoMountsByVFolderId';
 import BAIErrorBoundary from './BAIErrorBoundary';
 import WEBUIHelpButton from './WEBUIHelpButton';
 import { Button } from '@lablup/ui-common/Button';
