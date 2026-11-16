@@ -270,7 +270,8 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
 
     const folderName = values.name;
 
-    const wantsAutoMountSetting = !!values.auto_mount_enabled;
+    const wantsAutoMountSetting =
+      canSetAutoMount === true && !!values.auto_mount_enabled;
     // A personal project's folder auto-mounts for the user (ADR 0031).
     const autoMountsForUser =
       wantsAutoMountSetting &&
@@ -421,9 +422,12 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
             <AutoMountPermissionCheck
               scopeType={autoMountTarget.scopeType}
               scopeId={autoMountTarget.scopeId}
-              onResolved={(canCreate) =>
-                setAutoMountPermission({ key: autoMountTargetKey, canCreate })
-              }
+              onResolved={(canCreate) => {
+                setAutoMountPermission({ key: autoMountTargetKey, canCreate });
+                if (!canCreate) {
+                  formRef.current?.setFieldValue('auto_mount_enabled', false);
+                }
+              }}
             />
           </Suspense>
         ) : null}
@@ -658,7 +662,9 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
                 <Form.Item name={'auto_mount_enabled'} noStyle>
                   <BAISwitch
                     aria-label={t('autoMount.AutoMountSettings')}
-                    isLoading={canSetAutoMount === undefined}
+                    isLoading={
+                      !!autoMountTarget && canSetAutoMount === undefined
+                    }
                     disabled={canSetAutoMount !== true}
                     disabledMessage={
                       canSetAutoMount === false
