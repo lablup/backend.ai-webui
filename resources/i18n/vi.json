@@ -4601,13 +4601,13 @@
     "group": {
       "Account": "Tài khoản",
       "AppLauncher": "Trình khởi chạy ứng dụng",
+      "Deployments": "Triển khai",
       "Diagnostics": "Chẩn đoán",
       "Downloads": "Tải xuống",
       "Environments": "Image",
       "Login": "Đăng nhập",
       "Menu": "Menu",
       "Plugins": "Plugin",
-      "Serving": "Triển khai",
       "Session": "Phiên",
       "Storage": "Dữ liệu"
     }

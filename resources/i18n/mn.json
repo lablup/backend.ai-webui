@@ -4601,13 +4601,13 @@
     "group": {
       "Account": "Бүртгэл",
       "AppLauncher": "Апп эхлүүлэгч",
+      "Deployments": "Байршуулалтууд",
       "Diagnostics": "Оношилгоо",
       "Downloads": "Татан авалт",
       "Environments": "Имажууд",
       "Login": "Нэвтрэлт",
       "Menu": "Цэс",
       "Plugins": "Нэмэлтүүд",
-      "Serving": "Байршуулалтууд",
       "Session": "Session",
       "Storage": "Өгөгдөл"
     }

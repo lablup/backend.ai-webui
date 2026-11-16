@@ -4599,13 +4599,13 @@
     "group": {
       "Account": "Λογαριασμός",
       "AppLauncher": "Εκκινητής εφαρμογών",
+      "Deployments": "Αναπτύξεις",
       "Diagnostics": "Διάγνωση",
       "Downloads": "Λήψεις",
       "Environments": "Εικόνες",
       "Login": "Σύνδεση",
       "Menu": "Μενού",
       "Plugins": "Πρόσθετα",
-      "Serving": "Αναπτύξεις",
       "Session": "Συνεδρία",
       "Storage": "Δεδομένα"
     }

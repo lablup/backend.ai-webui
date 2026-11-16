@@ -4599,13 +4599,13 @@
     "group": {
       "Account": "Akaun",
       "AppLauncher": "Pelancar aplikasi",
+      "Deployments": "Penggunaan",
       "Diagnostics": "Diagnostik",
       "Downloads": "Muat Turun",
       "Environments": "Imej",
       "Login": "Log masuk",
       "Menu": "Menu",
       "Plugins": "Pemalam",
-      "Serving": "Penggunaan",
       "Session": "Sesi",
       "Storage": "Data"
     }

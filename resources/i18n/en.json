@@ -4584,13 +4584,13 @@
     "group": {
       "Account": "Account",
       "AppLauncher": "App launcher",
+      "Deployments": "Deployments",
       "Diagnostics": "Diagnostics",
       "Downloads": "Downloads",
       "Environments": "Images",
       "Login": "Sign-in",
       "Menu": "Menu",
       "Plugins": "Plugins",
-      "Serving": "Deployments",
       "Session": "Session",
       "Storage": "Data"
     }

@@ -4601,13 +4601,13 @@
     "group": {
       "Account": "アカウント",
       "AppLauncher": "アプリランチャー",
+      "Deployments": "デプロイ",
       "Diagnostics": "診断",
       "Downloads": "ダウンロード",
       "Environments": "イメージ",
       "Login": "サインイン",
       "Menu": "メニュー",
       "Plugins": "プラグイン",
-      "Serving": "デプロイ",
       "Session": "セッション",
       "Storage": "データ"
     }

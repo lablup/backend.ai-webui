@@ -3187,13 +3187,13 @@
         "webuiSettings.UnknownMenuKeys",
         "webuiSettings.group.Account",
         "webuiSettings.group.AppLauncher",
+        "webuiSettings.group.Deployments",
         "webuiSettings.group.Diagnostics",
         "webuiSettings.group.Downloads",
         "webuiSettings.group.Environments",
         "webuiSettings.group.Login",
         "webuiSettings.group.Menu",
         "webuiSettings.group.Plugins",
-        "webuiSettings.group.Serving",
         "webuiSettings.group.Session",
         "webuiSettings.group.Storage"
       ]

@@ -4602,13 +4602,13 @@
     "group": {
       "Account": "계정",
       "AppLauncher": "앱 런처",
+      "Deployments": "배포",
       "Diagnostics": "진단",
       "Downloads": "다운로드",
       "Environments": "이미지",
       "Login": "로그인",
       "Menu": "메뉴",
       "Plugins": "플러그인",
-      "Serving": "배포",
       "Session": "세션",
       "Storage": "데이터"
     }

@@ -4599,13 +4599,13 @@
     "group": {
       "Account": "Conta",
       "AppLauncher": "Lançador de aplicativos",
+      "Deployments": "Implantações",
       "Diagnostics": "Diagnóstico",
       "Downloads": "Downloads",
       "Environments": "Imagens",
       "Login": "Login",
       "Menu": "Menu",
       "Plugins": "Plugins",
-      "Serving": "Implantações",
       "Session": "Sessão",
       "Storage": "Dados"
     }

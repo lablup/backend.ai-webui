@@ -4603,13 +4603,13 @@
     "group": {
       "Account": "帳戶",
       "AppLauncher": "應用程式啟動器",
+      "Deployments": "部署",
       "Diagnostics": "診斷",
       "Downloads": "下載",
       "Environments": "映像檔",
       "Login": "登入",
       "Menu": "選單",
       "Plugins": "外掛",
-      "Serving": "部署",
       "Session": "會話",
       "Storage": "資料"
     }

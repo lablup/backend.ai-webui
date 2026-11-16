@@ -4585,13 +4585,13 @@
     "group": {
       "Account": "บัญชี",
       "AppLauncher": "ตัวเปิดแอป",
+      "Deployments": "การปรับใช้",
       "Diagnostics": "การวินิจฉัย",
       "Downloads": "ดาวน์โหลด",
       "Environments": "อิมเมจ",
       "Login": "การลงชื่อเข้าใช้",
       "Menu": "เมนู",
       "Plugins": "ปลั๊กอิน",
-      "Serving": "การปรับใช้",
       "Session": "เซสชัน",
       "Storage": "ข้อมูล"
     }

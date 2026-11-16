@@ -4601,13 +4601,13 @@
     "group": {
       "Account": "Conta",
       "AppLauncher": "Lançador de aplicações",
+      "Deployments": "Implementações",
       "Diagnostics": "Diagnóstico",
       "Downloads": "Downloads",
       "Environments": "Imagens",
       "Login": "Início de sessão",
       "Menu": "Menu",
       "Plugins": "Plugins",
-      "Serving": "Implementações",
       "Session": "Sessão",
       "Storage": "Dados"
     }

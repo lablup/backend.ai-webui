@@ -2649,7 +2649,8 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                   name="definitionPath"
                   label={t('deployment.ModelDefinitionPath')}
                   tooltip={t('modelService.ModelDefinitionPathTooltip')}
-                  rules={[{ whitespace: true }]}
+                  // A hidden item's error cannot be seen, so it gets no rule.
+                  rules={hideModelDefinitionPath ? [] : [{ whitespace: true }]}
                   preserve={false}
                   // Hidden, not unmounted: a copied revision keeps its path.
                   hidden={hideModelDefinitionPath}

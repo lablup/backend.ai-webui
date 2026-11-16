@@ -4603,13 +4603,13 @@
     "group": {
       "Account": "Akun",
       "AppLauncher": "Peluncur aplikasi",
+      "Deployments": "Penerapan",
       "Diagnostics": "Diagnostik",
       "Downloads": "Unduhan",
       "Environments": "Image",
       "Login": "Masuk",
       "Menu": "Menu",
       "Plugins": "Plugin",
-      "Serving": "Penerapan",
       "Session": "Sesi",
       "Storage": "Data"
     }

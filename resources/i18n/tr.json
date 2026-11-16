@@ -4599,13 +4599,13 @@
     "group": {
       "Account": "Hesap",
       "AppLauncher": "Uygulama başlatıcı",
+      "Deployments": "Dağıtımlar",
       "Diagnostics": "Tanılama",
       "Downloads": "İndirmeler",
       "Environments": "İmajlar",
       "Login": "Oturum açma",
       "Menu": "Menü",
       "Plugins": "Eklentiler",
-      "Serving": "Dağıtımlar",
       "Session": "Oturum",
       "Storage": "Veri"
     }

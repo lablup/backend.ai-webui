@@ -49,7 +49,7 @@ export type WebUISettingGroup =
   | 'appLauncher'
   | 'environments'
   | 'storage'
-  | 'serving'
+  | 'deployments'
   | 'menu'
   | 'downloads'
   | 'account'
@@ -166,7 +166,7 @@ export const WEBUI_SETTING_ROWS: ReadonlyArray<WebUISettingRow> = [
   ),
 
   // Model serving.
-  row('hideModelDefinitionPath', 'domain', 'boolean', 'serving', null),
+  row('hideModelDefinitionPath', 'domain', 'boolean', 'deployments', null),
 
   // Sidebar.
   row('menuBlocklist', 'domain', 'stringList', 'menu', ['menu', 'blocklist']),
@@ -203,7 +203,7 @@ export const WEBUI_SETTING_GROUPS: ReadonlyArray<WebUISettingGroup> = [
   'appLauncher',
   'environments',
   'storage',
-  'serving',
+  'deployments',
   'menu',
   'downloads',
   'account',

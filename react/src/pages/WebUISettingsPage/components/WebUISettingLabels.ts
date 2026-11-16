@@ -242,7 +242,7 @@ export const useWebUISettingLabels = (): {
       appLauncher: t('webuiSettings.group.AppLauncher'),
       environments: t('webuiSettings.group.Environments'),
       storage: t('webuiSettings.group.Storage'),
-      serving: t('webuiSettings.group.Serving'),
+      deployments: t('webuiSettings.group.Deployments'),
       menu: t('webuiSettings.group.Menu'),
       downloads: t('webuiSettings.group.Downloads'),
       account: t('webuiSettings.group.Account'),

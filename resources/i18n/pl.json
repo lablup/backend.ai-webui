@@ -4602,13 +4602,13 @@
     "group": {
       "Account": "Konto",
       "AppLauncher": "Program uruchamiający aplikacje",
+      "Deployments": "Wdrożenia",
       "Diagnostics": "Diagnostyka",
       "Downloads": "Pobieranie",
       "Environments": "Obrazy",
       "Login": "Logowanie",
       "Menu": "Menu",
       "Plugins": "Wtyczki",
-      "Serving": "Wdrożenia",
       "Session": "Sesja",
       "Storage": "Dane"
     }

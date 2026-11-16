@@ -4601,13 +4601,13 @@
     "group": {
       "Account": "账户",
       "AppLauncher": "应用启动器",
+      "Deployments": "部署",
       "Diagnostics": "诊断",
       "Downloads": "下载",
       "Environments": "镜像",
       "Login": "登录",
       "Menu": "菜单",
       "Plugins": "插件",
-      "Serving": "部署",
       "Session": "会话",
       "Storage": "数据"
     }

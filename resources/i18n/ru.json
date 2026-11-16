@@ -4599,13 +4599,13 @@
     "group": {
       "Account": "Учётная запись",
       "AppLauncher": "Средство запуска приложений",
+      "Deployments": "Развёртывания",
       "Diagnostics": "Диагностика",
       "Downloads": "Загрузки",
       "Environments": "Образы",
       "Login": "Вход",
       "Menu": "Меню",
       "Plugins": "Плагины",
-      "Serving": "Развёртывания",
       "Session": "Сессия",
       "Storage": "Данные"
     }

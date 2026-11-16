@@ -18,11 +18,12 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 const effective = vi.hoisted(() => ({ hideModelDefinitionPath: false }));
 
-vi.mock('react-i18next', () => ({
+vi.mock('react-i18next', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('react-i18next')>()),
   useTranslation: () => ({ t: (key: string) => key }),
-  initReactI18next: { type: '3rdParty', init: () => {} },
 }));
-vi.mock('../hooks/useWebUIConfig', () => ({
+vi.mock('../hooks/useWebUIConfig', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('../hooks/useWebUIConfig')>()),
   useEffectiveLoginConfig: () => effective,
 }));
 vi.mock('./FolderLink', () => ({ default: () => null }));

@@ -4600,13 +4600,13 @@
     "group": {
       "Account": "Tili",
       "AppLauncher": "Sovelluskäynnistin",
+      "Deployments": "Käyttöönotot",
       "Diagnostics": "Diagnostiikka",
       "Downloads": "Lataukset",
       "Environments": "Imaget",
       "Login": "Kirjautuminen",
       "Menu": "Valikko",
       "Plugins": "Liitännäiset",
-      "Serving": "Käyttöönotot",
       "Session": "Istunto",
       "Storage": "Data"
     }
