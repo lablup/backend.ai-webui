@@ -271,46 +271,43 @@ const VFolderAutoMountCell: React.FC<{
   'use memo';
   const { t } = useTranslation();
   const autoMount = autoMounts?.edges[0]?.node;
-  const configuredToken = (
-    <BAIBooleanToken
-      value={!!autoMount}
-      trueLabel={t('autoMount.Configured')}
-      falseLabel={t('autoMount.NotConfigured')}
-    />
-  );
-  if (!autoMount) return configuredToken;
-  const permissionLabel =
-    autoMount.mountPermission === 'READ_ONLY'
-      ? t('data.ReadOnly')
-      : autoMount.mountPermission === 'READ_WRITE'
-        ? t('data.ReadWrite')
-        : t('autoMount.ReadWriteDelete');
   return (
     <HStack gap={1} vAlign="center">
-      {configuredToken}
-      <BAIIconWithTooltip
-        icon={<InfoIcon size="1em" />}
-        aria-label={t('autoMount.AutoMount')}
-        content={
-          <VStack>
-            {/* Inherit the tooltip's own colour; the default is page text. */}
-            <Text color="inherit" weight="semibold">
-              {autoMount.scopeType === 'USER'
-                ? t('autoMount.ScopeUser')
-                : t('autoMount.ScopeProject')}
-            </Text>
-            <Text color="inherit">
-              {t('autoMount.MountDestination')}: {autoMount.mountDestination}
-            </Text>
-            <Text color="inherit">
-              {t('autoMount.Subpath')}: {autoMount.subpath}
-            </Text>
-            <Text color="inherit">
-              {t('autoMount.MountPermission')}: {permissionLabel}
-            </Text>
-          </VStack>
-        }
+      <BAIBooleanToken
+        value={!!autoMount}
+        trueLabel={t('autoMount.Configured')}
+        falseLabel={t('autoMount.NotConfigured')}
       />
+      {autoMount && (
+        <BAIIconWithTooltip
+          icon={<InfoIcon size="1em" />}
+          aria-label={t('autoMount.AutoMount')}
+          content={
+            <VStack>
+              {/* Inherit the tooltip's own colour; the default is page text. */}
+              <Text color="inherit" weight="semibold">
+                {autoMount.scopeType === 'USER'
+                  ? t('autoMount.ScopeUser')
+                  : t('autoMount.ScopeProject')}
+              </Text>
+              <Text color="inherit">
+                {t('autoMount.MountDestination')}: {autoMount.mountDestination}
+              </Text>
+              <Text color="inherit">
+                {t('autoMount.Subpath')}: {autoMount.subpath}
+              </Text>
+              <Text color="inherit">
+                {t('autoMount.MountPermission')}:{' '}
+                {autoMount.mountPermission === 'READ_ONLY'
+                  ? t('data.ReadOnly')
+                  : autoMount.mountPermission === 'READ_WRITE'
+                    ? t('data.ReadWrite')
+                    : t('autoMount.ReadWriteDelete')}
+              </Text>
+            </VStack>
+          }
+        />
+      )}
     </HStack>
   );
 };
