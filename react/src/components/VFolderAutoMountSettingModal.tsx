@@ -85,16 +85,7 @@ const VFolderAutoMountSettingModal: React.FC<
             id
             vfolder {
               id
-              vfolderAutoMounts(limit: 1) {
-                edges {
-                  node {
-                    scopeType
-                    mountDestination
-                    subpath
-                    mountPermission
-                  }
-                }
-              }
+              ...VFolderNodesV2AutoMountCellFragment
             }
           }
         }
@@ -113,16 +104,7 @@ const VFolderAutoMountSettingModal: React.FC<
             ...VFolderAutoMountSettingModalFragment
             vfolder {
               id
-              vfolderAutoMounts(limit: 1) {
-                edges {
-                  node {
-                    scopeType
-                    mountDestination
-                    subpath
-                    mountPermission
-                  }
-                }
-              }
+              ...VFolderNodesV2AutoMountCellFragment
             }
           }
         }

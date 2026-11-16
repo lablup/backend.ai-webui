@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<58f9ec4a2b584a6e32d61ae011b2028f>>
+ * @generated SignedSource<<93d400510565b81c474e03bc389fc34d>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,9 +9,7 @@
 // @ts-nocheck
 
 import { ReaderFragment } from 'relay-runtime';
-export type MountPermission = "READ_ONLY" | "READ_WRITE" | "RW_DELETE" | "%future added value";
 export type PermissionBit = "CREATE" | "HARD_DELETE" | "READ" | "SOFT_DELETE" | "UPDATE" | "%future added value";
-export type VFolderAutoMountScopeType = "PROJECT" | "USER" | "%future added value";
 export type VFolderMountPermission = "NONE" | "READ_ONLY" | "READ_WRITE" | "RW_DELETE" | "%future added value";
 export type VFolderOperationStatus = "CLONING" | "CREATING" | "DELETE_COMPLETE" | "DELETE_ERROR" | "DELETE_ONGOING" | "DELETE_PENDING" | "READY" | "%future added value";
 export type VFolderOwnershipType = "GROUP" | "USER" | "%future added value";
@@ -68,18 +66,8 @@ export type VFolderNodesV2Fragment$data = ReadonlyArray<{
       readonly expr: string;
     };
   } | null | undefined;
-  readonly vfolderAutoMounts: {
-    readonly edges: ReadonlyArray<{
-      readonly node: {
-        readonly mountDestination: string;
-        readonly mountPermission: MountPermission;
-        readonly scopeType: VFolderAutoMountScopeType;
-        readonly subpath: string;
-      };
-    }>;
-  } | null | undefined;
   readonly vfolderStatus: VFolderOperationStatus;
-  readonly " $fragmentSpreads": FragmentRefs<"DeleteForeverVFolderModalV2Fragment" | "InviteFolderSettingModalFragment" | "SharedFolderPermissionInfoModalV2Fragment" | "VFolderNodeIdenticonV2Fragment">;
+  readonly " $fragmentSpreads": FragmentRefs<"DeleteForeverVFolderModalV2Fragment" | "InviteFolderSettingModalFragment" | "SharedFolderPermissionInfoModalV2Fragment" | "VFolderNodeIdenticonV2Fragment" | "VFolderNodesV2AutoMountCellFragment">;
   readonly " $fragmentType": "VFolderNodesV2Fragment";
 } | null | undefined>;
 export type VFolderNodesV2Fragment$key = ReadonlyArray<{
@@ -398,71 +386,9 @@ return {
       "storageKey": "entityLabels(limit:100)"
     },
     {
-      "alias": null,
-      "args": [
-        {
-          "kind": "Literal",
-          "name": "limit",
-          "value": 1
-        }
-      ],
-      "concreteType": "VFolderAutoMountConnection",
-      "kind": "LinkedField",
-      "name": "vfolderAutoMounts",
-      "plural": false,
-      "selections": [
-        {
-          "alias": null,
-          "args": null,
-          "concreteType": "VFolderAutoMountEdge",
-          "kind": "LinkedField",
-          "name": "edges",
-          "plural": true,
-          "selections": [
-            {
-              "alias": null,
-              "args": null,
-              "concreteType": "VFolderAutoMount",
-              "kind": "LinkedField",
-              "name": "node",
-              "plural": false,
-              "selections": [
-                {
-                  "alias": null,
-                  "args": null,
-                  "kind": "ScalarField",
-                  "name": "scopeType",
-                  "storageKey": null
-                },
-                {
-                  "alias": null,
-                  "args": null,
-                  "kind": "ScalarField",
-                  "name": "mountDestination",
-                  "storageKey": null
-                },
-                {
-                  "alias": null,
-                  "args": null,
-                  "kind": "ScalarField",
-                  "name": "subpath",
-                  "storageKey": null
-                },
-                {
-                  "alias": null,
-                  "args": null,
-                  "kind": "ScalarField",
-                  "name": "mountPermission",
-                  "storageKey": null
-                }
-              ],
-              "storageKey": null
-            }
-          ],
-          "storageKey": null
-        }
-      ],
-      "storageKey": "vfolderAutoMounts(limit:1)"
+      "args": null,
+      "kind": "FragmentSpread",
+      "name": "VFolderNodesV2AutoMountCellFragment"
     },
     {
       "args": null,
@@ -506,6 +432,6 @@ return {
 };
 })();
 
-(node as any).hash = "46c8b74642216e7619672d3a4ed08ee3";
+(node as any).hash = "2b4995a2c4adca84fc48a970202a3ac0";
 
 export default node;
