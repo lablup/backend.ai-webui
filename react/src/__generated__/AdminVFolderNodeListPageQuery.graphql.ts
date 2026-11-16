@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<bf7869c8b4cd59d98e827bb82d53e96d>>
+ * @generated SignedSource<<86f39988a3c451fc5b9889cec4aee0e5>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,14 +10,17 @@
 
 import { ConcreteRequest } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
+export type MountPermission = "READ_ONLY" | "READ_WRITE" | "RW_DELETE" | "%future added value";
 export type OrderDirection = "ASC" | "DESC" | "%future added value";
-export type VFolderOperationStatus = "CLONING" | "DELETE_COMPLETE" | "DELETE_ERROR" | "DELETE_ONGOING" | "DELETE_PENDING" | "READY" | "%future added value";
+export type VFolderAutoMountScopeType = "PROJECT" | "USER" | "%future added value";
+export type VFolderOperationStatus = "CLONING" | "CREATING" | "DELETE_COMPLETE" | "DELETE_ERROR" | "DELETE_ONGOING" | "DELETE_PENDING" | "READY" | "%future added value";
 export type VFolderOrderField = "CREATED_AT" | "HOST" | "NAME" | "STATUS" | "USAGE_MODE" | "%future added value";
 export type VFolderUsageMode = "DATA" | "GENERAL" | "MODEL" | "%future added value";
 export type VFolderFilter = {
   AND?: ReadonlyArray<VFolderFilter> | null | undefined;
   NOT?: ReadonlyArray<VFolderFilter> | null | undefined;
   OR?: ReadonlyArray<VFolderFilter> | null | undefined;
+  autoMounts?: VFolderAutoMountNestedFilter | null | undefined;
   cloneable?: boolean | null | undefined;
   createdAt?: DateTimeFilter | null | undefined;
   entityId?: UUIDFilter | null | undefined;
@@ -88,6 +91,45 @@ export type UUIDFilter = {
   in?: ReadonlyArray<string> | null | undefined;
   notEquals?: string | null | undefined;
   notIn?: ReadonlyArray<string> | null | undefined;
+};
+export type VFolderAutoMountNestedFilter = {
+  every?: VFolderAutoMountFilter | null | undefined;
+  exists?: boolean | null | undefined;
+  none?: VFolderAutoMountFilter | null | undefined;
+  some?: VFolderAutoMountFilter | null | undefined;
+};
+export type VFolderAutoMountFilter = {
+  AND?: ReadonlyArray<VFolderAutoMountFilter> | null | undefined;
+  NOT?: ReadonlyArray<VFolderAutoMountFilter> | null | undefined;
+  OR?: ReadonlyArray<VFolderAutoMountFilter> | null | undefined;
+  createdAt?: DateTimeFilter | null | undefined;
+  deletedAt?: NullableDateTimeFilter | null | undefined;
+  entityId?: UUIDFilter | null | undefined;
+  mountDestination?: StringFilter | null | undefined;
+  mountPermission?: VFolderAutoMountPermissionFilter | null | undefined;
+  scopeId?: UUIDFilter | null | undefined;
+  scopeType?: VFolderAutoMountScopeTypeFilter | null | undefined;
+  updatedAt?: DateTimeFilter | null | undefined;
+  vfolderId?: UUIDFilter | null | undefined;
+};
+export type VFolderAutoMountScopeTypeFilter = {
+  equals?: VFolderAutoMountScopeType | null | undefined;
+  in?: ReadonlyArray<VFolderAutoMountScopeType> | null | undefined;
+  notEquals?: VFolderAutoMountScopeType | null | undefined;
+  notIn?: ReadonlyArray<VFolderAutoMountScopeType> | null | undefined;
+};
+export type VFolderAutoMountPermissionFilter = {
+  equals?: MountPermission | null | undefined;
+  in?: ReadonlyArray<MountPermission> | null | undefined;
+  notEquals?: MountPermission | null | undefined;
+  notIn?: ReadonlyArray<MountPermission> | null | undefined;
+};
+export type NullableDateTimeFilter = {
+  after?: string | null | undefined;
+  before?: string | null | undefined;
+  equals?: string | null | undefined;
+  isNull?: boolean | null | undefined;
+  notEquals?: string | null | undefined;
 };
 export type VFolderOrderBy = {
   direction?: OrderDirection;
@@ -1021,12 +1063,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "8911b0fae13ef423a0054dd49d0e60a7",
+    "cacheID": "ea48801eb159868e574a90d880f3bdbf",
     "id": null,
     "metadata": {},
     "name": "AdminVFolderNodeListPageQuery",
     "operationKind": "query",
-    "text": "query AdminVFolderNodeListPageQuery(\n  $offset: Int\n  $limit: Int\n  $filter: VFolderFilter\n  $orderBy: [VFolderOrderBy!]\n  $filterForActiveCount: VFolderFilter\n  $filterForDeletedCount: VFolderFilter\n) {\n  adminVfoldersV2(offset: $offset, limit: $limit, filter: $filter, orderBy: $orderBy) {\n    edges {\n      node {\n        id\n        entityId\n        vfolderStatus: status\n        metadata {\n          name\n        }\n        ...VFolderNodesV2Fragment\n        ...DeleteVFolderModalV2Fragment\n        ...DeleteForeverVFolderModalV2Fragment\n        ...RestoreVFolderModalV2Fragment\n      }\n    }\n    count\n  }\n  active: adminVfoldersV2(filter: $filterForActiveCount) {\n    count\n  }\n  deleted: adminVfoldersV2(filter: $filterForDeletedCount) {\n    count\n  }\n}\n\nfragment AppLaunchConfirmationModalFragment on ComputeSessionNode {\n  id\n  row_id\n  name\n  ...useBackendAIAppLauncherFragment\n}\n\nfragment AppLauncherModalFragment on ComputeSessionNode {\n  id\n  row_id\n  name\n  service_ports\n  access_key\n  ...useBackendAIAppLauncherFragment\n  ...SFTPConnectionInfoModalFragment\n  ...TensorboardPathModalFragment\n  ...AppLaunchConfirmationModalFragment\n}\n\nfragment BAIComputeSessionNodeNotificationItemFragment on ComputeSessionNode {\n  id\n  name\n  status\n  status_info\n  status_data\n  ...SessionActionButtonsFragment\n  ...SessionStatusBadgeFragment\n}\n\nfragment BAIEntityLabelSettingModalFragment on EntityLabelConnection {\n  edges {\n    node {\n      fieldId\n      key\n      value\n      id\n    }\n  }\n}\n\nfragment BAIEntityLabelTokensFragment on EntityLabelConnection {\n  edges {\n    node {\n      key\n      value\n      id\n    }\n  }\n}\n\nfragment BAINodeNotificationItemFragment on Node {\n  __isNode: __typename\n  ... on ComputeSessionNode {\n    __typename\n    status\n    name\n    row_id\n    ...BAIComputeSessionNodeNotificationItemFragment\n  }\n  ... on VFolder {\n    __typename\n    ...BAIVirtualFolderNodeNotificationItemV2Fragment\n  }\n  ... on VirtualFolderNode {\n    __typename\n    status\n    ...BAIVirtualFolderNodeNotificationItemFragment\n  }\n  id\n}\n\nfragment BAIVirtualFolderNodeNotificationItemFragment on VirtualFolderNode {\n  row_id\n  id\n  name\n  status\n}\n\nfragment BAIVirtualFolderNodeNotificationItemV2Fragment on VFolder {\n  id\n  entityId\n  metadata {\n    name\n  }\n}\n\nfragment ContainerCommitModalFragment on ComputeSessionNode {\n  id\n  name\n  row_id\n}\n\nfragment ContainerLogModalFragment on ComputeSessionNode {\n  id\n  row_id\n  name\n  status\n  access_key\n  kernel_nodes {\n    edges {\n      node {\n        id\n        row_id\n        container_id\n        cluster_idx\n        cluster_role\n        cluster_hostname\n      }\n    }\n  }\n}\n\nfragment DeleteForeverVFolderModalV2Fragment on VFolder {\n  id\n  entityId\n  metadata {\n    name\n  }\n}\n\nfragment DeleteVFolderModalV2Fragment on VFolder {\n  id\n  entityId\n  metadata {\n    name\n  }\n  permissions @since(version: \"26.9.0rc1\")\n}\n\nfragment InviteFolderSettingModalFragment on VFolder {\n  id\n  entityId\n  metadata {\n    name\n    usageMode\n  }\n  accessControl {\n    permission\n    ownershipType\n  }\n  ownership {\n    userId\n    projectId\n  }\n}\n\nfragment RestoreVFolderModalV2Fragment on VFolder {\n  id\n  entityId\n  metadata {\n    name\n  }\n}\n\nfragment SFTPConnectionInfoModalFragment on ComputeSessionNode {\n  row_id\n  vfolder_nodes {\n    edges {\n      node {\n        name\n        id\n      }\n    }\n  }\n}\n\nfragment SessionActionButtonsFragment on ComputeSessionNode {\n  id\n  name\n  row_id\n  type\n  status\n  access_key\n  service_ports\n  commit_status\n  user_id\n  ...TerminateSessionModalFragment\n  ...ContainerLogModalFragment\n  ...ContainerCommitModalFragment\n  ...AppLauncherModalFragment\n  ...SFTPConnectionInfoModalFragment\n  ...useBackendAIAppLauncherFragment\n}\n\nfragment SessionStatusBadgeFragment on ComputeSessionNode {\n  id\n  status\n  status_info\n  queue_position\n  cluster_size\n  kernel_nodes {\n    edges {\n      node {\n        id\n        status\n      }\n    }\n  }\n}\n\nfragment SharedFolderPermissionInfoModalV2Fragment on VFolder {\n  id\n  entityId\n  metadata {\n    name\n  }\n  accessControl {\n    ownershipType\n  }\n  ownership {\n    creatorEmail\n    user {\n      basicInfo {\n        email\n      }\n      id\n    }\n  }\n  ...VFolderPermissionCellV2Fragment\n}\n\nfragment TensorboardPathModalFragment on ComputeSessionNode {\n  id\n  row_id\n  name\n  ...useBackendAIAppLauncherFragment\n}\n\nfragment TerminateSessionModalFragment on ComputeSessionNode {\n  id\n  row_id\n  name\n  scaling_group\n  access_key\n  project_id\n  kernel_nodes {\n    edges {\n      node {\n        container_id\n        agent_id\n        id\n      }\n    }\n  }\n}\n\nfragment VFolderNodeIdenticonV2Fragment on VFolder {\n  id\n}\n\nfragment VFolderNodesV2Fragment on VFolder {\n  id\n  entityId\n  vfolderStatus: status\n  host\n  unmanagedPath\n  usage {\n    numFiles\n    usedBytes {\n      expr @since(version: \"26.8.0\")\n    }\n  }\n  metadata {\n    name\n    usageMode\n    quotaScopeId\n    createdAt\n    lastUsed\n    cloneable\n  }\n  accessControl {\n    permission\n    ownershipType\n  }\n  permissions @since(version: \"26.9.0rc1\")\n  quota {\n    maxFiles\n    maxSize {\n      expr @since(version: \"26.8.0\")\n    }\n  }\n  ownership {\n    userId\n    projectId\n    creatorEmail\n    user {\n      basicInfo {\n        email\n      }\n      id\n    }\n    project {\n      basicInfo {\n        name\n      }\n      id\n    }\n  }\n  entityLabels(limit: 100) {\n    ...BAIEntityLabelTokensFragment\n    ...BAIEntityLabelSettingModalFragment\n  }\n  vfolderAutoMounts @since(version: \"26.10.0a6\") {\n    edges {\n      node {\n        scopeType\n        mountDestination\n        subpath\n        mountPermission\n        id\n      }\n    }\n  }\n  ...VFolderNodeIdenticonV2Fragment\n  ...SharedFolderPermissionInfoModalV2Fragment\n  ...InviteFolderSettingModalFragment\n  ...DeleteForeverVFolderModalV2Fragment\n  ...BAINodeNotificationItemFragment\n}\n\nfragment VFolderPermissionCellV2Fragment on VFolder {\n  accessControl {\n    permission\n  }\n}\n\nfragment useBackendAIAppLauncherFragment on ComputeSessionNode {\n  name\n  row_id\n  vfolder_mounts\n  scaling_group\n  project_id\n  service_ports\n}\n"
+    "text": "query AdminVFolderNodeListPageQuery(\n  $offset: Int\n  $limit: Int\n  $filter: VFolderFilter\n  $orderBy: [VFolderOrderBy!]\n  $filterForActiveCount: VFolderFilter\n  $filterForDeletedCount: VFolderFilter\n) {\n  adminVfoldersV2(offset: $offset, limit: $limit, filter: $filter, orderBy: $orderBy) {\n    edges {\n      node {\n        id\n        entityId\n        vfolderStatus: status\n        metadata {\n          name\n        }\n        ...VFolderNodesV2Fragment\n        ...DeleteVFolderModalV2Fragment\n        ...DeleteForeverVFolderModalV2Fragment\n        ...RestoreVFolderModalV2Fragment\n      }\n    }\n    count\n  }\n  active: adminVfoldersV2(filter: $filterForActiveCount) {\n    count\n  }\n  deleted: adminVfoldersV2(filter: $filterForDeletedCount) {\n    count\n  }\n}\n\nfragment AppLaunchConfirmationModalFragment on ComputeSessionNode {\n  id\n  row_id\n  name\n  ...useBackendAIAppLauncherFragment\n}\n\nfragment AppLauncherModalFragment on ComputeSessionNode {\n  id\n  row_id\n  name\n  service_ports\n  access_key\n  ...useBackendAIAppLauncherFragment\n  ...SFTPConnectionInfoModalFragment\n  ...TensorboardPathModalFragment\n  ...AppLaunchConfirmationModalFragment\n}\n\nfragment BAIComputeSessionNodeNotificationItemFragment on ComputeSessionNode {\n  id\n  name\n  status\n  status_info\n  status_data\n  ...SessionActionButtonsFragment\n  ...SessionStatusBadgeFragment\n}\n\nfragment BAIEntityLabelSettingModalFragment on EntityLabelConnection {\n  edges {\n    node {\n      fieldId\n      key\n      value\n      id\n    }\n  }\n}\n\nfragment BAIEntityLabelTokensFragment on EntityLabelConnection {\n  edges {\n    node {\n      key\n      value\n      id\n    }\n  }\n}\n\nfragment BAINodeNotificationItemFragment on Node {\n  __isNode: __typename\n  ... on ComputeSessionNode {\n    __typename\n    status\n    name\n    row_id\n    ...BAIComputeSessionNodeNotificationItemFragment\n  }\n  ... on VFolder {\n    __typename\n    ...BAIVirtualFolderNodeNotificationItemV2Fragment\n  }\n  ... on VirtualFolderNode {\n    __typename\n    status\n    ...BAIVirtualFolderNodeNotificationItemFragment\n  }\n  id\n}\n\nfragment BAIVirtualFolderNodeNotificationItemFragment on VirtualFolderNode {\n  row_id\n  id\n  name\n  status\n}\n\nfragment BAIVirtualFolderNodeNotificationItemV2Fragment on VFolder {\n  id\n  entityId\n  metadata {\n    name\n  }\n}\n\nfragment ContainerCommitModalFragment on ComputeSessionNode {\n  id\n  name\n  row_id\n}\n\nfragment ContainerLogModalFragment on ComputeSessionNode {\n  id\n  row_id\n  name\n  status\n  access_key\n  kernel_nodes {\n    edges {\n      node {\n        id\n        row_id\n        container_id\n        cluster_idx\n        cluster_role\n        cluster_hostname\n      }\n    }\n  }\n}\n\nfragment DeleteForeverVFolderModalV2Fragment on VFolder {\n  id\n  entityId\n  metadata {\n    name\n  }\n}\n\nfragment DeleteVFolderModalV2Fragment on VFolder {\n  id\n  entityId\n  metadata {\n    name\n  }\n  permissions @since(version: \"26.9.0rc1\")\n}\n\nfragment InviteFolderSettingModalFragment on VFolder {\n  id\n  entityId\n  metadata {\n    name\n    usageMode\n  }\n  accessControl {\n    permission\n    ownershipType\n  }\n  ownership {\n    userId\n    projectId\n  }\n}\n\nfragment RestoreVFolderModalV2Fragment on VFolder {\n  id\n  entityId\n  metadata {\n    name\n  }\n}\n\nfragment SFTPConnectionInfoModalFragment on ComputeSessionNode {\n  row_id\n  vfolder_nodes {\n    edges {\n      node {\n        name\n        id\n      }\n    }\n  }\n}\n\nfragment SessionActionButtonsFragment on ComputeSessionNode {\n  id\n  name\n  row_id\n  type\n  status\n  access_key\n  service_ports\n  commit_status\n  user_id\n  ...TerminateSessionModalFragment\n  ...ContainerLogModalFragment\n  ...ContainerCommitModalFragment\n  ...AppLauncherModalFragment\n  ...SFTPConnectionInfoModalFragment\n  ...useBackendAIAppLauncherFragment\n}\n\nfragment SessionStatusBadgeFragment on ComputeSessionNode {\n  id\n  status\n  status_info\n  queue_position\n  cluster_size\n  kernel_nodes {\n    edges {\n      node {\n        id\n        status\n      }\n    }\n  }\n}\n\nfragment SharedFolderPermissionInfoModalV2Fragment on VFolder {\n  id\n  entityId\n  metadata {\n    name\n  }\n  accessControl {\n    ownershipType\n  }\n  ownership {\n    creatorEmail\n    user {\n      basicInfo {\n        email\n      }\n      id\n    }\n  }\n  ...VFolderPermissionCellV2Fragment\n}\n\nfragment TensorboardPathModalFragment on ComputeSessionNode {\n  id\n  row_id\n  name\n  ...useBackendAIAppLauncherFragment\n}\n\nfragment TerminateSessionModalFragment on ComputeSessionNode {\n  id\n  row_id\n  name\n  scaling_group\n  access_key\n  project_id\n  kernel_nodes {\n    edges {\n      node {\n        container_id\n        agent_id\n        id\n      }\n    }\n  }\n}\n\nfragment VFolderNodeIdenticonV2Fragment on VFolder {\n  id\n}\n\nfragment VFolderNodesV2Fragment on VFolder {\n  id\n  entityId\n  vfolderStatus: status\n  host\n  unmanagedPath\n  usage {\n    numFiles\n    usedBytes {\n      expr @since(version: \"26.8.0\")\n    }\n  }\n  metadata {\n    name\n    usageMode\n    quotaScopeId\n    createdAt\n    lastUsed\n    cloneable\n  }\n  accessControl {\n    permission\n    ownershipType\n  }\n  permissions @since(version: \"26.9.0rc1\")\n  quota {\n    maxFiles\n    maxSize {\n      expr @since(version: \"26.8.0\")\n    }\n  }\n  ownership {\n    userId\n    projectId\n    creatorEmail\n    user {\n      basicInfo {\n        email\n      }\n      id\n    }\n    project {\n      basicInfo {\n        name\n      }\n      id\n    }\n  }\n  entityLabels(limit: 100) {\n    ...BAIEntityLabelTokensFragment\n    ...BAIEntityLabelSettingModalFragment\n  }\n  vfolderAutoMounts {\n    edges {\n      node {\n        scopeType\n        mountDestination\n        subpath\n        mountPermission\n        id\n      }\n    }\n  }\n  ...VFolderNodeIdenticonV2Fragment\n  ...SharedFolderPermissionInfoModalV2Fragment\n  ...InviteFolderSettingModalFragment\n  ...DeleteForeverVFolderModalV2Fragment\n  ...BAINodeNotificationItemFragment\n}\n\nfragment VFolderPermissionCellV2Fragment on VFolder {\n  accessControl {\n    permission\n  }\n}\n\nfragment useBackendAIAppLauncherFragment on ComputeSessionNode {\n  name\n  row_id\n  vfolder_mounts\n  scaling_group\n  project_id\n  service_ports\n}\n"
   }
 };
 })();

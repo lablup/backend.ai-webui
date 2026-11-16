@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<50814d485fa636f62be373fef0b9efbf>>
+ * @generated SignedSource<<ddcea07bbd452f550654e18124500f84>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -200,6 +200,7 @@ return {
         "vfolderV2.status": {
           "enumValues": [
             "READY",
+            "CREATING",
             "CLONING",
             "DELETE_PENDING",
             "DELETE_ONGOING",

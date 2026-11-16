@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<cbf6ce9749139b4b2f190e6b8c39122f>>
+ * @generated SignedSource<<0ab4df285f9378fe14e744cf74120653>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -14,6 +14,7 @@ export type MountPermission = "READ_ONLY" | "READ_WRITE" | "RW_DELETE" | "%futur
 export type VFolderAutoMountScope = {
   project?: ReadonlyArray<UUIDScope> | null | undefined;
   user?: ReadonlyArray<UUIDScope> | null | undefined;
+  vfolder?: ReadonlyArray<UUIDScope> | null | undefined;
 };
 export type UUIDScope = {
   value: string;

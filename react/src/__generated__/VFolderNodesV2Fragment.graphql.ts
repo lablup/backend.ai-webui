@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<8a052baa8bf638443e45e244f1aa1edb>>
+ * @generated SignedSource<<af58bea4dca01e730113b9f2b1747eb9>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -13,7 +13,7 @@ export type MountPermission = "READ_ONLY" | "READ_WRITE" | "RW_DELETE" | "%futur
 export type PermissionBit = "CREATE" | "HARD_DELETE" | "READ" | "SOFT_DELETE" | "UPDATE" | "%future added value";
 export type VFolderAutoMountScopeType = "PROJECT" | "USER" | "%future added value";
 export type VFolderMountPermission = "NONE" | "READ_ONLY" | "READ_WRITE" | "RW_DELETE" | "%future added value";
-export type VFolderOperationStatus = "CLONING" | "DELETE_COMPLETE" | "DELETE_ERROR" | "DELETE_ONGOING" | "DELETE_PENDING" | "READY" | "%future added value";
+export type VFolderOperationStatus = "CLONING" | "CREATING" | "DELETE_COMPLETE" | "DELETE_ERROR" | "DELETE_ONGOING" | "DELETE_PENDING" | "READY" | "%future added value";
 export type VFolderOwnershipType = "GROUP" | "USER" | "%future added value";
 export type VFolderUsageMode = "DATA" | "GENERAL" | "MODEL" | "%future added value";
 import { FragmentRefs } from "relay-runtime";
@@ -500,6 +500,6 @@ return {
 };
 })();
 
-(node as any).hash = "9ec9496a3712520d8e60464ce0c0f301";
+(node as any).hash = "63b1406ecd57cea735e1cfe5480c58fe";
 
 export default node;
