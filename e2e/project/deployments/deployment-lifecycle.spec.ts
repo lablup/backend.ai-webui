@@ -576,8 +576,14 @@ test.describe(
       await expect(alert).toContainText('No revision is deployed', {
         timeout: 20000,
       });
+      // Astryx puts role="alert" on the banner's title and description only, so
+      // its action button is found from the banner frame, not the alert.
       await expect(
-        alert.getByRole('button', { name: 'Add Revision' }),
+        page
+          .getByTestId('page-deployments')
+          .locator('.astryx-banner')
+          .filter({ hasText: 'No revision is deployed' })
+          .getByRole('button', { name: 'Add Revision' }),
       ).toBeVisible();
 
       await expect(

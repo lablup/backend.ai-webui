@@ -78,7 +78,10 @@ describe('BAIPowerSearchEditor', () => {
 
     const hook = container.querySelector('.bai-power-search-editor');
     expect(hook).not.toBeNull();
-    expect(hook).toContainElement(screen.getByLabelText('Field'));
+    // Astryx 0.7.11 labels two controls "Field"; every one sits inside the hook.
+    const fields = screen.getAllByLabelText('Field');
+    expect(fields.length).toBeGreaterThan(0);
+    fields.forEach((field) => expect(hook).toContainElement(field));
   });
 
   it('registers that editor for every operator value type', () => {

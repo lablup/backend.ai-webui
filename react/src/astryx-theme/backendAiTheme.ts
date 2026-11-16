@@ -63,7 +63,7 @@ import {
 export { ANTD_ALIGN_TOKENS };
 
 /** Bump when the static recipe (align tokens, formulas) changes. */
-export const THEME_NAME_REV = 29;
+export const THEME_NAME_REV = 30;
 
 /**
  * NEUTRAL BACKGROUND FAMILY — pinned to the measured legacy antd values.
@@ -898,6 +898,24 @@ const ANTD_DROPDOWN_DENSITY = {
  * i.e. the same hue, one perceptual step short of antd's lift — against a
  * previous state that dropped the hue entirely in dark.
  */
+/**
+ * theme-neutral 0.7.11 greys `--color-text-secondary` on these four surfaces;
+ * keep the theme's pinned secondary text there too (ANTD_NEUTRAL_TEXT).
+ */
+const NEUTRAL_SECONDARY_TEXT = `light-dark(${ANTD_NEUTRAL_TEXT['--color-text-secondary'][0]}, ${ANTD_NEUTRAL_TEXT['--color-text-secondary'][1]})`;
+const SECONDARY_TEXT_PARITY = {
+  item: { selected: { '--color-text-secondary': NEUTRAL_SECONDARY_TEXT } },
+  'tree-list-item': {
+    selected: { '--color-text-secondary': NEUTRAL_SECONDARY_TEXT },
+  },
+  'file-input': {
+    'mode:dropzone': { '--color-text-secondary': NEUTRAL_SECONDARY_TEXT },
+  },
+  citation: {
+    'variant:number': { '--color-text-secondary': NEUTRAL_SECONDARY_TEXT },
+  },
+};
+
 const ANTD_HOVER_PARITY = {
   // antd `colorBgSpotlight` — the tooltip bubble is DARK in both schemes, with
   // `colorTextLightSolid` (#fff) copy. Astryx instead inverts against the app
@@ -1284,6 +1302,7 @@ export function buildBackendAITheme(
       ...FIELD_PAGE_OVERLAYS,
       ...COMMAND_PALETTE_ROW_OVERLAYS,
       ...ANTD_HOVER_PARITY,
+      ...SECONDARY_TEXT_PARITY,
     },
   });
 
