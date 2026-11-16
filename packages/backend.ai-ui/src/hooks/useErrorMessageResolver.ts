@@ -42,7 +42,17 @@ export type ESMClientErrorResponse = {
   response?: ErrorResponse | GraphQLErrorResponseBody;
 };
 
-type ErrorLike = Partial<ErrorResponse & Error & ESMClientErrorResponse>;
+/**
+ * Relay's error for a response that carries no data; the server's own
+ * `errors` sit on `source`, and `message` wraps them in Relay's prose.
+ */
+type RelayNetworkError = {
+  source?: GraphQLErrorResponseBody;
+};
+
+type ErrorLike = Partial<
+  ErrorResponse & Error & ESMClientErrorResponse & RelayNetworkError
+>;
 
 export type GetErrorMessageOptions = {
   defaultMessage?: string;
@@ -78,10 +88,12 @@ const useErrorMessageResolver = () => {
    * lives only in this array.
    */
   const getGraphQLErrorMessage = (
-    response: ErrorResponse | GraphQLErrorResponseBody | undefined,
+    response: ErrorResponse | GraphQLErrorResponseBody | undefined | null,
   ): string | undefined => {
     const errors =
-      response && 'errors' in response ? response.errors : undefined;
+      response && typeof response === 'object' && 'errors' in response
+        ? response.errors
+        : undefined;
     if (!Array.isArray(errors)) return undefined;
     const messages = errors
       .map((entry) => entry?.message)
@@ -112,7 +124,9 @@ const useErrorMessageResolver = () => {
 
     // Prefer the GraphQL error detail when the failed response carries one,
     // since the client's `message`/`title` only say "... - undefined" for it.
-    const graphQLErrorMessage = getGraphQLErrorMessage(error.response);
+    const graphQLErrorMessage =
+      getGraphQLErrorMessage(error.response) ??
+      getGraphQLErrorMessage(error.source);
     if (graphQLErrorMessage) {
       errorMsg = graphQLErrorMessage;
     } else if (error.msg || error.message) {

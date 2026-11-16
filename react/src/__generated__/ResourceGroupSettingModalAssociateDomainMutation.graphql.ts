@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<b68bf92f7dc53a5d1012bc2fd7294441>>
+ * @generated SignedSource<<332aa9978e6ba5dbaf6737362303144f>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,14 +9,17 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
+export type UpdateAllowedDomainsForResourceGroupInput = {
+  add?: ReadonlyArray<string> | null | undefined;
+  remove?: ReadonlyArray<string> | null | undefined;
+  resourceGroupName: string;
+};
 export type ResourceGroupSettingModalAssociateDomainMutation$variables = {
-  domain: string;
-  scaling_group: string;
+  input: UpdateAllowedDomainsForResourceGroupInput;
 };
 export type ResourceGroupSettingModalAssociateDomainMutation$data = {
-  readonly associate_scaling_group_with_domain: {
-    readonly msg: string | null | undefined;
-    readonly ok: boolean | null | undefined;
+  readonly adminUpdateAllowedDomainsForResourceGroupV2: {
+    readonly items: ReadonlyArray<string>;
   } | null | undefined;
 };
 export type ResourceGroupSettingModalAssociateDomainMutation = {
@@ -29,12 +32,7 @@ var v0 = [
   {
     "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "domain"
-  },
-  {
-    "defaultValue": null,
-    "kind": "LocalArgument",
-    "name": "scaling_group"
+    "name": "input"
   }
 ],
 v1 = [
@@ -43,32 +41,20 @@ v1 = [
     "args": [
       {
         "kind": "Variable",
-        "name": "domain",
-        "variableName": "domain"
-      },
-      {
-        "kind": "Variable",
-        "name": "scaling_group",
-        "variableName": "scaling_group"
+        "name": "input",
+        "variableName": "input"
       }
     ],
-    "concreteType": "AssociateScalingGroupWithDomain",
+    "concreteType": "AllowedDomainsPayload",
     "kind": "LinkedField",
-    "name": "associate_scaling_group_with_domain",
+    "name": "adminUpdateAllowedDomainsForResourceGroupV2",
     "plural": false,
     "selections": [
       {
         "alias": null,
         "args": null,
         "kind": "ScalarField",
-        "name": "ok",
-        "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "msg",
+        "name": "items",
         "storageKey": null
       }
     ],
@@ -93,16 +79,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "72535173512804feacec89a7cabb4ac3",
+    "cacheID": "b3a3ad1c2dbda8d3b79f3a6aeaf43760",
     "id": null,
     "metadata": {},
     "name": "ResourceGroupSettingModalAssociateDomainMutation",
     "operationKind": "mutation",
-    "text": "mutation ResourceGroupSettingModalAssociateDomainMutation(\n  $domain: String!\n  $scaling_group: String!\n) {\n  associate_scaling_group_with_domain(domain: $domain, scaling_group: $scaling_group) {\n    ok\n    msg\n  }\n}\n"
+    "text": "mutation ResourceGroupSettingModalAssociateDomainMutation(\n  $input: UpdateAllowedDomainsForResourceGroupInput!\n) {\n  adminUpdateAllowedDomainsForResourceGroupV2(input: $input) {\n    items\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "a1253f2e15bdfc1e59cdf2b26bc0a273";
+(node as any).hash = "6c85156647d82189655d48dec13d0b70";
 
 export default node;

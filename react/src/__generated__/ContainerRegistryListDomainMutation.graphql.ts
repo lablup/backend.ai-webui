@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<4f4f12c24752a271bb19dcdc0f9542bb>>
+ * @generated SignedSource<<a7e36ce7aa7626cc345670c670eda353>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,14 +10,18 @@
 
 import { ConcreteRequest } from 'relay-runtime';
 export type ContainerRegistryListDomainMutation$variables = {
-  allowed_docker_registries: ReadonlyArray<string | null | undefined>;
-  domain: string;
+  allowedDockerRegistries: ReadonlyArray<string>;
+  id: string;
 };
 export type ContainerRegistryListDomainMutation$data = {
-  readonly modify_domain: {
-    readonly msg: string | null | undefined;
-    readonly ok: boolean | null | undefined;
-  } | null | undefined;
+  readonly updateDomainV2: {
+    readonly domain: {
+      readonly id: string;
+      readonly registry: {
+        readonly allowedDockerRegistries: ReadonlyArray<string>;
+      };
+    };
+  };
 };
 export type ContainerRegistryListDomainMutation = {
   response: ContainerRegistryListDomainMutation$data;
@@ -28,12 +32,12 @@ const node: ConcreteRequest = (function(){
 var v0 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "allowed_docker_registries"
+  "name": "allowedDockerRegistries"
 },
 v1 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "domain"
+  "name": "id"
 },
 v2 = [
   {
@@ -41,38 +45,60 @@ v2 = [
     "args": [
       {
         "kind": "Variable",
-        "name": "name",
-        "variableName": "domain"
+        "name": "id",
+        "variableName": "id"
       },
       {
         "fields": [
           {
             "kind": "Variable",
-            "name": "allowed_docker_registries",
-            "variableName": "allowed_docker_registries"
+            "name": "allowedDockerRegistries",
+            "variableName": "allowedDockerRegistries"
           }
         ],
         "kind": "ObjectValue",
-        "name": "props"
+        "name": "input"
       }
     ],
-    "concreteType": "ModifyDomain",
+    "concreteType": "DomainPayload",
     "kind": "LinkedField",
-    "name": "modify_domain",
+    "name": "updateDomainV2",
     "plural": false,
     "selections": [
       {
         "alias": null,
         "args": null,
-        "kind": "ScalarField",
-        "name": "ok",
-        "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "msg",
+        "concreteType": "DomainV2",
+        "kind": "LinkedField",
+        "name": "domain",
+        "plural": false,
+        "selections": [
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "id",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "DomainRegistryInfo",
+            "kind": "LinkedField",
+            "name": "registry",
+            "plural": false,
+            "selections": [
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "allowedDockerRegistries",
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
+          }
+        ],
         "storageKey": null
       }
     ],
@@ -103,16 +129,16 @@ return {
     "selections": (v2/*: any*/)
   },
   "params": {
-    "cacheID": "5ea7ebdd79d15e15b23a9fb2d8568d34",
+    "cacheID": "cec5408bcc7d3f40200da99fe2b687e4",
     "id": null,
     "metadata": {},
     "name": "ContainerRegistryListDomainMutation",
     "operationKind": "mutation",
-    "text": "mutation ContainerRegistryListDomainMutation(\n  $domain: String!\n  $allowed_docker_registries: [String]!\n) {\n  modify_domain(name: $domain, props: {allowed_docker_registries: $allowed_docker_registries}) {\n    ok\n    msg\n  }\n}\n"
+    "text": "mutation ContainerRegistryListDomainMutation(\n  $id: UUID!\n  $allowedDockerRegistries: [String!]!\n) {\n  updateDomainV2(id: $id, input: {allowedDockerRegistries: $allowedDockerRegistries}) {\n    domain {\n      id\n      registry {\n        allowedDockerRegistries\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "647ec7cdf3bcffc8cc1d8cd3cced159f";
+(node as any).hash = "fe8bb4a26c38c335b3608df2f9650bc1";
 
 export default node;

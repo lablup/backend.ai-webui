@@ -39,6 +39,7 @@ import {
   BAISwitch,
   BAITextArea,
   BAITextInput,
+  useErrorMessageResolver,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { Suspense, useDeferredValue, useRef } from 'react';
@@ -71,6 +72,7 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
   'use memo';
   const { t } = useTranslation();
   const { message } = App.useApp();
+  const { getErrorMessage } = useErrorMessageResolver();
   const { logger } = useBAILogger();
   const baiClient = useSuspendedBackendaiClient();
   const currentDomain = useCurrentDomainValue();
@@ -108,6 +110,8 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
   const isSftpMapLoading =
     proxyResourceGroups === undefined || isSftpMapFetching;
 
+  // TODO(needs-backend): lablup/backend.ai#16372, lablup/backend.ai#16373 the V2 resource group
+  // inputs have no `scheduler_opts`; move create/update to `adminCreateResourceGroupV2` / `updateResourceGroup` then.
   const [commitUpdateResourceGroup, isInFlightCommitUpdateResourceGroup] =
     useMutation<ResourceGroupSettingModalUpdateMutation>(graphql`
       mutation ResourceGroupSettingModalUpdateMutation(
@@ -135,15 +139,10 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
   const [commitAssociateDomain, isInFlightCommitAssociateDomain] =
     useMutation<ResourceGroupSettingModalAssociateDomainMutation>(graphql`
       mutation ResourceGroupSettingModalAssociateDomainMutation(
-        $domain: String!
-        $scaling_group: String!
+        $input: UpdateAllowedDomainsForResourceGroupInput!
       ) {
-        associate_scaling_group_with_domain(
-          domain: $domain
-          scaling_group: $scaling_group
-        ) {
-          ok
-          msg
+        adminUpdateAllowedDomainsForResourceGroupV2(input: $input) {
+          items
         }
       }
     `);
@@ -272,7 +271,7 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
                   );
                 },
                 onError: (err) => {
-                  message.error(err.message);
+                  message.error(getErrorMessage(err));
                 },
               });
               return;
@@ -300,17 +299,12 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
 
                 commitAssociateDomain({
                   variables: {
-                    domain: currentDomain,
-                    scaling_group: values.name,
+                    input: {
+                      resourceGroupName: values.name,
+                      add: [currentDomain],
+                    },
                   },
-                  onCompleted: (
-                    { associate_scaling_group_with_domain: res },
-                    errors,
-                  ) => {
-                    if (!res?.ok) {
-                      message.error(res?.msg);
-                      return;
-                    }
+                  onCompleted: (_res, errors) => {
                     if (errors && errors.length > 0) {
                       const errorMsgList = _.map(
                         errors,
@@ -328,12 +322,12 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
                     );
                   },
                   onError: (err) => {
-                    message.error(err.message);
+                    message.error(getErrorMessage(err));
                   },
                 });
               },
               onError: (err) => {
-                message.error(err.message);
+                message.error(getErrorMessage(err));
               },
             });
           })
