@@ -68,7 +68,7 @@ sequenceDiagram
 
 - **Helper**: `withWebUISettings(state, publicDoc, domainDoc)`(`react/src/helper/webuiSettings.ts`)는 모든 정의의 필드를 코드 기본값으로 되돌린 뒤 PUBLIC 문서, 이어서 DOMAIN 문서를 적용한다. 어떤 정의도 갖지 않는 필드는 `state`의 값을 유지한다.
 - **Pre-sign-in callers**: 부트(`initializeConfigOnce`)와 다른 webserver 합류(`loadConfigFromWebServer`)가 이 함수로 로그인 전 상태를 만든다.
-- **Sign-in**: `connectViaGQL`은 로그인 전 상태 위에 DOMAIN 문서만 적용한다(`applyWebUISettings`). 그 상태에 PUBLIC 문서가 이미 들어 있기 때문이다.
+- **Sign-in**: `connectViaGQL`은 DOMAIN 문서로 `domainWebUISettingsState`를 설정한다. PUBLIC 층은 이미 설정되어 있고, `loginConfigState`는 두 층에서 계산된다(ADR 0033).
 - **System Settings**: `setEffectiveWebUISettings(store, publicDoc, domainDoc)`(`react/src/hooks/useWebUIConfig.ts`)가 `publicWebUISettingsState`와 `domainWebUISettingsState`를 설정한 뒤 `autoLogoutState`를 설정한다. `loginConfigState`는 ADR 0033의 derived atom으로, `baseLoginConfigState`와 두 층에 `withWebUISettings`를 적용한다.
 - **Why a rebuild**: 행 리셋은 키를 지운다. 이전 상태 위에 문서를 적용하면 지운 값이 남고, 기본값부터 다시 만들면 기본값으로 돌아간다.
 
@@ -76,7 +76,7 @@ sequenceDiagram
 
 - **When a row saves**: checkbox, selector, 목록, plugin 경로 컨트롤은 바뀔 때 저장한다. 숫자 입력은 blur, Enter, stepper 클릭 때 저장한다(`NumberInput`이 그때만 값을 확정한다). 텍스트 입력은 확정할 때(`BAIUncontrolledInput`의 `onCommit`) 저장한다. 행 리셋은 즉시 저장한다.
 - **Order of effects**: `WebUISettingList`는 행의 값을 바꾸고 페이지 값으로 만든 문서(`buildWebUISettingsDocument`)로 `setEffectiveWebUISettings`를 부른 뒤, 바뀐 스코프마다 `setDomainSettings` / `setPublicSettings` prop으로 쓴다. `WebUISettingsPage`는 두 prop을 `upsertScopedAppConfig`로 만든다(ADR 0033). 쓰기는 페이지가 읽은 문서의 `settings` 서브키를 [read-modify-write](#용어)하고, 표 밖의 키를 그대로 옮긴다(`withForeignWebUISettings`).
-- **Where the state lives**: Jotai store마다 settings session 하나(`WebUISettingList.tsx`의 모듈 `WeakMap`)가 서버가 마지막으로 받아들인 값(`confirmed`, session이 시작될 때 문서로 채운다)과 스코프마다 `{ running, rerun, force }` 항목 하나를 가진다. 화면에 보이는 값은 `sessionValuesAtom`에 둔다. 쓰기가 도는 동안 다시 mount되면 같은 session에 합류하므로, 쓰는 쪽과 되돌릴 기준이 하나뿐이다. 도는 쓰기가 없고 모든 쓰기가 다시 조회를 마치면 session이 끝나고, 행은 다시 저장된 문서를 따른다.
+- **Where the state lives**: Jotai store마다 settings session 하나(`WebUISettingList.tsx`의 모듈 `WeakMap`)가 서버가 마지막으로 받아들인 값(`confirmed`, session이 시작될 때 문서로 채운다)과 스코프마다 `{ running, rerun, force }` 항목 하나를 가진다. 화면에 보이는 값은 `sessionValuesAtom`에 둔다. 쓰기가 도는 동안 다시 mount되면 같은 session에 합류하므로, 쓰는 쪽과 되돌릴 기준이 하나뿐이다. 도는 쓰기가 없으면 session이 끝난다. upsert 응답이 저장된 문서를 이미 갱신했으므로 행은 다시 그 문서를 따른다.
 - **One write per scope at a time**: 한 스코프의 쓰기가 도는 동안 그 스코프가 또 바뀌면 `rerun`을 세우고, 다음 쓰기가 최신 값을 저장한다. `useAppConfig`도 한 문서에 대한 모든 쓰기를 줄 세우므로(`serializeWrite`), 공지 modal과 설정 행이 서로의 read-modify-write를 덮어쓰지 않는다.
 - **Several keys at once**: JSON Config 가져오기와 툴바 Reset은 바뀐 스코프마다 한 번만 쓴다. Reset은 입력 확인(`BAIDeleteConfirmModal`)을 유지한다.
 - **Refused write**: 페이지는 거부된 쓰기가 담았던 키마다 확정된 값을 되돌린다. 그사이 행이 다시 바뀌었으면 되돌리지 않는다. 스코프가 아직 확정된 값과 다르면 쓰기를 한 번 더 예약하고, 해당 설정을 나열한 오류 modal(`webuiSettings.NotSaved`, `webuiSettings.NotSavedItems`)을 연다.

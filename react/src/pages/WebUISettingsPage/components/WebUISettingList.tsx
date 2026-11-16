@@ -116,12 +116,18 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
   const store = useStore();
 
   const baseState = getDefaultLoginConfig();
-  // Only the keys a definition owns: the announcement beside them is saved by
-  // its own modal.
-  const saved: WebUISettingsDocument = ownedWebUISettings({
-    ...savedPublicSettings,
-    ...savedDomainSettings,
-  });
+  // Only the keys a definition owns, each from its own scope's document: the
+  // announcement beside them is saved by its own modal.
+  const saved: WebUISettingsDocument = {
+    ...pickWebUISettingsOfScope(
+      ownedWebUISettings({ ...savedPublicSettings }),
+      'public',
+    ),
+    ...pickWebUISettingsOfScope(
+      ownedWebUISettings({ ...savedDomainSettings }),
+      'domain',
+    ),
+  };
   const sessionValues = useAtomValue(sessionValuesAtom);
   const values = sessionValues ?? saved;
 
@@ -198,20 +204,25 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
       session.writes[scope].rerun = true;
     }
     // A key changed again meanwhile is retried, not reverted, so it is not listed.
-    if (reverted.length === 0) return;
+    // A forced write (Reset) can fail with nothing to revert; it still reports.
+    if (reverted.length === 0 && failed.length > 0) return;
     modal.error({
       title: t('webuiSettings.NotSaved'),
       content: (
         <BAIFlex direction="column" align="stretch" gap="xs">
           <Text>{getErrorMessage(error)}</Text>
-          <Text>{t('webuiSettings.NotSavedItems')}</Text>
-          <BAIFlex direction="column" align="start" gap="xxs">
-            {reverted.map((definition) => (
-              <Text key={definition.key} weight="semibold">
-                {labels.items[definition.key].title}
-              </Text>
-            ))}
-          </BAIFlex>
+          {reverted.length > 0 && (
+            <>
+              <Text>{t('webuiSettings.NotSavedItems')}</Text>
+              <BAIFlex direction="column" align="start" gap="xxs">
+                {reverted.map((definition) => (
+                  <Text key={definition.key} weight="semibold">
+                    {labels.items[definition.key].title}
+                  </Text>
+                ))}
+              </BAIFlex>
+            </>
+          )}
         </BAIFlex>
       ),
     });
