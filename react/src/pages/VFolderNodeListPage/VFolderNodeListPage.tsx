@@ -272,7 +272,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
                 metadata {
                   name
                 }
-                ...VFolderNodesV2Fragment @arguments(withAutoMount: true)
+                ...VFolderNodesV2Fragment
                 ...WebMCPVFolderListToolsFragment
                 ...DeleteVFolderModalV2Fragment
                 ...DeleteForeverVFolderModalV2Fragment
@@ -540,7 +540,6 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
               order={queryParams.order}
               loading={deferredQueryVariables !== queryVariables}
               project={projectContext}
-              showAutoMountColumn
               vfoldersFrgmt={vfolderNodes}
               rowSelection={{
                 type: 'checkbox',

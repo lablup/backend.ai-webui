@@ -941,11 +941,6 @@
         },
         {
           "param": "mode",
-          "key": "automount",
-          "labelKey": "data.AutoMount"
-        },
-        {
-          "param": "mode",
           "key": "data",
           "labelKey": "data.Pipeline"
         },
