@@ -156,7 +156,16 @@ test.describe(
                 checked: defaultValue as boolean,
               });
               break;
-            case 'number':
+            case 'number': {
+              // An unset number row is empty with its default as the
+              // placeholder (WebUISettingList); a stored one shows the value.
+              const shown = String(defaultValue);
+              await expect(rowInput(row)).toHaveAttribute('placeholder', shown);
+              await expect(rowInput(row)).toHaveValue(
+                new RegExp(`^(${shown.replace(/[.\-+]/g, '\\$&')})?$`),
+              );
+              break;
+            }
             case 'string':
               await expect(rowInput(row)).toHaveValue(String(defaultValue));
               break;
