@@ -453,9 +453,9 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
   const { t } = useTranslation();
   const { token } = useTheme();
   const { message } = App.useApp();
-  const { hideModelDefinitionPath } = useEffectiveLoginConfig();
   const relayEnvironment = useRelayEnvironment();
-  const { isDirectorySizeVisible } = useEffectiveLoginConfig();
+  const { isDirectorySizeVisible, hideModelDefinitionPath } =
+    useEffectiveLoginConfig();
 
   // Deployment-scoped data (resourceGroupName for resource defaults,
   // currentRevision for the optional "Load current" affordance). Fragment-
