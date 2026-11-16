@@ -29,10 +29,7 @@ Next, a dialog containing SSH/SFTP connection information pops up. The
 dialog shows the **User**, **Host**, and **Port** to connect to and ready-made
 `sftp`, `scp`, and `rsync` example commands. Register your SSH public key in
 [SSH keypair management](#user-ssh-keypair-management) under User Settings
-first, then connect with the matching private key. Alternatively, you can
-download the automatically generated `id_container` private key located under
-`/home/work/` with your web terminal or Jupyter Notebook; that key may change
-when a new session is created.
+first, then connect with the matching private key.
 
 ![=800px](../images/SSH_SFTP_connection.png)
 
@@ -56,7 +53,7 @@ host and port in the transcript below with the values shown in your own dialog.
 
 ```shellsession
 $ ssh \
-    -i ~/.ssh/id_container -p 30722 \
+    -i /path/to/private_key -p 30722 \
     -o StrictHostKeyChecking=no \
     -o UserKnownHostsFile=/dev/null \
     work@127.0.0.1
@@ -82,16 +79,16 @@ will be assigned.
 :::
 
 :::note
-If you want to use your own SSH keypair instead of `id_container`, create a
-user-type folder named `.ssh`. If you create `authorized_keys` file in
-that folder and append it with the contents of your SSH public key, you can
-connect by SSH/SFTP through your own SSH private key without having to
-download the `id_container` after creating a compute session.
+Instead of registering a key in User Settings, you can authorize one for a
+single session: create a user-type folder named `.ssh`, create
+`authorized_keys` file in that folder, and append it with the contents of your
+SSH public key. You can then connect by SSH/SFTP through the matching SSH
+private key.
 :::
 
 :::note
 If you receive the following warning message, try again after changing the
-permission of the `id_container` to 600. (`chmod 600 <id_container path>`)
+permission of the private key file to 600. (`chmod 600 <private key path>`)
 
 ![](../images/bad_permissions.png)
 :::
@@ -134,20 +131,19 @@ https://wiki.filezilla-project.org/Howto. For easier explanation, this section
 will describe how to connect to SFTP through FileZilla client on Windows.
 
 Refer to the connection method on Linux/Mac, create a compute session, check the
-connection port and prepare your SSH private key. If you use the automatically
-generated `id_container` key, take it from `/home/work/` inside the session.
-`id_container` is an OpenSSH-based key, so if you use a client that supports
-only Windows or ppk type keys, you must convert it. Here, we will convert
-through the PuTTYgen program installed with PuTTY. After running the PuTTYgen,
-click on the import key in the Conversions menu. Select the `id_container` file
-from the file open dialog. Click the Save private key button of PuTTYGen and
-save the file with the name `id_container.ppk`.
+connection port and prepare your SSH private key. The private key is an
+OpenSSH-based key, so if you use a client that supports only Windows or ppk
+type keys, you must convert it. Here, we will convert through the PuTTYgen
+program installed with PuTTY. After running the PuTTYgen, click on the import
+key in the Conversions menu. Select your private key file from the file open
+dialog. Click the Save private key button of PuTTYGen and save the file with
+the `ppk` extension.
 
 ![](../images/puttygen_conversion.png)
 
 After launching the FileZilla client, go to the Settings-Connection-SFTP
-and register the key file `id_container.ppk` (`id_container` for clients
-supporting OpenSSH).
+and register the converted `ppk` key file (the SSH private key itself for
+clients supporting OpenSSH).
 
 ![=628px](../images/filezilla_setting.png)
 
@@ -392,10 +388,10 @@ $ backend.ai ssh ibnFmWim-session
 work@main1[ibnFmWim-session]:~$
 ```
 
-If you want to download the SSH key file and explicitly run the ssh command, you
-need to first run the following command to launch a local proxy service that
-relays connection from the local machine to the computation session. You can
-specify the port (9922) to use on the local machine with the b option.
+If you want to run the ssh command explicitly, you need to first run the
+following command to launch a local proxy service that relays connection from
+the local machine to the computation session. You can specify the port (9922)
+to use on the local machine with the b option.
 
 ```shellsession
 $ backend.ai app ibnFmWim-session sshd -b 9922
@@ -403,18 +399,14 @@ $ backend.ai app ibnFmWim-session sshd -b 9922
 tcp://127.0.0.1:9922
 ```
 
-Open another terminal window on your local machine. Move to the working
-directory where the `.env` file is located, and download the SSH key
-automatically generated in the compute session.
+Open another terminal window on your local machine and move to the working
+directory where the `.env` file is located.
 
 ```shellsession
 $ source .venv/bin/activate  # Reactivate the Python virtual environment as this is a different terminal
-$ backend.ai session download ibnFmWim-session id_container
-Downloading files: 3.58kbytes [00:00, 352kbytes/s]
-✓ Downloaded to /*/client.
 ```
 
-You can use the downloaded key to SSH as follows. Since you launched the local
+You can use your SSH private key to SSH as follows. Since you launched the local
 proxy on port 9922, the connection address should be 127.0.0.1 and the port
 should be 9922. Use the user account `work` for the connection.
 
@@ -422,7 +414,7 @@ should be 9922. Use the user account `work` for the connection.
 $ ssh \
 -o StrictHostKeyChecking=no \
 -o UserKnownHostsFile=/dev/null \
--i ./id_container \
+-i /path/to/private_key \
 -p 9922 \
 work@127.0.0.1
 Warning: Permanently added '[127.0.0.1]:9922' (RSA) to the list of known hosts.
@@ -437,7 +429,7 @@ preserve them even after the session has been terminated.
 $ scp \
 -o StrictHostKeyChecking=no \
 -o UserKnownHostsFile=/dev/null \
--i ./id_container \
+-i /path/to/private_key \
 -P 9922 \
 test_file.xlsx work@127.0.0.1:/home/work/myfolder/
 Warning: Permanently added '[127.0.0.1]:9922' (RSA) to the list of known hosts.
