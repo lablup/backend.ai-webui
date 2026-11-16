@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<09b4ac5baf2e211cb9514f8c19b96137>>
+ * @generated SignedSource<<5119579034ed2bf64fabb2bf26a7ab2c>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -16,12 +16,6 @@ export type VFolderAutoMountSettingModalFragment$data = {
   readonly mountDestination: string;
   readonly mountPermission: MountPermission;
   readonly subpath: string;
-  readonly vfolder: {
-    readonly metadata: {
-      readonly name: string;
-    };
-  } | null | undefined;
-  readonly vfolderId: string;
   readonly " $fragmentType": "VFolderAutoMountSettingModalFragment";
 };
 export type VFolderAutoMountSettingModalFragment$key = {
@@ -46,13 +40,6 @@ const node: ReaderFragment = {
       "alias": null,
       "args": null,
       "kind": "ScalarField",
-      "name": "vfolderId",
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
       "name": "mountDestination",
       "storageKey": null
     },
@@ -69,41 +56,12 @@ const node: ReaderFragment = {
       "kind": "ScalarField",
       "name": "mountPermission",
       "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "concreteType": "VFolder",
-      "kind": "LinkedField",
-      "name": "vfolder",
-      "plural": false,
-      "selections": [
-        {
-          "alias": null,
-          "args": null,
-          "concreteType": "VFolderMetadataInfo",
-          "kind": "LinkedField",
-          "name": "metadata",
-          "plural": false,
-          "selections": [
-            {
-              "alias": null,
-              "args": null,
-              "kind": "ScalarField",
-              "name": "name",
-              "storageKey": null
-            }
-          ],
-          "storageKey": null
-        }
-      ],
-      "storageKey": null
     }
   ],
   "type": "VFolderAutoMount",
   "abstractKey": null
 };
 
-(node as any).hash = "0ce53f915d6ce562ec12ad9027f273c6";
+(node as any).hash = "9403e3e17e69c14494dc82a674bc5f22";
 
 export default node;

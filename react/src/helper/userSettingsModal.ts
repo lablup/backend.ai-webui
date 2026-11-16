@@ -14,7 +14,6 @@ export const USER_SETTINGS_ROUTE = '/usersettings';
 
 export const USER_SETTINGS_CATEGORIES = [
   'general',
-  'auto-mount',
   'logs',
   'login-sessions',
   'login-history',

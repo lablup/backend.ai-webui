@@ -13,14 +13,13 @@ import { Text } from '@lablup/ui-common/Text';
 import {
   BAIModal,
   type BAIModalProps,
-  BAIScopedVFolderSelect,
   BAISelect,
   BAITextInput,
   useErrorMessageResolver,
   useMutationWithPromise,
 } from 'backend.ai-ui';
 import { FolderIcon } from 'lucide-react';
-import { Suspense, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 
@@ -28,7 +27,6 @@ export type VFolderAutoMountScopeType = 'PROJECT' | 'USER';
 type MountPermission = 'READ_ONLY' | 'READ_WRITE' | 'RW_DELETE';
 
 interface FormValues {
-  vfolderId?: string;
   mountDestination: string;
   subpath?: string;
   mountPermission: MountPermission;
@@ -43,8 +41,7 @@ export interface VFolderAutoMountSettingModalProps extends Omit<
   scopeId: string;
   /** The auto-mount being edited; create mode when absent. */
   autoMountFrgmt?: VFolderAutoMountSettingModalFragment$key | null;
-  /** Fixes the folder of a new auto-mount instead of offering a picker. */
-  vfolder?: { id: string; name: string };
+  vfolder: { id: string; name: string };
   onRequestClose: (success: boolean) => void;
 }
 
@@ -69,15 +66,9 @@ const VFolderAutoMountSettingModal: React.FC<
     graphql`
       fragment VFolderAutoMountSettingModalFragment on VFolderAutoMount {
         entityId
-        vfolderId
         mountDestination
         subpath
         mountPermission
-        vfolder {
-          metadata {
-            name
-          }
-        }
       }
     `,
     autoMountFrgmt,
@@ -136,7 +127,7 @@ const VFolderAutoMountSettingModal: React.FC<
         await createAutoMount({
           input: {
             scope: { scopeType, scopeId },
-            vfolderId: vfolder?.id ?? values.vfolderId ?? '',
+            vfolderId: vfolder.id,
             mountDestination: values.mountDestination.trim(),
             subpath,
             mountPermission: values.mountPermission,
@@ -151,11 +142,6 @@ const VFolderAutoMountSettingModal: React.FC<
       setIsSaving(false);
     }
   };
-
-  const folderScope =
-    scopeType === 'PROJECT'
-      ? { project: [{ value: scopeId }] }
-      : { user: [{ value: scopeId }] };
 
   return (
     <BAIModal
@@ -178,49 +164,13 @@ const VFolderAutoMountSettingModal: React.FC<
             'READ_WRITE') as MountPermission,
         }}
       >
-        {isEditMode || vfolder ? (
-          // Plain text, not a read-only input, so the fixed folder does not look editable.
-          <BAIFormItem label={t('autoMount.Folder')}>
-            <HStack gap={2} vAlign="center">
-              <FolderIcon size="1em" />
-              <Text weight="semibold">
-                {autoMount
-                  ? (autoMount.vfolder?.metadata?.name ?? autoMount.vfolderId)
-                  : (vfolder?.name ?? '')}
-              </Text>
-            </HStack>
-          </BAIFormItem>
-        ) : (
-          <BAIFormItem
-            name="vfolderId"
-            label={t('autoMount.Folder')}
-            extra={
-              scopeType === 'PROJECT'
-                ? t('autoMount.ProjectFolderHint')
-                : t('autoMount.UserFolderHint')
-            }
-            rules={[
-              { required: true, message: t('autoMount.PleaseSelectFolder') },
-            ]}
-          >
-            <Suspense
-              fallback={
-                <BAITextInput
-                  aria-label={t('autoMount.Folder')}
-                  value=""
-                  disabled
-                />
-              }
-            >
-              <BAIScopedVFolderSelect
-                label={t('autoMount.Folder')}
-                isLabelHidden
-                scope={folderScope}
-                filter={{ status: { equals: 'READY' } }}
-              />
-            </Suspense>
-          </BAIFormItem>
-        )}
+        {/* Plain text, not a read-only input, so the fixed folder does not look editable. */}
+        <BAIFormItem label={t('autoMount.Folder')}>
+          <HStack gap={2} vAlign="center">
+            <FolderIcon size="1em" />
+            <Text weight="semibold">{vfolder.name}</Text>
+          </HStack>
+        </BAIFormItem>
         <BAIFormItem
           name="mountDestination"
           label={t('autoMount.MountDestination')}

@@ -24,8 +24,8 @@ flowchart LR
     projectFolder["Project folder"]
   end
   subgraph set["Where the WebUI sets it"]
-    personal["Personal project<br/>FolderCreateModal, user settings, explorer"]
-    admin["Project admin<br/>FolderCreateModal, ProjectAutoMountSettingModal, explorer"]
+    personal["Personal project<br/>FolderCreateModal, explorer"]
+    admin["Project admin<br/>FolderCreateModal, explorer"]
   end
   subgraph manager["Manager"]
     userScope["USER scope of the owner"]
@@ -51,7 +51,7 @@ flowchart LR
 
 - **Scope choice**: Every WebUI path that creates an auto-mount derives the scope from the folder's owner. A folder whose `accessControl.ownershipType` is `USER` gets the `USER` scope of `ownership.userId`. Any other folder gets the `PROJECT` scope of `ownership.projectId`.
 - **Creation paths**: `FolderCreateModal` creates a folder in the personal project as the user's own folder and auto-mounts it for the user. In any other project it auto-mounts the folder for that project.
-- **Folder pickers**: `VFolderAutoMountSettingModal` offers only folders of the scope it edits, through `BAIScopedVFolderSelect` with the same scope. The user settings list therefore picks only folders the user owns, and the project list picks only folders of that project.
+- **Folder entry points**: An auto-mount is added only from a folder: `FolderCreateModal` and the folder explorer's `VFolderAutoMountMetadataSection`. `VFolderAutoMountSettingModal` always receives that folder and offers no folder picker.
 
 ### 2. One row per folder on read
 

@@ -25,7 +25,6 @@ import { BAIModal, BAISkeleton, useBAIBreakpoint } from 'backend.ai-ui';
 import {
   ArrowLeft,
   ChevronRight,
-  FolderSync,
   History,
   MonitorSmartphone,
   ScrollText,
@@ -62,7 +61,6 @@ const CATEGORY_ICONS: Record<
   React.ComponentProps<typeof Icon>['icon']
 > = {
   general: SlidersHorizontal,
-  'auto-mount': FolderSync,
   logs: ScrollText,
   'login-sessions': MonitorSmartphone,
   'login-history': History,
@@ -70,7 +68,6 @@ const CATEGORY_ICONS: Record<
 
 const CATEGORY_LABEL_KEYS: Record<UserSettingsCategory, string> = {
   general: 'userSettings.General',
-  'auto-mount': 'userSettings.AutoMount',
   logs: 'userSettings.Logs',
   'login-sessions': 'userSettings.LoginSessions',
   'login-history': 'userSettings.LoginHistory',
@@ -93,10 +90,6 @@ const UserSettingsModal: React.FC<UserSettingsModalProps> = ({
   const { md } = useBAIBreakpoint();
   const isNarrow = !md;
   const [narrowView, setNarrowView] = useState<'nav' | 'detail'>('detail');
-  const settingCategories: Array<UserSettingsCategory> = [
-    'general',
-    'auto-mount',
-  ];
 
   // Narrow drill-down: picking a category in the rail reveals its pane, the
   // back button returns to the rail (same idiom as `SettingList`).
@@ -105,31 +98,39 @@ const UserSettingsModal: React.FC<UserSettingsModalProps> = ({
     onCategoryChange(next);
   };
 
-  const renderCategoryItem = (key: UserSettingsCategory) => (
-    <ListItem
-      key={key}
-      label={t(CATEGORY_LABEL_KEYS[key])}
-      startContent={<Icon icon={CATEGORY_ICONS[key]} size="sm" />}
-      endContent={
-        isNarrow ? (
-          <Icon icon={ChevronRight} size="sm" color="secondary" />
-        ) : undefined
-      }
-      isSelected={!isNarrow && category === key}
-      onClick={() => selectCategory(key)}
-    />
-  );
-
   const categoryNav = (
     <VStack gap={2}>
       <List density="spacious">
-        {settingCategories.map(renderCategoryItem)}
+        <ListItem
+          label={t(CATEGORY_LABEL_KEYS.general)}
+          startContent={<Icon icon={CATEGORY_ICONS.general} size="sm" />}
+          endContent={
+            isNarrow ? (
+              <Icon icon={ChevronRight} size="sm" color="secondary" />
+            ) : undefined
+          }
+          isSelected={!isNarrow && category === 'general'}
+          onClick={() => selectCategory('general')}
+        />
       </List>
       <Divider />
       <List density="spacious">
-        {USER_SETTINGS_CATEGORIES.filter(
-          (key) => key !== 'general' && key !== 'auto-mount',
-        ).map(renderCategoryItem)}
+        {USER_SETTINGS_CATEGORIES.filter((key) => key !== 'general').map(
+          (key) => (
+            <ListItem
+              key={key}
+              label={t(CATEGORY_LABEL_KEYS[key])}
+              startContent={<Icon icon={CATEGORY_ICONS[key]} size="sm" />}
+              endContent={
+                isNarrow ? (
+                  <Icon icon={ChevronRight} size="sm" color="secondary" />
+                ) : undefined
+              }
+              isSelected={!isNarrow && category === key}
+              onClick={() => selectCategory(key)}
+            />
+          ),
+        )}
       </List>
     </VStack>
   );
