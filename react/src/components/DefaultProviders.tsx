@@ -22,7 +22,10 @@ import {
   useWebUINavigate,
 } from '../hooks';
 import { useDeviceMetaData, useImageMetaData } from '../hooks/backendai';
-import { syncLoginConfigToClient, useLoginConfig } from '../hooks/useWebUIConfig';
+import {
+  syncLoginConfigToClient,
+  useLoginConfig,
+} from '../hooks/useWebUIConfig';
 import '../index.css';
 import I18nKeyMarkers, { appendI18nKeyMarker } from './I18nKeyMarkers';
 import NotificationHost from './NotificationHost';
