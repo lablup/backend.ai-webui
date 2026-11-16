@@ -137,10 +137,8 @@ async function uploadFixturesToVFolder(
 
 // `cr.backend.ai/stable/python:3.9-ubuntu20.04@x86_64` -> `python`
 function imageKeyOf(image: string): string {
-  const name = image.split('@')[0];
-  const colon = name.lastIndexOf(':');
-  const repo = colon >= 0 ? name.slice(0, colon) : name;
-  return repo.split('/').pop() ?? repo;
+  const last = image.split('@')[0].split('/').pop() ?? image;
+  return last.split(':')[0];
 }
 
 /**
@@ -180,6 +178,8 @@ async function addAdvancedRevision(
   await page
     .getByRole('listbox', { name: /^Environments \/ Version/ })
     .getByRole('option')
+    .filter({ hasText: new RegExp(escapeForRegExp(imageKey), 'i') })
+    .filter({ hasNotText: /cuda/i })
     .first()
     .click();
   await expect(envSelect).toContainText(imageKey, {
@@ -228,7 +228,7 @@ test.describe(
     test.setTimeout(240_000);
 
     test.afterAll(async ({ browser, request }, testInfo) => {
-      testInfo.setTimeout(300_000);
+      testInfo.setTimeout(420_000);
 
       // Deployment first: its revision mounts the model folder.
       await resources.cleanup();
@@ -245,9 +245,12 @@ test.describe(
       }
 
       try {
-        await moveToTrashAndVerify(page, VFOLDER_NAME, 'data', {
-          skipTrashVerify: true,
-        });
+        // The replica session keeps the folder mounted until it terminates.
+        await expect(async () => {
+          await moveToTrashAndVerify(page, VFOLDER_NAME, 'data', {
+            skipTrashVerify: true,
+          });
+        }).toPass({ timeout: 180_000, intervals: [15_000] });
         await deleteForeverAndVerifyFromTrash(page, VFOLDER_NAME);
       } catch {
         console.log(`Could not delete vfolder ${VFOLDER_NAME}`);
@@ -310,10 +313,12 @@ test.describe(
       test.setTimeout(SERVICE_READY_TIMEOUT + 120_000);
       expect(deploymentDetailUrl, 'deployment was created').toBeTruthy();
       await loginAsAdmin(page, request);
-      await page.goto(deploymentDetailUrl!);
-      await expect(
-        page.getByRole('heading', { level: 3, name: DEPLOYMENT_NAME }),
-      ).toBeVisible({ timeout: 20000 });
+      await expect(async () => {
+        await page.goto(deploymentDetailUrl!);
+        await expect(
+          page.getByRole('heading', { level: 3, name: DEPLOYMENT_NAME }),
+        ).toBeVisible({ timeout: 20000 });
+      }).toPass({ timeout: 90_000 });
 
       const replicaRows = page.getByRole('row').filter({
         has: page.getByRole('button', { name: 'Replica Scheduling History' }),
@@ -337,7 +342,8 @@ test.describe(
         // cluster keeps sessions PENDING); any other state is a real failure.
         const rowTexts = await replicaRows.allInnerTexts();
         test.skip(
-          rowTexts.every((text) => /Provisioning/.test(text)),
+          rowTexts.length > 0 &&
+            rowTexts.every((text) => /Provisioning/.test(text)),
           `no replica left Provisioning within ${SERVICE_READY_TIMEOUT / 60_000} min: the environment did not schedule the replica session`,
         );
         throw new Error(
