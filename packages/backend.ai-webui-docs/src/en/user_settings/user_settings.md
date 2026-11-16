@@ -267,39 +267,23 @@ into the confirmation field before the delete is allowed.
 ### SSH keypair management
 
 When using the WebUI app, you can create SSH/SFTP connections directly to a
-compute session. Once you sign up for Backend.AI, a public keypair is
-provided. If you click the button on the right of the SSH Keypair Management
-section, the following dialog appears. The existing SSH public key is shown
-under the **Current public key** label; click the copy button next to the
-label to copy it. You can update the SSH keypair by clicking the `Generate`
-button at the bottom of the dialog. SSH public/private keys are randomly
-generated and stored as user information. Please note that the secret key
-cannot be checked again unless it is saved manually immediately after
-creation.
+compute session with your own SSH keypair, which also gives you the
+flexibility to access a private repository. Click the `Config` button in the
+SSH Keypair Management section to open the following dialog, where the SSH
+public key registered for your account is shown in the **Public Key** field.
 
-![=528px](../images/ssh_keypair_dialog.png)
+![=520px](../images/ssh_keypair_dialog.png)
+
+To register a keypair, enter your OpenSSH public key in the **Public Key**
+field and click the `Save` button. When the keypair is registered
+successfully, the message *"SSH Keypair has been successfully registered."* is
+displayed and the dialog closes, and you can access your compute session with
+the matching private key.
 
 :::note
 Backend.AI uses SSH keypair based on OpenSSH. On Windows, you may need to convert
 this into a PPK key.
 :::
-
-Backend.AI WebUI supports adding your own SSH keypair to provide flexibility
-such as accessing a private repository. To add your own SSH keypair, click the
-`Enter Manually` button. You will then see two text areas labeled **Public Key**
-and **Private Key**.
-
-![=528px](../images/add_ssh_keypair_manually_dialog.png)
-
-Enter the keys and click the `Save` button. When the keypair is registered
-successfully, the message *"SSH Keypair has been successfully registered."* is
-displayed, the dialog closes, and you can access your Backend.AI session using
-your own key. If the server rejects the keypair -- for example when a key is
-malformed or the public and private keys do not match -- the dialog stays open
-and shows the error message returned by the server, so you can correct the
-keys and save again.
-
-![=528px](../images/ssh_keypair_dialog_after.png)
 
 ### Max concurrent file upload limit
 
