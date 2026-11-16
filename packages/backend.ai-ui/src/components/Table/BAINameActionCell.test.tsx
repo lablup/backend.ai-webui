@@ -271,6 +271,20 @@ describe('BAINameActionCell — minTitleWidth reserves width for the title', () 
     },
   );
 
+  it('still folds a lone icon-less action, which renders as a wider text button', () => {
+    render(
+      <BAINameActionCell
+        title="label-a, label-b"
+        showActions="always"
+        minTitleWidth={NARROW_CELL_WIDTH}
+        actions={[{ key: 'edit', title: 'Edit' }]}
+      />,
+    );
+
+    expect(screen.queryByRole('button', { name: /^Edit$/ })).toBeNull();
+    expect(screen.getAllByRole('button')).toHaveLength(1);
+  });
+
   it('re-measures when the menu-only action that justified the fold goes away', () => {
     const cell = (actions: BAINameActionCellAction[]) => (
       <BAINameActionCell
