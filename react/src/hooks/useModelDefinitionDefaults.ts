@@ -22,7 +22,7 @@ const MODEL_DEFINITION_FILENAME = 'model-definition.yaml';
  * `null` so callers silently fall back to their static placeholders — the user
  * never sees an error for a missing/invalid definition file.
  *
- * @param modelFolderId  `VirtualFolderNode` global id from `BAIVFolderSelect`.
+ * @param modelFolderId  `VirtualFolderNode` global id the add-revision form holds.
  * @param enabled        Gate the read (custom variant + a folder selected).
  */
 export const useModelDefinitionPlaceholders = (

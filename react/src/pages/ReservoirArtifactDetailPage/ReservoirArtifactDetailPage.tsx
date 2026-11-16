@@ -43,7 +43,6 @@ import {
   INITIAL_FETCH_KEY,
   convertToDecimalUnit,
   filterOutNullAndUndefined,
-  toLocalId,
   useIsLabelableEntityType,
   useUpdatableState,
 } from 'backend.ai-ui';
@@ -756,7 +755,7 @@ const ReservoirArtifactDetailPage = () => {
                       to: vfolderId
                         ? {
                             search: new URLSearchParams({
-                              folder: toLocalId(vfolderId),
+                              folder: vfolderId,
                             }).toString(),
                           }
                         : `/reservoir/${task.artifact.id}`,

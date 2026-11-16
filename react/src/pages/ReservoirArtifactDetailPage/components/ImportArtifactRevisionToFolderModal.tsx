@@ -18,11 +18,9 @@ import {
   BAIModal,
   BAIModalProps,
   BAISelect,
-  BAIVFolderSelect,
-  BAIVFolderSelectRef,
-  mergeFilterValues,
-  toGlobalId,
-  toLocalId,
+  BAIScopedVFolderSelect,
+  BAIScopedVFolderSelectRef,
+  notDeletedVFolderFilter,
   useBAILogger,
   useToggle,
 } from 'backend.ai-ui';
@@ -78,7 +76,7 @@ const ImportArtifactRevisionToFolderModal = ({
 
   const formRef =
     useRef<FormInstance<ImportArtifactRevisionToFolderModalInput>>(null);
-  const vfolderSelectRef = useRef<BAIVFolderSelectRef>(null);
+  const vfolderSelectRef = useRef<BAIScopedVFolderSelectRef>(null);
   const [isOpenCreateModal, { toggle: toggleIsOpenCreateModal }] =
     useToggle(false);
 
@@ -180,9 +178,7 @@ const ImportArtifactRevisionToFolderModal = ({
                 variables: {
                   input: {
                     artifactRevisionIds: selectedArtifactRevisionIds,
-                    vfolderId: values.vfolderId
-                      ? toLocalId(values.vfolderId)
-                      : null,
+                    vfolderId: values.vfolderId || null,
                     options: {
                       force: true,
                     },
@@ -311,23 +307,23 @@ const ImportArtifactRevisionToFolderModal = ({
             >
               <BAIFlex gap="xs" align="center">
                 <Form.Item name="vfolderId" noStyle>
-                  <BAIVFolderSelect
+                  <BAIScopedVFolderSelect
                     ref={vfolderSelectRef}
                     label={t(
                       'importArtifactRevisionToFolderModal.FolderMountForModelStore',
                     )}
                     isLabelHidden
-                    excludeDeleted
-                    // Disabled rather than unfiltered without a destination:
-                    // dropping the `group` predicate would list every
-                    // group-owned folder and allow an import outside the
-                    // model store.
+                    filter={notDeletedVFolderFilter}
+                    // Model-store project folders only; without a destination
+                    // there is no scope to read, so the picker stays disabled.
+                    // TODO(needs-backend): #11103 VFolderFilter has no ownership
+                    // condition, so folders shared into the project also list.
                     isDisabled={!destinationProject?.id}
-                    // model-store-exclusive project folders only
-                    filter={mergeFilterValues([
-                      'ownership_type == "group"',
-                      `group == "${destinationProject?.id ?? ''}"`,
-                    ])}
+                    scope={{
+                      project: destinationProject?.id
+                        ? [{ value: destinationProject.id }]
+                        : [],
+                    }}
                   />
                 </Form.Item>
                 <Tooltip
@@ -361,7 +357,7 @@ const ImportArtifactRevisionToFolderModal = ({
           toggleIsOpenCreateModal();
           if (result) {
             formRef.current?.setFieldsValue({
-              vfolderId: toGlobalId('VirtualFolderNode', result.entityId),
+              vfolderId: result.entityId,
             });
             vfolderSelectRef.current?.refetch();
           }

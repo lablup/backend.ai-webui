@@ -196,6 +196,8 @@ const BAIScopedVFolderSelect: React.FC<BAIScopedVFolderSelectProps> = ({
   const deferredSearchStr = useDebouncedDeferredValue(searchStr);
   const [fetchKey, updateFetchKey] = useFetchKey();
   const [isPendingRefetch, startRefetchTransition] = useTransition();
+  // The manager rejects a scope whose range lists are all empty (ADR 0012).
+  const hasScope = _.some(scope, (ranges) => !_.isEmpty(ranges));
 
   const { paginationData, result, loadNext, isLoadingNext } =
     useLazyPaginatedQuery<BAIScopedVFolderSelectQuery, ScopedVFolderNode>(
@@ -249,7 +251,8 @@ const BAIScopedVFolderSelect: React.FC<BAIScopedVFolderSelectProps> = ({
       },
       {
         fetchKey,
-        fetchPolicy: deferredOpen ? 'store-and-network' : 'store-only',
+        fetchPolicy:
+          deferredOpen && hasScope ? 'store-and-network' : 'store-only',
       },
       {
         getTotal: (data) => data.scopedVFoldersV2?.count ?? undefined,
@@ -301,11 +304,12 @@ const BAIScopedVFolderSelect: React.FC<BAIScopedVFolderSelectProps> = ({
         scope,
         filter: { AND: _.compact([filter, { entityId: { in: lookupIds } }]) },
         limit: Math.max(lookupIds.length, 1),
-        skip: lookupIds.length === 0,
+        skip: lookupIds.length === 0 || !hasScope,
       },
       {
         fetchKey,
-        fetchPolicy: lookupIds.length ? 'store-and-network' : 'store-only',
+        fetchPolicy:
+          lookupIds.length && hasScope ? 'store-and-network' : 'store-only',
       },
     );
   const summaryById = _.keyBy(

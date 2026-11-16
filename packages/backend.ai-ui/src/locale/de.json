@@ -1550,9 +1550,6 @@
     "SubpathTooltip": "Hängt einen Unterordner innerhalb des Ordners als Quelle ein, anstatt dessen Wurzel. Klicken Sie auf das Feld, um den Ordner zu durchsuchen und einen auszuwählen; leer lassen, um die Ordnerwurzel einzuhängen.",
     "UnmountableFoldersRemoved": "Ordner, die Sie nicht mehr einbinden können, wurden aus der Auswahl entfernt."
   },
-  "comp:BAIVFolderSelect": {
-    "SelectFolder": "Ordner auswählen"
-  },
   "comp:FileExplorer": {
     "ArchiveDownloadStarted": "Der Download von {{count}} Element(en) wurde gestartet.",
     "ChangeFileExtension": "Dateierweiterung ändern",

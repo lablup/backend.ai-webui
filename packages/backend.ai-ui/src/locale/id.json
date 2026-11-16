@@ -1550,9 +1550,6 @@
     "SubpathTooltip": "Mount subfolder di dalam folder sebagai sumber, bukan dari direktori root-nya. Klik kolom ini untuk menelusuri folder dan memilih salah satu; biarkan kosong untuk mount root folder.",
     "UnmountableFoldersRemoved": "Folder yang tidak lagi dapat Anda pasang telah dihapus dari pilihan."
   },
-  "comp:BAIVFolderSelect": {
-    "SelectFolder": "Pilih Folder"
-  },
   "comp:FileExplorer": {
     "ArchiveDownloadStarted": "Unduhan {{count}} item telah dimulai.",
     "ChangeFileExtension": "Ubah ekstensi file",

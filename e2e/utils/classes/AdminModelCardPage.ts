@@ -399,7 +399,7 @@ export class AdminModelCardPage {
         name: 'Model Storage Folder',
       });
       await vfolderTrigger.click();
-      // Wait for the VFolder query to load options (BAIVFolderSelect uses network-only fetch on open)
+      // Wait for the VFolder query to load options (the folder select reads its options only once open)
       const dropdown = this.page.getByRole('dialog', {
         name: 'Model Storage Folder',
       });

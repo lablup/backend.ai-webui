@@ -12,7 +12,7 @@ import { App } from '../../../app-shim';
 import DeploymentRevisionDetailDrawer from '../../../components/DeploymentRevisionDetailDrawer';
 import FolderLink from '../../../components/FolderLink';
 import { convertToOrderBy } from '../../../helper';
-import { useCurrentDomain } from '../../../hooks';
+import { useCurrentDomain, useSuspendedBackendaiClient } from '../../../hooks';
 import { useBAISettingUserState } from '../../../hooks/useBAISetting';
 import DeploymentAddRevisionModal from './DeploymentAddRevisionModal';
 import { Badge } from '@lablup/ui-common/Badge';
@@ -34,7 +34,9 @@ import {
   BAITable,
   BAIText,
   BAIUnmountAfterClose,
-  BAIVFolderSelect,
+  BAIScopedVFolderSelect,
+  mountableVFolderScope,
+  notDeletedVFolderFilter,
   INITIAL_FETCH_KEY,
   filterOutNullAndUndefined,
   isDeploymentInStoppedCategory,
@@ -110,6 +112,7 @@ const DeploymentRevisionHistoryTab: React.FC<
 > = ({ deploymentFrgmt, deploymentId, fetchKey }) => {
   'use memo';
   const { t } = useTranslation();
+  const baiClient = useSuspendedBackendaiClient();
   const { token } = useTheme();
   const { message } = App.useApp();
   const { logger } = useBAILogger();
@@ -646,17 +649,18 @@ const DeploymentRevisionHistoryTab: React.FC<
       fixedOperator: 'equals' as const,
       rule: uuidRule,
       renderInput: ({ onAddCondition, value, isDisabled }) => (
-        <BAIVFolderSelect
-          // `modelVfolderId` is a `UUIDFilter`, so the folder's `row_id` — not
-          // its Relay global id — is what serializes.
-          valuePropName="row_id"
+        <BAIScopedVFolderSelect
+          // `modelVfolderId` is a `UUIDFilter`; the select's value is the folder UUID.
           label={t('deployment.ModelFolder')}
           isLabelHidden
-          // Same scope as the revision creation picker: the deployment's own
-          // project, model folders only.
-          currentProjectId={deployment?.metadata?.projectId ?? undefined}
-          excludeDeleted
-          filter='usage_mode == "model"'
+          // Same scope as the revision creation picker.
+          scope={mountableVFolderScope(
+            baiClient.user_uuid,
+            deployment?.metadata?.projectId ?? undefined,
+          )}
+          filter={{
+            AND: [notDeletedVFolderFilter, { usageMode: { equals: 'MODEL' } }],
+          }}
           value={value}
           isDisabled={isDisabled}
           onChange={(next, option) =>

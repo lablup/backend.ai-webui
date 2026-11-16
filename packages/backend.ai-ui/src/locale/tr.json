@@ -1550,9 +1550,6 @@
     "SubpathTooltip": "Kök yerine klasörün içindeki bir alt klasörü kaynak olarak bağlar. Klasöre göz atıp bir alt klasör seçmek için alana tıklayın; klasörün kökünü bağlamak için boş bırakın.",
     "UnmountableFoldersRemoved": "Artık bağlayamayacağınız klasörler seçimden kaldırıldı."
   },
-  "comp:BAIVFolderSelect": {
-    "SelectFolder": "Klasör Seç"
-  },
   "comp:FileExplorer": {
     "ArchiveDownloadStarted": "{{count}} öğe indirilmeye başlandı.",
     "ChangeFileExtension": "Dosya Uzantısını Değiştir",

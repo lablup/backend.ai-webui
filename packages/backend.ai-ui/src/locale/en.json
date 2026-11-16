@@ -1550,9 +1550,6 @@
     "SubpathTooltip": "Mount a subfolder inside the folder as the source instead of its root. Click the field to browse the folder and pick one; leave it empty to mount the folder root.",
     "UnmountableFoldersRemoved": "Folders you can no longer mount were removed from the selection."
   },
-  "comp:BAIVFolderSelect": {
-    "SelectFolder": "Select Folder"
-  },
   "comp:FileExplorer": {
     "ArchiveDownloadStarted": "Download of {{count}} item(s) has started.",
     "ChangeFileExtension": "Change File Extension",

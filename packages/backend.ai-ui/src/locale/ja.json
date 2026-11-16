@@ -1550,9 +1550,6 @@
     "SubpathTooltip": "フォルダのルートではなく、フォルダ内のサブフォルダをマウントソースとして使用します。入力欄をクリックしてフォルダを参照し、選択してください。空のままにするとフォルダのルートをマウントします。",
     "UnmountableFoldersRemoved": "マウントできなくなったフォルダーを選択から除外しました。"
   },
-  "comp:BAIVFolderSelect": {
-    "SelectFolder": "フォルダを選択"
-  },
   "comp:FileExplorer": {
     "ArchiveDownloadStarted": "{{count}}件のダウンロードが開始されました。",
     "ChangeFileExtension": "ファイル拡張子を変更します",

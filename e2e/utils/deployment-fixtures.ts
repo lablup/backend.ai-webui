@@ -659,7 +659,7 @@ export async function cleanupDeploymentFixtures(
  * cluster, as every provisioned `e2e-dfx-*` name is.
  *
  * Both fields are `BAIComplexSelect`-backed (BAIAvailablePresetSelect /
- * BAIVFolderSelect): the Astryx ComplexSelector's field trigger is a
+ * BAIScopedVFolderSelect): the Astryx ComplexSelector's field trigger is a
  * `role="combobox"` named by the field label (`aria-haspopup="dialog"`), and
  * its popup is a
  * `role="dialog"` (aria-labelled with the same field label) hosting a search
@@ -673,7 +673,7 @@ export async function cleanupDeploymentFixtures(
  * settle gate AND the selection in one step (a click on the named row cannot
  * land on a stale neighbor the way blind keyboard-Enter could). The option
  * name is matched as a substring because the rows carry extra content in
- * their accessible name (e.g. the folder id in the description slot). The
+ * their accessible name (e.g. the folder details in the description slot). The
  * closing assertion reads the trigger, which renders the selected label once
  * the selection committed.
  */
