@@ -4509,7 +4509,7 @@
     "DescFasttrackEndpoint": "FastTrack-palvelun URL-osoite. Se tarjotaan omana valikkokohtanaan.",
     "DescHideAgents": "Piilottaa Agenttien yhteenveto -valikon ja agenttien tiedot käyttäjiltä, jotka eivät ole superadmin-käyttäjiä.",
     "DescIsDirectorySizeVisible": "Näyttää kunkin hakemiston koon kansioselaimessa.",
-    "DescManualUrl": "Ohjepainikkeen avaaman käyttöoppaan peilin juuri-URL. WebUI lisää perään version, kielen ja sivun kuten webui.docs.backend.ai-sivustolla. Jätä tyhjäksi, niin avataan webui.docs.backend.ai.",
+    "DescManualUrl": "Asettaa sivun URL-osoitteen, jonka yläpalkin ohjepainike avaa. Jätä tyhjäksi piilottaaksesi ohjepainikkeen.",
     "DescMaskUserInfo": "Peittää käyttäjätilin sähköpostiosoitteen ja nimen näytettäessä.",
     "DescMaxATOMDevicesPerContainer": "Yhdelle istunnolle varattavissa olevien ATOM-laitteiden enimmäismäärä.",
     "DescMaxATOMPLUSDevicesPerContainer": "Yhdelle istunnolle varattavissa olevien ATOM+-laitteiden enimmäismäärä.",

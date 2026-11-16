@@ -22,6 +22,7 @@ const WEBUIHelpButton: React.FC<WEBUIHelpButtonProps> = ({ ...props }) => {
   'use memo';
   const { t } = useTranslation();
   const openHelp = useOpenHelp();
+  if (!openHelp) return null;
 
   return (
     <IconButton

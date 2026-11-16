@@ -4,6 +4,7 @@
  */
 import { App } from '../../../app-shim';
 import AnnouncementEditModal from '../../../components/AnnouncementEditModal';
+import { useCurrentLanguage } from '../../../components/DefaultProviders';
 import type { SettingItemProps } from '../../../components/SettingItem';
 import SettingList, {
   type SettingGroup,
@@ -24,6 +25,7 @@ import {
 } from '../../../helper/webuiSettings';
 import { useCurrentDomainValue } from '../../../hooks';
 import type { AppConfigUpdate } from '../../../hooks/useAppConfig';
+import { buildHostedManualBaseURL } from '../../../hooks/useHelpURL';
 import { setEffectiveWebUISettings } from '../../../hooks/useWebUIConfig';
 import MenuKeySelector from './MenuKeySelector';
 import PluginPathInput from './PluginPathInput';
@@ -115,6 +117,12 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
   const { modal, message } = App.useApp();
   const { getErrorMessage } = useErrorMessageResolver();
   const labels = useWebUISettingLabels();
+  const [lang] = useCurrentLanguage();
+  // Shown in the unset User manual URL field: the address help opens by default.
+  const hostedManualBaseURL = buildHostedManualBaseURL(
+    globalThis.packageVersion ?? '',
+    lang,
+  );
   const store = useStore();
 
   const baseState = getDefaultLoginConfig();
@@ -399,8 +407,22 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
                 label={label.title}
                 isLabelHidden
                 data-testid={`webui-setting-${definition.key}-input`}
-                defaultValue={String(current ?? '')}
-                onCommit={(raw) => setValue(definition, raw.trim())}
+                defaultValue={String(
+                  current ??
+                    (definition.key === 'manualUrl' ? hostedManualBaseURL : ''),
+                )}
+                onCommit={(raw) => {
+                  const value = raw.trim();
+                  // Committing the shown default unchanged keeps the key unset.
+                  if (
+                    definition.key === 'manualUrl' &&
+                    current === null &&
+                    value === hostedManualBaseURL
+                  ) {
+                    return;
+                  }
+                  setValue(definition, value);
+                }}
                 width={CONTROL_WIDTH}
               />
             ),

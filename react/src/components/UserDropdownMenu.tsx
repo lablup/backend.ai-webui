@@ -212,11 +212,12 @@ const UserDropdownMenu: React.FC<{
       icon: isDarkMode ? <Sun size="1em" /> : <Moon size="1em" />,
       onClick: () => setThemeMode(isDarkMode ? 'light' : 'dark'),
     },
-    includesHeaderActions && {
-      label: t('webui.menu.Help'),
-      icon: <CircleHelp size="1em" />,
-      onClick: openHelp,
-    },
+    includesHeaderActions &&
+      openHelp && {
+        label: t('webui.menu.Help'),
+        icon: <CircleHelp size="1em" />,
+        onClick: openHelp,
+      },
     (loginConfig.allowAppDownloadPanel ||
       loginConfig.allowCLIDownloadPanel) && {
       label: t('summary.Downloads'),

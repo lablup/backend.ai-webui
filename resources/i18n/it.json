@@ -4508,7 +4508,7 @@
     "DescFasttrackEndpoint": "URL del servizio FastTrack. Viene offerto come voce di menu a sé.",
     "DescHideAgents": "Nasconde il menu Riepilogo agenti e i dettagli degli agenti agli utenti che non sono superadmin.",
     "DescIsDirectorySizeVisible": "Mostra la dimensione di ogni directory nell'esplora cartelle.",
-    "DescManualUrl": "URL radice di un mirror del manuale utente aperto dal pulsante di aiuto. La WebUI aggiunge versione, lingua e pagina, come su webui.docs.backend.ai. Lasciare vuoto per aprire webui.docs.backend.ai.",
+    "DescManualUrl": "Imposta l'URL della pagina aperta dal pulsante di aiuto nell'intestazione superiore. Lascia vuoto per nascondere il pulsante di aiuto.",
     "DescMaskUserInfo": "Maschera l'e-mail e il nome dell'account utente quando vengono mostrati.",
     "DescMaxATOMDevicesPerContainer": "Numero massimo di dispositivi ATOM che possono essere allocati a una sessione.",
     "DescMaxATOMPLUSDevicesPerContainer": "Numero massimo di dispositivi ATOM+ che possono essere allocati a una sessione.",

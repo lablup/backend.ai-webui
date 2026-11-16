@@ -4512,7 +4512,7 @@
     "DescFasttrackEndpoint": "URL layanan FastTrack. Ditawarkan sebagai item menu tersendiri.",
     "DescHideAgents": "Menyembunyikan menu Ringkasan Agen dan detail agen dari pengguna yang bukan superadmin.",
     "DescIsDirectorySizeVisible": "Menampilkan ukuran setiap direktori di penjelajah folder.",
-    "DescManualUrl": "URL root dari mirror panduan pengguna yang dibuka oleh tombol bantuan. WebUI menambahkan versi, bahasa, dan halaman seperti pada webui.docs.backend.ai. Kosongkan untuk membuka webui.docs.backend.ai.",
+    "DescManualUrl": "Mengatur URL halaman yang dibuka oleh tombol bantuan di header atas. Biarkan kosong untuk menyembunyikan tombol bantuan.",
     "DescMaskUserInfo": "Menyamarkan email dan nama akun pengguna saat ditampilkan.",
     "DescMaxATOMDevicesPerContainer": "Jumlah maksimum perangkat ATOM yang dapat dialokasikan ke sebuah sesi.",
     "DescMaxATOMPLUSDevicesPerContainer": "Jumlah maksimum perangkat ATOM+ yang dapat dialokasikan ke sebuah sesi.",

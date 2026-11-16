@@ -29,8 +29,10 @@ export { toTranslator } from './searchArtifacts';
 /** The one place the palette reads deployment config off the client. */
 export const toSearchConfigFlags = (config: {
   fasttrackEndpoint?: string | null;
+  manualUrl?: string | null;
 }): SearchConfigFlags => ({
   fasttrackEndpoint: config.fasttrackEndpoint || null,
+  isHelpHidden: config.manualUrl?.trim() === '',
 });
 
 export interface GlobalSearchSource extends SearchSource<SearchHit> {

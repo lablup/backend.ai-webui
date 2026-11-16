@@ -4510,7 +4510,7 @@
     "DescFasttrackEndpoint": "FastTrack サービスの URL です。独立したメニュー項目として提供されます。",
     "DescHideAgents": "スーパー管理者でないユーザーに対してエージェント概要メニューとエージェントの詳細を非表示にします。",
     "DescIsDirectorySizeVisible": "フォルダーエクスプローラーで各ディレクトリのサイズを表示します。",
-    "DescManualUrl": "ヘルプボタンが開くユーザーマニュアルのミラーのルート URL です。webui.docs.backend.ai と同様に、バージョン、言語、ページのパスを末尾に付けます。空欄の場合は webui.docs.backend.ai を開きます。",
+    "DescManualUrl": "上部ヘッダーのヘルプボタンで開くページの URL を設定します。空にするとヘルプボタンを非表示にします。",
     "DescMaskUserInfo": "ユーザーアカウントのメールアドレスと名前をマスクして表示します。",
     "DescMaxATOMDevicesPerContainer": "1 つのセッションに割り当てられる ATOM デバイスの最大数です。",
     "DescMaxATOMPLUSDevicesPerContainer": "1 つのセッションに割り当てられる ATOM+ デバイスの最大数です。",

@@ -16,33 +16,15 @@ import { useWebUILocation } from './index';
 import { useCurrentMenuKey } from './useRouteScope';
 import { useEffectiveLoginConfig } from './useWebUIConfig';
 
-// Languages the hosted user manual (https://webui.docs.backend.ai) is
-// published in. Any other WebUI locale falls back to English.
+// Languages the hosted user manual is published in; others fall back to English.
 const DOCS_LANGUAGES = ['en', 'ko', 'ja', 'th'];
 export const HOSTED_MANUAL_ROOT = 'https://webui.docs.backend.ai';
 
-// The same checks System Settings diagnostics apply (http(s), no user name or
-// password), so a value they accept is the value the help button opens; query
-// and fragment are dropped.
-const mirrorRootOf = (manualUrl: string): string | undefined => {
-  const value = manualUrl.trim();
-  if (!isValidUrl(value) || hasUrlCredentials(value)) return undefined;
-  const url = new URL(value);
-  url.search = '';
-  url.hash = '';
-  return url.toString().replace(/\/+$/, '');
-};
-
-/**
- * `<root>/<version>/<lang>/`: an http(s) `manualUrl` (System Settings) replaces
- * the hosted root, so a mirror keeps the hosted site's layout.
- */
-export const buildManualBaseURL = (
-  manualUrl: string,
+/** `https://webui.docs.backend.ai/<version>/<lang>/` for this build and language. */
+export const buildHostedManualBaseURL = (
   packageVersion: string,
   lang: string,
 ): string => {
-  const root = mirrorRootOf(manualUrl) ?? HOSTED_MANUAL_ROOT;
   const docsLang = DOCS_LANGUAGES.includes(lang) ? lang : 'en';
   // The manual is a versioned static site (FR-2729): a prerelease build has no
   // numbered docs site yet, so it tracks the `next` channel that every commit
@@ -50,19 +32,35 @@ export const buildManualBaseURL = (
   const docsVersion = packageVersion.includes('-')
     ? 'next'
     : packageVersion.split('.').slice(0, 2).filter(Boolean).join('.') || 'next';
-  return `${root}/${docsVersion}/${docsLang}/`;
+  return `${HOSTED_MANUAL_ROOT}/${docsVersion}/${docsLang}/`;
+};
+
+/**
+ * The page the help button opens, `null` when help is hidden. An unset
+ * `manualUrl` (System Settings) opens the hosted page for the route, an empty
+ * one hides help, and an http(s) URL opens as is. A value the diagnostics
+ * reject (not http(s), or with a user name or password) keeps the hosted page.
+ */
+export const resolveHelpURL = (
+  manualUrl: string | null,
+  hostedPageURL: string,
+): string | null => {
+  if (manualUrl === null) return hostedPageURL;
+  const value = manualUrl.trim();
+  if (value === '') return null;
+  if (!isValidUrl(value) || hasUrlCredentials(value)) return hostedPageURL;
+  return value;
 };
 
 /** The user manual page for the current route (and `?tab=` when it has one). */
-export const useHelpURL = (): string => {
+export const useHelpURL = (): string | null => {
   'use memo';
 
   const [lang] = useCurrentLanguage();
   const location = useWebUILocation();
   const { manualUrl } = useEffectiveLoginConfig();
 
-  const manualURL = buildManualBaseURL(
-    manualUrl,
+  const hostedBaseURL = buildHostedManualBaseURL(
     globalThis.packageVersion ?? '',
     lang,
   );
@@ -80,14 +78,18 @@ export const useHelpURL = (): string => {
   const matchingKey = settingsCategory ? 'usersettings' : routeMenuKey;
   const activeTab = settingsCategory ?? searchParams.get('tab');
 
-  return manualURL + resolveHelpDocPath(matchingKey, activeTab);
+  return resolveHelpURL(
+    manualUrl,
+    hostedBaseURL + resolveHelpDocPath(matchingKey, activeTab),
+  );
 };
 
-/** Opens the current page's manual in a new tab. */
-export const useOpenHelp = (): (() => void) => {
+/** Opens the current page's manual in a new tab; `null` when help is hidden. */
+export const useOpenHelp = (): (() => void) | null => {
   'use memo';
 
   const url = useHelpURL();
+  if (url === null) return null;
   return () => {
     window.open(url, '_blank', 'noopener noreferrer');
   };

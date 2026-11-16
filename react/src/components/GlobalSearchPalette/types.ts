@@ -64,6 +64,8 @@ export interface SearchHit extends SearchableItem<SearchHitAuxiliaryData> {
 
 export interface SearchConfigFlags {
   fasttrackEndpoint: string | null;
+  /** System Settings `manualUrl` is empty, so help is hidden. */
+  isHelpHidden: boolean;
 }
 
 export type ThemeModeValue = 'system' | 'light' | 'dark';

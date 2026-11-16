@@ -4511,7 +4511,7 @@
     "DescFasttrackEndpoint": "FastTrack 서비스의 URL 주소입니다. 별도 메뉴로 제공됩니다.",
     "DescHideAgents": "슈퍼 관리자가 아닌 사용자에게 에이전트 요약 메뉴와 에이전트 정보를 숨깁니다.",
     "DescIsDirectorySizeVisible": "폴더 탐색기에서 각 디렉터리의 크기를 표시합니다.",
-    "DescManualUrl": "도움말 버튼이 여는 사용자 매뉴얼 미러의 루트 URL입니다. webui.docs.backend.ai와 같이 버전, 언어, 페이지 경로를 뒤에 붙입니다. 비워 두면 webui.docs.backend.ai를 엽니다.",
+    "DescManualUrl": "상단 헤더의 도움말 버튼으로 이동할 페이지 URL을 설정합니다. 비워 두면 도움말 버튼을 숨깁니다.",
     "DescMaskUserInfo": "사용자 계정 이메일과 이름을 가려서 표시합니다.",
     "DescMaxATOMDevicesPerContainer": "한 세션에 할당할 수 있는 최대 ATOM 수입니다.",
     "DescMaxATOMPLUSDevicesPerContainer": "한 세션에 할당할 수 있는 최대 ATOM+ 수입니다.",

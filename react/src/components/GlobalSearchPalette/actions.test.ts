@@ -27,7 +27,7 @@ const makeSearchContext = (
 ): SearchContext => ({
   isSuperAdmin: false,
   isManagerVersionCompatibleWith: () => true,
-  config: { fasttrackEndpoint: null },
+  config: { fasttrackEndpoint: null, isHelpHidden: false },
   visibleMenuKeys: new Set(['session', 'data', 'deployments', 'pipeline']),
   disabledMenuKeys: new Set(),
   blockedMenuKeys: new Set(),
@@ -54,7 +54,10 @@ const makeActionContext = (
 ): PaletteActionContext => ({
   navigate,
   projectName: 'my project',
-  config: { fasttrackEndpoint: 'https://fasttrack.example.com' },
+  config: {
+    fasttrackEndpoint: 'https://fasttrack.example.com',
+    isHelpHidden: false,
+  },
   setThemeMode,
   openNotifications,
   toggleSider,
@@ -85,7 +88,10 @@ describe('PALETTE_ACTIONS gates', () => {
 
   const withEndpoint = (overrides: Partial<SearchContext> = {}) =>
     makeSearchContext({
-      config: { fasttrackEndpoint: 'https://fasttrack.example.com' },
+      config: {
+        fasttrackEndpoint: 'https://fasttrack.example.com',
+        isHelpHidden: false,
+      },
       ...overrides,
     });
 
