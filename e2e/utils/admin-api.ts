@@ -1136,7 +1136,7 @@ export async function deleteKeypairViaApi(
     );
     if (!data.delete_keypair?.ok) {
       console.warn(
-        `[admin-api] delete_keypair did not succeed for ${accessKey}: ${data.delete_keypair?.msg}`,
+        `[admin-api] delete_keypair did not succeed for ${accessKey}: ${data.delete_keypair?.msg ?? 'no result'}`,
       );
       return false;
     }
