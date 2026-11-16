@@ -6,13 +6,16 @@ import { resolveUploadChunkSize } from '../helper/uploadChunkSize';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
-import { useEffectiveLoginConfig } from '../hooks/useWebUIConfig';
+import {
+  loginConfigState,
+  useEffectiveLoginConfig,
+} from '../hooks/useWebUIConfig';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import { VStack } from '@lablup/ui-common/Stack';
 import { Text } from '@lablup/ui-common/Text';
 import { BAILink, useConnectedBAIClient } from 'backend.ai-ui';
 import dayjs from 'dayjs';
-import { atom, useAtom, useSetAtom } from 'jotai';
+import { atom, useAtom, useSetAtom, useStore } from 'jotai';
 import { atomFamily } from 'jotai-family';
 import * as _ from 'lodash-es';
 import PQueue from 'p-queue';
@@ -395,6 +398,7 @@ export const useFileUploadManager = (id?: string, folderName?: string) => {
 
   const baiClient = useConnectedBAIClient();
   const loginConfig = useEffectiveLoginConfig();
+  const store = useStore();
   const { t } = useTranslation();
   const { upsertNotification } = useSetBAINotification();
 
@@ -471,8 +475,9 @@ export const useFileUploadManager = (id?: string, folderName?: string) => {
                   endpoint: uploadUrl,
                   uploadUrl: uploadUrl,
                   retryDelays: [0, 3000, 5000, 10000, 20000],
+                  // Read when the queued upload starts, not when it was requested.
                   chunkSize: resolveUploadChunkSize(
-                    loginConfig.fileUploadChunkSize,
+                    store.get(loginConfigState)?.fileUploadChunkSize ?? 0,
                     file.size,
                   ),
                   storeFingerprintForResuming: false, // Disable localStorage storage
