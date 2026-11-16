@@ -791,25 +791,19 @@ export async function selectPropertyFilter(
   await searchBar.click();
   await page.getByRole('option', { name: propertyName, exact: true }).click();
 
-  // The popover's "Value" control is a textbox (free text, Apply commits) or a
-  // combobox (strict selection, picking commits); wait for whichever renders.
-  const valueTextbox = page.getByRole('textbox', {
-    name: 'Value',
-    exact: true,
-  });
-  const valueSelector = page.getByRole('combobox', {
-    name: 'Value',
-    exact: true,
-  });
-  await expect(
-    valueTextbox.or(valueSelector).filter({ visible: true }).first(),
-  ).toBeVisible({ timeout: 30000 });
-  if (await valueTextbox.filter({ visible: true }).count()) {
-    await valueTextbox.filter({ visible: true }).fill(searchValue);
-    await page.getByRole('button', { name: 'Apply', exact: true }).click();
-  } else {
-    await valueSelector.filter({ visible: true }).click();
+  // The popover renders a "Value" textbox (Apply commits) or combobox (a pick commits).
+  const valueControl = page
+    .getByRole('textbox', { name: 'Value', exact: true })
+    .or(page.getByRole('combobox', { name: 'Value', exact: true }))
+    .filter({ visible: true })
+    .first();
+  await expect(valueControl).toBeVisible({ timeout: 30000 });
+  if ((await valueControl.getAttribute('role')) === 'combobox') {
+    await valueControl.click();
     await page.getByRole('option', { name: searchValue, exact: true }).click();
+  } else {
+    await valueControl.fill(searchValue);
+    await page.getByRole('button', { name: 'Apply', exact: true }).click();
   }
 
   // Committing the value hands focus back to the search bar, which reopens
