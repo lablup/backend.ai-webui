@@ -26,8 +26,6 @@ const ACCOUNT_USER_SETTING_KEYS: ReadonlySet<string> = new Set([
   'session_monitor_condition',
   'session_monitor_chip_items',
   'compact_sidebar',
-  'recentSessionHistory',
-  'pinnedSessionHistory',
   'experimental_ai_agents',
   'experimental_import_from_huggingface',
   'experimental_session_resource_grid',
@@ -95,6 +93,8 @@ export const readLocalAccountUserSettings = (
   const settings: Record<string, unknown> = {};
   for (const key of accountStorageKeys(storage)) {
     const raw = storage.getItem(key);
+    // An older setter stored `undefined` as the string "undefined": not a value.
+    if (raw === 'undefined') continue;
     const value = rawToSetting(raw);
     // A stored `null` is a choice (e.g. auto-refresh off), unlike an unset key.
     if (value !== null || raw === 'null') {
@@ -175,7 +175,14 @@ export const flushUserSettingsSync = (): Promise<void> =>
  * Queues a changed user setting for `userConfig.settings`. A no-op for a
  * device-local setting and before the signed-in sync has started.
  */
+let lastReportedError: unknown;
+
 export const queueUserSettingWrite = (name: string, value: unknown): void => {
   if (!writer || !isAccountUserSetting(name)) return;
-  queue.schedule(name, value).catch((error) => onWriteError(error));
+  queue.schedule(name, value).catch((error) => {
+    // Every change in a failed batch rejects with the same error: report it once.
+    if (error === lastReportedError) return;
+    lastReportedError = error;
+    onWriteError(error);
+  });
 };

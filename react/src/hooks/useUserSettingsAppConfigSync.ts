@@ -42,7 +42,6 @@ export const useUserSettingsAppConfigSync = (
     });
 
   const start = useEffectEvent(() => {
-    let copied: Promise<unknown> = Promise.resolve();
     if (_.isPlainObject(serverSettings)) {
       mirrorAccountUserSettings(
         localStorage,
@@ -51,16 +50,17 @@ export const useUserSettingsAppConfigSync = (
       refreshSettingAtoms();
     } else {
       const local = readLocalAccountUserSettings(localStorage);
-      // Another tab may have copied first; its document wins.
-      copied = writeSettings((current) =>
+      // `current` is this tab's store copy, so this keeps settings only another
+      // write of this tab added first; it is no guard against another device.
+      writeSettings((current) =>
         _.isPlainObject(current) ? current : local,
       ).catch((error) =>
         logger.error('Failed to copy user settings to userConfig', error),
       );
     }
+    // The copy is queued first on the same per-user write queue, so it runs before any batch.
     startUserSettingsSync(
       async (batch) => {
-        await copied;
         await writeSettings((current) =>
           applyUserSettingChanges(current, batch),
         );

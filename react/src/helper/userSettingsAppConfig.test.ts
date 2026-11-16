@@ -36,6 +36,9 @@ describe('isAccountUserSetting', () => {
       'agent_endpoints',
       'projectGroup.abc',
       'custom_theme_config',
+      // Stored at the top level of userConfig by useRecentSessionHistory.
+      'recentSessionHistory',
+      'pinnedSessionHistory',
     ]) {
       expect(isAccountUserSetting(name)).toBe(false);
     }
@@ -51,6 +54,7 @@ describe('localStorage mirror', () => {
     localStorage.setItem(P + 'fetchKeyAutoUpdateDelay.list', 'null');
     localStorage.setItem(P + 'preserve_login', 'true');
     localStorage.setItem(P + 'resource_panel_type', '');
+    localStorage.setItem(P + 'session_monitor_condition', 'undefined');
     localStorage.setItem('backendaiwebui.settings.general.language', 'ko');
     expect(readLocalAccountUserSettings(localStorage)).toEqual({
       compact_sidebar: true,
@@ -150,5 +154,16 @@ describe('queueUserSettingWrite', () => {
     queueUserSettingWrite('compact_sidebar', true);
     await vi.advanceTimersByTimeAsync(USER_SETTINGS_WRITE_DELAY_MS);
     expect(onError).toHaveBeenCalledWith(error);
+  });
+
+  it('reports a failed batch once, however many changes it carried', async () => {
+    const error = new Error('refused once');
+    const onError = vi.fn();
+    startUserSettingsSync(vi.fn().mockRejectedValue(error), onError);
+    queueUserSettingWrite('compact_sidebar', true);
+    queueUserSettingWrite('session_monitor_rows', 5);
+    queueUserSettingWrite('hiddenColumnKeys.AgentList', ['status']);
+    await vi.advanceTimersByTimeAsync(USER_SETTINGS_WRITE_DELAY_MS);
+    expect(onError).toHaveBeenCalledTimes(1);
   });
 });
