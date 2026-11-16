@@ -45,7 +45,7 @@ import {
 import { atom, useAtomValue, useStore } from 'jotai';
 import * as _ from 'lodash-es';
 import { Braces, Redo2, SquarePenIcon } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface WebUISettingListProps {
@@ -76,6 +76,8 @@ type WriteState = { running: boolean; rerun: boolean; force: boolean };
 interface SettingsSession {
   confirmed: WebUISettingsDocument;
   writes: Record<WebUISettingScope, WriteState>;
+  // Registered for the session's life, not the list's: writes outlive an unmount.
+  onBeforeUnload: (e: BeforeUnloadEvent) => void;
 }
 const sessions = new WeakMap<ReturnType<typeof useStore>, SettingsSession>();
 // The values the rows show while a session lives; `null` means the saved documents.
@@ -142,8 +144,14 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
         domain: { running: false, rerun: false, force: false },
         public: { running: false, rerun: false, force: false },
       },
+      onBeforeUnload: (e) => {
+        if (SCOPES.some((scope) => created.writes[scope].running)) {
+          e.preventDefault();
+        }
+      },
     };
     sessions.set(store, created);
+    window.addEventListener('beforeunload', created.onBeforeUnload);
     return created;
   };
 
@@ -232,6 +240,7 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
   // updated the saved documents, so the rows follow them again.
   const endSessionIfIdle = (session: SettingsSession) => {
     if (SCOPES.some((scope) => session.writes[scope].running)) return;
+    window.removeEventListener('beforeunload', session.onBeforeUnload);
     sessions.delete(store);
     store.set(sessionValuesAtom, null);
   };
@@ -319,17 +328,6 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
     }
     commit(next);
   };
-
-  useEffect(() => {
-    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-      const session = sessions.get(store);
-      if (session && SCOPES.some((scope) => session.writes[scope].running)) {
-        e.preventDefault();
-      }
-    };
-    window.addEventListener('beforeunload', handleBeforeUnload);
-    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
-  }, [store]);
 
   // Reset-all deletes the saved documents (irreversible), so it is confirmed
   // by a typed word.

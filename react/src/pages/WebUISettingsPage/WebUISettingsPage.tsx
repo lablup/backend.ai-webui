@@ -33,6 +33,13 @@ const SavedWebUISettingList: React.FC = () => {
     { scope: domainScope, configNames: ['domainConfig'] },
     { scope: PUBLIC_SCOPE, configNames: ['publicConfigByDomain'] },
   ]);
+  // A change rebuilds both settings layers from these reads, so an unreadable
+  // scope would reset its live settings to the defaults: show the error instead.
+  if (!scopedAppConfig.domain || !scopedAppConfig.public) {
+    throw new Error(
+      `System Settings could not read the ${scopedAppConfig.domain ? 'public' : 'domain'} settings document`,
+    );
+  }
   return (
     <WebUISettingList
       savedDomainSettings={

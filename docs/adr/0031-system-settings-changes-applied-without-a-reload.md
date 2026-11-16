@@ -80,7 +80,8 @@ sequenceDiagram
 - **One write per scope at a time**: while a write to a scope runs, a further change to that scope sets `rerun`, and the next write stores the latest values. `useAppConfig` also queues every write to one document (`serializeWrite`), so the announcement modal and a settings row cannot overwrite each other's read-modify-write.
 - **Several keys at once**: the JSON Config import and the toolbar Reset write each changed scope once. Reset keeps its typed confirmation (`BAIDeleteConfirmModal`).
 - **Refused write**: the page puts back the confirmed value of each key the refused write carried, unless the row changed again since, queues another write if the scope still differs from the confirmed values, and opens an error modal (`webuiSettings.NotSaved`, `webuiSettings.NotSavedItems`) naming those settings.
-- **Leaving the page**: a `beforeunload` prompt runs only while a write is in flight.
+- **Leaving the page**: a `beforeunload` prompt runs only while a write is in flight. The settings session registers it and removes it when the session ends, so it still guards a write that outlives the page.
+- **Unreadable scope**: `WebUISettingsPage` shows its error boundary when the PUBLIC or DOMAIN document cannot be read, because a change rebuilds both settings layers from the page's reads.
 - **Refetch**: a DOMAIN or PUBLIC write refetches its merged view (`domainConfig`, `publicConfigByDomain`) without waiting for it, so `useMyAppConfig` readers update. The page's saved documents come from the raw read of `useScopedAppConfig`, which the upsert response updates, so the session ends once no write is in flight.
 
 ### 4. Who sees a change, and when

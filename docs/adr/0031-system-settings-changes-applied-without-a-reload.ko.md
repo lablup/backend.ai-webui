@@ -80,7 +80,8 @@ sequenceDiagram
 - **One write per scope at a time**: 한 스코프의 쓰기가 도는 동안 그 스코프가 또 바뀌면 `rerun`을 세우고, 다음 쓰기가 최신 값을 저장한다. `useAppConfig`도 한 문서에 대한 모든 쓰기를 줄 세우므로(`serializeWrite`), 공지 modal과 설정 행이 서로의 read-modify-write를 덮어쓰지 않는다.
 - **Several keys at once**: JSON Config 가져오기와 툴바 Reset은 바뀐 스코프마다 한 번만 쓴다. Reset은 입력 확인(`BAIDeleteConfirmModal`)을 유지한다.
 - **Refused write**: 페이지는 거부된 쓰기가 담았던 키마다 확정된 값을 되돌린다. 그사이 행이 다시 바뀌었으면 되돌리지 않는다. 스코프가 아직 확정된 값과 다르면 쓰기를 한 번 더 예약하고, 해당 설정을 나열한 오류 modal(`webuiSettings.NotSaved`, `webuiSettings.NotSavedItems`)을 연다.
-- **Leaving the page**: `beforeunload` 확인은 쓰기가 진행 중일 때만 뜬다.
+- **Leaving the page**: `beforeunload` 확인은 쓰기가 진행 중일 때만 뜬다. settings session이 이를 등록하고 session이 끝날 때 지우므로, 페이지보다 오래 남는 쓰기도 지킨다.
+- **Unreadable scope**: 변경은 페이지가 읽은 문서로 두 settings 층을 다시 만들기 때문에, PUBLIC이나 DOMAIN 문서를 읽지 못하면 `WebUISettingsPage`는 error boundary를 보여 준다.
 - **Refetch**: DOMAIN과 PUBLIC 쓰기는 자기 merged view(`domainConfig`, `publicConfigByDomain`)를 기다리지 않고 다시 조회하므로 `useMyAppConfig` reader가 갱신된다. 페이지가 저장된 문서로 쓰는 값은 `useScopedAppConfig`의 원본 읽기이고 upsert 응답이 이를 갱신하므로, 진행 중인 쓰기가 없으면 session이 끝난다.
 
 ### 4. 누가 언제 변경을 보는가

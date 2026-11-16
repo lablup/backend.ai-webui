@@ -176,6 +176,23 @@ describe('WebUISettingList', () => {
     expect(domainWrite).not.toHaveBeenCalled();
   });
 
+  it('keeps the leave guard until the write lands, even after the list unmounts', async () => {
+    const write = deferred();
+    domainWrite.mockReturnValue(write.promise);
+    const store = renderList();
+
+    fireEvent.click(checkboxOf('hideAgents'));
+    store.unmount();
+    const during = new Event('beforeunload', { cancelable: true });
+    window.dispatchEvent(during);
+    expect(during.defaultPrevented).toBe(true);
+
+    await act(async () => write.resolve());
+    const after = new Event('beforeunload', { cancelable: true });
+    window.dispatchEvent(after);
+    expect(after.defaultPrevented).toBe(false);
+  });
+
   it('a remount during a write starts from the values being written', async () => {
     const write = deferred();
     domainWrite.mockReturnValueOnce(write.promise).mockResolvedValue();
