@@ -62,7 +62,7 @@ import {
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import {
-  FolderSymlinkIcon,
+  InfoIcon,
   RocketIcon,
   RotateCcwIcon,
   Share2Icon,
@@ -270,7 +270,8 @@ const VFolderAutoMountCell: React.FC<{
   'use memo';
   const { t } = useTranslation();
   const autoMount = autoMounts?.edges[0]?.node;
-  if (!autoMount) return <Text color="secondary">-</Text>;
+  if (!autoMount)
+    return <Text color="secondary">{t('autoMount.NotConfigured')}</Text>;
   const permissionLabel =
     autoMount.mountPermission === 'READ_ONLY'
       ? t('data.ReadOnly')
@@ -278,29 +279,32 @@ const VFolderAutoMountCell: React.FC<{
         ? t('data.ReadWrite')
         : t('autoMount.ReadWriteDelete');
   return (
-    <BAIIconWithTooltip
-      icon={<FolderSymlinkIcon size="1em" />}
-      aria-label={t('autoMount.AutoMount')}
-      content={
-        <VStack>
-          {/* Inherit the tooltip's own colour; the default is page text. */}
-          <Text color="inherit" weight="semibold">
-            {autoMount.scopeType === 'USER'
-              ? t('autoMount.ScopeUser')
-              : t('autoMount.ScopeProject')}
-          </Text>
-          <Text color="inherit">
-            {t('autoMount.MountDestination')}: {autoMount.mountDestination}
-          </Text>
-          <Text color="inherit">
-            {t('autoMount.Subpath')}: {autoMount.subpath}
-          </Text>
-          <Text color="inherit">
-            {t('autoMount.MountPermission')}: {permissionLabel}
-          </Text>
-        </VStack>
-      }
-    />
+    <HStack gap={1} vAlign="center">
+      <Text>{t('autoMount.Configured')}</Text>
+      <BAIIconWithTooltip
+        icon={<InfoIcon size="1em" />}
+        aria-label={t('autoMount.AutoMount')}
+        content={
+          <VStack>
+            {/* Inherit the tooltip's own colour; the default is page text. */}
+            <Text color="inherit" weight="semibold">
+              {autoMount.scopeType === 'USER'
+                ? t('autoMount.ScopeUser')
+                : t('autoMount.ScopeProject')}
+            </Text>
+            <Text color="inherit">
+              {t('autoMount.MountDestination')}: {autoMount.mountDestination}
+            </Text>
+            <Text color="inherit">
+              {t('autoMount.Subpath')}: {autoMount.subpath}
+            </Text>
+            <Text color="inherit">
+              {t('autoMount.MountPermission')}: {permissionLabel}
+            </Text>
+          </VStack>
+        }
+      />
+    </HStack>
   );
 };
 
