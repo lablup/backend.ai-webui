@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<d95d43b07bf6a8f33eef100acb6255c0>>
+ * @generated SignedSource<<f7cec7f26c7b8a7d9681580879601204>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,7 +11,6 @@
 import { ConcreteRequest } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type MountPermission = "READ_ONLY" | "READ_WRITE" | "RW_DELETE" | "%future added value";
-export type PermissionBit = "CREATE" | "HARD_DELETE" | "READ" | "SOFT_DELETE" | "UPDATE" | "%future added value";
 export type VFolderAutoMountScopeType = "PROJECT" | "USER" | "%future added value";
 export type VFolderAutoMountScope = {
   project?: ReadonlyArray<UUIDScope> | null | undefined;
@@ -89,18 +88,12 @@ export type NullableDateTimeFilter = {
   notEquals?: string | null | undefined;
 };
 export type VFolderAutoMountMetadataSectionQuery$variables = {
+  canRead: boolean;
   filter?: VFolderAutoMountFilter | null | undefined;
-  permissionScopeId: string;
-  permissionScopeType: string;
   scope: VFolderAutoMountScope;
 };
 export type VFolderAutoMountMetadataSectionQuery$data = {
-  readonly myScopePermissions: {
-    readonly item: {
-      readonly permissions: ReadonlyArray<PermissionBit>;
-    };
-  } | null | undefined;
-  readonly scopedVfolderAutoMounts: {
+  readonly scopedVfolderAutoMounts?: {
     readonly edges: ReadonlyArray<{
       readonly node: {
         readonly entityId: string;
@@ -122,81 +115,19 @@ const node: ConcreteRequest = (function(){
 var v0 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "filter"
+  "name": "canRead"
 },
 v1 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "permissionScopeId"
+  "name": "filter"
 },
 v2 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "permissionScopeType"
-},
-v3 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
   "name": "scope"
 },
-v4 = {
-  "alias": null,
-  "args": [
-    {
-      "fields": [
-        {
-          "fields": [
-            {
-              "kind": "Literal",
-              "name": "entityType",
-              "value": "vfolder_auto_mount"
-            },
-            {
-              "kind": "Variable",
-              "name": "scopeId",
-              "variableName": "permissionScopeId"
-            },
-            {
-              "kind": "Variable",
-              "name": "scopeType",
-              "variableName": "permissionScopeType"
-            }
-          ],
-          "kind": "ObjectValue",
-          "name": "target"
-        }
-      ],
-      "kind": "ObjectValue",
-      "name": "input"
-    }
-  ],
-  "concreteType": "MyScopePermissionsPayload",
-  "kind": "LinkedField",
-  "name": "myScopePermissions",
-  "plural": false,
-  "selections": [
-    {
-      "alias": null,
-      "args": null,
-      "concreteType": "ScopeEntityPermission",
-      "kind": "LinkedField",
-      "name": "item",
-      "plural": false,
-      "selections": [
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "permissions",
-          "storageKey": null
-        }
-      ],
-      "storageKey": null
-    }
-  ],
-  "storageKey": null
-},
-v5 = [
+v3 = [
   {
     "kind": "Variable",
     "name": "filter",
@@ -213,35 +144,35 @@ v5 = [
     "variableName": "scope"
   }
 ],
-v6 = {
+v4 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
 },
-v7 = {
+v5 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "entityId",
   "storageKey": null
 },
-v8 = {
+v6 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "mountDestination",
   "storageKey": null
 },
-v9 = {
+v7 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "subpath",
   "storageKey": null
 },
-v10 = {
+v8 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
@@ -253,47 +184,53 @@ return {
     "argumentDefinitions": [
       (v0/*: any*/),
       (v1/*: any*/),
-      (v2/*: any*/),
-      (v3/*: any*/)
+      (v2/*: any*/)
     ],
     "kind": "Fragment",
     "metadata": null,
     "name": "VFolderAutoMountMetadataSectionQuery",
     "selections": [
-      (v4/*: any*/),
       {
-        "alias": null,
-        "args": (v5/*: any*/),
-        "concreteType": "VFolderAutoMountConnection",
-        "kind": "LinkedField",
-        "name": "scopedVfolderAutoMounts",
-        "plural": false,
+        "condition": "canRead",
+        "kind": "Condition",
+        "passingValue": true,
         "selections": [
           {
             "alias": null,
-            "args": null,
-            "concreteType": "VFolderAutoMountEdge",
+            "args": (v3/*: any*/),
+            "concreteType": "VFolderAutoMountConnection",
             "kind": "LinkedField",
-            "name": "edges",
-            "plural": true,
+            "name": "scopedVfolderAutoMounts",
+            "plural": false,
             "selections": [
               {
                 "alias": null,
                 "args": null,
-                "concreteType": "VFolderAutoMount",
+                "concreteType": "VFolderAutoMountEdge",
                 "kind": "LinkedField",
-                "name": "node",
-                "plural": false,
+                "name": "edges",
+                "plural": true,
                 "selections": [
-                  (v6/*: any*/),
-                  (v7/*: any*/),
-                  (v8/*: any*/),
-                  (v9/*: any*/),
-                  (v10/*: any*/),
                   {
+                    "alias": null,
                     "args": null,
-                    "kind": "FragmentSpread",
-                    "name": "VFolderAutoMountSettingModalFragment"
+                    "concreteType": "VFolderAutoMount",
+                    "kind": "LinkedField",
+                    "name": "node",
+                    "plural": false,
+                    "selections": [
+                      (v4/*: any*/),
+                      (v5/*: any*/),
+                      (v6/*: any*/),
+                      (v7/*: any*/),
+                      (v8/*: any*/),
+                      {
+                        "args": null,
+                        "kind": "FragmentSpread",
+                        "name": "VFolderAutoMountSettingModalFragment"
+                      }
+                    ],
+                    "storageKey": null
                   }
                 ],
                 "storageKey": null
@@ -301,8 +238,7 @@ return {
             ],
             "storageKey": null
           }
-        ],
-        "storageKey": null
+        ]
       }
     ],
     "type": "Query",
@@ -311,66 +247,71 @@ return {
   "kind": "Request",
   "operation": {
     "argumentDefinitions": [
-      (v3/*: any*/),
-      (v0/*: any*/),
       (v2/*: any*/),
-      (v1/*: any*/)
+      (v1/*: any*/),
+      (v0/*: any*/)
     ],
     "kind": "Operation",
     "name": "VFolderAutoMountMetadataSectionQuery",
     "selections": [
-      (v4/*: any*/),
       {
-        "alias": null,
-        "args": (v5/*: any*/),
-        "concreteType": "VFolderAutoMountConnection",
-        "kind": "LinkedField",
-        "name": "scopedVfolderAutoMounts",
-        "plural": false,
+        "condition": "canRead",
+        "kind": "Condition",
+        "passingValue": true,
         "selections": [
           {
             "alias": null,
-            "args": null,
-            "concreteType": "VFolderAutoMountEdge",
+            "args": (v3/*: any*/),
+            "concreteType": "VFolderAutoMountConnection",
             "kind": "LinkedField",
-            "name": "edges",
-            "plural": true,
+            "name": "scopedVfolderAutoMounts",
+            "plural": false,
             "selections": [
               {
                 "alias": null,
                 "args": null,
-                "concreteType": "VFolderAutoMount",
+                "concreteType": "VFolderAutoMountEdge",
                 "kind": "LinkedField",
-                "name": "node",
-                "plural": false,
+                "name": "edges",
+                "plural": true,
                 "selections": [
-                  (v6/*: any*/),
-                  (v7/*: any*/),
-                  (v8/*: any*/),
-                  (v9/*: any*/),
-                  (v10/*: any*/)
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "VFolderAutoMount",
+                    "kind": "LinkedField",
+                    "name": "node",
+                    "plural": false,
+                    "selections": [
+                      (v4/*: any*/),
+                      (v5/*: any*/),
+                      (v6/*: any*/),
+                      (v7/*: any*/),
+                      (v8/*: any*/)
+                    ],
+                    "storageKey": null
+                  }
                 ],
                 "storageKey": null
               }
             ],
             "storageKey": null
           }
-        ],
-        "storageKey": null
+        ]
       }
     ]
   },
   "params": {
-    "cacheID": "8054f5a9b284b8bba67461d2a8c1e548",
+    "cacheID": "179d6a6b2bfa7d7c2be653659f9548a6",
     "id": null,
     "metadata": {},
     "name": "VFolderAutoMountMetadataSectionQuery",
     "operationKind": "query",
-    "text": "query VFolderAutoMountMetadataSectionQuery(\n  $scope: VFolderAutoMountScope!\n  $filter: VFolderAutoMountFilter\n  $permissionScopeType: String!\n  $permissionScopeId: UUID!\n) {\n  myScopePermissions(input: {target: {scopeType: $permissionScopeType, scopeId: $permissionScopeId, entityType: \"vfolder_auto_mount\"}}) {\n    item {\n      permissions\n    }\n  }\n  scopedVfolderAutoMounts(scope: $scope, filter: $filter, limit: 1) {\n    edges {\n      node {\n        id\n        entityId\n        mountDestination\n        subpath\n        mountPermission\n        ...VFolderAutoMountSettingModalFragment\n      }\n    }\n  }\n}\n\nfragment VFolderAutoMountSettingModalFragment on VFolderAutoMount {\n  entityId\n  mountDestination\n  subpath\n  mountPermission\n}\n"
+    "text": "query VFolderAutoMountMetadataSectionQuery(\n  $scope: VFolderAutoMountScope!\n  $filter: VFolderAutoMountFilter\n  $canRead: Boolean!\n) {\n  scopedVfolderAutoMounts(scope: $scope, filter: $filter, limit: 1) @include(if: $canRead) {\n    edges {\n      node {\n        id\n        entityId\n        mountDestination\n        subpath\n        mountPermission\n        ...VFolderAutoMountSettingModalFragment\n      }\n    }\n  }\n}\n\nfragment VFolderAutoMountSettingModalFragment on VFolderAutoMount {\n  entityId\n  mountDestination\n  subpath\n  mountPermission\n}\n"
   }
 };
 })();
 
-(node as any).hash = "83de3b422285da2e883c4be8dd21d8c8";
+(node as any).hash = "5f206261c9c889407b5ad6c518ddb4f6";
 
 export default node;

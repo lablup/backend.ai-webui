@@ -374,6 +374,7 @@
     "MountPermission": "Холбох эрх",
     "NoPermissionToSetAutoMount": "Танд автомат холболт тохируулах эрх байхгүй.",
     "NoPermissionToSetProjectAutoMount": "Танд энэ төсөлд автомат холболт тохируулах эрх байхгүй. Өөрийн сешнд хавтсыг автоматаар холбохын тулд хувийн төсөлдөө үүсгэнэ үү.",
+    "NoPermissionToViewAutoMount": "Энэ хавтасны автомат холболтыг харах эрх танд байхгүй.",
     "NotAutoMounted": "Энэ хавтас автоматаар холбогддоггүй.",
     "NotConfigured": "Тохируулаагүй",
     "PleaseEnterMountDestination": "Холбох замыг оруулна уу.",

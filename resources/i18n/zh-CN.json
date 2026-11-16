@@ -374,6 +374,7 @@
     "MountPermission": "挂载权限",
     "NoPermissionToSetAutoMount": "您没有设置自动挂载的权限。",
     "NoPermissionToSetProjectAutoMount": "您没有在此项目中设置自动挂载的权限。要在自己的会话中自动挂载文件夹,请在个人项目中创建它。",
+    "NoPermissionToViewAutoMount": "您没有查看此文件夹自动挂载的权限。",
     "NotAutoMounted": "此文件夹未设置自动挂载。",
     "NotConfigured": "未设置",
     "PleaseEnterMountDestination": "请输入挂载路径。",

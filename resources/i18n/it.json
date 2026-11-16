@@ -374,6 +374,7 @@
     "MountPermission": "Permesso di montaggio",
     "NoPermissionToSetAutoMount": "Non hai l'autorizzazione per impostare montaggi automatici.",
     "NoPermissionToSetProjectAutoMount": "Non hai l'autorizzazione per impostare montaggi automatici in questo progetto. Per montare automaticamente una cartella nelle tue sessioni, creala nel tuo progetto personale.",
+    "NoPermissionToViewAutoMount": "Non hai il permesso di visualizzare il montaggio automatico di questa cartella.",
     "NotAutoMounted": "Questa cartella non viene montata automaticamente.",
     "NotConfigured": "Non configurato",
     "PleaseEnterMountDestination": "Inserisci il percorso di montaggio.",

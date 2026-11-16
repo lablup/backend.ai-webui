@@ -374,6 +374,7 @@
     "MountPermission": "Bağlama izni",
     "NoPermissionToSetAutoMount": "Otomatik bağlama ayarlama izniniz yok.",
     "NoPermissionToSetProjectAutoMount": "Bu projede otomatik bağlama ayarlama izniniz yok. Bir klasörü kendi oturumlarınıza otomatik bağlamak için kişisel projenizde oluşturun.",
+    "NoPermissionToViewAutoMount": "Bu klasörün otomatik bağlamasını görüntüleme izniniz yok.",
     "NotAutoMounted": "Bu klasör otomatik olarak bağlanmıyor.",
     "NotConfigured": "Yapılandırılmadı",
     "PleaseEnterMountDestination": "Bağlama yolunu girin.",

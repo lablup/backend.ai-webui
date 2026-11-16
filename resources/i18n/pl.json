@@ -374,6 +374,7 @@
     "MountPermission": "Uprawnienia montowania",
     "NoPermissionToSetAutoMount": "Nie masz uprawnień do ustawiania automatycznego montowania.",
     "NoPermissionToSetProjectAutoMount": "Nie masz uprawnień do ustawiania automatycznego montowania w tym projekcie. Aby automatycznie montować folder we własnych sesjach, utwórz go w projekcie osobistym.",
+    "NoPermissionToViewAutoMount": "Nie masz uprawnień do wyświetlenia automatycznego montowania tego folderu.",
     "NotAutoMounted": "Ten folder nie jest montowany automatycznie.",
     "NotConfigured": "Nie skonfigurowano",
     "PleaseEnterMountDestination": "Wprowadź ścieżkę montowania.",
