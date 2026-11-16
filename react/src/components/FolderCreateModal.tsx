@@ -648,7 +648,11 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
                 <HStack gap={1} vAlign="center">
                   <BAIText strong>{t('autoMount.AutoMountSettings')}</BAIText>
                   <BAIQuestionIconWithTooltip
-                    title={t('autoMount.AutoMountInSessionsDesc')}
+                    title={
+                      isPersonalTarget
+                        ? t('autoMount.AutoMountInUserSessionsDesc')
+                        : t('autoMount.AutoMountInSessionsDesc')
+                    }
                   />
                 </HStack>
                 <Form.Item name={'auto_mount_enabled'} noStyle>

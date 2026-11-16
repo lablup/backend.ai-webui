@@ -348,6 +348,7 @@
     "AutoMountAdded": "Auto-mount added.",
     "AutoMountFailedAfterCreation": "The folder was created, but its auto-mount could not be set. Try again from the Auto-mount section of the folder's details.",
     "AutoMountInSessionsDesc": "Mount this folder into every session created in this project.",
+    "AutoMountInUserSessionsDesc": "Mount this folder into every session you create, in any project.",
     "AutoMountRemoved": "Auto-mount removed.",
     "AutoMountSettings": "Auto-mount settings",
     "AutoMountUpdated": "Auto-mount updated.",

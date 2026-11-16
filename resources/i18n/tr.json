@@ -361,6 +361,7 @@
     "AutoMountAdded": "Otomatik bağlama eklendi.",
     "AutoMountFailedAfterCreation": "Klasör oluşturuldu ancak otomatik bağlaması ayarlanamadı. Klasör ayrıntılarındaki otomatik bağlama bölümünden yeniden deneyin.",
     "AutoMountInSessionsDesc": "Bu klasörü bu projede oluşturulan her oturuma bağla.",
+    "AutoMountInUserSessionsDesc": "Bu klasörü, herhangi bir projede oluşturduğunuz her oturuma bağlar.",
     "AutoMountRemoved": "Otomatik bağlama kaldırıldı.",
     "AutoMountSettings": "Otomatik bağlama ayarları",
     "AutoMountUpdated": "Otomatik bağlama güncellendi.",
