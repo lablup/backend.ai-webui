@@ -258,13 +258,15 @@ export const WEBUI_SETTING_GROUPS: ReadonlyArray<WebUISettingGroup> = [
 
 export type WebUISettingsDocument = Record<string, unknown>;
 
-/** A list value with only the entries the definition's `options` allow. */
+/** A list value with only the entries the definition's `options` allow, each once. */
 export const restrictToOptions = (
   definition: WebUISettingDefinition,
   value: unknown,
 ): unknown =>
   definition.options && Array.isArray(value)
-    ? value.filter((v) => definition.options!.some((o) => o.value === v))
+    ? _.uniq(
+        value.filter((v) => definition.options!.some((o) => o.value === v)),
+      )
     : value;
 
 /** The value has the definition's type and, for a number, lies in its range. */

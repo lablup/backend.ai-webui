@@ -33,13 +33,6 @@ vi.mock('react-i18next', async (importOriginal) => {
   };
 });
 
-// The header only reads `_config` off the client.
-vi.mock('../../hooks', () => ({
-  useSuspendedBackendaiClient: () => ({
-    _config: { enableExtendLoginSession: false },
-  }),
-}));
-
 // The header paints its band against the resolved app mode, which normally
 // comes from `ThemeModeProvider` at the app root. Nothing under test depends
 // on the value, so pin it instead of mounting the provider.

@@ -119,6 +119,20 @@ describe('applyWebUISettings', () => {
     ).toEqual({ singleSignOnVendors: [] });
   });
 
+  it('keeps each SSO vendor once', () => {
+    const next = applyWebUISettings(
+      state,
+      { singleSignOnVendors: ['saml', 'openid', 'saml'] },
+      'public',
+    );
+    expect(next.singleSignOnVendors).toEqual(['saml', 'openid']);
+    expect(
+      buildWebUISettingsDocument('public', {
+        singleSignOnVendors: ['openid', 'openid'],
+      }),
+    ).toEqual({ singleSignOnVendors: ['openid'] });
+  });
+
   it('does not mutate the input state', () => {
     const before = { ...state };
     applyWebUISettings(state, { hideAgents: false }, 'domain');

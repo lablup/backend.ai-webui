@@ -667,28 +667,3 @@ export function notSavedDialog(page: Page): Locator {
     .or(page.getByRole('dialog'))
     .filter({ hasText: 'Some System Settings were not saved' });
 }
-
-/** A value of the row's type that differs from `current`. */
-export function differentValueFor(
-  setting: WebUISettingRow,
-  current: unknown,
-): unknown {
-  switch (setting.type) {
-    case 'boolean':
-      return !(current === true);
-    case 'number':
-      return typeof current === 'number' && Number.isFinite(current)
-        ? current + 1
-        : 7;
-    case 'string':
-      return `e2e-${setting.key}`;
-    case 'stringList':
-      // The SSO vendor list only keeps `saml` / `openid`.
-      if (setting.key === 'singleSignOnVendors') {
-        return Array.isArray(current) && current.includes('saml')
-          ? ['openid']
-          : ['saml'];
-      }
-      return [`e2e-${setting.key}`];
-  }
-}

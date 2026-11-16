@@ -55,7 +55,6 @@ vi.mock('../../../hooks', async (importOriginal) => {
     ...originalModule,
     useSuspendedBackendaiClient: () => ({
       isManagerVersionCompatibleWith: () => false,
-      _config: { allowCustomResourceAllocation: true },
     }),
     useWebUINavigate: () => vi.fn(),
   };

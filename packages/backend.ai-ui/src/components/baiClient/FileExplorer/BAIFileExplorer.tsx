@@ -8,7 +8,6 @@ import BAIFetchKeyButton from '../../BAIFetchKeyButton';
 import BAIFlex from '../../BAIFlex';
 import BAIUnmountAfterClose from '../../BAIUnmountAfterClose';
 import { BAIColumnsType, BAITable, BAITableProps } from '../../Table';
-import useConnectedBAIClient from '../../provider/BAIClientProvider/hooks/useConnectedBAIClient';
 import { VFolderFile } from '../../provider/BAIClientProvider/types';
 import DeleteSelectedItemsModal from './DeleteSelectedItemsModal';
 import DragAndDrop from './DragAndDrop';
@@ -137,7 +136,6 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
   const [selectedItems, setSelectedItems] = useState<Array<VFolderFile>>([]);
   const [selectedSingleItem, setSelectedSingleItem] =
     useState<VFolderFile | null>(null);
-  useConnectedBAIClient();
 
   const {
     files,

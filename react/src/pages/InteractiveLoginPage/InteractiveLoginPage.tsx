@@ -3,7 +3,6 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { CSSTokenVariables } from '../../components/MainLayout/MainLayout';
-import { useSuspendedBackendaiClient } from '../../hooks';
 import { useCurrentUserInfo } from '../../hooks/backendai';
 import { useEffectiveLoginConfig } from '../../hooks/useWebUIConfig';
 import { Button } from '@lablup/ui-common/Button';
@@ -33,7 +32,6 @@ const InteractiveLoginPage = () => {
 
 const Children = () => {
   'use memo';
-  useSuspendedBackendaiClient();
   const loginConfig = useEffectiveLoginConfig();
   const [userInfo] = useCurrentUserInfo();
   const { pathname, search } = useLocation();

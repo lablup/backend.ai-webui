@@ -268,6 +268,5 @@ export function applyConfigToClient(cfg: LoginConfigState): void {
   client._config._proxyToken = '';
   client._config.domainName = cfg.domain_name;
   client._config.domainId = cfg.domain_id;
-  client._config.enableWebMCP = cfg.enableWebMCP;
   client.ready = true;
 }

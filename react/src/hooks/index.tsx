@@ -705,6 +705,5 @@ type BackendAIConfig = {
   _session_id: string;
   domainName: string;
   domainId: string;
-  enableWebMCP: boolean;
   proxyURL: string;
 };
