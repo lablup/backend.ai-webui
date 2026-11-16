@@ -286,9 +286,12 @@ const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
         menuOnlyActions.length > 0 ? MORE_BUTTON_WIDTH + ACTIONS_GAP : 0;
       const availableWidth =
         containerWidth - minTitleReserve - moreButtonReserve;
-      // Folding one action alone only swaps its button for an equally wide More button.
+      // Folding one icon action alone only swaps it for a More button at least as wide.
       const settle = (count: number) =>
-        menuOnlyActions.length === 0 && autoActionCount - count === 1
+        menuOnlyActions.length === 0 &&
+        autoActionCount - count === 1 &&
+        autoActions[count]?.icon &&
+        ACTION_BUTTON_WIDTH <= MORE_BUTTON_WIDTH
           ? autoActionCount
           : count;
 
@@ -344,7 +347,12 @@ const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
       ro.disconnect();
       cancelAnimationFrame(rafId);
     };
-  }, [autoActionCount, minTitleWidth, calculateVisibleActions]);
+  }, [
+    autoActionCount,
+    menuOnlyActions.length,
+    minTitleWidth,
+    calculateVisibleActions,
+  ]);
 
   const hasOverflow = visibleCount < autoActionCount;
   const visibleActions = autoActions.slice(0, visibleCount);

@@ -241,15 +241,26 @@ describe('BAINameActionCell — minTitleWidth reserves width for the title', () 
     expect(screen.getAllByRole('button')).toHaveLength(1);
   });
 
-  it.each(['always', 'hover'] as const)(
-    'keeps a single action as its own button instead of a More button of the same width (showActions=%s)',
-    (showActions) => {
+  const editLabels = {
+    key: 'edit-labels',
+    title: 'Edit labels',
+    icon: <span data-testid="edit-labels-icon" />,
+  };
+
+  it.each([
+    ['always', NARROW_CELL_WIDTH],
+    ['hover', NARROW_CELL_WIDTH],
+    // Leaves a few px for actions, so the fit loop rather than the early return decides.
+    ['always', NARROW_CELL_WIDTH - 20],
+  ] as const)(
+    'keeps a single icon action as its own button instead of a More button of the same width (showActions=%s, minTitleWidth=%i)',
+    (showActions, minTitleWidth) => {
       render(
         <BAINameActionCell
           title="label-a, label-b"
           showActions={showActions}
-          minTitleWidth={NARROW_CELL_WIDTH}
-          actions={[{ key: 'edit-labels', title: 'Edit labels' }]}
+          minTitleWidth={minTitleWidth}
+          actions={[editLabels]}
         />,
       );
 
@@ -260,6 +271,29 @@ describe('BAINameActionCell — minTitleWidth reserves width for the title', () 
     },
   );
 
+  it('re-measures when the menu-only action that justified the fold goes away', () => {
+    const cell = (actions: BAINameActionCellAction[]) => (
+      <BAINameActionCell
+        title="label-a, label-b"
+        showActions="always"
+        minTitleWidth={NARROW_CELL_WIDTH}
+        actions={actions}
+      />
+    );
+    const { rerender } = render(
+      cell([
+        editLabels,
+        { key: 'delete', title: 'Delete', showInMenu: 'always' },
+      ]),
+    );
+    expect(screen.queryByRole('button', { name: /Edit labels/ })).toBeNull();
+
+    rerender(cell([editLabels]));
+    expect(
+      screen.getByRole('button', { name: /Edit labels/ }),
+    ).toBeInTheDocument();
+  });
+
   it('still folds a single action when a menu-only action already shows the More button', () => {
     render(
       <BAINameActionCell
@@ -267,7 +301,7 @@ describe('BAINameActionCell — minTitleWidth reserves width for the title', () 
         showActions="always"
         minTitleWidth={NARROW_CELL_WIDTH}
         actions={[
-          { key: 'download', title: 'Download' },
+          { ...editLabels, key: 'download', title: 'Download' },
           { key: 'delete', title: 'Delete', showInMenu: 'always' },
         ]}
       />,
