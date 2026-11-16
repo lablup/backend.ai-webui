@@ -4,6 +4,7 @@ import {
   createUserViaApi,
   deleteKeypairResourcePolicyViaApi,
   purgeUserViaApi,
+  sweepStaleKeypairResourcePoliciesViaApi,
 } from '../../utils/admin-api';
 import { StartPage } from '../../utils/classes/common/StartPage';
 import { SessionLauncher } from '../../utils/classes/session/SessionLauncher';
@@ -376,6 +377,8 @@ test.describe(
     test.beforeAll(async () => {
       const api = await createAdminApiContext();
       try {
+        // Leftovers of a killed run; the global teardown sweeps their users.
+        await sweepStaleKeypairResourcePoliciesViaApi(api, /^e2e-zero-slots-/);
         await createKeypairResourcePolicyViaApi(api, policyName, {
           cpu: '0',
           mem: '0',
@@ -405,7 +408,7 @@ test.describe(
       }
     });
 
-    test('User cannot allocate resources above a zero keypair resource policy limit', async ({
+    test('User can see the insufficient-resources warning when the keypair resource policy allows no CPU or memory', async ({
       page,
       request,
     }) => {
@@ -417,6 +420,7 @@ test.describe(
           .getByText(
             'Allocatable resources falls below the minimum resource required in the selected image.',
           )
+          .filter({ visible: true })
           .first(),
       ).toBeVisible({ timeout: 15000 });
     });

@@ -284,7 +284,13 @@ export async function deleteKeypairResourcePolicyViaApi(
       }`,
       { name },
     );
-    return data.delete_keypair_resource_policy?.ok === true;
+    if (!data.delete_keypair_resource_policy?.ok) {
+      console.warn(
+        `[admin-api] delete_keypair_resource_policy did not succeed for ${name}: ${data.delete_keypair_resource_policy?.msg}`,
+      );
+      return false;
+    }
+    return true;
   } catch (error) {
     console.warn(
       `[admin-api] could not delete keypair resource policy ${name}:`,
@@ -292,6 +298,36 @@ export async function deleteKeypairResourcePolicyViaApi(
     );
     return false;
   }
+}
+
+/**
+ * Deletes keypair resource policies matching `pattern` that are older than
+ * `minAgeMs`, so a hard-killed run cannot leak them.
+ */
+export async function sweepStaleKeypairResourcePoliciesViaApi(
+  api: APIRequestContext,
+  pattern: RegExp,
+  minAgeMs = 60 * 60 * 1000,
+): Promise<number> {
+  const data = await gqlAdmin<{
+    keypair_resource_policies: Array<{
+      name: string;
+      created_at: string;
+    }> | null;
+  }>(api, `query { keypair_resource_policies { name created_at } }`);
+  const stale = (data.keypair_resource_policies ?? []).filter((p) => {
+    const createdAt = new Date(p.created_at).getTime();
+    return (
+      pattern.test(p.name) &&
+      Number.isFinite(createdAt) &&
+      Date.now() - createdAt > minAgeMs
+    );
+  });
+  let deleted = 0;
+  for (const { name } of stale) {
+    if (await deleteKeypairResourcePolicyViaApi(api, name)) deleted++;
+  }
+  return deleted;
 }
 
 /**
@@ -314,7 +350,9 @@ export async function createUserViaApi(
   }>(
     api,
     `query($domain: String) {
-      groups(domain_name: $domain, is_active: true) { id name }
+      groups(domain_name: $domain, is_active: true, type: ["GENERAL"]) {
+        id name
+      }
     }`,
     { domain: user.domainName },
   );
