@@ -374,6 +374,7 @@
     "MountPermission": "Izin mount",
     "NoPermissionToSetAutoMount": "Anda tidak memiliki izin untuk mengatur mount otomatis.",
     "NoPermissionToSetProjectAutoMount": "Anda tidak memiliki izin untuk mengatur mount otomatis di proyek ini. Untuk me-mount folder secara otomatis di sesi Anda sendiri, buat folder di proyek pribadi Anda.",
+    "NoPermissionToViewAutoMount": "Anda tidak memiliki izin untuk melihat mount otomatis folder ini.",
     "NotAutoMounted": "Folder ini tidak di-mount otomatis.",
     "NotConfigured": "Tidak dikonfigurasi",
     "PleaseEnterMountDestination": "Masukkan path mount.",

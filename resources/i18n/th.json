@@ -374,6 +374,7 @@
     "MountPermission": "สิทธิ์การเมานต์",
     "NoPermissionToSetAutoMount": "คุณไม่มีสิทธิ์ตั้งค่าการเมานต์อัตโนมัติ",
     "NoPermissionToSetProjectAutoMount": "คุณไม่มีสิทธิ์ตั้งค่าการเมานต์อัตโนมัติในโปรเจกต์นี้ หากต้องการเมานต์โฟลเดอร์อัตโนมัติในเซสชันของคุณเอง ให้สร้างโฟลเดอร์ในโปรเจกต์ส่วนตัว",
+    "NoPermissionToViewAutoMount": "คุณไม่มีสิทธิ์ดูการเมานต์อัตโนมัติของโฟลเดอร์นี้",
     "NotAutoMounted": "โฟลเดอร์นี้ไม่ได้เมานต์อัตโนมัติ",
     "NotConfigured": "ยังไม่ได้ตั้งค่า",
     "PleaseEnterMountDestination": "กรอกพาธที่เมานต์",

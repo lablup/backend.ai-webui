@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import type { VFolderAutoMountMetadataSectionDeleteMutation } from '../__generated__/VFolderAutoMountMetadataSectionDeleteMutation.graphql';
+import type { VFolderAutoMountMetadataSectionPermissionQuery } from '../__generated__/VFolderAutoMountMetadataSectionPermissionQuery.graphql';
 import type { VFolderAutoMountMetadataSectionQuery } from '../__generated__/VFolderAutoMountMetadataSectionQuery.graphql';
 import { App } from '../app-shim';
 import VFolderAutoMountSettingModal, {
@@ -43,20 +44,18 @@ const VFolderAutoMountMetadataSection: React.FC<
   const [fetchKey, updateFetchKey] = useFetchKey();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const { scopedVfolderAutoMounts, myScopePermissions } =
-    useLazyLoadQuery<VFolderAutoMountMetadataSectionQuery>(
+  const { myScopePermissions } =
+    useLazyLoadQuery<VFolderAutoMountMetadataSectionPermissionQuery>(
       graphql`
-        query VFolderAutoMountMetadataSectionQuery(
-          $scope: VFolderAutoMountScope!
-          $filter: VFolderAutoMountFilter
-          $permissionScopeType: String!
-          $permissionScopeId: UUID!
+        query VFolderAutoMountMetadataSectionPermissionQuery(
+          $scopeType: String!
+          $scopeId: UUID!
         ) {
           myScopePermissions(
             input: {
               target: {
-                scopeType: $permissionScopeType
-                scopeId: $permissionScopeId
+                scopeType: $scopeType
+                scopeId: $scopeId
                 entityType: "vfolder_auto_mount"
               }
             }
@@ -65,7 +64,27 @@ const VFolderAutoMountMetadataSection: React.FC<
               permissions
             }
           }
-          scopedVfolderAutoMounts(scope: $scope, filter: $filter, limit: 1) {
+        }
+      `,
+      {
+        scopeType: scopeType === 'PROJECT' ? 'project' : 'user',
+        scopeId,
+      },
+      { fetchPolicy: 'store-and-network' },
+    );
+  const permissions = myScopePermissions?.item.permissions ?? [];
+  const canRead = _.includes(permissions, 'READ');
+
+  const { scopedVfolderAutoMounts } =
+    useLazyLoadQuery<VFolderAutoMountMetadataSectionQuery>(
+      graphql`
+        query VFolderAutoMountMetadataSectionQuery(
+          $scope: VFolderAutoMountScope!
+          $filter: VFolderAutoMountFilter
+          $canRead: Boolean!
+        ) {
+          scopedVfolderAutoMounts(scope: $scope, filter: $filter, limit: 1)
+            @include(if: $canRead) {
             edges {
               node {
                 id
@@ -88,13 +107,11 @@ const VFolderAutoMountMetadataSection: React.FC<
           scopeType: { equals: scopeType },
           vfolderId: { equals: vfolder.id },
         },
-        permissionScopeType: scopeType === 'PROJECT' ? 'project' : 'user',
-        permissionScopeId: scopeId,
+        canRead,
       },
       { fetchKey, fetchPolicy: 'store-and-network' },
     );
   const autoMount = scopedVfolderAutoMounts?.edges[0]?.node ?? null;
-  const permissions = myScopePermissions?.item.permissions ?? [];
   const noPermission = {
     reason:
       scopeType === 'PROJECT'
@@ -155,42 +172,48 @@ const VFolderAutoMountMetadataSection: React.FC<
         }
         showActions="always"
         actions={
-          autoMount
-            ? [
-                {
-                  key: 'edit-auto-mount',
-                  title: t('autoMount.EditAutoMount'),
-                  icon: <SquarePenIcon />,
-                  disabled: disabledUnless('UPDATE'),
-                  onClick: () => setIsModalOpen(true),
-                },
-                {
-                  key: 'remove-auto-mount',
-                  title: t('autoMount.RemoveAutoMount'),
-                  icon: <Trash2 />,
-                  type: 'danger' as const,
-                  disabled: disabledUnless('SOFT_DELETE'),
-                  popConfirm: {
-                    title: t('autoMount.RemoveAutoMountConfirm'),
-                    description: autoMount.mountDestination,
-                    okButtonProps: { danger: true },
-                    okText: t('button.Remove'),
-                    onConfirm: handleDelete,
+          !canRead
+            ? []
+            : autoMount
+              ? [
+                  {
+                    key: 'edit-auto-mount',
+                    title: t('autoMount.EditAutoMount'),
+                    icon: <SquarePenIcon />,
+                    disabled: disabledUnless('UPDATE'),
+                    onClick: () => setIsModalOpen(true),
                   },
-                },
-              ]
-            : [
-                {
-                  key: 'add-auto-mount',
-                  title: t('autoMount.AddAutoMount'),
-                  icon: <PlusIcon />,
-                  disabled: disabledUnless('CREATE'),
-                  onClick: () => setIsModalOpen(true),
-                },
-              ]
+                  {
+                    key: 'remove-auto-mount',
+                    title: t('autoMount.RemoveAutoMount'),
+                    icon: <Trash2 />,
+                    type: 'danger' as const,
+                    disabled: disabledUnless('SOFT_DELETE'),
+                    popConfirm: {
+                      title: t('autoMount.RemoveAutoMountConfirm'),
+                      description: autoMount.mountDestination,
+                      okButtonProps: { danger: true },
+                      okText: t('button.Remove'),
+                      onConfirm: handleDelete,
+                    },
+                  },
+                ]
+              : [
+                  {
+                    key: 'add-auto-mount',
+                    title: t('autoMount.AddAutoMount'),
+                    icon: <PlusIcon />,
+                    disabled: disabledUnless('CREATE'),
+                    onClick: () => setIsModalOpen(true),
+                  },
+                ]
         }
       />
-      {autoMount ? (
+      {!canRead ? (
+        <Text color="secondary">
+          {t('autoMount.NoPermissionToViewAutoMount')}
+        </Text>
+      ) : autoMount ? (
         <BAIMetadataList columns="single">
           <BAIMetadataListItem label={t('autoMount.MountDestination')}>
             {autoMount.mountDestination}
