@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { catalogFor, sanitizeBoard, seedBoard } from './boardModel';
+import { addPanel, catalogFor, sanitizeBoard, seedBoard } from './boardModel';
 import { PANEL_CATALOG } from './panelCatalog';
 import { resourceKeys } from './resourceRegistry';
 import type { PanelCatalogContext, PanelPage } from './types';
@@ -50,9 +50,13 @@ describe('PANEL_CATALOG', () => {
   });
 
   it('keeps every default size at or above its minimum', () => {
-    PANEL_CATALOG.forEach(({ defaultSize, minSize }) => {
-      expect(defaultSize.columnSpan).toBeGreaterThanOrEqual(minSize.columnSpan);
-      expect(defaultSize.rowSpan).toBeGreaterThanOrEqual(minSize.rowSpan);
+    PANEL_CATALOG.forEach(({ defaultSize, defaultSizeByPage, minSize }) => {
+      [defaultSize, ...Object.values(defaultSizeByPage ?? {})].forEach(
+        (size) => {
+          expect(size.columnSpan).toBeGreaterThanOrEqual(minSize.columnSpan);
+          expect(size.rowSpan).toBeGreaterThanOrEqual(minSize.rowSpan);
+        },
+      );
     });
   });
 
@@ -69,19 +73,21 @@ describe('PANEL_CATALOG', () => {
     [
       'project',
       [
+        'mySession',
+        'myTotalResource',
+        'myResource',
+        'start.recentHistory',
         'start.session',
         'start.batchSession',
         'start.folder',
         'start.deployment',
         'start.url',
-        'mySession',
         'myRecentSessions',
-        'myTotalResource',
-        'myResource',
-        'totalResourceWithinResourceGroup',
-        'memberAgentStats',
         'quotaPerStorageVolume',
         'myDeployments',
+        'sessionsCreated',
+        'totalResourceWithinResourceGroup',
+        'memberAgentStats',
         'myActivity',
       ],
     ],
@@ -89,12 +95,15 @@ describe('PANEL_CATALOG', () => {
       'projectAdmin',
       [
         'projectSessionStatus',
-        'pendingSessions',
-        'longRunningSessions',
         'projectResourceAllocation',
+        'pendingSessions',
+        'resourceGroupCapacity',
+        'longRunningSessions',
         'projectDeployments',
-        'projectFolders',
+        'sessionsCreated',
+        'sessionsByStatus',
         'projectUsers',
+        'projectFolders',
         'projectAuditLog',
       ],
     ],
@@ -102,18 +111,54 @@ describe('PANEL_CATALOG', () => {
       'admin',
       [
         'projectSessionStatus',
-        'pendingSessions',
-        'activeAgents',
         'agentStats',
+        'pendingSessions',
         'failuresByEntityType',
-        'projectAuditLog',
+        'activeAgents',
         'totalResourceWithinResourceGroup',
+        'sessionsCreated',
+        'foldersByUsageMode',
+        'projectAuditLog',
       ],
     ],
   ])('seeds the %s board with its default cards', (page, keys) => {
     expect(
       seedBoard(PANEL_CATALOG, page).panels.map((panel) => panel.id),
     ).toEqual(keys);
+  });
+
+  it('sizes a card per page where the page overrides it', () => {
+    const sizeOn = (page: PanelPage) =>
+      seedBoard(PANEL_CATALOG, page).panels.find(
+        (panel) => panel.id === 'totalResourceWithinResourceGroup',
+      );
+    expect(sizeOn('project')).toMatchObject({ columnSpan: 3, rowSpan: 2 });
+    expect(sizeOn('admin')).toMatchObject({ columnSpan: 2, rowSpan: 4 });
+  });
+
+  it('gives a card added from the sider the size and range a new board would', () => {
+    const definition = PANEL_CATALOG.find(
+      (entry) => entry.key === 'sessionsCreated',
+    )!;
+    const added = addPanel(
+      { panels: [], knownKeys: [] },
+      definition,
+      {},
+      'project',
+    ).panels[0];
+    expect(added).toMatchObject({
+      columnSpan: 2,
+      rowSpan: 3,
+      settings: { range: 'now-7d' },
+    });
+  });
+
+  it('seeds the session trend card with the last seven days', () => {
+    expect(
+      seedBoard(PANEL_CATALOG, 'project').panels.find(
+        (panel) => panel.id === 'sessionsCreated',
+      )?.settings,
+    ).toEqual({ range: 'now-7d' });
   });
 });
 
@@ -190,13 +235,13 @@ describe('catalogFor on the real catalog', () => {
     );
   });
 
-  it('offers the resource group capacity card on the project admin page without placing it', () => {
+  it('places the resource group capacity card on the project admin board', () => {
     expect(
       keysFor({ page: 'projectAdmin', role: 'user', config: {} }),
     ).toContain('resourceGroupCapacity');
-    expect(seedBoard(PANEL_CATALOG, 'projectAdmin').knownKeys).toContain(
-      'resourceGroupCapacity',
-    );
+    expect(
+      seedBoard(PANEL_CATALOG, 'projectAdmin').panels.map((panel) => panel.id),
+    ).toContain('resourceGroupCapacity');
   });
 
   it('offers the catalog-only superadmin cards without placing them', () => {
@@ -208,6 +253,7 @@ describe('catalogFor on the real catalog', () => {
       'projectFolders',
       'projectUsers',
       'resourceGroupCapacity',
+      'sessionsByStatus',
       'recentlyCreatedSession',
       'resourcePolicies',
       'failedLogins',

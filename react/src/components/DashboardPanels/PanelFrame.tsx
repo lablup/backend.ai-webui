@@ -110,6 +110,9 @@ const PanelFrame: React.FC<PanelFrameProps> = ({
           minHeight: 0,
           overflowY: 'auto',
           overflowX: 'hidden',
+          // Room for content that reaches into the card's inset (the accelerator box), without moving the rest.
+          paddingInline: token('--spacing-4'),
+          marginInline: `calc(-1 * ${token('--spacing-4')})`,
           ...(isInBoard ? {} : { marginBottom: token('--spacing-4') }),
         }}
       >

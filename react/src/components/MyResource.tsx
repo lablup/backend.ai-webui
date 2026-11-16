@@ -150,7 +150,9 @@ const NO_RESOURCE_DATA = { cpu: null, memory: null, accelerators: [] };
 export const MyTotalResourceStatistics: React.FC<{
   projectId: string;
   fetchKey: string;
-}> = ({ projectId, fetchKey }) => {
+  /** A line under a slot's statistic, keyed by its resource type. */
+  notesOf?: (resourceType: string) => React.ReactNode;
+}> = ({ projectId, fetchKey, notesOf }) => {
   'use memo';
   const queryRef = useLazyLoadQuery<MyResourceQuery>(
     graphql`
@@ -162,12 +164,15 @@ export const MyTotalResourceStatistics: React.FC<{
     { fetchPolicy: 'network-only', fetchKey },
   );
 
-  return <MyTotalResourceStatisticsContent queryRef={queryRef} />;
+  return (
+    <MyTotalResourceStatisticsContent queryRef={queryRef} notesOf={notesOf} />
+  );
 };
 
 const MyTotalResourceStatisticsContent: React.FC<{
   queryRef: MyResourceV2StatisticsFragment$key;
-}> = ({ queryRef }) => {
+  notesOf?: (resourceType: string) => React.ReactNode;
+}> = ({ queryRef, notesOf }) => {
   'use memo';
   // Fields a plain project member can read; the user's figures count every keypair.
   const data = useFragment(
@@ -232,6 +237,7 @@ const MyTotalResourceStatisticsContent: React.FC<{
 
   return (
     <ResourceUsageStatistics
+      notesOf={notesOf}
       rows={
         user
           ? toUsageRows(

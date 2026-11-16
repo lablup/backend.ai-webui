@@ -5,6 +5,7 @@
 import QuotaPerStorageVolumeDashboardItem from '../QuotaPerStorageVolumeDashboardItem';
 import { useDashboardRefreshQuery } from './DashboardRefreshContext';
 import AuditLogPanel from './cards/AuditLogPanel';
+import { chartCard } from './cards/ChartCard';
 import DeploymentStatusPanel from './cards/DeploymentStatusPanel';
 import FoldersPanel from './cards/FoldersPanel';
 import LongRunningSessionsPanel from './cards/LongRunningSessionsPanel';
@@ -21,6 +22,7 @@ import ResourceGroupTotalPanel from './memberCards/ResourceGroupTotalPanel';
 import ResourcePresetsPanel from './memberCards/ResourcePresetsPanel';
 import {
   CreateFolderPanel,
+  RecentHistoryPanel,
   StartBatchSessionPanel,
   StartDeploymentPanel,
   StartFromURLPanel,
@@ -43,6 +45,7 @@ import type {
   PanelType,
 } from './types';
 import { BAIBoardItemErrorBoundary, BAISkeleton } from 'backend.ai-ui';
+import * as _ from 'lodash-es';
 import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -115,9 +118,20 @@ const ALL_PAGES: ReadonlyArray<PanelPage> = [
 ];
 
 // Each Start card also carries the retired Start page's menu key, which still hides them all.
-const START_SIZE = { defaultSize: size(1, 2), minSize: size(1, 2) };
+// Two columns: on a six-column board one column is too narrow for a title and a button.
+const START_SIZE = { defaultSize: size(2, 2), minSize: size(1, 2) };
 /** The member page's cards and the shared ones, in the order a new board places them. */
 const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
+  {
+    key: 'start.recentHistory',
+    page: ['project'],
+    group: 'start',
+    titleKey: 'start.StartSessionFromRecentHistory',
+    requires: { menuKey: ['session', 'start'] },
+    kind: 'custom',
+    Component: RecentHistoryPanel,
+    ...START_SIZE,
+  },
   {
     key: 'start.session',
     page: ['project'],
@@ -179,7 +193,7 @@ const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
     kind: 'custom',
     Component: SessionStatusPanel,
     detailLink: RUNNING_SESSIONS,
-    defaultSize: size(2, 2),
+    defaultSize: size(2, 3),
     minSize: size(2, 2),
   },
   {
@@ -200,6 +214,7 @@ const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
     titleKey: 'webui.menu.MyResources',
     kind: 'custom',
     Component: MyTotalResourcePanel,
+    // A row taller for Memory in use.
     defaultSize: size(2, 3),
     minSize: size(2, 2),
   },
@@ -241,6 +256,8 @@ const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
     kind: 'custom',
     Component: ResourceGroupTotalPanel,
     defaultSize: size(2, 2),
+    // Half of a row with Agent Stats on the member board; beside the 4-row Agents card on the superadmin board.
+    defaultSizeByPage: { project: size(3, 2), admin: size(2, 4) },
     minSize: size(2, 2),
     settings: ['resourceGroup'],
   },
@@ -259,7 +276,7 @@ const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
     detailLink: listLink('agent-summary', {
       project: 'webui.menu.AgentSummary',
     }),
-    defaultSize: size(2, 2),
+    defaultSize: size(3, 2),
     minSize: size(2, 2),
   },
   // TODO(needs-backend): BA-8719 - re-add `folderStatus` (FoldersPanel) once
@@ -271,7 +288,7 @@ const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
     titleKey: 'data.QuotaPerStorageVolume',
     kind: 'custom',
     Component: QuotaPerStorageVolumePanel,
-    defaultSize: size(2, 2),
+    defaultSize: size(2, 3),
     minSize: size(2, 2),
   },
   {
@@ -283,7 +300,8 @@ const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
     kind: 'custom',
     Component: DeploymentStatusPanel,
     detailLink: listLink('deployments', { project: 'webui.menu.Deployments' }),
-    defaultSize: size(2, 3),
+    // Same as My Recent Sessions.
+    defaultSize: size(4, 3),
     minSize: size(2, 2),
     columnSettings: true,
   },
@@ -294,25 +312,12 @@ const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
     titleKey: 'dashboard.card.MyActivity',
     kind: 'custom',
     Component: AuditLogPanel,
-    defaultSize: size(4, 3),
+    // A time axis: full width, last on the board.
+    defaultSize: size(6, 3),
     minSize: size(2, 2),
     settings: ['range'],
   },
 ];
-
-/** Where the superadmin page's default board places its cards. */
-const ADMIN_ORDER = {
-  projectSessionStatus: 1,
-  pendingSessions: 2,
-  activeAgents: 3,
-  agentStats: 4,
-  failuresByEntityType: 5,
-  projectAuditLog: 6,
-} as const;
-
-const adminOrder = (key: keyof typeof ADMIN_ORDER) => ({
-  order: { admin: ADMIN_ORDER[key] },
-});
 
 /**
  * The admin pages' cards, in the order the project admin board places them.
@@ -329,7 +334,6 @@ const PROJECT_ADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     detailLink: RUNNING_SESSIONS,
     defaultSize: size(4, 3),
     minSize: size(2, 2),
-    ...adminOrder('projectSessionStatus'),
   },
   {
     key: 'pendingSessions',
@@ -343,7 +347,6 @@ const PROJECT_ADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     minSize: size(2, 2),
     settings: ['resourceGroup'],
     columnSettings: true,
-    ...adminOrder('pendingSessions'),
   },
   {
     key: 'longRunningSessions',
@@ -367,7 +370,7 @@ const PROJECT_ADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     titleKey: 'dashboard.card.ResourceAllocation',
     kind: 'custom',
     Component: ResourceAllocationPanel,
-    defaultSize: size(2, 2),
+    defaultSize: size(2, 3),
     minSize: size(2, 2),
     defaultHidden: ['admin'],
   },
@@ -400,7 +403,7 @@ const PROJECT_ADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
       projectAdmin: 'webui.menu.Data',
       admin: 'webui.menu.Data',
     }),
-    defaultSize: size(2, 2),
+    defaultSize: size(3, 2),
     minSize: size(2, 2),
     defaultHidden: ['admin'],
   },
@@ -416,7 +419,7 @@ const PROJECT_ADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
       projectAdmin: 'webui.menu.ProjectMembers',
       admin: 'webui.menu.Users',
     }),
-    defaultSize: size(2, 2),
+    defaultSize: size(3, 2),
     minSize: size(2, 2),
     defaultHidden: ['admin'],
   },
@@ -427,10 +430,9 @@ const PROJECT_ADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     titleKey: 'auditLog.AuditLog',
     kind: 'custom',
     Component: AuditLogPanel,
-    defaultSize: size(4, 4),
+    defaultSize: size(6, 4),
     minSize: size(2, 3),
     settings: ['range'],
-    ...adminOrder('projectAuditLog'),
   },
   {
     key: 'resourceGroupCapacity',
@@ -439,14 +441,80 @@ const PROJECT_ADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     titleKey: 'dashboard.card.ResourceGroupCapacity',
     kind: 'custom',
     Component: ResourceGroupCapacityPanel,
-    defaultSize: size(2, 2),
+    defaultSize: size(2, 3),
     minSize: size(2, 2),
     settings: ['resourceGroup'],
-    defaultHidden: true,
+    defaultHidden: ['admin'],
   },
 ];
 
 const SUPERADMIN_ONLY = { role: 'superadmin' } as const;
+
+const LAST_7_DAYS = { range: 'now-7d' } as const;
+
+/** Cards the custom-panel chart engine draws, scoped like every other card on the page. */
+const CHART_PANELS: ReadonlyArray<PanelDefinition> = [
+  {
+    key: 'sessionsCreated',
+    page: ALL_PAGES,
+    group: 'session',
+    titleKey: 'dashboard.card.SessionsCreated',
+    kind: 'custom',
+    Component: chartCard(
+      'session',
+      { type: 'area' },
+      'dashboard.card.SessionsCreated',
+    ),
+    detailLink: listLink('session', SESSIONS),
+    defaultSize: size(4, 3),
+    // Beside My Deployments on the member board; half width beside Sessions by Status and the folder donut.
+    defaultSizeByPage: {
+      project: size(2, 3),
+      projectAdmin: size(3, 3),
+      admin: size(3, 3),
+    },
+    minSize: size(2, 2),
+    settings: ['range'],
+    defaultSettings: LAST_7_DAYS,
+  },
+  {
+    key: 'sessionsByStatus',
+    page: ['projectAdmin', 'admin'],
+    group: 'session',
+    titleKey: 'dashboard.card.SessionsByStatus',
+    kind: 'custom',
+    Component: chartCard(
+      'session',
+      // A donut, not a bar: a bar's six status labels run into each other on a card this wide.
+      { type: 'donut', groupBy: 'status', period: true },
+      'dashboard.card.SessionsByStatus',
+    ),
+    detailLink: listLink('session', SESSIONS),
+    // Narrower than three columns, the ring gives way to its legend.
+    defaultSize: size(3, 3),
+    minSize: size(2, 2),
+    settings: ['range'],
+    defaultSettings: LAST_7_DAYS,
+    defaultHidden: ['admin'],
+  },
+  {
+    key: 'foldersByUsageMode',
+    page: ['admin'],
+    group: 'resource',
+    titleKey: 'dashboard.card.FoldersByUsageMode',
+    requires: SUPERADMIN_ONLY,
+    kind: 'custom',
+    Component: chartCard(
+      'vfolder',
+      { type: 'donut', groupBy: 'usageMode' },
+      'dashboard.card.FoldersByUsageMode',
+    ),
+    detailLink: listLink('data', { admin: 'webui.menu.Data' }),
+    // Narrower than three columns, the ring gives way to its legend.
+    defaultSize: size(3, 3),
+    minSize: size(2, 2),
+  },
+];
 
 /** Cards only the superadmin page has: cluster-wide and superadmin-only fields. */
 const SUPERADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
@@ -479,7 +547,6 @@ const SUPERADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     ),
     defaultSize: size(4, 4),
     minSize: size(2, 3),
-    ...adminOrder('activeAgents'),
   },
   {
     key: 'agentStats',
@@ -490,9 +557,8 @@ const SUPERADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     kind: 'custom',
     Component: AgentStatsPanel,
     detailLink: listLink('agent', { admin: 'webui.menu.Resources' }),
-    defaultSize: size(2, 2),
+    defaultSize: size(2, 3),
     minSize: size(2, 2),
-    ...adminOrder('agentStats'),
   },
   {
     key: 'failuresByEntityType',
@@ -505,7 +571,6 @@ const SUPERADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     defaultSize: size(2, 3),
     minSize: size(2, 3),
     settings: ['range'],
-    ...adminOrder('failuresByEntityType'),
   },
   {
     // The member page's My Recent Sessions over the domain; the key is the one stored boards already carry.
@@ -615,9 +680,70 @@ const PRESET_PANELS: ReadonlyArray<PanelDefinition> = resourceKeys.map(
   },
 );
 
+/**
+ * Where each page's default board places its cards, most important first: on
+ * a six-column board each row pairs a 4-column card with the 2-column one that
+ * explains it. Cards not listed follow, in catalog order.
+ */
+const PAGE_ORDER: Record<PanelPage, ReadonlyArray<string>> = {
+  project: [
+    'mySession',
+    'myTotalResource',
+    'myResource',
+    'start.recentHistory',
+    'start.session',
+    'start.batchSession',
+    'start.folder',
+    'start.deployment',
+    'start.url',
+    'myRecentSessions',
+    'quotaPerStorageVolume',
+    'myDeployments',
+    'sessionsCreated',
+    'totalResourceWithinResourceGroup',
+    'memberAgentStats',
+    'myActivity',
+  ],
+  projectAdmin: [
+    'projectSessionStatus',
+    'projectResourceAllocation',
+    'pendingSessions',
+    'resourceGroupCapacity',
+    'longRunningSessions',
+    'projectDeployments',
+    'sessionsCreated',
+    'sessionsByStatus',
+    'projectUsers',
+    'projectFolders',
+    'projectAuditLog',
+  ],
+  admin: [
+    'projectSessionStatus',
+    'agentStats',
+    'pendingSessions',
+    'failuresByEntityType',
+    'activeAgents',
+    'totalResourceWithinResourceGroup',
+    'sessionsCreated',
+    'foldersByUsageMode',
+    'projectAuditLog',
+  ],
+};
+
+const withPageOrder = (definition: PanelDefinition): PanelDefinition => {
+  const order = _.fromPairs(
+    ALL_PAGES.flatMap((page) => {
+      const index = PAGE_ORDER[page].indexOf(definition.key);
+      return index === -1 ? [] : [[page, index]];
+    }),
+  );
+  return _.isEmpty(order) ? definition : { ...definition, order };
+};
+
 export const PANEL_CATALOG: ReadonlyArray<PanelDefinition> = [
   ...MEMBER_PANELS,
   ...PROJECT_ADMIN_PANELS,
   ...SUPERADMIN_PANELS,
+  ...CHART_PANELS,
   ...PRESET_PANELS,
-];
+].map(withPageOrder);

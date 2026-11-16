@@ -2,14 +2,14 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { ResourceNumbersOfSession } from '../../../components/ResourceNumbersOfSession';
-import { useBackendAIImageMetaData } from '../../../hooks';
-import { SessionHistory } from '../../../hooks/useBAISetting';
+import { useBackendAIImageMetaData } from '../hooks';
+import { SessionHistory } from '../hooks/useBAISetting';
 import {
   usePinnedSessionHistory,
   useRecentSessionHistory,
-} from '../../../hooks/useRecentSessionHistory';
-import type { SessionLauncherFormValue } from '../SessionLauncherPage';
+} from '../hooks/useRecentSessionHistory';
+import type { SessionLauncherFormValue } from '../pages/SessionLauncherPage/SessionLauncherPage';
+import { ResourceNumbersOfSession } from './ResourceNumbersOfSession';
 import { IconButton } from '@lablup/ui-common/IconButton';
 import { Text } from '@lablup/ui-common/Text';
 import { Token } from '@lablup/ui-common/Token';
@@ -135,7 +135,8 @@ const SessionTemplateModal: React.FC<SessionTemplateModalProps> = ({
                 </BAIFlex>
               ),
               dataIndex: 'pinned',
-              width: 40,
+              // Room for the header's pin and help icons; at 40px the help icon was cut off.
+              width: 64,
               render: (_value, record) => {
                 const isPinned = !!record.pinned;
                 const isHovered = hoverRowKey === record.id;
