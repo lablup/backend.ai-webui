@@ -260,4 +260,20 @@ describe('BAINameActionCell — minTitleWidth reserves width for the title', () 
       expect(screen.queryByRole('button', { name: 'More actions' })).toBeNull();
     },
   );
+
+  it('keeps a lone action visible when it only partly fits', () => {
+    render(
+      <BAINameActionCell
+        title="-"
+        showActions="always"
+        minTitleWidth={NARROW_CELL_WIDTH - 10}
+        actions={[{ key: 'edit-labels', title: 'Edit labels' }]}
+      />,
+    );
+
+    expect(
+      screen.getByRole('button', { name: 'Edit labels' }),
+    ).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'More actions' })).toBeNull();
+  });
 });

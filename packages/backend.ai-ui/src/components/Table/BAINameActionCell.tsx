@@ -129,7 +129,8 @@ export interface BAINameActionCellProps {
   minVisibleActions?: number;
   /**
    * Width (px) the title keeps before an action may claim space; actions that
-   * no longer fit fold into the more menu. Applies in both modes: hover mode
+   * no longer fit fold into the more menu, except a lone action, which stays
+   * visible because the more button would take the same width. Applies in both modes: hover mode
    * reserves the actions' width at rest too (#10371). The default suits an
    * identifier a few characters of which already identify the row; raise it
    * where the title is long and the cell narrow (FR-3926).
@@ -290,7 +291,9 @@ const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
       // A lone overflowed action would swap for a more button of the same
       // width, freeing nothing, so it stays visible instead.
       const withoutLoneOverflow = (count: number) =>
-        menuOnlyActions.length === 0 && autoActionCount - count === 1
+        ACTION_BUTTON_WIDTH <= MORE_BUTTON_WIDTH &&
+        menuOnlyActions.length === 0 &&
+        autoActionCount - count === 1
           ? autoActionCount
           : count;
 
