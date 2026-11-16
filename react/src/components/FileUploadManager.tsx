@@ -394,6 +394,8 @@ const FileUploadManager: React.FC = () => {
 
 export default FileUploadManager;
 
+const DEFAULT_CHUNK_SIZE_MIB = getDefaultLoginConfig().fileUploadChunkSize;
+
 export const useFileUploadManager = (id?: string, folderName?: string) => {
   'use memo';
 
@@ -478,8 +480,8 @@ export const useFileUploadManager = (id?: string, folderName?: string) => {
                   retryDelays: [0, 3000, 5000, 10000, 20000],
                   // Read when the queued upload starts, not when it was requested.
                   chunkSize: resolveUploadChunkSize(
-                    (store.get(loginConfigState) ?? getDefaultLoginConfig())
-                      .fileUploadChunkSize,
+                    store.get(loginConfigState)?.fileUploadChunkSize ??
+                      DEFAULT_CHUNK_SIZE_MIB,
                     file.size,
                   ),
                   storeFingerprintForResuming: false, // Disable localStorage storage

@@ -23,6 +23,7 @@ describe('resolveUploadChunkSize', () => {
     expect(resolveUploadChunkSize(32, 10 * MiB)).toBe(32 * MiB);
     expect(resolveUploadChunkSize(32, 6 * GiB)).toBe(32 * MiB);
     expect(resolveUploadChunkSize(1, 10 * MiB)).toBe(MiB);
+    expect(resolveUploadChunkSize(1024, 10 * MiB)).toBe(1024 * MiB);
   });
 
   it('rounds a fractional size down to whole MiB', () => {
@@ -30,7 +31,7 @@ describe('resolveUploadChunkSize', () => {
   });
 
   it('keeps the size-based default below 1 MiB or for a non-finite value', () => {
-    for (const value of [0.0000001, 0.001, 0.999, -5, Number.NaN]) {
+    for (const value of [0.0000001, 0.001, 0.999, -5, Number.NaN, Infinity]) {
       expect(resolveUploadChunkSize(value, 10 * MiB)).toBe(15 * MiB);
     }
   });
