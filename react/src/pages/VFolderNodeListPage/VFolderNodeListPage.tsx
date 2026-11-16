@@ -429,6 +429,11 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
                     propertyLabel: t('data.folders.Cloneable'),
                     type: 'boolean',
                   },
+                  {
+                    key: 'autoMounts.exists',
+                    propertyLabel: t('autoMount.AutoMount'),
+                    type: 'boolean',
+                  },
                   ...(isLabelable
                     ? [
                         {
