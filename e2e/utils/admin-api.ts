@@ -232,6 +232,138 @@ export async function sweepProfileTestUsersViaApi(
   return purged;
 }
 
+/**
+ * Creates a keypair resource policy capped at `totalResourceSlots` (e.g.
+ * `{ cpu: '0', mem: '0' }`). Pair it with `deleteKeypairResourcePolicyViaApi`.
+ */
+export async function createKeypairResourcePolicyViaApi(
+  api: APIRequestContext,
+  name: string,
+  totalResourceSlots: Record<string, string>,
+): Promise<void> {
+  const data = await gqlAdmin<{
+    create_keypair_resource_policy: { ok: boolean; msg: string } | null;
+  }>(
+    api,
+    `mutation($name: String!, $props: CreateKeyPairResourcePolicyInput!) {
+      create_keypair_resource_policy(name: $name, props: $props) { ok msg }
+    }`,
+    {
+      name,
+      props: {
+        default_for_unspecified: 'UNLIMITED',
+        total_resource_slots: JSON.stringify(totalResourceSlots),
+        max_concurrent_sessions: 1,
+        max_containers_per_session: 1,
+        idle_timeout: 3600,
+      },
+    },
+  );
+  if (!data.create_keypair_resource_policy?.ok) {
+    throw new Error(
+      `create_keypair_resource_policy failed: ${data.create_keypair_resource_policy?.msg}`,
+    );
+  }
+}
+
+/**
+ * Deletes a keypair resource policy. Returns `false` instead of throwing so
+ * teardown never masks the test result.
+ */
+export async function deleteKeypairResourcePolicyViaApi(
+  api: APIRequestContext,
+  name: string,
+): Promise<boolean> {
+  try {
+    const data = await gqlAdmin<{
+      delete_keypair_resource_policy: { ok: boolean; msg: string } | null;
+    }>(
+      api,
+      `mutation($name: String!) {
+        delete_keypair_resource_policy(name: $name) { ok msg }
+      }`,
+      { name },
+    );
+    return data.delete_keypair_resource_policy?.ok === true;
+  } catch (error) {
+    console.warn(
+      `[admin-api] could not delete keypair resource policy ${name}:`,
+      error,
+    );
+    return false;
+  }
+}
+
+/**
+ * Creates an active user in `domainName` and `projectName`. With
+ * `keypairResourcePolicy`, the user's own keypairs are moved onto that policy.
+ * Pair it with `purgeUserViaApi`.
+ */
+export async function createUserViaApi(
+  api: APIRequestContext,
+  user: {
+    email: string;
+    password: string;
+    domainName: string;
+    projectName: string;
+    keypairResourcePolicy?: string;
+  },
+): Promise<void> {
+  const { groups } = await gqlAdmin<{
+    groups: Array<{ id: string; name: string }>;
+  }>(
+    api,
+    `query($domain: String) {
+      groups(domain_name: $domain, is_active: true) { id name }
+    }`,
+    { domain: user.domainName },
+  );
+  const projectId = groups?.find((g) => g.name === user.projectName)?.id;
+  if (!projectId) throw new Error(`Project ${user.projectName} not found`);
+  const created = await gqlAdmin<{
+    create_user: { ok: boolean; msg: string } | null;
+  }>(
+    api,
+    `mutation($email: String!, $props: UserInput!) {
+      create_user(email: $email, props: $props) { ok msg }
+    }`,
+    {
+      email: user.email,
+      props: {
+        username: user.email.split('@')[0],
+        password: user.password,
+        need_password_change: false,
+        domain_name: user.domainName,
+        group_ids: [projectId],
+      },
+    },
+  );
+  if (!created.create_user?.ok) {
+    throw new Error(`create_user failed: ${created.create_user?.msg}`);
+  }
+  if (!user.keypairResourcePolicy) return;
+  const { keypairs } = await gqlAdmin<{
+    keypairs: Array<{ access_key: string }> | null;
+  }>(api, `query($email: String) { keypairs(email: $email) { access_key } }`, {
+    email: user.email,
+  });
+  if (!keypairs?.length) throw new Error(`No keypair for ${user.email}`);
+  for (const { access_key } of keypairs) {
+    const modified = await gqlAdmin<{
+      modify_keypair: { ok: boolean; msg: string } | null;
+    }>(
+      api,
+      `mutation($access_key: String!, $props: ModifyKeyPairInput!) {
+        modify_keypair(access_key: $access_key, props: $props) { ok msg }
+      }`,
+      { access_key, props: { resource_policy: user.keypairResourcePolicy } },
+    );
+    if (!modified.modify_keypair?.ok) {
+      throw new Error(`modify_keypair failed: ${modified.modify_keypair?.msg}`);
+    }
+  }
+}
+
 const UUID_RE =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
