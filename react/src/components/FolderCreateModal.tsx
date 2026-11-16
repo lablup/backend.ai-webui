@@ -172,8 +172,6 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
   };
 
   const isFolderTypeLocked = folderType === 'model_project';
-  // The folder is a project folder, so its auto-mount is set on that project.
-  const supportsAutoMountSetting = !isFolderTypeLocked;
   // A personal project's folder auto-mounts for the user, any other for its project.
   const isPersonalTarget =
     !!effectiveProject && effectiveProject.id === personalProject?.id;
@@ -272,8 +270,7 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
 
     const folderName = values.name;
 
-    const wantsAutoMountSetting =
-      supportsAutoMountSetting && !!values.auto_mount_enabled;
+    const wantsAutoMountSetting = !!values.auto_mount_enabled;
     // A personal project's folder auto-mounts for the user (ADR 0031).
     const autoMountsForUser =
       wantsAutoMountSetting &&
@@ -419,7 +416,7 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
           }
         }}
       >
-        {supportsAutoMountSetting && autoMountTarget && autoMountTargetKey ? (
+        {autoMountTarget && autoMountTargetKey ? (
           <Suspense fallback={null}>
             <AutoMountPermissionCheck
               scopeType={autoMountTarget.scopeType}
@@ -637,110 +634,105 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
               }}
             </Form.Item>
 
-            {supportsAutoMountSetting && (
-              // The switch is the section's only expander: its fields
-              // exist only while auto-mount is on.
-              <VStack
-                className="bai-collapsible-section"
-                align="stretch"
-                data-testid="folder-create-auto-mount-section"
+            {/* The switch is the section's only expander: its fields exist only while auto-mount is on. */}
+            <VStack
+              className="bai-collapsible-section"
+              align="stretch"
+              data-testid="folder-create-auto-mount-section"
+            >
+              <HStack
+                className="bai-toggle-section__header"
+                justify="between"
+                vAlign="center"
               >
-                <HStack
-                  className="bai-toggle-section__header"
-                  justify="between"
-                  vAlign="center"
-                >
-                  <HStack gap={1} vAlign="center">
-                    <BAIText strong>{t('autoMount.AutoMountSettings')}</BAIText>
-                    <BAIQuestionIconWithTooltip
-                      title={t('autoMount.AutoMountInSessionsDesc')}
-                    />
-                  </HStack>
-                  <Form.Item name={'auto_mount_enabled'} noStyle>
-                    <BAISwitch
-                      aria-label={t('autoMount.AutoMountSettings')}
-                      isLoading={canSetAutoMount === undefined}
-                      disabled={canSetAutoMount !== true}
-                      disabledMessage={
-                        canSetAutoMount === false
-                          ? isPersonalTarget
-                            ? t('autoMount.NoPermissionToSetAutoMount')
-                            : t('autoMount.NoPermissionToSetProjectAutoMount')
-                          : undefined
-                      }
-                    />
-                  </Form.Item>
+                <HStack gap={1} vAlign="center">
+                  <BAIText strong>{t('autoMount.AutoMountSettings')}</BAIText>
+                  <BAIQuestionIconWithTooltip
+                    title={t('autoMount.AutoMountInSessionsDesc')}
+                  />
                 </HStack>
-                <Form.Item dependencies={['auto_mount_enabled']} noStyle>
-                  {({ getFieldValue: getValue }) =>
-                    getValue('auto_mount_enabled') && (
-                      <VStack
-                        className="bai-toggle-section__content"
-                        align="stretch"
+                <Form.Item name={'auto_mount_enabled'} noStyle>
+                  <BAISwitch
+                    aria-label={t('autoMount.AutoMountSettings')}
+                    isLoading={canSetAutoMount === undefined}
+                    disabled={canSetAutoMount !== true}
+                    disabledMessage={
+                      canSetAutoMount === false
+                        ? isPersonalTarget
+                          ? t('autoMount.NoPermissionToSetAutoMount')
+                          : t('autoMount.NoPermissionToSetProjectAutoMount')
+                        : undefined
+                    }
+                  />
+                </Form.Item>
+              </HStack>
+              <Form.Item dependencies={['auto_mount_enabled']} noStyle>
+                {({ getFieldValue: getValue }) =>
+                  getValue('auto_mount_enabled') && (
+                    <VStack
+                      className="bai-toggle-section__content"
+                      align="stretch"
+                    >
+                      <BAIFormItem
+                        label={t('autoMount.MountDestination')}
+                        tooltip={t('autoMount.MountDestinationDesc')}
+                        name={'auto_mount_destination'}
+                        layout="horizontal"
+                        required
+                        rules={[
+                          {
+                            required: true,
+                            whitespace: true,
+                            message: t('autoMount.PleaseEnterMountDestination'),
+                          },
+                        ]}
                       >
-                        <BAIFormItem
-                          label={t('autoMount.MountDestination')}
-                          tooltip={t('autoMount.MountDestinationDesc')}
-                          name={'auto_mount_destination'}
-                          layout="horizontal"
-                          required
-                          rules={[
+                        <BAITextInput
+                          aria-label={t('autoMount.MountDestination')}
+                          placeholder="/home/work/data"
+                        />
+                      </BAIFormItem>
+                      <BAIFormItem
+                        label={t('autoMount.Subpath')}
+                        tooltip={t('autoMount.SubpathDesc')}
+                        name={'auto_mount_subpath'}
+                        layout="horizontal"
+                      >
+                        <BAITextInput
+                          aria-label={t('autoMount.Subpath')}
+                          placeholder="."
+                        />
+                      </BAIFormItem>
+                      <BAIFormItem
+                        label={t('autoMount.MountPermission')}
+                        name={'auto_mount_permission'}
+                        layout="horizontal"
+                        required
+                      >
+                        <BAISelect
+                          showSearch={false}
+                          aria-label={t('autoMount.MountPermission')}
+                          options={[
                             {
-                              required: true,
-                              whitespace: true,
-                              message: t(
-                                'autoMount.PleaseEnterMountDestination',
-                              ),
+                              value: 'READ_ONLY',
+                              label: t('data.ReadOnly'),
+                            },
+                            {
+                              value: 'READ_WRITE',
+                              label: t('data.ReadWrite'),
+                            },
+                            {
+                              value: 'RW_DELETE',
+                              label: t('autoMount.ReadWriteDelete'),
                             },
                           ]}
-                        >
-                          <BAITextInput
-                            aria-label={t('autoMount.MountDestination')}
-                            placeholder="/home/work/data"
-                          />
-                        </BAIFormItem>
-                        <BAIFormItem
-                          label={t('autoMount.Subpath')}
-                          tooltip={t('autoMount.SubpathDesc')}
-                          name={'auto_mount_subpath'}
-                          layout="horizontal"
-                        >
-                          <BAITextInput
-                            aria-label={t('autoMount.Subpath')}
-                            placeholder="."
-                          />
-                        </BAIFormItem>
-                        <BAIFormItem
-                          label={t('autoMount.MountPermission')}
-                          name={'auto_mount_permission'}
-                          layout="horizontal"
-                          required
-                        >
-                          <BAISelect
-                            showSearch={false}
-                            aria-label={t('autoMount.MountPermission')}
-                            options={[
-                              {
-                                value: 'READ_ONLY',
-                                label: t('data.ReadOnly'),
-                              },
-                              {
-                                value: 'READ_WRITE',
-                                label: t('data.ReadWrite'),
-                              },
-                              {
-                                value: 'RW_DELETE',
-                                label: t('autoMount.ReadWriteDelete'),
-                              },
-                            ]}
-                          />
-                        </BAIFormItem>
-                      </VStack>
-                    )
-                  }
-                </Form.Item>
-              </VStack>
-            )}
+                        />
+                      </BAIFormItem>
+                    </VStack>
+                  )
+                }
+              </Form.Item>
+            </VStack>
           </Form>
         </VStack>
       </BAIModal>
