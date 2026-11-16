@@ -87,13 +87,10 @@ const listPayload = (
     }),
   });
 
-const listQueryCount = (environment: RelayMockEnvironment) =>
+const findOperation = (environment: RelayMockEnvironment, name: string) =>
   environment.mock
     .getAllOperations()
-    .filter(
-      (operation) =>
-        operation.request.node.params.name === 'ResourceGroupListQuery',
-    ).length;
+    .find((operation) => operation.request.node.params.name === name);
 
 const renderList = (environment: RelayMockEnvironment) =>
   render(
@@ -112,11 +109,13 @@ const resolveListQuery = async (
   environment: RelayMockEnvironment,
   rows: Array<{ description: string; isActive: boolean }>,
 ) => {
-  await waitFor(() => expect(listQueryCount(environment)).toBeGreaterThan(0));
+  let operation: OperationDescriptor | undefined;
+  await waitFor(() => {
+    operation = findOperation(environment, 'ResourceGroupListQuery');
+    expect(operation).toBeDefined();
+  });
   await act(async () => {
-    environment.mock.resolveMostRecentOperation((operation) =>
-      listPayload(operation, rows),
-    );
+    environment.mock.resolve(operation!, listPayload(operation!, rows));
   });
 };
 
@@ -144,20 +143,15 @@ describe('ResourceGroupList refresh after a change', () => {
     });
     await user.click(confirmButtons[confirmButtons.length - 1]);
 
-    await waitFor(() =>
-      expect(
-        environment.mock
-          .getAllOperations()
-          .some(
-            (operation) =>
-              operation.request.node.params.name ===
-              'ResourceGroupListUpdateMutation',
-          ),
-      ).toBe(true),
-    );
+    let mutation: OperationDescriptor | undefined;
+    await waitFor(() => {
+      mutation = findOperation(environment, 'ResourceGroupListUpdateMutation');
+      expect(mutation).toBeDefined();
+    });
     await act(async () => {
-      environment.mock.resolveMostRecentOperation((operation) =>
-        MockPayloadGenerator.generate(operation, {
+      environment.mock.resolve(
+        mutation!,
+        MockPayloadGenerator.generate(mutation!, {
           ResourceGroup: () => ({
             id: 'UmVzb3VyY2VHcm91cDpyZy1h',
             status: { isActive: false },
