@@ -21,9 +21,17 @@ import {
 import test, { expect, type Page } from '@playwright/test';
 
 // PowerSearch has no submit button: clicking the quoted free-text suggestion
-// commits the filter (same as AdminModelCardPage.applyNameFilter()).
+// commits the filter (same as AdminModelCardPage.applyNameFilter()). A filter
+// kept from the other Active/Inactive view hides the search input, so clear it
+// first.
 async function applyEmailFilter(page: Page, email: string): Promise<void> {
   const searchBar = page.getByRole('combobox', { name: 'Search filters' });
+  const clearAll = page.getByRole('button', { name: 'Clear all', exact: true });
+  await expect(searchBar.or(clearAll).first()).toBeVisible();
+  if (await clearAll.isVisible()) {
+    await clearAll.click();
+    await expect(clearAll).toBeHidden();
+  }
   await searchBar.fill(email);
   await page.getByRole('option', { name: new RegExp(`^"${email}"$`) }).click();
 }
