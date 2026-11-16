@@ -55,6 +55,7 @@ vi.mock('../hooks', async (importOriginal) => {
     ...originalModule,
     useSuspendedBackendaiClient: () => ({
       is_superadmin: clientState.isSuperadmin,
+      user_uuid: 'current-user-uuid',
       _config: {
         domainName: 'default',
       },
@@ -344,5 +345,96 @@ describe('FolderCreateModal project prop contract (ADR-0001)', () => {
     );
     // The mutation carries exactly the project chosen inside the modal.
     expect(operation.request.variables.projectId).toBe('chosen-project-id');
+  });
+});
+
+describe('FolderCreateModal auto-mount', () => {
+  const VFOLDER_UUID = '00000000-0000-0000-0000-000000000001';
+  const VFOLDER_GLOBAL_ID = btoa(`VFolder:${VFOLDER_UUID}`);
+
+  const findOperation = (environment: RelayMockEnvironment, name: string) =>
+    environment.mock
+      .getAllOperations()
+      .find((op) => op.request.node.params.name === name);
+
+  const createWithAutoMount = async (project: { id: string; name: string }) => {
+    const user = userEvent.setup();
+    const { environment } = renderModal(project);
+
+    await waitFor(() =>
+      expect(
+        findOperation(environment, 'FolderCreateModalAutoMountPermissionQuery'),
+      ).toBeDefined(),
+    );
+    environment.mock.resolve(
+      findOperation(environment, 'FolderCreateModalAutoMountPermissionQuery')!,
+      { data: { myScopePermissions: { item: { permissions: ['CREATE'] } } } },
+    );
+
+    const autoMountSwitch = screen.getByRole('switch', {
+      name: 'autoMount.AutoMountSettings',
+    });
+    await waitFor(() =>
+      expect(autoMountSwitch).not.toHaveAttribute('aria-disabled', 'true'),
+    );
+    await user.click(autoMountSwitch);
+    await user.type(
+      await screen.findByRole('textbox', {
+        name: 'autoMount.MountDestination',
+      }),
+      '/home/work/data',
+    );
+    await fillFolderNameAndSubmit(user, 'auto-mount-folder');
+
+    await waitFor(() =>
+      expect(
+        findOperation(environment, 'FolderCreateModalProjectMutation'),
+      ).toBeDefined(),
+    );
+    const createOperation = findOperation(
+      environment,
+      'FolderCreateModalProjectMutation',
+    )!;
+    environment.mock.resolve(
+      createOperation,
+      MockPayloadGenerator.generate(createOperation, {
+        Node: () => ({ __typename: 'VFolder', id: VFOLDER_GLOBAL_ID }),
+        VFolder: () => ({ id: VFOLDER_GLOBAL_ID, entityId: VFOLDER_UUID }),
+      }),
+    );
+
+    await waitFor(() =>
+      expect(
+        findOperation(environment, 'FolderCreateModalAutoMountMutation'),
+      ).toBeDefined(),
+    );
+    return findOperation(environment, 'FolderCreateModalAutoMountMutation')!
+      .request.variables.input;
+  };
+
+  it('auto-mounts a personal project folder for the user', async () => {
+    const input = await createWithAutoMount({
+      id: 'personal-project-id',
+      name: 'me',
+    });
+    expect(input).toMatchObject({
+      scope: { scopeType: 'USER', scopeId: 'current-user-uuid' },
+      vfolderId: VFOLDER_UUID,
+      mountDestination: '/home/work/data',
+      subpath: '.',
+      mountPermission: 'READ_WRITE',
+    });
+  });
+
+  it('auto-mounts a shared project folder for its project', async () => {
+    const input = await createWithAutoMount({
+      id: 'fixed-project-id',
+      name: 'fixed-project-name',
+    });
+    expect(input).toMatchObject({
+      scope: { scopeType: 'PROJECT', scopeId: 'fixed-project-id' },
+      vfolderId: VFOLDER_UUID,
+      mountDestination: '/home/work/data',
+    });
   });
 });
