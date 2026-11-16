@@ -4733,10 +4733,6 @@
         },
         {
           "param": "mode",
-          "key": "automount"
-        },
-        {
-          "param": "mode",
           "key": "data",
           "labelKey": "data.Pipeline"
         },

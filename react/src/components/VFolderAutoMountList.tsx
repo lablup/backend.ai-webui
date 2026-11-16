@@ -20,7 +20,6 @@ import {
   BAIFlex,
   BAINameActionCell,
   BAITable,
-  BAIUnmountAfterClose,
   INITIAL_FETCH_KEY,
   filterOutNullAndUndefined,
   useErrorMessageResolver,
@@ -239,20 +238,19 @@ const VFolderAutoMountList: React.FC<VFolderAutoMountListProps> = ({
           },
         ]}
       />
-      <BAIUnmountAfterClose>
-        <VFolderAutoMountSettingModal
-          open={editing.open}
-          scopeType={scopeType}
-          scopeId={scopeId}
-          autoMountFrgmt={editing.node}
-          onRequestClose={(success) => {
-            setEditing({ open: false, node: editing.node });
-            if (success && !editing.node) {
-              updateFetchKey();
-            }
-          }}
-        />
-      </BAIUnmountAfterClose>
+      <VFolderAutoMountSettingModal
+        open={editing.open}
+        unmountOnClose
+        scopeType={scopeType}
+        scopeId={scopeId}
+        autoMountFrgmt={editing.node}
+        onRequestClose={(success) => {
+          setEditing({ open: false, node: editing.node });
+          if (success && !editing.node) {
+            updateFetchKey();
+          }
+        }}
+      />
     </BAIFlex>
   );
 };

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<58f9ec4a2b584a6e32d61ae011b2028f>>
+ * @generated SignedSource<<829c0f1c1ab924c112cdf3d9b0fc2a29>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -68,7 +68,7 @@ export type VFolderNodesV2Fragment$data = ReadonlyArray<{
       readonly expr: string;
     };
   } | null | undefined;
-  readonly vfolderAutoMounts: {
+  readonly vfolderAutoMounts?: {
     readonly edges: ReadonlyArray<{
       readonly node: {
         readonly mountDestination: string;
@@ -105,7 +105,13 @@ v1 = {
   "storageKey": null
 };
 return {
-  "argumentDefinitions": [],
+  "argumentDefinitions": [
+    {
+      "defaultValue": false,
+      "kind": "LocalArgument",
+      "name": "withAutoMount"
+    }
+  ],
   "kind": "Fragment",
   "metadata": {
     "plural": true
@@ -398,71 +404,78 @@ return {
       "storageKey": "entityLabels(limit:100)"
     },
     {
-      "alias": null,
-      "args": [
-        {
-          "kind": "Literal",
-          "name": "limit",
-          "value": 1
-        }
-      ],
-      "concreteType": "VFolderAutoMountConnection",
-      "kind": "LinkedField",
-      "name": "vfolderAutoMounts",
-      "plural": false,
+      "condition": "withAutoMount",
+      "kind": "Condition",
+      "passingValue": true,
       "selections": [
         {
           "alias": null,
-          "args": null,
-          "concreteType": "VFolderAutoMountEdge",
+          "args": [
+            {
+              "kind": "Literal",
+              "name": "limit",
+              "value": 1
+            }
+          ],
+          "concreteType": "VFolderAutoMountConnection",
           "kind": "LinkedField",
-          "name": "edges",
-          "plural": true,
+          "name": "vfolderAutoMounts",
+          "plural": false,
           "selections": [
             {
               "alias": null,
               "args": null,
-              "concreteType": "VFolderAutoMount",
+              "concreteType": "VFolderAutoMountEdge",
               "kind": "LinkedField",
-              "name": "node",
-              "plural": false,
+              "name": "edges",
+              "plural": true,
               "selections": [
                 {
                   "alias": null,
                   "args": null,
-                  "kind": "ScalarField",
-                  "name": "scopeType",
-                  "storageKey": null
-                },
-                {
-                  "alias": null,
-                  "args": null,
-                  "kind": "ScalarField",
-                  "name": "mountDestination",
-                  "storageKey": null
-                },
-                {
-                  "alias": null,
-                  "args": null,
-                  "kind": "ScalarField",
-                  "name": "subpath",
-                  "storageKey": null
-                },
-                {
-                  "alias": null,
-                  "args": null,
-                  "kind": "ScalarField",
-                  "name": "mountPermission",
+                  "concreteType": "VFolderAutoMount",
+                  "kind": "LinkedField",
+                  "name": "node",
+                  "plural": false,
+                  "selections": [
+                    {
+                      "alias": null,
+                      "args": null,
+                      "kind": "ScalarField",
+                      "name": "scopeType",
+                      "storageKey": null
+                    },
+                    {
+                      "alias": null,
+                      "args": null,
+                      "kind": "ScalarField",
+                      "name": "mountDestination",
+                      "storageKey": null
+                    },
+                    {
+                      "alias": null,
+                      "args": null,
+                      "kind": "ScalarField",
+                      "name": "subpath",
+                      "storageKey": null
+                    },
+                    {
+                      "alias": null,
+                      "args": null,
+                      "kind": "ScalarField",
+                      "name": "mountPermission",
+                      "storageKey": null
+                    }
+                  ],
                   "storageKey": null
                 }
               ],
               "storageKey": null
             }
           ],
-          "storageKey": null
+          "storageKey": "vfolderAutoMounts(limit:1)"
         }
-      ],
-      "storageKey": "vfolderAutoMounts(limit:1)"
+      ]
     },
     {
       "args": null,
@@ -506,6 +519,6 @@ return {
 };
 })();
 
-(node as any).hash = "46c8b74642216e7619672d3a4ed08ee3";
+(node as any).hash = "aa4472be0656d98a0e25709abbc0a039";
 
 export default node;

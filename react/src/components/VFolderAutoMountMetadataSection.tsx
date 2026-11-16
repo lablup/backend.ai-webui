@@ -15,7 +15,6 @@ import {
   BAIMetadataListItem,
   BAINameActionCell,
   BAIQuestionIconWithTooltip,
-  BAIUnmountAfterClose,
   useErrorMessageResolver,
   useFetchKey,
   useMutationWithPromise,
@@ -206,19 +205,18 @@ const VFolderAutoMountMetadataSection: React.FC<
       ) : (
         <Text color="secondary">{t('autoMount.NotAutoMounted')}</Text>
       )}
-      <BAIUnmountAfterClose>
-        <VFolderAutoMountSettingModal
-          open={isModalOpen}
-          scopeType={scopeType}
-          scopeId={scopeId}
-          vfolder={vfolder}
-          autoMountFrgmt={autoMount}
-          onRequestClose={(success) => {
-            setIsModalOpen(false);
-            if (success && !autoMount) updateFetchKey();
-          }}
-        />
-      </BAIUnmountAfterClose>
+      <VFolderAutoMountSettingModal
+        open={isModalOpen}
+        unmountOnClose
+        scopeType={scopeType}
+        scopeId={scopeId}
+        vfolder={vfolder}
+        autoMountFrgmt={autoMount}
+        onRequestClose={(success) => {
+          setIsModalOpen(false);
+          if (success && !autoMount) updateFetchKey();
+        }}
+      />
     </VStack>
   );
 };

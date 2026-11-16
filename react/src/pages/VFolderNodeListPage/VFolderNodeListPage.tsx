@@ -79,7 +79,7 @@ interface VFolderNodeListPageProps {}
 
 const DEFAULT_ORDER = '-created_at';
 const statusCategoryValues = ['active', 'deleted'] as const;
-const modeValues = ['all', 'general', 'data', 'automount', 'model'] as const;
+const modeValues = ['all', 'general', 'data', 'model'] as const;
 
 const DELETE_STATUSES = [
   'DELETE_PENDING',
@@ -124,7 +124,6 @@ const USAGE_MODE_FILTERS: Partial<
     ],
   },
   data: { usageMode: { equals: 'DATA' } },
-  automount: { name: { iStartsWith: '.' } },
   model: { usageMode: { equals: 'MODEL' } },
 };
 
@@ -200,9 +199,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
     };
   }, [queryParams, tablePaginationOption]);
 
-  // Auto-mount is a setting on any folder there, shown as a column, not a mode.
-  const mode = queryParams.mode === 'automount' ? 'all' : queryParams.mode;
-  const usageModeFilter = USAGE_MODE_FILTERS[mode];
+  const usageModeFilter = USAGE_MODE_FILTERS[queryParams.mode];
 
   const [fetchKey, updateFetchKey] = useFetchKey();
 
@@ -277,7 +274,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
                 metadata {
                   name
                 }
-                ...VFolderNodesV2Fragment
+                ...VFolderNodesV2Fragment @arguments(withAutoMount: true)
                 ...WebMCPVFolderListToolsFragment
                 ...DeleteVFolderModalV2Fragment
                 ...DeleteForeverVFolderModalV2Fragment
@@ -377,7 +374,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
           <HStack justify="between" wrap="wrap" gap={3}>
             <HStack gap={3} align="start" style={{ flexShrink: 1 }} wrap="wrap">
               <BAISegmentedControl
-                value={mode}
+                value={queryParams.mode}
                 onChange={(value) => {
                   setQuery({ mode: value as typeof queryParams.mode });
                   setTablePaginationOption({ current: 1 });
@@ -608,7 +605,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
         project={projectContext}
         allowAutoMount={isPersonalProject}
         initialValues={{
-          usage_mode: mode === 'model' ? 'model' : 'general',
+          usage_mode: queryParams.mode === 'model' ? 'model' : 'general',
         }}
         onRequestClose={(success) => {
           if (success) {
