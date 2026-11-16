@@ -240,4 +240,24 @@ describe('BAINameActionCell — minTitleWidth reserves width for the title', () 
     expect(screen.queryByRole('button', { name: /Delete/ })).toBeNull();
     expect(screen.getAllByRole('button')).toHaveLength(1);
   });
+
+  // A more button is as wide as the action it would hide (#11230).
+  it.each(['hover', 'always'] as const)(
+    'keeps a lone action visible in %s mode instead of folding it',
+    (showActions) => {
+      render(
+        <BAINameActionCell
+          title="-"
+          showActions={showActions}
+          minTitleWidth={NARROW_CELL_WIDTH}
+          actions={[{ key: 'edit-labels', title: 'Edit labels' }]}
+        />,
+      );
+
+      expect(
+        screen.getByRole('button', { name: 'Edit labels' }),
+      ).toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: 'More actions' })).toBeNull();
+    },
+  );
 });

@@ -287,8 +287,15 @@ const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
       const availableWidth =
         containerWidth - minTitleReserve - moreButtonReserve;
 
+      // A lone overflowed action would swap for a more button of the same
+      // width, freeing nothing, so it stays visible instead.
+      const withoutLoneOverflow = (count: number) =>
+        menuOnlyActions.length === 0 && autoActionCount - count === 1
+          ? autoActionCount
+          : count;
+
       if (availableWidth <= 0) {
-        setVisibleCount(Math.max(0, minVisibleActions));
+        setVisibleCount(withoutLoneOverflow(Math.max(0, minVisibleActions)));
         return;
       }
 
@@ -317,7 +324,7 @@ const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
         }
       }
 
-      setVisibleCount(Math.max(count, minVisibleActions));
+      setVisibleCount(withoutLoneOverflow(Math.max(count, minVisibleActions)));
     },
   );
 
