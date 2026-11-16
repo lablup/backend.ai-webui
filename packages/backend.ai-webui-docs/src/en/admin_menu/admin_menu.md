@@ -16,7 +16,7 @@ Superadmins land on the administration pages right after logging in, and move be
 
 ## Dashboard
 
-Superadmins have a **Dashboard** entry in the administration sidebar, showing a board of system-wide cards: **Session Status**, **Pending Sessions and Reasons**, **Agents**, **Agent Statistics**, **Failures by Entity Type**, **Audit Log**, and **Total Resources in Resource Group**. More cards, such as **Scheduling Failures**, **Resource Policies**, **Failed sign-ins**, and **Container Registries**, can be added from the edit sidebar.
+Superadmins have a **Dashboard** entry in the administration sidebar, showing a board of system-wide cards: **Session Status**, **Pending Sessions and Reasons**, **Agents**, **Agent Statistics**, **Failures by Entity Type**, **Audit Log**, **Total Resources in Resource Group**, **Sessions Created**, and **Folders by Usage Mode**. More cards, such as **Scheduling Failures**, **Resource Policies**, **Failed sign-ins**, **Container Registries**, and **Sessions by Status**, can be added from the edit sidebar.
 
 Boards, card settings, and the refresh control work the same way as on the user [Dashboard](#dashboard).
 
@@ -101,9 +101,11 @@ complete list without widening the column.
 ### Use as this user
 
 A superadmin can work in the WebUI with another user's permissions. Open the more actions
-menu in that user's row, select **Use as this user**, and confirm with **Open in new tab**.
+menu in that user's row, select **Use as this user**, and confirm with **Open in new tab**. Check
+**Debug mode** in the confirmation dialog to show debugging information, such as raw error details,
+in that tab.
 
-![=400px](../images/admin_user_use_as_this_user.png)
+![=520px](../images/admin_user_use_as_this_user.png)
 
 The new tab runs as that user; click **Exit** in its banner to return the tab to your own
 account. Your other tabs keep your admin view, and the audit log records that your admin
