@@ -967,7 +967,7 @@ test.describe(
 // active user through the admin API and purges it in afterEach.
 test.describe(
   'Use as this user - Superadmin',
-  { tag: ['@regression', '@user', '@functional'] },
+  { tag: ['@regression', '@user', '@functional', '@requires-manager-v26.9'] },
   () => {
     let api: APIRequestContext | null = null;
     let actAsEmail: string | null = null;
@@ -999,15 +999,6 @@ test.describe(
       );
       expect(create_user.ok, create_user.msg).toBe(true);
 
-      // The superadmin intro tour (AdminViewSwitchTour) otherwise covers the page.
-      await page.addInitScript(() => {
-        for (const tour of ['back_to_user_view', 'back_to_admin_settings']) {
-          localStorage.setItem(
-            `backendaiwebui.settings.user.has_opened_tour_${tour}`,
-            'true',
-          );
-        }
-      });
       await loginAsAdmin(page, request);
     });
 
