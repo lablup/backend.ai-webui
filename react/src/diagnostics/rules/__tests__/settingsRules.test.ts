@@ -91,6 +91,24 @@ describe('checkSettingUrls', () => {
     ]);
     expect(results[1].interpolationValues).toEqual({ value: 'nope' });
   });
+
+  it('flags a manual URL with a user name or password without echoing it', () => {
+    const results = checkSettingUrls(
+      state({ manualUrl: 'https://user:secret@docs.example.com' }),
+    );
+    expect(results).toHaveLength(1);
+    expect(results[0].id).toBe('settings-url-credentials-manualUrl');
+    expect(results[0].titleKey).toBe('diagnostics.SettingUrlWithCredentials');
+    expect(results[0].interpolationValues).toBeUndefined();
+  });
+
+  it('leaves credentials in the other URL settings to the URL check alone', () => {
+    expect(
+      checkSettingUrls(
+        state({ appDownloadUrl: 'https://user:secret@downloads.example.com' }),
+      ),
+    ).toEqual([]);
+  });
 });
 
 describe('checkSettingImageReferences', () => {

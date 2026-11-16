@@ -11,7 +11,7 @@ import {
   readWebUISettingFromState,
 } from '../../helper/webuiSettings';
 import type { DiagnosticResult } from '../../types/diagnostics';
-import { isPlaceholder, isValidUrl } from './configRules';
+import { hasUrlCredentials, isPlaceholder, isValidUrl } from './configRules';
 import * as _ from 'lodash-es';
 
 // Rules over the effective System Settings values (ADR 0028). A setting that
@@ -56,19 +56,36 @@ export const SETTING_URL_KEYS = [
 export function checkSettingUrls(state: LoginConfigState): DiagnosticResult[] {
   return SETTING_URL_KEYS.flatMap((key): DiagnosticResult[] => {
     const value = settingValue(state, key);
-    if (!nonEmptyString(value) || isValidUrl(value)) return [];
-    return [
-      {
-        id: `settings-invalid-url-${key}`,
-        severity: 'warning',
-        category: 'config',
-        titleKey: 'diagnostics.InvalidSettingUrl',
-        descriptionKey: 'diagnostics.InvalidSettingUrlDesc',
-        remediationKey: 'diagnostics.InvalidSettingUrlFix',
-        settingKey: key,
-        interpolationValues: { value },
-      },
-    ];
+    if (!nonEmptyString(value)) return [];
+    if (!isValidUrl(value)) {
+      return [
+        {
+          id: `settings-invalid-url-${key}`,
+          severity: 'warning',
+          category: 'config',
+          titleKey: 'diagnostics.InvalidSettingUrl',
+          descriptionKey: 'diagnostics.InvalidSettingUrlDesc',
+          remediationKey: 'diagnostics.InvalidSettingUrlFix',
+          settingKey: key,
+          interpolationValues: { value },
+        },
+      ];
+    }
+    // Every signed-in user reads the manual URL; the value is not echoed back.
+    if (key === 'manualUrl' && hasUrlCredentials(value)) {
+      return [
+        {
+          id: `settings-url-credentials-${key}`,
+          severity: 'warning',
+          category: 'config',
+          titleKey: 'diagnostics.SettingUrlWithCredentials',
+          descriptionKey: 'diagnostics.SettingUrlWithCredentialsDesc',
+          remediationKey: 'diagnostics.SettingUrlWithCredentialsFix',
+          settingKey: key,
+        },
+      ];
+    }
+    return [];
   });
 }
 

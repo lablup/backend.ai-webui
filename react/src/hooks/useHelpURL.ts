@@ -3,7 +3,10 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useCurrentLanguage } from '../components/DefaultProviders';
-import { isValidUrl } from '../diagnostics/rules/configRules';
+import {
+  hasUrlCredentials,
+  isValidUrl,
+} from '../diagnostics/rules/configRules';
 import { resolveHelpDocPath } from '../helper/helpAnchors';
 import {
   coerceUserSettingsCategory,
@@ -18,11 +21,12 @@ import { useEffectiveLoginConfig } from './useWebUIConfig';
 const DOCS_LANGUAGES = ['en', 'ko', 'ja', 'th'];
 export const HOSTED_MANUAL_ROOT = 'https://webui.docs.backend.ai';
 
-// The same http(s) check System Settings diagnostics apply, so a value they
-// accept is the value the help button opens; query and fragment are dropped.
+// The same checks System Settings diagnostics apply (http(s), no user name or
+// password), so a value they accept is the value the help button opens; query
+// and fragment are dropped.
 const mirrorRootOf = (manualUrl: string): string | undefined => {
   const value = manualUrl.trim();
-  if (!isValidUrl(value)) return undefined;
+  if (!isValidUrl(value) || hasUrlCredentials(value)) return undefined;
   const url = new URL(value);
   url.search = '';
   url.hash = '';

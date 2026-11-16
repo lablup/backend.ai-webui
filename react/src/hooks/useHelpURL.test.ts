@@ -68,12 +68,24 @@ describe('buildManualBaseURL', () => {
     );
   });
 
+  it('ignores a URL that carries a user name or password', () => {
+    for (const value of [
+      'https://user:secret@docs.example.com',
+      'https://user@docs.example.com/manual',
+    ]) {
+      expect(buildManualBaseURL(value, '26.10.1', 'en'), value).toBe(
+        `${HOSTED_MANUAL_ROOT}/26.10/en/`,
+      );
+    }
+  });
+
   it('accepts exactly the values System Settings diagnostics accept', () => {
     for (const value of [
       'https:docs.example.com',
       'http://a b',
       'https://[bad',
       'ftp://docs.example.com',
+      'https://user:secret@docs.example.com',
       'https://docs.example.com/manual',
     ]) {
       const usesMirror = !buildManualBaseURL(value, '26.10.1', 'en').startsWith(
