@@ -798,14 +798,22 @@ export async function selectPropertyFilter(
   // strict-selection fields render a `Selector` (`role="combobox"`, commits
   // immediately on picking an option) — `PowerSearchValueEditor.tsx`.
   // `isVisible` does not wait, so wait for whichever control the popover renders.
-  const valueTextbox = page.getByRole('textbox', { name: 'Value' });
-  const valueSelector = page.getByRole('combobox', { name: 'Value' });
-  await expect(valueTextbox.or(valueSelector).first()).toBeVisible();
-  if (await valueTextbox.isVisible()) {
-    await valueTextbox.fill(searchValue);
+  const valueTextbox = page.getByRole('textbox', {
+    name: 'Value',
+    exact: true,
+  });
+  const valueSelector = page.getByRole('combobox', {
+    name: 'Value',
+    exact: true,
+  });
+  await expect(
+    valueTextbox.or(valueSelector).filter({ visible: true }).first(),
+  ).toBeVisible({ timeout: 30000 });
+  if (await valueTextbox.filter({ visible: true }).count()) {
+    await valueTextbox.filter({ visible: true }).fill(searchValue);
     await page.getByRole('button', { name: 'Apply', exact: true }).click();
   } else {
-    await valueSelector.click();
+    await valueSelector.filter({ visible: true }).click();
     await page.getByRole('option', { name: searchValue, exact: true }).click();
   }
 
@@ -813,7 +821,11 @@ export async function selectPropertyFilter(
   // the field typeahead (listbox "Search results") over the first table rows
   // and intercepts clicks on their action buttons. Close it before returning.
   const typeahead = page.getByRole('listbox', { name: 'Search results' });
-  if (await typeahead.isVisible({ timeout: 1000 }).catch(() => false)) {
+  const reopened = await typeahead
+    .waitFor({ state: 'visible', timeout: 1000 })
+    .then(() => true)
+    .catch(() => false);
+  if (reopened) {
     await searchBar.press('Escape');
     await expect(typeahead).toBeHidden({ timeout: 5000 });
   }
