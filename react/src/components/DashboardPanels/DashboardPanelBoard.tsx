@@ -43,15 +43,16 @@ import { ErrorBoundary } from 'react-error-boundary';
 
 /**
  * Narrower than ui-common's: six columns from 1100px (not 2100px) so a laptop
- * board is not four wide, and four from 640px (not 912px) so the ~680px board
- * beside the edit sider still puts two 2-column cards in a row.
+ * board is not four wide, four from 640px (not 912px) so the ~680px board
+ * beside the edit sider still puts two 2-column cards in a row, and eight from
+ * 2200px (not 2400px) so a 2560px window's ~2272px board is eight wide.
  */
 const DASHBOARD_COLUMN_BREAKPOINTS: BAIBoardProps['columnBreakpoints'] = [
   { minWidth: 0, columns: 1 },
   { minWidth: 480, columns: 2 },
   { minWidth: 640, columns: 4 },
   { minWidth: 1100, columns: 6 },
-  { minWidth: 2400, columns: 8 },
+  { minWidth: 2200, columns: 8 },
   { minWidth: 3000, columns: 10 },
   { minWidth: 3600, columns: 12 },
 ];
