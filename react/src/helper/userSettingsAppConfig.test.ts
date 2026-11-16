@@ -7,6 +7,7 @@ import {
   isAccountUserSetting,
   mirrorAccountUserSettings,
   queueUserSettingWrite,
+  rawToSetting,
   readLocalAccountUserSettings,
   startUserSettingsSync,
   stopUserSettingsSync,
@@ -165,5 +166,23 @@ describe('queueUserSettingWrite', () => {
     queueUserSettingWrite('hiddenColumnKeys.AgentList', ['status']);
     await vi.advanceTimersByTimeAsync(USER_SETTINGS_WRITE_DELAY_MS);
     expect(onError).toHaveBeenCalledTimes(1);
+  });
+
+  it('reports each failed batch, even with the same rejection value', async () => {
+    const onError = vi.fn();
+    startUserSettingsSync(vi.fn().mockRejectedValue('forbidden'), onError);
+    queueUserSettingWrite('compact_sidebar', true);
+    await vi.advanceTimersByTimeAsync(USER_SETTINGS_WRITE_DELAY_MS);
+    queueUserSettingWrite('compact_sidebar', false);
+    await vi.advanceTimersByTimeAsync(USER_SETTINGS_WRITE_DELAY_MS);
+    expect(onError).toHaveBeenCalledTimes(2);
+  });
+});
+
+describe('rawToSetting', () => {
+  it('treats the legacy string "undefined" as unset', () => {
+    expect(rawToSetting('undefined')).toBeNull();
+    expect(rawToSetting('null')).toBeNull();
+    expect(rawToSetting('true')).toBe(true);
   });
 });

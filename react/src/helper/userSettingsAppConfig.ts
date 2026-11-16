@@ -60,7 +60,9 @@ const isJson = (str: string) => {
 
 /** A localStorage string as the setting value it stores; `null` when unset. */
 export const rawToSetting = (value: string | null): any => {
-  if (value === null || value === '' || value === '""') return null;
+  // An older setter stored `undefined` as the string "undefined": unset, too.
+  if (value === null || value === '' || value === '""' || value === 'undefined')
+    return null;
   if (value === 'false') return false;
   if (value === 'true') return true;
   return isJson(value) ? JSON.parse(value) : value;
@@ -93,8 +95,6 @@ export const readLocalAccountUserSettings = (
   const settings: Record<string, unknown> = {};
   for (const key of accountStorageKeys(storage)) {
     const raw = storage.getItem(key);
-    // An older setter stored `undefined` as the string "undefined": not a value.
-    if (raw === 'undefined') continue;
     const value = rawToSetting(raw);
     // A stored `null` is a choice (e.g. auto-refresh off), unlike an unset key.
     if (value !== null || raw === 'null') {
@@ -146,8 +146,14 @@ let onWriteError: (error: unknown) => void = () => {};
 
 const queue = createWriteQueue<string, unknown>({
   delay: USER_SETTINGS_WRITE_DELAY_MS,
+  // Reported here, once per failed batch; the waiters of that batch reject with it too.
   write: async (batch) => {
-    await writer?.(batch);
+    try {
+      await writer?.(batch);
+    } catch (error) {
+      onWriteError(error);
+      throw error;
+    }
   },
 });
 
@@ -175,14 +181,8 @@ export const flushUserSettingsSync = (): Promise<void> =>
  * Queues a changed user setting for `userConfig.settings`. A no-op for a
  * device-local setting and before the signed-in sync has started.
  */
-let lastReportedError: unknown;
-
 export const queueUserSettingWrite = (name: string, value: unknown): void => {
   if (!writer || !isAccountUserSetting(name)) return;
-  queue.schedule(name, value).catch((error) => {
-    // Every change in a failed batch rejects with the same error: report it once.
-    if (error === lastReportedError) return;
-    lastReportedError = error;
-    onWriteError(error);
-  });
+  // The queue's write already reported a failure.
+  queue.schedule(name, value).catch(() => {});
 };
