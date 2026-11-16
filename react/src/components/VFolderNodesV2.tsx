@@ -42,6 +42,7 @@ import {
   BAIAlertIconWithTooltip,
   BAIEntityLabelCell,
   BAIEntityLabelSettingModal,
+  BAIBooleanToken,
   BAIIconWithTooltip,
   BAIModal,
   BAINameActionCell,
@@ -270,8 +271,14 @@ const VFolderAutoMountCell: React.FC<{
   'use memo';
   const { t } = useTranslation();
   const autoMount = autoMounts?.edges[0]?.node;
-  if (!autoMount)
-    return <Text color="secondary">{t('autoMount.NotConfigured')}</Text>;
+  const configuredToken = (
+    <BAIBooleanToken
+      value={!!autoMount}
+      trueLabel={t('autoMount.Configured')}
+      falseLabel={t('autoMount.NotConfigured')}
+    />
+  );
+  if (!autoMount) return configuredToken;
   const permissionLabel =
     autoMount.mountPermission === 'READ_ONLY'
       ? t('data.ReadOnly')
@@ -280,7 +287,7 @@ const VFolderAutoMountCell: React.FC<{
         : t('autoMount.ReadWriteDelete');
   return (
     <HStack gap={1} vAlign="center">
-      <Text>{t('autoMount.Configured')}</Text>
+      {configuredToken}
       <BAIIconWithTooltip
         icon={<InfoIcon size="1em" />}
         aria-label={t('autoMount.AutoMount')}
