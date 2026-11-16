@@ -20,20 +20,22 @@ import {
 } from '../../utils/user-profile-util';
 import test, { expect, type Page } from '@playwright/test';
 
-// PowerSearch has no submit button: clicking the quoted free-text suggestion
-// commits the filter (same as AdminModelCardPage.applyNameFilter()). A filter
-// kept from the other Active/Inactive view hides the search input, so clear it
-// first.
+// Clicking the quoted suggestion commits the filter. A filter kept from the
+// other Active/Inactive view hides the search input, so clear it first.
 async function applyEmailFilter(page: Page, email: string): Promise<void> {
   const searchBar = page.getByRole('combobox', { name: 'Search filters' });
   const clearAll = page.getByRole('button', { name: 'Clear all', exact: true });
-  await expect(searchBar.or(clearAll).first()).toBeVisible();
-  if (await clearAll.isVisible()) {
-    await clearAll.click();
-    await expect(clearAll).toBeHidden();
-  }
-  await searchBar.fill(email);
-  await page.getByRole('option', { name: new RegExp(`^"${email}"$`) }).click();
+  await expect(async () => {
+    if (await clearAll.isVisible()) {
+      await clearAll.click();
+      await expect(clearAll).toBeHidden();
+    }
+    await searchBar.fill(email, { timeout: 5000 });
+  }).toPass({ timeout: 30000 });
+  const escaped = email.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  await page
+    .getByRole('option', { name: new RegExp(`^"${escaped}"$`) })
+    .click();
 }
 
 // Generate unique identifiers for this test run
