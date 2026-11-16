@@ -1075,3 +1075,68 @@ export async function sweepStaleResourceGroupsViaApi(
   }
   return deleted;
 }
+
+/**
+ * Issues an inactive keypair for `email` under the user's current resource
+ * policy (read from its active keypairs). Returns the new access key.
+ */
+export async function createInactiveKeypairViaApi(
+  api: APIRequestContext,
+  email: string,
+): Promise<string> {
+  const data = await gqlAdmin<{
+    user: { id: string } | null;
+    keypairs: Array<{ resource_policy: string | null }> | null;
+  }>(
+    api,
+    `query($email: String) {
+      user(email: $email) { id }
+      keypairs(email: $email, is_active: true) { resource_policy }
+    }`,
+    { email },
+  );
+  const userId = data.user?.id;
+  const resourcePolicy = data.keypairs?.find(
+    (k) => k.resource_policy,
+  )?.resource_policy;
+  if (!userId || !resourcePolicy) {
+    throw new Error(`No user or active keypair policy found for ${email}`);
+  }
+  const created = await gqlAdmin<{
+    adminCreateKeypairV2: { keypair: { accessKey: string } } | null;
+  }>(
+    api,
+    `mutation($input: AdminCreateKeypairInput!) {
+      adminCreateKeypairV2(input: $input) { keypair { accessKey } }
+    }`,
+    { input: { userId, resourcePolicy, isActive: false } },
+  );
+  const accessKey = created.adminCreateKeypairV2?.keypair.accessKey;
+  if (!accessKey) throw new Error(`adminCreateKeypairV2 failed for ${email}`);
+  return accessKey;
+}
+
+/**
+ * Deletes a keypair by access key. Returns `false` instead of throwing so
+ * teardown never masks the test result.
+ */
+export async function deleteKeypairViaApi(
+  api: APIRequestContext,
+  accessKey: string,
+): Promise<boolean> {
+  try {
+    const data = await gqlAdmin<{
+      delete_keypair: { ok: boolean; msg: string } | null;
+    }>(
+      api,
+      `mutation($access_key: String!) {
+        delete_keypair(access_key: $access_key) { ok msg }
+      }`,
+      { access_key: accessKey },
+    );
+    return data.delete_keypair?.ok === true;
+  } catch (error) {
+    console.warn(`[admin-api] could not delete keypair ${accessKey}:`, error);
+    return false;
+  }
+}

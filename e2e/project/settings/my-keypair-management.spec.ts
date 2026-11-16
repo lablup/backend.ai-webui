@@ -1,5 +1,10 @@
 // spec: e2e/.agent-output/test-plan-my-keypair-management.md
-import { createAdminApiContext, purgeUserViaApi } from '../../utils/admin-api';
+import {
+  createAdminApiContext,
+  createInactiveKeypairViaApi,
+  deleteKeypairViaApi,
+  purgeUserViaApi,
+} from '../../utils/admin-api';
 import {
   KeyPairModal,
   UserSettingModal,
@@ -75,13 +80,10 @@ function toastViewport(page: Page) {
   return page.getByRole('region', { name: 'Notifications' });
 }
 
-// Helper to get the keypair table rows (excluding the antd measure row and
-// the empty-state placeholder "No data" row, which is also a <tr> in tbody).
+// The keypair table rows; the empty state is also a <tr> in tbody.
 function getKeypairTableRows(page: import('@playwright/test').Page) {
   const modal = page.getByRole('dialog', { name: 'My Keypair Management' });
-  return modal.locator(
-    'tbody tr:not(.ant-table-measure-row):not(.ant-table-placeholder)',
-  );
+  return modal.locator('tbody tr');
 }
 
 // Helper to issue a new keypair and close the credential dialog
@@ -114,9 +116,7 @@ async function deactivateKeypair(
   // Active/Inactive toggle) renders a real `<button role="radio">`, not antd's
   // `<label>`-wrapped radio.
   await modal.getByRole('radio', { name: 'Active', exact: true }).click();
-  const row = modal
-    .locator('tbody tr:not(.ant-table-measure-row)')
-    .filter({ hasText: accessKey });
+  const row = modal.locator('tbody tr').filter({ hasText: accessKey });
   await expect(row).toBeVisible();
   // Click the Deactivate button in that row (`IconButton` with
   // `label={t('credential.Deactivate')}`, `variant="destructive"` —
@@ -139,9 +139,7 @@ async function deleteInactiveKeypair(
   const modal = page.getByRole('dialog', { name: 'My Keypair Management' });
   // Make sure we're on the Inactive tab
   await modal.getByRole('radio', { name: 'Inactive' }).click();
-  const row = modal
-    .locator('tbody tr:not(.ant-table-measure-row)')
-    .filter({ hasText: accessKey });
+  const row = modal.locator('tbody tr').filter({ hasText: accessKey });
   await expect(row).toBeVisible();
   // Click the Delete Keypair button in the Controls cell of that row
   // (`IconButton` with `label={t('credential.DeleteKeypair')}` —
@@ -168,6 +166,7 @@ const TEST_RUN_ID = Date.now().toString(36) + randomUUID().slice(0, 4);
 const FIXTURE_EMAIL = `e2e-mykeypair-${TEST_RUN_ID}@lablup.com`;
 const FIXTURE_USERNAME = `e2e-mykeypair-${TEST_RUN_ID}`;
 const FIXTURE_PASSWORD = 'testing@123';
+const apiCreatedAccessKeys: string[] = [];
 
 test.describe(
   'My Keypair Management',
@@ -254,6 +253,19 @@ test.describe(
         FIXTURE_EMAIL,
         FIXTURE_PASSWORD,
       );
+    });
+
+    // Keypairs seeded through the API; deleted even when the test fails.
+    test.afterEach(async () => {
+      if (apiCreatedAccessKeys.length === 0) return;
+      const api = await createAdminApiContext();
+      try {
+        for (const key of apiCreatedAccessKeys.splice(0)) {
+          await deleteKeypairViaApi(api, key);
+        }
+      } finally {
+        await api.dispose();
+      }
     });
 
     // ── 1. Modal Opening and Initial Display ───────────────────────────────────
@@ -353,7 +365,7 @@ test.describe(
 
       // Find the main keypair row by text content
       const mainKeyRow = modal
-        .locator('tbody tr:not(.ant-table-measure-row)')
+        .locator('tbody tr')
         .filter({
           hasText: mainAccessKey,
         })
@@ -562,7 +574,7 @@ test.describe(
 
         // Find the newly created non-main keypair row
         const nonMainRow = modal
-          .locator('tbody tr:not(.ant-table-measure-row)')
+          .locator('tbody tr')
           .filter({ hasText: createdAccessKey });
         await expect(nonMainRow).toBeVisible({ timeout: 10000 });
 
@@ -623,7 +635,7 @@ test.describe(
 
       // Find the main keypair row
       const mainKeyRow = modal
-        .locator('tbody tr:not(.ant-table-measure-row)')
+        .locator('tbody tr')
         .filter({ hasText: mainAccessKey });
       await expect(mainKeyRow).toBeVisible({ timeout: 10000 });
 
@@ -647,7 +659,7 @@ test.describe(
 
         // Find the newly created keypair row and click Deactivate in the Controls cell
         const newKeypairRow = modal
-          .locator('tbody tr:not(.ant-table-measure-row)')
+          .locator('tbody tr')
           .filter({ hasText: deactivatedAccessKey });
         await expect(newKeypairRow).toBeVisible({ timeout: 10000 });
         await newKeypairRow.getByRole('button', { name: 'Deactivate' }).click();
@@ -667,9 +679,7 @@ test.describe(
 
         // Verify the row is removed from Active table
         await expect(
-          modal
-            .locator('tbody tr:not(.ant-table-measure-row)')
-            .filter({ hasText: deactivatedAccessKey }),
+          modal.locator('tbody tr').filter({ hasText: deactivatedAccessKey }),
         ).toBeHidden({ timeout: 5000 });
       } finally {
         // Cleanup: delete the deactivated keypair
@@ -698,7 +708,7 @@ test.describe(
         issuedAccessKey = await issueNewKeypair(page);
 
         const nonMainRow = modal
-          .locator('tbody tr:not(.ant-table-measure-row)')
+          .locator('tbody tr')
           .filter({ hasText: issuedAccessKey });
         await expect(nonMainRow).toBeVisible({ timeout: 10000 });
 
@@ -742,7 +752,7 @@ test.describe(
 
       // Find the main keypair row
       const mainKeyRow = modal
-        .locator('tbody tr:not(.ant-table-measure-row)')
+        .locator('tbody tr')
         .filter({ hasText: mainAccessKey });
       await expect(mainKeyRow).toBeVisible({ timeout: 10000 });
 
@@ -799,7 +809,7 @@ test.describe(
         // unit so each attempt re-queries the live DOM instead of holding a
         // stale handle.
         const targetRow = modal
-          .locator('tbody tr:not(.ant-table-measure-row)')
+          .locator('tbody tr')
           .filter({ hasText: restoredAccessKey });
         await expect(targetRow).toBeVisible();
 
@@ -820,9 +830,7 @@ test.describe(
 
         // Verify the restored keypair no longer appears in Inactive tab
         await expect(
-          modal
-            .locator('tbody tr:not(.ant-table-measure-row)')
-            .filter({ hasText: restoredAccessKey }),
+          modal.locator('tbody tr').filter({ hasText: restoredAccessKey }),
         ).toBeHidden({ timeout: 10000 });
 
         // Switch to Active tab and verify keypair is restored
@@ -832,7 +840,7 @@ test.describe(
         ).toBeChecked();
 
         const activeRow = modal
-          .locator('tbody tr:not(.ant-table-measure-row)')
+          .locator('tbody tr')
           .filter({ hasText: restoredAccessKey });
         await expect(activeRow).toBeVisible({ timeout: 10000 });
       } finally {
@@ -869,7 +877,7 @@ test.describe(
 
         // Find the target inactive keypair row
         const targetRow = modal
-          .locator('tbody tr:not(.ant-table-measure-row)')
+          .locator('tbody tr')
           .filter({ hasText: createdAccessKey });
         await expect(targetRow).toBeVisible({ timeout: 10000 });
 
@@ -936,7 +944,7 @@ test.describe(
 
       // Find the target keypair row and click Delete Keypair in the Controls cell
       const targetRow = modal
-        .locator('tbody tr:not(.ant-table-measure-row)')
+        .locator('tbody tr')
         .filter({ hasText: deleteTargetKey });
       await expect(targetRow).toBeVisible();
       await targetRow.getByRole('button', { name: 'Delete Keypair' }).click();
@@ -972,132 +980,54 @@ test.describe(
         toastViewport(page).getByText('Keypair deleted.'),
       ).toBeVisible();
       await expect(
-        modal
-          .locator('tbody tr:not(.ant-table-measure-row)')
-          .filter({ hasText: deleteTargetKey }),
+        modal.locator('tbody tr').filter({ hasText: deleteTargetKey }),
       ).toBeHidden({ timeout: 10000 });
     });
 
-    test(
-      'User cannot delete a keypair without typing the exact confirmation phrase',
-      { tag: ['@requires-seeded-data'] },
-      async ({ page }) => {
-        await openKeypairModal(page);
+    test('User cannot delete a keypair without typing the exact confirmation phrase', async ({
+      page,
+    }) => {
+      const api = await createAdminApiContext();
+      let accessKey: string;
+      try {
+        accessKey = await createInactiveKeypairViaApi(api, FIXTURE_EMAIL);
+      } finally {
+        await api.dispose();
+      }
+      apiCreatedAccessKeys.push(accessKey);
 
-        const modal = page.getByRole('dialog', {
-          name: 'My Keypair Management',
-        });
+      await openKeypairModal(page);
+      const modal = page.getByRole('dialog', { name: 'My Keypair Management' });
+      await modal.getByRole('radio', { name: 'Inactive' }).click();
+      await expect(
+        modal.getByRole('radio', { name: 'Inactive' }),
+      ).toBeChecked();
 
-        // Switch to Inactive tab. The table's data source updates via a
-        // deferred transition, so immediately after switching it can still
-        // show the previous (Active) tab's rows — and a stale Active row
-        // (which also has a destructive-styled Deactivate button) could
-        // be mistaken for a seeded inactive keypair. Synchronize on the
-        // actual Inactive query (`myKeypairs` with `isActive: false`)
-        // completing instead of polling row counts, so a slow request
-        // cannot slip stale rows past the check.
-        const inactiveQueryResponse = page.waitForResponse((response) => {
-          const postData = response.request().postData() ?? '';
-          return (
-            postData.includes('MyKeypairManagementModalQuery') &&
-            postData.includes('"isActive":false')
-          );
-        });
-        await modal.getByRole('radio', { name: 'Inactive' }).click();
-        await expect(
-          modal.getByRole('radio', { name: 'Inactive' }),
-        ).toBeChecked();
-        await inactiveQueryResponse;
+      const targetRow = modal
+        .locator('tbody tr')
+        .filter({ hasText: accessKey });
+      await expect(targetRow).toBeVisible({ timeout: 10000 });
+      await targetRow.getByRole('button', { name: 'Delete Keypair' }).click();
 
-        // The tab switch is a React transition: the table keeps rendering the
-        // previous (Active) dataset until the Inactive query result commits,
-        // so right after the click the rows in the DOM can still be genuine
-        // (non-placeholder, non-measure-row) Active `<tr>`s — and those carry
-        // a destructive-styled button (Deactivate/disabled-Ban) too, so a
-        // bare row-count check can be fooled into treating one as a seeded
-        // inactive keypair. The Controls cell follows the *rendered dataset*
-        // (it is keyed off the deferred filter in MyKeypairManagementModal),
-        // so the "Restore" button only ever appears on genuinely-committed
-        // Inactive rows — which makes it a reliable settle signal. Poll until
-        // the table reaches a stable Inactive state: either genuinely empty,
-        // or its first row is an actual Inactive row. The row count is
-        // captured in the same atomic retry loop because the data gate below
-        // needs the value that satisfied the condition.
-        const inactiveRows = getKeypairTableRows(page);
-        const firstControlsCell = inactiveRows.first().locator('td').nth(1);
-        let count = 0;
-        await expect
-          .poll(
-            async () => {
-              count = await inactiveRows.count();
-              if (count === 0) return true;
-              // The empty state is itself a `<tr>` in the DataGrid body.
-              if (
-                await modal
-                  .getByRole('heading', { name: 'No inactive keypairs.' })
-                  .isVisible()
-              ) {
-                count = 0;
-                return true;
-              }
-              const hasRestoreIcon = await firstControlsCell
-                .locator('.lucide-undo')
-                .count();
-              return hasRestoreIcon > 0;
-            },
-            {
-              timeout: 10000,
-              message:
-                'Table kept showing a stale Active-tab row after switching to Inactive',
-            },
-          )
-          .toBe(true);
+      const deleteDialog = page.getByRole('dialog', { name: /Delete Keypair/ });
+      await expect(deleteDialog).toBeVisible();
+      const deleteButton = deleteDialog.getByRole('button', {
+        name: 'Delete',
+        exact: true,
+      });
+      await expect(deleteButton).toBeDisabled();
+      const confirmInput = deleteDialog.getByRole('textbox', {
+        name: 'Type Permanently Delete to confirm.',
+      });
+      await confirmInput.fill('Permanently Delet');
+      await expect(deleteButton).toBeDisabled();
+      await confirmInput.fill('Permanently Delete');
+      await expect(deleteButton).toBeEnabled();
 
-        // Environment data gate (FR-3114): needs at least one pre-existing
-        // inactive keypair on the e2e user account. Seeding it is an infra
-        // task — until then the test skips with an auditable reason.
-        test.skip(
-          count === 0,
-          'Requires at least one inactive keypair on the e2e user account to exercise the delete confirmation flow (@requires-seeded-data)',
-        );
-
-        // Click Delete Keypair on first inactive row (in Controls cell).
-        // A trailing deferred Relay commit can still detach the button node
-        // between the poll above and the click, hanging a bare .click()
-        // indefinitely. Retry click-then-dialog-opens as a unit so each
-        // attempt re-queries the live DOM, bounded to the same ~30s a bare
-        // .click() would have retried for.
-        const deleteDialog = page.getByRole('dialog', {
-          name: /Delete Keypair/,
-        });
-        try {
-          await expect(async () => {
-            await firstControlsCell
-              .getByRole('button', { name: 'Delete Keypair' })
-              .click({ timeout: 3000 });
-            await expect(deleteDialog).toBeVisible({ timeout: 5000 });
-          }).toPass({ timeout: 30000 });
-        } catch {
-          // The row never durably joined the committed Inactive dataset —
-          // the same missing-seed-data situation as the count === 0 gate
-          // above, so fold it into that gate instead of failing on a
-          // precondition this test doesn't control.
-          test.skip(
-            true,
-            'Detected inactive keypair row did not durably remain clickable across retries (@requires-seeded-data)',
-          );
-        }
-
-        // Verify Delete button is disabled when input is empty
-        await expect(
-          deleteDialog.getByRole('button', { name: 'Delete', exact: true }),
-        ).toBeDisabled();
-
-        // Close the dialog without deleting
-        await deleteDialog.getByRole('button', { name: 'Close' }).click();
-        await expect(deleteDialog).toBeHidden();
-      },
-    );
+      await deleteDialog.getByRole('button', { name: 'Close' }).click();
+      await expect(deleteDialog).toBeHidden();
+      await expect(targetRow).toBeVisible();
+    });
 
     test('User can cancel the delete confirmation dialog without deleting the keypair', async ({
       page,
@@ -1115,7 +1045,7 @@ test.describe(
 
       // Find the target row and click Delete Keypair
       const targetRow = modal
-        .locator('tbody tr:not(.ant-table-measure-row)')
+        .locator('tbody tr')
         .filter({ hasText: cancelTestKey });
       await expect(targetRow).toBeVisible();
       await targetRow.getByRole('button', { name: 'Delete Keypair' }).click();
@@ -1134,9 +1064,7 @@ test.describe(
 
       // Verify the keypair is still in the Inactive table (was not deleted)
       await expect(
-        modal
-          .locator('tbody tr:not(.ant-table-measure-row)')
-          .filter({ hasText: cancelTestKey }),
+        modal.locator('tbody tr').filter({ hasText: cancelTestKey }),
       ).toBeVisible({ timeout: 5000 });
 
       // Cleanup: delete the test keypair
@@ -1319,7 +1247,7 @@ test.describe(
 
         // Verify the newly created keypair appears in the table (sorted by -createdAt, so it should be first)
         const newRow = modal
-          .locator('tbody tr:not(.ant-table-measure-row)')
+          .locator('tbody tr')
           .filter({ hasText: createdAccessKey });
         await expect(newRow).toBeVisible({ timeout: 10000 });
       } finally {
