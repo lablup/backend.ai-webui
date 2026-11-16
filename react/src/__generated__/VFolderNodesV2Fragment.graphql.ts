@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<af58bea4dca01e730113b9f2b1747eb9>>
+ * @generated SignedSource<<58f9ec4a2b584a6e32d61ae011b2028f>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -399,7 +399,13 @@ return {
     },
     {
       "alias": null,
-      "args": null,
+      "args": [
+        {
+          "kind": "Literal",
+          "name": "limit",
+          "value": 1
+        }
+      ],
       "concreteType": "VFolderAutoMountConnection",
       "kind": "LinkedField",
       "name": "vfolderAutoMounts",
@@ -456,7 +462,7 @@ return {
           "storageKey": null
         }
       ],
-      "storageKey": null
+      "storageKey": "vfolderAutoMounts(limit:1)"
     },
     {
       "args": null,
@@ -500,6 +506,6 @@ return {
 };
 })();
 
-(node as any).hash = "63b1406ecd57cea735e1cfe5480c58fe";
+(node as any).hash = "46c8b74642216e7619672d3a4ed08ee3";
 
 export default node;
