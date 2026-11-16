@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<b0cb0e32b915b9f99bbd850190076a20>>
+ * @generated SignedSource<<6690041f5b9bda0a387c300c432b6eca>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,7 +10,7 @@
 
 import { ConcreteRequest } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
-export type RetentionCategory = "DEPLOYMENTS" | "LOGIN" | "LOGS" | "RECONCILE_HISTORY" | "ROLES_INVITATIONS" | "SESSIONS" | "USAGE_BUCKETS" | "USAGE_RECORDS" | "%future added value";
+export type RetentionCategory = "DEPLOYMENTS" | "LOGIN" | "LOGS" | "PROJECTS" | "RECONCILE_HISTORY" | "ROLES_INVITATIONS" | "SESSIONS" | "USAGE_BUCKETS" | "USAGE_RECORDS" | "%future added value";
 export type RetentionPolicyOrderField = "CATEGORY" | "CREATED_AT" | "LAST_SWEPT_AT" | "%future added value";
 export type RetentionPolicyFilter = {
   category?: RetentionCategory | null | undefined;

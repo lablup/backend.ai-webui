@@ -55,8 +55,6 @@ vi.mock('../hooks', async (importOriginal) => {
     ...originalModule,
     useSuspendedBackendaiClient: () => ({
       is_superadmin: clientState.isSuperadmin,
-      // Keeps the auto-mount settings section out of these flows.
-      isManagerVersionCompatibleWith: () => false,
       _config: {
         domainName: 'default',
       },
@@ -142,6 +140,16 @@ vi.mock('./ProjectSelectForAdminPage', async () => {
   };
 });
 
+// The auto-mount permission check runs on mount and is not under test here.
+const folderOperations = (environment: RelayMockEnvironment) =>
+  environment.mock
+    .getAllOperations()
+    .filter(
+      (operation) =>
+        operation.request.node.params.name !==
+        'FolderCreateModalAutoMountPermissionQuery',
+    );
+
 const renderModal = (
   project: { id: string; name: string } | null,
   onRequestClose = vi.fn(),
@@ -185,7 +193,7 @@ describe('FolderCreateModal project prop contract (ADR-0001)', () => {
     await fillFolderNameAndSubmit(user, 'contract-folder');
 
     await waitFor(() => {
-      expect(environment.mock.getAllOperations()).toHaveLength(1);
+      expect(folderOperations(environment)).toHaveLength(1);
     });
     const operation = environment.mock.getMostRecentOperation();
     expect(operation.request.node.params.name).toBe(
@@ -209,7 +217,7 @@ describe('FolderCreateModal project prop contract (ADR-0001)', () => {
     await fillFolderNameAndSubmit(user, '.contract-folder');
 
     await waitFor(() => {
-      expect(environment.mock.getAllOperations()).toHaveLength(1);
+      expect(folderOperations(environment)).toHaveLength(1);
     });
     const operation = environment.mock.getMostRecentOperation();
     // The manager rejects dot-prefixed project folders.
@@ -237,7 +245,7 @@ describe('FolderCreateModal project prop contract (ADR-0001)', () => {
     await fillFolderNameAndSubmit(user, 'contract-folder');
 
     await waitFor(() => {
-      expect(environment.mock.getAllOperations()).toHaveLength(1);
+      expect(folderOperations(environment)).toHaveLength(1);
     });
     expect(
       environment.mock.getMostRecentOperation().request.variables.input,
@@ -253,7 +261,7 @@ describe('FolderCreateModal project prop contract (ADR-0001)', () => {
       });
 
       await waitFor(() => {
-        expect(environment.mock.getAllOperations()).toHaveLength(1);
+        expect(folderOperations(environment)).toHaveLength(1);
       });
       const operation = environment.mock.getMostRecentOperation();
       expect(operation.request.node.params.name).toBe(
@@ -300,7 +308,7 @@ describe('FolderCreateModal project prop contract (ADR-0001)', () => {
       // The confirm step stands between Create and the mutation. jsdom does
       // not open a second Modal after mount, so the dialog itself is not read.
       await new Promise((resolve) => setTimeout(resolve, 300));
-      expect(environment.mock.getAllOperations()).toHaveLength(0);
+      expect(folderOperations(environment)).toHaveLength(0);
     } finally {
       clientState.skipSharedConfirm = true;
     }
@@ -317,7 +325,7 @@ describe('FolderCreateModal project prop contract (ADR-0001)', () => {
     await fillFolderNameAndSubmit(user, 'contract-folder');
 
     await waitFor(() => {
-      expect(environment.mock.getAllOperations()).toHaveLength(1);
+      expect(folderOperations(environment)).toHaveLength(1);
     });
     const operation = environment.mock.getMostRecentOperation();
     expect(operation.request.variables.projectId).toBe('fixed-project-id');
@@ -333,7 +341,7 @@ describe('FolderCreateModal project prop contract (ADR-0001)', () => {
 
     await fillFolderNameAndSubmit(user, 'contract-folder');
     await waitFor(() => {
-      expect(environment.mock.getAllOperations()).toHaveLength(1);
+      expect(folderOperations(environment)).toHaveLength(1);
     });
     // The payload's vfolder spreads a fragment defined on the abstract
     // `Node` interface; pin the concrete type and give it a decodable
@@ -367,7 +375,7 @@ describe('FolderCreateModal project prop contract (ADR-0001)', () => {
     expect(
       await screen.findByText('data.folders.TargetProjectRequired'),
     ).toBeInTheDocument();
-    expect(environment.mock.getAllOperations()).toHaveLength(0);
+    expect(folderOperations(environment)).toHaveLength(0);
   });
 
   it('targets exactly the project chosen in the in-modal selector when `project` is null', async () => {
@@ -378,7 +386,7 @@ describe('FolderCreateModal project prop contract (ADR-0001)', () => {
     await fillFolderNameAndSubmit(user, 'contract-folder');
 
     await waitFor(() => {
-      expect(environment.mock.getAllOperations()).toHaveLength(1);
+      expect(folderOperations(environment)).toHaveLength(1);
     });
     const operation = environment.mock.getMostRecentOperation();
     expect(operation.request.node.params.name).toBe(

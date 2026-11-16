@@ -16,7 +16,6 @@ import {
 // `Form.Item` IS `BAIFormItem` — the visual shell plus the engine binding.
 import { Form, FormInstance } from '../form-engine';
 import { buildPath } from '../helper/pathBuilder';
-import { AUTO_MOUNT_SETTING_MANAGER_VERSION } from '../helper/vfolderAutoMount';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useAccessibleProjects } from '../hooks/useAccessibleProjects';
 import { useMyAppConfig } from '../hooks/useAppConfig';
@@ -190,10 +189,7 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
 
   const isFolderTypeLocked = folderType === 'model_project';
   // The folder is a project folder, so its auto-mount is set on that project.
-  const supportsAutoMountSetting =
-    baiClient.isManagerVersionCompatibleWith(
-      AUTO_MOUNT_SETTING_MANAGER_VERSION,
-    ) && !isFolderTypeLocked;
+  const supportsAutoMountSetting = !isFolderTypeLocked;
   // A personal project's folder auto-mounts for the user, any other for its project.
   const isPersonalTarget =
     !!effectiveProject && effectiveProject.id === personalProject?.id;

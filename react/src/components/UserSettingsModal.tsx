@@ -13,8 +13,6 @@ import {
   USER_SETTINGS_CATEGORIES,
   type UserSettingsCategory,
 } from '../helper/userSettingsModal';
-import { AUTO_MOUNT_SETTING_MANAGER_VERSION } from '../helper/vfolderAutoMount';
-import { useSuspendedBackendaiClient } from '../hooks';
 import BAIErrorBoundary from './BAIErrorBoundary';
 import WEBUIHelpButton from './WEBUIHelpButton';
 import { Button } from '@lablup/ui-common/Button';
@@ -95,15 +93,10 @@ const UserSettingsModal: React.FC<UserSettingsModalProps> = ({
   const { md } = useBAIBreakpoint();
   const isNarrow = !md;
   const [narrowView, setNarrowView] = useState<'nav' | 'detail'>('detail');
-  const baiClient = useSuspendedBackendaiClient();
-  // The rail hides the auto-mount category without this manager version; the
-  // pane falls back to General on a direct `?settings=auto-mount` restore.
-  const supportsAutoMount = baiClient.isManagerVersionCompatibleWith(
-    AUTO_MOUNT_SETTING_MANAGER_VERSION,
-  );
-  const settingCategories: Array<UserSettingsCategory> = supportsAutoMount
-    ? ['general', 'auto-mount']
-    : ['general'];
+  const settingCategories: Array<UserSettingsCategory> = [
+    'general',
+    'auto-mount',
+  ];
 
   // Narrow drill-down: picking a category in the rail reveals its pane, the
   // back button returns to the rail (same idiom as `SettingList`).

@@ -4733,8 +4733,7 @@
         },
         {
           "param": "mode",
-          "key": "automount",
-          "labelKey": "data.AutoMount"
+          "key": "automount"
         },
         {
           "param": "mode",
@@ -4820,6 +4819,7 @@
         "button.Yes",
         "credential.LastUsed",
         "data.AllowsLettersNumbersAnd-_Dot",
+        "data.AutoMount",
         "data.AutomountFolderCreationDesc",
         "data.AutomountFolderNameMustStartWithDot",
         "data.BelongsToDifferentProject",

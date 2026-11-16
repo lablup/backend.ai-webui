@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<da55f402d0808bf5589e9d94e08d124f>>
+ * @generated SignedSource<<261512eab8b082f824c30a492578315e>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,8 +10,10 @@
 
 import { ConcreteRequest } from 'relay-runtime';
 import { Result } from "relay-runtime";
+export type MountPermission = "READ_ONLY" | "READ_WRITE" | "RW_DELETE" | "%future added value";
 export type OrderDirection = "ASC" | "DESC" | "%future added value";
-export type VFolderOperationStatus = "CLONING" | "DELETE_COMPLETE" | "DELETE_ERROR" | "DELETE_ONGOING" | "DELETE_PENDING" | "READY" | "%future added value";
+export type VFolderAutoMountScopeType = "PROJECT" | "USER" | "%future added value";
+export type VFolderOperationStatus = "CLONING" | "CREATING" | "DELETE_COMPLETE" | "DELETE_ERROR" | "DELETE_ONGOING" | "DELETE_PENDING" | "READY" | "%future added value";
 export type VFolderOrderField = "CREATED_AT" | "HOST" | "NAME" | "STATUS" | "USAGE_MODE" | "%future added value";
 export type VFolderUsageMode = "DATA" | "GENERAL" | "MODEL" | "%future added value";
 export type VFolderScope = {
@@ -26,6 +28,7 @@ export type VFolderFilter = {
   AND?: ReadonlyArray<VFolderFilter> | null | undefined;
   NOT?: ReadonlyArray<VFolderFilter> | null | undefined;
   OR?: ReadonlyArray<VFolderFilter> | null | undefined;
+  autoMounts?: VFolderAutoMountNestedFilter | null | undefined;
   cloneable?: boolean | null | undefined;
   createdAt?: DateTimeFilter | null | undefined;
   entityId?: UUIDFilter | null | undefined;
@@ -96,6 +99,45 @@ export type UUIDFilter = {
   in?: ReadonlyArray<string> | null | undefined;
   notEquals?: string | null | undefined;
   notIn?: ReadonlyArray<string> | null | undefined;
+};
+export type VFolderAutoMountNestedFilter = {
+  every?: VFolderAutoMountFilter | null | undefined;
+  exists?: boolean | null | undefined;
+  none?: VFolderAutoMountFilter | null | undefined;
+  some?: VFolderAutoMountFilter | null | undefined;
+};
+export type VFolderAutoMountFilter = {
+  AND?: ReadonlyArray<VFolderAutoMountFilter> | null | undefined;
+  NOT?: ReadonlyArray<VFolderAutoMountFilter> | null | undefined;
+  OR?: ReadonlyArray<VFolderAutoMountFilter> | null | undefined;
+  createdAt?: DateTimeFilter | null | undefined;
+  deletedAt?: NullableDateTimeFilter | null | undefined;
+  entityId?: UUIDFilter | null | undefined;
+  mountDestination?: StringFilter | null | undefined;
+  mountPermission?: VFolderAutoMountPermissionFilter | null | undefined;
+  scopeId?: UUIDFilter | null | undefined;
+  scopeType?: VFolderAutoMountScopeTypeFilter | null | undefined;
+  updatedAt?: DateTimeFilter | null | undefined;
+  vfolderId?: UUIDFilter | null | undefined;
+};
+export type VFolderAutoMountScopeTypeFilter = {
+  equals?: VFolderAutoMountScopeType | null | undefined;
+  in?: ReadonlyArray<VFolderAutoMountScopeType> | null | undefined;
+  notEquals?: VFolderAutoMountScopeType | null | undefined;
+  notIn?: ReadonlyArray<VFolderAutoMountScopeType> | null | undefined;
+};
+export type VFolderAutoMountPermissionFilter = {
+  equals?: MountPermission | null | undefined;
+  in?: ReadonlyArray<MountPermission> | null | undefined;
+  notEquals?: MountPermission | null | undefined;
+  notIn?: ReadonlyArray<MountPermission> | null | undefined;
+};
+export type NullableDateTimeFilter = {
+  after?: string | null | undefined;
+  before?: string | null | undefined;
+  equals?: string | null | undefined;
+  isNull?: boolean | null | undefined;
+  notEquals?: string | null | undefined;
 };
 export type VFolderOrderBy = {
   direction?: OrderDirection;
