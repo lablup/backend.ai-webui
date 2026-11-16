@@ -4507,7 +4507,7 @@
     "DescEnableReservoir": "Reservoir menü öğesini gösterir.",
     "DescFasttrackEndpoint": "FastTrack hizmetinin URL'si. Ayrı bir menü öğesi olarak sunulur.",
     "DescHideAgents": "Süper yönetici olmayan kullanıcılardan Temsilci Özeti menüsünü ve temsilci ayrıntılarını gizler.",
-    "DescHideModelDefinitionPath": "Dağıtım revizyonlarında model tanım dosyası yolunu gizler: revizyon ayrıntıları onu göstermez ve alan revizyon formundan kalkar. Kopyalanan bir revizyon yolunu korur; yenisi model-definition.yaml kullanır.",
+    "DescHideModelDefinitionPath": "Dağıtım revizyonu ayrıntılarında ve revizyon formunda model tanım dosyası yolunu gizler. Revizyonlar bu durumda model klasöründeki model-definition.yaml dosyasını kullanır.",
     "DescIsDirectorySizeVisible": "Klasör gezgininde her dizinin boyutunu gösterir.",
     "DescManualUrl": "Üst başlıktaki yardım düğmesinin açacağı sayfanın URL'sini ayarlar. Yardım düğmesini gizlemek için boş bırakın.",
     "DescMaskUserInfo": "Görüntülenirken kullanıcı hesabının e-postasını ve adını maskeler.",

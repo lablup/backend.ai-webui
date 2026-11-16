@@ -4511,7 +4511,7 @@
     "DescEnableReservoir": "Menampilkan item menu Reservoir.",
     "DescFasttrackEndpoint": "URL layanan FastTrack. Ditawarkan sebagai item menu tersendiri.",
     "DescHideAgents": "Menyembunyikan menu Ringkasan Agen dan detail agen dari pengguna yang bukan superadmin.",
-    "DescHideModelDefinitionPath": "Menyembunyikan jalur file definisi model pada revisi deployment: detail revisi tidak menampilkannya dan kolomnya hilang dari formulir revisi. Revisi yang disalin mempertahankan jalurnya; revisi baru memakai model-definition.yaml.",
+    "DescHideModelDefinitionPath": "Menyembunyikan jalur file definisi model pada detail revisi deployment dan formulir revisi. Revisi kemudian memakai model-definition.yaml di folder model.",
     "DescIsDirectorySizeVisible": "Menampilkan ukuran setiap direktori di penjelajah folder.",
     "DescManualUrl": "Mengatur URL halaman yang dibuka oleh tombol bantuan di header atas. Biarkan kosong untuk menyembunyikan tombol bantuan.",
     "DescMaskUserInfo": "Menyamarkan email dan nama akun pengguna saat ditampilkan.",

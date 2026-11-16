@@ -4510,7 +4510,7 @@
     "DescEnableReservoir": "Affiche l'entrée de menu Reservoir.",
     "DescFasttrackEndpoint": "URL du service FastTrack. Il est proposé comme élément de menu à part entière.",
     "DescHideAgents": "Masque le menu Résumé des agents et les détails des agents pour les utilisateurs qui ne sont pas superadmins.",
-    "DescHideModelDefinitionPath": "Masque le chemin du fichier de définition du modèle dans les révisions de déploiement : les détails de la révision ne l'affichent pas et le champ disparaît du formulaire. Une révision copiée conserve son chemin ; une nouvelle utilise model-definition.yaml.",
+    "DescHideModelDefinitionPath": "Masque le chemin du fichier de définition du modèle dans les détails de la révision de déploiement et dans le formulaire de révision. Les révisions utilisent alors model-definition.yaml dans le dossier du modèle.",
     "DescIsDirectorySizeVisible": "Affiche la taille de chaque répertoire dans l'explorateur de dossiers.",
     "DescManualUrl": "Définit l'URL de la page qu'ouvre le bouton d'aide de l'en-tête supérieur. Laissez vide pour masquer le bouton d'aide.",
     "DescMaskUserInfo": "Masque l'e-mail et le nom du compte utilisateur lors de l'affichage.",

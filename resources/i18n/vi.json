@@ -4509,7 +4509,7 @@
     "DescEnableReservoir": "Hiển thị mục menu Reservoir.",
     "DescFasttrackEndpoint": "URL của dịch vụ FastTrack. Được cung cấp dưới dạng một mục menu riêng.",
     "DescHideAgents": "Ẩn menu Tóm tắt đại lý và chi tiết đại lý đối với người dùng không phải superadmin.",
-    "DescHideModelDefinitionPath": "Ẩn đường dẫn tệp định nghĩa mô hình trong các bản sửa đổi triển khai: chi tiết bản sửa đổi không hiển thị và trường này biến mất khỏi biểu mẫu. Bản sửa đổi được sao chép giữ đường dẫn của nó; bản mới dùng model-definition.yaml.",
+    "DescHideModelDefinitionPath": "Ẩn đường dẫn tệp định nghĩa mô hình trong chi tiết bản sửa đổi triển khai và biểu mẫu bản sửa đổi. Khi đó các bản sửa đổi dùng model-definition.yaml trong thư mục mô hình.",
     "DescIsDirectorySizeVisible": "Hiển thị kích thước của từng thư mục trong trình duyệt thư mục.",
     "DescManualUrl": "Đặt URL của trang mà nút trợ giúp trên thanh tiêu đề trên cùng sẽ mở. Để trống để ẩn nút trợ giúp.",
     "DescMaskUserInfo": "Che email và tên của tài khoản người dùng khi hiển thị.",
