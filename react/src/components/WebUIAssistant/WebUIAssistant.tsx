@@ -160,7 +160,8 @@ const WebUIAssistantFloating: React.FC = () => {
         direction="column"
         align="stretch"
         className="webui-assistant-panel"
-        hidden={!isOpen}
+        // BAIFlex's inline `position`/`display` would beat the class and `hidden`.
+        style={{ position: 'fixed', display: isOpen ? 'flex' : 'none' }}
         role="dialog"
         aria-label={title}
       >

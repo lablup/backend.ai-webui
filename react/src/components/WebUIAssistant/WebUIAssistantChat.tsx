@@ -192,6 +192,41 @@ const WebUIAssistantChat: React.FC<WebUIAssistantChatProps> = ({
   const isWaitingForFirstToken =
     isStreaming && (lastMessage?.role === 'user' || !lastMessage);
 
+  // One array child: ChatMessageList shows `emptyState` only for an empty array.
+  const messageItems = [
+    ...messages.map((message, index) => {
+      const text = messageText(message);
+      const isUser = message.role === 'user';
+      return (
+        <ChatMessage key={message.id} sender={isUser ? 'user' : 'assistant'}>
+          <ChatMessageBubble variant={isUser ? 'filled' : 'ghost'}>
+            {isUser ? (
+              text
+            ) : (
+              <ChatMessageContent
+                isStreaming={isStreaming && index === messages.length - 1}
+              >
+                {text}
+              </ChatMessageContent>
+            )}
+          </ChatMessageBubble>
+        </ChatMessage>
+      );
+    }),
+    ...(isWaitingForFirstToken
+      ? [
+          <ChatMessage key="thinking" sender="assistant">
+            <ChatMessageBubble variant="ghost">
+              <BAIFlex gap="xs">
+                <Spinner size="sm" />
+                <Text color="secondary">{t('chatui.Thinking')}</Text>
+              </BAIFlex>
+            </ChatMessageBubble>
+          </ChatMessage>,
+        ]
+      : []),
+  ];
+
   return (
     <BAIFlex
       direction="column"
@@ -217,38 +252,7 @@ const WebUIAssistantChat: React.FC<WebUIAssistantChatProps> = ({
             <Text color="secondary">{t('webuiAssistant.EmptyState')}</Text>
           }
         >
-          {messages.map((message, index) => {
-            const text = messageText(message);
-            const isUser = message.role === 'user';
-            return (
-              <ChatMessage
-                key={message.id}
-                sender={isUser ? 'user' : 'assistant'}
-              >
-                <ChatMessageBubble variant={isUser ? 'filled' : 'ghost'}>
-                  {isUser ? (
-                    text
-                  ) : (
-                    <ChatMessageContent
-                      isStreaming={isStreaming && index === messages.length - 1}
-                    >
-                      {text}
-                    </ChatMessageContent>
-                  )}
-                </ChatMessageBubble>
-              </ChatMessage>
-            );
-          })}
-          {isWaitingForFirstToken && (
-            <ChatMessage sender="assistant">
-              <ChatMessageBubble variant="ghost">
-                <BAIFlex gap="xs">
-                  <Spinner size="sm" />
-                  <Text color="secondary">{t('chatui.Thinking')}</Text>
-                </BAIFlex>
-              </ChatMessageBubble>
-            </ChatMessage>
-          )}
+          {messageItems}
         </ChatMessageList>
       </BAIFlex>
       {error?.message && (
