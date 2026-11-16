@@ -797,12 +797,15 @@ export async function selectPropertyFilter(
   // `TextInput` (`role="textbox"`, commits via the popover's Apply button);
   // strict-selection fields render a `Selector` (`role="combobox"`, commits
   // immediately on picking an option) — `PowerSearchValueEditor.tsx`.
+  // `isVisible` does not wait, so wait for whichever control the popover renders.
   const valueTextbox = page.getByRole('textbox', { name: 'Value' });
-  if (await valueTextbox.isVisible({ timeout: 3000 }).catch(() => false)) {
+  const valueSelector = page.getByRole('combobox', { name: 'Value' });
+  await expect(valueTextbox.or(valueSelector).first()).toBeVisible();
+  if (await valueTextbox.isVisible()) {
     await valueTextbox.fill(searchValue);
     await page.getByRole('button', { name: 'Apply', exact: true }).click();
   } else {
-    await page.getByRole('combobox', { name: 'Value' }).click();
+    await valueSelector.click();
     await page.getByRole('option', { name: searchValue, exact: true }).click();
   }
 
