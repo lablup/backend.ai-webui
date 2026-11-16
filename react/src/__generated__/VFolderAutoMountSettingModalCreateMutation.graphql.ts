@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<8834e07a19cba0d4fe8893ebf59ce7b9>>
+ * @generated SignedSource<<f67f7f8cf59870224d713cb1656e2513>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -29,6 +29,19 @@ export type VFolderAutoMountSettingModalCreateMutation$data = {
   readonly createVfolderAutoMount: {
     readonly vfolderAutoMount: {
       readonly id: string;
+      readonly vfolder: {
+        readonly id: string;
+        readonly vfolderAutoMounts: {
+          readonly edges: ReadonlyArray<{
+            readonly node: {
+              readonly mountDestination: string;
+              readonly mountPermission: MountPermission;
+              readonly scopeType: VFolderAutoMountScopeType;
+              readonly subpath: string;
+            };
+          }>;
+        } | null | undefined;
+      } | null | undefined;
     };
   } | null | undefined;
 };
@@ -47,48 +60,133 @@ var v0 = [
 ],
 v1 = [
   {
-    "alias": null,
-    "args": [
-      {
-        "kind": "Variable",
-        "name": "input",
-        "variableName": "input"
-      }
-    ],
-    "concreteType": "CreateVFolderAutoMountPayload",
-    "kind": "LinkedField",
-    "name": "createVfolderAutoMount",
-    "plural": false,
-    "selections": [
-      {
-        "alias": null,
-        "args": null,
-        "concreteType": "VFolderAutoMount",
-        "kind": "LinkedField",
-        "name": "vfolderAutoMount",
-        "plural": false,
-        "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "id",
-            "storageKey": null
-          }
-        ],
-        "storageKey": null
-      }
-    ],
-    "storageKey": null
+    "kind": "Variable",
+    "name": "input",
+    "variableName": "input"
   }
-];
+],
+v2 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "id",
+  "storageKey": null
+},
+v3 = [
+  {
+    "kind": "Literal",
+    "name": "limit",
+    "value": 1
+  }
+],
+v4 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "scopeType",
+  "storageKey": null
+},
+v5 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "mountDestination",
+  "storageKey": null
+},
+v6 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "subpath",
+  "storageKey": null
+},
+v7 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "mountPermission",
+  "storageKey": null
+};
 return {
   "fragment": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
     "name": "VFolderAutoMountSettingModalCreateMutation",
-    "selections": (v1/*: any*/),
+    "selections": [
+      {
+        "alias": null,
+        "args": (v1/*: any*/),
+        "concreteType": "CreateVFolderAutoMountPayload",
+        "kind": "LinkedField",
+        "name": "createVfolderAutoMount",
+        "plural": false,
+        "selections": [
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "VFolderAutoMount",
+            "kind": "LinkedField",
+            "name": "vfolderAutoMount",
+            "plural": false,
+            "selections": [
+              (v2/*: any*/),
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "VFolder",
+                "kind": "LinkedField",
+                "name": "vfolder",
+                "plural": false,
+                "selections": [
+                  (v2/*: any*/),
+                  {
+                    "alias": null,
+                    "args": (v3/*: any*/),
+                    "concreteType": "VFolderAutoMountConnection",
+                    "kind": "LinkedField",
+                    "name": "vfolderAutoMounts",
+                    "plural": false,
+                    "selections": [
+                      {
+                        "alias": null,
+                        "args": null,
+                        "concreteType": "VFolderAutoMountEdge",
+                        "kind": "LinkedField",
+                        "name": "edges",
+                        "plural": true,
+                        "selections": [
+                          {
+                            "alias": null,
+                            "args": null,
+                            "concreteType": "VFolderAutoMount",
+                            "kind": "LinkedField",
+                            "name": "node",
+                            "plural": false,
+                            "selections": [
+                              (v4/*: any*/),
+                              (v5/*: any*/),
+                              (v6/*: any*/),
+                              (v7/*: any*/)
+                            ],
+                            "storageKey": null
+                          }
+                        ],
+                        "storageKey": null
+                      }
+                    ],
+                    "storageKey": "vfolderAutoMounts(limit:1)"
+                  }
+                ],
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
+          }
+        ],
+        "storageKey": null
+      }
+    ],
     "type": "Mutation",
     "abstractKey": null
   },
@@ -97,19 +195,93 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "VFolderAutoMountSettingModalCreateMutation",
-    "selections": (v1/*: any*/)
+    "selections": [
+      {
+        "alias": null,
+        "args": (v1/*: any*/),
+        "concreteType": "CreateVFolderAutoMountPayload",
+        "kind": "LinkedField",
+        "name": "createVfolderAutoMount",
+        "plural": false,
+        "selections": [
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "VFolderAutoMount",
+            "kind": "LinkedField",
+            "name": "vfolderAutoMount",
+            "plural": false,
+            "selections": [
+              (v2/*: any*/),
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "VFolder",
+                "kind": "LinkedField",
+                "name": "vfolder",
+                "plural": false,
+                "selections": [
+                  (v2/*: any*/),
+                  {
+                    "alias": null,
+                    "args": (v3/*: any*/),
+                    "concreteType": "VFolderAutoMountConnection",
+                    "kind": "LinkedField",
+                    "name": "vfolderAutoMounts",
+                    "plural": false,
+                    "selections": [
+                      {
+                        "alias": null,
+                        "args": null,
+                        "concreteType": "VFolderAutoMountEdge",
+                        "kind": "LinkedField",
+                        "name": "edges",
+                        "plural": true,
+                        "selections": [
+                          {
+                            "alias": null,
+                            "args": null,
+                            "concreteType": "VFolderAutoMount",
+                            "kind": "LinkedField",
+                            "name": "node",
+                            "plural": false,
+                            "selections": [
+                              (v4/*: any*/),
+                              (v5/*: any*/),
+                              (v6/*: any*/),
+                              (v7/*: any*/),
+                              (v2/*: any*/)
+                            ],
+                            "storageKey": null
+                          }
+                        ],
+                        "storageKey": null
+                      }
+                    ],
+                    "storageKey": "vfolderAutoMounts(limit:1)"
+                  }
+                ],
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
+          }
+        ],
+        "storageKey": null
+      }
+    ]
   },
   "params": {
-    "cacheID": "71b85becc4c9655c62291924db30083d",
+    "cacheID": "3e16973a19efe12d6b15fac97e5951a3",
     "id": null,
     "metadata": {},
     "name": "VFolderAutoMountSettingModalCreateMutation",
     "operationKind": "mutation",
-    "text": "mutation VFolderAutoMountSettingModalCreateMutation(\n  $input: CreateVFolderAutoMountInput!\n) {\n  createVfolderAutoMount(input: $input) {\n    vfolderAutoMount {\n      id\n    }\n  }\n}\n"
+    "text": "mutation VFolderAutoMountSettingModalCreateMutation(\n  $input: CreateVFolderAutoMountInput!\n) {\n  createVfolderAutoMount(input: $input) {\n    vfolderAutoMount {\n      id\n      vfolder {\n        id\n        vfolderAutoMounts(limit: 1) {\n          edges {\n            node {\n              scopeType\n              mountDestination\n              subpath\n              mountPermission\n              id\n            }\n          }\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "8a7578ee11d79b04b843beaf7ea51e99";
+(node as any).hash = "3e50b25d2df11790ddadcb38ce22ff2b";
 
 export default node;

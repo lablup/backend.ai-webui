@@ -83,6 +83,19 @@ const VFolderAutoMountSettingModal: React.FC<
         createVfolderAutoMount(input: $input) {
           vfolderAutoMount {
             id
+            vfolder {
+              id
+              vfolderAutoMounts(limit: 1) {
+                edges {
+                  node {
+                    scopeType
+                    mountDestination
+                    subpath
+                    mountPermission
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -98,6 +111,19 @@ const VFolderAutoMountSettingModal: React.FC<
           vfolderAutoMount {
             id
             ...VFolderAutoMountSettingModalFragment
+            vfolder {
+              id
+              vfolderAutoMounts(limit: 1) {
+                edges {
+                  node {
+                    scopeType
+                    mountDestination
+                    subpath
+                    mountPermission
+                  }
+                }
+              }
+            }
           }
         }
       }
