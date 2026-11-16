@@ -9,7 +9,7 @@
 - In the running app the WebUI settings live in the Jotai atom `loginConfigState`. `applyConfigToClient` no longer copies them onto `backendaiclient._config`, which keeps only connection fields.
 - Code that needs a setting reads it with `useEffectiveLoginConfig()`, or with `jotaiStore.get(loginConfigState)` outside React, so a component re-renders when a setting changes.
 - System Settings has no Apply button. A row saves when it changes, and the save is [optimistic](#glossary): the row and `loginConfigState` change at once, the write to the scope document runs after, and a refused write puts the row back.
-- After a change the page rebuilds `loginConfigState` with `setEffectiveWebUISettings`; nothing reloads.
+- After a change the page sets the two settings layers with `setEffectiveWebUISettings`, and `loginConfigState` derives from them (ADR 0033); nothing reloads.
 
 ## Context
 
@@ -60,7 +60,7 @@ sequenceDiagram
 - **Type guard**: the host `BackendAIConfig` type (`react/src/hooks/index.tsx`) declares no setting field, so `tsc` rejects `useSuspendedBackendaiClient()._config.<setting>`. An untyped read through `globalThis`, and a read through `useConnectedBAIClient()` (the BUI `BackendAIConfig` keeps `[key: string]: any`), are not checked.
 - **Reading in React**: `useEffectiveLoginConfig()` (`react/src/hooks/useWebUIConfig.ts`) returns `loginConfigState`, or the code defaults until it loads. It never returns `null`.
 - **Reading outside React**: `jotaiStore.get(loginConfigState)`, which is `null` before config loads, so the caller falls back to `getDefaultLoginConfig()` or uses optional chaining. A Jotai atom that derives from a setting reads it with `get(loginConfigState)`.
-- **Atoms beside it**: `autoLogoutState` mirrors `autoLogout` and is set wherever `loginConfigState` is. `loginPluginState` is set once at boot and is not rebuilt after a save.
+- **Atoms beside it**: `autoLogoutState` mirrors `autoLogout` and is set wherever a settings layer is. `loginPluginState` is set once at boot and is not rebuilt after a save.
 - **BUI components**: a `backend.ai-ui` component does not read the host atom; it takes the setting as a prop. `BAIFileExplorer` takes `isDirectorySizeVisible`.
 - **Adding a setting**: a new setting adds a `LoginConfigState` field with its default in `getDefaultLoginConfig`, one `WEBUI_SETTING_DEFINITIONS` entry (`react/src/helper/webuiSettings.ts`) and its copy in `WebUISettingLabels.ts`. It adds nothing to `applyConfigToClient`.
 
@@ -69,19 +69,19 @@ sequenceDiagram
 - **Helper**: `withWebUISettings(state, publicDoc, domainDoc)` (`react/src/helper/webuiSettings.ts`) sets every definition's field back to its code default, then applies the PUBLIC document, then the DOMAIN document. Fields that no definition owns keep the value `state` holds.
 - **Pre-sign-in callers**: boot (`initializeConfigOnce`) and joining another webserver (`loadConfigFromWebServer`) build the pre-sign-in state with it.
 - **Sign-in**: `connectViaGQL` applies only the DOMAIN document over the pre-sign-in state (`applyWebUISettings`), because that state already holds the PUBLIC document.
-- **System Settings**: `setEffectiveWebUISettings(store, publicDoc, domainDoc)` (`react/src/hooks/useWebUIConfig.ts`) runs `withWebUISettings` over the current state and sets `loginConfigState` and `autoLogoutState`.
+- **System Settings**: `setEffectiveWebUISettings(store, publicDoc, domainDoc)` (`react/src/hooks/useWebUIConfig.ts`) sets `publicWebUISettingsState` and `domainWebUISettingsState`, then `autoLogoutState`. `loginConfigState` is the derived atom of ADR 0033, which runs `withWebUISettings` over `baseLoginConfigState` and the two layers.
 - **Why a rebuild**: a row reset removes a key. Applying the documents over the previous state would keep the removed value; rebuilding from the defaults returns it to the default.
 
 ### 3. Save on change, optimistically
 
 - **When a row saves**: a checkbox, selector, list or plugin path control saves on change; a number input on blur, Enter or a stepper click (`NumberInput` commits only then); a text input on commit (`BAIUncontrolledInput`'s `onCommit`). A row reset saves at once.
-- **Order of effects**: `WebUISettingList` sets the row's value and calls `setEffectiveWebUISettings` with documents built from the page's values (`buildWebUISettingsDocument`), then writes each changed scope through `useUpdateDomainAppConfig` / `useUpdatePublicDomainAppConfig`, which keep their [read-modify-write](#glossary) of the `settings` sub-key and carry over keys outside the table (`withForeignWebUISettings`).
+- **Order of effects**: `WebUISettingList` sets the row's value and calls `setEffectiveWebUISettings` with documents built from the page's values (`buildWebUISettingsDocument`), then writes each changed scope through its `setDomainSettings` / `setPublicSettings` props. `WebUISettingsPage` builds both on `upsertScopedAppConfig` (ADR 0033): a [read-modify-write](#glossary) of the `settings` sub-key of the document the page read, carrying over keys outside the table (`withForeignWebUISettings`).
 - **Where the state lives**: one settings session per Jotai store (a module `WeakMap` in `WebUISettingList.tsx`) holds the last values the server accepted (`confirmed`, seeded from the documents when the session starts) and one `{ running, rerun, force }` entry per scope; the shown values live in `sessionValuesAtom`. A remount while a write runs joins the same session, so there is one writer and one rollback target. The session ends once no write runs and every write refetched; the rows then follow the saved documents again.
 - **One write per scope at a time**: while a write to a scope runs, a further change to that scope sets `rerun`, and the next write stores the latest values. `useAppConfig` also queues every write to one document (`serializeWrite`), so the announcement modal and a settings row cannot overwrite each other's read-modify-write.
 - **Several keys at once**: the JSON Config import and the toolbar Reset write each changed scope once. Reset keeps its typed confirmation (`BAIDeleteConfirmModal`).
 - **Refused write**: the page puts back the confirmed value of each key the refused write carried, unless the row changed again since, queues another write if the scope still differs from the confirmed values, and opens an error modal (`webuiSettings.NotSaved`, `webuiSettings.NotSavedItems`) naming those settings.
 - **Leaving the page**: a `beforeunload` prompt runs only while a write is in flight.
-- **Refetch**: a PUBLIC write refetches the merged `publicConfigByDomain` view, as a DOMAIN write already refetches `domainConfig`, so `usePublicDomainAppConfig` readers update. A setter resolves to `false` when only the refetch failed; the write counts as saved, and the session stays open so the rows do not fall back to the stale cache.
+- **Refetch**: a DOMAIN or PUBLIC write refetches its merged view (`domainConfig`, `publicConfigByDomain`) without waiting for it, so `useMyAppConfig` readers update. The page's saved documents come from the raw read of `useScopedAppConfig`, which the upsert response updates, so the session ends once no write is in flight.
 
 ### 4. Who sees a change, and when
 
