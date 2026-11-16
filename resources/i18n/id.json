@@ -1065,8 +1065,6 @@
     "All": "Semua",
     "AllowsLettersNumbersAnd-_Dot": "Hanya huruf (A-Z, a-z), angka, '-', '_', dan '.' yang diperbolehkan.",
     "AutoMount": "Pemasangan otomatis",
-    "AutomountFolderCreationDesc": "Folder pemasangan otomatis secara otomatis dipasang ketika sesi dimulai.",
-    "AutomountFolderNameMustStartWithDot": "Nama folder pemasangan otomatis harus dimulai dengan tanda titik ('.').",
     "AutomountFolders": "Folder yang Dipasang Otomatis",
     "BelongsToDifferentProject": "Folder ini milik proyek lain.",
     "CannotLaunchSessionInAdminMenu": "Sesi tidak dapat dijalankan dari menu admin.",

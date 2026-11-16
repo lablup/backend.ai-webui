@@ -1065,8 +1065,6 @@
     "All": "Alle",
     "AllowsLettersNumbersAnd-_Dot": "Es sind nur Buchstaben (A-Z, a-z), Zahlen, '-', '_' und '.' erlaubt.",
     "AutoMount": "Autohalterung",
-    "AutomountFolderCreationDesc": "Automatisch eingehängte Ordner werden automatisch eingehängt, wenn eine Sitzung beginnt.",
-    "AutomountFolderNameMustStartWithDot": "Der Name des Auto-Mount-Ordners muss mit einem Punkt ('.') beginnen.",
     "AutomountFolders": "Automount-Ordner",
     "BelongsToDifferentProject": "Dieser Ordner gehört zu einem anderen Projekt.",
     "CannotLaunchSessionInAdminMenu": "Sitzungen können nicht über das Admin-Menü gestartet werden.",

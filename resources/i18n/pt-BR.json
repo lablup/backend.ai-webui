@@ -1065,8 +1065,6 @@
     "All": "Todos",
     "AllowsLettersNumbersAnd-_Dot": "Só são permitidas letras (A-Z, a-z), números, '-', '_' e '.'.",
     "AutoMount": "Montagem automática",
-    "AutomountFolderCreationDesc": "As pastas de montagem automática são montadas automaticamente quando uma sessão é iniciada.",
-    "AutomountFolderNameMustStartWithDot": "O nome da pasta de montagem automática deve começar com um ponto ('.').",
     "AutomountFolders": "Pastas Automount",
     "BelongsToDifferentProject": "Esta pasta pertence a um projeto diferente.",
     "CannotLaunchSessionInAdminMenu": "Não é possível iniciar sessões a partir do menu de administração.",

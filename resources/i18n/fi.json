@@ -1065,8 +1065,6 @@
     "All": "Kaikki",
     "AllowsLettersNumbersAnd-_Dot": "Vain kirjaimet (A-Z, a-z), numerot, '-', '_' ja '.' ovat sallittuja.",
     "AutoMount": "Automaattinen kiinnitys",
-    "AutomountFolderCreationDesc": "Automaattisesti kiinnitettävät kansiot kiinnitetään automaattisesti, kun istunto käynnistyy.",
-    "AutomountFolderNameMustStartWithDot": "Automaattisen kiinnityskansion nimen on alettava pisteellä ('.').",
     "AutomountFolders": "Automount-kansiot",
     "BelongsToDifferentProject": "Tämä kansio kuuluu toiseen projektiin.",
     "CannotLaunchSessionInAdminMenu": "Istuntoja ei voi käynnistää hallintavalikosta.",

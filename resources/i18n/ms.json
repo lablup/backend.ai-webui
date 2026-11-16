@@ -1065,8 +1065,6 @@
     "All": "Semua",
     "AllowsLettersNumbersAnd-_Dot": "Hanya huruf (a-z, a-z), nombor, '-', '_', dan '.' \ndibenarkan.",
     "AutoMount": "Lekap Automatik",
-    "AutomountFolderCreationDesc": "Folder auto-mount dipasang secara automatik apabila sesi bermula.",
-    "AutomountFolderNameMustStartWithDot": "Nama folder auto-mount mesti bermula dengan titik ('.').",
     "AutomountFolders": "Folder Automatik",
     "BelongsToDifferentProject": "Folder ini milik projek lain.",
     "CannotLaunchSessionInAdminMenu": "Sesi tidak boleh dilancarkan daripada menu pentadbir.",

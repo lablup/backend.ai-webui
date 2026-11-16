@@ -1062,8 +1062,6 @@
     "All": "ทั้งหมด",
     "AllowsLettersNumbersAnd-_Dot": "ตัวอักษรเท่านั้น (a-z, a-z), ตัวเลข, '-', '_' และ '.' \nได้รับอนุญาต",
     "AutoMount": "ติดตั้งอัตโนมัติ",
-    "AutomountFolderCreationDesc": "โฟลเดอร์ที่ติดตั้งอัตโนมัติจะถูกติดตั้งโดยอัตโนมัติเมื่อเริ่มต้นเซสชัน",
-    "AutomountFolderNameMustStartWithDot": "ชื่อของโฟลเดอร์ที่ติดตั้งอัตโนมัติต้องขึ้นต้นด้วยจุด ('.')",
     "AutomountFolders": "โฟลเดอร์เมาท์อัตโนมัติ",
     "BelongsToDifferentProject": "โฟลเดอร์นี้เป็นของโปรเจกต์อื่น.",
     "CannotLaunchSessionInAdminMenu": "ไม่สามารถเริ่มเซสชันจากเมนูผู้ดูแลระบบได้",

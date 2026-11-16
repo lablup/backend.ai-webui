@@ -1052,8 +1052,6 @@
     "All": "All",
     "AllowsLettersNumbersAnd-_Dot": "Only letters (A–Z, a–z), numbers, '-', '_', and '.' are allowed.",
     "AutoMount": "Auto Mount",
-    "AutomountFolderCreationDesc": "Auto-mount folders are automatically mounted when a session starts.",
-    "AutomountFolderNameMustStartWithDot": "The name of the auto-mount folder must start with a dot ('.').",
     "AutomountFolders": "Automount Folders",
     "BelongsToDifferentProject": "This folder belongs to a different project.",
     "CannotLaunchSessionInAdminMenu": "Sessions cannot be launched from the admin menu.",

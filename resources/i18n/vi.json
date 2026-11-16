@@ -1065,8 +1065,6 @@
     "All": "Tất cả",
     "AllowsLettersNumbersAnd-_Dot": "Chỉ các chữ cái (A, Z Z, A Z), số, '-', '_' và '.' \nđược phép.",
     "AutoMount": "Khai thác tự động",
-    "AutomountFolderCreationDesc": "Thư mục tự động gắn sẽ được gắn tự động khi phiên làm việc bắt đầu.",
-    "AutomountFolderNameMustStartWithDot": "Tên của thư mục tự động gắn phải bắt đầu bằng dấu chấm ('.').",
     "AutomountFolders": "Thư mục Automount",
     "BelongsToDifferentProject": "Thư mục này thuộc dự án khác.",
     "CannotLaunchSessionInAdminMenu": "Không thể khởi chạy phiên từ menu quản trị.",

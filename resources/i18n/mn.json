@@ -1065,8 +1065,6 @@
     "All": "Бүгд",
     "AllowsLettersNumbersAnd-_Dot": "Зөвхөн үсэг (A-Z, A-Z, A-Z), тоонууд, тоонууд, '-', '_', '.'. \nзөвшөөрөгдсөн.",
     "AutoMount": "Автомат холболт",
-    "AutomountFolderCreationDesc": "Автомат холболтын хавтас нь сешн эхэлдэг үед автоматаар автоматаар бэхлэгддэг.",
-    "AutomountFolderNameMustStartWithDot": "Автомат суурилуулсан фолдерын нэр нь цэгээс эхлэх ёстой ('.').",
     "AutomountFolders": "Автомат хавтас",
     "BelongsToDifferentProject": "Энэхүү хавтас нь өөр төсөлд харьяалагдана.",
     "CannotLaunchSessionInAdminMenu": "Session-ийг админ цэснээс эхлүүлэх боломжгүй.",

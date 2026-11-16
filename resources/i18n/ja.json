@@ -1065,8 +1065,6 @@
     "All": "全て",
     "AllowsLettersNumbersAnd-_Dot": "アルファベットの大文字と小文字(A-Z、a-z)、数字、「-」、「_」、「.」しか入力できません。",
     "AutoMount": "オートマウント",
-    "AutomountFolderCreationDesc": "自動マウントフォルダは、セッション開始時に自動的にマウントされる。",
-    "AutomountFolderNameMustStartWithDot": "自動マウントフォルダー名はドット（'.）",
     "AutomountFolders": "フォルダーの自動マウント",
     "BelongsToDifferentProject": "このフォルダは別のプロジェクトに属しています。",
     "CannotLaunchSessionInAdminMenu": "管理者メニューからセッションを起動することはできません。",
