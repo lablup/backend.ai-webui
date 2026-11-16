@@ -614,7 +614,7 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
           ...BAIEntityLabelTokensFragment
           ...BAIEntityLabelSettingModalFragment
         }
-        vfolderAutoMounts {
+        vfolderAutoMounts(limit: 1) {
           edges {
             node {
               scopeType
