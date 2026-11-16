@@ -272,11 +272,6 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
 
     const wantsAutoMountSetting =
       canSetAutoMount === true && !!values.auto_mount_enabled;
-    // A personal project's folder auto-mounts for the user (ADR 0031).
-    const autoMountsForUser =
-      wantsAutoMountSetting &&
-      !!personalProject?.id &&
-      effectiveProject?.id === personalProject.id;
     let vfolderResults: FolderCreationResponse | undefined;
     try {
       // Every folder starts read-only for shared users (#10647); the default
@@ -314,17 +309,15 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
       return;
     }
 
-    const autoMountScopeId = autoMountsForUser
-      ? baiClient.user_uuid
-      : (effectiveProject?.id ?? values.group);
     let autoMountError: string | undefined;
-    if (wantsAutoMountSetting && vfolderResults && autoMountScopeId) {
+    if (wantsAutoMountSetting && vfolderResults && autoMountTarget) {
       // The folder exists by now; a refused auto-mount is reported, not undone.
       await commitCreateAutoMountMutation({
         input: {
           scope: {
-            scopeType: autoMountsForUser ? 'USER' : 'PROJECT',
-            scopeId: autoMountScopeId,
+            scopeType:
+              autoMountTarget.scopeType === 'user' ? 'USER' : 'PROJECT',
+            scopeId: autoMountTarget.scopeId,
           },
           vfolderId: vfolderResults.entityId,
           mountDestination: (values.auto_mount_destination ?? '').trim(),
