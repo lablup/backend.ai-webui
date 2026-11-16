@@ -63,7 +63,7 @@ import {
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import {
-  FolderSyncIcon,
+  FolderSymlinkIcon,
   RocketIcon,
   RotateCcwIcon,
   Share2Icon,
@@ -283,7 +283,7 @@ const VFolderAutoMountCell: React.FC<{
         : t('autoMount.ReadWriteDelete');
   return (
     <BAIIconWithTooltip
-      icon={<FolderSyncIcon size="1em" />}
+      icon={<FolderSymlinkIcon size="1em" />}
       aria-label={t('autoMount.AutoMount')}
       content={
         <VStack gap={2}>
