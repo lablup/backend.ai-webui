@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useCurrentLanguage } from '../components/DefaultProviders';
+import { isValidUrl } from '../diagnostics/rules/configRules';
 import { resolveHelpDocPath } from '../helper/helpAnchors';
 import {
   coerceUserSettingsCategory,
@@ -17,6 +18,17 @@ import { useEffectiveLoginConfig } from './useWebUIConfig';
 const DOCS_LANGUAGES = ['en', 'ko', 'ja', 'th'];
 export const HOSTED_MANUAL_ROOT = 'https://webui.docs.backend.ai';
 
+// The same http(s) check System Settings diagnostics apply, so a value they
+// accept is the value the help button opens; query and fragment are dropped.
+const mirrorRootOf = (manualUrl: string): string | undefined => {
+  const value = manualUrl.trim();
+  if (!isValidUrl(value)) return undefined;
+  const url = new URL(value);
+  url.search = '';
+  url.hash = '';
+  return url.toString().replace(/\/+$/, '');
+};
+
 /**
  * `<root>/<version>/<lang>/`: an http(s) `manualUrl` (System Settings) replaces
  * the hosted root, so a mirror keeps the hosted site's layout.
@@ -26,8 +38,7 @@ export const buildManualBaseURL = (
   packageVersion: string,
   lang: string,
 ): string => {
-  const custom = manualUrl.trim().replace(/\/+$/, '');
-  const root = /^https?:\/\/[^/]/i.test(custom) ? custom : HOSTED_MANUAL_ROOT;
+  const root = mirrorRootOf(manualUrl) ?? HOSTED_MANUAL_ROOT;
   const docsLang = DOCS_LANGUAGES.includes(lang) ? lang : 'en';
   // The manual is a versioned static site (FR-2729): a prerelease build has no
   // numbered docs site yet, so it tracks the `next` channel that every commit

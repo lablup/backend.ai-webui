@@ -8,7 +8,8 @@ import helpAnchorsData from './helpAnchors.json';
  * Route → user-manual mapping behind the header's help ("?") button.
  *
  * The manual is a flat, versioned static site (FR-2729) served as
- * `https://webui.docs.backend.ai/{version}/{lang}/{docPage}#{anchor}`, so
+ * `<root>/{version}/{lang}/{docPage}#{anchor}`, where `<root>` is
+ * `https://webui.docs.backend.ai` or the System Settings `manualUrl` mirror, so
  * `docPage` is a `*.html` page slug and `anchor` an in-page heading id.
  * The data lives in `helpAnchors.json` so `scripts/check-help-anchors.mjs`
  * can resolve every target against the published manual sources without a
