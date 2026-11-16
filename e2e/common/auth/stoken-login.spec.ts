@@ -155,10 +155,10 @@ test.describe(
       await page.goto(webuiEndpoint);
       // Regression guard: the route-level STokenGuard passes through when
       // no sToken is present, so the ordinary LoginView panel still mounts.
-      // The panel opens on the Login Endpoint step until a server is set.
       await fillLoginEndpoint(page, webServerEndpoint);
       await expect(page.getByLabel('Email or Username')).toBeVisible();
       await expect(page.getByLabel('Password')).toBeVisible();
+      await expect(page.getByRole('button', { name: /retry/i })).toHaveCount(0);
     });
 
     test('invalid sToken on `/` surfaces the boundary error card with a Retry button', async ({
