@@ -130,6 +130,19 @@ const VFolderAutoMountMetadataSection: React.FC<
           deleteVfolderAutoMount(input: $input) {
             vfolderAutoMount {
               id
+              vfolder {
+                id
+                vfolderAutoMounts(limit: 1) {
+                  edges {
+                    node {
+                      scopeType
+                      mountDestination
+                      subpath
+                      mountPermission
+                    }
+                  }
+                }
+              }
             }
           }
         }
