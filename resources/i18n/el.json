@@ -1065,8 +1065,6 @@
     "All": "Ολοι",
     "AllowsLettersNumbersAnd-_Dot": "Επιτρέπονται μόνο γράμματα (A-Z, a-z), αριθμοί, '-', '_' και \".\".",
     "AutoMount": "Αυτοκινητοβιομηχανία",
-    "AutomountFolderCreationDesc": "Οι φάκελοι αυτόματης προσάρτησης προσαρτώνται αυτόματα κατά την έναρξη μιας συνεδρίας.",
-    "AutomountFolderNameMustStartWithDot": "Το όνομα του φακέλου αυτόματης προσάρτησης πρέπει να αρχίζει με τελεία ('.').",
     "AutomountFolders": "Φάκελοι Automount",
     "BelongsToDifferentProject": "Αυτός ο φάκελος ανήκει σε διαφορετικό έργο.",
     "CannotLaunchSessionInAdminMenu": "Δεν είναι δυνατή η εκκίνηση συνεδριών από το μενού διαχειριστή.",

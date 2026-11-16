@@ -1065,8 +1065,6 @@
     "All": "Tüm",
     "AllowsLettersNumbersAnd-_Dot": "Yalnızca harflere (A-Z, a-z), sayılara, '-', '_' ve '.' işaretlerine izin verilir.",
     "AutoMount": "Otomatik montaj",
-    "AutomountFolderCreationDesc": "Otomatik bağlanan klasörler bir oturum başladığında otomatik olarak bağlanır.",
-    "AutomountFolderNameMustStartWithDot": "Otomatik montaj klasörünün adı bir nokta ('.') ile başlamalıdır.",
     "AutomountFolders": "Klasörleri Otomatik Bağla",
     "BelongsToDifferentProject": "Bu klasör farklı bir projeye ait.",
     "CannotLaunchSessionInAdminMenu": "Oturumlar yönetici menüsünden başlatılamaz.",

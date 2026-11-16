@@ -1065,8 +1065,6 @@
     "All": "Tutto",
     "AllowsLettersNumbersAnd-_Dot": "Sono consentite solo lettere (A-Z, a-z), numeri, '-', '_' e '.'.",
     "AutoMount": "Monte automatica",
-    "AutomountFolderCreationDesc": "Le cartelle di montaggio automatico vengono montate automaticamente all'avvio di una sessione.",
-    "AutomountFolderNameMustStartWithDot": "Il nome della cartella di montaggio automatico deve iniziare con un punto ('.').",
     "AutomountFolders": "Cartelle di montaggio automatico",
     "BelongsToDifferentProject": "Questa cartella appartiene a un progetto diverso.",
     "CannotLaunchSessionInAdminMenu": "Non è possibile avviare sessioni dal menu di amministrazione.",

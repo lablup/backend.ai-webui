@@ -1065,8 +1065,6 @@
     "All": "Все",
     "AllowsLettersNumbersAnd-_Dot": "Допускаются только буквы (A-Z, a-z), цифры, '-', '_' и '.'.",
     "AutoMount": "Автоф",
-    "AutomountFolderCreationDesc": "Папки с автоматическим монтированием автоматически монтируются при запуске сеанса.",
-    "AutomountFolderNameMustStartWithDot": "Имя папки автомонтирования должно начинаться с точки ('.').",
     "AutomountFolders": "Автоматически монтировать папки",
     "BelongsToDifferentProject": "Эта папка принадлежит другому проекту.",
     "CannotLaunchSessionInAdminMenu": "Запуск сессий из меню администратора невозможен.",
