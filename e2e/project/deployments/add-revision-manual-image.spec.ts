@@ -78,7 +78,9 @@ async function openAdvancedAddRevisionWithManualImage(
 
   // The resource fields mount under Suspense; wait for the prefilled CPU value
   // so the submitted form carries the resource configuration.
-  const cpuSpin = modal.getByRole('spinbutton').first();
+  const cpuSpin = getFormItemControlByLabel(page, 'CPU')
+    .getByRole('spinbutton')
+    .first();
   await expect(cpuSpin).toBeVisible({ timeout: 30_000 });
   await expect(cpuSpin).toHaveValue(/\d/, { timeout: 30_000 });
 
