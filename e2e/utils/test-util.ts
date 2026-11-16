@@ -791,13 +791,8 @@ export async function selectPropertyFilter(
   await searchBar.click();
   await page.getByRole('option', { name: propertyName, exact: true }).click();
 
-  // Fill the Value control in the edit popover it opens. The value editor's
-  // accessible name is "Value" (`t('@astryx.powersearch.valueEditor.value')`)
-  // regardless of which control renders it: free-text fields render a
-  // `TextInput` (`role="textbox"`, commits via the popover's Apply button);
-  // strict-selection fields render a `Selector` (`role="combobox"`, commits
-  // immediately on picking an option) — `PowerSearchValueEditor.tsx`.
-  // `isVisible` does not wait, so wait for whichever control the popover renders.
+  // The popover's "Value" control is a textbox (free text, Apply commits) or a
+  // combobox (strict selection, picking commits); wait for whichever renders.
   const valueTextbox = page.getByRole('textbox', {
     name: 'Value',
     exact: true,
