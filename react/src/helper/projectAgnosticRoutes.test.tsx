@@ -19,7 +19,7 @@ import {
   PROJECT_AGNOSTIC_PATHNAME_REGEX,
   PROJECT_AGNOSTIC_ROUTE_PATHS,
 } from './projectAgnosticRoutes';
-import { matchRoutes } from 'react-router-dom';
+import { matchRoutes, type RouteObject } from 'react-router-dom';
 import { describe, expect, it } from 'vitest';
 
 interface MatchedRoute {
@@ -103,6 +103,32 @@ describe('PROJECT_AGNOSTIC_ROUTE_PATHS (FR-3414 drift guard)', () => {
   );
 });
 
+const adminSubtreeMenuKeys = (): string[] => {
+  const keys = new Set<string>();
+  const walk = (routes: RouteObject[] = []) => {
+    for (const route of routes) {
+      const menuKey = (route.handle as MatchedRoute['handle'])?.menuKey;
+      if (menuKey) keys.add(menuKey);
+      walk(route.children);
+    }
+  };
+  walk(mainLayoutChildRoutes.find((route) => route.path === 'admin')?.children);
+  return [...keys];
+};
+
+describe('the /admin/* subtree (#11209)', () => {
+  it('gates every menuKey it declares', () => {
+    const keys = adminSubtreeMenuKeys();
+    expect(keys).not.toHaveLength(0);
+    expect(
+      keys.filter(
+        (key) =>
+          !(PROJECT_AGNOSTIC_MENU_KEYS as readonly string[]).includes(key),
+      ),
+    ).toEqual([]);
+  });
+});
+
 describe('PROJECT_AGNOSTIC_PATHNAME_REGEX (FR-3414)', () => {
   it.each([
     // Modern /admin/* shape (routes.tsx `handle.menuKey` pages)
@@ -128,6 +154,7 @@ describe('PROJECT_AGNOSTIC_PATHNAME_REGEX (FR-3414)', () => {
     '/admin/diagnostics',
     '/admin/rbac',
     '/admin/branding',
+    '/admin/system-settings',
     '/admin/information',
     // Legacy first-segment shapes (redirect shims)
     '/admin-session',

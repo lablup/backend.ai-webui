@@ -174,7 +174,8 @@ export default [
   //   scheduler          -> SchedulerPage
   //   agent              -> ResourcesPage
   //   project            -> ProjectPage
-  //   settings           -> WebUISettingsPage (its Configurations tab)
+  //   settings           -> redirects to system-settings (Configurations tab)
+  //   system-settings    -> WebUISettingsPage
   //   maintenance        -> MaintenancePage
   //   diagnostics        -> DiagnosticsPage
   //   rbac               -> RBACManagementPage
