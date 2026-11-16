@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<ae3e74c2e2d58b2b64fdfe88230f305c>>
+ * @generated SignedSource<<d40f1c1b0fca6038c834e101e201c283>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -49,6 +49,15 @@ v1 = {
   "value": 100
 },
 v2 = [
+  {
+    "kind": "Literal",
+    "name": "filter",
+    "value": {
+      "accessLevel": {
+        "equals": "public"
+      }
+    }
+  },
   (v1/*: any*/),
   {
     "fields": [
@@ -604,16 +613,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "54e195c6b50ac1184686c0bfa9ab7caf",
+    "cacheID": "788bc557638bf7561828bfdcf6f22e09",
     "id": null,
     "metadata": {},
     "name": "WebUIAssistantSetupModalQuery",
     "operationKind": "query",
-    "text": "query WebUIAssistantSetupModalQuery(\n  $projectId: UUID!\n) {\n  projectModelCardsV2(scope: {projectId: $projectId}, limit: 100) {\n    edges {\n      node {\n        id\n        name\n        metadata {\n          title\n          description\n          task\n          label\n        }\n        ...ModelCardDeployModalFragment\n      }\n    }\n  }\n}\n\nfragment DeploymentPresetDetailModalFragment on DeploymentRevisionPreset {\n  id\n  entityId\n  name\n  description\n  runtimeVariantId\n  runtimeVariant {\n    id\n    name\n  }\n  cluster {\n    clusterMode\n    clusterSize\n  }\n  execution {\n    imageId\n    startupCommand\n    bootstrapScript\n    environ {\n      key\n      value\n    }\n  }\n  image {\n    id\n    identity {\n      canonicalName\n    }\n  }\n  resource {\n    resourceOpts {\n      name\n      value\n    }\n  }\n  resourceSlots {\n    slotName\n    quantity\n  }\n  deploymentDefaults {\n    openToPublic\n    replicaCount\n    revisionHistoryLimit\n    deploymentStrategy\n  }\n  presetValues {\n    presetId\n    value\n  }\n  modelDefinition {\n    models {\n      name\n      service {\n        healthCheck {\n          enable\n          interval\n          path\n          maxRetries\n          maxWaitTime\n          expectedStatusCode\n          initialDelay\n        }\n      }\n    }\n  }\n}\n\nfragment ModelCardDeployModalFragment on ModelCardV2 {\n  id\n  entityId\n  availablePresets(orderBy: [{field: RANK, direction: \"ASC\"}], limit: 100) {\n    edges {\n      node {\n        id\n        entityId\n        name\n        runtimeVariantId\n        ...DeploymentPresetDetailModalFragment\n      }\n    }\n  }\n}\n"
+    "text": "query WebUIAssistantSetupModalQuery(\n  $projectId: UUID!\n) {\n  projectModelCardsV2(scope: {projectId: $projectId}, filter: {accessLevel: {equals: \"public\"}}, limit: 100) {\n    edges {\n      node {\n        id\n        name\n        metadata {\n          title\n          description\n          task\n          label\n        }\n        ...ModelCardDeployModalFragment\n      }\n    }\n  }\n}\n\nfragment DeploymentPresetDetailModalFragment on DeploymentRevisionPreset {\n  id\n  entityId\n  name\n  description\n  runtimeVariantId\n  runtimeVariant {\n    id\n    name\n  }\n  cluster {\n    clusterMode\n    clusterSize\n  }\n  execution {\n    imageId\n    startupCommand\n    bootstrapScript\n    environ {\n      key\n      value\n    }\n  }\n  image {\n    id\n    identity {\n      canonicalName\n    }\n  }\n  resource {\n    resourceOpts {\n      name\n      value\n    }\n  }\n  resourceSlots {\n    slotName\n    quantity\n  }\n  deploymentDefaults {\n    openToPublic\n    replicaCount\n    revisionHistoryLimit\n    deploymentStrategy\n  }\n  presetValues {\n    presetId\n    value\n  }\n  modelDefinition {\n    models {\n      name\n      service {\n        healthCheck {\n          enable\n          interval\n          path\n          maxRetries\n          maxWaitTime\n          expectedStatusCode\n          initialDelay\n        }\n      }\n    }\n  }\n}\n\nfragment ModelCardDeployModalFragment on ModelCardV2 {\n  id\n  entityId\n  availablePresets(orderBy: [{field: RANK, direction: \"ASC\"}], limit: 100) {\n    edges {\n      node {\n        id\n        entityId\n        name\n        runtimeVariantId\n        ...DeploymentPresetDetailModalFragment\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "d30c571944bab8f5d92ba93bb69adca0";
+(node as any).hash = "e1ddf38aaaf97d3fc02ee5b85e6823cc";
 
 export default node;

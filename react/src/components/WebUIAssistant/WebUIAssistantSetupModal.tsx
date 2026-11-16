@@ -82,7 +82,12 @@ const SetupModalWithStore: React.FC<
     useLazyLoadQuery<WebUIAssistantSetupModalQuery>(
       graphql`
         query WebUIAssistantSetupModalQuery($projectId: UUID!) {
-          projectModelCardsV2(scope: { projectId: $projectId }, limit: 100) {
+          # Same cards as the Model Store page: private ones live on the admin page.
+          projectModelCardsV2(
+            scope: { projectId: $projectId }
+            filter: { accessLevel: { equals: "public" } }
+            limit: 100
+          ) {
             edges {
               node {
                 id
