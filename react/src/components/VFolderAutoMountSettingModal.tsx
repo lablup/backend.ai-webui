@@ -40,7 +40,7 @@ export interface VFolderAutoMountSettingModalProps extends Omit<
   /** UUID of the project or the user the auto-mount is set on. */
   scopeId: string;
   /** The auto-mount being edited; create mode when absent. */
-  autoMountFrgmt?: VFolderAutoMountSettingModalFragment$key | null;
+  vfolderAutoMountFrgmt?: VFolderAutoMountSettingModalFragment$key | null;
   vfolder: { id: string; name: string };
   onRequestClose: (success: boolean) => void;
 }
@@ -50,7 +50,7 @@ const VFolderAutoMountSettingModal: React.FC<
 > = ({
   scopeType,
   scopeId,
-  autoMountFrgmt,
+  vfolderAutoMountFrgmt,
   vfolder,
   onRequestClose,
   ...modalProps
@@ -71,7 +71,7 @@ const VFolderAutoMountSettingModal: React.FC<
         mountPermission
       }
     `,
-    autoMountFrgmt,
+    vfolderAutoMountFrgmt,
   );
   const isEditMode = !!autoMount;
 

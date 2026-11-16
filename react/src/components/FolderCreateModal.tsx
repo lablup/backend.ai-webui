@@ -18,6 +18,7 @@ import { useMyAppConfig } from '../hooks/useAppConfig';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { ProjectContext, ProjectContextOrNull } from '../types/projectContext';
 import BAIFormItem from './BAIFormItem';
+import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
 import ProjectSelectForAdminPage from './ProjectSelectForAdminPage';
 // Keeps its antd-shaped contract until the ComplexSelector-based rebuild lands.
 import StorageSelect from './StorageSelect';
@@ -411,18 +412,23 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
         }}
       >
         {autoMountTarget && autoMountTargetKey ? (
-          <Suspense fallback={null}>
-            <AutoMountPermissionCheck
-              scopeType={autoMountTarget.scopeType}
-              scopeId={autoMountTarget.scopeId}
-              onResolved={(canCreate) => {
-                setAutoMountPermission({ key: autoMountTargetKey, canCreate });
-                if (!canCreate) {
-                  formRef.current?.setFieldValue('auto_mount_enabled', false);
-                }
-              }}
-            />
-          </Suspense>
+          <ErrorBoundaryWithNullFallback>
+            <Suspense fallback={null}>
+              <AutoMountPermissionCheck
+                scopeType={autoMountTarget.scopeType}
+                scopeId={autoMountTarget.scopeId}
+                onResolved={(canCreate) => {
+                  setAutoMountPermission({
+                    key: autoMountTargetKey,
+                    canCreate,
+                  });
+                  if (!canCreate) {
+                    formRef.current?.setFieldValue('auto_mount_enabled', false);
+                  }
+                }}
+              />
+            </Suspense>
+          </ErrorBoundaryWithNullFallback>
         ) : null}
         {shouldCheckCreatePermission && effectiveProject ? (
           <Suspense fallback={null}>
