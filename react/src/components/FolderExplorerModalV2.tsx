@@ -23,7 +23,6 @@ import { FolderExplorerModalV2OwnershipProjectQuery } from '../__generated__/Fol
 import { FolderExplorerModalV2Query } from '../__generated__/FolderExplorerModalV2Query.graphql';
 import type { ScopedAuditLogQuery as ScopedAuditLogQueryType } from '../__generated__/ScopedAuditLogQuery.graphql';
 import { formatToUUID } from '../helper';
-import { AUTO_MOUNT_SETTING_MANAGER_VERSION } from '../helper/vfolderAutoMount';
 import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import { useSetBAINotification } from '../hooks/useBAINotification';
@@ -363,24 +362,21 @@ const FolderExplorerBody: React.FC<{
   );
   // A project folder auto-mounts for its project, a user folder for its owner.
   // A user folder still carries its personal project's id, so read the type.
-  const autoMountScope =
-    baiClient.isManagerVersionCompatibleWith(
-      AUTO_MOUNT_SETTING_MANAGER_VERSION,
-    ) && vfolderNode
-      ? vfolderNode.accessControl?.ownershipType === 'USER'
-        ? vfolderNode.ownership?.userId
-          ? {
-              scopeType: 'USER' as const,
-              scopeId: vfolderNode.ownership.userId,
-            }
-          : null
-        : vfolderNode.ownership?.projectId
-          ? {
-              scopeType: 'PROJECT' as const,
-              scopeId: vfolderNode.ownership.projectId,
-            }
-          : null
-      : null;
+  const autoMountScope = vfolderNode
+    ? vfolderNode.accessControl?.ownershipType === 'USER'
+      ? vfolderNode.ownership?.userId
+        ? {
+            scopeType: 'USER' as const,
+            scopeId: vfolderNode.ownership.userId,
+          }
+        : null
+      : vfolderNode.ownership?.projectId
+        ? {
+            scopeType: 'PROJECT' as const,
+            scopeId: vfolderNode.ownership.projectId,
+          }
+        : null
+    : null;
   const [auditLogQueryRef, loadAuditLogQuery] =
     useQueryLoader<ScopedAuditLogQueryType>(ScopedAuditLogQuery);
 

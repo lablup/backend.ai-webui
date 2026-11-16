@@ -12,7 +12,6 @@ import {
   ProjectPageQuery$variables,
 } from '../../__generated__/ProjectPageQuery.graphql';
 import { App } from '../../app-shim';
-import { AUTO_MOUNT_SETTING_MANAGER_VERSION } from '../../helper/vfolderAutoMount';
 import { useSuspendedBackendaiClient } from '../../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
@@ -94,9 +93,6 @@ const ProjectPage = () => {
   const relayEnvironment = useRelayEnvironment();
   const baiClient = useSuspendedBackendaiClient();
   const supportsTypeFilter = baiClient.isManagerVersionCompatibleWith('26.9.0');
-  const supportsAutoMount = baiClient.isManagerVersionCompatibleWith(
-    AUTO_MOUNT_SETTING_MANAGER_VERSION,
-  );
   // The project outlives `open` so the closing modal does not re-query with an empty id.
   const [autoMount, setAutoMount] = useState<{
     open: boolean;
@@ -572,21 +568,17 @@ const ProjectPage = () => {
                               action: () =>
                                 openProjectAdminSettingModal(record),
                             },
-                            ...(supportsAutoMount
-                              ? [
-                                  {
-                                    key: 'auto-mount',
-                                    title: t('autoMount.AutoMountFolders'),
-                                    icon: <FolderSync />,
-                                    disabled: isModelStore || !record.row_id,
-                                    onClick: () =>
-                                      setAutoMount({
-                                        open: true,
-                                        project: record,
-                                      }),
-                                  },
-                                ]
-                              : []),
+                            {
+                              key: 'auto-mount',
+                              title: t('autoMount.AutoMountFolders'),
+                              icon: <FolderSync />,
+                              disabled: isModelStore || !record.row_id,
+                              onClick: () =>
+                                setAutoMount({
+                                  open: true,
+                                  project: record,
+                                }),
+                            },
                             {
                               key: 'edit',
                               title: t('project.EditProject'),
