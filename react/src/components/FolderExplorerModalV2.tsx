@@ -362,21 +362,17 @@ const FolderExplorerBody: React.FC<{
     'metadata',
   );
   // A personal project's folder auto-mounts for the user, as FolderCreateModal sets it.
-  const autoMountScope = !vfolderNode
-    ? null
-    : vfolderNode.accessControl?.ownershipType === 'USER'
-      ? vfolderNode.ownership?.userId
-        ? { scopeType: 'USER' as const, scopeId: vfolderNode.ownership.userId }
-        : null
-      : vfolderNode.ownership?.projectId &&
-          vfolderNode.ownership.projectId === personalProject?.id
-        ? { scopeType: 'USER' as const, scopeId: baiClient.user_uuid }
-        : vfolderNode.ownership?.projectId
-          ? {
-              scopeType: 'PROJECT' as const,
-              scopeId: vfolderNode.ownership.projectId,
-            }
-          : null;
+  const autoMountScope = (() => {
+    if (!vfolderNode) return null;
+    const { userId, projectId } = vfolderNode.ownership ?? {};
+    if (vfolderNode.accessControl?.ownershipType === 'USER') {
+      return userId ? { scopeType: 'USER' as const, scopeId: userId } : null;
+    }
+    if (!projectId) return null;
+    return projectId === personalProject?.id
+      ? { scopeType: 'USER' as const, scopeId: baiClient.user_uuid }
+      : { scopeType: 'PROJECT' as const, scopeId: projectId };
+  })();
   const [auditLogQueryRef, loadAuditLogQuery] =
     useQueryLoader<ScopedAuditLogQueryType>(ScopedAuditLogQuery);
 

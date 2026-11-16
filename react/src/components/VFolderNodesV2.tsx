@@ -8,6 +8,7 @@
  `BAIText copyable`, `BAIModal` (host-quota modal), `BAISkeleton`.
 */
 import { VFolderDeployModalQuery } from '../__generated__/VFolderDeployModalQuery.graphql';
+import type { VFolderNodesV2AutoMountCellFragment$key } from '../__generated__/VFolderNodesV2AutoMountCellFragment.graphql';
 import { VFolderNodesV2DeleteMutation } from '../__generated__/VFolderNodesV2DeleteMutation.graphql';
 import {
   VFolderNodesV2Fragment$data,
@@ -261,16 +262,30 @@ interface VFolderHostCellProps {
   host?: string | null;
 }
 
-type VFolderAutoMountConnection = NonNullable<
-  NonNullable<VFolderNodesV2Fragment$data[number]>['vfolderAutoMounts']
->;
-
 const VFolderAutoMountCell: React.FC<{
-  autoMounts?: VFolderAutoMountConnection | null;
-}> = ({ autoMounts }) => {
+  vfolderFrgmt: VFolderNodesV2AutoMountCellFragment$key;
+}> = ({ vfolderFrgmt }) => {
   'use memo';
   const { t } = useTranslation();
-  const autoMount = autoMounts?.edges[0]?.node;
+  const { vfolderAutoMounts } = useFragment(
+    graphql`
+      fragment VFolderNodesV2AutoMountCellFragment on VFolder {
+        # Duplicate mounts are blocked, so a folder has at most one auto-mount (ADR 0031).
+        vfolderAutoMounts(limit: 1) {
+          edges {
+            node {
+              scopeType
+              mountDestination
+              subpath
+              mountPermission
+            }
+          }
+        }
+      }
+    `,
+    vfolderFrgmt,
+  );
+  const autoMount = vfolderAutoMounts?.edges[0]?.node;
   return (
     <HStack gap={1} vAlign="center">
       <BAIBooleanToken
@@ -612,17 +627,7 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
           ...BAIEntityLabelTokensFragment
           ...BAIEntityLabelSettingModalFragment
         }
-        # Duplicate mounts are blocked, so a folder has at most one auto-mount (ADR 0031).
-        vfolderAutoMounts(limit: 1) {
-          edges {
-            node {
-              scopeType
-              mountDestination
-              subpath
-              mountPermission
-            }
-          }
-        }
+        ...VFolderNodesV2AutoMountCellFragment
         ...VFolderNodeIdenticonV2Fragment
         ...SharedFolderPermissionInfoModalV2Fragment
         ...InviteFolderSettingModalFragment
@@ -857,7 +862,7 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
             key: 'auto_mount',
             title: t('autoMount.AutoMount'),
             render: (__, vfolder) => (
-              <VFolderAutoMountCell autoMounts={vfolder.vfolderAutoMounts} />
+              <VFolderAutoMountCell vfolderFrgmt={vfolder} />
             ),
           },
           {

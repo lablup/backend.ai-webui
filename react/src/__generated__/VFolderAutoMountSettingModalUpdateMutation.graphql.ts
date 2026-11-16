@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<f774921d68985baa7462b885359b4b56>>
+ * @generated SignedSource<<e45753b18395a5ef85380c606ecdbc02>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,7 +11,6 @@
 import { ConcreteRequest } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type MountPermission = "READ_ONLY" | "READ_WRITE" | "RW_DELETE" | "%future added value";
-export type VFolderAutoMountScopeType = "PROJECT" | "USER" | "%future added value";
 export type UpdateVFolderAutoMountInput = {
   id: string;
   mountDestination?: string | null | undefined;
@@ -27,16 +26,7 @@ export type VFolderAutoMountSettingModalUpdateMutation$data = {
       readonly id: string;
       readonly vfolder: {
         readonly id: string;
-        readonly vfolderAutoMounts: {
-          readonly edges: ReadonlyArray<{
-            readonly node: {
-              readonly mountDestination: string;
-              readonly mountPermission: MountPermission;
-              readonly scopeType: VFolderAutoMountScopeType;
-              readonly subpath: string;
-            };
-          }>;
-        } | null | undefined;
+        readonly " $fragmentSpreads": FragmentRefs<"VFolderNodesV2AutoMountCellFragment">;
       } | null | undefined;
       readonly " $fragmentSpreads": FragmentRefs<"VFolderAutoMountSettingModalFragment">;
     };
@@ -69,35 +59,21 @@ v2 = {
   "name": "id",
   "storageKey": null
 },
-v3 = [
-  {
-    "kind": "Literal",
-    "name": "limit",
-    "value": 1
-  }
-],
-v4 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "scopeType",
-  "storageKey": null
-},
-v5 = {
+v3 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "mountDestination",
   "storageKey": null
 },
-v6 = {
+v4 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "subpath",
   "storageKey": null
 },
-v7 = {
+v5 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
@@ -143,41 +119,9 @@ return {
                 "selections": [
                   (v2/*: any*/),
                   {
-                    "alias": null,
-                    "args": (v3/*: any*/),
-                    "concreteType": "VFolderAutoMountConnection",
-                    "kind": "LinkedField",
-                    "name": "vfolderAutoMounts",
-                    "plural": false,
-                    "selections": [
-                      {
-                        "alias": null,
-                        "args": null,
-                        "concreteType": "VFolderAutoMountEdge",
-                        "kind": "LinkedField",
-                        "name": "edges",
-                        "plural": true,
-                        "selections": [
-                          {
-                            "alias": null,
-                            "args": null,
-                            "concreteType": "VFolderAutoMount",
-                            "kind": "LinkedField",
-                            "name": "node",
-                            "plural": false,
-                            "selections": [
-                              (v4/*: any*/),
-                              (v5/*: any*/),
-                              (v6/*: any*/),
-                              (v7/*: any*/)
-                            ],
-                            "storageKey": null
-                          }
-                        ],
-                        "storageKey": null
-                      }
-                    ],
-                    "storageKey": "vfolderAutoMounts(limit:1)"
+                    "args": null,
+                    "kind": "FragmentSpread",
+                    "name": "VFolderNodesV2AutoMountCellFragment"
                   }
                 ],
                 "storageKey": null
@@ -222,9 +166,9 @@ return {
                 "name": "entityId",
                 "storageKey": null
               },
+              (v3/*: any*/),
+              (v4/*: any*/),
               (v5/*: any*/),
-              (v6/*: any*/),
-              (v7/*: any*/),
               {
                 "alias": null,
                 "args": null,
@@ -236,7 +180,13 @@ return {
                   (v2/*: any*/),
                   {
                     "alias": null,
-                    "args": (v3/*: any*/),
+                    "args": [
+                      {
+                        "kind": "Literal",
+                        "name": "limit",
+                        "value": 1
+                      }
+                    ],
                     "concreteType": "VFolderAutoMountConnection",
                     "kind": "LinkedField",
                     "name": "vfolderAutoMounts",
@@ -258,10 +208,16 @@ return {
                             "name": "node",
                             "plural": false,
                             "selections": [
+                              {
+                                "alias": null,
+                                "args": null,
+                                "kind": "ScalarField",
+                                "name": "scopeType",
+                                "storageKey": null
+                              },
+                              (v3/*: any*/),
                               (v4/*: any*/),
                               (v5/*: any*/),
-                              (v6/*: any*/),
-                              (v7/*: any*/),
                               (v2/*: any*/)
                             ],
                             "storageKey": null
@@ -284,16 +240,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "9210f44e2f974fa21d98c133fb03c47c",
+    "cacheID": "3509d66164e39010c747230641ac3960",
     "id": null,
     "metadata": {},
     "name": "VFolderAutoMountSettingModalUpdateMutation",
     "operationKind": "mutation",
-    "text": "mutation VFolderAutoMountSettingModalUpdateMutation(\n  $input: UpdateVFolderAutoMountInput!\n) {\n  updateVfolderAutoMount(input: $input) {\n    vfolderAutoMount {\n      id\n      ...VFolderAutoMountSettingModalFragment\n      vfolder {\n        id\n        vfolderAutoMounts(limit: 1) {\n          edges {\n            node {\n              scopeType\n              mountDestination\n              subpath\n              mountPermission\n              id\n            }\n          }\n        }\n      }\n    }\n  }\n}\n\nfragment VFolderAutoMountSettingModalFragment on VFolderAutoMount {\n  entityId\n  mountDestination\n  subpath\n  mountPermission\n}\n"
+    "text": "mutation VFolderAutoMountSettingModalUpdateMutation(\n  $input: UpdateVFolderAutoMountInput!\n) {\n  updateVfolderAutoMount(input: $input) {\n    vfolderAutoMount {\n      id\n      ...VFolderAutoMountSettingModalFragment\n      vfolder {\n        id\n        ...VFolderNodesV2AutoMountCellFragment\n      }\n    }\n  }\n}\n\nfragment VFolderAutoMountSettingModalFragment on VFolderAutoMount {\n  entityId\n  mountDestination\n  subpath\n  mountPermission\n}\n\nfragment VFolderNodesV2AutoMountCellFragment on VFolder {\n  vfolderAutoMounts(limit: 1) {\n    edges {\n      node {\n        scopeType\n        mountDestination\n        subpath\n        mountPermission\n        id\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "7d35854b951a6fed13b94bb769f25b09";
+(node as any).hash = "6d9eb6d8e17550253255598337cd0c9c";
 
 export default node;
