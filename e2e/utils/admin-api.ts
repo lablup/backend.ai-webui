@@ -1085,17 +1085,17 @@ export async function createInactiveKeypairViaApi(
   email: string,
 ): Promise<string> {
   const data = await gqlAdmin<{
-    user: { id: string } | null;
+    user: { uuid: string } | null;
     keypairs: Array<{ resource_policy: string | null }> | null;
   }>(
     api,
     `query($email: String) {
-      user(email: $email) { id }
+      user(email: $email) { uuid }
       keypairs(email: $email, is_active: true) { resource_policy }
     }`,
     { email },
   );
-  const userId = data.user?.id;
+  const userId = data.user?.uuid;
   const resourcePolicy = data.keypairs?.find(
     (k) => k.resource_policy,
   )?.resource_policy;
@@ -1134,7 +1134,13 @@ export async function deleteKeypairViaApi(
       }`,
       { access_key: accessKey },
     );
-    return data.delete_keypair?.ok === true;
+    if (!data.delete_keypair?.ok) {
+      console.warn(
+        `[admin-api] delete_keypair did not succeed for ${accessKey}: ${data.delete_keypair?.msg}`,
+      );
+      return false;
+    }
+    return true;
   } catch (error) {
     console.warn(`[admin-api] could not delete keypair ${accessKey}:`, error);
     return false;

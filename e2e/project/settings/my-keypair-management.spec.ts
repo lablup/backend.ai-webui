@@ -258,13 +258,16 @@ test.describe(
     // Keypairs seeded through the API; deleted even when the test fails.
     test.afterEach(async () => {
       if (apiCreatedAccessKeys.length === 0) return;
-      const api = await createAdminApiContext();
+      const keys = apiCreatedAccessKeys.splice(0);
+      let api: APIRequestContext | undefined;
       try {
-        for (const key of apiCreatedAccessKeys.splice(0)) {
-          await deleteKeypairViaApi(api, key);
-        }
+        api = await createAdminApiContext();
+        for (const key of keys) await deleteKeypairViaApi(api, key);
+      } catch (error) {
+        // afterAll's user purge removes the keypairs as a backstop.
+        console.warn('[my-keypair-management] keypair cleanup failed:', error);
       } finally {
-        await api.dispose();
+        await api?.dispose();
       }
     });
 
@@ -1007,10 +1010,14 @@ test.describe(
         .locator('tbody tr')
         .filter({ hasText: accessKey });
       await expect(targetRow).toBeVisible({ timeout: 10000 });
-      await targetRow.getByRole('button', { name: 'Delete Keypair' }).click();
-
+      // A deferred Relay commit can swap the row node mid-click; retry as a unit.
       const deleteDialog = page.getByRole('dialog', { name: /Delete Keypair/ });
-      await expect(deleteDialog).toBeVisible();
+      await expect(async () => {
+        await targetRow
+          .getByRole('button', { name: 'Delete Keypair' })
+          .click({ timeout: 3000 });
+        await expect(deleteDialog).toBeVisible({ timeout: 5000 });
+      }).toPass({ timeout: 30000 });
       const deleteButton = deleteDialog.getByRole('button', {
         name: 'Delete',
         exact: true,
