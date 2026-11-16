@@ -330,7 +330,7 @@ const LoginView: React.FC<{
     }
   }
 
-  // Load the login plugin once the account form is shown; it is served from
+  // Load the login plugin once the endpoint step closes; it is served from
   // `/dist/plugins/` like page plugins, never bundled.
   const isAccountFormShown = !endpointStep.isStepOpen;
   useEffect(() => {

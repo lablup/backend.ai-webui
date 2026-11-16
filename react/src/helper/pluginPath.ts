@@ -57,9 +57,8 @@ export const resolvePluginScriptUrl = (
 };
 
 /**
- * The login plugin's script URL once the account form is on screen, else
- * `undefined`: a plugin that injects into the endpoint step's form loses its
- * DOM when the account form replaces it (#11231).
+ * The login plugin's script URL once config is loaded and the endpoint step is
+ * closed, else `undefined`: the account form replaces the step's form (#11231).
  */
 export const resolveLoginPluginScriptUrl = ({
   path,
