@@ -376,7 +376,7 @@
     "NoPermissionToSetAutoMount": "자동 마운트를 설정할 권한이 없습니다.",
     "NoPermissionToSetProjectAutoMount": "이 프로젝트에서 자동 마운트를 설정할 권한이 없습니다. 내 세션에 자동 마운트하려면 개인 프로젝트에서 폴더를 만들어 주세요.",
     "NotAutoMounted": "이 폴더는 자동 마운트되지 않습니다.",
-    "NotConfigured": "설정되지 않음",
+    "NotConfigured": "미설정",
     "PleaseEnterMountDestination": "마운트 경로를 입력하세요.",
     "PleaseSelectFolder": "폴더를 선택하세요.",
     "ProjectAutoMountDesc": "이 프로젝트에서 만드는 모든 세션에 이 폴더들이 마운트됩니다.",
