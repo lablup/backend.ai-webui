@@ -10,7 +10,10 @@ import {
   withAnnouncement,
 } from '../helper/announcement';
 import { useCurrentDomain } from '../hooks';
-import { useScopedAppConfig } from '../hooks/useAppConfig';
+import {
+  updateMyAppConfigLocally,
+  useScopedAppConfig,
+} from '../hooks/useAppConfig';
 import './AnnouncementEditModal.css';
 import BAICodeEditor from './BAICodeEditor';
 import BAIFormItem from './BAIFormItem';
@@ -24,6 +27,7 @@ import { Token } from '@lablup/ui-common/Token';
 import { useTheme } from '@lablup/ui-common/theme';
 import type { OnMount } from '@monaco-editor/react';
 import {
+  BAIAlert,
   BAIFlex,
   BAIModal,
   BAIModalProps,
@@ -46,6 +50,7 @@ import {
 } from 'lucide-react';
 import { Suspense, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useRelayEnvironment } from 'react-relay';
 
 type MonacoEditorInstance = Parameters<OnMount>[0];
 type MonacoNamespace = Parameters<OnMount>[1];
@@ -112,20 +117,26 @@ const AnnouncementEditModalContent: React.FC<AnnouncementEditModalProps> = ({
 
   const { id: domainId } = useCurrentDomain();
   const domainScope = { type: 'domain', id: domainId } as const;
-  const { scopedAppConfig, upsertScopedAppConfig } = useScopedAppConfig(
-    domainScope,
-    ['domainConfig'],
-  );
+  const { scopedAppConfig, upsertScopedAppConfig } = useScopedAppConfig({
+    scope: domainScope,
+    configNames: ['domainConfig'],
+  });
   const announcement = readDomainAnnouncement(
-    scopedAppConfig?.domainConfig?.settings,
+    scopedAppConfig.domain?.domainConfig?.settings,
   );
-  // Keeps the System Settings keys beside the announcement.
-  const writeAnnouncement = (next: DomainAnnouncement | undefined) =>
-    upsertScopedAppConfig({
+  const relayEnv = useRelayEnvironment();
+  // Keeps the System Settings keys beside the announcement; only this user's
+  // banner shows the change at once.
+  const writeAnnouncement = async (next: DomainAnnouncement | undefined) => {
+    const update = (current: unknown) => withAnnouncement(current, next);
+    await upsertScopedAppConfig({
+      scope: domainScope,
       configName: 'domainConfig',
       subKey: 'settings',
-      value: (current: unknown) => withAnnouncement(current, next),
+      value: update,
     });
+    updateMyAppConfigLocally(relayEnv, 'domainConfig', 'settings', update);
+  };
 
   const formRef = useRef<FormInstance<AnnouncementFormValues>>(null);
   const [bodyDraft, setBodyDraft] = useState<string>();
@@ -266,6 +277,12 @@ const AnnouncementEditModalContent: React.FC<AnnouncementEditModalProps> = ({
       {...modalProps}
     >
       <BAIFlex direction="column" align="stretch" gap="sm">
+        <BAIAlert
+          data-testid="announcement-reload-notice"
+          type="info"
+          showIcon
+          title={t('summary.AnnouncementReloadNotice')}
+        />
         <Form
           ref={formRef}
           layout="vertical"

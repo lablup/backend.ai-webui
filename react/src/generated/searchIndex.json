@@ -3013,6 +3013,7 @@
         "summary.AnnouncementDraft",
         "summary.AnnouncementMessage",
         "summary.AnnouncementPreview",
+        "summary.AnnouncementReloadNotice",
         "summary.AnnouncementTitle",
         "summary.AnnouncementUpdated",
         "summary.EditAnnouncement",
