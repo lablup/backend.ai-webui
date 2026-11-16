@@ -611,6 +611,7 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
           ...BAIEntityLabelTokensFragment
           ...BAIEntityLabelSettingModalFragment
         }
+        # Duplicate mounts are blocked, so a folder has at most one auto-mount (ADR 0031).
         vfolderAutoMounts(limit: 1) @include(if: $withAutoMount) {
           edges {
             node {
