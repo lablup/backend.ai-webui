@@ -133,6 +133,21 @@ describe('applyWebUISettings', () => {
     ).toEqual({ singleSignOnVendors: ['openid'] });
   });
 
+  it('keeps only the agent network stats the views can hide', () => {
+    expect(state.hiddenAgentLiveStats).toEqual([]);
+    const next = applyWebUISettings(
+      state,
+      { hiddenAgentLiveStats: ['net_tx', 'cpu_util', 'net_rx'] },
+      'domain',
+    );
+    expect(next.hiddenAgentLiveStats).toEqual(['net_tx', 'net_rx']);
+    // A domain-scope key saved under the public document is ignored.
+    expect(
+      applyWebUISettings(state, { hiddenAgentLiveStats: ['net_rx'] }, 'public')
+        .hiddenAgentLiveStats,
+    ).toEqual([]);
+  });
+
   it('does not mutate the input state', () => {
     const before = { ...state };
     applyWebUISettings(state, { hideAgents: false }, 'domain');
