@@ -385,6 +385,38 @@ describe('useScopedAppConfig', () => {
     await waitForOperation(environment, 'useAppConfigScopedQuery');
   });
 
+  it('sends a mount read only after the writes queued on its scope settle', async () => {
+    const hooks = await loadHooks();
+    const { environment, result } = await mountScoped(
+      { scope: USER, configNames: ['userConfig'] },
+      { user: { userConfig: { a: 1 } } },
+      hooks,
+    );
+    let pending!: Promise<unknown>;
+    act(() => {
+      pending = result.current.upsertScopedAppConfig({
+        scope: USER,
+        configName: 'userConfig',
+        subKey: 'b',
+        value: 2,
+      });
+    });
+    await waitForOperation(environment, 'useAppConfigUpsertMutation');
+    renderHook(
+      () =>
+        hooks.useScopedAppConfig({ scope: USER, configNames: ['userConfig'] }),
+      { wrapper: wrapperFor(environment) },
+    );
+    await act(async () => {
+      await Promise.resolve();
+    });
+    expect(operationsNamed(environment, 'useAppConfigScopedQuery')).toEqual([]);
+
+    await answerUpsert(environment, 'user-0');
+    await act(() => pending);
+    await waitForOperation(environment, 'useAppConfigScopedQuery');
+  });
+
   it('rejects requesting one scope type twice', async () => {
     const { useScopedAppConfig } = await loadHooks();
     const environment = createMockEnvironment();

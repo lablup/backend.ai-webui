@@ -65,11 +65,11 @@ flowchart LR
 
 ### 1. `useAppConfig.ts`의 hook 세 개
 
-| Hook                                   | 읽기                                                                  | 쓰기                               | Fetch policy                                                  |
-| -------------------------------------- | --------------------------------------------------------------------- | ---------------------------------- | ------------------------------------------------------------- |
-| `useScopedAppConfig(request)`          | 요청한 scope마다 `scopedAppConfigFragmentsByNames` 하나, query 하나로 | `upsertScopedAppConfig(changes)`, scoped mutation | `store-and-network`, mount마다 `network-only` 읽기 한 번 추가 |
+| Hook                                   | 읽기                                                                  | 쓰기                                                  | Fetch policy                                                  |
+| -------------------------------------- | --------------------------------------------------------------------- | ----------------------------------------------------- | ------------------------------------------------------------- |
+| `useScopedAppConfig(request)`          | 요청한 scope마다 `scopedAppConfigFragmentsByNames` 하나, query 하나로 | `upsertScopedAppConfig(changes)`, scoped mutation     | `store-and-network`, mount마다 `network-only` 읽기 한 번 추가 |
 | `useMyAppConfigFragments(configNames)` | `myAppConfigFragmentsByNames`                                         | `upsertMyAppConfigFragments(changes)`, `my*` mutation | `store-and-network`, mount마다 `network-only` 읽기 한 번 추가 |
-| `useMyAppConfig(configName, subKey?)`  | 요청마다 config name 하나로 `myAppConfigs`                            | 없음                               | `store-or-network`                                            |
+| `useMyAppConfig(configName, subKey?)`  | 요청마다 config name 하나로 `myAppConfigs`                            | 없음                                                  | `store-or-network`                                            |
 
 - **Lifecycle**: 모든 hook이 suspend하므로 호출부는 `Suspense` boundary 아래에 있어야 하고, 모든 hook은 로그인한 뒤에만 동작한다.
 - **Scope object**: `AppConfigScope`는 `{ type: 'public' }` 또는 `{ type: 'domain' | 'user'; id: string }`이다. 호출부가 domain id(`useCurrentDomain().id`)나 user id를 넘기고, `PUBLIC_SCOPE`는 export된 PUBLIC 객체다.
@@ -77,7 +77,7 @@ flowchart LR
 - **One query**: `useAppConfigScopedQuery`는 alias field `scopedAppConfigFragmentsByNames` 세 개(`public`, `domain`, `user`)를 둔다. 각 field에는 `@skip(if:)`과 `@catch(to: NULL)`이 붙는다. 건너뛰는 field에는 `scopeId` 없이 `{ scopeType }`만 넘기고, 입력 type이 이를 허용한다.
 - **Return shape**: `useScopedAppConfig`는 `{ scopedAppConfig: { public, domain, user }, upsertScopedAppConfig }`를 돌려준다. `scopedAppConfig`의 각 scope는 요청한 이름에서 raw document로 가는 map이고, scope에 fragment가 없는 이름은 `undefined`, 요청하지 않았거나, 이름 없이 요청했거나, 읽을 수 없는 scope는 통째로 `undefined`다. `useMyAppConfigFragments`는 `{ myAppConfigFragments, upsertMyAppConfigFragments }`를 돌려주고, `myAppConfigFragments`는 같은 map이다. 이 hook의 query에는 `@catch`가 없어서 읽기 오류는 error boundary로 간다.
 - **Own USER scope**: 로그인한 사용자 본인의 `userConfig`만 읽고 쓰는 화면은 모두 `useMyAppConfigFragments`를 쓴다. `user` scope를 넘기는 `useScopedAppConfig`는 호출부가 지정한 사용자의 document를 다룰 때 쓴다.
-- **Read on every mount**: `useLazyLoadQuery`는 `MainLayout`의 `userConfig` 읽기처럼 mount된 다른 reader가 붙잡고 있는 query를 다시 가져오지 않는다. 그래서 raw document를 읽는 hook마다 effect 하나가 화면이 mount될 때마다 `network-only`로 문서를 읽는다.
+- **Read on every mount**: `useLazyLoadQuery`는 `MainLayout`의 `userConfig` 읽기처럼 mount된 다른 reader가 붙잡고 있는 query를 다시 가져오지 않는다. 그래서 raw document를 읽는 hook마다 effect 하나가 화면이 mount될 때마다 `network-only`로 문서를 읽는다. 이 읽기는 그 scope에 이미 줄 선 쓰기가 끝날 때까지 기다린다(`readAfterQueuedWrites`). 그래서 나중 쓰기의 응답보다 늦게 도착해 옛 문서를 되돌려 놓지 않는다.
 - **Merged view per name**: `useMyAppConfig`는 `myAppConfigs`에 config name 하나만 묻는다. 그래서 `domainConfig` reader는 로그인 query(`loginSessionAuth.ts`)나 `AnnouncementBanner`가 쓴 `myAppConfigs(["domainConfig"])` 결과가 store에 남아 있는 동안 그것을 다시 쓴다. `MergedAppConfigName`이 `configName`을 `domainConfig`와 `publicConfigByDomain`으로 제한한다.
 - **Domain slice**: `publicConfigByDomain`은 domain마다 조각 하나를 가지므로, 호출부는 change의 `subKey`(`[domainName, key]`)와 `useMyAppConfig('publicConfigByDomain', [domainName, key])` 양쪽에 domain 이름을 첫 경로로 넘긴다.
 

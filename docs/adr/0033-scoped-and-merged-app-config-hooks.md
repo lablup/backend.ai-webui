@@ -65,11 +65,11 @@ flowchart LR
 
 ### 1. Three hooks in `useAppConfig.ts`
 
-| Hook                                   | Reads                                                                    | Writes                             | Fetch policy                                                     |
-| -------------------------------------- | ------------------------------------------------------------------------ | ---------------------------------- | ---------------------------------------------------------------- |
-| `useScopedAppConfig(request)`          | `scopedAppConfigFragmentsByNames` once per requested scope, in one query | `upsertScopedAppConfig(changes)`, scoped mutation | `store-and-network`, plus one `network-only` read on every mount |
+| Hook                                   | Reads                                                                    | Writes                                                | Fetch policy                                                     |
+| -------------------------------------- | ------------------------------------------------------------------------ | ----------------------------------------------------- | ---------------------------------------------------------------- |
+| `useScopedAppConfig(request)`          | `scopedAppConfigFragmentsByNames` once per requested scope, in one query | `upsertScopedAppConfig(changes)`, scoped mutation     | `store-and-network`, plus one `network-only` read on every mount |
 | `useMyAppConfigFragments(configNames)` | `myAppConfigFragmentsByNames`                                            | `upsertMyAppConfigFragments(changes)`, `my*` mutation | `store-and-network`, plus one `network-only` read on every mount |
-| `useMyAppConfig(configName, subKey?)`  | `myAppConfigs` for one config name per request                           | none                               | `store-or-network`                                               |
+| `useMyAppConfig(configName, subKey?)`  | `myAppConfigs` for one config name per request                           | none                                                  | `store-or-network`                                               |
 
 - **Lifecycle**: every hook suspends, so a caller sits under a `Suspense` boundary, and every hook runs only after sign-in.
 - **Scope object**: `AppConfigScope` is `{ type: 'public' }` or `{ type: 'domain' | 'user'; id: string }`. The caller passes the domain id (`useCurrentDomain().id`) or the user id; `PUBLIC_SCOPE` is the exported PUBLIC object.
@@ -77,7 +77,7 @@ flowchart LR
 - **One query**: `useAppConfigScopedQuery` holds three aliased `scopedAppConfigFragmentsByNames` fields (`public`, `domain`, `user`). Each carries `@skip(if:)` and `@catch(to: NULL)`. A skipped field gets `{ scopeType }` with no `scopeId`, which the input type allows.
 - **Return shape**: `useScopedAppConfig` returns `{ scopedAppConfig: { public, domain, user }, upsertScopedAppConfig }`. Each scope in `scopedAppConfig` is a map from the requested names to the raw document, `undefined` for a name the scope holds no fragment for, and the whole scope is `undefined` when it was not requested, was requested with no names, or was not readable. `useMyAppConfigFragments` returns `{ myAppConfigFragments, upsertMyAppConfigFragments }`, where `myAppConfigFragments` is the same map; its query has no `@catch`, so a read error reaches the error boundary.
 - **Own USER scope**: every screen that reads or writes only the signed-in user's `userConfig` uses `useMyAppConfigFragments`. `useScopedAppConfig` with a `user` scope is for a document of a user the caller names.
-- **Read on every mount**: `useLazyLoadQuery` does not fetch a query that another mounted reader still retains, such as `MainLayout`'s `userConfig` read. An effect in each raw-document hook therefore reads the documents with `network-only` every time the screen mounts.
+- **Read on every mount**: `useLazyLoadQuery` does not fetch a query that another mounted reader still retains, such as `MainLayout`'s `userConfig` read. An effect in each raw-document hook therefore reads the documents with `network-only` every time the screen mounts. That read waits until the writes already queued on its scopes settle (`readAfterQueuedWrites`), so it cannot land after a later write's response and put the older document back.
 - **Merged view per name**: `useMyAppConfig` asks `myAppConfigs` for its one config name, so a `domainConfig` reader reuses the `myAppConfigs(["domainConfig"])` result that the sign-in query (`loginSessionAuth.ts`) or `AnnouncementBanner` wrote, while the store still holds it. `MergedAppConfigName` limits `configName` to `domainConfig` and `publicConfigByDomain`.
 - **Domain slice**: `publicConfigByDomain` holds one slice per domain, so callers pass the domain name as the first path segment, both to a change's `subKey` (`[domainName, key]`) and to `useMyAppConfig('publicConfigByDomain', [domainName, key])`.
 

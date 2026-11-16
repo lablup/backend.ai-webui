@@ -194,6 +194,20 @@ const applySubKey = (
 // The upsert replaces the whole document, so two overlapping writes to one
 // scope would drop a change: each runs after the previous one settles.
 const writeQueues = new Map<string, Promise<unknown>>();
+const queueKeyOf = (scope: { scopeType: string; scopeId?: string | null }) =>
+  `${scope.scopeType}:${scope.scopeId ?? ''}`;
+const MY_QUEUE_KEY = 'USER:me';
+
+// A mount read sent while a write is in flight could land after that write's
+// response and put the older document back, so it waits for the queued writes.
+const readAfterQueuedWrites = (
+  keys: ReadonlyArray<string>,
+  read: () => Promise<unknown>,
+) =>
+  Promise.all(keys.map((key) => writeQueues.get(key)))
+    .then(read)
+    .catch(() => undefined);
+
 const serializeWrite = <T>(
   key: string,
   write: () => Promise<T>,
@@ -368,11 +382,14 @@ export const useScopedAppConfig = (request: ScopedAppConfigRequest) => {
   );
 
   const refreshOnMount = useEffectEvent(() => {
-    fetchQuery<useAppConfigScopedQuery>(relayEnv, scopedQuery, variables, {
-      fetchPolicy: 'network-only',
-    })
-      .toPromise()
-      .catch(() => undefined);
+    const keys = SCOPE_KEYS.filter(
+      (key) => variables[namesVariable(key)].length > 0,
+    ).map((key) => queueKeyOf(variables[scopeVariable(key)]));
+    readAfterQueuedWrites(keys, () =>
+      fetchQuery<useAppConfigScopedQuery>(relayEnv, scopedQuery, variables, {
+        fetchPolicy: 'network-only',
+      }).toPromise(),
+    );
   });
   useEffect(() => {
     refreshOnMount();
@@ -403,47 +420,44 @@ export const useScopedAppConfig = (request: ScopedAppConfigRequest) => {
       if (!scopeChanges) continue;
       const names = variables[namesVariable(key)];
       const scope = variables[scopeVariable(key)];
-      await serializeWrite(
-        `${scope.scopeType}:${scope.scopeId ?? ''}`,
-        async () => {
-          const current = (
-            await readCurrentDocuments<useAppConfigScopedQuery>(
-              relayEnv,
-              scopedQuery,
-              operation,
-            )
-          )[key];
-          // A scope that failed to read must not be written: the base would be empty.
-          if (!current) {
-            throw new Error(`useScopedAppConfig: ${key} could not be read`);
-          }
-          const docs = scopedDocumentsOf(current, names) ?? {};
-          for (const change of scopeChanges) {
-            docs[change.configName] = applySubKey(
-              docs[change.configName] ?? {},
-              change.subKey,
-              change.value,
-            );
-          }
-          const touched = _.uniq(scopeChanges.map((c) => c.configName));
-          written[key] = _.pick(docs, touched);
-          await commitScopedUpsert(
+      await serializeWrite(queueKeyOf(scope), async () => {
+        const current = (
+          await readCurrentDocuments<useAppConfigScopedQuery>(
             relayEnv,
-            variables,
-            key,
-            touched.map((configName) => ({
-              configName,
-              config: docs[configName] ?? {},
-            })),
+            scopedQuery,
+            operation,
+          )
+        )[key];
+        // A scope that failed to read must not be written: the base would be empty.
+        if (!current) {
+          throw new Error(`useScopedAppConfig: ${key} could not be read`);
+        }
+        const docs = scopedDocumentsOf(current, names) ?? {};
+        for (const change of scopeChanges) {
+          docs[change.configName] = applySubKey(
+            docs[change.configName] ?? {},
+            change.subKey,
+            change.value,
           );
-          if (touched.includes('domainConfig')) {
-            // Not awaited: the write has landed, and a failed refetch only leaves the merged view stale.
-            refetchMergedAppConfig(relayEnv, 'domainConfig').catch(
-              () => undefined,
-            );
-          }
-        },
-      );
+        }
+        const touched = _.uniq(scopeChanges.map((c) => c.configName));
+        written[key] = _.pick(docs, touched);
+        await commitScopedUpsert(
+          relayEnv,
+          variables,
+          key,
+          touched.map((configName) => ({
+            configName,
+            config: docs[configName] ?? {},
+          })),
+        );
+        if (touched.includes('domainConfig')) {
+          // Not awaited: the write has landed, and a failed refetch only leaves the merged view stale.
+          refetchMergedAppConfig(relayEnv, 'domainConfig').catch(
+            () => undefined,
+          );
+        }
+      });
     }
     return written;
   };
@@ -492,14 +506,14 @@ export const useMyAppConfigFragments = (configNames: Array<AppConfigName>) => {
   );
 
   const refreshOnMount = useEffectEvent(() => {
-    fetchQuery<useAppConfigMyFragmentsQuery>(
-      relayEnv,
-      myFragmentsQuery,
-      variables,
-      { fetchPolicy: 'network-only' },
-    )
-      .toPromise()
-      .catch(() => undefined);
+    readAfterQueuedWrites([MY_QUEUE_KEY], () =>
+      fetchQuery<useAppConfigMyFragmentsQuery>(
+        relayEnv,
+        myFragmentsQuery,
+        variables,
+        { fetchPolicy: 'network-only' },
+      ).toPromise(),
+    );
   });
   useEffect(() => {
     refreshOnMount();
@@ -515,7 +529,7 @@ export const useMyAppConfigFragments = (configNames: Array<AppConfigName>) => {
         `useMyAppConfigFragments: ${missing.configName} was not requested`,
       );
     }
-    return serializeWrite('USER:me', async () => {
+    return serializeWrite(MY_QUEUE_KEY, async () => {
       const current = await readCurrentDocuments<useAppConfigMyFragmentsQuery>(
         relayEnv,
         myFragmentsQuery,
