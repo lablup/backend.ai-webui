@@ -1,8 +1,12 @@
-import { mountableVFolderFilter } from '../../hooks/useMountableVFolders';
+import {
+  mountableVFolderFilter,
+  notDeletedVFolderFilter,
+} from '../../hooks/useMountableVFolders';
 import MockVFolderFileProviders from '../../tests/MockVFolderFileProviders';
 import {
   MOCK_MOUNT_SCOPE,
   MOCK_MOUNTABLE_HOSTS,
+  MOCK_PROJECT_ID,
   mockMountFolder,
   mockMountFolders,
   type MockMountFolder,
@@ -40,7 +44,7 @@ const storyFolders: Array<MockMountFolder> = [
     name: 'team-scratch',
     permission: 'READ_WRITE',
     ownershipType: 'GROUP',
-    projectId: MOCK_MOUNT_SCOPE.project[0].value,
+    projectId: MOCK_PROJECT_ID,
     creatorEmail: 'teammate@lablup.com',
     createdAt: '2026-08-03T09:00:00+00:00',
   }),
@@ -53,14 +57,32 @@ const storyFolders: Array<MockMountFolder> = [
   ...mockMountFolders,
 ];
 
-const folderByName = (name: string) =>
-  storyFolders.find((folder) => folder.name === name)!;
+// More than two pages of 20, so scrolling the list loads the next page.
+const manyFolders: Array<MockMountFolder> = Array.from(
+  { length: 45 },
+  (_unused, index) => {
+    const n = 45 - index;
+    return mockMountFolder({
+      id: `bbbbbbbb-0000-4000-8000-${String(n).padStart(12, '0')}`,
+      name: `experiment-${String(n).padStart(2, '0')}`,
+      createdAt: `2026-09-${String(Math.ceil(n / 2)).padStart(2, '0')}T09:00:00+00:00`,
+    });
+  },
+);
+
+const folderByName = (name: string) => {
+  const folder = storyFolders.find((candidate) => candidate.name === name);
+  if (!folder) {
+    throw new globalThis.Error(`No story folder named "${name}"`);
+  }
+  return folder;
+};
 
 const mountFilter = mountableVFolderFilter(MOCK_MOUNTABLE_HOSTS);
 
 type SandboxProps = Omit<
   ComponentProps<typeof BAIScopedVFolderSelect>,
-  'value' | 'onChange' | 'scope'
+  'value' | 'onChange' | 'onResolve' | 'ref' | 'scope'
 > & {
   scope?: ComponentProps<typeof BAIScopedVFolderSelect>['scope'];
   initialValue?: string | Array<string> | null;
@@ -74,6 +96,7 @@ const Sandbox: React.FC<SandboxProps> = ({
   folders = storyFolders,
   ...args
 }) => {
+  'use memo';
   const [value, setValue] = useState<string | Array<string> | null>(
     initialValue,
   );
@@ -81,13 +104,9 @@ const Sandbox: React.FC<SandboxProps> = ({
   const selectRef = useRef<BAIScopedVFolderSelectRef>(null);
   return (
     <MockVFolderFileProviders folders={folders} suspenseFallback="Loading...">
-      <BAIFlex
-        direction="column"
-        align="stretch"
-        gap="md"
-        style={{ width: DEMO_WIDTH }}
-      >
+      <BAIFlex direction="column" align="start" gap="md">
         <BAIScopedVFolderSelect
+          width={DEMO_WIDTH}
           {...args}
           ref={selectRef}
           scope={scope}
@@ -101,27 +120,32 @@ const Sandbox: React.FC<SandboxProps> = ({
             action('onResolve')(next);
           }}
         />
-        <BAIFlex gap="xs">
-          <BAIButton onClick={() => selectRef.current?.refetch()}>
-            Refetch via ref
-          </BAIButton>
+        <BAIButton onClick={() => selectRef.current?.refetch()}>
+          Refetch via ref
+        </BAIButton>
+        <BAIFlex direction="column" align="start" gap="xxs">
+          <BAIText type="secondary" code>
+            value: {JSON.stringify(value)}
+          </BAIText>
+          <BAIText type="secondary" code>
+            resolved:{' '}
+            {JSON.stringify(
+              resolution?.resolved.map((folder) => folder.name) ?? [],
+            )}
+          </BAIText>
+          <BAIText type="secondary" code>
+            unresolved: {JSON.stringify(resolution?.unresolved ?? [])}
+          </BAIText>
         </BAIFlex>
-        <BAIText type="secondary" code>
-          {JSON.stringify(
-            {
-              value,
-              resolved: resolution?.resolved.map((folder) => folder.name),
-              unresolved: resolution?.unresolved,
-            },
-            null,
-            2,
-          )}
-        </BAIText>
       </BAIFlex>
     </MockVFolderFileProviders>
   );
 };
 
+/**
+ * Stories for the vfolder picker over `scopedVFoldersV2`, answered from an
+ * in-memory folder list (`MockVFolderFileProviders`).
+ */
 const meta: Meta<typeof BAIScopedVFolderSelect> = {
   title: 'Fragments/BAIScopedVFolderSelect',
   component: BAIScopedVFolderSelect,
@@ -131,7 +155,7 @@ const meta: Meta<typeof BAIScopedVFolderSelect> = {
     docs: {
       description: {
         component: `
-**BAIScopedVFolderSelect** — the virtual folder picker, built on \`BAIComplexSelect\` and paged through \`scopedVFoldersV2\` (manager 26.9.0).
+**BAIScopedVFolderSelect** — the virtual folder picker, built on \`BAIComplexSelect\` and paged through \`scopedVFoldersV2\` (manager 26.9.0; the selected-value lookup filters on \`VFolderFilter.entityId\`, which needs manager 26.10.0).
 
 - \`scope\` (required): the \`VFolderScope\` input (\`user\`, \`project\`, \`domain\` lists, ORed). A scope whose lists are all empty reads nothing.
 - \`filter\`: ANDed onto the options **and** the lookup of selected ids; a selected folder outside it is reported unresolved.
@@ -140,7 +164,7 @@ const meta: Meta<typeof BAIScopedVFolderSelect> = {
 - \`fallbackLabels\` / \`onResolve\`: name an id the scope no longer reaches, and learn which selected ids are still reachable.
 - The value is folder UUIDs (\`VFolder.entityId\`). The selected-value lookup suspends on first load, so the caller owns the Suspense boundary.
 
-The stories answer from an in-memory folder list; the panel under each select shows the value and the last \`onResolve\` outcome.
+The options are read only once the popup opens, so click a select to see its list. The lines under each select show the value and the last \`onResolve\` outcome.
         `,
       },
     },
@@ -163,6 +187,7 @@ export default meta;
 type Story = StoryObj<typeof BAIScopedVFolderSelect>;
 
 export const Default: Story = {
+  name: 'Basic',
   parameters: {
     docs: {
       description: {
@@ -176,11 +201,12 @@ export const Default: Story = {
 
 export const SessionMountFolders: Story = {
   name: 'Session mount folders',
+  args: { multiple: true, disableUnmountable: true },
   parameters: {
     docs: {
       description: {
         story:
-          "The session launcher's setup: `filter` keeps folders on hosts that grant `mount-in-session` (so `cold-archive` is gone), `optionFilter` hides dotfile folders, and `disableUnmountable` lists `invited-no-mount` disabled with the reason.",
+          'Folders a session may mount: `filter` keeps folders on hosts that grant `mount-in-session` (so `cold-archive` is gone), `optionFilter` hides dotfile folders and folders that are not ready, and `disableUnmountable` lists `invited-no-mount` disabled with the reason.',
       },
     },
   },
@@ -188,7 +214,6 @@ export const SessionMountFolders: Story = {
     <Sandbox
       {...args}
       label="Folders"
-      multiple
       filter={mountFilter}
       optionFilter={{
         AND: [
@@ -196,13 +221,13 @@ export const SessionMountFolders: Story = {
           { name: { notStartsWith: '.' } },
         ],
       }}
-      disableUnmountable
     />
   ),
 };
 
 export const Multiple: Story = {
   name: 'Multiple Select',
+  args: { multiple: true },
   parameters: {
     docs: {
       description: {
@@ -215,7 +240,6 @@ export const Multiple: Story = {
     <Sandbox
       {...args}
       label="Folders"
-      multiple
       initialValue={[
         folderByName('my-project-data').id,
         folderByName('shared-datasets').id,
@@ -230,7 +254,7 @@ export const ModelFolder: Story = {
     docs: {
       description: {
         story:
-          'A single model folder, as a deployment form picks it: `filter` narrows the folders to `usageMode: MODEL`.',
+          'A single model folder, as the deployment form picks it: `filter` leaves out deleted folders and keeps `usageMode: MODEL`.',
       },
     },
   },
@@ -238,13 +262,16 @@ export const ModelFolder: Story = {
     <Sandbox
       {...args}
       label="Model folder"
-      filter={{ AND: [mountFilter, { usageMode: { equals: 'MODEL' } }] }}
+      filter={{
+        AND: [notDeletedVFolderFilter, { usageMode: { equals: 'MODEL' } }],
+      }}
     />
   ),
 };
 
 export const HiddenSelection: Story = {
   name: 'Selection hidden by optionFilter',
+  args: { multiple: true },
   parameters: {
     docs: {
       description: {
@@ -257,7 +284,6 @@ export const HiddenSelection: Story = {
     <Sandbox
       {...args}
       label="Folders"
-      multiple
       filter={mountFilter}
       optionFilter={{ name: { notStartsWith: '.' } }}
       initialValue={[folderByName('.config').id]}
@@ -267,6 +293,7 @@ export const HiddenSelection: Story = {
 
 export const UnresolvedSelection: Story = {
   name: 'Unresolved selection',
+  args: { multiple: true, disableUnmountable: true },
   parameters: {
     docs: {
       description: {
@@ -279,9 +306,7 @@ export const UnresolvedSelection: Story = {
     <Sandbox
       {...args}
       label="Folders"
-      multiple
       filter={mountFilter}
-      disableUnmountable
       initialValue={[
         folderByName('my-project-data').id,
         folderByName('cold-archive').id,
@@ -293,6 +318,19 @@ export const UnresolvedSelection: Story = {
       }}
     />
   ),
+};
+
+export const Paging: Story = {
+  name: 'Paging and search',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          '45 folders, read 20 at a time: scrolling to the end of the list loads the next page. Typing in the search box filters on the server by name (`iContains`), e.g. `experiment-4`.',
+      },
+    },
+  },
+  render: (args) => <Sandbox {...args} label="Folder" folders={manyFolders} />,
 };
 
 export const NoScope: Story = {
@@ -311,11 +349,12 @@ export const NoScope: Story = {
 };
 
 export const Empty: Story = {
+  name: 'EmptyState',
   parameters: {
     docs: {
       description: {
         story:
-          'No folder matches — the popup shows the shared empty-state text.',
+          'No folder matches — opening the popup shows the shared empty-state text.',
       },
     },
   },
@@ -323,6 +362,7 @@ export const Empty: Story = {
 };
 
 export const Loading: Story = {
+  name: 'LoadingState',
   parameters: {
     docs: {
       description: {
@@ -335,11 +375,12 @@ export const Loading: Story = {
 };
 
 export const Error: Story = {
+  name: 'ErrorState',
   parameters: {
     docs: {
       description: {
         story:
-          'The error status a form item sets when its `required` rule fails.',
+          "The select's own `status`: a red border and the message under the control, for a caller that validates the pick itself. Inside a Form.Item the item shows its rule message instead.",
       },
     },
   },
