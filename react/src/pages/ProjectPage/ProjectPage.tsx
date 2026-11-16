@@ -713,16 +713,15 @@ const ProjectPage = () => {
             />
           </BAIUnmountAfterClose>
         )}
-        <BAIUnmountAfterClose>
-          <ProjectAutoMountSettingModal
-            open={autoMount.open}
-            projectId={autoMount.project?.row_id ?? ''}
-            projectName={autoMount.project?.name}
-            onCancel={() =>
-              setAutoMount({ open: false, project: autoMount.project })
-            }
-          />
-        </BAIUnmountAfterClose>
+        <ProjectAutoMountSettingModal
+          open={autoMount.open}
+          unmountOnClose
+          projectId={autoMount.project?.row_id ?? ''}
+          projectName={autoMount.project?.name}
+          onCancel={() =>
+            setAutoMount({ open: false, project: autoMount.project })
+          }
+        />
         <BAIDeleteConfirmModal
           open={!!purgingProject}
           title={t('project.PurgeProject')}

@@ -260,14 +260,6 @@ interface VFolderHostCellProps {
   host?: string | null;
 }
 
-// Renders a Host column cell: usage badge (if the backend reports one)
-// plus the host name. The badge's data comes from `vfolder.list_hosts()`,
-// cached under the same tan-query key that `StorageSelect` uses, so the
-// payload is fetched once and shared across rows + selects. Uses the
-// non-suspense `useTanQuery` here — a per-cell suspense boundary with a
-// plain-text fallback rendered identically on the loaded-without-usage path,
-// so rows would get stuck in the fallback branch and never pick up the badge
-// after the query resolved.
 type VFolderAutoMountConnection = NonNullable<
   NonNullable<VFolderNodesV2Fragment$data[number]>['vfolderAutoMounts']
 >;
@@ -277,12 +269,12 @@ const VFolderAutoMountCell: React.FC<{
 }> = ({ autoMounts }) => {
   'use memo';
   const { t } = useTranslation();
-  const autoMountNodes = autoMounts?.edges.map(({ node }) => node) ?? [];
-  if (_.isEmpty(autoMountNodes)) return <Text color="secondary">-</Text>;
-  const permissionLabel = (permission: string) =>
-    permission === 'READ_ONLY'
+  const autoMount = autoMounts?.edges[0]?.node;
+  if (!autoMount) return <Text color="secondary">-</Text>;
+  const permissionLabel =
+    autoMount.mountPermission === 'READ_ONLY'
       ? t('data.ReadOnly')
-      : permission === 'READ_WRITE'
+      : autoMount.mountPermission === 'READ_WRITE'
         ? t('data.ReadWrite')
         : t('autoMount.ReadWriteDelete');
   return (
@@ -290,35 +282,36 @@ const VFolderAutoMountCell: React.FC<{
       icon={<FolderSymlinkIcon size="1em" />}
       aria-label={t('autoMount.AutoMount')}
       content={
-        <VStack gap={2}>
-          {_.map(autoMountNodes, (autoMount) => (
-            <VStack
-              key={`${autoMount.scopeType}-${autoMount.mountDestination}`}
-            >
-              {/* Inherit the tooltip's own colour; the default is page text. */}
-              <Text color="inherit" weight="semibold">
-                {autoMount.scopeType === 'USER'
-                  ? t('autoMount.ScopeUser')
-                  : t('autoMount.ScopeProject')}
-              </Text>
-              <Text color="inherit">
-                {t('autoMount.MountDestination')}: {autoMount.mountDestination}
-              </Text>
-              <Text color="inherit">
-                {t('autoMount.Subpath')}: {autoMount.subpath}
-              </Text>
-              <Text color="inherit">
-                {t('autoMount.MountPermission')}:{' '}
-                {permissionLabel(autoMount.mountPermission)}
-              </Text>
-            </VStack>
-          ))}
+        <VStack>
+          {/* Inherit the tooltip's own colour; the default is page text. */}
+          <Text color="inherit" weight="semibold">
+            {autoMount.scopeType === 'USER'
+              ? t('autoMount.ScopeUser')
+              : t('autoMount.ScopeProject')}
+          </Text>
+          <Text color="inherit">
+            {t('autoMount.MountDestination')}: {autoMount.mountDestination}
+          </Text>
+          <Text color="inherit">
+            {t('autoMount.Subpath')}: {autoMount.subpath}
+          </Text>
+          <Text color="inherit">
+            {t('autoMount.MountPermission')}: {permissionLabel}
+          </Text>
         </VStack>
       }
     />
   );
 };
 
+// Renders a Host column cell: usage badge (if the backend reports one)
+// plus the host name. The badge's data comes from `vfolder.list_hosts()`,
+// cached under the same tan-query key that `StorageSelect` uses, so the
+// payload is fetched once and shared across rows + selects. Uses the
+// non-suspense `useTanQuery` here — a per-cell suspense boundary with a
+// plain-text fallback rendered identically on the loaded-without-usage path,
+// so rows would get stuck in the fallback branch and never pick up the badge
+// after the query resolved.
 const VFolderHostCell: React.FC<VFolderHostCellProps> = ({ host }) => {
   'use memo';
   const { t } = useTranslation();
@@ -564,7 +557,11 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
   // The Status column key + V2 OrderField sort value stay `status`.
   const vfolders = useFragment(
     graphql`
-      fragment VFolderNodesV2Fragment on VFolder @relay(plural: true) {
+      fragment VFolderNodesV2Fragment on VFolder
+      @relay(plural: true)
+      @argumentDefinitions(
+        withAutoMount: { type: "Boolean", defaultValue: false }
+      ) {
         id @required(action: NONE)
         entityId
         vfolderStatus: status
@@ -614,7 +611,7 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
           ...BAIEntityLabelTokensFragment
           ...BAIEntityLabelSettingModalFragment
         }
-        vfolderAutoMounts(limit: 1) {
+        vfolderAutoMounts(limit: 1) @include(if: $withAutoMount) {
           edges {
             node {
               scopeType
