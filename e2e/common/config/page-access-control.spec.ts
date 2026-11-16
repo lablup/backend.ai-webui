@@ -704,8 +704,7 @@ test.describe(
       });
     });
 
-    // The retired Start page (#10584) was this scenario's blocked page; it needs another general page to block.
-    test.fixme(
+    test(
       'User sees correct behavior when both blocklist and inactiveList are configured',
       { tag: ['@config', '@blocklist', '@inactiveList'] },
       async ({ page, request }) => {
@@ -714,7 +713,7 @@ test.describe(
         // 1. Modify config.toml with both blocklist and inactiveList
         await modifyConfigToml(page, request, {
           menu: {
-            blocklist: 'start',
+            blocklist: 'statistics',
             inactivelist: 'dashboard,my-environment',
           },
         });
@@ -731,18 +730,16 @@ test.describe(
         await loginAsAdmin(page, request);
         await openUserScope(page);
 
-        // 3. Verify "Start" menu item is hidden
-        await expect(
-          page.getByRole('link', { name: 'Start', exact: true }),
-        ).toBeHidden();
+        // 3. Verify "Statistics" menu item is hidden
+        await expect(getSideNavItem(page, 'Statistics')).toBeHidden();
 
         // 4. Verify "Dashboard" menu item is disabled
         const dashboardMenuItem = getSideNavItem(page, 'Dashboard');
         await expect(dashboardMenuItem).toBeVisible();
         await expect(dashboardMenuItem).toBeDisabled();
 
-        // 5. Navigate to /start
-        await page.goto(`${webuiEndpoint}/start`);
+        // 5. Navigate to /statistics
+        await page.goto(`${webuiEndpoint}/statistics`);
 
         // 6. Verify 404 page is displayed (blocked)
         await expect(notFoundPageHeading(page)).toBeVisible({
@@ -776,22 +773,21 @@ test.describe(
 
         // 12. Verify user is redirected to first active, non-blocked page
         await page.waitForURL((url) => !url.pathname.endsWith('/'));
-        expect(page.url()).not.toContain('/start');
+        expect(page.url()).not.toContain('/statistics');
         expect(new URL(page.url()).pathname).not.toMatch(
           PROJECT_DASHBOARD_PATH,
         );
       },
     );
 
-    // The retired Start page (#10584) was this scenario's blocked page; it needs another general page to block.
-    test.fixme(
+    test(
       'Configuration can be cleared to restore normal behavior',
       { tag: ['@config', '@blocklist', '@inactiveList'] },
       async ({ page, request }) => {
         // 1. Modify config.toml with both blocklist and inactiveList
         await modifyConfigToml(page, request, {
           menu: {
-            blocklist: 'start',
+            blocklist: 'statistics',
             inactivelist: 'dashboard',
           },
         });
@@ -807,10 +803,8 @@ test.describe(
         await loginAsAdmin(page, request);
         await openUserScope(page);
 
-        // 3. Verify "Start" is hidden
-        await expect(
-          page.getByRole('link', { name: 'Start', exact: true }),
-        ).toBeHidden();
+        // 3. Verify "Statistics" is hidden
+        await expect(getSideNavItem(page, 'Statistics')).toBeHidden();
 
         // 4. Verify "Dashboard" is disabled
         const dashboardMenuItem = getSideNavItem(page, 'Dashboard');
@@ -827,24 +821,26 @@ test.describe(
         // 6. Reload page
         await page.reload();
 
-        // 7. Verify "Start" menu item is now visible (the reload is a full
+        // 7. Verify "Statistics" menu item is now visible (the reload is a full
         // app boot, so wait for the menu to re-render)
-        await expect(
-          page.getByRole('link', { name: 'Start', exact: true }),
-        ).toBeVisible({ timeout: 15_000 });
+        await expect(getSideNavItem(page, 'Statistics')).toBeVisible({
+          timeout: 15_000,
+        });
 
         // 8. Verify "Dashboard" menu item is now active (not disabled)
         await expect(dashboardMenuItem).not.toBeDisabled();
 
-        // 9. Navigate to /start
-        await page.goto(`${webuiEndpoint}/start`);
+        // 9. Navigate to /statistics
+        await page.goto(`${webuiEndpoint}/statistics`);
 
-        // 10. Verify Start page loads successfully (not 404): wait for real
-        // Start-page content — a missing 404 heading alone would pass before
-        // the route resolves.
-        await expect(page.getByText('Start Interactive Session')).toBeVisible({
-          timeout: 15_000,
-        });
+        // 10. Verify Statistics page loads successfully (not 404): wait for
+        // real Statistics-page content — a missing 404 heading alone would
+        // pass before the route resolves.
+        await expect(
+          page
+            .getByRole('navigation', { name: 'Tabs' })
+            .getByRole('button', { name: 'Allocation History' }),
+        ).toBeVisible({ timeout: 15_000 });
         await expect(notFoundPageHeading(page)).toBeHidden();
       },
     );
