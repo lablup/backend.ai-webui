@@ -2,14 +2,15 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { isValidUrl } from '../diagnostics/rules/configRules';
+import { checkSettingUrls } from '../diagnostics/rules/settingsRules';
+import { getDefaultLoginConfig } from '../helper/loginConfig';
 import {
   buildManualBaseURL,
   HOSTED_MANUAL_ROOT,
   useHelpURL,
 } from './useHelpURL';
 import { renderHook } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 const effective = vi.hoisted(() => ({ manualUrl: '' }));
 
@@ -78,12 +79,21 @@ describe('buildManualBaseURL', () => {
       const usesMirror = !buildManualBaseURL(value, '26.10.1', 'en').startsWith(
         HOSTED_MANUAL_ROOT,
       );
-      expect(usesMirror, value).toBe(isValidUrl(value));
+      const flagged =
+        checkSettingUrls({ ...getDefaultLoginConfig(), manualUrl: value })
+          .length > 0;
+      expect(usesMirror, value).toBe(!flagged);
     }
   });
 });
 
 describe('useHelpURL', () => {
+  const originalVersion = globalThis.packageVersion;
+  afterEach(() => {
+    globalThis.packageVersion = originalVersion;
+    effective.manualUrl = '';
+  });
+
   it('reads manualUrl from the effective login config', () => {
     globalThis.packageVersion = '26.10.1';
     effective.manualUrl = 'https://docs.example.com/manual';
