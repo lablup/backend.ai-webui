@@ -14,7 +14,7 @@ import { copyCustomEndpointApiKey } from './customEndpointKeyStore';
 import { useBAILogger } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { customAlphabet } from 'nanoid/non-secure';
-import { useEffect, useCallback, useState } from 'react';
+import { useEffect, useCallback, useRef, useState } from 'react';
 
 // Utils for chat history cache
 const createIdGenerator = () => {
@@ -26,6 +26,8 @@ const createIdGenerator = () => {
 };
 
 const generateChatDataId = createIdGenerator();
+
+const DEFAULT_CHAT_LABEL = 'Chat';
 
 export function generateChatId(): string {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
@@ -95,6 +97,11 @@ export function useHistory(id: string, provider: ChatProviderData) {
   const [chat, setChat] = useState<ChatHistoryData | undefined>(undefined);
   const webuiNavigate = useWebUINavigate();
   const buildProjectPath = useProjectPath();
+  // Read by saveChatMessage, whose `chat` can belong to a chat the user left.
+  const activeChatIdRef = useRef<string | undefined>(undefined);
+  useEffect(() => {
+    activeChatIdRef.current = chat?.id;
+  }, [chat?.id]);
 
   const removeHistory = useCallback((id: string) => {
     chatHistoryCache.delete(id);
@@ -200,10 +207,12 @@ export function useHistory(id: string, provider: ChatProviderData) {
         return;
       }
 
-      // ChatCard's transport keeps the callback of the render that created
-      // it, so `chat` here can be an old copy. Once the chat is cached, the
-      // cache holds its latest messages and label; read and write that.
+      // The reply's onFinish runs with the callback of the render that sent
+      // the request, so `chat` can be stale; the cache holds the latest copy.
       const cachedChat = getChatById(chat.id);
+      const isActiveChat = activeChatIdRef.current === chat.id;
+      // Deleted, or left before its first save: do not bring it back.
+      if (!cachedChat && !isActiveChat) return;
       const baseChat = cachedChat ?? chat;
 
       const index = baseChat.chats.findIndex((item) => item.id === id);
@@ -215,9 +224,10 @@ export function useHistory(id: string, provider: ChatProviderData) {
       const chatData = baseChat.chats[index];
       const lastMessage = chatData.messages.at(-1);
 
-      // Overwrite the last message if it is the same message
+      // Overwrite the last message if it is the same message. Streamed
+      // replies carry an empty id, so only a real id counts as the same.
       const messages =
-        lastMessage?.id === message.id
+        message.id && lastMessage?.id === message.id
           ? [
               ...chatData.messages.slice(0, -1),
               _.merge({}, lastMessage, {
@@ -229,27 +239,39 @@ export function useHistory(id: string, provider: ChatProviderData) {
       const chats = [...baseChat.chats];
       chats[index] = { ...chatData, messages };
 
-      // Update the chat label with the first chat data message content
+      // Name a chat that still has the default label after its first user
+      // message, once the first pane gets a reply; a user-set title stays.
       let label = baseChat.label;
       if (
         index === 0 &&
-        messages.length === 2 &&
-        message.role === 'assistant'
+        message.role === 'assistant' &&
+        baseChat.label === DEFAULT_CHAT_LABEL
       ) {
-        // Change the chat label to the first user message content
-        const textContent = messages[0].parts
-          ?.filter((part) => part.type === 'text')
+        const textContent = messages
+          .find((item) => item.role === 'user')
+          ?.parts?.filter((part) => part.type === 'text')
           .map((part) => part.text)
           .join('')
           .trim();
 
-        // Only update label if there's actual text content
         if (textContent) {
           label = textContent;
         }
       }
 
-      updateHistory({ ...baseChat, chats, label });
+      const nextChat = { ...baseChat, chats, label };
+      if (!isActiveChat) {
+        // A reply that finished after the user switched chats: store it
+        // without pulling the page back to that chat.
+        chatHistoryCache.set(nextChat.id, {
+          ...nextChat,
+          updatedAt: new Date().toISOString(),
+        });
+        setHistory([...chatHistoryCache.getAll().sort(sortHistoryByUpdatedAt)]);
+        return;
+      }
+
+      updateHistory(nextChat);
       if (!cachedChat) {
         webuiNavigate(buildProjectPath(`chat/${chat.id}`), { replace: true });
       }
@@ -334,7 +356,7 @@ export function createChat({
   const id = generateChatId();
   const newChats: ChatHistoryData = {
     id,
-    label: 'Chat',
+    label: DEFAULT_CHAT_LABEL,
     chats: chats ?? [createChatData({ provider })],
     updatedAt: dateTime.toISOString(),
   };

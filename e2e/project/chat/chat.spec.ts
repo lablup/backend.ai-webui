@@ -271,6 +271,9 @@ test.describe('Basic Chat Flow', { tag: ['@chat', '@functional'] }, () => {
       timeout: 15000,
     });
 
+    const messageList = page.getByTestId('chat-message-list');
+    await expect(messageList.getByText('What is Backend.AI?')).toBeVisible();
+
     // Click the "More" (three-dot) menu button in the chat card header
     const moreButton = page.getByRole('button', { name: 'more' });
     await moreButton.first().click();
@@ -281,9 +284,9 @@ test.describe('Basic Chat Flow', { tag: ['@chat', '@functional'] }, () => {
       .first()
       .click();
 
-    // The message thread should now be empty; the chat keeps the title it
-    // took from its first message, so that heading is the only match left.
-    await expect(page.getByText('What is Backend.AI?')).toHaveCount(1, {
+    // The message thread is empty; the chat keeps the title it took from
+    // its first message.
+    await expect(messageList.getByText('What is Backend.AI?')).toBeHidden({
       timeout: 10000,
     });
     await expect(
@@ -434,10 +437,13 @@ test.describe(
       await expect(
         page.getByRole('heading', { name: 'First session message' }),
       ).toBeVisible({ timeout: 10000 });
-      await expect(page.getByText('First session message')).toHaveCount(3);
-      // Only the second chat's history entry still shows its text.
-      await expect(page.getByText('Second session message')).toHaveCount(1);
-      await expect(drawer.getByText('Second session message')).toBeVisible();
+      const messageList = page.getByTestId('chat-message-list');
+      await expect(
+        messageList.getByText('First session message'),
+      ).toBeVisible();
+      await expect(
+        messageList.getByText('Second session message'),
+      ).toBeHidden();
     });
 
     test('User can rename a chat session from the page title', async ({
