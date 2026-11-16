@@ -26,13 +26,13 @@ SSH/SFTP icon must be clicked again.
 :::
 
 Next, a dialog containing SSH/SFTP connection information pops up. The
-dialog shows the **User**, **Host**, and **Port** to connect to, ready-made
-`sftp`, `scp`, and `rsync` example commands, and a **Download SSH Key** button
-that saves the `id_container` file on the local machine. This file is an
-automatically generated SSH private key. Instead of using the button, you can
-also download the `id_container` file located under `/home/work/` with your web
-terminal or Jupyter Notebook. The auto-generated SSH key may change when new
-session is created. In that case, it must be downloaded again.
+dialog shows the **User**, **Host**, and **Port** to connect to and ready-made
+`sftp`, `scp`, and `rsync` example commands. Register your SSH public key in
+[SSH keypair management](#user-ssh-keypair-management) under User Settings
+first, then connect with the matching private key. Alternatively, you can
+download the automatically generated `id_container` private key located under
+`/home/work/` with your web terminal or Jupyter Notebook; that key may change
+when a new session is created.
 
 ![=800px](../images/SSH_SFTP_connection.png)
 
@@ -43,9 +43,9 @@ dialog. The values depend on how you use Backend.AI. If the connection informati
 resolved, the dialog does not open at all and an error notification explains the
 reason — see [Connection Errors](#connection-errors).
 
-To SSH connect to the compute session with the downloaded SSH private key, you
+To SSH connect to the compute session with your SSH private key, you
 run the following command in the shell environment. You should write the
-path to the downloaded `id_container` file after `-i` option, the port number
+path to the private key file after `-i` option, the port number
 from the dialog after `-p` option, and the host from the dialog as the
 connection address. The user inside the compute session is
 usually set to `work`, but if your session uses other account, the `work`
@@ -65,8 +65,8 @@ f310e8dbce83:~$
 ```
 
 Connecting by SFTP would almost be the same. After running the SFTP client and
-setting public key-based connection method, simply specify `id_container`
-as the SSH private key. Each FTP client may adopt different way, so refer to
+setting public key-based connection method, simply specify your SSH private
+key. Each FTP client may adopt different way, so refer to
 each FTP client manual for details.
 
 :::note
@@ -134,13 +134,14 @@ https://wiki.filezilla-project.org/Howto. For easier explanation, this section
 will describe how to connect to SFTP through FileZilla client on Windows.
 
 Refer to the connection method on Linux/Mac, create a compute session, check the
-connection port and download `id_container`. `id_container` is an
-OpenSSH-based key, so if you use a client that supports only Windows or ppk type
-keys, you must convert it. Here, we will convert through the PuTTYgen program
-installed with PuTTY. After running the PuTTYgen, click on the import key in the
-Conversions menu. Select the downloaded `id_container` file from the file open
-dialog. Click the Save private key button of PuTTYGen and save the file with the
-name `id_container.ppk`.
+connection port and prepare your SSH private key. If you use the automatically
+generated `id_container` key, take it from `/home/work/` inside the session.
+`id_container` is an OpenSSH-based key, so if you use a client that supports
+only Windows or ppk type keys, you must convert it. Here, we will convert
+through the PuTTYgen program installed with PuTTY. After running the PuTTYgen,
+click on the import key in the Conversions menu. Select the `id_container` file
+from the file open dialog. Click the Save private key button of PuTTYGen and
+save the file with the name `id_container.ppk`.
 
 ![](../images/puttygen_conversion.png)
 
