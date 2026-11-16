@@ -591,7 +591,8 @@ export const useMyAppConfig = <T = AppConfigDocument>(
   const data = useLazyLoadQuery<useAppConfigMergedQuery>(mergedQuery, {
     configNames: [configName],
   });
-  const doc = data.myAppConfigs.find((c) => c.configName === configName)
+  // The sign-in query reads the same field with `@catch(to: NULL)`, so the store may hold null.
+  const doc = data?.myAppConfigs?.find((c) => c.configName === configName)
     ?.config as AppConfigDocument | undefined;
   return (subKey === undefined ? doc : _.get(doc, subKey)) as T | undefined;
 };

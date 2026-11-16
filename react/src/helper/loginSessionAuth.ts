@@ -603,6 +603,7 @@ export async function loadConfigFromWebServer(
   const {
     autoLogoutState,
     baseLoginConfigState,
+    domainWebUISettingsState,
     loginConfigState,
     publicWebUISettingsState,
   } = await import('../hooks/useWebUIConfig');
@@ -620,6 +621,8 @@ export async function loadConfigFromWebServer(
     publicWebUISettingsState,
     publicSlice?.[WEBUI_SETTINGS_CONFIG_KEY],
   );
+  // The previous server's domain settings stop applying until this one's sign-in.
+  jotaiStore.set(domainWebUISettingsState, undefined);
   const effectiveLoginConfig = jotaiStore.get(loginConfigState)!;
   jotaiStore.set(autoLogoutState, effectiveLoginConfig.autoLogout);
   // loginPluginState stays on the bundled value; whether the joined

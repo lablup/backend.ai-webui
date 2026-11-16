@@ -33,6 +33,19 @@ vi.mock('../RelayEnvironment', async () => {
 
 const environment = RelayEnvironment as unknown as RelayMockEnvironment;
 
+// One real store per file: start every test from empty settings layers.
+beforeEach(async () => {
+  const { jotaiStore } = await import('../components/DefaultProviders');
+  const {
+    baseLoginConfigState,
+    domainWebUISettingsState,
+    publicWebUISettingsState,
+  } = await import('../hooks/useWebUIConfig');
+  jotaiStore.set(baseLoginConfigState, null);
+  jotaiStore.set(publicWebUISettingsState, undefined);
+  jotaiStore.set(domainWebUISettingsState, undefined);
+});
+
 const globalId = (typeName: string, uuid: string) =>
   btoa(`${typeName}:${uuid}`);
 

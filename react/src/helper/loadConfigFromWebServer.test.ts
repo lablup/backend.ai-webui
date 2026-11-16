@@ -17,6 +17,7 @@ vi.mock('../hooks/useWebUIConfig', () => ({
   rawConfigState: Symbol('rawConfigState'),
   baseLoginConfigState: Symbol('baseLoginConfigState'),
   publicWebUISettingsState: Symbol('publicWebUISettingsState'),
+  domainWebUISettingsState: Symbol('domainWebUISettingsState'),
   loginConfigState: Symbol('loginConfigState'),
   autoLogoutState: Symbol('autoLogoutState'),
   loginPluginState: Symbol('loginPluginState'),
