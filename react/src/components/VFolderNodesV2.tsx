@@ -577,8 +577,6 @@ interface VFolderNodesV2Props extends Omit<
    * service" row action renders disabled with this string as its tooltip.
    */
   noDeployTooltip?: string;
-  /** Shows the Auto-mount column, read from each row's own connection. */
-  showAutoMountColumn?: boolean;
 }
 
 const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
@@ -589,7 +587,6 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
   showLabelsByDefault = false,
   project,
   noDeployTooltip,
-  showAutoMountColumn,
   ...tableProps
 }) => {
   'use memo';
@@ -916,19 +913,13 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
                 ? vfolder?.ownership?.user?.basicInfo?.email
                 : vfolder?.ownership?.project?.basicInfo?.name,
           },
-          ...(showAutoMountColumn
-            ? [
-                {
-                  key: 'auto_mount',
-                  title: t('autoMount.AutoMount'),
-                  render: (__: unknown, vfolder: VFolderNodeInList) => (
-                    <VFolderAutoMountCell
-                      autoMounts={vfolder.vfolderAutoMounts}
-                    />
-                  ),
-                },
-              ]
-            : []),
+          {
+            key: 'auto_mount',
+            title: t('autoMount.AutoMount'),
+            render: (__, vfolder) => (
+              <VFolderAutoMountCell autoMounts={vfolder.vfolderAutoMounts} />
+            ),
+          },
           {
             key: 'auto_mount',
             title: t('autoMount.AutoMount'),
