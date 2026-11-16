@@ -18,7 +18,6 @@ import {
   moveToTrashAndVerify,
   deleteForeverAndVerifyFromTrash,
 } from '../../utils/test-util';
-import { getFormItemControlByLabel } from '../../utils/test-util-antd';
 import { test, expect, Page } from '@playwright/test';
 import fs from 'fs';
 import path from 'path';
@@ -136,6 +135,14 @@ async function uploadFixturesToVFolder(
   await modal.close();
 }
 
+// `cr.backend.ai/stable/python:3.9-ubuntu20.04@x86_64` -> `python`
+function imageKeyOf(image: string): string {
+  const name = image.split('@')[0];
+  const colon = name.lastIndexOf(':');
+  const repo = colon >= 0 ? name.slice(0, colon) : name;
+  return repo.split('/').pop() ?? repo;
+}
+
 /**
  * Adds an Advanced Mode revision (model folder + `custom` runtime) to the
  * deployment whose detail page is open. The Start Command is left empty so
@@ -144,6 +151,7 @@ async function uploadFixturesToVFolder(
 async function addAdvancedRevision(
   page: Page,
   folderName: string,
+  image: string,
 ): Promise<void> {
   await page
     .getByRole('navigation', { name: 'Tabs' })
@@ -159,24 +167,36 @@ async function addAdvancedRevision(
   await selectRevisionModalOption(page, 'Model Folder', folderName);
   await selectRevisionModalOption(page, 'Runtime', 'custom');
 
+  // The default image is a GPU one; pick a CPU image of the same environment
+  // as the folder's service-definition.toml (search matches visible text).
+  const imageKey = imageKeyOf(image);
+  const envSelect = dialog.getByRole('button', {
+    name: /^Environments \/ Version/,
+  });
+  await envSelect.click();
+  await page
+    .getByRole('combobox', { name: 'Search options', exact: true })
+    .fill(imageKey);
+  await page
+    .getByRole('listbox', { name: /^Environments \/ Version/ })
+    .getByRole('option')
+    .first()
+    .click();
+  await expect(envSelect).toContainText(imageKey, {
+    ignoreCase: true,
+    timeout: 10000,
+  });
+
   // Cluster & Resources mounts behind its own Suspense boundary; submitting
   // before it does leaves the resource fields unregistered.
-  await expect(
-    dialog.getByRole('button', { name: 'Resource Presets' }),
-  ).toBeVisible({ timeout: 30000 });
-
-  // The default image's minimum footprint (CPU >= 5, mem >= 1088MiB) is above
-  // the default preset, so set CPU/mem by hand.
-  const cpuInput = getFormItemControlByLabel(page, 'CPU')
-    .getByRole('spinbutton')
-    .first();
-  await cpuInput.click();
-  await cpuInput.fill('5');
-  await cpuInput.blur();
-  await getFormItemControlByLabel(page, 'Memory')
-    .getByRole('spinbutton')
+  const presetSelect = dialog.getByRole('button', { name: 'Resource Presets' });
+  await expect(presetSelect).toBeVisible({ timeout: 30000 });
+  await presetSelect.click();
+  await page
+    .getByRole('option', { name: /^Minimum requirements/ })
     .first()
-    .fill('4'); // GiB
+    .click();
+  await expect(presetSelect).toContainText('Minimum requirements');
 
   await expect(
     dialog.getByRole('checkbox', { name: 'Apply immediately after adding' }),
@@ -271,7 +291,7 @@ test.describe(
       await createDeploymentShell(page, DEPLOYMENT_NAME);
       deploymentDetailUrl = page.url();
 
-      await addAdvancedRevision(page, VFOLDER_NAME);
+      await addAdvancedRevision(page, VFOLDER_NAME, resolvedImage);
 
       await expect(async () => {
         await navigateTo(page, 'deployments');
