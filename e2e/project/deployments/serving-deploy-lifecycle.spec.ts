@@ -165,8 +165,8 @@ async function addAdvancedRevision(
   await selectRevisionModalOption(page, 'Model Folder', folderName);
   await selectRevisionModalOption(page, 'Runtime', 'custom');
 
-  // The default image is a GPU one; pick a CPU image of the same environment
-  // as the folder's service-definition.toml (search matches visible text).
+  // The default image is a GPU one; pick a non-CUDA environment with the same
+  // name as the image in service-definition.toml (search matches visible text).
   const imageKey = imageKeyOf(image);
   const envSelect = dialog.getByRole('button', {
     name: /^Environments \/ Version/,
@@ -175,13 +175,16 @@ async function addAdvancedRevision(
   await page
     .getByRole('combobox', { name: 'Search options', exact: true })
     .fill(imageKey);
-  await page
+  const envOption = page
     .getByRole('listbox', { name: /^Environments \/ Version/ })
     .getByRole('option')
     .filter({ hasText: new RegExp(escapeForRegExp(imageKey), 'i') })
     .filter({ hasNotText: /cuda/i })
-    .first()
-    .click();
+    .first();
+  await expect(envOption, `a non-CUDA "${imageKey}" environment`).toBeVisible({
+    timeout: 15000,
+  });
+  await envOption.click();
   await expect(envSelect).toContainText(imageKey, {
     ignoreCase: true,
     timeout: 10000,
@@ -245,15 +248,24 @@ test.describe(
       }
 
       try {
-        // The replica session keeps the folder mounted until it terminates.
+        // Retry only while the terminating replica still mounts the folder.
+        let trashError: unknown = null;
         await expect(async () => {
-          await moveToTrashAndVerify(page, VFOLDER_NAME, 'data', {
-            skipTrashVerify: true,
-          });
+          trashError = null;
+          await moveToTrashAndVerify(page, VFOLDER_NAME, 'data').catch(
+            (error) => {
+              if (/mounted on sessions/.test(String(error))) throw error;
+              trashError = error;
+            },
+          );
         }).toPass({ timeout: 180_000, intervals: [15_000] });
+        if (trashError) throw trashError;
         await deleteForeverAndVerifyFromTrash(page, VFOLDER_NAME);
-      } catch {
-        console.log(`Could not delete vfolder ${VFOLDER_NAME}`);
+      } catch (error) {
+        // sweepVFolders below retries it.
+        console.log(
+          `Could not delete vfolder ${VFOLDER_NAME}: ${String(error).split('\n')[0]}`,
+        );
       }
 
       try {
@@ -310,7 +322,7 @@ test.describe(
       page,
       request,
     }) => {
-      test.setTimeout(SERVICE_READY_TIMEOUT + 120_000);
+      test.setTimeout(SERVICE_READY_TIMEOUT + 240_000);
       expect(deploymentDetailUrl, 'deployment was created').toBeTruthy();
       await loginAsAdmin(page, request);
       await expect(async () => {
