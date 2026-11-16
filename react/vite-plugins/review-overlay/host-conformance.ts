@@ -1,7 +1,7 @@
 /**
  * The second host, stated in types only (ADR 0008). Nothing imports this file
  * and it ships nowhere: it exists so `tsconfig.host.json` — the gate that
- * compiles `client/` under the Chrome extension's compiler flags — fails when
+ * compiles `client/` under the Chrome extension's strictness flags — fails when
  * the seam stops being usable the way phase B uses it.
  */
 import {

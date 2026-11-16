@@ -160,6 +160,7 @@ allowBuilds:
   utf-8-validate: true
 
 overrides:
+  "@typescript/typescript6>@typescript/old": npm:typescript@~6.0.3
   # The lab canary peers on the core canary it was cut from; run it on the
   # pinned stable core instead of a second copy (ui-common upgrade adds this).
   "@astryxdesign/lab>@astryxdesign/core": "0.7.11"

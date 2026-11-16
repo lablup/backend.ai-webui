@@ -17,11 +17,12 @@ import { resolveAppName } from './portless-app-name.mjs';
 
 const env = { ...process.env };
 
-// Both TypeScript watch programs under this script — the root `tsc --watch`
-// child below and the one vite-plugin-checker runs inside the Vite process —
-// default to TS's `UseFsEvents` watch strategy, which installs ONE watcher per
-// file in the program. On macOS that is one open file descriptor per file, so a
-// GUI/IDE-launched dev server (launchd soft `maxfiles` = 256) hits EMFILE.
+// The watch program vite-plugin-checker runs inside the Vite process (the
+// TypeScript 6 API; the root `tsc --watch` child is TypeScript 7, which does not
+// read this variable) defaults to TS's `UseFsEvents` watch strategy, which
+// installs ONE watcher per file in the program. On macOS that is one open file
+// descriptor per file, so a GUI/IDE-launched dev server (launchd soft
+// `maxfiles` = 256) hits EMFILE.
 //
 // `UseFsEventsOnParentDirectory` coalesces those into one watcher per
 // *directory* instead. It is TypeScript's own documented remedy for watcher

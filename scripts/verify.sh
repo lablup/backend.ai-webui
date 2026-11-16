@@ -44,9 +44,7 @@ LANE_SLUGS=()
 # actually checked (changed files vs full tree, fallbacks, skipped parts).
 note() { echo ">> $*"; }
 
-# Run a package-local binary directly: `pnpm exec` costs ~1.5s of start-up per
-# call, and the packages pin different TypeScript majors, so the binary must be
-# the package's own, not the root one.
+# Run a package-local binary directly: `pnpm exec` costs ~1.5s of start-up per call.
 bin() { # bin <package dir> <binary> [args...]
   local dir="$1" name="$2"
   shift 2
@@ -389,10 +387,7 @@ start_lane gate "TypeScript" bin react tsc --noEmit --incremental
 # so each gets its own lane.
 start_lane gate "TypeScript (backend.ai-ui)" bin packages/backend.ai-ui tsc --noEmit --incremental
 start_lane gate "TypeScript (agent-cli)" bin packages/backend.ai-agent-cli tsc --noEmit
-# The review overlay client is vendored by the Chrome extension (ADR 0008) and
-# built with narrower flags than react's. Deliberately the ROOT TypeScript
-# (5.5.4): react's 6.x folded the iterable DOM declarations into the base `DOM`
-# lib, so the no-`DOM.Iterable` half of the gate cannot fail there.
+# The review overlay client is vendored by the Chrome extension (ADR 0008).
 start_lane gate "TypeScript (review overlay host seam)" \
   bin . tsc --noEmit -p react/vite-plugins/review-overlay/tsconfig.host.json
 start_lane gate "Vite warmup paths" check_warmup_paths
