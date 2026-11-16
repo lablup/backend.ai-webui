@@ -1,8 +1,3 @@
-// ─────────────────────────────────────────────────────────────────────────────
-// EndpointDetailPageQuery mock factory functions for post-deploy alerts
-// ─────────────────────────────────────────────────────────────────────────────
-import { MOCK_ENDPOINT_UUID } from './endpoint-detail-mock';
-
 /**
  * Mock responses for ModelStore GraphQL operations.
  *
@@ -110,7 +105,7 @@ export const MOCK_MODEL_CARD_WITH_MULTI_PRESETS = {
         node: {
           id: btoa('Preset:preset-uuid-012'),
           entityId: 'preset-uuid-012',
-          name: 'gpu-small',
+          name: 'gpu-medium',
           rank: 1,
           runtimeVariantId: RUNTIME_VARIANT_TGI_LOCAL_ID,
         },
@@ -357,7 +352,7 @@ export function modelCardDrawerQueryWithMultiPresetsMock() {
           {
             node: buildPresetNode(
               'preset-uuid-012',
-              'gpu-small',
+              'gpu-medium',
               RUNTIME_VARIANT_TGI_LOCAL_ID,
               'huggingface-tgi',
             ),
@@ -431,182 +426,47 @@ export function modelCardDrawerQueryWithSinglePresetMock() {
   });
 }
 
-const MOCK_ENDPOINT_GLOBAL_ID = btoa(`Endpoint:${MOCK_ENDPOINT_UUID}`);
+// ─────────────────────────────────────────────────────────────────────────────
+// BAIAvailablePresetSelect query mocks (the Deploy modal's Preset dropdown)
+// ─────────────────────────────────────────────────────────────────────────────
 
-const BASE_ENDPOINT_FOR_DETAIL = {
-  __typename: 'Endpoint',
-  id: MOCK_ENDPOINT_GLOBAL_ID,
-  name: 'mock-endpoint',
-  status: 'PENDING',
-  endpoint_id: MOCK_ENDPOINT_UUID,
-  project: 'mock-project-id-001',
-  image_object: null,
-  desired_session_count: null,
-  url: 'https://mock-endpoint.backend.ai/api',
-  open_to_public: false,
-  errors: [],
-  retries: 0,
-  runtime_variant: null,
-  model: null,
-  model_mount_destination: null,
-  model_definition_path: null,
-  extra_mounts: [],
-  environ: '{}',
-  resource_group: 'default',
-  resource_slots: '{"cpu": 2, "mem": 2147483648}',
-  resource_opts: '{}',
-  cluster_mode: 'SINGLE_NODE',
-  cluster_size: 1,
-  routings: [],
-  created_user_email: 'admin@lablup.com',
-  session_owner_email: 'admin@lablup.com',
-};
-
-const EMPTY_TOKEN_LIST = {
-  __typename: 'EndpointTokenList',
-  total_count: 0,
-  items: [],
-};
+/** The multi-preset card's presets, as the dropdown's own queries return them. */
+const SELECTABLE_PRESETS = [
+  buildPresetNode(
+    'preset-uuid-011',
+    'gpu-small',
+    RUNTIME_VARIANT_VLLM_LOCAL_ID,
+    'vllm',
+  ),
+  buildPresetNode(
+    'preset-uuid-012',
+    'gpu-medium',
+    RUNTIME_VARIANT_TGI_LOCAL_ID,
+    'huggingface-tgi',
+  ),
+].map((preset, index) => ({ ...preset, rank: index + 1 }));
 
 /**
- * Shared minimal `modelDeployment` node used by EndpointDetailPage mocks. The
- * page reads `modelDeployment.metadata.status` as the single source of truth
- * for `isDeploymentDeploying` / `hasAnyHealthyRoute`.
+ * Mocks for the dropdown's option list (`BAIAvailablePresetSelectPaginatedQuery`)
+ * and its selected-label lookup (`BAIAvailablePresetSelectValueQuery`).
  */
-const MOCK_DEPLOYMENT_GLOBAL_ID = btoa(`ModelDeployment:${MOCK_ENDPOINT_UUID}`);
-
-const buildModelDeployment = (
-  status: 'DEPLOYING' | 'READY' | 'TERMINATED',
-) => ({
-  __typename: 'ModelDeployment' as const,
-  id: MOCK_DEPLOYMENT_GLOBAL_ID,
-  entityId: MOCK_ENDPOINT_UUID,
-  metadata: { status },
-  currentRevision: null,
-  revisionHistory: { edges: [] },
-});
-
-/**
- * Mock for EndpointDetailPageQuery — "Preparing your service" state.
- * replicas=1, deploymentScopedSchedulingHistories.count=0 → hasReachedReady=false.
- * Triggers the "Preparing your service" info alert.
- */
-export function endpointDetailPreparingMockResponse() {
-  return (_vars: Record<string, any>) => ({
-    endpoint: {
-      ...BASE_ENDPOINT_FOR_DETAIL,
-      status: 'PENDING',
-      replicas: 1,
+export function availablePresetSelectMocks() {
+  return {
+    BAIAvailablePresetSelectPaginatedQuery: () => ({
+      deploymentRevisionPresets: {
+        count: SELECTABLE_PRESETS.length,
+        edges: SELECTABLE_PRESETS.map((node) => ({ node })),
+      },
+    }),
+    BAIAvailablePresetSelectValueQuery: (vars: Record<string, any>) => {
+      const ids: string[] = vars.ids ?? [];
+      return {
+        deploymentRevisionPresets: {
+          edges: SELECTABLE_PRESETS.filter((preset) =>
+            ids.includes(preset.entityId),
+          ).map((node) => ({ node })),
+        },
+      };
     },
-    endpoint_token_list: EMPTY_TOKEN_LIST,
-    endpoint_auto_scaling_rules: null,
-    routes: { edges: [], count: 0 },
-    healthyRoutes: { count: 0 },
-    deploymentScopedSchedulingHistories: { count: 0 },
-    modelDeployment: buildModelDeployment('DEPLOYING'),
-  });
-}
-
-/**
- * Mock for EndpointDetailPageQuery — replicas=0 state.
- * replicas=0 → "Preparing your service" alert is suppressed.
- */
-export function endpointDetailZeroReplicasMockResponse() {
-  return (_vars: Record<string, any>) => ({
-    endpoint: {
-      ...BASE_ENDPOINT_FOR_DETAIL,
-      status: 'PENDING',
-      replicas: 0,
-    },
-    endpoint_token_list: EMPTY_TOKEN_LIST,
-    endpoint_auto_scaling_rules: null,
-    routes: { edges: [], count: 0 },
-    healthyRoutes: { count: 0 },
-    deploymentScopedSchedulingHistories: { count: 0 },
-    modelDeployment: buildModelDeployment('DEPLOYING'),
-  });
-}
-
-/**
- * Mock for EndpointDetailPageQuery — TERMINATED state with replicas=0.
- * Ensures the "Preparing your service" alert is not shown for destroyed endpoints.
- */
-export function endpointDetailTerminatedMockResponse() {
-  return (_vars: Record<string, any>) => ({
-    endpoint: {
-      ...BASE_ENDPOINT_FOR_DETAIL,
-      status: 'TERMINATED',
-      replicas: 0,
-    },
-    endpoint_token_list: EMPTY_TOKEN_LIST,
-    endpoint_auto_scaling_rules: null,
-    routes: { edges: [], count: 0 },
-    healthyRoutes: { count: 0 },
-    deploymentScopedSchedulingHistories: { count: 0 },
-    modelDeployment: buildModelDeployment('TERMINATED'),
-  });
-}
-
-/**
- * Mock for EndpointDetailPageQuery — "Service Ready" state.
- * healthyRoutes.count=1 (hasAnyHealthyRoute=true).
- * Triggers the "Service Ready" success alert.
- */
-export function endpointDetailServiceReadyMockResponse() {
-  return (_vars: Record<string, any>) => ({
-    endpoint: {
-      ...BASE_ENDPOINT_FOR_DETAIL,
-      status: 'HEALTHY',
-      replicas: 1,
-    },
-    endpoint_token_list: EMPTY_TOKEN_LIST,
-    endpoint_auto_scaling_rules: null,
-    routes: { edges: [], count: 0 },
-    healthyRoutes: { count: 1 },
-    deploymentScopedSchedulingHistories: { count: 1 },
-    modelDeployment: buildModelDeployment('READY'),
-  });
-}
-
-/**
- * Mock for EndpointDetailPageQuery — healthy routes exist but no scheduling history.
- * healthyRoutes.count=1, deploymentScopedSchedulingHistories.count=0.
- * "Service Ready" alert should still be shown (hasAnyHealthyRoute is sufficient).
- */
-export function endpointDetailHealthyButNoSchedulingHistoryMockResponse() {
-  return (_vars: Record<string, any>) => ({
-    endpoint: {
-      ...BASE_ENDPOINT_FOR_DETAIL,
-      status: 'HEALTHY',
-      replicas: 1,
-    },
-    endpoint_token_list: EMPTY_TOKEN_LIST,
-    endpoint_auto_scaling_rules: null,
-    routes: { edges: [], count: 0 },
-    healthyRoutes: { count: 1 },
-    deploymentScopedSchedulingHistories: { count: 0 },
-    modelDeployment: buildModelDeployment('READY'),
-  });
-}
-
-/**
- * Mock for EndpointDetailPageQuery — no healthy routes.
- * healthyRoutes.count=0. "Service Ready" alert should NOT be shown.
- */
-export function endpointDetailReadyButNoHealthyRoutesMockResponse() {
-  return (_vars: Record<string, any>) => ({
-    endpoint: {
-      ...BASE_ENDPOINT_FOR_DETAIL,
-      status: 'HEALTHY',
-      replicas: 1,
-    },
-    endpoint_token_list: EMPTY_TOKEN_LIST,
-    endpoint_auto_scaling_rules: null,
-    routes: { edges: [], count: 0 },
-    healthyRoutes: { count: 0 },
-    deploymentScopedSchedulingHistories: { count: 1 },
-    // No healthy routes → hasAnyHealthyRoute=false; use non-READY status so
-    // the "Service Ready" alert is suppressed.
-    modelDeployment: buildModelDeployment('DEPLOYING'),
-  });
+  };
 }
