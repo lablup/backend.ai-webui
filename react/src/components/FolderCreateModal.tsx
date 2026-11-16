@@ -556,7 +556,7 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
                     }
                     if (_.startsWith(value, '.')) {
                       return Promise.reject(
-                        new Error(t('data.DotPrefixReservedForAutomount')),
+                        new Error(t('data.FolderNameCannotStartWithDot')),
                       );
                     }
                     return Promise.resolve();
