@@ -16,7 +16,7 @@ import { Form, FormInstance } from '../form-engine';
 import { buildPath } from '../helper/pathBuilder';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useAccessibleProjects } from '../hooks/useAccessibleProjects';
-import { useScopedAppConfig } from '../hooks/useAppConfig';
+import { useMyAppConfigFragments } from '../hooks/useAppConfig';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { ProjectContext, ProjectContextOrNull } from '../types/projectContext';
 import BAIFormItem from './BAIFormItem';
@@ -158,9 +158,9 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
         ? createPermission?.canCreate
         : undefined;
 
-  const userConfig = useScopedAppConfig({ user: ['userConfig'] });
+  const userConfig = useMyAppConfigFragments(['userConfig']);
   const skipSharedFolderConfirm =
-    !!userConfig.user?.userConfig?.[SKIP_PROJECT_FOLDER_CONFIRM_KEY];
+    !!userConfig.documents.userConfig?.[SKIP_PROJECT_FOLDER_CONFIRM_KEY];
   const [isSharedConfirmOpen, setIsSharedConfirmOpen] = useState(false);
   const [dontAskAgain, setDontAskAgain] = useState(false);
   const [isConfirmPending, setIsConfirmPending] = useState(false);
@@ -664,7 +664,6 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
               // A failed preference write must not block the creation.
               await userConfig
                 .upsert({
-                  scope: 'user',
                   configName: 'userConfig',
                   subKey: SKIP_PROJECT_FOLDER_CONFIRM_KEY,
                   value: true,

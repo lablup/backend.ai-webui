@@ -18,10 +18,9 @@ vi.mock('react-i18next', () => ({
   initReactI18next: { type: '3rdParty', init: () => {} },
 }));
 
-vi.mock('.', () => ({
-  useSuspendedBackendaiClient: () => ({ user_uuid: 'user-1' }),
-  useCurrentDomain: () => ({ name: 'default', id: 'domain-1' }),
-}));
+const USER = { type: 'user', id: 'user-1' } as const;
+const DOMAIN = { type: 'domain', id: 'domain-1' } as const;
+const PUBLIC = { type: 'public' } as const;
 
 // A fresh module per test: the write queue is module state.
 const loadHooks = async () => {
@@ -123,7 +122,10 @@ const answerUpsert = async (environment: MockEnvironment, id?: string) => {
 describe('useScopedAppConfig', () => {
   it('reads every requested scope in one request and skips the rest', async () => {
     const { read, result } = await mountScoped(
-      { domain: ['domainConfig'], public: ['publicConfigByDomain'] },
+      [
+        { scope: DOMAIN, configNames: ['domainConfig'] },
+        { scope: PUBLIC, configNames: ['publicConfigByDomain'] },
+      ],
       {
         domain: { domainConfig: { settings: { a: 1 } } },
         public: { publicConfigByDomain: { default: { b: 2 } } },
@@ -149,7 +151,7 @@ describe('useScopedAppConfig', () => {
   it('writes one domain slice with a single upsert and keeps other domains', async () => {
     const otherDomain = { appearance: { brand: 'other' } };
     const { environment, result } = await mountScoped(
-      { public: ['publicConfigByDomain'] },
+      { scope: PUBLIC, configNames: ['publicConfigByDomain'] },
       {
         public: {
           publicConfigByDomain: {
@@ -159,10 +161,10 @@ describe('useScopedAppConfig', () => {
         },
       },
     );
-    let pending!: Promise<void>;
+    let pending!: Promise<unknown>;
     act(() => {
       pending = result.current.upsert({
-        scope: 'public',
+        scope: PUBLIC,
         configName: 'publicConfigByDomain',
         subKey: ['default', 'appearance'],
         value: { brand: 'new' },
@@ -189,18 +191,18 @@ describe('useScopedAppConfig', () => {
 
   it('applies several changes to one scope in one upsert, in order', async () => {
     const { environment, result } = await mountScoped(
-      { user: ['userConfig'] },
+      { scope: USER, configNames: ['userConfig'] },
       {
         user: {
           userConfig: { settings: { debug: true, extra: 1 }, themeFamily: 'x' },
         },
       },
     );
-    let pending!: Promise<void>;
+    let pending!: Promise<unknown>;
     act(() => {
       pending = result.current.upsert([
         {
-          scope: 'user',
+          scope: USER,
           configName: 'userConfig',
           subKey: 'settings',
           value: (current: unknown) => ({
@@ -209,7 +211,7 @@ describe('useScopedAppConfig', () => {
           }),
         },
         {
-          scope: 'user',
+          scope: USER,
           configName: 'userConfig',
           subKey: 'themeFamily',
           value: undefined,
@@ -227,20 +229,20 @@ describe('useScopedAppConfig', () => {
 
   it('builds a later write on the earlier one when both are queued', async () => {
     const { environment, result } = await mountScoped(
-      { user: ['userConfig'] },
+      { scope: USER, configNames: ['userConfig'] },
       { user: { userConfig: { a: 1 } } },
     );
-    let first!: Promise<void>;
-    let second!: Promise<void>;
+    let first!: Promise<unknown>;
+    let second!: Promise<unknown>;
     act(() => {
       first = result.current.upsert({
-        scope: 'user',
+        scope: USER,
         configName: 'userConfig',
         subKey: 'b',
         value: 2,
       });
       second = result.current.upsert({
-        scope: 'user',
+        scope: USER,
         configName: 'userConfig',
         subKey: 'c',
         value: 3,
@@ -255,14 +257,14 @@ describe('useScopedAppConfig', () => {
 
   it('links a first write into the read so the next write builds on it', async () => {
     const { environment, result } = await mountScoped(
-      { user: ['userConfig'] },
+      { scope: USER, configNames: ['userConfig'] },
       { user: { userConfig: null } },
     );
     expect(result.current.user).toEqual({ userConfig: undefined });
-    let first!: Promise<void>;
+    let first!: Promise<unknown>;
     act(() => {
       first = result.current.upsert({
-        scope: 'user',
+        scope: USER,
         configName: 'userConfig',
         subKey: 'themeFamily',
         value: 'ocean',
@@ -275,13 +277,13 @@ describe('useScopedAppConfig', () => {
 
   it('follows the fragment the upsert returned when its id changed', async () => {
     const { environment, result } = await mountScoped(
-      { user: ['userConfig'] },
+      { scope: USER, configNames: ['userConfig'] },
       { user: { userConfig: { themeFamily: 'ocean' } } },
     );
-    let pending!: Promise<void>;
+    let pending!: Promise<unknown>;
     act(() => {
       pending = result.current.upsert({
-        scope: 'user',
+        scope: USER,
         configName: 'userConfig',
         subKey: 'language',
         value: 'ko',
@@ -297,7 +299,10 @@ describe('useScopedAppConfig', () => {
 
   it('leaves a scope it may not read undefined and refuses to write it', async () => {
     const { environment, result } = await mountScoped(
-      { domain: ['domainConfig'], public: ['publicConfigByDomain'] },
+      [
+        { scope: DOMAIN, configNames: ['domainConfig'] },
+        { scope: PUBLIC, configNames: ['publicConfigByDomain'] },
+      ],
       { domain: 'denied', public: { publicConfigByDomain: { default: {} } } },
     );
     expect(result.current.domain).toBeUndefined();
@@ -306,7 +311,7 @@ describe('useScopedAppConfig', () => {
     });
     await expect(
       result.current.upsert({
-        scope: 'domain',
+        scope: DOMAIN,
         configName: 'domainConfig',
         subKey: 'settings',
         value: {},
@@ -319,12 +324,12 @@ describe('useScopedAppConfig', () => {
 
   it('refuses a change to a name the hook did not request', async () => {
     const { result } = await mountScoped(
-      { user: ['userConfig'] },
+      { scope: USER, configNames: ['userConfig'] },
       { user: { userConfig: {} } },
     );
     await expect(
       result.current.upsert({
-        scope: 'public',
+        scope: PUBLIC,
         configName: 'publicConfigByDomain',
         subKey: 'x',
         value: 1,
@@ -334,13 +339,13 @@ describe('useScopedAppConfig', () => {
 
   it('refetches the merged domainConfig view after a domainConfig write', async () => {
     const { environment, result } = await mountScoped(
-      { domain: ['domainConfig'] },
+      { scope: DOMAIN, configNames: ['domainConfig'] },
       { domain: { domainConfig: { settings: {} } } },
     );
-    let pending!: Promise<void>;
+    let pending!: Promise<unknown>;
     act(() => {
       pending = result.current.upsert({
-        scope: 'domain',
+        scope: DOMAIN,
         configName: 'domainConfig',
         subKey: ['settings', 'announcement'],
         value: { title: 'hi' },
@@ -358,12 +363,13 @@ describe('useScopedAppConfig', () => {
   it('reads the documents again when another reader mounts on the stored copy', async () => {
     const hooks = await loadHooks();
     const { environment } = await mountScoped(
-      { user: ['userConfig'] },
+      { scope: USER, configNames: ['userConfig'] },
       { user: { userConfig: { themeFamily: 'ocean' } } },
       hooks,
     );
     const second = renderHook(
-      () => hooks.useScopedAppConfig({ user: ['userConfig'] }),
+      () =>
+        hooks.useScopedAppConfig({ scope: USER, configNames: ['userConfig'] }),
       { wrapper: wrapperFor(environment) },
     );
     expect(second.result.current.user?.userConfig).toEqual({
@@ -372,15 +378,106 @@ describe('useScopedAppConfig', () => {
     await waitForOperation(environment, 'useAppConfigScopedQuery');
   });
 
-  it('rejects with the server message when the write fails', async () => {
-    const { environment, result } = await mountScoped(
-      { public: ['publicConfigByDomain'] },
-      { public: { publicConfigByDomain: {} } },
+  it('rejects requesting one scope type twice', async () => {
+    const { useScopedAppConfig } = await loadHooks();
+    const environment = createMockEnvironment();
+    const spy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    expect(() =>
+      renderHook(
+        () =>
+          useScopedAppConfig([
+            { scope: USER, configNames: ['userConfig'] },
+            {
+              scope: { type: 'user', id: 'user-2' },
+              configNames: ['userConfig'],
+            },
+          ]),
+        { wrapper: wrapperFor(environment) },
+      ),
+    ).toThrow('user was requested twice');
+    spy.mockRestore();
+  });
+
+  it('passes the given ids as scope ids and refuses a change to another id', async () => {
+    const { read, result } = await mountScoped(
+      { scope: { type: 'user', id: 'user-9' }, configNames: ['userConfig'] },
+      { user: { userConfig: {} } },
     );
-    let pending!: Promise<void>;
+    expect(read.request.variables.userScope).toEqual({
+      scopeType: 'USER',
+      scopeId: 'user-9',
+    });
+    await expect(
+      result.current.upsert({
+        scope: USER,
+        configName: 'userConfig',
+        subKey: 'x',
+        value: 1,
+      }),
+    ).rejects.toThrow('user.userConfig was not requested');
+  });
+
+  it('resolves with the documents it wrote, by scope type', async () => {
+    const { environment, result } = await mountScoped(
+      { scope: DOMAIN, configNames: ['domainConfig'] },
+      { domain: { domainConfig: { settings: { a: 1 } } } },
+    );
+    let pending!: Promise<unknown>;
     act(() => {
       pending = result.current.upsert({
-        scope: 'public',
+        scope: DOMAIN,
+        configName: 'domainConfig',
+        subKey: ['settings', 'b'],
+        value: 2,
+      });
+    });
+    await answerUpsert(environment);
+    await expect(pending).resolves.toEqual({
+      domain: { domainConfig: { settings: { a: 1, b: 2 } } },
+    });
+  });
+
+  it('sends nothing when any change of a multi-scope upsert is refused', async () => {
+    const { environment, result } = await mountScoped(
+      [
+        { scope: DOMAIN, configNames: ['domainConfig'] },
+        { scope: PUBLIC, configNames: ['publicConfigByDomain'] },
+      ],
+      {
+        domain: { domainConfig: {} },
+        public: { publicConfigByDomain: {} },
+      },
+    );
+    await expect(
+      result.current.upsert([
+        {
+          scope: PUBLIC,
+          configName: 'publicConfigByDomain',
+          subKey: 'x',
+          value: 1,
+        },
+        {
+          scope: { type: 'domain', id: 'domain-2' },
+          configName: 'domainConfig',
+          subKey: 'y',
+          value: 2,
+        },
+      ]),
+    ).rejects.toThrow('domain.domainConfig was not requested');
+    expect(operationsNamed(environment, 'useAppConfigUpsertMutation')).toEqual(
+      [],
+    );
+  });
+
+  it('rejects with the server message when the write fails', async () => {
+    const { environment, result } = await mountScoped(
+      { scope: PUBLIC, configNames: ['publicConfigByDomain'] },
+      { public: { publicConfigByDomain: {} } },
+    );
+    let pending!: Promise<unknown>;
+    act(() => {
+      pending = result.current.upsert({
+        scope: PUBLIC,
         configName: 'publicConfigByDomain',
         subKey: ['default', 'appearance'],
         value: {},
@@ -397,6 +494,135 @@ describe('useScopedAppConfig', () => {
       } as any);
     });
     await expect(pending).rejects.toThrow('publicConfigByDomain: not allowed');
+  });
+});
+
+/** Mounts the own-user hook and answers its read with `docs` (`null`: no fragment). */
+const mountMine = async (
+  docs: Record<string, Doc | null>,
+  environment = createMockEnvironment(),
+) => {
+  const { useMyAppConfigFragments } = await loadHooks();
+  const names = Object.keys(docs) as Array<'userConfig'>;
+  const { result } = renderHook(() => useMyAppConfigFragments(names), {
+    wrapper: wrapperFor(environment),
+  });
+  const payload = {
+    data: {
+      myAppConfigFragmentsByNames: Object.entries(docs).map(
+        ([configName, config], index) =>
+          config ? { id: `mine-${index}`, configName, config } : null,
+      ),
+    },
+  } as any;
+  for (let i = 0; i < 2; i++) {
+    // The suspending read, then the mount read.
+    const read = await waitForOperation(
+      environment,
+      'useAppConfigMyFragmentsQuery',
+    );
+    act(() => {
+      environment.mock.resolve(read, payload);
+    });
+  }
+  await waitFor(() => expect(result.current).not.toBeNull());
+  return { environment, result };
+};
+
+const answerMyUpsert = async (environment: MockEnvironment, id: string) => {
+  const upsert = await waitForOperation(
+    environment,
+    'useAppConfigMyUpsertMutation',
+  );
+  const sent = upsert.request.variables.input;
+  act(() => {
+    environment.mock.resolve(upsert, {
+      data: {
+        myAtomicBulkUpsertAppConfigFragments: {
+          items: sent.items.map((item: { configName: string }) => ({
+            id,
+            ...item,
+          })),
+        },
+      },
+    });
+  });
+  return sent;
+};
+
+describe('useMyAppConfigFragments', () => {
+  it('reads the own USER documents and writes them through the my* mutation', async () => {
+    const { environment, result } = await mountMine({
+      userConfig: { themeFamily: 'ocean', dashboard: { a: 1 } },
+    });
+    expect(result.current.documents.userConfig).toEqual({
+      themeFamily: 'ocean',
+      dashboard: { a: 1 },
+    });
+    let pending!: Promise<unknown>;
+    act(() => {
+      pending = result.current.upsert({
+        configName: 'userConfig',
+        subKey: ['dashboard', 'b'],
+        value: 2,
+      });
+    });
+    const sent = await answerMyUpsert(environment, 'mine-0');
+    expect(sent).toEqual({
+      items: [
+        {
+          configName: 'userConfig',
+          config: { themeFamily: 'ocean', dashboard: { a: 1, b: 2 } },
+        },
+      ],
+    });
+    await expect(pending).resolves.toEqual({
+      userConfig: { themeFamily: 'ocean', dashboard: { a: 1, b: 2 } },
+    });
+    expect(operationsNamed(environment, 'useAppConfigUpsertMutation')).toEqual(
+      [],
+    );
+  });
+
+  it('links a first write into the read so the next write builds on it', async () => {
+    const { environment, result } = await mountMine({ userConfig: null });
+    expect(result.current.documents).toEqual({ userConfig: undefined });
+    let first!: Promise<unknown>;
+    act(() => {
+      first = result.current.upsert({
+        configName: 'userConfig',
+        subKey: 'themeFamily',
+        value: 'ocean',
+      });
+    });
+    await answerMyUpsert(environment, 'created');
+    await act(() => first);
+    expect(result.current.documents.userConfig).toEqual({
+      themeFamily: 'ocean',
+    });
+    let second!: Promise<unknown>;
+    act(() => {
+      second = result.current.upsert({
+        configName: 'userConfig',
+        subKey: 'language',
+        value: 'ko',
+      });
+    });
+    expect(
+      (await answerMyUpsert(environment, 'created')).items[0].config,
+    ).toEqual({ themeFamily: 'ocean', language: 'ko' });
+    await act(() => second);
+  });
+
+  it('refuses a change to a name the hook did not request', async () => {
+    const { result } = await mountMine({ userConfig: {} });
+    await expect(
+      result.current.upsert({
+        configName: 'domainConfig',
+        subKey: 'x',
+        value: 1,
+      }),
+    ).rejects.toThrow('domainConfig was not requested');
   });
 });
 

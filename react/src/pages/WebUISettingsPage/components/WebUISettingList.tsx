@@ -200,6 +200,8 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
         ),
       );
       isLeavingAfterApplyRef.current = true;
+      // TODO(#10941): drop the reload. The setters already update the settings
+      // atoms and `baiClient._config`; screens that read `_config` once still need it.
       window.location.reload();
     } catch (error) {
       setIsApplying(false);

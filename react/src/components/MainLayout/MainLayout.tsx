@@ -9,7 +9,7 @@ import {
 } from '../../astryx-theme';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../../hooks';
 import { useResourceSlotsDetails } from '../../hooks/backendai';
-import { useScopedAppConfig } from '../../hooks/useAppConfig';
+import { useMyAppConfigFragments } from '../../hooks/useAppConfig';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
 import { useCustomThemeConfig } from '../../hooks/useCustomThemeConfig';
 import useKeyboardShortcut from '../../hooks/useKeyboardShortcut';
@@ -525,8 +525,8 @@ export const CSSTokenVariables = () => {
 const DismissSplashOnMount = () => {
   'use memo';
   useSuspendedBackendaiClient();
-  const userConfigFamily = useScopedAppConfig({ user: ['userConfig'] }).user
-    ?.userConfig?.themeFamily;
+  const userConfigFamily = useMyAppConfigFragments(['userConfig']).documents
+    .userConfig?.themeFamily;
   const { setActiveThemeFamily } = useCustomThemeConfig();
   const syncThemeFamilyMirror = useEffectEvent(() => {
     setActiveThemeFamily(

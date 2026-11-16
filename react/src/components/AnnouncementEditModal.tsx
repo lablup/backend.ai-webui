@@ -9,6 +9,7 @@ import {
   DomainAnnouncement,
   withAnnouncement,
 } from '../helper/announcement';
+import { useCurrentDomain } from '../hooks';
 import { useScopedAppConfig } from '../hooks/useAppConfig';
 import './AnnouncementEditModal.css';
 import BAICodeEditor from './BAICodeEditor';
@@ -109,12 +110,17 @@ const AnnouncementEditModalContent: React.FC<AnnouncementEditModalProps> = ({
   const { logger } = useBAILogger();
   const { getErrorMessage } = useErrorMessageResolver();
 
-  const { domain, upsert } = useScopedAppConfig({ domain: ['domainConfig'] });
+  const { id: domainId } = useCurrentDomain();
+  const domainScope = { type: 'domain', id: domainId } as const;
+  const { domain, upsert } = useScopedAppConfig({
+    scope: domainScope,
+    configNames: ['domainConfig'],
+  });
   const announcement = readDomainAnnouncement(domain?.domainConfig?.settings);
   // Keeps the System Settings keys beside the announcement.
   const writeAnnouncement = (next: DomainAnnouncement | undefined) =>
     upsert({
-      scope: 'domain',
+      scope: domainScope,
       configName: 'domainConfig',
       subKey: 'settings',
       value: (current: unknown) => withAnnouncement(current, next),

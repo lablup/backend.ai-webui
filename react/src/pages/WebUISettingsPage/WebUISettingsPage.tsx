@@ -9,10 +9,15 @@ import {
   useSuspendedBackendaiClient,
   useTabQuerySnapshot,
 } from '../../hooks';
-import { useScopedAppConfig } from '../../hooks/useAppConfig';
+import { PUBLIC_SCOPE, useScopedAppConfig } from '../../hooks/useAppConfig';
+import {
+  domainWebUISettingsState,
+  publicWebUISettingsState,
+} from '../../hooks/useWebUIConfig';
 import ConfigurationsSettingList from './components/ConfigurationsSettingList';
 import WebUISettingList from './components/WebUISettingList';
 import { BAICard, BAIFlex, BAISkeleton } from 'backend.ai-ui';
+import { useSetAtom } from 'jotai';
 import { parseAsStringLiteral } from 'nuqs';
 import { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -25,12 +30,15 @@ const tabParser = parseAsStringLiteral([
 /** Reads both saved documents: the public (pre-login) slice and the domain one. */
 const SavedWebUISettingList: React.FC = () => {
   'use memo';
-  const { name: domainName } = useCurrentDomain();
+  const { id: domainId, name: domainName } = useCurrentDomain();
+  const domainScope = { type: 'domain', id: domainId } as const;
   // One request for both documents the page edits.
-  const config = useScopedAppConfig({
-    domain: ['domainConfig'],
-    public: ['publicConfigByDomain'],
-  });
+  const config = useScopedAppConfig([
+    { scope: domainScope, configNames: ['domainConfig'] },
+    { scope: PUBLIC_SCOPE, configNames: ['publicConfigByDomain'] },
+  ]);
+  const setDomainLayer = useSetAtom(domainWebUISettingsState);
+  const setPublicLayer = useSetAtom(publicWebUISettingsState);
   return (
     <WebUISettingList
       savedDomainSettings={
@@ -41,22 +49,30 @@ const SavedWebUISettingList: React.FC = () => {
           WEBUI_SETTINGS_CONFIG_KEY
         ]
       }
-      setDomainSettings={(value) =>
-        config.upsert({
-          scope: 'domain',
+      setDomainSettings={async (value) => {
+        const written = await config.upsert({
+          scope: domainScope,
           configName: 'domainConfig',
           subKey: WEBUI_SETTINGS_CONFIG_KEY,
           value,
-        })
-      }
-      setPublicSettings={(value) =>
-        config.upsert({
-          scope: 'public',
+        });
+        setDomainLayer(
+          written.domain?.domainConfig?.[WEBUI_SETTINGS_CONFIG_KEY],
+        );
+      }}
+      setPublicSettings={async (value) => {
+        const written = await config.upsert({
+          scope: PUBLIC_SCOPE,
           configName: 'publicConfigByDomain',
           subKey: [domainName, WEBUI_SETTINGS_CONFIG_KEY],
           value,
-        })
-      }
+        });
+        setPublicLayer(
+          written.public?.publicConfigByDomain?.[domainName]?.[
+            WEBUI_SETTINGS_CONFIG_KEY
+          ],
+        );
+      }}
     />
   );
 };

@@ -9,7 +9,7 @@ import {
   DOMAIN_APPEARANCE_CONFIG_KEY,
 } from '../../../helper/customThemeConfig';
 import { useCurrentDomainValue } from '../../../hooks';
-import { useScopedAppConfig } from '../../../hooks/useAppConfig';
+import { PUBLIC_SCOPE, useScopedAppConfig } from '../../../hooks/useAppConfig';
 import { usePreviewThemeConfig } from '../../../hooks/usePreviewThemeConfig';
 import FontFamilySettingItem from './BrandingSettingItems/FontFamilySettingItem';
 import LogoPreviewer, {
@@ -54,7 +54,10 @@ const BrandingSettingList: React.FC<BrandingSettingListProps> = () => {
   // Saved WHOLE — families included — as this domain's slice of the public
   // document; reads replace wholesale rather than merging (FR-1964).
   const domainName = useCurrentDomainValue();
-  const { upsert } = useScopedAppConfig({ public: ['publicConfigByDomain'] });
+  const { upsert } = useScopedAppConfig({
+    scope: PUBLIC_SCOPE,
+    configNames: ['publicConfigByDomain'],
+  });
 
   // Edits live only while this page is open: an entry (refresh included)
   // starts from the applied document, and leaving drops them.
@@ -117,7 +120,7 @@ const BrandingSettingList: React.FC<BrandingSettingListProps> = () => {
       onOk: async () => {
         try {
           await upsert({
-            scope: 'public',
+            scope: PUBLIC_SCOPE,
             configName: 'publicConfigByDomain',
             subKey: [domainName, DOMAIN_APPEARANCE_CONFIG_KEY],
             value: { ...themeConfig, schemaVersion: APPEARANCE_SCHEMA_VERSION },

@@ -4,7 +4,10 @@
  */
 import { App } from '../../app-shim';
 import { useCurrentDomainValue } from '../../hooks';
-import { useMyAppConfig, useScopedAppConfig } from '../../hooks/useAppConfig';
+import {
+  useMyAppConfig,
+  useMyAppConfigFragments,
+} from '../../hooks/useAppConfig';
 import {
   activeBoardOf,
   keepUnreadablePanels,
@@ -71,8 +74,8 @@ export const useDashboardBoards = (
   const { message } = App.useApp();
   const { getErrorMessage } = useErrorMessageResolver();
   const domainName = useCurrentDomainValue();
-  const userConfig = useScopedAppConfig({ user: ['userConfig'] });
-  const storedDashboard = userConfig.user?.userConfig?.dashboard as
+  const userConfig = useMyAppConfigFragments(['userConfig']);
+  const storedDashboard = userConfig.documents.userConfig?.dashboard as
     Record<string, unknown> | undefined;
   const domainTemplates = useMyAppConfig('domainConfig', 'dashboardTemplates');
   const publicTemplates = useMyAppConfig('publicConfigByDomain', [
@@ -113,7 +116,6 @@ export const useDashboardBoards = (
         ] of batch) {
           // Replayed on the latest stored document, so this tab's earlier writes survive.
           await userConfig.upsert({
-            scope: 'user',
             configName: 'userConfig',
             subKey: ['dashboard', writtenPage],
             value: (stored: unknown) => {
