@@ -228,7 +228,8 @@ test.describe.serial(
       // 3. Check if the user is in the Active list
       const userRow = page.getByRole('row').filter({ hasText: EMAIL });
       const isActive = await userRow
-        .isVisible({ timeout: 5000 })
+        .waitFor({ state: 'visible', timeout: 5000 })
+        .then(() => true)
         .catch(() => false);
 
       if (isActive) {
