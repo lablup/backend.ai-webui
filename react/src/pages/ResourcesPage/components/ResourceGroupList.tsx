@@ -327,6 +327,11 @@ const ResourceGroupList: React.FC = () => {
                         message.success(
                           t('resourceGroup.ResourceGroupModified'),
                         );
+                        // Toggling `isActive` moves the row to the other
+                        // Active/Inactive list, so the membership changes.
+                        startRefetchTransition(() => {
+                          updateFetchKey();
+                        });
                         resolve();
                       },
                       onError: (err) => {
