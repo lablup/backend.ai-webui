@@ -176,6 +176,7 @@ export const WEBUI_SETTING_ROWS: ReadonlyArray<WebUISettingRow> = [
     'pipeline',
     'frontendEndpoint',
   ]),
+  row('manualUrl', 'domain', 'string', 'menu'),
 
   // Downloads.
   row('allowAppDownloadPanel', 'domain', 'boolean', 'downloads'),

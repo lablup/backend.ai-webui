@@ -50,6 +50,7 @@ export const SETTING_URL_KEYS = [
   'appDownloadUrl',
   'cliDownloadUrl',
   'fasttrackEndpoint',
+  'manualUrl',
 ] as const;
 
 export function checkSettingUrls(state: LoginConfigState): DiagnosticResult[] {
