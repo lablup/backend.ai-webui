@@ -1444,9 +1444,9 @@ drawer you can also change its schedulable status and control the agent service 
 
 ![](../images/agent_list.png)
 
-Use the **Connected** / **Terminated** selector to switch between agents that are currently connected and
-agents that have been connected once and then terminated or disconnected. The Terminated list can be used
-as a reference for node management; if it is empty, then no disconnection or termination has occurred.
+Use the **Connected** / **Inactive** selector to switch between agents that are currently connected and
+agents that are no longer alive. The Inactive list covers agents that have been terminated, lost, or are
+restarting, and can be used as a reference for node management.
 
 ![](../images/terminated_agent_list.png)
 
