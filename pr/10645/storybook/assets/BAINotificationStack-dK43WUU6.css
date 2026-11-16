@@ -1,0 +1,10 @@
+/*
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ Places ui-common's NotificationStack in the WebUI: top of the z-index ladder
+ (`../styles/zIndexLadder.ts`), above the modal band and the scrimmed drawers
+ but not the CSS top layer (tours paint over notices), and stopping below the
+ app header (FR-3829), whose height the host bridges as
+ `--webui-header-height` (`MainLayout` -> `CSSTokenVariables`).
+*/@layer components{.bai-notification-stack{--notification-stack-z: var(--bai-z-notification);--notification-stack-inset-top: var(--webui-header-height, 60px)}}@layer reset,theme,base,astryx-base,astryx-theme,ui-common,components,utilities;@layer ui-common{.uic-notification-stack{padding:var(--spacing-6);box-sizing:content-box;gap:var(--spacing-3);width:384px;max-width:calc(100vw - var(--spacing-6) * 2);max-height:calc(100dvh - var(--notification-stack-inset-top,0px) - var(--spacing-6) * 2);overscroll-behavior:contain;z-index:var(--notification-stack-z,11000);pointer-events:none;flex-direction:column;display:flex;position:fixed;inset-block-end:0;inset-inline-end:0;overflow:hidden auto}.uic-notification-stack>*{pointer-events:auto}@keyframes uic-notification-stack-enter{0%{opacity:0;transform:translate(var(--spacing-6))}to{opacity:1;transform:translate(0)}}@keyframes uic-notification-stack-exit{0%{opacity:1;max-height:40vh;transform:translate(0)}to{opacity:0;transform:translate(var(--spacing-6));max-height:0}}.uic-notification-stack__item{animation-name:uic-notification-stack-enter;animation-duration:var(--duration-fast);animation-timing-function:var(--ease-standard);animation-fill-mode:both}.uic-notification-stack__item[data-exiting=true]{animation-name:uic-notification-stack-exit;overflow:hidden}.uic-notification-stack__body{max-height:var(--notification-stack-body-max-height,30vh);overscroll-behavior:contain;overflow-y:auto}@media(prefers-reduced-motion:reduce){.uic-notification-stack__item,.uic-notification-stack__item[data-exiting=true]{opacity:1;animation-name:none;transform:none}}}

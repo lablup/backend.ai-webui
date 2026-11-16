@@ -1,0 +1,1 @@
+import{a as o}from"./_arrayEach-DpGxo2Of.js";import{a as i}from"./_baseEach-ehINIfaQ.js";import{i as f}from"./identity-DKeuBCMA.js";import{i as n}from"./iframe-Cg5_Z9Ur.js";function m(r){return typeof r=="function"?r:f}function e(r,a){var t=n(r)?o:i;return t(r,m(a))}export{e as f};

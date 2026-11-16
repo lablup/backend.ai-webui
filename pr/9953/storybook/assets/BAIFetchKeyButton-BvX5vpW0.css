@@ -1,0 +1,15 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ Co-located styles for <BAICountdownBorder> (to-astryx ticket 33). Replaces the
+ `antd-style` `createStyles` block; imported by the component itself (P17).
+ No theme token is involved — the block was pure animation plumbing.
+
+ `pathLength={100}` normalizes the stroke length so the offset animation is
+ size-independent: draw the rounded-rect outline clockwise from the top-left
+ (0 -> 100%) over one cycle, then reset. Disabled under reduced-motion.
+
+ The keyframes name is BUI-scoped: `@keyframes` never participates in the
+ cascade layer/scope, so a generic name (`fill`) would collide app-wide.
+*/@keyframes bai-countdown-border-fill{0%{stroke-dashoffset:100}to{stroke-dashoffset:0}}.bai-countdown-border-fill{animation-name:bai-countdown-border-fill;animation-timing-function:linear;animation-iteration-count:infinite}@media(prefers-reduced-motion:reduce){.bai-countdown-border-fill{animation:none}}
