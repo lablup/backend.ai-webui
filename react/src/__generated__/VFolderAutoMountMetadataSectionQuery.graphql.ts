@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<c937663df97134cfbbd4a6fd9c29a7f9>>
+ * @generated SignedSource<<50043605135d63e9d4c7a1476f5e8d41>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -16,6 +16,7 @@ export type VFolderAutoMountScopeType = "PROJECT" | "USER" | "%future added valu
 export type VFolderAutoMountScope = {
   project?: ReadonlyArray<UUIDScope> | null | undefined;
   user?: ReadonlyArray<UUIDScope> | null | undefined;
+  vfolder?: ReadonlyArray<UUIDScope> | null | undefined;
 };
 export type UUIDScope = {
   value: string;

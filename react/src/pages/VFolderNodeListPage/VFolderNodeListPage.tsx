@@ -19,10 +19,6 @@ import VFolderNodesV2, {
   availableVFolderSorterValues,
 } from '../../components/VFolderNodesV2';
 import { convertToOrderBy, handleRowSelectionChange } from '../../helper';
-import {
-  AUTO_MOUNT_NODE_FIELD_MANAGER_VERSION,
-  AUTO_MOUNT_SETTING_MANAGER_VERSION,
-} from '../../helper/vfolderAutoMount';
 import { isDeletedCategory } from '../../helper/vfolderStatus';
 import { useCurrentUserInfo } from '../../hooks/backendai';
 import { useBAIPaginationOptionStateOnSearchParam } from '../../hooks/reactPaginationQueryOptions';
@@ -204,13 +200,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
   }, [queryParams, tablePaginationOption]);
 
   // Auto-mount is a setting on any folder there, shown as a column, not a mode.
-  const hasAutoMountSetting = baiClient.isManagerVersionCompatibleWith(
-    AUTO_MOUNT_SETTING_MANAGER_VERSION,
-  );
-  const mode =
-    hasAutoMountSetting && queryParams.mode === 'automount'
-      ? 'all'
-      : queryParams.mode;
+  const mode = queryParams.mode === 'automount' ? 'all' : queryParams.mode;
   const usageModeFilter = USAGE_MODE_FILTERS[mode];
 
   const [fetchKey, updateFetchKey] = useFetchKey();
@@ -559,9 +549,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
               order={queryParams.order}
               loading={deferredQueryVariables !== queryVariables}
               project={projectContext}
-              showAutoMountColumn={baiClient.isManagerVersionCompatibleWith(
-                AUTO_MOUNT_NODE_FIELD_MANAGER_VERSION,
-              )}
+              showAutoMountColumn
               vfoldersFrgmt={vfolderNodes}
               rowSelection={{
                 type: 'checkbox',

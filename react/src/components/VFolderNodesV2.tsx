@@ -339,8 +339,6 @@ const VFolderAutoMountCell: React.FC<{
 // plain-text fallback rendered identically on the loaded-without-usage path,
 // so rows would get stuck in the fallback branch and never pick up the badge
 // after the query resolved.
-// The auto-mounts of one vfolder, read from the row's own `vfolderAutoMounts`
-// connection (null on a manager without the field).
 type VFolderAutoMountConnection = NonNullable<
   NonNullable<VFolderNodesV2Fragment$data[number]>['vfolderAutoMounts']
 >;
