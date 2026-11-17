@@ -1508,6 +1508,8 @@
     "Tags": "Tags",
     "TagsPlaceholder": "Insira tags, separadas por vírgulas",
     "TagsTooltip": "Rótulos opcionais para organizar e filtrar implantações. Pressione Enter ou vírgula para adicionar.",
+    "TensorParallelFgpuMismatch": "O paralelismo de tensores (TP) é {{tp}}, mas a quantidade de fGPU solicitada é {{gpu}}. O TP e a quantidade de fGPU devem corresponder.",
+    "TensorParallelFgpuNotInteger": "O paralelismo de tensores (TP) é {{tp}}, mas a quantidade de fGPU solicitada ({{gpu}}) não é um número inteiro. Com TP 2 ou superior, são necessárias GPUs inteiras.",
     "ToStatus": "Ir para o status",
     "TrafficRatio": "Proporção de tráfego",
     "TrafficStatus": "Status do tráfego",

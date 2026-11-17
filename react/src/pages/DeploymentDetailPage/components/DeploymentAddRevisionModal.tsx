@@ -74,6 +74,9 @@ import {
 import { useCommonEnvVarConfigs } from '../../../hooks/useVariantConfigs';
 import type { ProjectContextOrNull } from '../../../types/projectContext';
 import ModelCardSelect from './ModelCardSelect';
+import PresetTensorParallelFgpuWarning, {
+  CustomTensorParallelFgpuWarning,
+} from './TensorParallelFgpuWarning';
 import { Banner } from '@lablup/ui-common/Banner';
 import { Button } from '@lablup/ui-common/Button';
 import { ButtonGroup } from '@lablup/ui-common/ButtonGroup';
@@ -632,6 +635,11 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
 
   const [customForm] = Form.useForm<FormValues>();
   const [presetForm] = Form.useForm<PresetFormValues>();
+  // The preset form's selected preset drives the preset TP/fGPU warning.
+  const presetFormSelectedPresetId = Form.useWatch(['revisionPresetId'], {
+    form: presetForm,
+    preserve: true,
+  });
   // FR-2862 feedback: hoist `autoActivate` from the Custom body into the
   // modal so it can be rendered in the modal footer. Both modes forward
   // the value via `AddRevisionOptions.autoActivate` on `addModelRevision`.
@@ -719,9 +727,12 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
   // namespace (registered by RuntimeParameterFormSection), so required presets
   // participate in normal form validation. Touched keys and groups are kept in
   // refs since changing them must not re-render the modal — both are only read
-  // at submit time to collect runtime-variant preset values.
+  // at submit time to collect runtime-variant preset values. The groups also
+  // feed the TP/fGPU warning (state, so the warning re-renders with them).
   const runtimeParamTouchedKeysRef = useRef<Set<string>>(new Set());
   const runtimeParamGroupsRef = useRef<RuntimeParameterGroup[] | null>(null);
+  const [runtimeParamGroups, setRuntimeParamGroups] =
+    useState<ReadonlyArray<RuntimeParameterGroup> | null>(null);
 
   // Initial preset values fed into `RuntimeParameterFormSection` for non-custom
   // variants in edit mode, keyed by preset id. State (not ref) so the child
@@ -2268,6 +2279,12 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                 );
               }}
             </BAIFormItem>
+
+            {/* Warns when the selected preset's TP value and its fGPU
+                quantity conflict (lablup/backend.ai-webui#11283). */}
+            <PresetTensorParallelFgpuWarning
+              presetId={presetFormSelectedPresetId}
+            />
           </Form>
         )
       ) : (
@@ -2463,6 +2480,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                       }}
                       onGroupsLoaded={(groups) => {
                         runtimeParamGroupsRef.current = groups;
+                        setRuntimeParamGroups(groups);
                       }}
                       initialPresetValues={initialRuntimePresetValues}
                     />
@@ -2541,6 +2559,10 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
               />
             </Suspense>
           ) : null}
+
+          {/* Warns when the TP runtime parameter and the requested fGPU
+              quantity conflict (lablup/backend.ai-webui#11283). */}
+          <CustomTensorParallelFgpuWarning groups={runtimeParamGroups} />
 
           {/* PILOT-DECISION: antd Collapse (single bordered panel) → Astryx
               Collapsible: the boxed/bordered panel chrome is dropped (Astryx

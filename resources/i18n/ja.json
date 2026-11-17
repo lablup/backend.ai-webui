@@ -1508,6 +1508,8 @@
     "Tags": "タグ",
     "TagsPlaceholder": "タグをカンマ区切りで入力してください",
     "TagsTooltip": "デプロイメントを整理・フィルタリングするためのオプションのラベル。EnterまたはEnterキーを押して追加してください。",
+    "TensorParallelFgpuMismatch": "テンソル並列（TP）は {{tp}} ですが、要求された fGPU 数は {{gpu}} です。TP と fGPU 数を一致させてください。",
+    "TensorParallelFgpuNotInteger": "テンソル並列（TP）は {{tp}} ですが、要求された fGPU 数（{{gpu}}）が整数ではありません。TP が 2 以上の場合は GPU 丸ごと単位が必要です。",
     "ToStatus": "ステータスへ",
     "TrafficRatio": "トラフィック比率",
     "TrafficStatus": "トラフィック状態",

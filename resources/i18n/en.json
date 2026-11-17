@@ -1495,6 +1495,8 @@
     "Tags": "Tags",
     "TagsPlaceholder": "Enter tags, separated by commas",
     "TagsTooltip": "Optional labels for organizing and filtering deployments. Press Enter or comma to add.",
+    "TensorParallelFgpuMismatch": "Tensor parallelism (TP) is {{tp}}, but the requested fractional GPU (fGPU) quantity is {{gpu}}. TP and the fGPU quantity should match.",
+    "TensorParallelFgpuNotInteger": "Tensor parallelism (TP) is {{tp}}, but the requested fractional GPU (fGPU) quantity ({{gpu}}) is not a whole number. TP 2 or higher requires whole GPUs.",
     "ToStatus": "To Status",
     "TrafficRatio": "Traffic Ratio",
     "TrafficStatus": "Traffic Status",
