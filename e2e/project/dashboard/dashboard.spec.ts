@@ -9,6 +9,49 @@ import { WIDGET_TIMEOUT, setFailuresOnly } from '../../utils/dashboard-util';
 import { loginAsAdmin, loginAsUser, navigateTo } from '../../utils/test-util';
 import { test, expect, type Page } from '@playwright/test';
 
+/**
+ * Serves `userConfig` with `edit` applied, so a test sees a board or a session
+ * history without writing the shared account's config on the server.
+ */
+async function mockUserConfig(
+  page: Page,
+  edit: (config: Record<string, unknown>) => Record<string, unknown>,
+) {
+  await page.route('**/admin/gql', async (route) => {
+    const request = route.request();
+    let body: { query?: string; variables?: Record<string, any> } = {};
+    try {
+      body = JSON.parse(request.postData() ?? '{}');
+    } catch {
+      // not a GraphQL JSON body
+    }
+    const isUserConfigQuery =
+      request.method() === 'POST' &&
+      /query\s+useAppConfigMyQuery\b/.test(body.query ?? '') &&
+      (body.variables?.configNames ?? []).includes('userConfig');
+    if (!isUserConfigQuery) {
+      await route.fallback();
+      return;
+    }
+    const response = await route.fetch();
+    const json = await response.json();
+    const configs: Array<{ configName: string; config: any }> =
+      json?.data?.myAppConfigs ?? [];
+    const current = configs.find((c) => c.configName === 'userConfig');
+    const next = {
+      configName: 'userConfig',
+      config: edit(current?.config ?? {}),
+    };
+    json.data = {
+      ...json.data,
+      myAppConfigs: current
+        ? configs.map((c) => (c === current ? { ...c, ...next } : c))
+        : [...configs, next],
+    };
+    await route.fulfill({ response, json });
+  });
+}
+
 test.describe(
   'Dashboard Page',
   { tag: ['@regression', '@dashboard', '@functional'] },
@@ -113,6 +156,94 @@ test.describe(
             .filter({ hasText: 'My Recent Sessions' })
             .first(),
         ).toBeVisible({ timeout: WIDGET_TIMEOUT });
+      });
+    });
+
+    // -----------------------------------------------------------------------
+    // 6b. Default board and Start cards (#11161)
+    // -----------------------------------------------------------------------
+    test.describe('Default Board', () => {
+      test('User can see the Sessions Created chart card on a default dashboard', async ({
+        page,
+        request,
+      }) => {
+        // 1. Login as a regular user and serve their config without a saved board
+        await loginAsUser(page, request);
+        await mockUserConfig(
+          page,
+          ({ dashboard: _dashboard, ...rest }) => rest,
+        );
+        await navigateTo(page, 'summary');
+
+        // 2. The member board seeds the Sessions Created chart card
+        await expect(
+          page
+            .locator('.uic-board-item')
+            .filter({ hasText: 'Sessions Created' })
+            .first(),
+        ).toBeVisible({ timeout: WIDGET_TIMEOUT });
+      });
+
+      test('User can start a session from the Recent History card on the dashboard', async ({
+        page,
+        request,
+      }) => {
+        const historyName = `e2e-dashboard-history-${Date.now().toString(36)}`;
+        const formValues = {
+          sessionType: 'interactive',
+          sessionName: historyName,
+        };
+
+        // 1. Login as a regular user whose recent history holds one session
+        //    and who has no saved board, so the default Start cards show
+        await loginAsUser(page, request);
+        await mockUserConfig(page, ({ dashboard: _dashboard, ...rest }) => ({
+          ...rest,
+          recentSessionHistory: [
+            {
+              id: `${historyName}-id`,
+              name: historyName,
+              params: new URLSearchParams({
+                formValues: JSON.stringify(formValues),
+              }).toString(),
+              createdAt: new Date().toISOString(),
+            },
+          ],
+          pinnedSessionHistory: [],
+        }));
+        await navigateTo(page, 'summary');
+
+        // 2. The "Start Session from Recent History" card opens the Recent History modal
+        const card = page
+          .locator('.uic-board-item')
+          .filter({ hasText: 'Start Session from Recent History' })
+          .first();
+        await expect(card).toBeVisible({ timeout: WIDGET_TIMEOUT });
+        await card.getByRole('button', { name: 'View History' }).click();
+        const modal = page.getByRole('dialog', { name: 'Recent History' });
+        await expect(modal).toBeVisible();
+
+        // 3. Picking the entry closes the modal and opens the launcher's review step
+        await modal
+          .getByRole('row')
+          .filter({ hasText: historyName })
+          .getByText(historyName)
+          .click();
+        await expect(modal).toBeHidden();
+        await expect(page).toHaveURL(/\/session\/start\?/);
+        await expect(
+          page.getByRole('button', { name: /Confirm and Launch/i }),
+        ).toBeVisible({ timeout: WIDGET_TIMEOUT });
+
+        // 4. The launcher carries the session's settings under a fresh name
+        const launched = JSON.parse(
+          new URL(page.url()).searchParams.get('formValues') ?? '{}',
+        );
+        expect(new URL(page.url()).searchParams.get('step')).toBe('4');
+        expect(launched.sessionType).toBe('interactive');
+        expect(launched.sessionName).toMatch(
+          new RegExp(`^${historyName}-\\w{4}$`),
+        );
       });
     });
 
