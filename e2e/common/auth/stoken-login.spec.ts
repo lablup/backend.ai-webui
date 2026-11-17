@@ -155,7 +155,7 @@ test.describe(
       // Regression guard: the route-level STokenGuard passes through when
       // no sToken is present, so the ordinary LoginView panel still mounts.
       await expect(page.getByLabel('Email or Username')).toBeVisible();
-      await expect(page.getByLabel('Password')).toBeVisible();
+      await expect(page.getByLabel('Password', { exact: true })).toBeVisible();
     });
 
     test('invalid sToken on `/` surfaces the boundary error card with a Retry button', async ({
