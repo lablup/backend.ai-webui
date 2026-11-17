@@ -77,7 +77,7 @@ async function setupBaseMocks(page: Page): Promise<void> {
 async function fillLoginForm(page: Page): Promise<void> {
   await fillLoginEndpoint(page, webServerEndpoint);
   await page.getByLabel('Email or Username').fill(TEST_EMAIL);
-  await page.getByLabel('Password').fill(TEST_PASSWORD);
+  await page.getByLabel('Password', { exact: true }).fill(TEST_PASSWORD);
 }
 
 async function gotoLoginPage(

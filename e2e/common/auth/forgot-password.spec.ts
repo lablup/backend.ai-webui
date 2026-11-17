@@ -248,7 +248,7 @@ test.describe('Forgot password email modal', () => {
         page.getByRole('dialog', { name: 'Send change password email' }),
       ).toBeHidden({ timeout: 10_000 });
       await expect(page.getByLabel('Email or Username')).toBeVisible();
-      await expect(page.getByLabel('Password')).toBeVisible();
+      await expect(page.getByLabel('Password', { exact: true })).toBeVisible();
     },
   );
 

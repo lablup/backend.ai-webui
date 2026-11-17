@@ -107,7 +107,7 @@ async function setupBaseMocks(page: Page): Promise<void> {
 async function fillLoginForm(page: Page): Promise<void> {
   await fillLoginEndpoint(page, webServerEndpoint);
   await page.getByLabel('Email or Username').fill(TEST_EMAIL);
-  await page.getByLabel('Password').fill(TEST_PASSWORD);
+  await page.getByLabel('Password', { exact: true }).fill(TEST_PASSWORD);
 }
 
 /**
@@ -228,8 +228,10 @@ test.describe(
       await expect(page.getByLabel('Email or Username')).toHaveValue(
         TEST_EMAIL,
       );
-      await expect(page.getByLabel('Password')).toBeVisible();
-      await expect(page.getByLabel('Password')).toHaveValue(TEST_PASSWORD);
+      await expect(page.getByLabel('Password', { exact: true })).toBeVisible();
+      await expect(page.getByLabel('Password', { exact: true })).toHaveValue(
+        TEST_PASSWORD,
+      );
       await expect(loginEndpointRow(page)).toContainText(webServerEndpoint);
     });
 
