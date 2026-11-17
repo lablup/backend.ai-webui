@@ -29,6 +29,8 @@ const AgentList: React.FC<{ fetchKey: string }> = ({ fetchKey }) => {
     tablePaginationOption,
     setTablePaginationOption,
   } = useBAIPaginationOptionState({ current: 1, pageSize: 5 });
+  // TODO(needs-backend): #11077 the rows feed BAIAgentTable, an AgentNode fragment that stays
+  // on agent_nodes until AgentV2 carries the agent list's fields (see AgentList).
   // The legacy connection takes `first` + `offset` as its offset mode, like the agent list page.
   const variables = {
     first: baiPaginationOption.limit,

@@ -106,6 +106,8 @@ const AgentList: React.FC<AgentListProps> = ({
     setFetchKey(() => new Date().toISOString());
   };
 
+  // TODO(needs-backend): #11077 AgentV2 has no live_stat or hardware metadata, and agentsV2
+  // cannot filter or order by addr, region, version or the timestamps this list offers.
   const { agent_nodes } = useLazyLoadQuery<AgentListQuery>(
     graphql`
       query AgentListQuery(

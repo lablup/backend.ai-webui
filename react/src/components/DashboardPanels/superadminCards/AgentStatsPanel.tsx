@@ -15,21 +15,11 @@ const AgentStatsContent: React.FC<{ fetchKey: string }> = ({ fetchKey }) => {
   'use memo';
   const data = useLazyLoadQuery<AgentStatsPanelQuery>(
     graphql`
-      query AgentStatsPanelQuery(
-        $aliveAgentFilter: String!
-        $schedulableAgentFilter: String!
-      ) {
+      query AgentStatsPanelQuery {
         ...AgentStatsFragment
-          @arguments(
-            aliveAgentFilter: $aliveAgentFilter
-            schedulableAgentFilter: $schedulableAgentFilter
-          )
       }
     `,
-    {
-      aliveAgentFilter: 'status == "ALIVE"',
-      schedulableAgentFilter: 'status == "ALIVE" & schedulable == true',
-    },
+    {},
     { fetchPolicy: 'store-and-network', fetchKey },
   );
   return <AgentStats queryRef={data} />;

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<bf2b86edb4dbbae2a73140a0ec86b354>>
+ * @generated SignedSource<<03bf09f9dd6cbd1b58eca4e2df56214c>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,10 +10,7 @@
 
 import { ConcreteRequest } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
-export type AgentStatsRefetchQuery$variables = {
-  aliveAgentFilter: string;
-  schedulableAgentFilter: string;
-};
+export type AgentStatsRefetchQuery$variables = Record<PropertyKey, never>;
 export type AgentStatsRefetchQuery$data = {
   readonly " $fragmentSpreads": FragmentRefs<"AgentStatsFragment">;
 };
@@ -23,21 +20,12 @@ export type AgentStatsRefetchQuery = {
 };
 
 const node: ConcreteRequest = (function(){
-var v0 = [
-  {
-    "defaultValue": null,
-    "kind": "LocalArgument",
-    "name": "aliveAgentFilter"
-  },
-  {
-    "defaultValue": null,
-    "kind": "LocalArgument",
-    "name": "schedulableAgentFilter"
-  }
-],
+var v0 = {
+  "equals": "ALIVE"
+},
 v1 = {
   "kind": "Literal",
-  "name": "first",
+  "name": "limit",
   "value": 1
 },
 v2 = [
@@ -51,24 +39,13 @@ v2 = [
 ];
 return {
   "fragment": {
-    "argumentDefinitions": (v0/*: any*/),
+    "argumentDefinitions": [],
     "kind": "Fragment",
     "metadata": null,
     "name": "AgentStatsRefetchQuery",
     "selections": [
       {
-        "args": [
-          {
-            "kind": "Variable",
-            "name": "aliveAgentFilter",
-            "variableName": "aliveAgentFilter"
-          },
-          {
-            "kind": "Variable",
-            "name": "schedulableAgentFilter",
-            "variableName": "schedulableAgentFilter"
-          }
-        ],
+        "args": null,
         "kind": "FragmentSpread",
         "name": "AgentStatsFragment"
       }
@@ -78,7 +55,7 @@ return {
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": (v0/*: any*/),
+    "argumentDefinitions": [],
     "kind": "Operation",
     "name": "AgentStatsRefetchQuery",
     "selections": [
@@ -129,49 +106,54 @@ return {
         "alias": "aliveAgents",
         "args": [
           {
-            "kind": "Variable",
+            "kind": "Literal",
             "name": "filter",
-            "variableName": "aliveAgentFilter"
+            "value": {
+              "status": (v0/*: any*/)
+            }
           },
           (v1/*: any*/)
         ],
-        "concreteType": "AgentConnection",
+        "concreteType": "AgentV2Connection",
         "kind": "LinkedField",
-        "name": "agent_nodes",
+        "name": "agentsV2",
         "plural": false,
         "selections": (v2/*: any*/),
-        "storageKey": null
+        "storageKey": "agentsV2(filter:{\"status\":{\"equals\":\"ALIVE\"}},limit:1)"
       },
       {
         "alias": "schedulableAgents",
         "args": [
           {
-            "kind": "Variable",
+            "kind": "Literal",
             "name": "filter",
-            "variableName": "schedulableAgentFilter"
+            "value": {
+              "schedulable": true,
+              "status": (v0/*: any*/)
+            }
           },
           (v1/*: any*/)
         ],
-        "concreteType": "AgentConnection",
+        "concreteType": "AgentV2Connection",
         "kind": "LinkedField",
-        "name": "agent_nodes",
+        "name": "agentsV2",
         "plural": false,
         "selections": (v2/*: any*/),
-        "storageKey": null
+        "storageKey": "agentsV2(filter:{\"schedulable\":true,\"status\":{\"equals\":\"ALIVE\"}},limit:1)"
       }
     ]
   },
   "params": {
-    "cacheID": "94723c46599cac0fa017d69548d9db15",
+    "cacheID": "d855dbce20f7b0c70d997e3d7c80d024",
     "id": null,
     "metadata": {},
     "name": "AgentStatsRefetchQuery",
     "operationKind": "query",
-    "text": "query AgentStatsRefetchQuery(\n  $aliveAgentFilter: String!\n  $schedulableAgentFilter: String!\n) {\n  ...AgentStatsFragment_rQkRq\n}\n\nfragment AgentStatsFragment_rQkRq on Query {\n  agentStats {\n    totalResource {\n      free\n      used\n      capacity\n    }\n  }\n  aliveAgents: agent_nodes(filter: $aliveAgentFilter, first: 1) {\n    count\n  }\n  schedulableAgents: agent_nodes(filter: $schedulableAgentFilter, first: 1) {\n    count\n  }\n}\n"
+    "text": "query AgentStatsRefetchQuery {\n  ...AgentStatsFragment\n}\n\nfragment AgentStatsFragment on Query {\n  agentStats {\n    totalResource {\n      free\n      used\n      capacity\n    }\n  }\n  aliveAgents: agentsV2(filter: {status: {equals: ALIVE}}, limit: 1) {\n    count\n  }\n  schedulableAgents: agentsV2(filter: {status: {equals: ALIVE}, schedulable: true}, limit: 1) {\n    count\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "da7ac79d9a8210f4be08f760587adfdb";
+(node as any).hash = "e217cb656048f87c06a9d79f978a321b";
 
 export default node;

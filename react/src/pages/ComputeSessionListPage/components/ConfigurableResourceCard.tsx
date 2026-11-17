@@ -60,20 +60,17 @@ const ConfigurableResourceCard: React.FC<ConfigurableResourceCardProps> = ({
         query ConfigurableResourceCardQuery(
           $resourceGroup: String
           $isSuperAdmin: Boolean!
-          $agentNodeFilter: String!
         ) {
           ...TotalResourceWithinResourceGroupFragment
             @arguments(
               resourceGroup: $resourceGroup
               isSuperAdmin: $isSuperAdmin
-              agentNodeFilter: $agentNodeFilter
             )
         }
       `,
       {
         resourceGroup: currentResourceGroup || 'default',
         isSuperAdmin: _.isEqual(userRole, 'superadmin'),
-        agentNodeFilter: `schedulable == true & status == "ALIVE" & scaling_group == "${currentResourceGroup}"`,
       },
       {
         // The agent scan runs only while the total panel is the one shown.

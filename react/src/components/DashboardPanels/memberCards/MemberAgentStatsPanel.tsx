@@ -55,6 +55,7 @@ const MemberAgentStats: React.FC<{ fetchKey: string }> = ({ fetchKey }) => {
   'use memo';
   const allowed = useDashboardResourceGroups();
   const sftpGroups = allowed?.filter?.name?.notIn ?? [];
+  // TODO(needs-backend): #11077 agentsV2 is superadmin-only, and this card serves every role.
   const data = useLazyLoadQuery<MemberAgentStatsPanelQuery>(
     graphql`
       query MemberAgentStatsPanelQuery($limit: Int!, $filter: String) {
