@@ -7,11 +7,10 @@ import type { resourceRegistryDeploymentQuery } from '../../__generated__/resour
 import type { resourceRegistrySessionQuery } from '../../__generated__/resourceRegistrySessionQuery.graphql';
 import type { resourceRegistryVfolderQuery } from '../../__generated__/resourceRegistryVfolderQuery.graphql';
 import { convertToOrderBy } from '../../helper';
-import { rbacTypeLabel } from '../../helper/rbacElementTypes';
 import FolderLink from '../FolderLink';
+import { auditEntityTypeLabels } from './chartSources';
 import { AUDIT_LOG_STATUSES } from './memberCards/memberCardData';
 import { readPrimary, type CaughtValue } from './panelPermission';
-import { projectAuditScope } from './projectAdminCards/projectCardData';
 import { getSessionFilterProperties } from './sessionFilterProperties';
 import {
   AUDIT_ENTITY_TYPES,
@@ -433,14 +432,18 @@ const auditLogConfig: ResourceConfig<resourceRegistryAuditLogQuery, unknown> = {
       // Picked, never typed: the table shows translated labels, and a typed
       // label would be sent as the value.
       strictSelection: true,
-      options: _.sortBy(
-        _.uniq([
+      options: (() => {
+        const types = _.uniq([
           ...(context?.entityTypes ?? []),
           ...AUDIT_ENTITY_TYPES,
           ...UNLISTED_AUDIT_ENTITY_TYPES,
-        ]).map((type) => ({ value: type, label: rbacTypeLabel(t, type) })),
-        (option) => option.label,
-      ),
+        ]);
+        const labels = auditEntityTypeLabels(t, types);
+        return _.sortBy(
+          types.map((type) => ({ value: type, label: labels[type] })),
+          (option) => option.label,
+        );
+      })(),
     },
     {
       key: 'status',
@@ -463,28 +466,17 @@ const auditLogConfig: ResourceConfig<resourceRegistryAuditLogQuery, unknown> = {
       type: 'string',
     },
   ],
-  buildVariables: ({
-    filter,
-    order,
-    limit,
-    offset,
-    ownerId,
-    projectId,
-    domainId,
-    auditScope,
-  }) => ({
-    scope:
-      auditScope ??
-      (ownerId
-        ? { triggeredUser: [{ value: ownerId }] }
-        : projectId
-          ? projectAuditScope(projectId)
-          : { entity: [{ entityType: 'domain', entityId: domainId }] }),
-    filter: typeof filter === 'string' ? undefined : (filter ?? undefined),
-    orderBy: convertToOrderBy(order ?? '-createdAt'),
-    limit,
-    offset,
-  }),
+  // The scope comes from `useAuditLogQueryScope` only, so no caller can fall back to a narrower one.
+  buildVariables: ({ filter, order, limit, offset, auditScope }) => {
+    if (!auditScope) throw new Error('This page has no audit log scope yet');
+    return {
+      scope: auditScope,
+      filter: typeof filter === 'string' ? undefined : (filter ?? undefined),
+      orderBy: convertToOrderBy(order ?? '-createdAt'),
+      limit,
+      offset,
+    };
+  },
   selectConnection: (data) =>
     selectOffsetConnection(readPrimary(data.scopedAuditLogsV2)),
 };

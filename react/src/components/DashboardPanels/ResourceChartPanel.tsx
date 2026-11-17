@@ -553,6 +553,17 @@ const useRankedAuditEntityTypes = (
                 }
               }
             }
+            oldest: adminAuditLogsV2(
+              filter: $filter
+              orderBy: [{ field: CREATED_AT, direction: ASC }]
+              limit: $limit
+            ) @include(if: $on) @catch(to: RESULT) {
+              edges {
+                node {
+                  entityType
+                }
+              }
+            }
           }
         `
       : graphql`
@@ -574,12 +585,24 @@ const useRankedAuditEntityTypes = (
                 }
               }
             }
+            oldest: scopedAuditLogsV2(
+              scope: $scope
+              filter: $filter
+              orderBy: [{ field: CREATED_AT, direction: ASC }]
+              limit: $limit
+            ) @include(if: $on) @catch(to: RESULT) {
+              edges {
+                node {
+                  entityType
+                }
+              }
+            }
           }
         `,
     sampleVariables,
     { fetchPolicy, fetchKey },
   );
-  const sampled = [sampleData.newest].flatMap((result) =>
+  const sampled = [sampleData.newest, sampleData.oldest].flatMap((result) =>
     result?.ok ? _.compact(result.value?.edges.map((e) => e?.node)) : [],
   );
   const candidates = isEnabled

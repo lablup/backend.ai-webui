@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<db90319f4f5285b301513fbd833100e1>>
+ * @generated SignedSource<<274c8e7dac5871dab2d9882f268cd029>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -13,7 +13,7 @@ export type DashboardPanelModalEntityTypesQuery$variables = Record<PropertyKey, 
 export type DashboardPanelModalEntityTypesQuery$data = {
   readonly entityTypes: ReadonlyArray<{
     readonly name: string;
-  }>;
+  }> | null | undefined;
 };
 export type DashboardPanelModalEntityTypesQuery = {
   response: DashboardPanelModalEntityTypesQuery$data;
@@ -36,16 +36,20 @@ return {
     "name": "DashboardPanelModalEntityTypesQuery",
     "selections": [
       {
-        "alias": null,
-        "args": null,
-        "concreteType": "EntityType",
-        "kind": "LinkedField",
-        "name": "entityTypes",
-        "plural": true,
-        "selections": [
-          (v0/*: any*/)
-        ],
-        "storageKey": null
+        "kind": "CatchField",
+        "field": {
+          "alias": null,
+          "args": null,
+          "concreteType": "EntityType",
+          "kind": "LinkedField",
+          "name": "entityTypes",
+          "plural": true,
+          "selections": [
+            (v0/*: any*/)
+          ],
+          "storageKey": null
+        },
+        "to": "NULL"
       }
     ],
     "type": "Query",
@@ -89,6 +93,6 @@ return {
 };
 })();
 
-(node as any).hash = "2dba302188f58254211fcdbc1eb790d6";
+(node as any).hash = "dd607cca218a8e8df923f414b8e10172";
 
 export default node;

@@ -109,12 +109,6 @@ const CHART_TYPE_LABELS: Record<
   },
 };
 
-/**
- * Create/edit a table panel: pick a resource, build the condition with the same
- * property filter the queries use, optionally title it (the title is how the
- * condition is expressed on the board), and see matching rows live — sorting the
- * preview sets the panel's persisted order. Nothing is applied until OK.
- */
 type ConditionFilterProps = Omit<
   BAIGraphQLPropertyFilterProps,
   'filterProperties'
@@ -130,7 +124,7 @@ const AuditLogConditionFilter: React.FC<ConditionFilterProps> = ({
   const data = useLazyLoadQuery<DashboardPanelModalEntityTypesQuery>(
     graphql`
       query DashboardPanelModalEntityTypesQuery {
-        entityTypes {
+        entityTypes @catch(to: NULL) {
           name
         }
       }
@@ -144,7 +138,8 @@ const AuditLogConditionFilter: React.FC<ConditionFilterProps> = ({
       {...filterProps}
       filterProperties={[
         ...(resourceRegistry[source].getFilterProperties?.(t, {
-          entityTypes: data.entityTypes.map((type) => type.name),
+          // Without the manager's list the fixed one still offers the common types.
+          entityTypes: data.entityTypes?.map((type) => type.name) ?? [],
         }) ?? []),
       ]}
     />
@@ -173,6 +168,12 @@ const ConditionFilter: React.FC<ConditionFilterProps> = ({
   );
 };
 
+/**
+ * Create/edit a table panel: pick a resource, build the condition with the same
+ * property filter the queries use, optionally title it (the title is how the
+ * condition is expressed on the board), and see matching rows live — sorting the
+ * preview sets the panel's persisted order. Nothing is applied until OK.
+ */
 const DashboardPanelModal: React.FC<DashboardPanelModalProps> = ({
   open,
   onRequestClose,

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<002b9ed235b6a04ac56a55c298d3d109>>
+ * @generated SignedSource<<9075fd5771074759e1d13fa8fadfd7b0>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -102,6 +102,13 @@ export type ResourceChartPanelAuditLogTypesQuery$data = {
       };
     }>;
   } | null | undefined, unknown>;
+  readonly oldest?: Result<{
+    readonly edges: ReadonlyArray<{
+      readonly node: {
+        readonly entityType: string | null | undefined;
+      };
+    }>;
+  } | null | undefined, unknown>;
 };
 export type ResourceChartPanelAuditLogTypesQuery = {
   response: ResourceChartPanelAuditLogTypesQuery$data;
@@ -129,17 +136,24 @@ v3 = {
   "kind": "LocalArgument",
   "name": "scope"
 },
-v4 = [
-  {
-    "kind": "Variable",
-    "name": "filter",
-    "variableName": "filter"
-  },
-  {
-    "kind": "Variable",
-    "name": "limit",
-    "variableName": "limit"
-  },
+v4 = {
+  "kind": "Variable",
+  "name": "filter",
+  "variableName": "filter"
+},
+v5 = {
+  "kind": "Variable",
+  "name": "limit",
+  "variableName": "limit"
+},
+v6 = {
+  "kind": "Variable",
+  "name": "scope",
+  "variableName": "scope"
+},
+v7 = [
+  (v4/*: any*/),
+  (v5/*: any*/),
   {
     "kind": "Literal",
     "name": "orderBy",
@@ -150,19 +164,87 @@ v4 = [
       }
     ]
   },
-  {
-    "kind": "Variable",
-    "name": "scope",
-    "variableName": "scope"
-  }
+  (v6/*: any*/)
 ],
-v5 = {
+v8 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "entityType",
   "storageKey": null
-};
+},
+v9 = [
+  {
+    "alias": null,
+    "args": null,
+    "concreteType": "AuditLogV2Edge",
+    "kind": "LinkedField",
+    "name": "edges",
+    "plural": true,
+    "selections": [
+      {
+        "alias": null,
+        "args": null,
+        "concreteType": "AuditLogV2",
+        "kind": "LinkedField",
+        "name": "node",
+        "plural": false,
+        "selections": [
+          (v8/*: any*/)
+        ],
+        "storageKey": null
+      }
+    ],
+    "storageKey": null
+  }
+],
+v10 = [
+  (v4/*: any*/),
+  (v5/*: any*/),
+  {
+    "kind": "Literal",
+    "name": "orderBy",
+    "value": [
+      {
+        "direction": "ASC",
+        "field": "CREATED_AT"
+      }
+    ]
+  },
+  (v6/*: any*/)
+],
+v11 = [
+  {
+    "alias": null,
+    "args": null,
+    "concreteType": "AuditLogV2Edge",
+    "kind": "LinkedField",
+    "name": "edges",
+    "plural": true,
+    "selections": [
+      {
+        "alias": null,
+        "args": null,
+        "concreteType": "AuditLogV2",
+        "kind": "LinkedField",
+        "name": "node",
+        "plural": false,
+        "selections": [
+          (v8/*: any*/),
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "id",
+            "storageKey": null
+          }
+        ],
+        "storageKey": null
+      }
+    ],
+    "storageKey": null
+  }
+];
 return {
   "fragment": {
     "argumentDefinitions": [
@@ -184,36 +266,26 @@ return {
             "kind": "CatchField",
             "field": {
               "alias": "newest",
-              "args": (v4/*: any*/),
+              "args": (v7/*: any*/),
               "concreteType": "AuditLogV2Connection",
               "kind": "LinkedField",
               "name": "scopedAuditLogsV2",
               "plural": false,
-              "selections": [
-                {
-                  "alias": null,
-                  "args": null,
-                  "concreteType": "AuditLogV2Edge",
-                  "kind": "LinkedField",
-                  "name": "edges",
-                  "plural": true,
-                  "selections": [
-                    {
-                      "alias": null,
-                      "args": null,
-                      "concreteType": "AuditLogV2",
-                      "kind": "LinkedField",
-                      "name": "node",
-                      "plural": false,
-                      "selections": [
-                        (v5/*: any*/)
-                      ],
-                      "storageKey": null
-                    }
-                  ],
-                  "storageKey": null
-                }
-              ],
+              "selections": (v9/*: any*/),
+              "storageKey": null
+            },
+            "to": "RESULT"
+          },
+          {
+            "kind": "CatchField",
+            "field": {
+              "alias": "oldest",
+              "args": (v10/*: any*/),
+              "concreteType": "AuditLogV2Connection",
+              "kind": "LinkedField",
+              "name": "scopedAuditLogsV2",
+              "plural": false,
+              "selections": (v9/*: any*/),
               "storageKey": null
             },
             "to": "RESULT"
@@ -242,43 +314,22 @@ return {
         "selections": [
           {
             "alias": "newest",
-            "args": (v4/*: any*/),
+            "args": (v7/*: any*/),
             "concreteType": "AuditLogV2Connection",
             "kind": "LinkedField",
             "name": "scopedAuditLogsV2",
             "plural": false,
-            "selections": [
-              {
-                "alias": null,
-                "args": null,
-                "concreteType": "AuditLogV2Edge",
-                "kind": "LinkedField",
-                "name": "edges",
-                "plural": true,
-                "selections": [
-                  {
-                    "alias": null,
-                    "args": null,
-                    "concreteType": "AuditLogV2",
-                    "kind": "LinkedField",
-                    "name": "node",
-                    "plural": false,
-                    "selections": [
-                      (v5/*: any*/),
-                      {
-                        "alias": null,
-                        "args": null,
-                        "kind": "ScalarField",
-                        "name": "id",
-                        "storageKey": null
-                      }
-                    ],
-                    "storageKey": null
-                  }
-                ],
-                "storageKey": null
-              }
-            ],
+            "selections": (v11/*: any*/),
+            "storageKey": null
+          },
+          {
+            "alias": "oldest",
+            "args": (v10/*: any*/),
+            "concreteType": "AuditLogV2Connection",
+            "kind": "LinkedField",
+            "name": "scopedAuditLogsV2",
+            "plural": false,
+            "selections": (v11/*: any*/),
             "storageKey": null
           }
         ]
@@ -286,16 +337,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "cc09d688c7cb9a2088d6eba8981ab0ab",
+    "cacheID": "5d02e4c095e29c6736b9e311f73ee1c4",
     "id": null,
     "metadata": {},
     "name": "ResourceChartPanelAuditLogTypesQuery",
     "operationKind": "query",
-    "text": "query ResourceChartPanelAuditLogTypesQuery(\n  $scope: AuditLogScope!\n  $filter: AuditLogFilter\n  $limit: Int!\n  $on: Boolean!\n) {\n  newest: scopedAuditLogsV2(scope: $scope, filter: $filter, orderBy: [{field: CREATED_AT, direction: DESC}], limit: $limit) @include(if: $on) {\n    edges {\n      node {\n        entityType\n        id\n      }\n    }\n  }\n}\n"
+    "text": "query ResourceChartPanelAuditLogTypesQuery(\n  $scope: AuditLogScope!\n  $filter: AuditLogFilter\n  $limit: Int!\n  $on: Boolean!\n) {\n  newest: scopedAuditLogsV2(scope: $scope, filter: $filter, orderBy: [{field: CREATED_AT, direction: DESC}], limit: $limit) @include(if: $on) {\n    edges {\n      node {\n        entityType\n        id\n      }\n    }\n  }\n  oldest: scopedAuditLogsV2(scope: $scope, filter: $filter, orderBy: [{field: CREATED_AT, direction: ASC}], limit: $limit) @include(if: $on) {\n    edges {\n      node {\n        entityType\n        id\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "3e7c6ade865119f5cc1c7f759e2bccf2";
+(node as any).hash = "05e369ad31f46ff2cc3c0e90e8b54765";
 
 export default node;

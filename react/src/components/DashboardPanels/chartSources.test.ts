@@ -5,6 +5,7 @@
 import {
   CHART_GROUPINGS,
   auditEntityTypeGroups,
+  auditEntityTypeLabels,
   chartCounts,
   chartTableFilter,
   chartTypesFor,
@@ -309,8 +310,25 @@ describe('audit log entity type groups from the data', () => {
     });
   });
 
-  it('keeps the fixed list when no row was sampled', () => {
+  it('keeps the fixed list when fewer than two types were found, so a radar keeps three axes', () => {
     expect(auditEntityTypeGroups([])).toBeUndefined();
+    expect(auditEntityTypeGroups(['session'])).toBeUndefined();
+  });
+
+  it('adds the type name where two types share a label', () => {
+    const t = ((key: string) =>
+      ({
+        'rbac.types.DEPLOYMENT': 'Deployment',
+        'rbac.types.MODEL_DEPLOYMENT': 'Deployment',
+        'rbac.types.SESSION': 'Session',
+      })[key] ?? key) as unknown as Parameters<typeof auditEntityTypeLabels>[0];
+    expect(
+      auditEntityTypeLabels(t, ['deployment', 'model_deployment', 'session']),
+    ).toEqual({
+      deployment: 'Deployment (deployment)',
+      model_deployment: 'Deployment (model_deployment)',
+      session: 'Session',
+    });
   });
 
   it("replaces the grouping's groups in the chart counts", () => {
@@ -319,10 +337,11 @@ describe('audit log entity type groups from the data', () => {
       resolveChart('auditLog', { type: 'donut', groupBy: 'entityType' }),
       'now-24h',
       NOW,
-      auditEntityTypeGroups(['app_config_fragment']),
+      auditEntityTypeGroups(['app_config_fragment', 'project']),
     );
     expect(counts.map((count) => count.key)).toEqual([
       'app_config_fragment',
+      'project',
       'other',
     ]);
   });

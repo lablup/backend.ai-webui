@@ -353,12 +353,13 @@ export const entityTypesByFrequency = (
 export const auditEntityTypeGroups = (
   frequentTypes: ReadonlyArray<string>,
 ): ReadonlyArray<ChartCount> | undefined => {
-  if (frequentTypes.length === 0) return undefined;
   const shown = frequentTypes.slice(0, MAX_BUCKETS - 1);
+  // Two types plus "Other types" is the fewest a radar can draw.
+  if (shown.length < 2) return undefined;
   return [
     ...shown.map((type) => ({
       key: type,
-      label: (t: TFunction) => rbacTypeLabel(t, type),
+      label: (t: TFunction) => auditEntityTypeLabels(t, shown)[type],
       filter: { entityType: { equals: type } },
     })),
     {
@@ -367,4 +368,19 @@ export const auditEntityTypeGroups = (
       filter: { entityType: { notIn: [...shown] } },
     },
   ];
+};
+
+/** Each type's label, with the type name added where two types share one (`deployment`, `model_deployment`). */
+export const auditEntityTypeLabels = (
+  t: TFunction,
+  types: ReadonlyArray<string>,
+): Record<string, string> => {
+  const labels = types.map((type) => rbacTypeLabel(t, type));
+  const counts = _.countBy(labels);
+  return Object.fromEntries(
+    types.map((type, index) => [
+      type,
+      counts[labels[index]] > 1 ? `${labels[index]} (${type})` : labels[index],
+    ]),
+  );
 };
