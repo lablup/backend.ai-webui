@@ -80,7 +80,9 @@ test.describe('Basic Chat Flow', { tag: ['@chat', '@functional'] }, () => {
     await chatInput.press('Enter');
 
     // Verify the user message appears in the message thread
-    await expect(page.getByText('What is Backend.AI?').first()).toBeVisible({
+    await expect(
+      page.getByTestId('chat-message-list').getByText('What is Backend.AI?'),
+    ).toBeVisible({
       timeout: 10000,
     });
 
@@ -135,8 +137,9 @@ test.describe('Basic Chat Flow', { tag: ['@chat', '@functional'] }, () => {
     ).toBeVisible({ timeout: 15000 });
 
     // Both turns should be visible in the thread
-    await expect(page.getByText('What is Backend.AI?').first()).toBeVisible();
-    await expect(page.getByText('Hello from mock!').first()).toBeVisible();
+    const messageList = page.getByTestId('chat-message-list');
+    await expect(messageList.getByText('What is Backend.AI?')).toBeVisible();
+    await expect(messageList.getByText('Hello from mock!')).toBeVisible();
   });
 
   test('User can stop a streaming response mid-generation', async ({
@@ -273,6 +276,9 @@ test.describe('Basic Chat Flow', { tag: ['@chat', '@functional'] }, () => {
 
     const messageList = page.getByTestId('chat-message-list');
     await expect(messageList.getByText('What is Backend.AI?')).toBeVisible();
+    await expect(
+      page.getByRole('heading', { name: 'What is Backend.AI?' }),
+    ).toBeVisible();
 
     // Click the "More" (three-dot) menu button in the chat card header
     const moreButton = page.getByRole('button', { name: 'more' });
@@ -392,6 +398,7 @@ test.describe(
 
       const chatInput = page.getByLabel('Type your message here...');
       await expect(chatInput).toBeVisible({ timeout: 10000 });
+      const messageList = page.getByTestId('chat-message-list');
 
       // First session: send "First session message" and wait for reply
       await chatInput.fill('First session message');
@@ -405,7 +412,7 @@ test.describe(
       await newChatButton.first().click();
 
       // The message thread should be empty in the new session
-      await expect(page.getByText('First session message')).not.toBeVisible({
+      await expect(messageList.getByText('First session message')).toBeHidden({
         timeout: 5000,
       });
 
@@ -438,7 +445,6 @@ test.describe(
       await expect(
         page.getByRole('heading', { name: 'First session message' }),
       ).toBeVisible({ timeout: 10000 });
-      const messageList = page.getByTestId('chat-message-list');
       await expect(
         messageList.getByText('First session message'),
       ).toBeVisible();
