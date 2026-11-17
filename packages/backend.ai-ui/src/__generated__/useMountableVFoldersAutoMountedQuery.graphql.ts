@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<22c18ffcb9ba2d690ba6881871c68950>>
+ * @generated SignedSource<<d0f33fd1a3507d0b11b72a2c5f5377b0>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,6 +9,7 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
+export type VFolderMountPermission = "NONE" | "READ_ONLY" | "READ_WRITE" | "RW_DELETE" | "%future added value";
 export type VFolderOperationStatus = "CLONING" | "CREATING" | "DELETE_COMPLETE" | "DELETE_ERROR" | "DELETE_ONGOING" | "DELETE_PENDING" | "READY" | "%future added value";
 export type VFolderAutoMountScope = {
   project?: ReadonlyArray<UUIDScope> | null | undefined;
@@ -32,6 +33,7 @@ export type useMountableVFoldersAutoMountedQuery$data = {
           readonly metadata: {
             readonly name: string;
           };
+          readonly mountPermission: VFolderMountPermission | null | undefined;
           readonly status: VFolderOperationStatus;
         } | null | undefined;
         readonly vfolderId: string;
@@ -110,6 +112,13 @@ v5 = {
 v6 = {
   "alias": null,
   "args": null,
+  "kind": "ScalarField",
+  "name": "mountPermission",
+  "storageKey": null
+},
+v7 = {
+  "alias": null,
+  "args": null,
   "concreteType": "VFolderMetadataInfo",
   "kind": "LinkedField",
   "name": "metadata",
@@ -125,7 +134,7 @@ v6 = {
   ],
   "storageKey": null
 },
-v7 = {
+v8 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
@@ -175,7 +184,8 @@ return {
                     "selections": [
                       (v4/*: any*/),
                       (v5/*: any*/),
-                      (v6/*: any*/)
+                      (v6/*: any*/),
+                      (v7/*: any*/)
                     ],
                     "storageKey": null
                   }
@@ -235,11 +245,12 @@ return {
                       (v4/*: any*/),
                       (v5/*: any*/),
                       (v6/*: any*/),
-                      (v7/*: any*/)
+                      (v7/*: any*/),
+                      (v8/*: any*/)
                     ],
                     "storageKey": null
                   },
-                  (v7/*: any*/)
+                  (v8/*: any*/)
                 ],
                 "storageKey": null
               }
@@ -252,16 +263,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "67075f433046137dfeec8b5e0b96153b",
+    "cacheID": "f553f5b4db42a327fbc947c97d1dd82d",
     "id": null,
     "metadata": {},
     "name": "useMountableVFoldersAutoMountedQuery",
     "operationKind": "query",
-    "text": "query useMountableVFoldersAutoMountedQuery(\n  $autoMountScope: VFolderAutoMountScope!\n  $limit: Int!\n) {\n  scopedVfolderAutoMounts(scope: $autoMountScope, limit: $limit, orderBy: [{field: MOUNT_DESTINATION, direction: ASC}]) {\n    edges {\n      node {\n        vfolderId\n        mountDestination\n        vfolder {\n          host\n          status\n          metadata {\n            name\n          }\n          id\n        }\n        id\n      }\n    }\n  }\n}\n"
+    "text": "query useMountableVFoldersAutoMountedQuery(\n  $autoMountScope: VFolderAutoMountScope!\n  $limit: Int!\n) {\n  scopedVfolderAutoMounts(scope: $autoMountScope, limit: $limit, orderBy: [{field: MOUNT_DESTINATION, direction: ASC}]) {\n    edges {\n      node {\n        vfolderId\n        mountDestination\n        vfolder {\n          host\n          status\n          mountPermission\n          metadata {\n            name\n          }\n          id\n        }\n        id\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "daba8afc6b20834c44e2debb4fe81132";
+(node as any).hash = "ab64b58dfb000e45e958faf253600f6b";
 
 export default node;
