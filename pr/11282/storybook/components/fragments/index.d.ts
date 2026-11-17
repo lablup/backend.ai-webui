@@ -119,6 +119,8 @@ export { default as BAIDeploymentOwnerInfo } from './BAIDeploymentOwnerInfo';
 export type { BAIDeploymentOwnerInfoProps } from './BAIDeploymentOwnerInfo';
 export { default as BAISchedulingHistoryNodes } from './BAISchedulingHistoryNodes';
 export type { BAISchedulingHistoryNodesProps, SchedulingHistoryNodeInList, } from './BAISchedulingHistoryNodes';
+export { default as BAIAuditLogActionName } from './BAIAuditLogActionName';
+export type { BAIAuditLogActionNameProps } from './BAIAuditLogActionName';
 export { default as BAIAuditLogNodes } from './BAIAuditLogNodes';
 export type { BAIAuditLogNodesProps, AuditLogNodeInList, } from './BAIAuditLogNodes';
 export { default as BAIDeploymentSchedulingHistoryNodes } from './BAIDeploymentSchedulingHistoryNodes';
