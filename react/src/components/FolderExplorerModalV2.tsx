@@ -25,7 +25,6 @@ import type { ScopedAuditLogQuery as ScopedAuditLogQueryType } from '../__genera
 import { formatToUUID } from '../helper';
 import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
-import { useAccessibleProjects } from '../hooks/useAccessibleProjects';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useIsProjectAgnosticPage } from '../hooks/useIsProjectAgnosticPage';
@@ -210,14 +209,10 @@ const useFolderExplorerQuery = (vfolderID: string) => {
           permissions @since(version: "26.9.0rc1")
           ownership {
             projectId
-            userId
-          }
-          accessControl {
-            ownershipType
           }
           ...FolderExplorerModalV2OwnershipFragment
           ...FolderExplorerHeaderV2Fragment
-          ...VFolderNodesV2AutoMountCellFragment
+          ...VFolderAutoMountMetadataSectionFragment
           ...VFolderNodeDescriptionV2Fragment
         }
       }
@@ -287,7 +282,6 @@ const FolderExplorerBody: React.FC<{
   const [fetchKey, updateFetchKey] = useFetchKey();
   const baiClient = useSuspendedBackendaiClient();
   const loginConfig = useEffectiveLoginConfig();
-  const { personalProject } = useAccessibleProjects();
   const currentDomain = useCurrentDomainValue();
   const { pageProject } = usePageProject();
   const currentUserAccessKey = baiClient?._config?.accessKey;
@@ -362,18 +356,6 @@ const FolderExplorerBody: React.FC<{
   const [activeTab, setActiveTab] = useState<'metadata' | 'auditLog'>(
     'metadata',
   );
-  // A personal project's folder auto-mounts for the user, as FolderCreateModal sets it.
-  const autoMountScope = (() => {
-    if (!vfolderNode) return null;
-    const { userId, projectId } = vfolderNode.ownership ?? {};
-    if (vfolderNode.accessControl?.ownershipType === 'USER') {
-      return userId ? { scopeType: 'USER' as const, scopeId: userId } : null;
-    }
-    if (!projectId) return null;
-    return projectId === personalProject?.id
-      ? { scopeType: 'USER' as const, scopeId: baiClient.user_uuid }
-      : { scopeType: 'PROJECT' as const, scopeId: projectId };
-  })();
   const [auditLogQueryRef, loadAuditLogQuery] =
     useQueryLoader<ScopedAuditLogQueryType>(ScopedAuditLogQuery);
 
@@ -586,17 +568,11 @@ const FolderExplorerBody: React.FC<{
               {vfolderNode ? (
                 <VFolderNodeDescriptionV2 vfolderNodeFrgmt={vfolderNode} />
               ) : null}
-              {autoMountScope && vfolderNode ? (
+              {vfolderNode ? (
                 <BAIErrorBoundary>
                   <Suspense fallback={<BAISkeleton rows={3} />}>
                     <VFolderAutoMountMetadataSection
                       vfolderFrgmt={vfolderNode}
-                      scopeType={autoMountScope.scopeType}
-                      scopeId={autoMountScope.scopeId}
-                      vfolder={{
-                        id: vfolderNode.entityId,
-                        name: vfolderNode.metadata?.name ?? '',
-                      }}
                     />
                   </Suspense>
                 </BAIErrorBoundary>

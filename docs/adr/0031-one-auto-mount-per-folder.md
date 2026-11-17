@@ -49,8 +49,8 @@ flowchart LR
 
 ### 1. The owning scope is the only scope
 
-- **Scope choice**: Every WebUI path that creates an auto-mount derives the scope from the folder's owner. A folder whose `accessControl.ownershipType` is `USER` gets the `USER` scope of `ownership.userId`. A project-owned folder of the user's personal project gets the current user's `USER` scope, the same scope `FolderCreateModal` uses there. Any other folder gets the `PROJECT` scope of `ownership.projectId`.
-- **Creation paths**: `FolderCreateModal` always creates a project folder with `createVFolderInProject`, in the personal project too. In the personal project it auto-mounts the folder for the user; in any other project it auto-mounts the folder for that project. Neither component decides the scope itself: the caller of `FolderCreateModal` passes `autoMountScopeType` (`USER` when the target is the caller's personal project, `PROJECT` by default), and `FolderExplorerModalV2` passes the scope to `VFolderAutoMountMetadataSection`.
+- **Scope choice**: Every WebUI path that creates an auto-mount derives the scope from the folder's owner. A folder whose `accessControl.ownershipType` is `USER` gets the `USER` scope of `ownership.userId`. A project-owned folder whose `ownership.project.basicInfo.type` is `PERSONAL` gets the `USER` scope of `ownership.creatorId`, that project's only user, whoever opens it. Any other folder gets the `PROJECT` scope of `ownership.projectId`.
+- **Creation paths**: `FolderCreateModal` always creates a project folder with `createVFolderInProject`, in the personal project too. In the personal project it auto-mounts the folder for the user; in any other project it auto-mounts the folder for that project. Neither component decides the scope itself: the caller of `FolderCreateModal` passes `autoMountScopeType` (`USER` when the target is the caller's personal project, `PROJECT` by default), and `VFolderAutoMountMetadataSection` derives the scope from its own fragment of the folder.
 - **Folder entry points**: An auto-mount is added only from a folder: `FolderCreateModal` and the folder explorer's `VFolderAutoMountMetadataSection`. `VFolderAutoMountSettingModal` always receives that folder and offers no folder picker.
 
 ### 2. One row per folder on read
@@ -62,6 +62,13 @@ flowchart LR
 
 - **Single value**: The folder list cell and the explorer section render the first row as the folder's auto-mount setting.
 - **Explorer actions**: The explorer section offers Add when the row is absent and Edit or Remove when it is present. It never offers a second Add for the same folder.
+
+### 3. Permissions gate the actions, not the display
+
+- **Display**: `VFolderAutoMountMetadataSection` shows what `VFolderNodesV2AutoMountCellFragment` returns, the same as the folder list. A permission check never hides it.
+- **Action permissions**: Edit and Remove check `UPDATE` and `SOFT_DELETE` on the existing row's own `scopeType`/`scopeId`; Add checks `CREATE` on the scope from section 1. Both read `myScopePermissions` with `entityType: "vfolder_auto_mount"`.
+- **Missing permission**: An action the caller may not perform stays visible, disabled, with a tooltip that says the permission is missing (`BAINameActionCell`'s `disabled: { reason }`). When the scope cannot be derived because `ownership.project` cannot be read, Add is disabled the same way.
+- **V2 fields only**: The project type comes from `vfolderV2.ownership.project`, caught with `@catch(to: NULL)` in the section's own fragment so a share recipient's project error does not fail the explorer's folder node (#10647). The legacy `group_node` is not used for this.
 
 ## Rejected alternatives
 
