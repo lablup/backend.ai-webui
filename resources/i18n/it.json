@@ -2329,7 +2329,7 @@
     "EndpointUnreachable": "Impossibile connettersi a questo server. Controlla l'indirizzo e la rete, poi riprova.",
     "ForgotPassword": "Ha dimenticato la password?",
     "GoToLogin": "Vai all'accesso",
-    "HidePassword": "Nascondi password",
+    "HidePassword": "Nascondi parola d'ordine",
     "InvalidChangePasswordToken": "gettone non valido",
     "InvalidChangePasswordTokenMessage": "Il token emesso per cambiare la password contiene un errore. Invia un'altra email per la modifica della password e riprova.",
     "LeaveService": "Lascia il servizio",
@@ -2354,7 +2354,7 @@
     "ServerUnreachable": "Impossibile connettersi al server. Verificare l'endpoint API e riprovare.",
     "SessionExpired": "La sessione di accesso è scaduta. Effettua nuovamente l'accesso.",
     "SessionMode": "Sessione",
-    "ShowPassword": "Mostra password",
+    "ShowPassword": "Mostra parola d'ordine",
     "SignUp": "Iscriviti",
     "SignoutFinished": "Disconnessione completata.",
     "singleSignOn": {
