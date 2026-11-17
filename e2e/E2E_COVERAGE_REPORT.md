@@ -1,6 +1,6 @@
 # E2E Test Coverage Report
 
-> **Last Updated:** 2026-11-08
+> **Last Updated:** 2026-11-16
 > **Router Source:** [`react/src/routes.tsx`](../react/src/routes.tsx)
 > **E2E Root:** [`e2e/`](.)
 >
@@ -12,7 +12,7 @@
 
 **Scope:** Coverage metrics apply only to the routes listed below and do **not** include all entries from `react/src/routes.tsx`. Routes such as `/admin-dashboard` (not yet exposed in menu) and `/ai-agent` (experimental) are currently out of scope.
 
-**Overall (in-scope routes): 428 / 582 features covered (74%)**
+**Overall (in-scope routes): 427 / 582 features covered (73%)**
 
 | Page                     | Route                                            | Features | Covered | Status  |
 | ------------------------ | ------------------------------------------------ | :------: | :-----: | :-----: |
@@ -26,7 +26,7 @@
 | Endpoint Detail          | `/serving/:serviceId`                            |    19    |    8    | 🔶 42%  |
 | Service Launcher         | `/service/start`                                 |    5     |    1    | 🔶 20%  |
 | VFolder / Data           | `/data`                                          |    56    |   43    | 🔶 77%  |
-| Model Store              | `/model-store`                                   |    6     |    6    | ✅ 100% |
+| Model Store              | `/model-store`                                   |    5     |    5    | ✅ 100% |
 | Admin Model Store        | `/admin-model-store`                             |    28    |   28    | ✅ 100% |
 | Storage Host             | `/storage-settings/:hostname`                    |    3     |    0    |  ❌ 0%  |
 | My Environment           | `/my-environment`                                |    2     |    2    | ✅ 100% |
@@ -49,13 +49,13 @@
 | Plugin System            | (config-based)                                   |    12    |   12    | ✅ 100% |
 | RBAC Management          | `/rbac`                                          |    26    |   25    | 🔶 96%  |
 | Auto Scaling Rule Preset | `/admin-serving?tab=auto-scaling-rule`           |    33    |   32    | 🔶 97%  |
-| Deployments              | `/deployments`, `/deployments/:id`               |    25    |   22    | 🔶 88%  |
+| Deployments              | `/deployments`, `/deployments/:id`               |    26    |   22    | 🔶 85%  |
 | Admin Deployment Preset  | `/admin/deployments/deployment-presets/new`      |    5     |    5    | ✅ 100% |
 | Runtime Parameters       | `/admin/deployments?tab=runtime-variant-presets` |    5     |    5    | ✅ 100% |
 | Project-Agnostic Scope   | `/admin/*` (except `admin-dashboard`)            |    5     |    5    | ✅ 100% |
 | Global Search Palette    | (header, every route)                            |    8     |    8    | ✅ 100% |
 | System Settings          | `/admin/system-settings`                         |    37    |   33    | 🔶 89%  |
-| **Total**                |                                                  | **582**  | **428** | **74%** |
+| **Total**                |                                                  | **582**  | **427** | **73%** |
 
 ---
 
@@ -479,16 +479,15 @@
 
 **Drawer:** `ModelCardDrawer` (card click), **Modal:** `ModelCardDeployModal` (deploy)
 
-| Feature                             | Status | Test                                                                                                             |
-| ----------------------------------- | ------ | ---------------------------------------------------------------------------------------------------------------- |
-| Model card list rendering           | ✅     | `admin can open model card drawer by clicking a card`                                                            |
-| Model card drawer metadata          | ✅     | `admin can see model description / metadata tags / metadata table / README content in the drawer`                |
-| Deploy button disabled (no presets) | ✅     | `admin cannot deploy when model card has no presets`                                                             |
-| Deploy modal (multi-preset)         | ✅     | `admin can open the Deploy Model modal / see preset options grouped by runtime variant / deploy after selection` |
-| Auto-deploy (single preset + RG)    | ✅     | `admin can auto-deploy when single preset and resource group available`                                          |
-| Post-deploy alerts                  | ✅     | `admin can see "Preparing your service" / "Service Ready" alerts on EndpointDetailPage`                          |
+| Feature                          | Status | Test                                                                                              |
+| -------------------------------- | ------ | ------------------------------------------------------------------------------------------------- |
+| Model card list rendering        | ✅     | `admin can open model card drawer by clicking a card`                                             |
+| Model card drawer metadata       | ✅     | `admin can see model description / metadata tags / metadata table / README content in the drawer` |
+| Deploy modal (no presets)        | ✅     | `admin sees "No deployment presets available" in the deploy modal / cannot deploy from the modal` |
+| Deploy modal (multi-preset)      | ✅     | `admin can open the Deploy Model modal / see the preset options / change the preset selection`    |
+| Auto-deploy (single preset + RG) | ✅     | `admin can auto-deploy when single preset and resource group available`                           |
 
-**Coverage: ✅ 6/6 features**
+**Coverage: ✅ 5/5 features** (post-deploy banners: see Deployments, `deployment-lifecycle.spec.ts`)
 
 ---
 
@@ -1248,11 +1247,14 @@ External portals (LMS) open these routes with a signed `sToken` plus the app and
 
 #### Detail Page
 
-| Feature                                                                                                            | Status | Test                                                                                          |
-| ------------------------------------------------------------------------------------------------------------------ | ------ | --------------------------------------------------------------------------------------------- |
-| Basic Information card, revision tabs, Replicas / Auto-scaling sections, Access Tokens disabled without a revision | ✅     | `Admin can view the Basic Information and empty-state sections of a newly created deployment` |
-| Edit deployment — Desired Replicas save persists; Cancel does not                                                  | ✅     | `Admin can update a deployment's Desired Replicas via the Edit modal`                         |
-| Revision History tab — URL tab param, filter, table structure, empty state                                         | ✅     | `Admin can view the Revision History tab structure`                                           |
+| Feature                                                                                                            | Status | Test                                                                                                        |
+| ------------------------------------------------------------------------------------------------------------------ | ------ | ----------------------------------------------------------------------------------------------------------- |
+| Basic Information card, revision tabs, Replicas / Auto-scaling sections, Access Tokens disabled without a revision | ✅     | `Admin can view the Basic Information and empty-state sections of a newly created deployment`               |
+| Edit deployment — Desired Replicas save persists; Cancel does not                                                  | ✅     | `Admin can update a deployment's Desired Replicas via the Edit modal`                                       |
+| Revision History tab — URL tab param, filter, table structure, empty state                                         | ✅     | `Admin can view the Revision History tab structure`                                                         |
+| "Deployment is ready" banner + "Test in Chat" → `/chat?endpointId=` (status/replicas mocked over a real shell)     | ✅     | `admin sees the "Deployment is ready" banner …` / `admin can open the chat page from "Test in Chat" …`      |
+| Replica warnings (desired 0 / none running) replace the ready banner; hidden once stopped                          | ✅     | `admin sees a warning instead of the ready banner when …` / `admin does not see the replica warning once …` |
+| "No revision is deployed" hidden once stopped; "Test in Chat" hidden when chat is blocklisted                      | ✅     | `admin does not see the "No revision is deployed" warning …` / `admin cannot see "Test in Chat" …`          |
 
 #### Add Revision Modal
 
@@ -1280,7 +1282,7 @@ External portals (LMS) open these routes with a signed `sToken` plus the app and
 | Replica scheduling completion (Lifecycle leaves Pending → replica scheduled)       | ❌     | Deferred — measured ~40s–20min+ on the shared cluster; out of scope for webui e2e                                        |
 | Revision rollback / promote from Revision History                                  | ❌     | -                                                                                                                        |
 
-**Coverage: 🔶 19/23 features (4 deferred to backend-surface testing or future work)**
+**Coverage: 🔶 22/26 features (4 deferred to backend-surface testing or future work)**
 
 ---
 

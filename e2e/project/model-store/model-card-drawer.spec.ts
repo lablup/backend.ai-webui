@@ -1,9 +1,8 @@
 // FR-2503: E2E tests for Model Card Drawer and Deploy UX
-// spec: e2e/.agent-output/test-plan-model-card-drawer-deploy.md
-import { MOCK_ENDPOINT_UUID } from '../../mocks/serving/endpoint-detail-mock';
 import { endpointListMockResponse } from '../../mocks/serving/endpoint-list-mock';
 import {
   MOCK_DEPLOYMENT_ID,
+  availablePresetSelectMocks,
   modelCardDeployModalMutationMock,
   modelCardDeployModalQueryMock,
   modelCardDeployModalQuerySingleRGMock,
@@ -13,19 +12,9 @@ import {
   modelCardDrawerQueryWithMultiPresetsMock,
   modelCardDrawerQueryWithNoPresetsMock,
   modelCardDrawerQueryWithSinglePresetMock,
-  endpointDetailPreparingMockResponse,
-  endpointDetailZeroReplicasMockResponse,
-  endpointDetailTerminatedMockResponse,
-  endpointDetailServiceReadyMockResponse,
-  endpointDetailReadyButNoHealthyRoutesMockResponse,
-  endpointDetailHealthyButNoSchedulingHistoryMockResponse,
 } from '../../mocks/serving/model-store-mock';
 import { setupGraphQLMocks } from '../../mocks/session/graphql-interceptor';
-import {
-  loginAsAdmin,
-  modifyConfigToml,
-  navigateTo,
-} from '../../utils/test-util';
+import { loginAsAdmin, navigateTo } from '../../utils/test-util';
 import { test, expect } from '@playwright/test';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -285,72 +274,47 @@ test.describe(
       });
     });
 
-    test('admin cannot deploy when model card has no presets — Deploy button is disabled', async ({
-      page,
-    }) => {
-      // FR-2503 / post-refactor: The Deploy button in ModelCardDrawer is
-      // now disabled only when modelCard.id is missing (data not loaded).
-      // The no-presets state no longer disables the drawer-level Deploy
-      // button — instead, the Deploy modal shows a "No deployment presets
-      // available" info alert with the modal OK button disabled. To test
-      // the no-presets disabled state, check the modal's OK button after
-      // clicking Deploy in the drawer.
-      test.fixme(true);
-      // Click the "Mock No-Preset Model" card to open its drawer
+    async function openNoPresetDeployModal(page: any) {
       await openModelCardDrawer(page, 'Mock No-Preset Model');
-
-      // Verify the Deploy button is visible but disabled
-      const deployButton = page
+      const drawerDeployButton = page
         .getByRole('dialog', { name: /Mock No-Preset Model/ })
         .getByRole('button', { name: 'Deploy' });
-      await expect(deployButton).toBeVisible();
-      await expect(deployButton).toBeDisabled();
-    });
+      // The drawer's Deploy stays enabled; the modal explains the empty state.
+      await expect(drawerDeployButton).toBeEnabled();
+      await drawerDeployButton.click();
+      const deployModal = page.getByRole('dialog', {
+        name: 'Create New Deployment with Preset',
+      });
+      await expect(deployModal).toBeVisible();
+      return deployModal;
+    }
 
-    test('admin can see "No Compatible Presets" error alert when model card has no presets', async ({
+    test('admin sees "No deployment presets available" in the deploy modal when the model card has no presets', async ({
       page,
     }) => {
-      // The "No Compatible Presets" error alert was removed from
-      // ModelCardDrawer. The current drawer does not render any alert for
-      // no-presets state — instead, the Deploy modal shows an info alert
-      // ("No deployment presets available") when the modal is opened. This
-      // test would need to be rewritten to open the drawer AND then click
-      // Deploy to see the modal-level alert.
-      test.fixme(true);
-      // Open the drawer for "Mock No-Preset Model"
-      await openModelCardDrawer(page, 'Mock No-Preset Model');
+      const deployModal = await openNoPresetDeployModal(page);
 
-      const drawer = page.getByRole('dialog', { name: /Mock No-Preset Model/ });
-
-      // Verify an error alert with "No Compatible Presets" title is visible in the drawer body
-      const noPresetsAlert = drawer
-        .getByRole('alert')
-        .filter({ hasText: 'No Compatible Presets' });
-      await expect(noPresetsAlert).toBeVisible();
-    });
-
-    test('admin cannot open the deploy modal when the Deploy button is disabled', async ({
-      page,
-    }) => {
-      // Post-refactor: The Deploy button in ModelCardDrawer is enabled even
-      // when availablePresets is empty — only disabled when modelCard.id is
-      // missing. The "disabled for no presets" behavior was moved to the
-      // Deploy modal's OK button. This test's core assertion
-      // (toBeDisabled on the drawer-level Deploy button) no longer holds.
-      test.fixme(true);
-      // Open the drawer for "Mock No-Preset Model"
-      await openModelCardDrawer(page, 'Mock No-Preset Model');
-
-      // Verify the Deploy button is disabled — cannot open the modal
-      const deployButton = page
-        .getByRole('dialog', { name: /Mock No-Preset Model/ })
-        .getByRole('button', { name: 'Deploy' });
-      await expect(deployButton).toBeDisabled();
-
-      // Verify no deploy modal appears (title changed to "Create New Deployment with Preset")
       await expect(
-        page.getByRole('dialog', { name: 'Create New Deployment with Preset' }),
-      ).not.toBeVisible();
+        deployModal
+          .getByRole('status')
+          .filter({ hasText: 'No deployment presets available.' }),
+      ).toBeVisible();
+    });
+
+    test('admin cannot deploy from the modal when the model card has no presets', async ({
+      page,
+    }) => {
+      const deployModal = await openNoPresetDeployModal(page);
+
+      await expect(
+        deployModal.getByRole('combobox', { name: 'Preset', exact: true }),
+      ).toBeDisabled();
+      await expect(
+        deployModal.getByRole('button', { name: /^Resource Group/ }),
+      ).toBeDisabled();
+      await expect(
+        deployModal.getByRole('button', { name: 'Deploy', exact: true }),
+      ).toBeDisabled();
     });
   },
 );
@@ -365,7 +329,10 @@ test.describe(
   () => {
     test.describe.configure({ mode: 'serial' });
 
+    let deployMutationVariables: Array<Record<string, any>> = [];
+
     test.beforeEach(async ({ page, request }) => {
+      deployMutationVariables = [];
       await setupModelStorePage(
         page,
         request,
@@ -374,7 +341,11 @@ test.describe(
           // ModelCardDrawer fires ModelCardDrawerQuery for drawer content.
           ModelCardDrawerQuery: modelCardDrawerQueryWithMultiPresetsMock(),
           ModelCardDeployModalQuery: modelCardDeployModalQueryMock(),
-          ModelCardDeployModalMutation: modelCardDeployModalMutationMock(),
+          ModelCardDeployModalMutation: (vars) => {
+            deployMutationVariables.push(vars);
+            return modelCardDeployModalMutationMock()();
+          },
+          ...availablePresetSelectMocks(),
         },
         ['default', 'gpu-cluster'],
       );
@@ -403,20 +374,9 @@ test.describe(
       await expect(deployModal).toBeVisible();
     });
 
-    test('admin can see preset options grouped by runtime variant in deploy modal', async ({
+    test('admin can see the preset options in the deploy modal', async ({
       page,
     }) => {
-      // BAIAvailablePresetSelect (used inside ModelCardDeployModal for the
-      // Preset dropdown) fires its own Relay queries
-      // (BAIAvailablePresetSelectPaginatedQuery and
-      // BAIAvailablePresetSelectValueQuery) which are not intercepted by the
-      // ModelCardDeployModalQuery mock. The dropdown therefore fetches from
-      // the real backend — the mocked preset data from ModelCardDrawerQuery
-      // does not appear as grouped options. To fix this test the suite
-      // would need to mock BAIAvailablePresetSelectPaginatedQuery with
-      // grouped runtime-variant data.
-      test.fixme(true);
-      // Open drawer and click Deploy
       await openModelCardDrawer(page, 'Mock LLM Model');
       await page
         .getByRole('dialog', { name: /Mock LLM Model/ })
@@ -428,28 +388,24 @@ test.describe(
       });
       await expect(deployModal).toBeVisible();
 
-      // Click the Preset selector dropdown to open it (use the label element specifically)
-      await deployModal.getByRole('combobox').first().click();
+      // The first available preset is selected by default.
+      const presetSelect = deployModal.getByRole('combobox', {
+        name: 'Preset',
+        exact: true,
+      });
+      await expect(presetSelect).toContainText('gpu-small');
 
-      // Verify the dropdown options are grouped under "vllm" and "huggingface-tgi" headers
+      await presetSelect.click();
+      const presetPopup = page.getByRole('dialog', {
+        name: 'Preset',
+        exact: true,
+      });
+      await expect(presetPopup).toBeVisible();
       await expect(
-        page.locator('.ant-select-dropdown .ant-select-item-group', {
-          hasText: 'vllm',
-        }),
+        presetPopup.getByRole('option', { name: /gpu-small/ }),
       ).toBeVisible();
       await expect(
-        page.locator('.ant-select-dropdown .ant-select-item-group', {
-          hasText: 'huggingface-tgi',
-        }),
-      ).toBeVisible();
-
-      // Verify the "gpu-small" option is available in the dropdown
-      await expect(
-        page
-          .locator('.ant-select-dropdown .ant-select-item-option', {
-            hasText: 'gpu-small',
-          })
-          .first(),
+        presetPopup.getByRole('option', { name: /gpu-medium/ }),
       ).toBeVisible();
     });
 
@@ -510,15 +466,6 @@ test.describe(
     test('admin can change the preset selection in the modal', async ({
       page,
     }) => {
-      // BAIAvailablePresetSelect (the Preset dropdown in ModelCardDeployModal)
-      // fires BAIAvailablePresetSelectPaginatedQuery against the real backend.
-      // The mocked presets from ModelCardDrawerQuery do not populate this
-      // dropdown — the real backend returns different presets (or none),
-      // so clicking the second "gpu-small" option times out. To fix this
-      // test the suite must mock BAIAvailablePresetSelectPaginatedQuery with
-      // the expected grouped preset data.
-      test.fixme(true);
-      // Open drawer and click Deploy
       await openModelCardDrawer(page, 'Mock LLM Model');
       await page
         .getByRole('dialog', { name: /Mock LLM Model/ })
@@ -530,21 +477,30 @@ test.describe(
       });
       await expect(deployModal).toBeVisible();
 
-      // Click the Preset dropdown (use combobox role to avoid strict mode violation with label text)
-      await deployModal.getByRole('combobox').first().click();
+      const presetSelect = deployModal.getByRole('combobox', {
+        name: 'Preset',
+        exact: true,
+      });
+      await presetSelect.click();
+      const presetPopup = page.getByRole('dialog', {
+        name: 'Preset',
+        exact: true,
+      });
+      await presetPopup.getByRole('option', { name: /gpu-medium/ }).click();
+      await expect(presetPopup).toBeHidden();
+      await expect(presetSelect).toContainText('gpu-medium');
 
-      // Select "gpu-small" under "huggingface-tgi" group (second option in the list)
-      const gpuSmallOptions = page.locator(
-        '.ant-select-dropdown .ant-select-item-option',
-        { hasText: 'gpu-small' },
+      // Deploying sends the newly selected preset.
+      const modalDeployButton = deployModal.getByRole('button', {
+        name: 'Deploy',
+        exact: true,
+      });
+      await expect(modalDeployButton).toBeEnabled();
+      await modalDeployButton.click();
+      await page.waitForURL(`**/deployments/${MOCK_DEPLOYMENT_ID}`);
+      expect(deployMutationVariables.at(-1)?.input?.revisionPresetId).toBe(
+        'preset-uuid-012',
       );
-      // The second "gpu-small" belongs to huggingface-tgi group
-      await gpuSmallOptions.nth(1).click();
-
-      // Verify the Deploy button remains enabled after selection change
-      await expect(
-        deployModal.getByRole('button', { name: 'Deploy', exact: true }),
-      ).toBeEnabled();
     });
 
     test('admin can change the resource group selection in the modal', async ({
@@ -704,279 +660,6 @@ test.describe(
       //  auto-deploy fires the mutation immediately without showing selection UI)
       await page.waitForURL(`**/deployments/${MOCK_DEPLOYMENT_ID}`);
       expect(page.url()).toContain(`/deployments/${MOCK_DEPLOYMENT_ID}`);
-    });
-  },
-);
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Group E: EndpointDetailPage — Post-Deploy Alerts
-// ─────────────────────────────────────────────────────────────────────────────
-
-test.describe(
-  'EndpointDetailPage — Post-Deploy Alerts',
-  { tag: ['@deploy', '@functional', '@regression'] },
-  () => {
-    test.describe.configure({ mode: 'serial' });
-
-    /**
-     * Navigate directly to the endpoint detail page with specific GraphQL mocks.
-     */
-    async function navigateToEndpointDetail(
-      page: any,
-      request: any,
-      mocks: Record<string, (vars: Record<string, any>) => Record<string, any>>,
-    ) {
-      await loginAsAdmin(page, request);
-
-      // Mock both queries the detail page fires. ServingPageQuery is fired
-      // once on `/serving` before we drill in, and EndpointDetailPageQuery is
-      // the detail page's main query. Any unmocked GQL operation that falls
-      // through to the real server risks clobbering shared Relay store
-      // records (notably `deployment(id: ...)`), so keep this set complete.
-      await setupGraphQLMocks(page, {
-        ServingPageQuery: endpointListMockResponse,
-        ...mocks,
-      });
-
-      // Navigate to serving first to initialize backendaiclient
-      await navigateTo(page, 'serving');
-
-      // Navigate to the endpoint detail page.
-      await navigateTo(page, `serving/${MOCK_ENDPOINT_UUID}`);
-    }
-
-    test('admin can see "Preparing your service" info alert when endpoint is not yet ready', async ({
-      page,
-      request,
-    }) => {
-      // FR-2664 replaced EndpointDetailPage with DeploymentDetailPage. The
-      // new DeploymentDetailPage does not render a "Preparing your service"
-      // info alert — alert variants were reworked ("Deployment Ready",
-      // "No Current Revision Deployed", "Private Deployment Alert").
-      // The EndpointDetailPageQuery mock this test relies on no longer exists
-      // (renamed to DeploymentDetailPageQuery) and uses a different data
-      // shape, so this test cannot be fixed without a full rewrite against
-      // the new DeploymentDetailPage component and its query mock.
-      test.fixme(true);
-      await navigateToEndpointDetail(page, request, {
-        EndpointDetailPageQuery: endpointDetailPreparingMockResponse(),
-      });
-
-      // Verify the page loads and shows the endpoint name heading
-      await expect(
-        page.getByRole('heading', { name: 'mock-endpoint' }),
-      ).toBeVisible();
-
-      // Verify the "Preparing your service" info alert is visible near the top
-      // Increased timeout: Relay Suspense + double StrictMode fetches can delay render past the 5s default
-      const preparingAlert = page
-        .getByRole('alert')
-        .filter({ hasText: 'Preparing your service' });
-      await expect(preparingAlert).toBeVisible({ timeout: 15000 });
-
-      // Verify the alert description text is correct
-      await expect(
-        page.getByText(
-          'Your service is being prepared. This may take several minutes depending on the model size.',
-        ),
-      ).toBeVisible();
-
-      // Verify the "Service Ready" success alert is NOT visible
-      await expect(
-        page.getByRole('alert').filter({ hasText: 'Service is ready' }),
-      ).not.toBeVisible();
-    });
-
-    test('admin cannot see "Preparing your service" alert when endpoint replicas is zero', async ({
-      page,
-      request,
-    }) => {
-      // Same environment issue as "Preparing your service" test above:
-      // FR-2664 replaced EndpointDetailPage with DeploymentDetailPage. The
-      // new page does not have a "Service Info" card or the
-      // "Preparing your service" alert. The EndpointDetailPageQuery mock
-      // used here is for the old page and does not match the new
-      // DeploymentDetailPageQuery. All remaining Group E tests have the
-      // same root cause — they use EndpointDetailPageQuery which no longer
-      // drives the detail page UI.
-      test.fixme(true);
-      await navigateToEndpointDetail(page, request, {
-        EndpointDetailPageQuery: endpointDetailZeroReplicasMockResponse(),
-      });
-
-      // Verify the page loads (Service Info card is visible)
-      await expect(page.getByText('Service Info')).toBeVisible();
-
-      // Verify the "Preparing your service" alert is NOT visible (replicas=0 suppresses it)
-      await expect(
-        page.getByRole('alert').filter({ hasText: 'Preparing your service' }),
-      ).not.toBeVisible();
-    });
-
-    test('admin cannot see "Preparing your service" alert when endpoint status is in a destroying category', async ({
-      page,
-      request,
-    }) => {
-      // Same environment issue as the tests above: FR-2664 replaced
-      // EndpointDetailPage with DeploymentDetailPage. The new page does
-      // not have "Service Info" or "Preparing your service" alert. The
-      // EndpointDetailPageQuery mock used here no longer drives the UI.
-      test.fixme(true);
-      await navigateToEndpointDetail(page, request, {
-        EndpointDetailPageQuery: endpointDetailTerminatedMockResponse(),
-      });
-
-      // Verify the page loads
-      await expect(page.getByText('Service Info')).toBeVisible();
-
-      // Verify the "Preparing your service" alert is NOT visible for terminated endpoints
-      await expect(
-        page.getByRole('alert').filter({ hasText: 'Preparing your service' }),
-      ).not.toBeVisible();
-    });
-
-    test('admin can see "Service Ready" success alert when endpoint is healthy with routes', async ({
-      page,
-      request,
-    }) => {
-      // Same environment issue: FR-2664 replaced EndpointDetailPage with
-      // DeploymentDetailPage. "Service is ready" / "Start Chat" alerts and
-      // the heading "mock-endpoint" do not exist on the new page.
-      // EndpointDetailPageQuery is no longer the query driving the UI.
-      test.fixme(true);
-      await navigateToEndpointDetail(page, request, {
-        EndpointDetailPageQuery: endpointDetailServiceReadyMockResponse(),
-      });
-
-      // Verify the page loads
-      await expect(
-        page.getByRole('heading', { name: 'mock-endpoint' }),
-      ).toBeVisible();
-
-      // Verify the "Service Ready" success alert is visible near the top
-      const serviceReadyAlert = page
-        .getByRole('alert')
-        .filter({ hasText: 'Service is ready' });
-      await expect(serviceReadyAlert).toBeVisible();
-
-      // Verify the "Start Chat" action button is visible in the alert
-      await expect(
-        page.getByRole('button', { name: 'Start Chat' }),
-      ).toBeVisible();
-
-      // Verify the "Preparing your service" info alert is NOT visible
-      await expect(
-        page.getByRole('alert').filter({ hasText: 'Preparing your service' }),
-      ).not.toBeVisible();
-    });
-
-    test('admin can navigate to Chat page by clicking "Start Chat" in the Service Ready alert', async ({
-      page,
-      request,
-    }) => {
-      // Same environment issue: "Service is ready" alert and "Start Chat"
-      // button do not exist on the new DeploymentDetailPage (FR-2664).
-      test.fixme(true);
-      await navigateToEndpointDetail(page, request, {
-        EndpointDetailPageQuery: endpointDetailServiceReadyMockResponse(),
-      });
-
-      // Verify the "Service Ready" alert is visible
-      await expect(
-        page.getByRole('alert').filter({ hasText: 'Service is ready' }),
-      ).toBeVisible();
-
-      // Click the "Start Chat" button inside the alert
-      await page.getByRole('button', { name: 'Start Chat' }).click();
-
-      // Verify navigation to the /chat page with endpointId query parameter
-      await page.waitForURL(`**/chat?endpointId=${MOCK_ENDPOINT_UUID}`);
-      expect(page.url()).toContain(`/chat?endpointId=${MOCK_ENDPOINT_UUID}`);
-    });
-
-    test('admin can see "Service Ready" alert when endpoint has healthy routes but no scheduling history', async ({
-      page,
-      request,
-    }) => {
-      // Same environment issue: FR-2664 replaced EndpointDetailPage with
-      // DeploymentDetailPage. EndpointDetailPageQuery mock no longer drives UI.
-      test.fixme(true);
-      await navigateToEndpointDetail(page, request, {
-        EndpointDetailPageQuery:
-          endpointDetailHealthyButNoSchedulingHistoryMockResponse(),
-      });
-
-      // Verify the page loads
-      await expect(
-        page.getByRole('heading', { name: 'mock-endpoint' }),
-      ).toBeVisible();
-
-      // Verify the "Service Ready" success alert is visible (hasAnyHealthyRoute is sufficient)
-      await expect(
-        page.getByRole('alert').filter({ hasText: 'Service is ready' }),
-      ).toBeVisible();
-
-      // Verify the "Preparing your service" info alert is NOT visible
-      await expect(
-        page.getByRole('alert').filter({ hasText: 'Preparing your service' }),
-      ).not.toBeVisible();
-    });
-
-    test('admin cannot see "Service Ready" alert when no healthy routes exist', async ({
-      page,
-      request,
-    }) => {
-      // Same environment issue: FR-2664 replaced EndpointDetailPage with
-      // DeploymentDetailPage. EndpointDetailPageQuery mock no longer drives UI.
-      test.fixme(true);
-      await navigateToEndpointDetail(page, request, {
-        EndpointDetailPageQuery:
-          endpointDetailReadyButNoHealthyRoutesMockResponse(),
-      });
-
-      // Verify the page loads
-      await expect(page.getByText('Service Info')).toBeVisible();
-
-      // Verify the "Service Ready" success alert is NOT visible when no healthy routes exist
-      await expect(
-        page.getByRole('alert').filter({ hasText: 'Service is ready' }),
-      ).not.toBeVisible();
-    });
-
-    test('admin cannot see "Service Ready" alert when "chat" feature is in the block list', async ({
-      page,
-      request,
-    }) => {
-      // Same environment issue: FR-2664 replaced EndpointDetailPage with
-      // DeploymentDetailPage. EndpointDetailPageQuery mock no longer drives UI,
-      // and "Service Info" / "Service is ready" do not exist on the new page.
-      test.fixme(true);
-      await loginAsAdmin(page, request);
-
-      // Set up GraphQL mocks BEFORE navigation
-      await setupGraphQLMocks(page, {
-        ServingPageQuery: endpointListMockResponse,
-        EndpointDetailPageQuery: endpointDetailServiceReadyMockResponse(),
-      });
-
-      // Navigate to endpoint detail page
-      await navigateTo(page, `serving/${MOCK_ENDPOINT_UUID}`);
-
-      // Verify the page loads
-      await expect(page.getByText('Service Info')).toBeVisible();
-
-      // Update config.toml interception to include blockList = ['chat'],
-      // then reload so the new config is fetched and applied during re-initialization.
-      await modifyConfigToml(page, request, { menu: { blocklist: 'chat' } });
-
-      // Reload the page so the updated config.toml (with blocklist) takes effect
-      await page.reload();
-      await expect(page.getByText('Service Info')).toBeVisible();
-
-      // Verify the "Service Ready" alert is NOT visible when chat is blocked
-      await expect(
-        page.getByRole('alert').filter({ hasText: 'Service is ready' }),
-      ).not.toBeVisible();
     });
   },
 );

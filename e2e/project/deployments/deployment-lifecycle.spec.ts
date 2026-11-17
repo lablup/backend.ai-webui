@@ -41,7 +41,8 @@
 //    directly rather than asserting on the modal's (buggy) pre-fill.
 //
 // Every test in this file creates its own throwaway `e2e-plan-*` deployment
-// shell and deletes it inline. The two revision-attaching tests additionally
+// shell and deletes it inline, except the Post-Deploy Banners group, which
+// shares one `e2e-gh11211-banner-*` shell removed in its afterAll. The two revision-attaching tests additionally
 // provision what they need via utils/deployment-fixtures.ts -- the Preset
 // Mode test a found-or-created preset plus a fresh model folder, the
 // Advanced Mode test a fresh model folder only -- attach a real revision,
@@ -64,6 +65,7 @@ import {
   provisionDeploymentModelFolder,
 } from '../../utils/deployment-fixtures';
 import { skipUnlessManagerVersion } from '../../utils/feature-gate-util';
+import { createTestResources } from '../../utils/test-resources';
 import {
   loginAsAdmin,
   modifyConfigToml,
@@ -1479,6 +1481,242 @@ test.describe(
 
       await deleteDeploymentAndVerify(page, deploymentName);
       createdDeploymentName = null;
+    });
+  },
+);
+
+// ─────────────────────────────────────────────────────────────────────────────
+// DeploymentDetailPage — top-of-page banners
+// ─────────────────────────────────────────────────────────────────────────────
+
+const FAKE_REVISION_UUID = '00000000-0000-0000-0000-0000000000a1';
+
+/** A minimal current revision, enough for the revision card to render. */
+const FAKE_CURRENT_REVISION = {
+  id: btoa(`ModelRevision:${FAKE_REVISION_UUID}`),
+  fieldId: FAKE_REVISION_UUID,
+  revisionNumber: 1,
+  createdAt: '2026-01-01T00:00:00+00:00',
+  revisionPresetId: null,
+  clusterConfig: { mode: 'SINGLE_NODE', size: 1 },
+  resourceConfig: { resourceOpts: null },
+  resourceSlots: [],
+  modelRuntimeConfig: {
+    runtimeVariantId: '00000000-0000-0000-0000-0000000000a2',
+    runtimeVariant: null,
+    inferenceRuntimeConfig: null,
+    environ: null,
+    runtimeVariantPresetValues: [],
+  },
+  modelMountConfig: null,
+  modelDefinition: null,
+  extraMounts: [],
+  imageV2: null,
+};
+
+interface DeploymentDetailPatch {
+  status?: string;
+  withRevision?: boolean;
+  desiredReplicaCount?: number;
+  runningReplicaCount?: number;
+}
+
+/**
+ * Lets `DeploymentDetailPageQuery` reach the real server for a real deployment
+ * shell, then overrides the fields that pick the page's top banners.
+ */
+async function patchDeploymentDetailQuery(
+  page: Page,
+  patch: DeploymentDetailPatch,
+) {
+  await page.route('**/admin/gql', async (route) => {
+    const query: string = route.request().postData() ?? '';
+    if (!/query\s+DeploymentDetailPageQuery\b/.test(query)) {
+      await route.fallback();
+      return;
+    }
+    const response = await route.fetch();
+    const json = await response.json();
+    const deployment = json?.data?.deployment;
+    if (deployment) {
+      if (patch.status) deployment.metadata.status = patch.status;
+      if (patch.withRevision)
+        deployment.currentRevision = FAKE_CURRENT_REVISION;
+      if (patch.desiredReplicaCount !== undefined) {
+        deployment.replicaState.desiredReplicaCount = patch.desiredReplicaCount;
+      }
+      if (patch.runningReplicaCount !== undefined) {
+        deployment.runningReplicas = { count: patch.runningReplicaCount };
+      }
+    }
+    await route.fulfill({ response, json });
+  });
+}
+
+const READY_WITH_RUNNING_REPLICA: DeploymentDetailPatch = {
+  status: 'READY',
+  withRevision: true,
+  desiredReplicaCount: 1,
+  runningReplicaCount: 1,
+};
+
+test.describe(
+  'DeploymentDetailPage — Post-Deploy Banners',
+  { tag: ['@functional', '@regression', '@serving', '@deployment'] },
+  () => {
+    test.describe.configure({ mode: 'serial' });
+
+    const resources = createTestResources();
+    // URL and raw UUID of one real deployment shell (no revision) shared by the group.
+    let deploymentUrl = '';
+    let deploymentUuid = '';
+    let deploymentName = '';
+
+    test.beforeAll(async ({ browser, request }) => {
+      const context = await browser.newContext();
+      const page = await context.newPage();
+      try {
+        await loginAsAdmin(page, request);
+        await navigateTo(page, 'deployments');
+        deploymentName = resources.name('deployment', 'e2e-gh11211-banner');
+        await createDeploymentShell(page, deploymentName);
+        const url = new URL(page.url());
+        deploymentUrl = url.toString();
+        deploymentUuid = url.pathname.split('/').pop() ?? '';
+      } finally {
+        await context.close();
+      }
+    });
+
+    test.afterAll(async () => {
+      await resources.cleanup();
+    });
+
+    test.beforeEach(async ({ page, request }) => {
+      await loginAsAdmin(page, request);
+    });
+
+    async function openDeploymentDetail(page: Page) {
+      await navigateTo(page, deploymentUrl);
+      await expect(
+        page.getByRole('heading', { level: 3, name: deploymentName }),
+      ).toBeVisible({ timeout: 15000 });
+    }
+
+    // Scoped like the detail test above: Astryx's live region is also an alert.
+    const detailPage = (page: Page) => page.getByTestId('page-deployments');
+    const NO_REVISION = 'No revision is deployed';
+    const NO_DESIRED_REPLICAS = 'The desired replica count is 0';
+    const NO_RUNNING_REPLICAS = 'No replicas are available';
+    const readyBanner = (page: Page) =>
+      detailPage(page)
+        .getByRole('status')
+        .filter({ hasText: 'Deployment is ready' });
+    // Banner puts the role on its text, so its action button is a sibling.
+    const testInChatButton = (page: Page) =>
+      detailPage(page).getByRole('button', { name: 'Test in Chat' });
+    const warningBanner = (page: Page, text: string) =>
+      detailPage(page).getByRole('alert').filter({ hasText: text });
+
+    test('admin sees the "Deployment is ready" banner when the deployment is ready with a running replica', async ({
+      page,
+    }) => {
+      await patchDeploymentDetailQuery(page, READY_WITH_RUNNING_REPLICA);
+      await openDeploymentDetail(page);
+
+      const banner = readyBanner(page);
+      await expect(banner).toBeVisible();
+      await expect(testInChatButton(page)).toBeVisible();
+      await expect(warningBanner(page, NO_REVISION)).toBeHidden();
+      await expect(warningBanner(page, NO_DESIRED_REPLICAS)).toBeHidden();
+      await expect(warningBanner(page, NO_RUNNING_REPLICAS)).toBeHidden();
+    });
+
+    test('admin can open the chat page from "Test in Chat" in the ready banner', async ({
+      page,
+    }) => {
+      await patchDeploymentDetailQuery(page, READY_WITH_RUNNING_REPLICA);
+      await openDeploymentDetail(page);
+
+      await testInChatButton(page).click();
+      await page.waitForURL(
+        (url) =>
+          url.pathname.endsWith('/chat') &&
+          url.searchParams.get('endpointId') === deploymentUuid,
+      );
+    });
+
+    test('admin sees a warning instead of the ready banner when the desired replica count is 0', async ({
+      page,
+    }) => {
+      await patchDeploymentDetailQuery(page, {
+        ...READY_WITH_RUNNING_REPLICA,
+        desiredReplicaCount: 0,
+        runningReplicaCount: 0,
+      });
+      await openDeploymentDetail(page);
+
+      await expect(warningBanner(page, NO_DESIRED_REPLICAS)).toBeVisible();
+      await expect(readyBanner(page)).toBeHidden();
+    });
+
+    test('admin sees a warning instead of the ready banner when no replica is running', async ({
+      page,
+    }) => {
+      await patchDeploymentDetailQuery(page, {
+        ...READY_WITH_RUNNING_REPLICA,
+        runningReplicaCount: 0,
+      });
+      await openDeploymentDetail(page);
+
+      await expect(warningBanner(page, NO_RUNNING_REPLICAS)).toBeVisible();
+      await expect(readyBanner(page)).toBeHidden();
+    });
+
+    test('admin does not see the replica warning once the deployment is stopped', async ({
+      page,
+    }) => {
+      await patchDeploymentDetailQuery(page, {
+        status: 'STOPPED',
+        withRevision: true,
+        desiredReplicaCount: 0,
+        runningReplicaCount: 0,
+      });
+      await openDeploymentDetail(page);
+      // The patched status is shown, so the hidden checks below are not vacuous.
+      await expect(
+        detailPage(page).getByText('Stopped', { exact: true }).first(),
+      ).toBeVisible();
+
+      await expect(warningBanner(page, NO_DESIRED_REPLICAS)).toBeHidden();
+      await expect(warningBanner(page, NO_RUNNING_REPLICAS)).toBeHidden();
+      await expect(readyBanner(page)).toBeHidden();
+    });
+
+    test('admin does not see the "No revision is deployed" warning once the deployment is stopped', async ({
+      page,
+    }) => {
+      await patchDeploymentDetailQuery(page, { status: 'STOPPED' });
+      await openDeploymentDetail(page);
+      await expect(
+        detailPage(page).getByText('Stopped', { exact: true }).first(),
+      ).toBeVisible();
+
+      await expect(warningBanner(page, NO_REVISION)).toBeHidden();
+    });
+
+    test('admin cannot see "Test in Chat" when chat is in the menu blocklist', async ({
+      page,
+      request,
+    }) => {
+      // Takes effect on the next page load, which openDeploymentDetail does.
+      await modifyConfigToml(page, request, { menu: { blocklist: 'chat' } });
+      await patchDeploymentDetailQuery(page, READY_WITH_RUNNING_REPLICA);
+      await openDeploymentDetail(page);
+
+      const banner = readyBanner(page);
+      await expect(banner).toBeVisible();
+      await expect(testInChatButton(page)).toHaveCount(0);
     });
   },
 );
