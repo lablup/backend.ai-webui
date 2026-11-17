@@ -186,7 +186,18 @@
         "binary": false,
         "round_length": 0
       },
-      "display_icon": "gpu1"
+      "display_icon": "intel"
+    },
+    "xpu.shares": {
+      "slot_name": "xpu.shares",
+      "human_readable_name": "fGPU",
+      "description": "Intel XPU-capable GPU (fractional)",
+      "display_unit": "fGPU",
+      "number_format": {
+        "binary": false,
+        "round_length": 1
+      },
+      "display_icon": "intel"
     }
   }
 }
