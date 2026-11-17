@@ -163,6 +163,39 @@ export async function fillManualImageName(
   await expect(environmentsRequiredMark).toHaveCount(0, { timeout: 10000 });
 }
 
+/**
+ * Pick the first preset the account can use: the form selects none on its own,
+ * and the presets a shared server offers differ (unavailable ones are disabled).
+ */
+export async function selectAvailableResourcePreset(
+  page: Page,
+  modal: Locator,
+): Promise<void> {
+  const trigger = modal.getByRole('button', { name: 'Resource Presets' });
+  // Opening the select refetches availability; rows are enabled until it lands.
+  const refetched = page
+    .waitForResponse(
+      (response) =>
+        (response.request().postData() ?? '').includes(
+          'query useSessionResourcePresetsQuery',
+        ),
+      { timeout: 15000 },
+    )
+    .catch(() => undefined);
+  await trigger.click();
+  await refetched;
+  const listbox = page.getByRole('listbox').filter({ visible: true });
+  const option = listbox
+    .getByRole('option', { disabled: false })
+    .filter({ hasNotText: /^(Custom allocation|Minimum requirements)/ })
+    .first();
+  await expect(option).toBeVisible();
+  const name = (await option.innerText()).split('\n')[0].trim();
+  await option.click();
+  await expect(listbox).toHaveCount(0);
+  await expect(trigger).toContainText(name);
+}
+
 /** Uncheck "Apply immediately after adding" so no replica is spun up. */
 export async function disableAutoApply(modal: Locator): Promise<void> {
   const autoApply = modal.getByRole('checkbox', {
