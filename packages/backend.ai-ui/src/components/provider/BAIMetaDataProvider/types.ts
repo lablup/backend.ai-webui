@@ -21,6 +21,8 @@ export const knownAcceleratorResourceSlotNames = [
   'rngd.device',
   'hyperaccel-lpu.device',
   'tt-n300.device',
+  'xpu.device',
+  'xpu.shares',
 ] as const;
 export type KnownAcceleratorResourceSlotName =
   (typeof knownAcceleratorResourceSlotNames)[number];
