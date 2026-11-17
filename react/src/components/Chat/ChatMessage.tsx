@@ -83,7 +83,14 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
         const filename =
           part.filename || part.url?.split('/').pop() || `file-${index}`;
 
-        return part.mediaType?.toLowerCase().startsWith('image/') ? (
+        const hasPayload = !_.isEmpty(part.url);
+        // An empty (not missing) url is exactly what `persist()` in
+        // ChatHistory.ts writes when the storage quota forced the inlined
+        // payload out of the stored history.
+        const isDroppedForStorage = part.url === '';
+
+        return hasPayload &&
+          part.mediaType?.toLowerCase().startsWith('image/') ? (
           <BAIFlex
             key={`${message?.id}-${index}`}
             style={{
@@ -112,9 +119,11 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
           <Token
             key={`${message?.id}-${index}`}
             label={filename}
-            description={filename}
+            description={
+              isDroppedForStorage ? t('chatui.AttachmentNotStored') : filename
+            }
             icon={<PaperclipIcon size="1em" />}
-            href={part?.url}
+            href={hasPayload ? part?.url : undefined}
           />
         );
       })}
