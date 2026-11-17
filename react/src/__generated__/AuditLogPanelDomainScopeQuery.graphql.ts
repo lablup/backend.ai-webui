@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<a20a8a762c32ed3c121e270e7d5435a8>>
+ * @generated SignedSource<<37c4a408bfc0dcb48a825c6e0eee4b13>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -12,16 +12,17 @@ import { ConcreteRequest } from 'relay-runtime';
 export type AuditLogPanelDomainScopeQuery$variables = {
   domainName: string;
   limit: number;
+  on: boolean;
 };
 export type AuditLogPanelDomainScopeQuery$data = {
-  readonly projects: {
+  readonly projects?: {
     readonly edges: ReadonlyArray<{
       readonly node: {
         readonly entityId: string;
       };
     }>;
   } | null | undefined;
-  readonly users: {
+  readonly users?: {
     readonly edges: ReadonlyArray<{
       readonly node: {
         readonly entityId: string;
@@ -45,6 +46,11 @@ var v0 = [
     "defaultValue": null,
     "kind": "LocalArgument",
     "name": "limit"
+  },
+  {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "on"
   }
 ],
 v1 = [
@@ -93,68 +99,75 @@ return {
     "name": "AuditLogPanelDomainScopeQuery",
     "selections": [
       {
-        "alias": "projects",
-        "args": (v1/*: any*/),
-        "concreteType": "ProjectV2Connection",
-        "kind": "LinkedField",
-        "name": "domainProjectsV2",
-        "plural": false,
+        "condition": "on",
+        "kind": "Condition",
+        "passingValue": true,
         "selections": [
           {
-            "alias": null,
-            "args": null,
-            "concreteType": "ProjectV2Edge",
+            "alias": "projects",
+            "args": (v1/*: any*/),
+            "concreteType": "ProjectV2Connection",
             "kind": "LinkedField",
-            "name": "edges",
-            "plural": true,
+            "name": "domainProjectsV2",
+            "plural": false,
             "selections": [
               {
                 "alias": null,
                 "args": null,
-                "concreteType": "ProjectV2",
+                "concreteType": "ProjectV2Edge",
                 "kind": "LinkedField",
-                "name": "node",
-                "plural": false,
-                "selections": (v3/*: any*/),
+                "name": "edges",
+                "plural": true,
+                "selections": [
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "ProjectV2",
+                    "kind": "LinkedField",
+                    "name": "node",
+                    "plural": false,
+                    "selections": (v3/*: any*/),
+                    "storageKey": null
+                  }
+                ],
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
+          },
+          {
+            "alias": "users",
+            "args": (v1/*: any*/),
+            "concreteType": "UserV2Connection",
+            "kind": "LinkedField",
+            "name": "domainUsersV2",
+            "plural": false,
+            "selections": [
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "UserV2Edge",
+                "kind": "LinkedField",
+                "name": "edges",
+                "plural": true,
+                "selections": [
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "UserV2",
+                    "kind": "LinkedField",
+                    "name": "node",
+                    "plural": false,
+                    "selections": (v3/*: any*/),
+                    "storageKey": null
+                  }
+                ],
                 "storageKey": null
               }
             ],
             "storageKey": null
           }
-        ],
-        "storageKey": null
-      },
-      {
-        "alias": "users",
-        "args": (v1/*: any*/),
-        "concreteType": "UserV2Connection",
-        "kind": "LinkedField",
-        "name": "domainUsersV2",
-        "plural": false,
-        "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "UserV2Edge",
-            "kind": "LinkedField",
-            "name": "edges",
-            "plural": true,
-            "selections": [
-              {
-                "alias": null,
-                "args": null,
-                "concreteType": "UserV2",
-                "kind": "LinkedField",
-                "name": "node",
-                "plural": false,
-                "selections": (v3/*: any*/),
-                "storageKey": null
-              }
-            ],
-            "storageKey": null
-          }
-        ],
-        "storageKey": null
+        ]
       }
     ],
     "type": "Query",
@@ -167,82 +180,89 @@ return {
     "name": "AuditLogPanelDomainScopeQuery",
     "selections": [
       {
-        "alias": "projects",
-        "args": (v1/*: any*/),
-        "concreteType": "ProjectV2Connection",
-        "kind": "LinkedField",
-        "name": "domainProjectsV2",
-        "plural": false,
+        "condition": "on",
+        "kind": "Condition",
+        "passingValue": true,
         "selections": [
           {
-            "alias": null,
-            "args": null,
-            "concreteType": "ProjectV2Edge",
+            "alias": "projects",
+            "args": (v1/*: any*/),
+            "concreteType": "ProjectV2Connection",
             "kind": "LinkedField",
-            "name": "edges",
-            "plural": true,
+            "name": "domainProjectsV2",
+            "plural": false,
             "selections": [
               {
                 "alias": null,
                 "args": null,
-                "concreteType": "ProjectV2",
+                "concreteType": "ProjectV2Edge",
                 "kind": "LinkedField",
-                "name": "node",
-                "plural": false,
-                "selections": (v4/*: any*/),
+                "name": "edges",
+                "plural": true,
+                "selections": [
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "ProjectV2",
+                    "kind": "LinkedField",
+                    "name": "node",
+                    "plural": false,
+                    "selections": (v4/*: any*/),
+                    "storageKey": null
+                  }
+                ],
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
+          },
+          {
+            "alias": "users",
+            "args": (v1/*: any*/),
+            "concreteType": "UserV2Connection",
+            "kind": "LinkedField",
+            "name": "domainUsersV2",
+            "plural": false,
+            "selections": [
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "UserV2Edge",
+                "kind": "LinkedField",
+                "name": "edges",
+                "plural": true,
+                "selections": [
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "UserV2",
+                    "kind": "LinkedField",
+                    "name": "node",
+                    "plural": false,
+                    "selections": (v4/*: any*/),
+                    "storageKey": null
+                  }
+                ],
                 "storageKey": null
               }
             ],
             "storageKey": null
           }
-        ],
-        "storageKey": null
-      },
-      {
-        "alias": "users",
-        "args": (v1/*: any*/),
-        "concreteType": "UserV2Connection",
-        "kind": "LinkedField",
-        "name": "domainUsersV2",
-        "plural": false,
-        "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "UserV2Edge",
-            "kind": "LinkedField",
-            "name": "edges",
-            "plural": true,
-            "selections": [
-              {
-                "alias": null,
-                "args": null,
-                "concreteType": "UserV2",
-                "kind": "LinkedField",
-                "name": "node",
-                "plural": false,
-                "selections": (v4/*: any*/),
-                "storageKey": null
-              }
-            ],
-            "storageKey": null
-          }
-        ],
-        "storageKey": null
+        ]
       }
     ]
   },
   "params": {
-    "cacheID": "443ad1b85d33b9503edb3c91b38a38b7",
+    "cacheID": "49a347bbf4a053f6792d15ce53e2a8b5",
     "id": null,
     "metadata": {},
     "name": "AuditLogPanelDomainScopeQuery",
     "operationKind": "query",
-    "text": "query AuditLogPanelDomainScopeQuery(\n  $domainName: String!\n  $limit: Int!\n) {\n  projects: domainProjectsV2(scope: {domainName: $domainName}, limit: $limit) {\n    edges {\n      node {\n        entityId\n        id\n      }\n    }\n  }\n  users: domainUsersV2(scope: {domainName: $domainName}, limit: $limit) {\n    edges {\n      node {\n        entityId\n        id\n      }\n    }\n  }\n}\n"
+    "text": "query AuditLogPanelDomainScopeQuery(\n  $domainName: String!\n  $limit: Int!\n  $on: Boolean!\n) {\n  projects: domainProjectsV2(scope: {domainName: $domainName}, limit: $limit) @include(if: $on) {\n    edges {\n      node {\n        entityId\n        id\n      }\n    }\n  }\n  users: domainUsersV2(scope: {domainName: $domainName}, limit: $limit) @include(if: $on) {\n    edges {\n      node {\n        entityId\n        id\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "c83f8fa86953610ad0a0eca00ec2c622";
+(node as any).hash = "6523c1bfa517240fb394aeb7bc70e4c7";
 
 export default node;

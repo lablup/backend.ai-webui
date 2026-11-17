@@ -1,0 +1,431 @@
+/**
+ * @generated SignedSource<<397c192c9d13cf34e446f5d40fd90813>>
+ * @lightSyntaxTransform
+ * @nogrep
+ */
+
+/* tslint:disable */
+/* eslint-disable */
+// @ts-nocheck
+
+import { ConcreteRequest } from 'relay-runtime';
+import { FragmentRefs, Result } from "relay-runtime";
+export type AuditLogActionKind = "BULK" | "GLOBAL" | "LOOKUP" | "MEMBERSHIP" | "RELATION" | "SCOPE" | "SINGLE_ENTITY" | "%future added value";
+export type AuditLogOrderField = "ACTION_KIND" | "ACTION_NAME" | "CREATED_AT" | "ENTITY_TYPE" | "OPERATION" | "STATUS" | "%future added value";
+export type AuditLogStatus = "DENIED" | "ERROR" | "RUNNING" | "SUCCESS" | "UNKNOWN" | "%future added value";
+export type OrderDirection = "ASC" | "DESC" | "%future added value";
+export type AuditLogScope = {
+  entity?: ReadonlyArray<EntityTypeScope> | null | undefined;
+  triggeredUser?: ReadonlyArray<UUIDScope> | null | undefined;
+};
+export type EntityTypeScope = {
+  entityId: string;
+  entityType: string;
+};
+export type UUIDScope = {
+  value: string;
+};
+export type AuditLogFilter = {
+  AND?: ReadonlyArray<AuditLogFilter> | null | undefined;
+  NOT?: ReadonlyArray<AuditLogFilter> | null | undefined;
+  OR?: ReadonlyArray<AuditLogFilter> | null | undefined;
+  actedAs?: UUIDFilter | null | undefined;
+  actionId?: UUIDFilter | null | undefined;
+  actionKind?: AuditLogActionKindFilter | null | undefined;
+  actionName?: StringFilter | null | undefined;
+  createdAt?: DateTimeFilter | null | undefined;
+  entityId?: StringFilter | null | undefined;
+  entityType?: StringFilter | null | undefined;
+  fieldId?: UUIDFilter | null | undefined;
+  lookupKey?: StringFilter | null | undefined;
+  lookupKind?: StringFilter | null | undefined;
+  operation?: StringFilter | null | undefined;
+  status?: AuditLogStatusFilter | null | undefined;
+  targetEntityId?: UUIDFilter | null | undefined;
+  triggeredBy?: StringFilter | null | undefined;
+};
+export type StringFilter = {
+  contains?: string | null | undefined;
+  endsWith?: string | null | undefined;
+  equals?: string | null | undefined;
+  iContains?: string | null | undefined;
+  iEndsWith?: string | null | undefined;
+  iEquals?: string | null | undefined;
+  iIn?: ReadonlyArray<string> | null | undefined;
+  iNotContains?: string | null | undefined;
+  iNotEndsWith?: string | null | undefined;
+  iNotEquals?: string | null | undefined;
+  iNotIn?: ReadonlyArray<string> | null | undefined;
+  iNotStartsWith?: string | null | undefined;
+  iStartsWith?: string | null | undefined;
+  in?: ReadonlyArray<string> | null | undefined;
+  notContains?: string | null | undefined;
+  notEndsWith?: string | null | undefined;
+  notEquals?: string | null | undefined;
+  notIn?: ReadonlyArray<string> | null | undefined;
+  notStartsWith?: string | null | undefined;
+  startsWith?: string | null | undefined;
+};
+export type UUIDFilter = {
+  equals?: string | null | undefined;
+  in?: ReadonlyArray<string> | null | undefined;
+  notEquals?: string | null | undefined;
+  notIn?: ReadonlyArray<string> | null | undefined;
+};
+export type AuditLogStatusFilter = {
+  equals?: AuditLogStatus | null | undefined;
+  in?: ReadonlyArray<AuditLogStatus> | null | undefined;
+  notEquals?: AuditLogStatus | null | undefined;
+  notIn?: ReadonlyArray<AuditLogStatus> | null | undefined;
+};
+export type DateTimeFilter = {
+  after?: string | null | undefined;
+  before?: string | null | undefined;
+  equals?: string | null | undefined;
+  notEquals?: string | null | undefined;
+};
+export type AuditLogActionKindFilter = {
+  equals?: AuditLogActionKind | null | undefined;
+  in?: ReadonlyArray<AuditLogActionKind> | null | undefined;
+  notEquals?: AuditLogActionKind | null | undefined;
+  notIn?: ReadonlyArray<AuditLogActionKind> | null | undefined;
+};
+export type AuditLogOrderBy = {
+  direction?: OrderDirection;
+  field: AuditLogOrderField;
+};
+export type resourceRegistryAuditLogQuery$variables = {
+  filter?: AuditLogFilter | null | undefined;
+  limit?: number | null | undefined;
+  offset?: number | null | undefined;
+  orderBy?: ReadonlyArray<AuditLogOrderBy> | null | undefined;
+  scope: AuditLogScope;
+};
+export type resourceRegistryAuditLogQuery$data = {
+  readonly scopedAuditLogsV2: Result<{
+    readonly count: number;
+    readonly edges: ReadonlyArray<{
+      readonly node: {
+        readonly id: string;
+        readonly " $fragmentSpreads": FragmentRefs<"BAIAuditLogNodesFragment">;
+      };
+    }>;
+  } | null | undefined, unknown>;
+};
+export type resourceRegistryAuditLogQuery = {
+  response: resourceRegistryAuditLogQuery$data;
+  variables: resourceRegistryAuditLogQuery$variables;
+};
+
+const node: ConcreteRequest = (function(){
+var v0 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "filter"
+},
+v1 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "limit"
+},
+v2 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "offset"
+},
+v3 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "orderBy"
+},
+v4 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "scope"
+},
+v5 = [
+  {
+    "kind": "Variable",
+    "name": "filter",
+    "variableName": "filter"
+  },
+  {
+    "kind": "Variable",
+    "name": "limit",
+    "variableName": "limit"
+  },
+  {
+    "kind": "Variable",
+    "name": "offset",
+    "variableName": "offset"
+  },
+  {
+    "kind": "Variable",
+    "name": "orderBy",
+    "variableName": "orderBy"
+  },
+  {
+    "kind": "Variable",
+    "name": "scope",
+    "variableName": "scope"
+  }
+],
+v6 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "count",
+  "storageKey": null
+},
+v7 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "id",
+  "storageKey": null
+};
+return {
+  "fragment": {
+    "argumentDefinitions": [
+      (v0/*: any*/),
+      (v1/*: any*/),
+      (v2/*: any*/),
+      (v3/*: any*/),
+      (v4/*: any*/)
+    ],
+    "kind": "Fragment",
+    "metadata": null,
+    "name": "resourceRegistryAuditLogQuery",
+    "selections": [
+      {
+        "kind": "CatchField",
+        "field": {
+          "alias": null,
+          "args": (v5/*: any*/),
+          "concreteType": "AuditLogV2Connection",
+          "kind": "LinkedField",
+          "name": "scopedAuditLogsV2",
+          "plural": false,
+          "selections": [
+            (v6/*: any*/),
+            {
+              "alias": null,
+              "args": null,
+              "concreteType": "AuditLogV2Edge",
+              "kind": "LinkedField",
+              "name": "edges",
+              "plural": true,
+              "selections": [
+                {
+                  "alias": null,
+                  "args": null,
+                  "concreteType": "AuditLogV2",
+                  "kind": "LinkedField",
+                  "name": "node",
+                  "plural": false,
+                  "selections": [
+                    (v7/*: any*/),
+                    {
+                      "args": null,
+                      "kind": "FragmentSpread",
+                      "name": "BAIAuditLogNodesFragment"
+                    }
+                  ],
+                  "storageKey": null
+                }
+              ],
+              "storageKey": null
+            }
+          ],
+          "storageKey": null
+        },
+        "to": "RESULT"
+      }
+    ],
+    "type": "Query",
+    "abstractKey": null
+  },
+  "kind": "Request",
+  "operation": {
+    "argumentDefinitions": [
+      (v4/*: any*/),
+      (v0/*: any*/),
+      (v3/*: any*/),
+      (v1/*: any*/),
+      (v2/*: any*/)
+    ],
+    "kind": "Operation",
+    "name": "resourceRegistryAuditLogQuery",
+    "selections": [
+      {
+        "alias": null,
+        "args": (v5/*: any*/),
+        "concreteType": "AuditLogV2Connection",
+        "kind": "LinkedField",
+        "name": "scopedAuditLogsV2",
+        "plural": false,
+        "selections": [
+          (v6/*: any*/),
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "AuditLogV2Edge",
+            "kind": "LinkedField",
+            "name": "edges",
+            "plural": true,
+            "selections": [
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "AuditLogV2",
+                "kind": "LinkedField",
+                "name": "node",
+                "plural": false,
+                "selections": [
+                  (v7/*: any*/),
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "createdAt",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "actionName",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "operation",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "status",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "description",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "duration",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "requestId",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "actionId",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "entityType",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "targetEntityId",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "triggeredBy",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "clientIp",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "UserV2",
+                    "kind": "LinkedField",
+                    "name": "user",
+                    "plural": false,
+                    "selections": [
+                      (v7/*: any*/),
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "entityId",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "concreteType": "UserV2BasicInfo",
+                        "kind": "LinkedField",
+                        "name": "basicInfo",
+                        "plural": false,
+                        "selections": [
+                          {
+                            "alias": null,
+                            "args": null,
+                            "kind": "ScalarField",
+                            "name": "email",
+                            "storageKey": null
+                          }
+                        ],
+                        "storageKey": null
+                      }
+                    ],
+                    "storageKey": null
+                  }
+                ],
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
+          }
+        ],
+        "storageKey": null
+      }
+    ]
+  },
+  "params": {
+    "cacheID": "1548856f2ff7be9d1415d070b500876d",
+    "id": null,
+    "metadata": {},
+    "name": "resourceRegistryAuditLogQuery",
+    "operationKind": "query",
+    "text": "query resourceRegistryAuditLogQuery(\n  $scope: AuditLogScope!\n  $filter: AuditLogFilter\n  $orderBy: [AuditLogOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  scopedAuditLogsV2(scope: $scope, filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        ...BAIAuditLogNodesFragment\n      }\n    }\n  }\n}\n\nfragment BAIAuditLogNodesFragment on AuditLogV2 {\n  id\n  createdAt\n  actionName\n  operation\n  status\n  description\n  duration\n  requestId\n  actionId\n  entityType\n  targetEntityId\n  triggeredBy\n  clientIp @since(version: \"26.9.0\")\n  user {\n    id\n    entityId\n    basicInfo {\n      email\n    }\n  }\n}\n"
+  }
+};
+})();
+
+(node as any).hash = "5eb65402882fc72b2ca928274e195f43";
+
+export default node;

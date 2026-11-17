@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useBAIPaginationOptionState } from '../../hooks/reactPaginationQueryOptions';
+import { AuditLogNodesPanelContent } from './AuditLogNodesPanel';
 import { DeploymentNodesPanelContent } from './DeploymentNodesPanel';
 import PanelFrame from './PanelFrame';
 import { SessionNodesPanelContent } from './SessionNodesPanel';
@@ -95,6 +96,14 @@ export const ResourceTableBody: React.FC<
       {resourceRegistry[viewDescriptor.resourceType]?.kind ===
       'deploymentNodes' ? (
         <DeploymentNodesPanelContent
+          key={`${viewDescriptor.resourceType}:${JSON.stringify(viewDescriptor.filter ?? null)}:${viewDescriptor.order ?? ''}`}
+          descriptor={viewDescriptor}
+          onChangeOrder={onChangeOrder}
+          fetchKey={fetchKey}
+        />
+      ) : resourceRegistry[viewDescriptor.resourceType]?.kind ===
+        'auditLogNodes' ? (
+        <AuditLogNodesPanelContent
           key={`${viewDescriptor.resourceType}:${JSON.stringify(viewDescriptor.filter ?? null)}:${viewDescriptor.order ?? ''}`}
           descriptor={viewDescriptor}
           onChangeOrder={onChangeOrder}

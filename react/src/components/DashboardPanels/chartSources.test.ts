@@ -244,3 +244,38 @@ describe('panel range setting', () => {
     ).toBe('now-24h');
   });
 });
+
+describe('audit log chart groupings', () => {
+  const byKey = (key: string) =>
+    CHART_GROUPINGS.auditLog.find((grouping) => grouping.key === key)!;
+
+  it('counts every audit status once', () => {
+    expect(byKey('status').groups.map((group) => group.filter)).toEqual([
+      { status: { equals: 'SUCCESS' } },
+      { status: { equals: 'ERROR' } },
+      { status: { equals: 'DENIED' } },
+      { status: { equals: 'RUNNING' } },
+      { status: { equals: 'UNKNOWN' } },
+    ]);
+  });
+
+  it('counts each listed entity type and every other type as one more bucket', () => {
+    const groups = byKey('entityType').groups;
+    expect(groups).toHaveLength(MAX_BUCKETS);
+    expect(groups.at(-1)?.filter).toEqual({
+      entityType: {
+        notIn: groups.slice(0, -1).map((group) => group.key),
+      },
+    });
+  });
+
+  it('narrows a time chart to createdAt windows', () => {
+    const counts = chartCounts(
+      'auditLog',
+      resolveChart('auditLog', { type: 'line' }),
+      'now-24h',
+      NOW,
+    );
+    expect(counts[0].filter).toHaveProperty('AND');
+  });
+});

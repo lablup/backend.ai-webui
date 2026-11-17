@@ -31,6 +31,7 @@ import {
   type PanelDescriptor,
   type ResourceKey,
 } from './types';
+import { useAuditLogQueryScope } from './useAuditLogQueryScope';
 import { useDashboardQueryScope } from './useDashboardFilters';
 import { Text } from '@lablup/ui-common/Text';
 import { VStack } from '@lablup/ui-common/VStack';
@@ -269,6 +270,68 @@ const CHART_QUERIES: Record<ResourceKey, GraphQLTaggedNode> = {
       }
     }
   `,
+  auditLog: graphql`
+    query ResourceChartPanelAuditLogQuery(
+      $scope: AuditLogScope!
+      $c0: AuditLogFilter
+      $c0On: Boolean!
+      $c1: AuditLogFilter
+      $c1On: Boolean!
+      $c2: AuditLogFilter
+      $c2On: Boolean!
+      $c3: AuditLogFilter
+      $c3On: Boolean!
+      $c4: AuditLogFilter
+      $c4On: Boolean!
+      $c5: AuditLogFilter
+      $c5On: Boolean!
+      $c6: AuditLogFilter
+      $c6On: Boolean!
+      $c7: AuditLogFilter
+      $c7On: Boolean!
+    ) {
+      c0: scopedAuditLogsV2(scope: $scope, limit: 1, offset: 0, filter: $c0)
+        @include(if: $c0On)
+        @catch(to: RESULT) {
+        count
+      }
+      c1: scopedAuditLogsV2(scope: $scope, limit: 1, offset: 0, filter: $c1)
+        @include(if: $c1On)
+        @catch(to: RESULT) {
+        count
+      }
+      c2: scopedAuditLogsV2(scope: $scope, limit: 1, offset: 0, filter: $c2)
+        @include(if: $c2On)
+        @catch(to: RESULT) {
+        count
+      }
+      c3: scopedAuditLogsV2(scope: $scope, limit: 1, offset: 0, filter: $c3)
+        @include(if: $c3On)
+        @catch(to: RESULT) {
+        count
+      }
+      c4: scopedAuditLogsV2(scope: $scope, limit: 1, offset: 0, filter: $c4)
+        @include(if: $c4On)
+        @catch(to: RESULT) {
+        count
+      }
+      c5: scopedAuditLogsV2(scope: $scope, limit: 1, offset: 0, filter: $c5)
+        @include(if: $c5On)
+        @catch(to: RESULT) {
+        count
+      }
+      c6: scopedAuditLogsV2(scope: $scope, limit: 1, offset: 0, filter: $c6)
+        @include(if: $c6On)
+        @catch(to: RESULT) {
+        count
+      }
+      c7: scopedAuditLogsV2(scope: $scope, limit: 1, offset: 0, filter: $c7)
+        @include(if: $c7On)
+        @catch(to: RESULT) {
+        count
+      }
+    }
+  `,
 };
 
 const ALIAS_KEYS = _.range(8).map((index) => `c${index}`);
@@ -379,6 +442,7 @@ export const ResourceChartContent: React.FC<{
   const { t } = useTranslation();
   const queryScope = useDashboardQueryScope();
   const source = descriptor.resourceType;
+  const auditScope = useAuditLogQueryScope(source, fetchKey);
   const config = resourceRegistry[source];
   const nextChart = resolveChart(source, descriptor.chart);
   const nextCounts = chartCounts(source, nextChart, descriptor.range, now);
@@ -390,6 +454,7 @@ export const ResourceChartContent: React.FC<{
       limit: 1,
       offset: 0,
       ...queryScope,
+      auditScope,
       resourceGroups: descriptor.resourceGroups,
     });
   const nextVariables = {

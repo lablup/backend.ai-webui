@@ -2,13 +2,18 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import type { resourceRegistryAuditLogQuery } from '../../__generated__/resourceRegistryAuditLogQuery.graphql';
 import type { resourceRegistryDeploymentQuery } from '../../__generated__/resourceRegistryDeploymentQuery.graphql';
 import type { resourceRegistrySessionQuery } from '../../__generated__/resourceRegistrySessionQuery.graphql';
 import type { resourceRegistryVfolderQuery } from '../../__generated__/resourceRegistryVfolderQuery.graphql';
 import { convertToOrderBy } from '../../helper';
+import { rbacTypeLabel } from '../../helper/rbacElementTypes';
 import FolderLink from '../FolderLink';
+import { AUDIT_LOG_STATUSES } from './memberCards/memberCardData';
 import { readPrimary, type CaughtValue } from './panelPermission';
+import { projectAuditScope } from './projectAdminCards/projectCardData';
 import { getSessionFilterProperties } from './sessionFilterProperties';
+import { AUDIT_ENTITY_TYPES } from './superadminCards/superadminCardData';
 import type {
   PanelDescriptor,
   ResourceConfig,
@@ -360,12 +365,102 @@ const vfolderConfig: ResourceConfig<resourceRegistryVfolderQuery, VfolderNode> =
       selectOffsetConnection(readPrimary(data.scopedVFoldersV2)),
   };
 
+// Rows render through BAIAuditLogNodes (`kind: 'auditLogNodes'`), so no columns here.
+const auditLogConfig: ResourceConfig<resourceRegistryAuditLogQuery, unknown> = {
+  key: 'auditLog',
+  labelKey: 'auditLog.AuditLog',
+  defaultOrder: '-createdAt',
+  kind: 'auditLogNodes',
+  query: graphql`
+    query resourceRegistryAuditLogQuery(
+      $scope: AuditLogScope!
+      $filter: AuditLogFilter
+      $orderBy: [AuditLogOrderBy!]
+      $limit: Int
+      $offset: Int
+    ) {
+      scopedAuditLogsV2(
+        scope: $scope
+        filter: $filter
+        orderBy: $orderBy
+        limit: $limit
+        offset: $offset
+      ) @catch(to: RESULT) {
+        count
+        edges {
+          node {
+            id
+            ...BAIAuditLogNodesFragment
+          }
+        }
+      }
+    }
+  `,
+  getFilterProperties: (t) => [
+    {
+      key: 'entityType',
+      propertyLabel: t('dashboard.card.EntityType'),
+      type: 'enum',
+      // Suggestions, not a closed list: the manager writes more types than these.
+      options: AUDIT_ENTITY_TYPES.map((type) => ({
+        value: type,
+        label: rbacTypeLabel(t, type),
+      })),
+    },
+    {
+      key: 'status',
+      propertyLabel: t('auditLog.Result'),
+      type: 'enum',
+      strictSelection: true,
+      options: AUDIT_LOG_STATUSES.map(([status, labelKey]) => ({
+        value: status,
+        label: t(labelKey),
+      })),
+    },
+    {
+      key: 'actionName',
+      propertyLabel: t('auditLog.Action'),
+      type: 'string',
+    },
+    {
+      key: 'operation',
+      propertyLabel: t('auditLog.Operation'),
+      type: 'string',
+    },
+  ],
+  buildVariables: ({
+    filter,
+    order,
+    limit,
+    offset,
+    ownerId,
+    projectId,
+    domainId,
+    auditScope,
+  }) => ({
+    scope:
+      auditScope ??
+      (ownerId
+        ? { triggeredUser: [{ value: ownerId }] }
+        : projectId
+          ? projectAuditScope(projectId)
+          : { entity: [{ entityType: 'domain', entityId: domainId }] }),
+    filter: typeof filter === 'string' ? undefined : (filter ?? undefined),
+    orderBy: convertToOrderBy(order ?? '-createdAt'),
+    limit,
+    offset,
+  }),
+  selectConnection: (data) =>
+    selectOffsetConnection(readPrimary(data.scopedAuditLogsV2)),
+};
+
 export const resourceRegistry: {
   [K in ResourceKey]: ResourceConfig<any, any>;
 } = {
   session: sessionConfig,
   deployment: deploymentConfig,
   vfolder: vfolderConfig,
+  auditLog: auditLogConfig,
 };
 
 export const resourceKeys = Object.keys(resourceRegistry) as ResourceKey[];

@@ -89,33 +89,37 @@ export const auditLogScope = (
 const DOMAIN_SCOPE_LIMIT = 10000;
 
 /**
- * The current domain's audit log: the domain and its projects, and every action
- * its users took. A domain entity scope alone leaves out the sessions, folders
- * and deployments in it (ADR 0027).
+ * The current domain's audit log scope: the domain and its projects, and every
+ * action its users took. A domain entity scope alone leaves out the sessions,
+ * folders and deployments in it (ADR 0027). Null `domain` reads nothing.
  */
-export const DomainAuditScope: React.FC<{
-  scope: Extract<CardScope, { kind: 'domain' }>;
-  fetchKey: string;
-  children: (scope: AuditLogScope) => React.ReactNode;
-}> = ({ scope, fetchKey, children }) => {
+export const useDomainAuditScope = (
+  domain: Pick<
+    Extract<CardScope, { kind: 'domain' }>,
+    'domainId' | 'domainName'
+  > | null,
+  fetchKey?: string,
+): AuditLogScope | null => {
   'use memo';
   const data = useLazyLoadQuery<AuditLogPanelDomainScopeQuery>(
     graphql`
-      query AuditLogPanelDomainScopeQuery($domainName: String!, $limit: Int!) {
+      query AuditLogPanelDomainScopeQuery(
+        $domainName: String!
+        $limit: Int!
+        $on: Boolean!
+      ) {
         projects: domainProjectsV2(
           scope: { domainName: $domainName }
           limit: $limit
-        ) {
+        ) @include(if: $on) {
           edges {
             node {
               entityId
             }
           }
         }
-        users: domainUsersV2(
-          scope: { domainName: $domainName }
-          limit: $limit
-        ) {
+        users: domainUsersV2(scope: { domainName: $domainName }, limit: $limit)
+          @include(if: $on) {
           edges {
             node {
               entityId
@@ -124,12 +128,18 @@ export const DomainAuditScope: React.FC<{
         }
       }
     `,
-    { domainName: scope.domainName, limit: DOMAIN_SCOPE_LIMIT },
-    { fetchPolicy: 'store-and-network', fetchKey },
+    {
+      domainName: domain?.domainName ?? '',
+      limit: DOMAIN_SCOPE_LIMIT,
+      on: !!domain,
+    },
+    // Without a domain every field is skipped, so nothing is sent.
+    { fetchPolicy: domain ? 'store-and-network' : 'store-only', fetchKey },
   );
-  return children({
+  if (!domain) return null;
+  return {
     entity: [
-      { entityType: 'domain', entityId: scope.domainId },
+      { entityType: 'domain', entityId: domain.domainId },
       ...(data.projects?.edges ?? []).map(({ node }) => ({
         entityType: 'project',
         entityId: node.entityId,
@@ -138,7 +148,17 @@ export const DomainAuditScope: React.FC<{
     triggeredUser: (data.users?.edges ?? []).map(({ node }) => ({
       value: node.entityId,
     })),
-  });
+  };
+};
+
+export const DomainAuditScope: React.FC<{
+  scope: Extract<CardScope, { kind: 'domain' }>;
+  fetchKey: string;
+  children: (scope: AuditLogScope) => React.ReactNode;
+}> = ({ scope, fetchKey, children }) => {
+  'use memo';
+  const auditScope = useDomainAuditScope(scope, fetchKey);
+  return auditScope ? children(auditScope) : null;
 };
 
 const ScopedAuditLogHistory: React.FC<

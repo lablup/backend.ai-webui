@@ -7,6 +7,7 @@ import {
   DEFAULT_SESSION_GRID_VIEW,
   type SessionGridViewParams,
 } from '../../helper/sessionResourceGridData';
+import { AuditLogNodesPanelContent } from './AuditLogNodesPanel';
 import { DeploymentNodesPanelContent } from './DeploymentNodesPanel';
 import PanelRangeSelect, { NO_PERIOD } from './PanelRangeSelect';
 import { ResourceChartContent } from './ResourceChartPanel';
@@ -239,6 +240,18 @@ const DashboardPanelModal: React.FC<DashboardPanelModalProps> = ({
         }}
         onChangeOrder={(next) => setOrder(next ?? null)}
         disableNavigation
+      />
+    ) : config.kind === 'auditLogNodes' ? (
+      <AuditLogNodesPanelContent
+        key={`${resourceType}:${JSON.stringify(previewFilter ?? null)}`}
+        descriptor={{
+          resourceType,
+          filter: previewFilter ?? null,
+          order,
+          range,
+          tableWindow,
+        }}
+        onChangeOrder={(next) => setOrder(next ?? null)}
       />
     ) : config.kind === 'sessionNodes' ? (
       <SessionNodesPanelContent

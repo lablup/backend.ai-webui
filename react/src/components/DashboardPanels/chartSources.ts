@@ -2,8 +2,11 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { rbacTypeLabel } from '../../helper/rbacElementTypes';
 import { getSessionTypeLabel } from '../../helper/sessionTypeLabel';
+import { AUDIT_LOG_STATUSES } from './memberCards/memberCardData';
 import { DEFAULT_RANGE, isStoredRange } from './panelSettings';
+import { AUDIT_ENTITY_TYPES } from './superadminCards/superadminCardData';
 import {
   MAX_BUCKETS,
   planBuckets,
@@ -180,6 +183,33 @@ export const CHART_GROUPINGS: Record<
         label: labelOf(labelKey),
         filter: { usageMode: { equals: mode } },
       })),
+    },
+  ],
+  auditLog: [
+    {
+      key: 'status',
+      labelKey: 'auditLog.Result',
+      groups: AUDIT_LOG_STATUSES.map(([status, labelKey]) => ({
+        key: status,
+        label: labelOf(labelKey),
+        filter: { status: { equals: status } },
+      })),
+    },
+    {
+      key: 'entityType',
+      labelKey: 'dashboard.card.EntityType',
+      groups: [
+        ...AUDIT_ENTITY_TYPES.map((type) => ({
+          key: type,
+          label: (t: TFunction) => rbacTypeLabel(t, type),
+          filter: { entityType: { equals: type } },
+        })),
+        {
+          key: 'other',
+          label: labelOf('dashboard.card.OtherTypes'),
+          filter: { entityType: { notIn: [...AUDIT_ENTITY_TYPES] } },
+        },
+      ],
     },
   ],
 };
