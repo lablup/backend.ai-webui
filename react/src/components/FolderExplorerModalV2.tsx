@@ -19,13 +19,15 @@
    tickets 25/28 own their internals).
 */
 import { FolderExplorerModalV2OwnershipFragment$key } from '../__generated__/FolderExplorerModalV2OwnershipFragment.graphql';
-import { FolderExplorerModalV2OwnershipProjectQuery } from '../__generated__/FolderExplorerModalV2OwnershipProjectQuery.graphql';
+import FolderExplorerModalV2OwnershipProjectQueryNode, {
+  type FolderExplorerModalV2OwnershipProjectQuery,
+} from '../__generated__/FolderExplorerModalV2OwnershipProjectQuery.graphql';
 import { FolderExplorerModalV2Query } from '../__generated__/FolderExplorerModalV2Query.graphql';
 import type { ScopedAuditLogQuery as ScopedAuditLogQueryType } from '../__generated__/ScopedAuditLogQuery.graphql';
+import type { VFolderNodesV2AutoMountCellFragment$key } from '../__generated__/VFolderNodesV2AutoMountCellFragment.graphql';
 import { formatToUUID } from '../helper';
 import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
-import { useAccessibleProjects } from '../hooks/useAccessibleProjects';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useIsProjectAgnosticPage } from '../hooks/useIsProjectAgnosticPage';
@@ -125,6 +127,40 @@ interface FolderExplorerProps extends Omit<
   onRequestClose: () => void;
 }
 
+// A personal project's folder auto-mounts for its creator, its project's only
+// user (ADR 0031); `group_node` reads the type without a project role (FR-3983).
+const ProjectFolderAutoMountSection: React.FC<{
+  vfolderFrgmt: VFolderNodesV2AutoMountCellFragment$key;
+  projectId: string;
+  creatorId?: string | null;
+  vfolder: { id: string; name: string };
+}> = ({ vfolderFrgmt, projectId, creatorId, vfolder }) => {
+  'use memo';
+  const { group_node } =
+    useLazyLoadQuery<FolderExplorerModalV2OwnershipProjectQuery>(
+      FolderExplorerModalV2OwnershipProjectQueryNode,
+      { projectId: toGlobalId('GroupNode', projectId) },
+    );
+  if (group_node?.type === 'PERSONAL') {
+    return creatorId ? (
+      <VFolderAutoMountMetadataSection
+        vfolderFrgmt={vfolderFrgmt}
+        scopeType="USER"
+        scopeId={creatorId}
+        vfolder={vfolder}
+      />
+    ) : null;
+  }
+  return (
+    <VFolderAutoMountMetadataSection
+      vfolderFrgmt={vfolderFrgmt}
+      scopeType="PROJECT"
+      scopeId={projectId}
+      vfolder={vfolder}
+    />
+  );
+};
+
 // Read through the legacy `group_node`, which skips the RBAC own check that
 // `vfolderV2.ownership.project` runs, so a personal project is recognised even
 // when the caller holds no project role on it (FR-3983).
@@ -211,6 +247,7 @@ const useFolderExplorerQuery = (vfolderID: string) => {
           ownership {
             projectId
             userId
+            creatorId
           }
           accessControl {
             ownershipType
@@ -287,7 +324,6 @@ const FolderExplorerBody: React.FC<{
   const [fetchKey, updateFetchKey] = useFetchKey();
   const baiClient = useSuspendedBackendaiClient();
   const loginConfig = useEffectiveLoginConfig();
-  const { personalProject } = useAccessibleProjects();
   const currentDomain = useCurrentDomainValue();
   const { pageProject } = usePageProject();
   const currentUserAccessKey = baiClient?._config?.accessKey;
@@ -362,18 +398,9 @@ const FolderExplorerBody: React.FC<{
   const [activeTab, setActiveTab] = useState<'metadata' | 'auditLog'>(
     'metadata',
   );
-  // A personal project's folder auto-mounts for the user, as FolderCreateModal sets it.
-  const autoMountScope = (() => {
-    if (!vfolderNode) return null;
-    const { userId, projectId } = vfolderNode.ownership ?? {};
-    if (vfolderNode.accessControl?.ownershipType === 'USER') {
-      return userId ? { scopeType: 'USER' as const, scopeId: userId } : null;
-    }
-    if (!projectId) return null;
-    return projectId === personalProject?.id
-      ? { scopeType: 'USER' as const, scopeId: baiClient.user_uuid }
-      : { scopeType: 'PROJECT' as const, scopeId: projectId };
-  })();
+  const autoMountVFolder = vfolderNode
+    ? { id: vfolderNode.entityId, name: vfolderNode.metadata?.name ?? '' }
+    : null;
   const [auditLogQueryRef, loadAuditLogQuery] =
     useQueryLoader<ScopedAuditLogQueryType>(ScopedAuditLogQuery);
 
@@ -586,18 +613,26 @@ const FolderExplorerBody: React.FC<{
               {vfolderNode ? (
                 <VFolderNodeDescriptionV2 vfolderNodeFrgmt={vfolderNode} />
               ) : null}
-              {autoMountScope && vfolderNode ? (
+              {vfolderNode && autoMountVFolder ? (
                 <BAIErrorBoundary>
                   <Suspense fallback={<BAISkeleton rows={3} />}>
-                    <VFolderAutoMountMetadataSection
-                      vfolderFrgmt={vfolderNode}
-                      scopeType={autoMountScope.scopeType}
-                      scopeId={autoMountScope.scopeId}
-                      vfolder={{
-                        id: vfolderNode.entityId,
-                        name: vfolderNode.metadata?.name ?? '',
-                      }}
-                    />
+                    {vfolderNode.accessControl?.ownershipType === 'USER' ? (
+                      vfolderNode.ownership?.userId ? (
+                        <VFolderAutoMountMetadataSection
+                          vfolderFrgmt={vfolderNode}
+                          scopeType="USER"
+                          scopeId={vfolderNode.ownership.userId}
+                          vfolder={autoMountVFolder}
+                        />
+                      ) : null
+                    ) : vfolderNode.ownership?.projectId ? (
+                      <ProjectFolderAutoMountSection
+                        vfolderFrgmt={vfolderNode}
+                        projectId={vfolderNode.ownership.projectId}
+                        creatorId={vfolderNode.ownership.creatorId}
+                        vfolder={autoMountVFolder}
+                      />
+                    ) : null}
                   </Suspense>
                 </BAIErrorBoundary>
               ) : null}
