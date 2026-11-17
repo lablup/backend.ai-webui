@@ -618,6 +618,7 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
         />
         <FolderCreateModal
           open={isOpenCreateModal}
+          autoMountScopeType="PROJECT"
           // ADR-0001: no ambient project context on the admin Data page — the
           // modal renders its own required project selector.
           project={null}
