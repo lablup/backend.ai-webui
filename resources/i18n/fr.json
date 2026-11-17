@@ -941,7 +941,7 @@
       "Terminated": "Terminé",
       "Terminating": "Arrêt en cours",
       "ThisRange": "Cette période",
-      "TopFailureCauses": "Principales causes d'échec",
+      "TopFailureCauses": "Journal d'audit: Principales causes d'échec",
       "TopFailureCausesTooltip": "Entrées du journal d'audit du projet ou du domaine actuel terminées en erreur ou refusées dans la période de la carte, regroupées par action et par message, les plus fréquentes d'abord. Les identifiants et les longs nombres d'un message sont masqués pour qu'une même cause soit regroupée en une seule.",
       "Unhealthy": "Défaillant",
       "Unlimited": "Illimité",

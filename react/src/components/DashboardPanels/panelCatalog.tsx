@@ -597,7 +597,6 @@ const SUPERADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     defaultSize: size(4, 3),
     minSize: size(2, 3),
     settings: ['range'],
-    defaultHidden: true,
   },
   {
     // The member page's My Recent Sessions over the domain; the key is the one stored boards already carry.
@@ -749,6 +748,7 @@ const PAGE_ORDER: Record<PanelPage, ReadonlyArray<string>> = {
     'agentStats',
     'pendingSessions',
     'sessionLaunches',
+    'topFailureCauses',
     'failuresByEntityType',
     'activeAgents',
     'totalResourceWithinResourceGroup',

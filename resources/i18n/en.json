@@ -928,7 +928,7 @@
       "Terminated": "Terminated",
       "Terminating": "Terminating",
       "ThisRange": "This range",
-      "TopFailureCauses": "Top Failure Causes",
+      "TopFailureCauses": "Audit Log: Top Failure Causes",
       "TopFailureCausesTooltip": "Audit log entries of the current project or domain that ended in an error or were denied in the card's time range, grouped by action and message, most frequent first. IDs and long numbers in a message are masked so that one cause groups as one.",
       "Unhealthy": "Unhealthy",
       "Unlimited": "Unlimited",

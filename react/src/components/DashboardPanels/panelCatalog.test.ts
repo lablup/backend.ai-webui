@@ -114,6 +114,7 @@ describe('PANEL_CATALOG', () => {
         'agentStats',
         'pendingSessions',
         'sessionLaunches',
+        'topFailureCauses',
         'failuresByEntityType',
         'activeAgents',
         'totalResourceWithinResourceGroup',

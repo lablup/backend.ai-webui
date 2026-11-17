@@ -941,7 +941,7 @@
       "Terminated": "已終止",
       "Terminating": "終止中",
       "ThisRange": "本時段",
-      "TopFailureCauses": "主要失敗原因",
+      "TopFailureCauses": "稽核日誌: 主要失敗原因",
       "TopFailureCausesTooltip": "卡片時間範圍內目前專案或網域中以錯誤結束或被拒絕的稽核記錄項目,依操作與訊息分組,依頻率由高到低排列。訊息中的 ID 與長數字會被遮蔽,讓同一原因歸為一組。",
       "Unhealthy": "異常",
       "Unlimited": "無限制",

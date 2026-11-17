@@ -941,7 +941,7 @@
       "Terminated": "Terminato",
       "Terminating": "In terminazione",
       "ThisRange": "Questo periodo",
-      "TopFailureCauses": "Principali cause di errore",
+      "TopFailureCauses": "Registro di controllo: Principali cause di errore",
       "TopFailureCausesTooltip": "Voci del registro di audit del progetto o dominio corrente terminate con errore o negate nell'intervallo della scheda, raggruppate per azione e messaggio, dalle più frequenti. ID e numeri lunghi in un messaggio vengono mascherati affinché una stessa causa sia raggruppata come una.",
       "Unhealthy": "Non integro",
       "Unlimited": "Illimitato",

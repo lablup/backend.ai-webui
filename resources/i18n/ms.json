@@ -941,7 +941,7 @@
       "Terminated": "Ditamatkan",
       "Terminating": "Sedang ditamatkan",
       "ThisRange": "Julat ini",
-      "TopFailureCauses": "Punca Kegagalan Utama",
+      "TopFailureCauses": "Log Audit: Punca Kegagalan Utama",
       "TopFailureCausesTooltip": "Entri log audit projek atau domain semasa yang berakhir dengan ralat atau ditolak dalam julat masa kad, dikumpulkan mengikut tindakan dan mesej, yang paling kerap dahulu. ID dan nombor panjang dalam mesej disembunyikan supaya satu punca dikumpulkan sebagai satu.",
       "Unhealthy": "Tidak sihat",
       "Unlimited": "Tanpa had",

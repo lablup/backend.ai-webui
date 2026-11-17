@@ -941,7 +941,7 @@
       "Terminated": "Päättynyt",
       "Terminating": "Lopetetaan",
       "ThisRange": "Tämä jakso",
-      "TopFailureCauses": "Yleisimmät virheiden syyt",
+      "TopFailureCauses": "Tarkastusloki: Yleisimmät virheiden syyt",
       "TopFailureCausesTooltip": "Nykyisen projektin tai toimialueen tarkastuslokimerkinnät, jotka päättyivät virheeseen tai hylättiin kortin aikavälillä, ryhmiteltyinä toiminnon ja viestin mukaan yleisimmästä alkaen. Viestin tunnisteet ja pitkät numerot peitetään, jotta sama syy ryhmittyy yhdeksi.",
       "Unhealthy": "Ongelmia",
       "Unlimited": "Rajoittamaton",
