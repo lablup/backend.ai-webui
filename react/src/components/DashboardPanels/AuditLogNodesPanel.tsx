@@ -47,6 +47,10 @@ export const AuditLogNodesPanelContent: React.FC<{
     setTablePaginationOption,
   );
 
+  // Only the time sort is reliable; a stored sort on another column falls back to it.
+  const order = /^-?createdAt$/.test(descriptor.order ?? '')
+    ? descriptor.order
+    : undefined;
   const variables = config.buildVariables({
     filter:
       chartTableFilter(
@@ -54,7 +58,7 @@ export const AuditLogNodesPanelContent: React.FC<{
         descriptor.filter,
         descriptor.tableWindow ?? null,
       ) ?? undefined,
-    order: descriptor.order ?? config.defaultOrder,
+    order: order ?? config.defaultOrder,
     limit: baiPaginationOption.limit,
     offset: baiPaginationOption.offset,
     ...queryScope,
@@ -74,7 +78,7 @@ export const AuditLogNodesPanelContent: React.FC<{
     <BAIAuditLogNodes
       auditLogFrgmt={logs}
       size="small"
-      order={descriptor.order ?? undefined}
+      order={order ?? undefined}
       disableSorter={!onChangeOrder}
       onChangeOrder={
         onChangeOrder ? (next) => onChangeOrder(next ?? undefined) : undefined
@@ -97,10 +101,13 @@ export const AuditLogNodesPanelContent: React.FC<{
                       ? rbacTypeLabel(t, record.entityType)
                       : '-',
                 }
-              : column.key === 'status'
-                ? // A descending status sort answers INTERNAL_SERVER_ERROR (manager 26.10.0a5).
-                  { ...column, defaultHidden: false, sorter: false }
-                : { ...column, defaultHidden: false },
+              : // Sorting by anything but time answers INTERNAL_SERVER_ERROR in some
+                // directions (manager 26.10.0a5), which empties the table.
+                {
+                  ...column,
+                  defaultHidden: false,
+                  ...(column.key === 'createdAt' ? {} : { sorter: false }),
+                },
           )
       }
       pagination={{
