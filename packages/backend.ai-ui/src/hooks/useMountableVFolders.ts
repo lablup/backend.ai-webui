@@ -24,9 +24,6 @@ export interface VFolderMountScope {
   mountableHosts: ReadonlyArray<string>;
 }
 
-/** A dotfile folder is what a session mounts without being asked. */
-export const isAutoMountFolderName = (name: string) => name.startsWith('.');
-
 /** The caller's own folders plus the current project's, the reach a session mounts from. */
 export const mountableVFolderScope = (
   userId: string,

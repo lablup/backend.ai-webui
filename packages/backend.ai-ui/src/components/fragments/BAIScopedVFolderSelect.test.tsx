@@ -15,8 +15,8 @@ import BAIScopedVFolderSelect, {
 import { act, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
-// `.config` is reachable but kept out of the options by `optionFilter`, so its
-// label has to come from the lookup; `cold-archive` sits on an unmountable host.
+// `team-config` is auto-mounted, so `optionFilter` keeps it out of the options and
+// its label has to come from the lookup; `cold-archive` sits on an unmountable host.
 const configFolder = mockMountFolders[2];
 const coldArchive = mockMountFolders[3];
 
@@ -41,7 +41,7 @@ const renderSelect = async (
           label="Folders"
           scope={MOCK_MOUNT_SCOPE}
           filter={mountableVFolderFilter(MOCK_MOUNTABLE_HOSTS)}
-          optionFilter={{ name: { notStartsWith: '.' } }}
+          optionFilter={{ autoMounts: { exists: false } }}
           value={value}
           fallbackLabels={fallbackLabels}
           onResolve={onResolve}

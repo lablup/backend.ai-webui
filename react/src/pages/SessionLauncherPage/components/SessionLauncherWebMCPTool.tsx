@@ -20,7 +20,6 @@ import {
   type ResolvedEnvironment,
 } from '../helper/webmcpSessionPrefill';
 import {
-  isAutoMountFolderName,
   mountableVFolderFilter,
   mountableVFolderScope,
   useWebMCPTool,
@@ -222,9 +221,7 @@ const SessionLauncherWebMCPTool: React.FC<SessionLauncherWebMCPToolProps> = ({
             edges {
               node {
                 entityId
-                accessControl {
-                  permission
-                }
+                mountPermission
                 metadata {
                   name
                 }
@@ -253,11 +250,9 @@ const SessionLauncherWebMCPTool: React.FC<SessionLauncherWebMCPToolProps> = ({
     return {
       // One name can match several rows, so a full page can hide a second match.
       truncated: edges.length >= FOLDER_LOOKUP_LIMIT,
-      // Dotfile folders mount on their own, and NONE cannot be mounted.
       folders: _.compact(
         _.map(edges, ({ node }) =>
-          isAutoMountFolderName(node.metadata.name) ||
-          node.accessControl.permission === 'NONE'
+          node.mountPermission === 'NONE'
             ? null
             : { vfolderId: node.entityId, name: node.metadata.name },
         ),
