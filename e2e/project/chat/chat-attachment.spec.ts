@@ -69,7 +69,9 @@ test.describe(
       await chatInput.press('Enter');
 
       // The user message appears in the thread.
-      await expect(page.getByText('Describe this image').first()).toBeVisible({
+      await expect(
+        page.getByTestId('chat-message-list').getByText('Describe this image'),
+      ).toBeVisible({
         timeout: 10000,
       });
 

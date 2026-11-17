@@ -551,6 +551,7 @@ const PureChatCard: React.FC<ChatCardProps> = ({
             onRemoveChat?.(chat);
           }}
           onClearMessage={() => {
+            stop();
             onClearMessage?.(chat);
             setMessages([]);
           }}

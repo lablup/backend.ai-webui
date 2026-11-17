@@ -80,7 +80,9 @@ test.describe('Basic Chat Flow', { tag: ['@chat', '@functional'] }, () => {
     await chatInput.press('Enter');
 
     // Verify the user message appears in the message thread
-    await expect(page.getByText('What is Backend.AI?').first()).toBeVisible({
+    await expect(
+      page.getByTestId('chat-message-list').getByText('What is Backend.AI?'),
+    ).toBeVisible({
       timeout: 10000,
     });
 
@@ -135,8 +137,9 @@ test.describe('Basic Chat Flow', { tag: ['@chat', '@functional'] }, () => {
     ).toBeVisible({ timeout: 15000 });
 
     // Both turns should be visible in the thread
-    await expect(page.getByText('What is Backend.AI?').first()).toBeVisible();
-    await expect(page.getByText('Hello from mock!').first()).toBeVisible();
+    const messageList = page.getByTestId('chat-message-list');
+    await expect(messageList.getByText('What is Backend.AI?')).toBeVisible();
+    await expect(messageList.getByText('Hello from mock!')).toBeVisible();
   });
 
   test('User can stop a streaming response mid-generation', async ({
@@ -271,6 +274,12 @@ test.describe('Basic Chat Flow', { tag: ['@chat', '@functional'] }, () => {
       timeout: 15000,
     });
 
+    const messageList = page.getByTestId('chat-message-list');
+    await expect(messageList.getByText('What is Backend.AI?')).toBeVisible();
+    await expect(
+      page.getByRole('heading', { name: 'What is Backend.AI?' }),
+    ).toBeVisible();
+
     // Click the "More" (three-dot) menu button in the chat card header
     const moreButton = page.getByRole('button', { name: 'more' });
     await moreButton.first().click();
@@ -281,10 +290,15 @@ test.describe('Basic Chat Flow', { tag: ['@chat', '@functional'] }, () => {
       .first()
       .click();
 
-    // The message thread should now be empty
-    await expect(page.getByText('What is Backend.AI?')).not.toBeVisible({
+    // The message thread is empty; the chat keeps the title it took from
+    // its first message.
+    await expect(messageList).toBeVisible();
+    await expect(messageList.getByText('What is Backend.AI?')).toBeHidden({
       timeout: 10000,
     });
+    await expect(
+      page.getByRole('heading', { name: 'What is Backend.AI?' }),
+    ).toBeVisible();
     await expect(page.getByText('Hello from mock!')).not.toBeVisible();
 
     // Input area is still enabled
@@ -342,15 +356,10 @@ test.describe(
       await expect(historyItems.first()).toBeVisible({ timeout: 10000 });
     });
 
-    test.fixme('Chat history label auto-updates to the first user message after the first assistant reply', async ({
+    test('Chat history label auto-updates to the first user message after the first assistant reply', async ({
       page,
       request,
     }) => {
-      // FIXME: The chat history label does not auto-update to the first user message.
-      // The saveChatMessage callback in useHistory uses a stale closure: when the
-      // assistant message arrives via onFinish, the chat state captured in the callback
-      // still shows empty messages (before the user message was persisted), so the
-      // condition (messages.length === 2 && role === 'assistant') is never met.
       // Setup: login, install mocks, navigate to /chat
       await setupChatPage(page, request);
 
@@ -380,20 +389,16 @@ test.describe(
       });
     });
 
-    test.fixme('User can navigate to a previous chat session from history', async ({
+    test('User can navigate to a previous chat session from history', async ({
       page,
       request,
     }) => {
-      // FIXME: The chat history entry labels remain as the default "Chat" instead
-      // of updating to the first user message text. This means the test cannot
-      // locate specific sessions by their message content in the history drawer.
-      // History navigation itself works correctly — selecting a chat restores
-      // its messages — but the label issue prevents reliable session identification.
       // Setup: login, install mocks, navigate to /chat
       await setupChatPage(page, request);
 
       const chatInput = page.getByLabel('Type your message here...');
       await expect(chatInput).toBeVisible({ timeout: 10000 });
+      const messageList = page.getByTestId('chat-message-list');
 
       // First session: send "First session message" and wait for reply
       await chatInput.fill('First session message');
@@ -407,7 +412,7 @@ test.describe(
       await newChatButton.first().click();
 
       // The message thread should be empty in the new session
-      await expect(page.getByText('First session message')).not.toBeVisible({
+      await expect(messageList.getByText('First session message')).toBeHidden({
         timeout: 5000,
       });
 
@@ -436,11 +441,17 @@ test.describe(
       // Click on the first history entry
       await drawer.getByText('First session message').click();
 
-      // The first session's messages are restored
-      await expect(page.getByText('First session message').first()).toBeVisible(
-        { timeout: 10000 },
-      );
-      await expect(page.getByText('Second session message')).not.toBeVisible();
+      // The first session is open again: titled after, and showing, its message
+      await expect(
+        page.getByRole('heading', { name: 'First session message' }),
+      ).toBeVisible({ timeout: 10000 });
+      await expect(
+        messageList.getByText('First session message'),
+      ).toBeVisible();
+      await expect(
+        messageList.getByText('Second session message'),
+      ).toBeHidden();
+      await expect(drawer.getByText('Second session message')).toBeVisible();
     });
 
     test('User can rename a chat session from the page title', async ({
@@ -487,15 +498,10 @@ test.describe(
       });
     });
 
-    test.fixme('User can delete a chat session from history drawer', async ({
+    test('User can delete a chat session from history drawer', async ({
       page,
       request,
     }) => {
-      // FIXME: The chat history entry labels remain as the default "Chat" instead
-      // of updating to the user's message text, so the test cannot identify
-      // specific sessions by content in the history drawer. History selection
-      // and deletion work correctly, but the label issue prevents reliable
-      // targeting of specific entries for deletion.
       // Setup: login, install mocks, navigate to /chat
       await setupChatPage(page, request);
 

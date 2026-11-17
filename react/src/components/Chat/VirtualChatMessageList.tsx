@@ -55,6 +55,7 @@ const VirtualChatMessageList: React.FC<VirtualizedListProps> = ({
 
   return (
     <BAIFlex
+      data-testid="chat-message-list"
       direction="column"
       align="stretch"
       style={{ height: '100%', flex: 1 }}

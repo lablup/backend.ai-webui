@@ -273,11 +273,6 @@ const EditableChatTitle: React.FC<EditableChatTitleProps> = ({
   const [isEditing, setIsEditing] = useState(false);
   const [draft, setDraft] = useState(label);
 
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- resync the local edit draft when the external chat label changes (e.g. rename saved elsewhere)
-    setDraft(label);
-  }, [label]);
-
   if (!editable) {
     return <Heading level={5}>{label}</Heading>;
   }
@@ -320,7 +315,10 @@ const EditableChatTitle: React.FC<EditableChatTitleProps> = ({
         size="sm"
         icon={<PencilIcon size="1em" />}
         label={t('button.Edit')}
-        onClick={() => setIsEditing(true)}
+        onClick={() => {
+          setDraft(label);
+          setIsEditing(true);
+        }}
       />
     </HStack>
   );
