@@ -16,7 +16,8 @@ export type GraphQLMockMap = Record<string, GraphQLMockHandler>;
 /**
  * Intercepts GraphQL POST requests to the `/admin/gql` endpoint and returns
  * mock responses for operations whose names appear in the `mocks` map.
- * Unmatched operations are passed through to the real backend via `route.continue()`.
+ * Unmatched operations go to `route.fallback()`, so route handlers registered
+ * earlier (e.g. `modifyConfigToml`'s `myAppConfigs` handler) still see them.
  *
  * IMPORTANT: Call this **before** any navigation that triggers GraphQL queries.
  */
@@ -27,13 +28,13 @@ export async function setupGraphQLMocks(
   await page.route('**/admin/gql', async (route) => {
     const request = route.request();
     if (request.method() !== 'POST') {
-      await route.continue();
+      await route.fallback();
       return;
     }
 
     const postData = request.postData();
     if (!postData) {
-      await route.continue();
+      await route.fallback();
       return;
     }
 
@@ -41,7 +42,7 @@ export async function setupGraphQLMocks(
     try {
       body = JSON.parse(postData);
     } catch {
-      await route.continue();
+      await route.fallback();
       return;
     }
 
@@ -58,7 +59,7 @@ export async function setupGraphQLMocks(
         body: JSON.stringify({ data: responseData }),
       });
     } else {
-      await route.continue();
+      await route.fallback();
     }
   });
 }
