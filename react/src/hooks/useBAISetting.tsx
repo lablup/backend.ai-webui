@@ -7,13 +7,14 @@ import type { RecentSearchHit } from '../components/GlobalSearchPalette/types';
 import { backendaiOptions } from '../global-stores';
 import { BAIAppearanceConfig } from '../helper/customThemeConfig';
 import {
+  isAccountUserSetting,
   queueUserSettingWrite,
   rawToSetting,
   settingToRaw,
 } from '../helper/userSettingsAppConfig';
 import type { AgentEndpointBindings, AgentProfile } from './useAIAgent';
 import { type BAIBoardItem, BAITableColumnOverrideRecord } from 'backend.ai-ui';
-import { atom, useAtom } from 'jotai';
+import { atom, useAtom, useAtomValue } from 'jotai';
 import { atomFamily } from 'jotai-family';
 import { SetStateAction } from 'react';
 
@@ -91,21 +92,14 @@ export const useBAISettingUserState = <K extends keyof UserSettings>(
 };
 
 /**
- * Whether a user setting has ever been explicitly written to `localStorage`.
- * Needed because `useBAISettingUserState` collapses "never set" and
- * "explicitly set to `null`" into the same `null` return value — callers that
- * need a fallback-only-when-unset default (e.g. a per-consumer auto-refresh
- * interval where the user can legitimately choose "off") can't tell the two
- * apart from the hook's value alone.
+ * Whether a user setting holds a value, an explicit `null` included.
+ * `useBAISettingUserState` returns `null` for both "never set" and "set to
+ * `null`", so a caller whose default applies only while unset (an auto-refresh
+ * the user may turn off) reads this instead.
  */
-export const hasStoredUserSetting = <K extends keyof UserSettings>(
+export const useHasStoredUserSetting = <K extends keyof UserSettings>(
   name: K,
-): boolean => {
-  if (typeof window === 'undefined') return false;
-  return (
-    window.localStorage.getItem('backendaiwebui.settings.user.' + name) !== null
-  );
-};
+): boolean => useAtomValue(HasStoredSettingAtomFamily(name));
 
 export const useBAISettingGeneralState = <K extends keyof GeneralSettings>(
   name: K,
@@ -116,8 +110,49 @@ export const useBAISettingGeneralState = <K extends keyof GeneralSettings>(
 const settingAtom = atom<{
   [key: string]: any;
 }>({});
-const SettingAtomFamily = atomFamily((param: string) => {
-  return atom(
+
+// Account settings (ADR 0032): seeded from `userConfig.settings` at sign-in.
+const accountUserSettingsAtom = atom<Record<string, unknown>>({});
+
+export const setAccountUserSettings = (settings: Record<string, unknown>) => {
+  jotaiStore.set(accountUserSettingsAtom, settings);
+};
+
+export const getAccountUserSettings = (): Record<string, unknown> =>
+  jotaiStore.get(accountUserSettingsAtom);
+
+// Split at the first dot only: a setting name may itself contain dots.
+const splitParam = (param: string) => {
+  const separator = param.indexOf('.');
+  return {
+    namespace: param.slice(0, separator),
+    name: param.slice(separator + 1),
+  };
+};
+
+const isAccountParam = (param: string) => {
+  const { namespace, name } = splitParam(param);
+  return namespace === 'user' && isAccountUserSetting(name);
+};
+
+const accountSettingAtom = (name: string) =>
+  atom(
+    (get) => get(accountUserSettingsAtom)[name] ?? null,
+    (get, set, newValueOrUpdater: any) => {
+      const current = get(accountUserSettingsAtom);
+      const newValue =
+        typeof newValueOrUpdater === 'function'
+          ? newValueOrUpdater(current[name] ?? null)
+          : newValueOrUpdater;
+      const next = { ...current, [name]: newValue };
+      if (newValue === undefined) delete next[name];
+      set(accountUserSettingsAtom, next);
+      queueUserSettingWrite(name, newValue);
+    },
+  );
+
+const localSettingAtom = (param: string) =>
+  atom(
     (get) => {
       const key = 'backendaiwebui.settings.' + param;
       get(settingAtom); // only for the reactivity
@@ -131,10 +166,7 @@ const SettingAtomFamily = atomFamily((param: string) => {
           ? newValueOrUpdater(currentValue)
           : newValueOrUpdater;
 
-      // Split at the first dot only: a setting name may itself contain dots.
-      const separator = param.indexOf('.');
-      const namespace = param.slice(0, separator);
-      const name = param.slice(separator + 1);
+      const { namespace, name } = splitParam(param);
       // `undefined` removes the key; writing it would store the string "undefined".
       if (newValue === undefined) {
         localStorage.removeItem(key);
@@ -153,10 +185,26 @@ const SettingAtomFamily = atomFamily((param: string) => {
       } else {
         backendaiOptions?.set?.(name, newValue, namespace, true);
       }
-      if (namespace === 'user') queueUserSettingWrite(name, newValue);
     },
   );
-});
+
+const SettingAtomFamily = atomFamily((param: string) =>
+  isAccountParam(param)
+    ? accountSettingAtom(splitParam(param).name)
+    : localSettingAtom(param),
+);
+
+const HasStoredSettingAtomFamily = atomFamily((name: string) =>
+  atom((get) => {
+    if (isAccountUserSetting(name)) {
+      return name in get(accountUserSettingsAtom);
+    }
+    get(settingAtom); // only for the reactivity
+    return (
+      localStorage.getItem('backendaiwebui.settings.user.' + name) !== null
+    );
+  }),
+);
 
 document?.addEventListener('backendaiwebui.settings:set', (e: any) => {
   const { detail } = e;
@@ -172,6 +220,10 @@ document?.addEventListener('backendaiwebui.settings:delete', (e: any) => {
   const { detail } = e;
   if (detail.namespace && detail.name) {
     const key = detail.namespace + '.' + detail.name;
+    if (isAccountParam(key)) {
+      jotaiStore.set(SettingAtomFamily(key), undefined);
+      return;
+    }
     // localStorage removal is now handled directly in BackendAISettingsStore.delete().
     // Trigger jotai reactivity so React components re-render.
     const prev = jotaiStore.get(settingAtom);
@@ -179,13 +231,5 @@ document?.addEventListener('backendaiwebui.settings:delete', (e: any) => {
       ...prev,
       ['backendaiwebui.settings.' + key]: null,
     });
-    if (detail.namespace === 'user') {
-      queueUserSettingWrite(detail.name, undefined);
-    }
   }
 });
-
-/** Re-reads every setting atom after the localStorage mirror changed underneath. */
-export const refreshSettingAtoms = () => {
-  jotaiStore.set(settingAtom, {});
-};

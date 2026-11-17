@@ -5,10 +5,10 @@
 import {
   applyUserSettingChanges,
   isAccountUserSetting,
-  mirrorAccountUserSettings,
   queueUserSettingWrite,
   rawToSetting,
   readLocalAccountUserSettings,
+  removeLocalAccountUserSettings,
   startUserSettingsSync,
   stopUserSettingsSync,
   USER_SETTING_STORAGE_PREFIX,
@@ -37,6 +37,9 @@ describe('isAccountUserSetting', () => {
       'agent_endpoints',
       'projectGroup.abc',
       'custom_theme_config',
+      // e2e and walkthrough runs seed the tour flags before sign-in.
+      'has_opened_tour_back_to_user_view',
+      'has_opened_tour_neo_session_validation',
       // Stored at the top level of userConfig by useRecentSessionHistory.
       'recentSessionHistory',
       'pinnedSessionHistory',
@@ -46,7 +49,7 @@ describe('isAccountUserSetting', () => {
   });
 });
 
-describe('localStorage mirror', () => {
+describe('pre-ADR 0032 localStorage copies', () => {
   beforeEach(() => localStorage.clear());
 
   it('reads only account keys with a value, an explicit null included', () => {
@@ -64,26 +67,14 @@ describe('localStorage mirror', () => {
     });
   });
 
-  it('writes the account keys the document holds and keeps the rest', () => {
+  it('removes the account keys and keeps device-local ones', () => {
+    localStorage.setItem(P + 'compact_sidebar', 'true');
+    localStorage.setItem(P + 'hiddenColumnKeys.AgentList', '["status"]');
     localStorage.setItem(P + 'has_opened_tour_back_to_user_view', 'true');
-    localStorage.setItem(P + 'session_monitor_sort', 'newest');
     localStorage.setItem(P + 'preserve_login', 'true');
-    mirrorAccountUserSettings(localStorage, {
-      'table_column_overrides.SessionList': { name: { hidden: true } },
-      'fetchKeyAutoUpdateDelay.list': null,
-      session_monitor_sort: 'name',
-      preserve_login: false,
-    });
-    expect(localStorage.getItem(P + 'session_monitor_sort')).toBe('name');
-    expect(
-      JSON.parse(
-        localStorage.getItem(P + 'table_column_overrides.SessionList')!,
-      ),
-    ).toEqual({ name: { hidden: true } });
-    expect(localStorage.getItem(P + 'fetchKeyAutoUpdateDelay.list')).toBe(
-      'null',
-    );
-    // A seeded key the document lacks stays; a device-local key is untouched.
+    removeLocalAccountUserSettings(localStorage);
+    expect(localStorage.getItem(P + 'compact_sidebar')).toBeNull();
+    expect(localStorage.getItem(P + 'hiddenColumnKeys.AgentList')).toBeNull();
     expect(localStorage.getItem(P + 'has_opened_tour_back_to_user_view')).toBe(
       'true',
     );

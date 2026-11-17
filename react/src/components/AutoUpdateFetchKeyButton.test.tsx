@@ -7,9 +7,15 @@
  * in effect must turn auto-refresh off on the first try, not only after a
  * detour through another interval.
  */
+import {
+  getAccountUserSettings,
+  setAccountUserSettings,
+} from '../hooks/useBAISetting';
 import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
+import { jotaiStore } from './DefaultProviders';
 import '@testing-library/jest-dom';
 import { act, render } from '@testing-library/react';
+import { Provider } from 'jotai';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Capture what the host wrapper actually hands the presentational button; the
@@ -32,21 +38,23 @@ vi.mock('backend.ai-ui', async (importOriginal) => {
   };
 });
 
-const SETTING_KEY =
-  'backendaiwebui.settings.user.fetchKeyAutoUpdateDelay.session-list';
+const SETTING_NAME = 'fetchKeyAutoUpdateDelay.session-list';
 
 const renderButton = () =>
   render(
-    <AutoUpdateFetchKeyButton
-      settingId="session-list"
-      defaultAutoUpdateDelay={15_000}
-      onChange={() => {}}
-    />,
+    <Provider store={jotaiStore}>
+      <AutoUpdateFetchKeyButton
+        settingId="session-list"
+        defaultAutoUpdateDelay={15_000}
+        onChange={() => {}}
+      />
+    </Provider>,
   );
 
 describe('AutoUpdateFetchKeyButton', () => {
   beforeEach(() => {
     localStorage.clear();
+    setAccountUserSettings({});
     lastAutoUpdateDelay = undefined;
     lastOnChangeAutoUpdateDelay = undefined;
   });
@@ -62,7 +70,8 @@ describe('AutoUpdateFetchKeyButton', () => {
 
     act(() => lastOnChangeAutoUpdateDelay?.(null));
 
-    expect(localStorage.getItem(SETTING_KEY)).toBe('null');
+    expect(getAccountUserSettings()).toEqual({ [SETTING_NAME]: null });
+    expect(localStorage.length).toBe(0);
     expect(lastAutoUpdateDelay).toBeNull();
   });
 
@@ -77,8 +86,15 @@ describe('AutoUpdateFetchKeyButton', () => {
   });
 
   it('honours a persisted "Off" over the consumer default on remount', () => {
-    localStorage.setItem(SETTING_KEY, 'null');
+    setAccountUserSettings({ [SETTING_NAME]: null });
     renderButton();
+    expect(lastAutoUpdateDelay).toBeNull();
+  });
+
+  it('applies an "Off" seeded after mount, as the sign-in read does', () => {
+    renderButton();
+    expect(lastAutoUpdateDelay).toBe(15_000);
+    act(() => setAccountUserSettings({ [SETTING_NAME]: null }));
     expect(lastAutoUpdateDelay).toBeNull();
   });
 });

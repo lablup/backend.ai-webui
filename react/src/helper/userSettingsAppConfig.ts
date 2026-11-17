@@ -10,17 +10,13 @@ import * as _ from 'lodash-es';
 
 /**
  * Personal settings that follow the account (ADR 0032): stored flat under
- * `userConfig.settings`, mirrored in localStorage so `useBAISettingUserState`
- * stays synchronous. Every other user setting stays device-local.
+ * `userConfig.settings` and held in memory after sign-in, never in
+ * localStorage. Every other user setting stays device-local.
  */
 export const USER_SETTINGS_CONFIG_KEY = 'settings';
 export const USER_SETTING_STORAGE_PREFIX = 'backendaiwebui.settings.user.';
 
 const ACCOUNT_USER_SETTING_KEYS: ReadonlySet<string> = new Set([
-  'has_opened_tour_neo_session_validation',
-  'has_opened_tour_deployment_preset_validation',
-  'has_opened_tour_back_to_user_view',
-  'has_opened_tour_back_to_admin_settings',
   'session_monitor_sort',
   'session_monitor_rows',
   'session_monitor_condition',
@@ -88,7 +84,7 @@ const accountStorageKeys = (storage: Storage): Array<string> =>
         isAccountUserSetting(key.slice(USER_SETTING_STORAGE_PREFIX.length)),
     );
 
-/** The account settings this browser holds, for the one-time copy. */
+/** The account settings this browser stored before ADR 0032, for the one-time copy. */
 export const readLocalAccountUserSettings = (
   storage: Storage,
 ): Record<string, unknown> => {
@@ -104,19 +100,9 @@ export const readLocalAccountUserSettings = (
   return settings;
 };
 
-/**
- * Writes every account setting the document holds into localStorage. An
- * account key the document lacks keeps its local value: e2e and walkthrough
- * runs seed tour flags there before sign-in.
- */
-export const mirrorAccountUserSettings = (
-  storage: Storage,
-  settings: Record<string, unknown>,
-): void => {
-  _.forEach(settings, (value, name) => {
-    if (!isAccountUserSetting(name) || value === undefined) return;
-    storage.setItem(USER_SETTING_STORAGE_PREFIX + name, settingToRaw(value));
-  });
+/** Drops the pre-ADR 0032 localStorage copies once the account holds them. */
+export const removeLocalAccountUserSettings = (storage: Storage): void => {
+  accountStorageKeys(storage).forEach((key) => storage.removeItem(key));
 };
 
 /** `current` settings with `batch` applied; an `undefined` value removes the key. */

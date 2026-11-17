@@ -5,6 +5,7 @@
 import { useWebUINavigate } from '.';
 import { backendaiOptions, backendaiUtils } from '../global-stores';
 import { exitActAs, getActAsTarget } from '../helper/actAs';
+import { flushUserSettingsSync } from '../helper/userSettingsAppConfig';
 import React, { useEffect, useEffectEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -83,6 +84,8 @@ async function performLogoutCleanup(notificationMessage: string) {
       }),
     );
 
+    // Send the debounced account settings while the client can still write.
+    await flushUserSettingsSync();
     await logoutBackendAIClient();
     clearLoginStorage();
 

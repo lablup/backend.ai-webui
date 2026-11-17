@@ -524,8 +524,8 @@ export const CSSTokenVariables = () => {
  * Also suspends on the signed-in user's `userConfig.themeFamily` and copies
  * it into the localStorage mirror BEFORE the splash goes, so the account's
  * family is what the page reveals (FR-3834). The mirror survives logout; the
- * next login overrides it here. The account's personal settings are mirrored
- * the same way (ADR 0032).
+ * next login overrides it here. The same read seeds the account's personal
+ * settings in memory (ADR 0032).
  */
 const DismissSplashOnMount = () => {
   'use memo';

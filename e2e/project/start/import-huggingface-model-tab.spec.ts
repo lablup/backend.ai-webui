@@ -33,28 +33,51 @@ const getTabs = (page: Page) =>
     .filter({ hasText: 'Start From URL' })
     .getByRole('navigation', { name: 'Tabs' });
 
-// The user-settings atom reads localStorage at app boot, so write the flag
-// and reload instead of toggling through the settings UI.
-const enableHuggingFaceImportSetting = async (page: Page) => {
-  await page.evaluate(() => {
-    localStorage.setItem(
-      'backendaiwebui.settings.user.experimental_import_from_huggingface',
-      'true',
+// The flag is an account setting (ADR 0032) held in memory after sign-in, so
+// set it in the page and wait until userConfig stored it; `undefined` removes it.
+const setHuggingFaceImportSetting = async (
+  page: Page,
+  value: boolean | undefined,
+) => {
+  const saved = page.waitForResponse(
+    (response) =>
+      response.url().includes('/admin/gql') &&
+      (response.request().postData() ?? '').includes(
+        'useAppConfigMyUpsertMutation',
+      ),
+  );
+  await page.evaluate((next) => {
+    document.dispatchEvent(
+      new CustomEvent('backendaiwebui.settings:set', {
+        detail: {
+          namespace: 'user',
+          name: 'experimental_import_from_huggingface',
+          value: next,
+        },
+      }),
     );
-  });
-  await page.reload();
-  await page.waitForSelector('[data-testid="user-dropdown-button"]');
+  }, value);
+  await saved;
 };
 
 test.describe(
   'Start From URL Modal - Hugging Face Import Tab',
   { tag: ['@regression', '@start', '@functional'] },
   () => {
+    // The shared account keeps the flag, so every test starts from it unset.
+    test.afterEach(async ({ page }) => {
+      // Before sign-in nothing syncs, so there is nothing to restore.
+      if (await page.getByTestId('user-dropdown-button').isVisible()) {
+        await setHuggingFaceImportSetting(page, undefined);
+      }
+    });
+
     test('User does not see the Hugging Face import tab by default', async ({
       page,
       request,
     }) => {
       await loginAsAdmin(page, request);
+      await setHuggingFaceImportSetting(page, undefined);
       await navigateTo(page, 'dashboard');
       await openStartFromURLModal(page);
 
@@ -73,7 +96,7 @@ test.describe(
       request,
     }) => {
       await loginAsAdmin(page, request);
-      await enableHuggingFaceImportSetting(page);
+      await setHuggingFaceImportSetting(page, true);
       await navigateTo(page, 'dashboard');
       await openStartFromURLModal(page);
 
@@ -100,7 +123,7 @@ test.describe(
         menu: { blocklist: 'deployments' },
       });
       await loginAsAdmin(page, request);
-      await enableHuggingFaceImportSetting(page);
+      await setHuggingFaceImportSetting(page, true);
       await navigateTo(page, 'dashboard');
       await openStartFromURLModal(page);
 
@@ -118,7 +141,7 @@ test.describe(
       request,
     }) => {
       await loginAsAdmin(page, request);
-      await enableHuggingFaceImportSetting(page);
+      await setHuggingFaceImportSetting(page, true);
       await navigateTo(page, 'dashboard');
       await openStartFromURLModal(page);
 
