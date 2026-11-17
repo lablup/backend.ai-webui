@@ -5,6 +5,7 @@
 import { ImportHuggingFaceModelFormWritableFoldersQuery } from '../__generated__/ImportHuggingFaceModelFormWritableFoldersQuery.graphql';
 import { App } from '../app-shim';
 import { Form, FormInstance, FormProps } from '../form-engine';
+import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import {
   StartSessionWithDefaultValue,
