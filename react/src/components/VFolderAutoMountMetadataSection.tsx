@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import type { VFolderAutoMountMetadataSectionDeleteMutation } from '../__generated__/VFolderAutoMountMetadataSectionDeleteMutation.graphql';
+import type { VFolderAutoMountMetadataSectionFragment$key } from '../__generated__/VFolderAutoMountMetadataSectionFragment.graphql';
 import type { VFolderAutoMountMetadataSectionPermissionQuery } from '../__generated__/VFolderAutoMountMetadataSectionPermissionQuery.graphql';
 import VFolderNodesV2AutoMountCellFragment, {
   type VFolderNodesV2AutoMountCellFragment$key,
@@ -17,78 +18,92 @@ import {
   BAIMetadataList,
   BAIMetadataListItem,
   BAINameActionCell,
+  type BAINameActionCellAction,
   BAIQuestionIconWithTooltip,
   useErrorMessageResolver,
   useMutationWithPromise,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { PlusIcon, SquarePenIcon, Trash2 } from 'lucide-react';
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
 
+type AutoMountScope = { scopeType: VFolderAutoMountScopeType; scopeId: string };
+
+type BuildActions = (
+  disabledUnless: (permission: string) => BAINameActionCellAction['disabled'],
+) => Array<BAINameActionCellAction>;
+
 export interface VFolderAutoMountMetadataSectionProps {
-  /** The folder's auto-mount, read through the folder list's own fragment. */
-  vfolderFrgmt: VFolderNodesV2AutoMountCellFragment$key;
-  /** Scope the folder's auto-mount is set on; the caller decides (ADR 0031). */
-  scopeType: VFolderAutoMountScopeType;
-  scopeId: string;
-  vfolder: { id: string; name: string };
+  vfolderFrgmt: VFolderAutoMountMetadataSectionFragment$key;
 }
 
 /** The folder's one auto-mount setting, shown and edited in its metadata. */
 const VFolderAutoMountMetadataSection: React.FC<
   VFolderAutoMountMetadataSectionProps
-> = ({ vfolderFrgmt, scopeType, scopeId, vfolder }) => {
+> = ({ vfolderFrgmt }) => {
   'use memo';
   const { t } = useTranslation();
   const { message } = App.useApp();
   const { getErrorMessage } = useErrorMessageResolver();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { vfolderAutoMounts } = useFragment(
-    VFolderNodesV2AutoMountCellFragment,
-    vfolderFrgmt,
-  );
-  const autoMount = vfolderAutoMounts?.edges[0]?.node ?? null;
 
-  const { myScopePermissions } =
-    useLazyLoadQuery<VFolderAutoMountMetadataSectionPermissionQuery>(
-      graphql`
-        query VFolderAutoMountMetadataSectionPermissionQuery(
-          $scopeType: String!
-          $scopeId: UUID!
-        ) {
-          myScopePermissions(
-            input: {
-              target: {
-                scopeType: $scopeType
-                scopeId: $scopeId
-                entityType: "vfolder_auto_mount"
-              }
-            }
-          ) {
-            item {
-              permissions
+  // `project` is caught in this fragment, not at the explorer's node: a share
+  // recipient reads the folder but not its project (#10647).
+  const vfolder = useFragment(
+    graphql`
+      fragment VFolderAutoMountMetadataSectionFragment on VFolder {
+        entityId
+        metadata {
+          name
+        }
+        accessControl {
+          ownershipType
+        }
+        ownership {
+          userId
+          projectId
+          creatorId
+          project @catch(to: NULL) {
+            basicInfo {
+              type
             }
           }
         }
-      `,
-      {
-        scopeType: scopeType === 'PROJECT' ? 'project' : 'user',
-        scopeId,
-      },
-      { fetchPolicy: 'store-and-network' },
+        ...VFolderNodesV2AutoMountCellFragment
+      }
+    `,
+    vfolderFrgmt,
+  );
+  const { vfolderAutoMounts } =
+    useFragment<VFolderNodesV2AutoMountCellFragment$key>(
+      VFolderNodesV2AutoMountCellFragment,
+      vfolder,
     );
-  const permissions = myScopePermissions?.item.permissions ?? [];
+  const autoMount = vfolderAutoMounts?.edges[0]?.node ?? null;
 
-  const noPermission = {
-    reason:
-      scopeType === 'PROJECT'
-        ? t('autoMount.NoPermissionToSetProjectAutoMount')
-        : t('autoMount.NoPermissionToSetAutoMount'),
-  };
-  const disabledUnless = (permission: string) =>
-    _.includes(permissions, permission) ? undefined : noPermission;
+  // ADR 0031: a personal project's folder auto-mounts for its user, any other
+  // project folder for its project; null when the project cannot be read.
+  const { userId, projectId, creatorId, project } = vfolder.ownership ?? {};
+  const addScope: AutoMountScope | null =
+    vfolder.accessControl?.ownershipType === 'USER'
+      ? userId
+        ? { scopeType: 'USER', scopeId: userId }
+        : null
+      : !projectId || !project
+        ? null
+        : project.basicInfo.type === 'PERSONAL'
+          ? creatorId
+            ? { scopeType: 'USER', scopeId: creatorId }
+            : null
+          : { scopeType: 'PROJECT', scopeId: projectId };
+  const scope: AutoMountScope | null = autoMount
+    ? {
+        scopeType: autoMount.scopeType as VFolderAutoMountScopeType,
+        scopeId: autoMount.scopeId,
+      }
+    : addScope;
 
   const deleteAutoMount =
     useMutationWithPromise<VFolderAutoMountMetadataSectionDeleteMutation>(
@@ -119,66 +134,76 @@ const VFolderAutoMountMetadataSection: React.FC<
     }
   };
 
-  const permissionLabel = (permission: string) =>
-    permission === 'READ_ONLY'
-      ? t('data.ReadOnly')
-      : permission === 'READ_WRITE'
-        ? t('data.ReadWrite')
-        : t('autoMount.ReadWriteDelete');
+  const buildActions: BuildActions = (disabledUnless) =>
+    autoMount
+      ? [
+          {
+            key: 'edit-auto-mount',
+            title: t('autoMount.EditAutoMount'),
+            icon: <SquarePenIcon />,
+            disabled: disabledUnless('UPDATE'),
+            onClick: () => setIsModalOpen(true),
+          },
+          {
+            key: 'remove-auto-mount',
+            title: t('autoMount.RemoveAutoMount'),
+            icon: <Trash2 />,
+            type: 'danger',
+            disabled: disabledUnless('SOFT_DELETE'),
+            popConfirm: {
+              title: t('autoMount.RemoveAutoMountConfirm'),
+              description: autoMount.mountDestination,
+              okButtonProps: { danger: true },
+              okText: t('button.Remove'),
+              onConfirm: handleDelete,
+            },
+          },
+        ]
+      : [
+          {
+            key: 'add-auto-mount',
+            title: t('autoMount.AddAutoMount'),
+            icon: <PlusIcon />,
+            disabled: disabledUnless('CREATE'),
+            onClick: () => setIsModalOpen(true),
+          },
+        ];
+
+  const title = (
+    <HStack gap={1} vAlign="center">
+      <Text weight="semibold">{t('autoMount.AutoMount')}</Text>
+      <BAIQuestionIconWithTooltip
+        title={
+          scope?.scopeType === 'PROJECT'
+            ? t('autoMount.FolderProjectAutoMountDesc')
+            : t('autoMount.FolderUserAutoMountDesc')
+        }
+      />
+    </HStack>
+  );
+  const noScopeHeader = (
+    <BAINameActionCell
+      title={title}
+      showActions="always"
+      actions={buildActions(() => ({
+        reason: t('autoMount.NoPermissionToSetAutoMount'),
+      }))}
+    />
+  );
 
   return (
     <VStack gap={2} align="stretch">
-      {/* The row-action cell, so the buttons match the tables' tooltips and colours. */}
-      <BAINameActionCell
-        title={
-          <HStack gap={1} vAlign="center">
-            <Text weight="semibold">{t('autoMount.AutoMount')}</Text>
-            <BAIQuestionIconWithTooltip
-              title={
-                scopeType === 'PROJECT'
-                  ? t('autoMount.FolderProjectAutoMountDesc')
-                  : t('autoMount.FolderUserAutoMountDesc')
-              }
-            />
-          </HStack>
-        }
-        showActions="always"
-        actions={
-          autoMount
-            ? [
-                {
-                  key: 'edit-auto-mount',
-                  title: t('autoMount.EditAutoMount'),
-                  icon: <SquarePenIcon />,
-                  disabled: disabledUnless('UPDATE'),
-                  onClick: () => setIsModalOpen(true),
-                },
-                {
-                  key: 'remove-auto-mount',
-                  title: t('autoMount.RemoveAutoMount'),
-                  icon: <Trash2 />,
-                  type: 'danger' as const,
-                  disabled: disabledUnless('SOFT_DELETE'),
-                  popConfirm: {
-                    title: t('autoMount.RemoveAutoMountConfirm'),
-                    description: autoMount.mountDestination,
-                    okButtonProps: { danger: true },
-                    okText: t('button.Remove'),
-                    onConfirm: handleDelete,
-                  },
-                },
-              ]
-            : [
-                {
-                  key: 'add-auto-mount',
-                  title: t('autoMount.AddAutoMount'),
-                  icon: <PlusIcon />,
-                  disabled: disabledUnless('CREATE'),
-                  onClick: () => setIsModalOpen(true),
-                },
-              ]
-        }
-      />
+      {scope ? (
+        <Suspense fallback={noScopeHeader}>
+          <PermissionCheckedHeader
+            scope={scope}
+            title={title}
+            buildActions={buildActions}
+          />
+        </Suspense>
+      ) : (
+        noScopeHeader
+      )}
       {autoMount ? (
         <BAIMetadataList columns="single">
           <BAIMetadataListItem label={t('autoMount.MountDestination')}>
@@ -188,22 +213,84 @@ const VFolderAutoMountMetadataSection: React.FC<
             {autoMount.subpath}
           </BAIMetadataListItem>
           <BAIMetadataListItem label={t('autoMount.MountPermission')}>
-            {permissionLabel(autoMount.mountPermission)}
+            {autoMount.mountPermission === 'READ_ONLY'
+              ? t('data.ReadOnly')
+              : autoMount.mountPermission === 'READ_WRITE'
+                ? t('data.ReadWrite')
+                : t('autoMount.ReadWriteDelete')}
           </BAIMetadataListItem>
         </BAIMetadataList>
       ) : (
         <Text color="secondary">{t('autoMount.NotAutoMounted')}</Text>
       )}
-      <VFolderAutoMountSettingModal
-        open={isModalOpen}
-        unmountOnClose
-        scopeType={scopeType}
-        scopeId={scopeId}
-        vfolder={vfolder}
-        vfolderAutoMountFrgmt={autoMount}
-        onRequestClose={() => setIsModalOpen(false)}
-      />
+      {scope ? (
+        <VFolderAutoMountSettingModal
+          open={isModalOpen}
+          unmountOnClose
+          scopeType={scope.scopeType}
+          scopeId={scope.scopeId}
+          vfolder={{
+            id: vfolder.entityId,
+            name: vfolder.metadata?.name ?? '',
+          }}
+          vfolderAutoMountFrgmt={autoMount}
+          onRequestClose={() => setIsModalOpen(false)}
+        />
+      ) : null}
     </VStack>
+  );
+};
+
+/** The section's actions, each disabled with a reason without its permission. */
+const PermissionCheckedHeader: React.FC<{
+  scope: AutoMountScope;
+  title: React.ReactNode;
+  buildActions: BuildActions;
+}> = ({ scope, title, buildActions }) => {
+  'use memo';
+  const { t } = useTranslation();
+  const { myScopePermissions } =
+    useLazyLoadQuery<VFolderAutoMountMetadataSectionPermissionQuery>(
+      graphql`
+        query VFolderAutoMountMetadataSectionPermissionQuery(
+          $scopeType: String!
+          $scopeId: UUID!
+        ) {
+          myScopePermissions(
+            input: {
+              target: {
+                scopeType: $scopeType
+                scopeId: $scopeId
+                entityType: "vfolder_auto_mount"
+              }
+            }
+          ) {
+            item {
+              permissions
+            }
+          }
+        }
+      `,
+      {
+        scopeType: scope.scopeType === 'PROJECT' ? 'project' : 'user',
+        scopeId: scope.scopeId,
+      },
+      { fetchPolicy: 'store-and-network' },
+    );
+  const permissions = myScopePermissions?.item.permissions ?? [];
+  const reason =
+    scope.scopeType === 'PROJECT'
+      ? t('autoMount.NoPermissionToSetProjectAutoMount')
+      : t('autoMount.NoPermissionToSetAutoMount');
+
+  return (
+    <BAINameActionCell
+      title={title}
+      showActions="always"
+      actions={buildActions((permission) =>
+        _.includes(permissions, permission) ? undefined : { reason },
+      )}
+    />
   );
 };
 

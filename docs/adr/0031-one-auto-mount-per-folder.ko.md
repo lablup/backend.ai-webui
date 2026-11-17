@@ -49,8 +49,8 @@ flowchart LR
 
 ### 1. 소유 scope만이 유일한 scope다
 
-- **Scope choice**: auto-mount를 만드는 WebUI의 모든 경로는 폴더 소유자로부터 scope를 정한다. `accessControl.ownershipType`이 `USER`인 폴더는 `ownership.userId`의 `USER` scope를 받는다. 사용자 개인 프로젝트의 프로젝트 소유 폴더는 `FolderCreateModal`이 그곳에서 쓰는 것과 같은 현재 사용자의 `USER` scope를 받는다. 그 밖의 폴더는 `ownership.projectId`의 `PROJECT` scope를 받는다.
-- **Creation paths**: `FolderCreateModal`은 개인 프로젝트에서도 항상 `createVFolderInProject`로 프로젝트 폴더를 만든다. 개인 프로젝트에서는 그 폴더를 사용자에게 auto-mount하고, 다른 프로젝트에서는 그 프로젝트에 auto-mount한다. 두 component 모두 scope를 스스로 정하지 않는다. `FolderCreateModal`을 여는 쪽이 `autoMountScopeType`을 넘기고(대상이 자기 개인 프로젝트면 `USER`, 기본값은 `PROJECT`), `FolderExplorerModalV2`가 `VFolderAutoMountMetadataSection`에 scope를 넘긴다.
+- **Scope choice**: auto-mount를 만드는 WebUI의 모든 경로는 폴더 소유자로부터 scope를 정한다. `accessControl.ownershipType`이 `USER`인 폴더는 `ownership.userId`의 `USER` scope를 받는다. `ownership.project.basicInfo.type`이 `PERSONAL`인 프로젝트 소유 폴더는 누가 열든 그 프로젝트의 유일한 사용자인 `ownership.creatorId`의 `USER` scope를 받는다. 그 밖의 폴더는 `ownership.projectId`의 `PROJECT` scope를 받는다.
+- **Creation paths**: `FolderCreateModal`은 개인 프로젝트에서도 항상 `createVFolderInProject`로 프로젝트 폴더를 만든다. 개인 프로젝트에서는 그 폴더를 사용자에게 auto-mount하고, 다른 프로젝트에서는 그 프로젝트에 auto-mount한다. 두 component 모두 scope를 스스로 정하지 않는다. `FolderCreateModal`을 여는 쪽이 `autoMountScopeType`을 넘기고(대상이 자기 개인 프로젝트면 `USER`, 기본값은 `PROJECT`), `VFolderAutoMountMetadataSection`은 폴더에 대한 자기 fragment로 scope를 정한다.
 - **Folder entry points**: auto-mount는 폴더에서만 추가한다. `FolderCreateModal`과 폴더 탐색기의 `VFolderAutoMountMetadataSection`이 그곳이다. `VFolderAutoMountSettingModal`은 항상 그 폴더를 받고, 폴더 선택 박스를 보여주지 않는다.
 
 ### 2. 읽을 때는 폴더당 한 행
@@ -62,6 +62,13 @@ flowchart LR
 
 - **Single value**: 폴더 목록 셀과 탐색기 섹션은 첫 행을 그 폴더의 auto-mount 설정으로 그린다.
 - **Explorer actions**: 탐색기 섹션은 행이 없으면 추가를, 있으면 수정이나 삭제를 보여준다. 같은 폴더에 두 번째 추가는 보여주지 않는다.
+
+### 3. 권한은 표시가 아니라 동작을 막는다
+
+- **Display**: `VFolderAutoMountMetadataSection`은 폴더 목록과 똑같이 `VFolderNodesV2AutoMountCellFragment`가 돌려준 것을 보여준다. 권한 확인은 표시를 가리지 않는다.
+- **Action permissions**: 수정과 삭제는 기존 행의 `scopeType`/`scopeId`에서 `UPDATE`와 `SOFT_DELETE`를 확인하고, 추가는 1절의 scope에서 `CREATE`를 확인한다. 둘 다 `entityType: "vfolder_auto_mount"`로 `myScopePermissions`를 읽는다.
+- **Missing permission**: 호출한 사람이 할 수 없는 동작은 숨기지 않고 비활성으로 두며, 권한이 부족하다는 tooltip을 붙인다(`BAINameActionCell`의 `disabled: { reason }`). `ownership.project`를 읽지 못해 scope를 정할 수 없을 때도 추가를 같은 방식으로 비활성으로 둔다.
+- **V2 fields only**: 프로젝트 타입은 `vfolderV2.ownership.project`에서 읽고, 섹션 자기 fragment에서 `@catch(to: NULL)`로 받는다. 그래서 공유받은 사람이 프로젝트를 읽지 못해도 탐색기의 폴더 노드는 실패하지 않는다(#10647). 레거시 `group_node`는 쓰지 않는다.
 
 ## 대안과 기각 사유
 
