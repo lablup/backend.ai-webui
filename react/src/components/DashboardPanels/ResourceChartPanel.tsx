@@ -2,6 +2,8 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import type { ResourceChartPanelAuditLogTypeCountsQuery } from '../../__generated__/ResourceChartPanelAuditLogTypeCountsQuery.graphql';
+import type { ResourceChartPanelAuditLogTypesQuery } from '../../__generated__/ResourceChartPanelAuditLogTypesQuery.graphql';
 import PanelFrame from './PanelFrame';
 import {
   ResourceTableBody,
@@ -9,9 +11,12 @@ import {
 } from './ResourceTablePanel';
 import {
   CHART_GROUPINGS,
+  auditEntityTypeGroups,
   chartCounts,
+  chartTableFilter,
   chartWindow,
   combineFilters,
+  entityTypesByFrequency,
   resolveChart,
   type ChartCount,
 } from './chartSources';
@@ -20,11 +25,13 @@ import { formatBucketSpan } from './charts/bucketSpan';
 import {
   countAliasVariables,
   countText,
+  readCount,
   readCounts,
   type CountAlias,
 } from './countAliases';
 import { toDonutRows } from './memberCards/memberCardData';
 import { resolvePanelTitle, resourceRegistry } from './resourceRegistry';
+import { AUDIT_ENTITY_TYPES } from './superadminCards/superadminCardData';
 import {
   isTimeChartType,
   type PanelChart,
@@ -431,6 +438,225 @@ const ResourceChartPanel: React.FC<ResourceTablePanelProps> = ({
   );
 };
 
+/** The newest and the oldest audit log rows a chart reads for entity types the fixed list lacks. */
+const ENTITY_TYPE_SAMPLE_SIZE = 500;
+/** Entity types a chart counts to rank them; one count alias each. */
+const MAX_ENTITY_TYPE_CANDIDATES = 16;
+const CANDIDATE_KEYS = _.range(MAX_ENTITY_TYPE_CANDIDATES).map((i) => `k${i}`);
+
+/**
+ * Entity types of an audit log chart grouped by entity type, ranked by the
+ * manager's count; empty for any other chart. The candidates are the types in
+ * the newest and the oldest rows plus the fixed list, so a type frequent at
+ * either end of the range, or overall, gets its own slice.
+ */
+const useRankedAuditEntityTypes = (
+  isEnabled: boolean,
+  scope: unknown,
+  filter: PanelDescriptor['filter'],
+  fetchKey?: string,
+): Array<string> => {
+  'use memo';
+  const auditFilter = (
+    filter && typeof filter === 'object' ? filter : null
+  ) as ResourceChartPanelAuditLogTypesQuery['variables']['filter'];
+  const auditScope = (scope ??
+    {}) as ResourceChartPanelAuditLogTypesQuery['variables']['scope'];
+  const sampleVariables = useDeferredValue({
+    scope: auditScope,
+    filter: auditFilter,
+    limit: ENTITY_TYPE_SAMPLE_SIZE,
+    on: isEnabled,
+  });
+  // Off, every field is skipped, so neither query sends anything.
+  const fetchPolicy = isEnabled ? 'store-and-network' : 'store-only';
+  const sampleData = useLazyLoadQuery<ResourceChartPanelAuditLogTypesQuery>(
+    graphql`
+      query ResourceChartPanelAuditLogTypesQuery(
+        $scope: AuditLogScope!
+        $filter: AuditLogFilter
+        $limit: Int!
+        $on: Boolean!
+      ) {
+        newest: scopedAuditLogsV2(
+          scope: $scope
+          filter: $filter
+          orderBy: [{ field: CREATED_AT, direction: DESC }]
+          limit: $limit
+        ) @include(if: $on) @catch(to: RESULT) {
+          edges {
+            node {
+              entityType
+            }
+          }
+        }
+      }
+    `,
+    sampleVariables,
+    { fetchPolicy, fetchKey },
+  );
+  const sampled = [sampleData.newest].flatMap((result) =>
+    result?.ok ? _.compact(result.value?.edges.map((e) => e?.node)) : [],
+  );
+  const candidates = isEnabled
+    ? _.uniq([...entityTypesByFrequency(sampled), ...AUDIT_ENTITY_TYPES]).slice(
+        0,
+        MAX_ENTITY_TYPE_CANDIDATES,
+      )
+    : [];
+  const countData = useLazyLoadQuery<ResourceChartPanelAuditLogTypeCountsQuery>(
+    graphql`
+      query ResourceChartPanelAuditLogTypeCountsQuery(
+        $scope: AuditLogScope!
+        $k0: AuditLogFilter
+        $k0On: Boolean!
+        $k1: AuditLogFilter
+        $k1On: Boolean!
+        $k2: AuditLogFilter
+        $k2On: Boolean!
+        $k3: AuditLogFilter
+        $k3On: Boolean!
+        $k4: AuditLogFilter
+        $k4On: Boolean!
+        $k5: AuditLogFilter
+        $k5On: Boolean!
+        $k6: AuditLogFilter
+        $k6On: Boolean!
+        $k7: AuditLogFilter
+        $k7On: Boolean!
+        $k8: AuditLogFilter
+        $k8On: Boolean!
+        $k9: AuditLogFilter
+        $k9On: Boolean!
+        $k10: AuditLogFilter
+        $k10On: Boolean!
+        $k11: AuditLogFilter
+        $k11On: Boolean!
+        $k12: AuditLogFilter
+        $k12On: Boolean!
+        $k13: AuditLogFilter
+        $k13On: Boolean!
+        $k14: AuditLogFilter
+        $k14On: Boolean!
+        $k15: AuditLogFilter
+        $k15On: Boolean!
+      ) {
+        k0: scopedAuditLogsV2(scope: $scope, filter: $k0, limit: 1)
+          @include(if: $k0On)
+          @catch(to: RESULT) {
+          count
+        }
+        k1: scopedAuditLogsV2(scope: $scope, filter: $k1, limit: 1)
+          @include(if: $k1On)
+          @catch(to: RESULT) {
+          count
+        }
+        k2: scopedAuditLogsV2(scope: $scope, filter: $k2, limit: 1)
+          @include(if: $k2On)
+          @catch(to: RESULT) {
+          count
+        }
+        k3: scopedAuditLogsV2(scope: $scope, filter: $k3, limit: 1)
+          @include(if: $k3On)
+          @catch(to: RESULT) {
+          count
+        }
+        k4: scopedAuditLogsV2(scope: $scope, filter: $k4, limit: 1)
+          @include(if: $k4On)
+          @catch(to: RESULT) {
+          count
+        }
+        k5: scopedAuditLogsV2(scope: $scope, filter: $k5, limit: 1)
+          @include(if: $k5On)
+          @catch(to: RESULT) {
+          count
+        }
+        k6: scopedAuditLogsV2(scope: $scope, filter: $k6, limit: 1)
+          @include(if: $k6On)
+          @catch(to: RESULT) {
+          count
+        }
+        k7: scopedAuditLogsV2(scope: $scope, filter: $k7, limit: 1)
+          @include(if: $k7On)
+          @catch(to: RESULT) {
+          count
+        }
+        k8: scopedAuditLogsV2(scope: $scope, filter: $k8, limit: 1)
+          @include(if: $k8On)
+          @catch(to: RESULT) {
+          count
+        }
+        k9: scopedAuditLogsV2(scope: $scope, filter: $k9, limit: 1)
+          @include(if: $k9On)
+          @catch(to: RESULT) {
+          count
+        }
+        k10: scopedAuditLogsV2(scope: $scope, filter: $k10, limit: 1)
+          @include(if: $k10On)
+          @catch(to: RESULT) {
+          count
+        }
+        k11: scopedAuditLogsV2(scope: $scope, filter: $k11, limit: 1)
+          @include(if: $k11On)
+          @catch(to: RESULT) {
+          count
+        }
+        k12: scopedAuditLogsV2(scope: $scope, filter: $k12, limit: 1)
+          @include(if: $k12On)
+          @catch(to: RESULT) {
+          count
+        }
+        k13: scopedAuditLogsV2(scope: $scope, filter: $k13, limit: 1)
+          @include(if: $k13On)
+          @catch(to: RESULT) {
+          count
+        }
+        k14: scopedAuditLogsV2(scope: $scope, filter: $k14, limit: 1)
+          @include(if: $k14On)
+          @catch(to: RESULT) {
+          count
+        }
+        k15: scopedAuditLogsV2(scope: $scope, filter: $k15, limit: 1)
+          @include(if: $k15On)
+          @catch(to: RESULT) {
+          count
+        }
+      }
+    `,
+    {
+      scope: auditScope,
+      ...Object.fromEntries(
+        CANDIDATE_KEYS.flatMap((key, index) => {
+          const type = candidates[index];
+          const typeFilter = { entityType: { equals: type } };
+          return [
+            [
+              key,
+              type
+                ? auditFilter
+                  ? { AND: [auditFilter, typeFilter] }
+                  : typeFilter
+                : null,
+            ],
+            [`${key}On`, !!type],
+          ];
+        }),
+      ),
+    } as ResourceChartPanelAuditLogTypeCountsQuery['variables'],
+    { fetchPolicy, fetchKey },
+  ) as unknown as Record<string, CountAlias>;
+  return _.orderBy(
+    candidates
+      .map((type, index) => ({
+        type,
+        count: readCount(countData[CANDIDATE_KEYS[index]]).count,
+      }))
+      .filter(({ count }) => count > 0),
+    ['count', 'type'],
+    ['desc', 'asc'],
+  ).map(({ type }) => type);
+};
+
 /** Suspending inner half: counts every group or bucket in one request and draws them; also the modal's preview. */
 export const ResourceChartContent: React.FC<{
   descriptor: PanelDescriptor;
@@ -445,7 +671,27 @@ export const ResourceChartContent: React.FC<{
   const auditScope = useAuditLogQueryScope(source, fetchKey);
   const config = resourceRegistry[source];
   const nextChart = resolveChart(source, descriptor.chart);
-  const nextCounts = chartCounts(source, nextChart, descriptor.range, now);
+  const groupsByData =
+    source === 'auditLog' &&
+    nextChart.groupBy === 'entityType' &&
+    !isTimeChartType(nextChart.type);
+  const frequentTypes = useRankedAuditEntityTypes(
+    groupsByData,
+    auditScope,
+    chartTableFilter(
+      source,
+      descriptor.filter,
+      chartWindow(nextChart, descriptor.range, now),
+    ),
+    fetchKey,
+  );
+  const nextCounts = chartCounts(
+    source,
+    nextChart,
+    descriptor.range,
+    now,
+    groupsByData ? auditEntityTypeGroups(frequentTypes) : undefined,
+  );
 
   const variablesOf = (filter: PanelDescriptor['filter']) =>
     config.buildVariables({

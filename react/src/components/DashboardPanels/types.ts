@@ -385,6 +385,8 @@ export interface ResourceConfig<
   kind?: 'sessionNodes' | 'deploymentNodes' | 'auditLogNodes';
   getFilterProperties?: (
     t: TFunction,
+    /** The entity types the manager lists, for an audit log source's picker. */
+    context?: { entityTypes?: ReadonlyArray<string> },
   ) => ReadonlyArray<BAIGraphQLFilterProperty>;
   /** Properties for `BAIPropertyFilter` (string filter), `kind: 'sessionNodes'`. */
   getStringFilterProperties?: (t: TFunction) => Array<FilterProperty>;

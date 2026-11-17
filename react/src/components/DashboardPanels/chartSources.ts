@@ -303,6 +303,8 @@ export const chartCounts = (
   chart: PanelChart,
   range: string | null | undefined,
   now: number,
+  /** Groups decided from the data, replacing the grouping's fixed ones. */
+  groupsOverride?: ReadonlyArray<ChartCount>,
 ): Array<ChartCount> => {
   const effectiveRange = isStoredRange(range) ? range : DEFAULT_RANGE;
   if (isTimeChartType(chart.type)) {
@@ -319,12 +321,50 @@ export const chartCounts = (
     CHART_GROUPINGS[source].find(({ key }) => key === chart.groupBy) ??
     CHART_GROUPINGS[source][0];
   const window = chartWindow(chart, effectiveRange, now);
-  return grouping.groups.slice(0, MAX_BUCKETS).map((group) =>
-    window
-      ? {
-          ...group,
-          filter: combineFilters(group.filter, createdWithin(source, window)),
-        }
-      : group,
+  return (groupsOverride ?? grouping.groups)
+    .slice(0, MAX_BUCKETS)
+    .map((group) =>
+      window
+        ? {
+            ...group,
+            filter: combineFilters(group.filter, createdWithin(source, window)),
+          }
+        : group,
+    );
+};
+
+/** Entity types by how often they appear, most frequent first. */
+export const entityTypesByFrequency = (
+  rows: ReadonlyArray<{ readonly entityType?: string | null }>,
+): Array<string> => {
+  const counts = _.countBy(_.compact(rows.map((row) => row.entityType)));
+  return _.orderBy(
+    Object.keys(counts),
+    [(type) => counts[type], (type) => type],
+    ['desc', 'asc'],
   );
+};
+
+/**
+ * The audit log entity type groups for the types that actually appear: one
+ * slice per frequent type, every other type in "Other types". Without any,
+ * the fixed list stands.
+ */
+export const auditEntityTypeGroups = (
+  frequentTypes: ReadonlyArray<string>,
+): ReadonlyArray<ChartCount> | undefined => {
+  if (frequentTypes.length === 0) return undefined;
+  const shown = frequentTypes.slice(0, MAX_BUCKETS - 1);
+  return [
+    ...shown.map((type) => ({
+      key: type,
+      label: (t: TFunction) => rbacTypeLabel(t, type),
+      filter: { entityType: { equals: type } },
+    })),
+    {
+      key: 'other',
+      label: labelOf('dashboard.card.OtherTypes'),
+      filter: { entityType: { notIn: [...shown] } },
+    },
+  ];
 };

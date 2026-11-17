@@ -4,11 +4,13 @@
  */
 import {
   CHART_GROUPINGS,
+  auditEntityTypeGroups,
   chartCounts,
   chartTableFilter,
   chartTypesFor,
   chartWindow,
   combineFilters,
+  entityTypesByFrequency,
   resolveChart,
 } from './chartSources';
 import { settingsFromInput } from './defaults';
@@ -277,5 +279,51 @@ describe('audit log chart groupings', () => {
       NOW,
     );
     expect(counts[0].filter).toHaveProperty('AND');
+  });
+});
+
+describe('audit log entity type groups from the data', () => {
+  it('orders the types by how often they appear, skipping missing ones', () => {
+    expect(
+      entityTypesByFrequency([
+        { entityType: 'user' },
+        { entityType: 'app_config_fragment' },
+        { entityType: 'app_config_fragment' },
+        { entityType: null },
+        { entityType: 'project' },
+        { entityType: 'project' },
+      ]),
+    ).toEqual(['app_config_fragment', 'project', 'user']);
+  });
+
+  it('gives the seven most frequent types a slice and the rest to "Other types"', () => {
+    const types = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i'];
+    const groups = auditEntityTypeGroups(types)!;
+    expect(groups).toHaveLength(MAX_BUCKETS);
+    expect(groups.map((group) => group.key)).toEqual([
+      ...types.slice(0, 7),
+      'other',
+    ]);
+    expect(groups.at(-1)?.filter).toEqual({
+      entityType: { notIn: types.slice(0, 7) },
+    });
+  });
+
+  it('keeps the fixed list when no row was sampled', () => {
+    expect(auditEntityTypeGroups([])).toBeUndefined();
+  });
+
+  it("replaces the grouping's groups in the chart counts", () => {
+    const counts = chartCounts(
+      'auditLog',
+      resolveChart('auditLog', { type: 'donut', groupBy: 'entityType' }),
+      'now-24h',
+      NOW,
+      auditEntityTypeGroups(['app_config_fragment']),
+    );
+    expect(counts.map((count) => count.key)).toEqual([
+      'app_config_fragment',
+      'other',
+    ]);
   });
 });

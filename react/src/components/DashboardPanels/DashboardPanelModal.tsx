@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import type { DashboardPanelModalEntityTypesQuery } from '../../__generated__/DashboardPanelModalEntityTypesQuery.graphql';
 import { Form } from '../../form-engine';
 import {
   DEFAULT_SESSION_GRID_VIEW,
@@ -48,6 +49,7 @@ import {
   BAIBoardItemErrorBoundary,
   BAIFlex,
   BAIGraphQLPropertyFilter,
+  type BAIGraphQLPropertyFilterProps,
   BAIModal,
   BAIPropertyFilter,
   BAISkeleton,
@@ -64,6 +66,7 @@ import {
 } from 'lucide-react';
 import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { graphql, useLazyLoadQuery } from 'react-relay';
 
 export interface DashboardPanelModalProps {
   open: boolean;
@@ -112,6 +115,64 @@ const CHART_TYPE_LABELS: Record<
  * condition is expressed on the board), and see matching rows live — sorting the
  * preview sets the panel's persisted order. Nothing is applied until OK.
  */
+type ConditionFilterProps = Omit<
+  BAIGraphQLPropertyFilterProps,
+  'filterProperties'
+> & { source: ResourceKey };
+
+/** An audit log condition picks entity types from the manager's list. */
+const AuditLogConditionFilter: React.FC<ConditionFilterProps> = ({
+  source,
+  ...filterProps
+}) => {
+  'use memo';
+  const { t } = useTranslation();
+  const data = useLazyLoadQuery<DashboardPanelModalEntityTypesQuery>(
+    graphql`
+      query DashboardPanelModalEntityTypesQuery {
+        entityTypes {
+          name
+        }
+      }
+    `,
+    {},
+    { fetchPolicy: 'store-or-network' },
+  );
+  return (
+    <BAIGraphQLPropertyFilter
+      style={{ width: '100%' }}
+      {...filterProps}
+      filterProperties={[
+        ...(resourceRegistry[source].getFilterProperties?.(t, {
+          entityTypes: data.entityTypes.map((type) => type.name),
+        }) ?? []),
+      ]}
+    />
+  );
+};
+
+/** The condition filter of a V2 source. */
+const ConditionFilter: React.FC<ConditionFilterProps> = ({
+  source,
+  ...filterProps
+}) => {
+  'use memo';
+  const { t } = useTranslation();
+  return source === 'auditLog' ? (
+    <Suspense fallback={<BAISkeleton />}>
+      <AuditLogConditionFilter source={source} {...filterProps} />
+    </Suspense>
+  ) : (
+    <BAIGraphQLPropertyFilter
+      style={{ width: '100%' }}
+      {...filterProps}
+      filterProperties={[
+        ...(resourceRegistry[source].getFilterProperties?.(t) ?? []),
+      ]}
+    />
+  );
+};
+
 const DashboardPanelModal: React.FC<DashboardPanelModalProps> = ({
   open,
   onRequestClose,
@@ -476,10 +537,7 @@ const DashboardPanelModal: React.FC<DashboardPanelModalProps> = ({
               filterProperties={config.getStringFilterProperties?.(t) ?? []}
             />
           ) : (
-            <BAIGraphQLPropertyFilter
-              style={{ width: '100%' }}
-              filterProperties={[...(config.getFilterProperties?.(t) ?? [])]}
-            />
+            <ConditionFilter source={resourceType} />
           )}
         </Form.Item>
       </Form>

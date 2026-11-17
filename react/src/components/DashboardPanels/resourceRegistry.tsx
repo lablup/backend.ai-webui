@@ -13,7 +13,10 @@ import { AUDIT_LOG_STATUSES } from './memberCards/memberCardData';
 import { readPrimary, type CaughtValue } from './panelPermission';
 import { projectAuditScope } from './projectAdminCards/projectCardData';
 import { getSessionFilterProperties } from './sessionFilterProperties';
-import { AUDIT_ENTITY_TYPES } from './superadminCards/superadminCardData';
+import {
+  AUDIT_ENTITY_TYPES,
+  UNLISTED_AUDIT_ENTITY_TYPES,
+} from './superadminCards/superadminCardData';
 import type {
   PanelDescriptor,
   ResourceConfig,
@@ -28,6 +31,7 @@ import {
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import type { TFunction } from 'i18next';
+import * as _ from 'lodash-es';
 import { graphql } from 'react-relay';
 import type { OperationType } from 'relay-runtime';
 
@@ -396,16 +400,22 @@ const auditLogConfig: ResourceConfig<resourceRegistryAuditLogQuery, unknown> = {
       }
     }
   `,
-  getFilterProperties: (t) => [
+  getFilterProperties: (t, context) => [
     {
       key: 'entityType',
       propertyLabel: t('dashboard.card.EntityType'),
       type: 'enum',
-      // Suggestions, not a closed list: the manager writes more types than these.
-      options: AUDIT_ENTITY_TYPES.map((type) => ({
-        value: type,
-        label: rbacTypeLabel(t, type),
-      })),
+      // Picked, never typed: the table shows translated labels, and a typed
+      // label would be sent as the value.
+      strictSelection: true,
+      options: _.sortBy(
+        _.uniq([
+          ...(context?.entityTypes ?? []),
+          ...AUDIT_ENTITY_TYPES,
+          ...UNLISTED_AUDIT_ENTITY_TYPES,
+        ]).map((type) => ({ value: type, label: rbacTypeLabel(t, type) })),
+        (option) => option.label,
+      ),
     },
     {
       key: 'status',
