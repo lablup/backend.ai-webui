@@ -78,7 +78,7 @@ On the project-admin pages, only the items under the project selected with the p
 
 ## Dashboard
 
-The **Dashboard** entry opens a board of cards scoped to the selected project: **Session Status**, **Pending Sessions and Reasons**, **Long-running Sessions**, **Resource Allocation**, **Deployments**, **Project Folders**, **Project Users**, and **Audit Log**. Select a row in **Pending Sessions and Reasons** to open that session's scheduling history.
+The **Dashboard** entry opens a board of cards scoped to the selected project: **Session Status**, **Pending Sessions and Reasons**, **Long-running Sessions**, **Resource Allocation**, **Deployments**, **Sessions Created**, **Sessions by Status**, **Project Folders**, **Project Users**, and **Audit Log**. Select a row in **Pending Sessions and Reasons** to open that session's scheduling history.
 
 ![](../images/project_admin_dashboard.png)
 
