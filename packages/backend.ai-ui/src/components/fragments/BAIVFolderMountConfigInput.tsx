@@ -424,13 +424,22 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
             AND: _.compact([
               { status: { equals: 'READY' } },
               { name: { notStartsWith: '.' } },
-              autoMountedFolders.length > 0
-                ? {
-                    entityId: {
-                      notIn: _.map(autoMountedFolders, 'vfolderId'),
-                    },
-                  }
-                : null,
+              {
+                autoMounts: {
+                  none: {
+                    OR: _.compact([
+                      scope.project && {
+                        scopeType: { equals: 'PROJECT' },
+                        scopeId: { in: _.map(scope.project, 'value') },
+                      },
+                      scope.user && {
+                        scopeType: { equals: 'USER' },
+                        scopeId: { in: _.map(scope.user, 'value') },
+                      },
+                    ]),
+                  },
+                },
+              },
               filter,
             ]),
           }}
