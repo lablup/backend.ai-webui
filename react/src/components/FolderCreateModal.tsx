@@ -22,6 +22,7 @@ import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
 import ProjectSelectForAdminPage from './ProjectSelectForAdminPage';
 // Keeps its antd-shaped contract until the ComplexSelector-based rebuild lands.
 import StorageSelect from './StorageSelect';
+import type { VFolderAutoMountScopeType } from './VFolderAutoMountSettingModal';
 import './collapsible-section.css';
 import { Banner } from '@lablup/ui-common/Banner';
 import { Button } from '@lablup/ui-common/Button';
@@ -100,6 +101,8 @@ export interface FolderCreateModalProps extends Omit<
    * rendered as an Astryx `Banner status="warning"`.
    */
   alertMessage?: React.ReactNode;
+  /** Scope the folder's auto-mount is set on; the caller decides (ADR 0031). */
+  autoMountScopeType?: VFolderAutoMountScopeType;
 }
 
 const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
@@ -109,6 +112,7 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
   initialValues: initialValuesFromProps = {},
   folderType,
   alertMessage,
+  autoMountScopeType = 'PROJECT',
   ...modalProps
 }) => {
   'use memo';
@@ -173,9 +177,7 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
   };
 
   const isFolderTypeLocked = folderType === 'model_project';
-  // A personal project's folder auto-mounts for the user, any other for its project.
-  const isPersonalTarget =
-    !!effectiveProject && effectiveProject.id === personalProject?.id;
+  const isPersonalTarget = autoMountScopeType === 'USER';
   const autoMountTarget = effectiveProject
     ? isPersonalTarget
       ? { scopeType: 'user', scopeId: baiClient.user_uuid }

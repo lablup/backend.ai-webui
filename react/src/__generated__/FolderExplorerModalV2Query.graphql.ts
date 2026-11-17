@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<da52057d80bf6907632cf4917c976cf5>>
+ * @generated SignedSource<<3be7a3198614c4033e5e8d067bb1aee8>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -32,7 +32,7 @@ export type FolderExplorerModalV2Query$data = {
     };
     readonly permissions: ReadonlyArray<PermissionBit>;
     readonly unmanagedPath: string | null | undefined;
-    readonly " $fragmentSpreads": FragmentRefs<"FolderExplorerHeaderV2Fragment" | "FolderExplorerModalV2OwnershipFragment" | "VFolderNodeDescriptionV2Fragment">;
+    readonly " $fragmentSpreads": FragmentRefs<"FolderExplorerHeaderV2Fragment" | "FolderExplorerModalV2OwnershipFragment" | "VFolderNodeDescriptionV2Fragment" | "VFolderNodesV2AutoMountCellFragment">;
   } | null | undefined, unknown>;
 };
 export type FolderExplorerModalV2Query = {
@@ -187,6 +187,11 @@ return {
               "args": null,
               "kind": "FragmentSpread",
               "name": "FolderExplorerHeaderV2Fragment"
+            },
+            {
+              "args": null,
+              "kind": "FragmentSpread",
+              "name": "VFolderNodesV2AutoMountCellFragment"
             },
             {
               "args": null,
@@ -365,6 +370,82 @@ return {
               {
                 "kind": "Literal",
                 "name": "limit",
+                "value": 1
+              }
+            ],
+            "concreteType": "VFolderAutoMountConnection",
+            "kind": "LinkedField",
+            "name": "vfolderAutoMounts",
+            "plural": false,
+            "selections": [
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "VFolderAutoMountEdge",
+                "kind": "LinkedField",
+                "name": "edges",
+                "plural": true,
+                "selections": [
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "VFolderAutoMount",
+                    "kind": "LinkedField",
+                    "name": "node",
+                    "plural": false,
+                    "selections": [
+                      (v4/*: any*/),
+                      (v5/*: any*/),
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "scopeType",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "scopeId",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "mountDestination",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "subpath",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "mountPermission",
+                        "storageKey": null
+                      }
+                    ],
+                    "storageKey": null
+                  }
+                ],
+                "storageKey": null
+              }
+            ],
+            "storageKey": "vfolderAutoMounts(limit:1)"
+          },
+          {
+            "alias": null,
+            "args": [
+              {
+                "kind": "Literal",
+                "name": "limit",
                 "value": 100
               }
             ],
@@ -462,16 +543,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "4e5599a2a704c009a05ca7292ad1eac0",
+    "cacheID": "7ee513bf7218804c6fe1789656627e38",
     "id": null,
     "metadata": {},
     "name": "FolderExplorerModalV2Query",
     "operationKind": "query",
-    "text": "query FolderExplorerModalV2Query(\n  $vfolderId: UUID!\n) {\n  vfolderNode: vfolderV2(vfolderId: $vfolderId) {\n    unmanagedPath\n    host\n    id\n    entityId\n    metadata {\n      name\n    }\n    permissions @since(version: \"26.9.0rc1\")\n    ownership {\n      projectId\n      userId\n    }\n    accessControl {\n      ownershipType\n    }\n    ...FolderExplorerModalV2OwnershipFragment\n    ...FolderExplorerHeaderV2Fragment\n    ...VFolderNodeDescriptionV2Fragment\n  }\n}\n\nfragment BAIEntityLabelSettingModalFragment on EntityLabelConnection {\n  edges {\n    node {\n      fieldId\n      key\n      value\n      id\n    }\n  }\n}\n\nfragment BAIEntityLabelTokensFragment on EntityLabelConnection {\n  edges {\n    node {\n      key\n      value\n      id\n    }\n  }\n}\n\nfragment EditableVFolderNameV2Fragment on VFolder {\n  id\n  entityId\n  status\n  metadata {\n    name\n  }\n  ownership {\n    userId\n    projectId\n  }\n}\n\nfragment FileBrowserButtonV2Fragment on VFolder {\n  id\n  entityId\n  host\n  metadata {\n    name\n  }\n}\n\nfragment FolderExplorerHeaderV2Fragment on VFolder {\n  id\n  unmanagedPath\n  ...VFolderNodeIdenticonV2Fragment\n  ...EditableVFolderNameV2Fragment\n  ...FileBrowserButtonV2Fragment\n  ...SFTPServerButtonV2Fragment\n}\n\nfragment FolderExplorerModalV2OwnershipFragment on VFolder {\n  ownership {\n    projectId\n    project {\n      basicInfo {\n        name\n      }\n      id\n    }\n  }\n}\n\nfragment SFTPServerButtonV2Fragment on VFolder {\n  id\n  entityId\n  host\n  metadata {\n    name\n  }\n}\n\nfragment VFolderNodeDescriptionV2Fragment on VFolder {\n  id\n  entityId\n  host\n  status\n  unmanagedPath\n  permissions @since(version: \"26.9.0rc1\")\n  entityLabels(limit: 100) {\n    ...BAIEntityLabelTokensFragment\n    ...BAIEntityLabelSettingModalFragment\n  }\n  metadata {\n    name\n    usageMode\n    cloneable\n    createdAt\n  }\n  accessControl {\n    ownershipType\n    permission\n  }\n  quota {\n    maxFiles\n    maxSize {\n      expr @since(version: \"26.8.0\")\n    }\n  }\n  ownership {\n    userId\n    projectId\n    creatorId\n    user {\n      basicInfo {\n        email\n      }\n      id\n    }\n    project {\n      basicInfo {\n        name\n      }\n      id\n    }\n  }\n  ...useVirtualFolderNodePathV2Fragment\n}\n\nfragment VFolderNodeIdenticonV2Fragment on VFolder {\n  id\n}\n\nfragment useVirtualFolderNodePathV2Fragment on VFolder {\n  id\n  entityId\n  metadata {\n    quotaScopeId\n  }\n}\n"
+    "text": "query FolderExplorerModalV2Query(\n  $vfolderId: UUID!\n) {\n  vfolderNode: vfolderV2(vfolderId: $vfolderId) {\n    unmanagedPath\n    host\n    id\n    entityId\n    metadata {\n      name\n    }\n    permissions @since(version: \"26.9.0rc1\")\n    ownership {\n      projectId\n      userId\n    }\n    accessControl {\n      ownershipType\n    }\n    ...FolderExplorerModalV2OwnershipFragment\n    ...FolderExplorerHeaderV2Fragment\n    ...VFolderNodesV2AutoMountCellFragment\n    ...VFolderNodeDescriptionV2Fragment\n  }\n}\n\nfragment BAIEntityLabelSettingModalFragment on EntityLabelConnection {\n  edges {\n    node {\n      fieldId\n      key\n      value\n      id\n    }\n  }\n}\n\nfragment BAIEntityLabelTokensFragment on EntityLabelConnection {\n  edges {\n    node {\n      key\n      value\n      id\n    }\n  }\n}\n\nfragment EditableVFolderNameV2Fragment on VFolder {\n  id\n  entityId\n  status\n  metadata {\n    name\n  }\n  ownership {\n    userId\n    projectId\n  }\n}\n\nfragment FileBrowserButtonV2Fragment on VFolder {\n  id\n  entityId\n  host\n  metadata {\n    name\n  }\n}\n\nfragment FolderExplorerHeaderV2Fragment on VFolder {\n  id\n  unmanagedPath\n  ...VFolderNodeIdenticonV2Fragment\n  ...EditableVFolderNameV2Fragment\n  ...FileBrowserButtonV2Fragment\n  ...SFTPServerButtonV2Fragment\n}\n\nfragment FolderExplorerModalV2OwnershipFragment on VFolder {\n  ownership {\n    projectId\n    project {\n      basicInfo {\n        name\n      }\n      id\n    }\n  }\n}\n\nfragment SFTPServerButtonV2Fragment on VFolder {\n  id\n  entityId\n  host\n  metadata {\n    name\n  }\n}\n\nfragment VFolderAutoMountSettingModalFragment on VFolderAutoMount {\n  entityId\n  mountDestination\n  subpath\n  mountPermission\n}\n\nfragment VFolderNodeDescriptionV2Fragment on VFolder {\n  id\n  entityId\n  host\n  status\n  unmanagedPath\n  permissions @since(version: \"26.9.0rc1\")\n  entityLabels(limit: 100) {\n    ...BAIEntityLabelTokensFragment\n    ...BAIEntityLabelSettingModalFragment\n  }\n  metadata {\n    name\n    usageMode\n    cloneable\n    createdAt\n  }\n  accessControl {\n    ownershipType\n    permission\n  }\n  quota {\n    maxFiles\n    maxSize {\n      expr @since(version: \"26.8.0\")\n    }\n  }\n  ownership {\n    userId\n    projectId\n    creatorId\n    user {\n      basicInfo {\n        email\n      }\n      id\n    }\n    project {\n      basicInfo {\n        name\n      }\n      id\n    }\n  }\n  ...useVirtualFolderNodePathV2Fragment\n}\n\nfragment VFolderNodeIdenticonV2Fragment on VFolder {\n  id\n}\n\nfragment VFolderNodesV2AutoMountCellFragment on VFolder {\n  vfolderAutoMounts(limit: 1) {\n    edges {\n      node {\n        id\n        entityId\n        scopeType\n        scopeId\n        mountDestination\n        subpath\n        mountPermission\n        ...VFolderAutoMountSettingModalFragment\n      }\n    }\n  }\n}\n\nfragment useVirtualFolderNodePathV2Fragment on VFolder {\n  id\n  entityId\n  metadata {\n    quotaScopeId\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "61977ef1d639663aa933e6cf5722ddab";
+(node as any).hash = "906a6f8f8eab8bee6657dccdad60997b";
 
 export default node;

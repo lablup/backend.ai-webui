@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<e45753b18395a5ef85380c606ecdbc02>>
+ * @generated SignedSource<<d88e29f0002fd5c94273ab5887aea8b3>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -63,17 +63,24 @@ v3 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "mountDestination",
+  "name": "entityId",
   "storageKey": null
 },
 v4 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "subpath",
+  "name": "mountDestination",
   "storageKey": null
 },
 v5 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "subpath",
+  "storageKey": null
+},
+v6 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
@@ -159,16 +166,10 @@ return {
             "plural": false,
             "selections": [
               (v2/*: any*/),
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "entityId",
-                "storageKey": null
-              },
               (v3/*: any*/),
               (v4/*: any*/),
               (v5/*: any*/),
+              (v6/*: any*/),
               {
                 "alias": null,
                 "args": null,
@@ -208,6 +209,8 @@ return {
                             "name": "node",
                             "plural": false,
                             "selections": [
+                              (v2/*: any*/),
+                              (v3/*: any*/),
                               {
                                 "alias": null,
                                 "args": null,
@@ -215,10 +218,16 @@ return {
                                 "name": "scopeType",
                                 "storageKey": null
                               },
-                              (v3/*: any*/),
+                              {
+                                "alias": null,
+                                "args": null,
+                                "kind": "ScalarField",
+                                "name": "scopeId",
+                                "storageKey": null
+                              },
                               (v4/*: any*/),
                               (v5/*: any*/),
-                              (v2/*: any*/)
+                              (v6/*: any*/)
                             ],
                             "storageKey": null
                           }
@@ -240,12 +249,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "3509d66164e39010c747230641ac3960",
+    "cacheID": "77f37aca7146cbe21739ed667dcc5203",
     "id": null,
     "metadata": {},
     "name": "VFolderAutoMountSettingModalUpdateMutation",
     "operationKind": "mutation",
-    "text": "mutation VFolderAutoMountSettingModalUpdateMutation(\n  $input: UpdateVFolderAutoMountInput!\n) {\n  updateVfolderAutoMount(input: $input) {\n    vfolderAutoMount {\n      id\n      ...VFolderAutoMountSettingModalFragment\n      vfolder {\n        id\n        ...VFolderNodesV2AutoMountCellFragment\n      }\n    }\n  }\n}\n\nfragment VFolderAutoMountSettingModalFragment on VFolderAutoMount {\n  entityId\n  mountDestination\n  subpath\n  mountPermission\n}\n\nfragment VFolderNodesV2AutoMountCellFragment on VFolder {\n  vfolderAutoMounts(limit: 1) {\n    edges {\n      node {\n        scopeType\n        mountDestination\n        subpath\n        mountPermission\n        id\n      }\n    }\n  }\n}\n"
+    "text": "mutation VFolderAutoMountSettingModalUpdateMutation(\n  $input: UpdateVFolderAutoMountInput!\n) {\n  updateVfolderAutoMount(input: $input) {\n    vfolderAutoMount {\n      id\n      ...VFolderAutoMountSettingModalFragment\n      vfolder {\n        id\n        ...VFolderNodesV2AutoMountCellFragment\n      }\n    }\n  }\n}\n\nfragment VFolderAutoMountSettingModalFragment on VFolderAutoMount {\n  entityId\n  mountDestination\n  subpath\n  mountPermission\n}\n\nfragment VFolderNodesV2AutoMountCellFragment on VFolder {\n  vfolderAutoMounts(limit: 1) {\n    edges {\n      node {\n        id\n        entityId\n        scopeType\n        scopeId\n        mountDestination\n        subpath\n        mountPermission\n        ...VFolderAutoMountSettingModalFragment\n      }\n    }\n  }\n}\n"
   }
 };
 })();

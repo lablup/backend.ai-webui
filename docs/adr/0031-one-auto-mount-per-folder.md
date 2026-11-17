@@ -13,7 +13,7 @@
 
 - **Manager model**: Since 26.10 the manager keeps auto-mounts in the `vfolder_auto_mounts` table, one row per scope and folder. The unique index `uq_vfolder_auto_mounts_live_vfolder` covers `scope_type`, `scope_id` and `vfolder_id` for rows that are not deleted, and `uq_vfolder_auto_mounts_live_destination` covers `scope_type`, `scope_id` and `mount_destination`.
 - **No owner check in the manager**: `createVfolderAutoMount` takes any scope and folder. Nothing in the manager checks that the scope owns the folder.
-- **Two read paths**: The folder list reads `VFolder.vfolderAutoMounts` per row. The folder explorer reads `scopedVfolderAutoMounts` for the scope that owns the folder. Both can return several rows when one folder is set on several scopes.
+- **One read path**: The folder list and the folder explorer both read the folder's own `VFolder.vfolderAutoMounts` through `VFolderNodesV2AutoMountCellFragment`. The connection returns several rows when one folder is set on several scopes.
 
 ## Diagram
 
@@ -33,7 +33,7 @@ flowchart LR
   end
   subgraph read["WebUI reads"]
     list["VFolderNodesV2<br/>vfolderAutoMounts limit 1"]
-    explorer["VFolderAutoMountMetadataSection<br/>scopedVfolderAutoMounts limit 1"]
+    explorer["VFolderAutoMountMetadataSection<br/>vfolderAutoMounts limit 1"]
   end
   userFolder -- "owner sets" --> personal
   projectFolder -- "admin sets" --> admin
@@ -41,8 +41,8 @@ flowchart LR
   admin -- "createVfolderAutoMount scope PROJECT" --> projectScope
   userScope -- "one row per folder" --> list
   projectScope -- "one row per folder" --> list
-  userScope -- "owner scope filter" --> explorer
-  projectScope -- "owner scope filter" --> explorer
+  userScope -- "same fragment as the list" --> explorer
+  projectScope -- "same fragment as the list" --> explorer
 ```
 
 ## Decision
@@ -50,15 +50,15 @@ flowchart LR
 ### 1. The owning scope is the only scope
 
 - **Scope choice**: Every WebUI path that creates an auto-mount derives the scope from the folder's owner. A folder whose `accessControl.ownershipType` is `USER` gets the `USER` scope of `ownership.userId`. A project-owned folder of the user's personal project gets the current user's `USER` scope, the same scope `FolderCreateModal` uses there. Any other folder gets the `PROJECT` scope of `ownership.projectId`.
-- **Creation paths**: `FolderCreateModal` always creates a project folder with `createVFolderInProject`, in the personal project too. In the personal project it auto-mounts the folder for the user; in any other project it auto-mounts the folder for that project.
+- **Creation paths**: `FolderCreateModal` always creates a project folder with `createVFolderInProject`, in the personal project too. In the personal project it auto-mounts the folder for the user; in any other project it auto-mounts the folder for that project. Neither component decides the scope itself: the caller of `FolderCreateModal` passes `autoMountScopeType` (`USER` when the target is the caller's personal project, `PROJECT` by default), and `FolderExplorerModalV2` passes the scope to `VFolderAutoMountMetadataSection`.
 - **Folder entry points**: An auto-mount is added only from a folder: `FolderCreateModal` and the folder explorer's `VFolderAutoMountMetadataSection`. `VFolderAutoMountSettingModal` always receives that folder and offers no folder picker.
 
 ### 2. One row per folder on read
 
-| Component                         | Query                                                                   | Limit      |
-| --------------------------------- | ----------------------------------------------------------------------- | ---------- |
-| `VFolderNodesV2`                  | `vfolderAutoMounts` on each `VFolder` row                               | `limit: 1` |
-| `VFolderAutoMountMetadataSection` | `scopedVfolderAutoMounts`, filtered by the owning scope and `vfolderId` | `limit: 1` |
+| Component                         | Query                                                                                 | Limit      |
+| --------------------------------- | ------------------------------------------------------------------------------------- | ---------- |
+| `VFolderNodesV2`                  | `vfolderAutoMounts` on each `VFolder` row                                             | `limit: 1` |
+| `VFolderAutoMountMetadataSection` | the same `VFolderNodesV2AutoMountCellFragment`, spread in the explorer's folder query | `limit: 1` |
 
 - **Single value**: The folder list cell and the explorer section render the first row as the folder's auto-mount setting.
 - **Explorer actions**: The explorer section offers Add when the row is absent and Edit or Remove when it is present. It never offers a second Add for the same folder.

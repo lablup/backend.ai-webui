@@ -155,6 +155,7 @@ const renderModal = (
   project: { id: string; name: string } | null,
   onRequestClose = vi.fn(),
   initialValues?: Record<string, unknown>,
+  autoMountScopeType?: 'USER' | 'PROJECT',
 ) => {
   const environment: RelayMockEnvironment = createMockEnvironment();
   render(
@@ -163,6 +164,7 @@ const renderModal = (
         open
         project={project}
         initialValues={initialValues}
+        autoMountScopeType={autoMountScopeType}
         onRequestClose={onRequestClose}
       />
     </RelayEnvironmentProvider>,
@@ -357,9 +359,17 @@ describe('FolderCreateModal auto-mount', () => {
       .getAllOperations()
       .find((op) => op.request.node.params.name === name);
 
-  const createWithAutoMount = async (project: { id: string; name: string }) => {
+  const createWithAutoMount = async (
+    project: { id: string; name: string },
+    autoMountScopeType?: 'USER' | 'PROJECT',
+  ) => {
     const user = userEvent.setup();
-    const { environment } = renderModal(project);
+    const { environment } = renderModal(
+      project,
+      vi.fn(),
+      undefined,
+      autoMountScopeType,
+    );
 
     await waitFor(() =>
       expect(
@@ -412,11 +422,11 @@ describe('FolderCreateModal auto-mount', () => {
       .request.variables.input;
   };
 
-  it('auto-mounts a personal project folder for the user', async () => {
-    const input = await createWithAutoMount({
-      id: 'personal-project-id',
-      name: 'me',
-    });
+  it('auto-mounts on the user scope when the caller passes USER', async () => {
+    const input = await createWithAutoMount(
+      { id: 'personal-project-id', name: 'me' },
+      'USER',
+    );
     expect(input).toMatchObject({
       scope: { scopeType: 'USER', scopeId: 'current-user-uuid' },
       vfolderId: VFOLDER_UUID,
@@ -426,7 +436,7 @@ describe('FolderCreateModal auto-mount', () => {
     });
   });
 
-  it('auto-mounts a shared project folder for its project', async () => {
+  it('auto-mounts on the project scope by default', async () => {
     const input = await createWithAutoMount({
       id: 'fixed-project-id',
       name: 'fixed-project-name',

@@ -274,10 +274,14 @@ const VFolderAutoMountCell: React.FC<{
         vfolderAutoMounts(limit: 1) {
           edges {
             node {
+              id
+              entityId
               scopeType
+              scopeId
               mountDestination
               subpath
               mountPermission
+              ...VFolderAutoMountSettingModalFragment
             }
           }
         }

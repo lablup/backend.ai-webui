@@ -4,7 +4,9 @@
  */
 import type { VFolderAutoMountMetadataSectionDeleteMutation } from '../__generated__/VFolderAutoMountMetadataSectionDeleteMutation.graphql';
 import type { VFolderAutoMountMetadataSectionPermissionQuery } from '../__generated__/VFolderAutoMountMetadataSectionPermissionQuery.graphql';
-import type { VFolderAutoMountMetadataSectionQuery } from '../__generated__/VFolderAutoMountMetadataSectionQuery.graphql';
+import VFolderNodesV2AutoMountCellFragment, {
+  type VFolderNodesV2AutoMountCellFragment$key,
+} from '../__generated__/VFolderNodesV2AutoMountCellFragment.graphql';
 import { App } from '../app-shim';
 import VFolderAutoMountSettingModal, {
   type VFolderAutoMountScopeType,
@@ -17,18 +19,19 @@ import {
   BAINameActionCell,
   BAIQuestionIconWithTooltip,
   useErrorMessageResolver,
-  useFetchKey,
   useMutationWithPromise,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { PlusIcon, SquarePenIcon, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useLazyLoadQuery } from 'react-relay';
+import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
 
 export interface VFolderAutoMountMetadataSectionProps {
+  /** The folder's auto-mount, read through the folder list's own fragment. */
+  vfolderFrgmt: VFolderNodesV2AutoMountCellFragment$key;
+  /** Scope the folder's auto-mount is set on; the caller decides (ADR 0031). */
   scopeType: VFolderAutoMountScopeType;
-  /** UUID of the project or the user the folder auto-mounts for. */
   scopeId: string;
   vfolder: { id: string; name: string };
 }
@@ -36,13 +39,17 @@ export interface VFolderAutoMountMetadataSectionProps {
 /** The folder's one auto-mount setting, shown and edited in its metadata. */
 const VFolderAutoMountMetadataSection: React.FC<
   VFolderAutoMountMetadataSectionProps
-> = ({ scopeType, scopeId, vfolder }) => {
+> = ({ vfolderFrgmt, scopeType, scopeId, vfolder }) => {
   'use memo';
   const { t } = useTranslation();
   const { message } = App.useApp();
   const { getErrorMessage } = useErrorMessageResolver();
-  const [fetchKey, updateFetchKey] = useFetchKey();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { vfolderAutoMounts } = useFragment(
+    VFolderNodesV2AutoMountCellFragment,
+    vfolderFrgmt,
+  );
+  const autoMount = vfolderAutoMounts?.edges[0]?.node ?? null;
 
   const { myScopePermissions } =
     useLazyLoadQuery<VFolderAutoMountMetadataSectionPermissionQuery>(
@@ -75,43 +82,6 @@ const VFolderAutoMountMetadataSection: React.FC<
   const permissions = myScopePermissions?.item.permissions ?? [];
   const canRead = _.includes(permissions, 'READ');
 
-  const { scopedVfolderAutoMounts } =
-    useLazyLoadQuery<VFolderAutoMountMetadataSectionQuery>(
-      graphql`
-        query VFolderAutoMountMetadataSectionQuery(
-          $scope: VFolderAutoMountScope!
-          $filter: VFolderAutoMountFilter
-          $canRead: Boolean!
-        ) {
-          scopedVfolderAutoMounts(scope: $scope, filter: $filter, limit: 1)
-            @include(if: $canRead) {
-            edges {
-              node {
-                id
-                entityId
-                mountDestination
-                subpath
-                mountPermission
-                ...VFolderAutoMountSettingModalFragment
-              }
-            }
-          }
-        }
-      `,
-      {
-        scope:
-          scopeType === 'PROJECT'
-            ? { project: [{ value: scopeId }] }
-            : { user: [{ value: scopeId }] },
-        filter: {
-          scopeType: { equals: scopeType },
-          vfolderId: { equals: vfolder.id },
-        },
-        canRead,
-      },
-      { fetchKey, fetchPolicy: 'store-and-network' },
-    );
-  const autoMount = scopedVfolderAutoMounts?.edges[0]?.node ?? null;
   const noPermission = {
     reason:
       scopeType === 'PROJECT'
@@ -145,7 +115,6 @@ const VFolderAutoMountMetadataSection: React.FC<
     try {
       await deleteAutoMount({ input: { id: autoMount.entityId } });
       message.success(t('autoMount.AutoMountRemoved'));
-      updateFetchKey();
     } catch (error) {
       message.error(getErrorMessage(error));
     }
@@ -239,10 +208,7 @@ const VFolderAutoMountMetadataSection: React.FC<
         scopeId={scopeId}
         vfolder={vfolder}
         vfolderAutoMountFrgmt={autoMount}
-        onRequestClose={(success) => {
-          setIsModalOpen(false);
-          if (success && !autoMount) updateFetchKey();
-        }}
+        onRequestClose={() => setIsModalOpen(false)}
       />
     </VStack>
   );

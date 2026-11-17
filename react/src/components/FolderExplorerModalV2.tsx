@@ -217,6 +217,7 @@ const useFolderExplorerQuery = (vfolderID: string) => {
           }
           ...FolderExplorerModalV2OwnershipFragment
           ...FolderExplorerHeaderV2Fragment
+          ...VFolderNodesV2AutoMountCellFragment
           ...VFolderNodeDescriptionV2Fragment
         }
       }
@@ -589,6 +590,7 @@ const FolderExplorerBody: React.FC<{
                 <BAIErrorBoundary>
                   <Suspense fallback={<BAISkeleton rows={3} />}>
                     <VFolderAutoMountMetadataSection
+                      vfolderFrgmt={vfolderNode}
                       scopeType={autoMountScope.scopeType}
                       scopeId={autoMountScope.scopeId}
                       vfolder={{

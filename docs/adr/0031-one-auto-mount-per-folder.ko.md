@@ -13,7 +13,7 @@
 
 - **Manager model**: 26.10부터 manager는 auto-mount를 `vfolder_auto_mounts` 테이블에 scope와 폴더당 한 행으로 저장한다. unique index `uq_vfolder_auto_mounts_live_vfolder`는 삭제되지 않은 행의 `scope_type`, `scope_id`, `vfolder_id`를 묶고, `uq_vfolder_auto_mounts_live_destination`은 `scope_type`, `scope_id`, `mount_destination`을 묶는다.
 - **No owner check in the manager**: `createVfolderAutoMount`는 어떤 scope와 폴더든 받는다. manager의 어떤 코드도 scope가 그 폴더를 소유하는지 검사하지 않는다.
-- **Two read paths**: 폴더 목록은 행마다 `VFolder.vfolderAutoMounts`를 읽는다. 폴더 탐색기는 폴더를 소유한 scope에 대해 `scopedVfolderAutoMounts`를 읽는다. 한 폴더가 여러 scope에 걸려 있으면 두 경로 모두 여러 행을 돌려줄 수 있다.
+- **One read path**: 폴더 목록과 폴더 탐색기는 모두 `VFolderNodesV2AutoMountCellFragment`로 폴더 자신의 `VFolder.vfolderAutoMounts`를 읽는다. 한 폴더가 여러 scope에 걸려 있으면 이 connection은 여러 행을 돌려준다.
 
 ## 설계도
 
@@ -33,7 +33,7 @@ flowchart LR
   end
   subgraph read["WebUI 읽기"]
     list["VFolderNodesV2<br/>vfolderAutoMounts limit 1"]
-    explorer["VFolderAutoMountMetadataSection<br/>scopedVfolderAutoMounts limit 1"]
+    explorer["VFolderAutoMountMetadataSection<br/>vfolderAutoMounts limit 1"]
   end
   userFolder -- "소유자가 설정" --> personal
   projectFolder -- "어드민이 설정" --> admin
@@ -41,8 +41,8 @@ flowchart LR
   admin -- "createVfolderAutoMount scope PROJECT" --> projectScope
   userScope -- "폴더당 한 행" --> list
   projectScope -- "폴더당 한 행" --> list
-  userScope -- "소유 scope filter" --> explorer
-  projectScope -- "소유 scope filter" --> explorer
+  userScope -- "목록과 같은 fragment" --> explorer
+  projectScope -- "목록과 같은 fragment" --> explorer
 ```
 
 ## Decision
@@ -50,15 +50,15 @@ flowchart LR
 ### 1. 소유 scope만이 유일한 scope다
 
 - **Scope choice**: auto-mount를 만드는 WebUI의 모든 경로는 폴더 소유자로부터 scope를 정한다. `accessControl.ownershipType`이 `USER`인 폴더는 `ownership.userId`의 `USER` scope를 받는다. 사용자 개인 프로젝트의 프로젝트 소유 폴더는 `FolderCreateModal`이 그곳에서 쓰는 것과 같은 현재 사용자의 `USER` scope를 받는다. 그 밖의 폴더는 `ownership.projectId`의 `PROJECT` scope를 받는다.
-- **Creation paths**: `FolderCreateModal`은 개인 프로젝트에서도 항상 `createVFolderInProject`로 프로젝트 폴더를 만든다. 개인 프로젝트에서는 그 폴더를 사용자에게 auto-mount하고, 다른 프로젝트에서는 그 프로젝트에 auto-mount한다.
+- **Creation paths**: `FolderCreateModal`은 개인 프로젝트에서도 항상 `createVFolderInProject`로 프로젝트 폴더를 만든다. 개인 프로젝트에서는 그 폴더를 사용자에게 auto-mount하고, 다른 프로젝트에서는 그 프로젝트에 auto-mount한다. 두 component 모두 scope를 스스로 정하지 않는다. `FolderCreateModal`을 여는 쪽이 `autoMountScopeType`을 넘기고(대상이 자기 개인 프로젝트면 `USER`, 기본값은 `PROJECT`), `FolderExplorerModalV2`가 `VFolderAutoMountMetadataSection`에 scope를 넘긴다.
 - **Folder entry points**: auto-mount는 폴더에서만 추가한다. `FolderCreateModal`과 폴더 탐색기의 `VFolderAutoMountMetadataSection`이 그곳이다. `VFolderAutoMountSettingModal`은 항상 그 폴더를 받고, 폴더 선택 박스를 보여주지 않는다.
 
 ### 2. 읽을 때는 폴더당 한 행
 
-| Component                         | Query                                                         | Limit      |
-| --------------------------------- | ------------------------------------------------------------- | ---------- |
-| `VFolderNodesV2`                  | 각 `VFolder` 행의 `vfolderAutoMounts`                         | `limit: 1` |
-| `VFolderAutoMountMetadataSection` | 소유 scope와 `vfolderId`로 filter한 `scopedVfolderAutoMounts` | `limit: 1` |
+| Component                         | Query                                                                    | Limit      |
+| --------------------------------- | ------------------------------------------------------------------------ | ---------- |
+| `VFolderNodesV2`                  | 각 `VFolder` 행의 `vfolderAutoMounts`                                    | `limit: 1` |
+| `VFolderAutoMountMetadataSection` | 탐색기의 폴더 쿼리에 spread한 같은 `VFolderNodesV2AutoMountCellFragment` | `limit: 1` |
 
 - **Single value**: 폴더 목록 셀과 탐색기 섹션은 첫 행을 그 폴더의 auto-mount 설정으로 그린다.
 - **Explorer actions**: 탐색기 섹션은 행이 없으면 추가를, 있으면 수정이나 삭제를 보여준다. 같은 폴더에 두 번째 추가는 보여주지 않는다.

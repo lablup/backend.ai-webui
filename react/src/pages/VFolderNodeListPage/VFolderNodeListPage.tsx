@@ -22,6 +22,7 @@ import { convertToOrderBy, handleRowSelectionChange } from '../../helper';
 import { isDeletedCategory } from '../../helper/vfolderStatus';
 import { useCurrentUserInfo } from '../../hooks/backendai';
 import { useBAIPaginationOptionStateOnSearchParam } from '../../hooks/reactPaginationQueryOptions';
+import { useAccessibleProjects } from '../../hooks/useAccessibleProjects';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
 import { useCreateActionArrival } from '../../hooks/useCreateActionArrival';
 import { useCurrentProjectValue } from '../../hooks/useCurrentProject';
@@ -135,6 +136,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
   const isLabelable = useIsLabelableEntityType('vfolder');
   const currentProject = useCurrentProjectValue();
   const projectContext = toProjectContext(currentProject);
+  const { personalProject } = useAccessibleProjects();
   const [currentUser] = useCurrentUserInfo();
   const loginConfig = useEffectiveLoginConfig();
   const [invitations] = useVFolderInvitations();
@@ -605,6 +607,9 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
       <FolderCreateModal
         open={isOpenCreateModal}
         project={projectContext}
+        autoMountScopeType={
+          currentProject.id === personalProject?.id ? 'USER' : 'PROJECT'
+        }
         initialValues={{
           usage_mode: queryParams.mode === 'model' ? 'model' : 'general',
         }}
