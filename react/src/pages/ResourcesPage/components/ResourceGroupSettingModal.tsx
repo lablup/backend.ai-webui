@@ -161,12 +161,14 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
     ],
     active: resourceGroup?.is_active ?? true,
     public: resourceGroup?.is_public ?? true,
-    pendingTimeout: schedulerOpts?.pending_timeout
-      ? _.toNumber(schedulerOpts?.pending_timeout)
-      : null,
-    retriesToSkip: schedulerOpts?.config?.num_retries_to_skip
-      ? _.toNumber(schedulerOpts?.config?.num_retries_to_skip)
-      : null,
+    pendingTimeout:
+      schedulerOpts?.pending_timeout != null
+        ? _.toNumber(schedulerOpts?.pending_timeout)
+        : null,
+    retriesToSkip:
+      schedulerOpts?.config?.num_retries_to_skip != null
+        ? _.toNumber(schedulerOpts?.config?.num_retries_to_skip)
+        : null,
     wsProxyAddress: resourceGroup?.wsproxy_addr,
   });
 
@@ -194,13 +196,17 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
             const input = {
               scheduler: values.scheduler,
               description: values.description ?? null,
+              // The manager replaces the whole scheduler_opts value, so merge
+              // over the stored one: keys the form does not show survive.
               scheduler_opts: JSON.stringify({
+                ...schedulerOpts,
                 allowed_session_types: values.allowedSessionTypes,
-                ...(values.pendingTimeout && {
+                ...(values.pendingTimeout != null && {
                   pending_timeout: values.pendingTimeout,
                 }),
-                ...(values.retriesToSkip && {
+                ...(values.retriesToSkip != null && {
                   config: {
+                    ...schedulerOpts?.config,
                     num_retries_to_skip: values.retriesToSkip,
                   },
                 }),
@@ -251,10 +257,6 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
                   input: input,
                 },
                 onCompleted: ({ modify_scaling_group: res }, errors) => {
-                  if (!res?.ok) {
-                    message.error(res?.msg);
-                    return;
-                  }
                   if (errors && errors.length > 0) {
                     const errorMsgList = _.map(
                       errors,
@@ -263,6 +265,10 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
                     for (const error of errorMsgList) {
                       message.error(error);
                     }
+                    return;
+                  }
+                  if (!res?.ok) {
+                    message.error(res?.msg);
                     return;
                   }
                   message.success(t('resourceGroup.ResourceGroupModified'));
