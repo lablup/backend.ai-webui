@@ -517,6 +517,7 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
           ambient one. */}
       <FolderCreateModal
         open={isOpenCreateFolderModal}
+        autoMountScopeType="PROJECT"
         project={modelStoreProjectContext}
         initialValidate={true}
         folderType="model_project"
