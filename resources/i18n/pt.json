@@ -375,7 +375,6 @@
     "MountPermission": "Permissão de montagem",
     "NoPermissionToSetAutoMount": "Não tem permissão para definir montagens automáticas.",
     "NoPermissionToSetProjectAutoMount": "Não tem permissão para definir montagens automáticas neste projeto. Para montar automaticamente uma pasta nas suas próprias sessões, crie-a no seu projeto pessoal.",
-    "NoPermissionToViewAutoMount": "Não tem permissão para ver a montagem automática desta pasta.",
     "NotAutoMounted": "Esta pasta não é montada automaticamente.",
     "NotConfigured": "Não configurado",
     "PleaseEnterMountDestination": "Introduza o caminho de montagem.",

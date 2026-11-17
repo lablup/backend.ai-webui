@@ -375,7 +375,6 @@
     "MountPermission": "Mount-Berechtigung",
     "NoPermissionToSetAutoMount": "Sie haben keine Berechtigung, Auto-Mounts festzulegen.",
     "NoPermissionToSetProjectAutoMount": "Sie haben keine Berechtigung, in diesem Projekt Auto-Mounts festzulegen. Um einen Ordner in Ihren eigenen Sitzungen automatisch einzuhängen, erstellen Sie ihn in Ihrem persönlichen Projekt.",
-    "NoPermissionToViewAutoMount": "Sie haben keine Berechtigung, das automatische Einhängen dieses Ordners anzuzeigen.",
     "NotAutoMounted": "Dieser Ordner wird nicht automatisch eingehängt.",
     "NotConfigured": "Nicht konfiguriert",
     "PleaseEnterMountDestination": "Geben Sie den Mount-Pfad ein.",
