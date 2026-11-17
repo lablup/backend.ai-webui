@@ -2799,6 +2799,7 @@
       "VFOLDER": "文件夹",
       "VFOLDER_AUTO_MOUNT": "自动挂载文件夹",
       "VFOLDER_DATA": "文件夹数据",
+      "VFOLDER_INVITATION": "文件夹邀请",
       "VFS_STORAGE": "VFS 存储"
     }
   },

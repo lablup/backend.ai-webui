@@ -59,6 +59,7 @@ export const UNLISTED_AUDIT_ENTITY_TYPES = [
   'manager_admin',
   'model_deployment',
   'notification',
+  'vfolder_invitation',
 ] as const;
 
 /** The count alias of each entity type the failure card queries. */

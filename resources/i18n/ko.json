@@ -2799,6 +2799,7 @@
       "VFOLDER": "폴더",
       "VFOLDER_AUTO_MOUNT": "자동 마운트 폴더",
       "VFOLDER_DATA": "폴더 데이터",
+      "VFOLDER_INVITATION": "폴더 초대",
       "VFS_STORAGE": "VFS 스토리지"
     }
   },

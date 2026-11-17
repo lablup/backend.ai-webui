@@ -2797,6 +2797,7 @@
       "VFOLDER": "Папка",
       "VFOLDER_AUTO_MOUNT": "Папка автомонтирования",
       "VFOLDER_DATA": "Данные папки",
+      "VFOLDER_INVITATION": "Приглашение в папку",
       "VFS_STORAGE": "Хранилище VFS"
     }
   },

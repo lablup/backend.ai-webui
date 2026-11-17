@@ -2799,6 +2799,7 @@
       "VFOLDER": "Folder",
       "VFOLDER_AUTO_MOUNT": "Folder automatycznego montowania",
       "VFOLDER_DATA": "Dane folderu",
+      "VFOLDER_INVITATION": "Zaproszenie do folderu",
       "VFS_STORAGE": "Magazyn VFS"
     }
   },

@@ -2789,6 +2789,7 @@
       "VFOLDER": "โฟลเดอร์",
       "VFOLDER_AUTO_MOUNT": "โฟลเดอร์ที่เมานต์อัตโนมัติ",
       "VFOLDER_DATA": "ข้อมูลโฟลเดอร์",
+      "VFOLDER_INVITATION": "คำเชิญโฟลเดอร์",
       "VFS_STORAGE": "พื้นที่จัดเก็บ VFS"
     }
   },

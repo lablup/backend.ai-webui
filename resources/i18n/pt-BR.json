@@ -2797,6 +2797,7 @@
       "VFOLDER": "Pasta",
       "VFOLDER_AUTO_MOUNT": "Pasta de montagem automática",
       "VFOLDER_DATA": "Dados da pasta",
+      "VFOLDER_INVITATION": "Convite de pasta",
       "VFS_STORAGE": "Armazenamento VFS"
     }
   },

@@ -2800,6 +2800,7 @@
       "VFOLDER": "Folder",
       "VFOLDER_AUTO_MOUNT": "Folder mount otomatis",
       "VFOLDER_DATA": "Data folder",
+      "VFOLDER_INVITATION": "Undangan folder",
       "VFS_STORAGE": "Penyimpanan VFS"
     }
   },

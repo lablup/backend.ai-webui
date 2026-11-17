@@ -2797,6 +2797,7 @@
       "VFOLDER": "Kansio",
       "VFOLDER_AUTO_MOUNT": "Automaattisesti liitettävä kansio",
       "VFOLDER_DATA": "Kansiotiedot",
+      "VFOLDER_INVITATION": "Kansiokutsu",
       "VFS_STORAGE": "VFS-tallennus"
     }
   },

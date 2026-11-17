@@ -2797,6 +2797,7 @@
       "VFOLDER": "Φάκελος",
       "VFOLDER_AUTO_MOUNT": "Φάκελος αυτόματης προσάρτησης",
       "VFOLDER_DATA": "Δεδομένα φακέλου",
+      "VFOLDER_INVITATION": "Πρόσκληση φακέλου",
       "VFS_STORAGE": "Αποθήκευση VFS"
     }
   },

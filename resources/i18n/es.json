@@ -2797,6 +2797,7 @@
       "VFOLDER": "Carpeta",
       "VFOLDER_AUTO_MOUNT": "Carpeta de montaje automático",
       "VFOLDER_DATA": "Datos de carpeta",
+      "VFOLDER_INVITATION": "Invitación a carpeta",
       "VFS_STORAGE": "Almacenamiento VFS"
     }
   },

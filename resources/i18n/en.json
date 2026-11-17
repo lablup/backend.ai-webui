@@ -2784,6 +2784,7 @@
       "VFOLDER": "Folder",
       "VFOLDER_AUTO_MOUNT": "Automount Folder",
       "VFOLDER_DATA": "Folder Data",
+      "VFOLDER_INVITATION": "Folder Invitation",
       "VFS_STORAGE": "VFS Storage"
     }
   },

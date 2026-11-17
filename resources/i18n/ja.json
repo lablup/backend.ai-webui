@@ -2799,6 +2799,7 @@
       "VFOLDER": "フォルダ",
       "VFOLDER_AUTO_MOUNT": "自動マウントフォルダ",
       "VFOLDER_DATA": "フォルダーデータ",
+      "VFOLDER_INVITATION": "フォルダー招待",
       "VFS_STORAGE": "VFS ストレージ"
     }
   },

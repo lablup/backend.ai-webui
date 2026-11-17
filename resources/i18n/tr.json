@@ -2797,6 +2797,7 @@
       "VFOLDER": "Klasör",
       "VFOLDER_AUTO_MOUNT": "Otomatik bağlanan klasör",
       "VFOLDER_DATA": "Klasör verisi",
+      "VFOLDER_INVITATION": "Klasör daveti",
       "VFS_STORAGE": "VFS depolama"
     }
   },
