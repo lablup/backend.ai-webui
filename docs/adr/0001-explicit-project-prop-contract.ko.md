@@ -370,7 +370,7 @@ prefix 없는 legacy path에는 pathname fallback을 쓴다.
 admin-session  admin-deployments  admin-data  admin-dashboard  credential
 environment    resource-policy    reservoir   scheduler        agent
 project        settings           maintenance diagnostics      rbac
-branding       information
+branding       system-settings  information
 ```
 
 `admin-dashboard`는 프로젝트 관리자 대시보드(`/project/:projectName/admin/dashboard`)도

@@ -46,6 +46,7 @@ describe('useIsProjectAgnosticPage (FR-3413, widened in FR-3414 and FR-3415)', (
       'diagnostics',
       'rbac',
       'branding',
+      'system-settings',
       'information',
     ]);
   });
@@ -70,6 +71,7 @@ describe('useIsProjectAgnosticPage (FR-3413, widened in FR-3414 and FR-3415)', (
     ['/admin/diagnostics', 'diagnostics'],
     ['/admin/rbac', 'rbac'],
     ['/admin/branding', 'branding'],
+    ['/admin/system-settings', 'system-settings'],
     ['/admin/information', 'information'],
     ['/admin/dashboard', 'admin-dashboard'],
   ])('is true on the handle-marked admin route %s', (path, menuKey) => {

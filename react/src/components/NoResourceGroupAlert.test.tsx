@@ -76,6 +76,7 @@ describe('NoResourceGroupAlert (FR-3414 project-agnostic gating)', () => {
     ['/admin/maintenance', 'maintenance'],
     ['/admin/diagnostics', 'diagnostics'],
     ['/admin/branding', 'branding'],
+    ['/admin/system-settings', 'system-settings'],
     // Widened in FR-3415 — both now have explicit in-page project selection.
     ['/admin/environment', 'environment'],
     ['/admin/reservoir', 'reservoir'],

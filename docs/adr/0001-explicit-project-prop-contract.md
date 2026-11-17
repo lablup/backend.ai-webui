@@ -402,7 +402,7 @@ unprefixed paths.
 admin-session  admin-deployments  admin-data  admin-dashboard  credential
 environment    resource-policy    reservoir   scheduler        agent
 project        settings           maintenance diagnostics      rbac
-branding       information
+branding       system-settings  information
 ```
 
 `admin-dashboard` also names the project admin dashboard
