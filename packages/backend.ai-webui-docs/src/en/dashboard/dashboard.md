@@ -17,6 +17,10 @@ starts it:
     Click **Start Session** to open the session launcher with the session type
     set to batch, for a command that runs to completion on its own.
 
+- **Start Session from Recent History**:
+    Click **View History** to pick one of the sessions you created recently and
+    open the session launcher at its final step with that session's settings.
+
 - **Create New Storage Folder**:
     Click **Create Folder** to create a storage folder for the files and data
     your sessions use.
@@ -66,6 +70,10 @@ activity in the current project:
 
 - **My Deployments**:
     Lists your model deployments with the health of their replicas.
+
+- **Sessions Created**:
+    Shows how many of your sessions were created in each interval of the period
+    the card is set to.
 
 - **My Activity**:
     Lists your own audit log entries for the period the card is set to.
