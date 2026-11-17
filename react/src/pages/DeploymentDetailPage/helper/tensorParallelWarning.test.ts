@@ -77,6 +77,43 @@ describe('findTensorParallelParam', () => {
     ];
     expect(findTensorParallelParam(httpGroups)).toBeNull();
   });
+
+  it('does not match INT/FLOAT keys with a delimited tp token inside a longer name', () => {
+    const tpEpochGroups: RuntimeParameterGroup[] = [
+      {
+        category: 'training',
+        params: [
+          {
+            ...tpParam,
+            key: 'MAX_TP_EPOCHS',
+            displayName: null,
+            name: 'max_tp_epochs',
+          },
+        ],
+      },
+    ];
+    expect(findTensorParallelParam(tpEpochGroups)).toBeNull();
+  });
+
+  it('prefers a numeric namesake over a non-numeric one', () => {
+    const mixedGroups: RuntimeParameterGroup[] = [
+      {
+        category: 'parallelism',
+        params: [
+          {
+            ...tpParam,
+            key: 'TENSOR_PARALLEL_MODE',
+            valueType: 'STR' as const,
+            defaultValue: 'auto',
+          },
+          tpParam,
+        ],
+      },
+    ];
+    expect(findTensorParallelParam(mixedGroups)?.key).toBe(
+      'VLLM_TENSOR_PARALLEL_SIZE',
+    );
+  });
 });
 
 describe('effectiveTensorParallelValue', () => {

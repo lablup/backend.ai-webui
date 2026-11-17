@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import type { TensorParallelFgpuWarningPresetQuery } from '../../../__generated__/TensorParallelFgpuWarningPresetQuery.graphql';
+import ErrorBoundaryWithNullFallback from '../../../components/ErrorBoundaryWithNullFallback';
 import { RUNTIME_PARAMS_NAMESPACE } from '../../../components/RuntimeParameterFormSection';
 import { Form } from '../../../form-engine';
 import type {
@@ -109,11 +110,15 @@ interface PresetTensorParallelFgpuWarningProps {
 const PresetTensorParallelFgpuWarning: React.FC<
   PresetTensorParallelFgpuWarningProps
 > = ({ presetId }) => {
+  'use memo';
   if (!presetId) return null;
+  // An optional warning banner must not blank the page when its queries fail.
   return (
-    <Suspense fallback={null}>
-      <PresetTensorParallelFgpuWarningLoader presetId={presetId} />
-    </Suspense>
+    <ErrorBoundaryWithNullFallback>
+      <Suspense fallback={null}>
+        <PresetTensorParallelFgpuWarningLoader presetId={presetId} />
+      </Suspense>
+    </ErrorBoundaryWithNullFallback>
   );
 };
 
@@ -127,6 +132,7 @@ const PresetTensorParallelFgpuWarningLoader: React.FC<{ presetId: string }> = ({
         deploymentRevisionPreset(id: $id) {
           runtimeVariant {
             name
+            readsVfolderConfigFiles @since(version: "26.8.0")
           }
           resourceSlots {
             slotName
@@ -143,7 +149,13 @@ const PresetTensorParallelFgpuWarningLoader: React.FC<{ presetId: string }> = ({
     { fetchPolicy: 'store-or-network' },
   );
   const preset = data.deploymentRevisionPreset;
-  const groups = useRuntimeParameterSchema(preset?.runtimeVariant?.name);
+  // Runtime parameters apply only to variants that do NOT read the vfolder
+  // config files — the same gate the custom branch's RuntimeParameterFormSection
+  // gets. Legacy fallback on pre-26.8.0 managers: `name === 'custom'`.
+  const variantName = preset?.runtimeVariant?.name;
+  const reads =
+    preset?.runtimeVariant?.readsVfolderConfigFiles ?? variantName === 'custom';
+  const groups = useRuntimeParameterSchema(reads ? undefined : variantName);
   const tpParam = findTensorParallelParam(groups);
   const tpEntry = (preset?.presetValues ?? []).find(
     (v) => tpParam != null && v.presetId === tpParam.entityId,

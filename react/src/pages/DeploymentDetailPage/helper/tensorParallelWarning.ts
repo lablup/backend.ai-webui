@@ -18,8 +18,8 @@ import type {
  */
 
 const TP_NAME_RE = /tensor[-_. ]?parallel/i;
-/** Short-key fallback for `--tp`, `TP_SIZE` and friends. */
-const TP_SHORT_KEY_RE = /(^|[^a-z0-9])tp([-_]?size)?([^a-z0-9]|$)/i;
+/** Short-key fallback: the key is exactly `tp` / `--tp` / `tp-size` / `TP_SIZE`. */
+const TP_SHORT_KEY_RE = /^(--)?tp([-_]?size)?$/i;
 
 export type TensorParallelFgpuWarningKind = 'mismatch' | 'nonInteger';
 
@@ -33,12 +33,20 @@ export const findTensorParallelParam = (
   groups: ReadonlyArray<RuntimeParameterGroup> | null,
 ): RuntimeVariantPresetDef | null => {
   const params = flattenParams(groups);
-  const byName = params.find(
+  const byNameMatches = params.filter(
     (p) =>
       TP_NAME_RE.test(p.key) ||
       TP_NAME_RE.test(p.name) ||
       (p.displayName != null && TP_NAME_RE.test(p.displayName)),
   );
+  // Prefer a numeric param: a non-numeric namesake (e.g. a STR
+  // TENSOR_PARALLEL_MODE) has no TP size to compare.
+  const byName =
+    byNameMatches.find(
+      (p) => p.valueType === 'INT' || p.valueType === 'FLOAT',
+    ) ??
+    byNameMatches[0] ??
+    null;
   if (byName) return byName;
   return (
     params.find(

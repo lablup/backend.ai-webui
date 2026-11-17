@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<f5253e45ce29aed4eb8e55c9ec6f77ea>>
+ * @generated SignedSource<<d924a1185ebaef6195eab04e0bd86387>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -24,6 +24,7 @@ export type TensorParallelFgpuWarningPresetQuery$data = {
     }> | null | undefined;
     readonly runtimeVariant: {
       readonly name: string;
+      readonly readsVfolderConfigFiles: boolean;
     } | null | undefined;
   } | null | undefined;
 };
@@ -57,6 +58,13 @@ v2 = {
 v3 = {
   "alias": null,
   "args": null,
+  "kind": "ScalarField",
+  "name": "readsVfolderConfigFiles",
+  "storageKey": null
+},
+v4 = {
+  "alias": null,
+  "args": null,
   "concreteType": "AllocatedResourceSlot",
   "kind": "LinkedField",
   "name": "resourceSlots",
@@ -79,7 +87,7 @@ v3 = {
   ],
   "storageKey": null
 },
-v4 = {
+v5 = {
   "alias": null,
   "args": null,
   "concreteType": "RuntimeVariantPresetValueEntry",
@@ -104,7 +112,7 @@ v4 = {
   ],
   "storageKey": null
 },
-v5 = {
+v6 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
@@ -134,12 +142,13 @@ return {
             "name": "runtimeVariant",
             "plural": false,
             "selections": [
-              (v2/*: any*/)
+              (v2/*: any*/),
+              (v3/*: any*/)
             ],
             "storageKey": null
           },
-          (v3/*: any*/),
-          (v4/*: any*/)
+          (v4/*: any*/),
+          (v5/*: any*/)
         ],
         "storageKey": null
       }
@@ -170,29 +179,30 @@ return {
             "plural": false,
             "selections": [
               (v2/*: any*/),
-              (v5/*: any*/)
+              (v3/*: any*/),
+              (v6/*: any*/)
             ],
             "storageKey": null
           },
-          (v3/*: any*/),
           (v4/*: any*/),
-          (v5/*: any*/)
+          (v5/*: any*/),
+          (v6/*: any*/)
         ],
         "storageKey": null
       }
     ]
   },
   "params": {
-    "cacheID": "c706548b73f1976af41c8a19b21c67bb",
+    "cacheID": "198737970066d65d37b839e28ce6838f",
     "id": null,
     "metadata": {},
     "name": "TensorParallelFgpuWarningPresetQuery",
     "operationKind": "query",
-    "text": "query TensorParallelFgpuWarningPresetQuery(\n  $id: UUID!\n) {\n  deploymentRevisionPreset(id: $id) {\n    runtimeVariant {\n      name\n      id\n    }\n    resourceSlots {\n      slotName\n      quantity\n    }\n    presetValues {\n      presetId\n      value\n    }\n    id\n  }\n}\n"
+    "text": "query TensorParallelFgpuWarningPresetQuery(\n  $id: UUID!\n) {\n  deploymentRevisionPreset(id: $id) {\n    runtimeVariant {\n      name\n      readsVfolderConfigFiles @since(version: \"26.8.0\")\n      id\n    }\n    resourceSlots {\n      slotName\n      quantity\n    }\n    presetValues {\n      presetId\n      value\n    }\n    id\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "8515425d5d5e063b697d1d1b6606b71e";
+(node as any).hash = "1e3fced3eb700ce6102236531b1ed1de";
 
 export default node;

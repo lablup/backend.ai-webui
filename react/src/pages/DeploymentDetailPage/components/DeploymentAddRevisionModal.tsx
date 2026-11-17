@@ -725,10 +725,10 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
 
   // Runtime parameter values live in `customForm` under the `runtimeParams`
   // namespace (registered by RuntimeParameterFormSection), so required presets
-  // participate in normal form validation. Touched keys and groups are kept in
-  // refs since changing them must not re-render the modal — both are only read
-  // at submit time to collect runtime-variant preset values. The groups also
-  // feed the TP/fGPU warning (state, so the warning re-renders with them).
+  // participate in normal form validation. Touched keys are kept in a ref —
+  // changing them must not re-render the modal, and they are only read at
+  // submit time. The groups live in both a ref (the submit-time read) and
+  // state (the TP/fGPU warning, which re-renders with them).
   const runtimeParamTouchedKeysRef = useRef<Set<string>>(new Set());
   const runtimeParamGroupsRef = useRef<RuntimeParameterGroup[] | null>(null);
   const [runtimeParamGroups, setRuntimeParamGroups] =
