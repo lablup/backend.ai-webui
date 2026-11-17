@@ -544,7 +544,6 @@ const SUPERADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     defaultSize: size(2, 3),
     minSize: size(2, 3),
     settings: ['range'],
-    defaultHidden: true,
   },
   {
     key: 'activeAgents',
@@ -735,6 +734,7 @@ const PAGE_ORDER: Record<PanelPage, ReadonlyArray<string>> = {
     'projectSessionStatus',
     'agentStats',
     'pendingSessions',
+    'sessionLaunches',
     'failuresByEntityType',
     'activeAgents',
     'totalResourceWithinResourceGroup',
