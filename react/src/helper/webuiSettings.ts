@@ -225,7 +225,7 @@ export const WEBUI_SETTING_DEFINITIONS: ReadonlyArray<WebUISettingDefinition> =
     },
 
     // Deployments.
-    def('hideModelDefinitionPath', 'domain', 'boolean', 'deployments'),
+    def('allowCustomModelDefinitionPath', 'domain', 'boolean', 'deployments'),
 
     // Sidebar.
     def('menuBlocklist', 'domain', 'stringList', 'menu', 'blockList'),

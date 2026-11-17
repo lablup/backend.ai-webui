@@ -16,7 +16,7 @@ import {
 import { createMockEnvironment, MockPayloadGenerator } from 'relay-test-utils';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-const effective = vi.hoisted(() => ({ hideModelDefinitionPath: false }));
+const effective = vi.hoisted(() => ({ allowCustomModelDefinitionPath: true }));
 
 vi.mock('react-i18next', async (importOriginal) => ({
   ...(await importOriginal<typeof import('react-i18next')>()),
@@ -65,7 +65,7 @@ const renderDetail = () => {
 
 describe('DeploymentRevisionDetail model definition path', () => {
   afterEach(() => {
-    effective.hideModelDefinitionPath = false;
+    effective.allowCustomModelDefinitionPath = true;
   });
 
   it('shows the path by default', async () => {
@@ -76,8 +76,8 @@ describe('DeploymentRevisionDetail model definition path', () => {
     expect(screen.getByText('custom-definition.yaml')).toBeInTheDocument();
   });
 
-  it('drops the row when the System Setting hides it', async () => {
-    effective.hideModelDefinitionPath = true;
+  it('drops the row when the System Setting disallows a custom path', async () => {
+    effective.allowCustomModelDefinitionPath = false;
     renderDetail();
     // Another row proves the details rendered.
     expect(

@@ -171,9 +171,9 @@ export const useWebUISettingLabels = (): {
         title: t('webuiSettings.MaxFileUploadSize'),
         description: t('webuiSettings.DescMaxFileUploadSize'),
       },
-      hideModelDefinitionPath: {
-        title: t('webuiSettings.HideModelDefinitionPath'),
-        description: t('webuiSettings.DescHideModelDefinitionPath'),
+      allowCustomModelDefinitionPath: {
+        title: t('webuiSettings.AllowCustomModelDefinitionPath'),
+        description: t('webuiSettings.DescAllowCustomModelDefinitionPath'),
       },
       storageWarningThreshold: {
         title: t('webuiSettings.StorageWarningThreshold'),

@@ -166,7 +166,13 @@ export const WEBUI_SETTING_ROWS: ReadonlyArray<WebUISettingRow> = [
   ),
 
   // Deployments.
-  row('hideModelDefinitionPath', 'domain', 'boolean', 'deployments', null),
+  row(
+    'allowCustomModelDefinitionPath',
+    'domain',
+    'boolean',
+    'deployments',
+    null,
+  ),
 
   // Sidebar.
   row('menuBlocklist', 'domain', 'stringList', 'menu', ['menu', 'blocklist']),

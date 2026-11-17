@@ -469,8 +469,9 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
   const { token } = useTheme();
   const { message } = App.useApp();
   const relayEnvironment = useRelayEnvironment();
-  const { isDirectorySizeVisible, hideModelDefinitionPath } =
+  const { isDirectorySizeVisible, allowCustomModelDefinitionPath } =
     useEffectiveLoginConfig();
+  const hideModelDefinitionPath = !allowCustomModelDefinitionPath;
 
   // Deployment-scoped data (resourceGroupName for resource defaults,
   // currentRevision for the optional "Load current" affordance). Fragment-
@@ -2663,7 +2664,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
               {/* The path points at the model-definition.yaml the server
                   will read, so the field means nothing for a variant that
                   does not read the vfolder config files. With
-                  `hideModelDefinitionPath` on, the server default applies. */}
+                  `allowCustomModelDefinitionPath` off, the server default applies. */}
               {readsVfolderConfigFiles && !hideModelDefinitionPath && (
                 <BAIFormItem
                   name="definitionPath"

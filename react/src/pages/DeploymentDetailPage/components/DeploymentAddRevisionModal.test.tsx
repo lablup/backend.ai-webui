@@ -362,8 +362,8 @@ describe('toImageFullName', () => {
   });
 });
 
-describe('model definition path with hideModelDefinitionPath', () => {
-  it('sends no path for a copied revision with a custom path while hidden', () => {
+describe('model definition path with allowCustomModelDefinitionPath', () => {
+  it('sends no path for a copied revision with a custom path while disallowed', () => {
     const prefilled = prefillDefinitionPath('configs/llm.yaml', true);
     expect(prefilled).toBeUndefined();
     expect(
@@ -381,7 +381,7 @@ describe('model definition path with hideModelDefinitionPath', () => {
     ).toBeNull();
   });
 
-  it('keeps and sends a copied path when the setting is off', () => {
+  it('keeps and sends a copied path when a custom path is allowed', () => {
     const prefilled = prefillDefinitionPath('configs/llm.yaml', false);
     expect(prefilled).toBe('configs/llm.yaml');
     expect(

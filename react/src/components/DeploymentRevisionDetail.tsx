@@ -61,7 +61,7 @@ const DeploymentRevisionDetail: React.FC<{
 }> = ({ revisionFrgmt, status = 'none', mergeRevisionInfo = false }) => {
   'use memo';
   const { t } = useTranslation();
-  const { hideModelDefinitionPath } = useEffectiveLoginConfig();
+  const { allowCustomModelDefinitionPath } = useEffectiveLoginConfig();
   const screens = useBAIBreakpoint();
 
   const revision = useFragment(
@@ -360,7 +360,7 @@ const DeploymentRevisionDetail: React.FC<{
         renderFallback()
       ),
     },
-    !hideModelDefinitionPath && {
+    allowCustomModelDefinitionPath && {
       key: 'model-definition-path',
       label: t('deployment.ModelDefinitionPath'),
       children: mountConfig?.definitionPath || renderFallback(),
