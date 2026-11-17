@@ -375,7 +375,6 @@
     "MountPermission": "Kebenaran lekap",
     "NoPermissionToSetAutoMount": "Anda tidak mempunyai kebenaran untuk menetapkan lekap automatik.",
     "NoPermissionToSetProjectAutoMount": "Anda tidak mempunyai kebenaran untuk menetapkan lekap automatik dalam projek ini. Untuk melekapkan folder secara automatik dalam sesi anda sendiri, ciptanya dalam projek peribadi anda.",
-    "NoPermissionToViewAutoMount": "Anda tiada kebenaran untuk melihat lekap automatik folder ini.",
     "NotAutoMounted": "Folder ini tidak dilekapkan secara automatik.",
     "NotConfigured": "Tidak dikonfigurasi",
     "PleaseEnterMountDestination": "Masukkan laluan lekap.",

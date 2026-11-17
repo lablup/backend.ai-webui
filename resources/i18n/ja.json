@@ -375,7 +375,6 @@
     "MountPermission": "マウント権限",
     "NoPermissionToSetAutoMount": "自動マウントを設定する権限がありません。",
     "NoPermissionToSetProjectAutoMount": "このプロジェクトで自動マウントを設定する権限がありません。自分のセッションに自動マウントするには、個人プロジェクトでフォルダを作成してください。",
-    "NoPermissionToViewAutoMount": "このフォルダーの自動マウントを表示する権限がありません。",
     "NotAutoMounted": "このフォルダは自動マウントされません。",
     "NotConfigured": "未設定",
     "PleaseEnterMountDestination": "マウントパスを入力してください。",

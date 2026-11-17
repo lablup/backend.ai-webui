@@ -80,7 +80,6 @@ const VFolderAutoMountMetadataSection: React.FC<
       { fetchPolicy: 'store-and-network' },
     );
   const permissions = myScopePermissions?.item.permissions ?? [];
-  const canRead = _.includes(permissions, 'READ');
 
   const noPermission = {
     reason:
@@ -145,48 +144,42 @@ const VFolderAutoMountMetadataSection: React.FC<
         }
         showActions="always"
         actions={
-          !canRead
-            ? []
-            : autoMount
-              ? [
-                  {
-                    key: 'edit-auto-mount',
-                    title: t('autoMount.EditAutoMount'),
-                    icon: <SquarePenIcon />,
-                    disabled: disabledUnless('UPDATE'),
-                    onClick: () => setIsModalOpen(true),
+          autoMount
+            ? [
+                {
+                  key: 'edit-auto-mount',
+                  title: t('autoMount.EditAutoMount'),
+                  icon: <SquarePenIcon />,
+                  disabled: disabledUnless('UPDATE'),
+                  onClick: () => setIsModalOpen(true),
+                },
+                {
+                  key: 'remove-auto-mount',
+                  title: t('autoMount.RemoveAutoMount'),
+                  icon: <Trash2 />,
+                  type: 'danger' as const,
+                  disabled: disabledUnless('SOFT_DELETE'),
+                  popConfirm: {
+                    title: t('autoMount.RemoveAutoMountConfirm'),
+                    description: autoMount.mountDestination,
+                    okButtonProps: { danger: true },
+                    okText: t('button.Remove'),
+                    onConfirm: handleDelete,
                   },
-                  {
-                    key: 'remove-auto-mount',
-                    title: t('autoMount.RemoveAutoMount'),
-                    icon: <Trash2 />,
-                    type: 'danger' as const,
-                    disabled: disabledUnless('SOFT_DELETE'),
-                    popConfirm: {
-                      title: t('autoMount.RemoveAutoMountConfirm'),
-                      description: autoMount.mountDestination,
-                      okButtonProps: { danger: true },
-                      okText: t('button.Remove'),
-                      onConfirm: handleDelete,
-                    },
-                  },
-                ]
-              : [
-                  {
-                    key: 'add-auto-mount',
-                    title: t('autoMount.AddAutoMount'),
-                    icon: <PlusIcon />,
-                    disabled: disabledUnless('CREATE'),
-                    onClick: () => setIsModalOpen(true),
-                  },
-                ]
+                },
+              ]
+            : [
+                {
+                  key: 'add-auto-mount',
+                  title: t('autoMount.AddAutoMount'),
+                  icon: <PlusIcon />,
+                  disabled: disabledUnless('CREATE'),
+                  onClick: () => setIsModalOpen(true),
+                },
+              ]
         }
       />
-      {!canRead ? (
-        <Text color="secondary">
-          {t('autoMount.NoPermissionToViewAutoMount')}
-        </Text>
-      ) : autoMount ? (
+      {autoMount ? (
         <BAIMetadataList columns="single">
           <BAIMetadataListItem label={t('autoMount.MountDestination')}>
             {autoMount.mountDestination}

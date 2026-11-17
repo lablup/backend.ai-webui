@@ -375,7 +375,6 @@
     "MountPermission": "Liitosoikeus",
     "NoPermissionToSetAutoMount": "Sinulla ei ole oikeutta asettaa automaattisia liitoksia.",
     "NoPermissionToSetProjectAutoMount": "Sinulla ei ole oikeutta asettaa automaattisia liitoksia tässä projektissa. Jos haluat liittää kansion automaattisesti omiin istuntoihisi, luo se henkilökohtaiseen projektiisi.",
-    "NoPermissionToViewAutoMount": "Sinulla ei ole oikeutta nähdä tämän kansion automaattista liittämistä.",
     "NotAutoMounted": "Tätä kansiota ei liitetä automaattisesti.",
     "NotConfigured": "Ei määritetty",
     "PleaseEnterMountDestination": "Anna liitospolku.",
