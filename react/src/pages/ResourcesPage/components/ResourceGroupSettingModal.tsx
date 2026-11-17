@@ -54,8 +54,10 @@ type FormInputType = {
   active: boolean;
   public: boolean;
   scheduler: string;
-  pendingTimeout: number;
-  retriesToSkip: number;
+  // validateFields() returns null for a cleared field; INITIAL_FORM_VALUES
+  // seeds null when the stored value is absent.
+  pendingTimeout: number | null;
+  retriesToSkip: number | null;
   sftpProxies: string[];
 };
 
