@@ -383,6 +383,7 @@
     "RemoveAutoMountConfirm": "Parar a montagem automática desta pasta?",
     "ScopeProject": "Definido no projeto",
     "ScopeUser": "Definido no usuário",
+    "SetOnOtherUserAutoMount": "Esta montagem automática é definida para {{email}}, o dono da pasta, e não para você.",
     "Subpath": "Subcaminho",
     "SubpathDesc": "Caminho dentro da pasta a montar. '.' monta a pasta inteira."
   },

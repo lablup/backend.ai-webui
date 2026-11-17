@@ -383,6 +383,7 @@
     "RemoveAutoMountConfirm": "Lopetetaanko tämän kansion automaattinen liittäminen?",
     "ScopeProject": "Asetettu projektille",
     "ScopeUser": "Asetettu käyttäjälle",
+    "SetOnOtherUserAutoMount": "Tämä automaattinen liittäminen asetetaan kansion omistajalle {{email}}, ei sinulle.",
     "Subpath": "Alipolku",
     "SubpathDesc": "Liitettävä polku kansion sisällä. '.' liittää koko kansion."
   },

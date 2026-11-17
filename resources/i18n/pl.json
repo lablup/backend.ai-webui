@@ -383,6 +383,7 @@
     "RemoveAutoMountConfirm": "Zatrzymać automatyczne montowanie tego folderu?",
     "ScopeProject": "Ustawione w projekcie",
     "ScopeUser": "Ustawione dla użytkownika",
+    "SetOnOtherUserAutoMount": "To automatyczne montowanie zostanie ustawione dla właściciela folderu {{email}}, a nie dla Ciebie.",
     "Subpath": "Podścieżka",
     "SubpathDesc": "Ścieżka wewnątrz folderu do zamontowania. '.' montuje cały folder."
   },

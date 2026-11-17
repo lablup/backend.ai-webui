@@ -370,6 +370,7 @@
     "RemoveAutoMountConfirm": "Stop auto-mounting this folder?",
     "ScopeProject": "Set on the project",
     "ScopeUser": "Set on the user",
+    "SetOnOtherUserAutoMount": "This auto-mount is set on {{email}}, the folder owner, not on you.",
     "Subpath": "Subpath",
     "SubpathDesc": "Path inside the folder to mount. '.' mounts the whole folder."
   },

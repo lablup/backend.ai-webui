@@ -383,6 +383,7 @@
     "RemoveAutoMountConfirm": "停止自动挂载此文件夹?",
     "ScopeProject": "在项目中设置",
     "ScopeUser": "在用户中设置",
+    "SetOnOtherUserAutoMount": "此自动挂载将设置在文件夹所有者 {{email}} 名下，而不是您。",
     "Subpath": "子路径",
     "SubpathDesc": "要挂载的文件夹内路径。'.' 表示挂载整个文件夹。"
   },

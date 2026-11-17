@@ -383,6 +383,7 @@
     "RemoveAutoMountConfirm": "이 폴더의 자동 마운트를 중지할까요?",
     "ScopeProject": "프로젝트에 설정됨",
     "ScopeUser": "사용자에 설정됨",
+    "SetOnOtherUserAutoMount": "이 자동 마운트는 내가 아니라 폴더 주인인 {{email}} 사용자의 자동 마운트로 지정됩니다.",
     "Subpath": "하위 경로",
     "SubpathDesc": "마운트할 폴더 안의 경로입니다. '.'이면 폴더 전체를 마운트합니다."
   },

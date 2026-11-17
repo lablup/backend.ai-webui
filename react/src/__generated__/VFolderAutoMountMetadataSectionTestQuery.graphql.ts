@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<4e52996b9922ecb1517327e02a4ef47b>>
+ * @generated SignedSource<<e57bec0987de45e34120d0b1d58f4235>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -186,6 +186,13 @@ return {
               {
                 "alias": null,
                 "args": null,
+                "kind": "ScalarField",
+                "name": "creatorEmail",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
                 "concreteType": "ProjectV2",
                 "kind": "LinkedField",
                 "name": "project",
@@ -299,7 +306,7 @@ return {
     ]
   },
   "params": {
-    "cacheID": "7d1e63532545a6a628e224e409c4b59f",
+    "cacheID": "2ff467a8f0f5bcab688a84586f2499f3",
     "id": null,
     "metadata": {
       "relayTestingSelectionTypeInfo": {
@@ -338,6 +345,12 @@ return {
           "nullable": false,
           "plural": false,
           "type": "VFolderOwnershipInfo"
+        },
+        "vfolderV2.ownership.creatorEmail": {
+          "enumValues": null,
+          "nullable": true,
+          "plural": false,
+          "type": "String"
         },
         "vfolderV2.ownership.creatorId": (v7/*: any*/),
         "vfolderV2.ownership.project": {
@@ -411,7 +424,7 @@ return {
     },
     "name": "VFolderAutoMountMetadataSectionTestQuery",
     "operationKind": "query",
-    "text": "query VFolderAutoMountMetadataSectionTestQuery(\n  $vfolderId: UUID!\n) {\n  vfolderV2(vfolderId: $vfolderId) {\n    ...VFolderAutoMountMetadataSectionFragment\n    id\n  }\n}\n\nfragment VFolderAutoMountMetadataSectionFragment on VFolder {\n  entityId\n  metadata {\n    name\n  }\n  accessControl {\n    ownershipType\n  }\n  ownership {\n    userId\n    projectId\n    creatorId\n    project {\n      basicInfo {\n        type\n      }\n      id\n    }\n  }\n  ...VFolderNodesV2AutoMountCellFragment\n}\n\nfragment VFolderAutoMountSettingModalFragment on VFolderAutoMount {\n  entityId\n  mountDestination\n  subpath\n  mountPermission\n}\n\nfragment VFolderNodesV2AutoMountCellFragment on VFolder {\n  vfolderAutoMounts(limit: 1) {\n    edges {\n      node {\n        id\n        entityId\n        scopeType\n        scopeId\n        mountDestination\n        subpath\n        mountPermission\n        ...VFolderAutoMountSettingModalFragment\n      }\n    }\n  }\n}\n"
+    "text": "query VFolderAutoMountMetadataSectionTestQuery(\n  $vfolderId: UUID!\n) {\n  vfolderV2(vfolderId: $vfolderId) {\n    ...VFolderAutoMountMetadataSectionFragment\n    id\n  }\n}\n\nfragment VFolderAutoMountMetadataSectionFragment on VFolder {\n  entityId\n  metadata {\n    name\n  }\n  accessControl {\n    ownershipType\n  }\n  ownership {\n    userId\n    projectId\n    creatorId\n    creatorEmail\n    project {\n      basicInfo {\n        type\n      }\n      id\n    }\n  }\n  ...VFolderNodesV2AutoMountCellFragment\n}\n\nfragment VFolderAutoMountSettingModalFragment on VFolderAutoMount {\n  entityId\n  mountDestination\n  subpath\n  mountPermission\n}\n\nfragment VFolderNodesV2AutoMountCellFragment on VFolder {\n  vfolderAutoMounts(limit: 1) {\n    edges {\n      node {\n        id\n        entityId\n        scopeType\n        scopeId\n        mountDestination\n        subpath\n        mountPermission\n        ...VFolderAutoMountSettingModalFragment\n      }\n    }\n  }\n}\n"
   }
 };
 })();

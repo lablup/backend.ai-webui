@@ -383,6 +383,7 @@
     "RemoveAutoMountConfirm": "Auto-Mount dieses Ordners beenden?",
     "ScopeProject": "Im Projekt festgelegt",
     "ScopeUser": "Beim Benutzer festgelegt",
+    "SetOnOtherUserAutoMount": "Dieses automatische Einhängen wird für {{email}}, den Ordnerbesitzer, festgelegt, nicht für Sie.",
     "Subpath": "Unterpfad",
     "SubpathDesc": "Pfad im Ordner, der eingehängt wird. '.' hängt den ganzen Ordner ein."
   },

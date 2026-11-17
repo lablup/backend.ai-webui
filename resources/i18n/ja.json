@@ -383,6 +383,7 @@
     "RemoveAutoMountConfirm": "このフォルダの自動マウントを停止しますか?",
     "ScopeProject": "プロジェクトで設定",
     "ScopeUser": "ユーザーで設定",
+    "SetOnOtherUserAutoMount": "この自動マウントは自分ではなく、フォルダーの所有者 {{email}} の自動マウントとして設定されます。",
     "Subpath": "サブパス",
     "SubpathDesc": "マウントするフォルダ内のパスです。'.' はフォルダ全体をマウントします。"
   },
