@@ -31,6 +31,7 @@ import MenuKeySelector from './MenuKeySelector';
 import PluginPathInput from './PluginPathInput';
 import SettingsJsonModal from './SettingsJsonModal';
 import { useWebUISettingLabels } from './WebUISettingLabels';
+import WebUISettingSizeInput from './WebUISettingSizeInput';
 import { Button } from '@lablup/ui-common/Button';
 import { Text } from '@lablup/ui-common/Text';
 import {
@@ -370,7 +371,15 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
           type: 'custom',
           defaultValue: rowDefault,
           value: current,
-          children: (
+          children: definition.size ? (
+            <WebUISettingSizeInput
+              label={label.title}
+              value={current as number}
+              size={definition.size}
+              width={CONTROL_WIDTH}
+              onChange={(value) => setValue(definition, value)}
+            />
+          ) : (
             // An unset setting shows its default as the placeholder, so the
             // clear button empties the field instead of refilling the default.
             <BAINumberInput

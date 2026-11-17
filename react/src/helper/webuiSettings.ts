@@ -50,6 +50,20 @@ export interface WebUISettingDefinition {
   max?: number;
   /** For a `number`: only whole numbers are valid (counts, cores, bytes, MiB). */
   isInteger?: boolean;
+  /** For a size `number`: edited with a unit picker and an Unlimited toggle. */
+  size?: WebUISizeSetting;
+}
+
+export interface WebUISizeSetting {
+  /** The unit the stored number is in: `''` bytes, `'m'` MiB. */
+  storedUnit: '' | 'm';
+  /** The value stored for Unlimited. */
+  unlimitedValue: number;
+  units: Array<'m' | 'g' | 't'>;
+  defaultUnit: 'm' | 'g' | 't';
+  /** The input's bounds in size notation (`"100g"`). */
+  min: string;
+  max: string;
 }
 
 /** The SSO vendors the login form renders a button for. */
@@ -237,6 +251,14 @@ export const WEBUI_SETTING_DEFINITIONS: ReadonlyArray<WebUISettingDefinition> =
       max: 107374182400,
       unit: 'Bytes',
       isInteger: true,
+      size: {
+        storedUnit: '',
+        unlimitedValue: -1,
+        units: ['m', 'g', 't'],
+        defaultUnit: 'g',
+        min: '1m',
+        max: '100g',
+      },
     },
     {
       ...def('fileUploadChunkSize', 'domain', 'number', 'storage'),
@@ -244,6 +266,14 @@ export const WEBUI_SETTING_DEFINITIONS: ReadonlyArray<WebUISettingDefinition> =
       max: 1024,
       unit: 'MiB',
       isInteger: true,
+      size: {
+        storedUnit: 'm',
+        unlimitedValue: 0,
+        units: ['m', 'g'],
+        defaultUnit: 'm',
+        min: '1m',
+        max: '1g',
+      },
     },
 
     // Deployments.
