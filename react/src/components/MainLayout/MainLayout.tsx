@@ -7,6 +7,7 @@ import {
   AstryxReverseTheme,
   resolveRoleTheme,
 } from '../../astryx-theme';
+import { startAccountUserSettingsSync } from '../../helper/accountUserSettingsSync';
 import { USER_SETTINGS_CONFIG_KEY } from '../../helper/userSettingsAppConfig';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../../hooks';
 import { useResourceSlotsDetails } from '../../hooks/backendai';
@@ -18,7 +19,6 @@ import { useLogoutEventListeners } from '../../hooks/useLogout';
 import { useRouteAccessDecision } from '../../hooks/useRouteAccess';
 import { useCurrentMenuKey, useRouteScope } from '../../hooks/useRouteScope';
 import { useSiderCollapsedState } from '../../hooks/useShellPanels';
-import { useUserSettingsAppConfigSync } from '../../hooks/useUserSettingsAppConfigSync';
 import { useSetupWebUIPluginEffect } from '../../hooks/useWebUIPluginState';
 import ActAsBanner from '../ActAsBanner';
 import AnnouncementBanner from '../AnnouncementBanner';
@@ -51,6 +51,7 @@ import {
   BAIOverlayScrollbar,
   BAIResourceSlotsProvider,
   BAISkeleton,
+  useBAILogger,
   useLabelableEntityTypes,
 } from 'backend.ai-ui';
 import { atom, useSetAtom } from 'jotai';
@@ -525,7 +526,7 @@ export const CSSTokenVariables = () => {
  * it into the localStorage mirror BEFORE the splash goes, so the account's
  * family is what the page reveals (FR-3834). The mirror survives logout; the
  * next login overrides it here. The same read seeds the account's personal
- * settings in memory (ADR 0032).
+ * settings, before the splash goes too, and starts their sync (ADR 0032).
  */
 const DismissSplashOnMount = () => {
   'use memo';
@@ -533,24 +534,27 @@ const DismissSplashOnMount = () => {
   const { myAppConfigFragments, upsertMyAppConfigFragments } =
     useMyAppConfigFragments(['userConfig']);
   const userConfig = myAppConfigFragments.userConfig;
-  useUserSettingsAppConfigSync(
-    userConfig?.[USER_SETTINGS_CONFIG_KEY],
-    upsertMyAppConfigFragments,
-  );
   const userConfigFamily = userConfig?.themeFamily;
   const { setActiveThemeFamily } = useCustomThemeConfig();
-  const syncThemeFamilyMirror = useEffectEvent(() => {
+  const { logger } = useBAILogger();
+  const applyUserConfig = useEffectEvent(() => {
     setActiveThemeFamily(
       typeof userConfigFamily === 'string' ? userConfigFamily : undefined,
     );
+    return startAccountUserSettingsSync({
+      serverSettings: userConfig?.[USER_SETTINGS_CONFIG_KEY],
+      upsertMyAppConfigFragments,
+      onError: (message, error) => logger.error(message, error),
+    });
   });
   useEffect(() => {
-    syncThemeFamilyMirror();
+    const stopSettingsSync = applyUserConfig();
     (globalThis as any).__dismissSplash?.();
     (globalThis as any).__mainLayoutReady = true;
     document.dispatchEvent(new CustomEvent('main-layout-ready'));
     return () => {
       (globalThis as any).__mainLayoutReady = false;
+      stopSettingsSync();
     };
   }, []);
   return null;
