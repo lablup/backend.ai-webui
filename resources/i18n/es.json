@@ -2329,6 +2329,7 @@
     "EndpointUnreachable": "No se puede conectar con este servidor. Compruebe la dirección y la red e inténtelo de nuevo.",
     "ForgotPassword": "¿Ha olvidado su contraseña?",
     "GoToLogin": "Ir al inicio de sesión",
+    "HidePassword": "Ocultar contraseña",
     "InvalidChangePasswordToken": "Token no válido",
     "InvalidChangePasswordTokenMessage": "El token emitido para cambiar la contraseña tiene un error. Por favor, envíe otro correo electrónico para cambiar la contraseña y vuelva a intentarlo.",
     "LeaveService": "Dejar el servicio",
@@ -2353,6 +2354,7 @@
     "ServerUnreachable": "No se puede conectar al servidor. Por favor, verifique el punto final de la API e inténtelo de nuevo.",
     "SessionExpired": "Su sesión de inicio de sesión ha expirado. Por favor, inicie sesión de nuevo.",
     "SessionMode": "Sesión",
+    "ShowPassword": "Mostrar contraseña",
     "SignUp": "Inscríbete",
     "SignoutFinished": "Firma terminada.",
     "singleSignOn": {
