@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<337b65800de0ab7e7c2740b0e67b916d>>
+ * @generated SignedSource<<24939bb25694bce1075c27430d259a4d>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -16,10 +16,14 @@ export type VFolderNodesV2AutoMountCellFragment$data = {
   readonly vfolderAutoMounts: {
     readonly edges: ReadonlyArray<{
       readonly node: {
+        readonly entityId: string;
+        readonly id: string;
         readonly mountDestination: string;
         readonly mountPermission: MountPermission;
+        readonly scopeId: string;
         readonly scopeType: VFolderAutoMountScopeType;
         readonly subpath: string;
+        readonly " $fragmentSpreads": FragmentRefs<"VFolderAutoMountSettingModalFragment">;
       };
     }>;
   } | null | undefined;
@@ -70,7 +74,28 @@ const node: ReaderFragment = {
                   "alias": null,
                   "args": null,
                   "kind": "ScalarField",
+                  "name": "id",
+                  "storageKey": null
+                },
+                {
+                  "alias": null,
+                  "args": null,
+                  "kind": "ScalarField",
+                  "name": "entityId",
+                  "storageKey": null
+                },
+                {
+                  "alias": null,
+                  "args": null,
+                  "kind": "ScalarField",
                   "name": "scopeType",
+                  "storageKey": null
+                },
+                {
+                  "alias": null,
+                  "args": null,
+                  "kind": "ScalarField",
+                  "name": "scopeId",
                   "storageKey": null
                 },
                 {
@@ -93,6 +118,11 @@ const node: ReaderFragment = {
                   "kind": "ScalarField",
                   "name": "mountPermission",
                   "storageKey": null
+                },
+                {
+                  "args": null,
+                  "kind": "FragmentSpread",
+                  "name": "VFolderAutoMountSettingModalFragment"
                 }
               ],
               "storageKey": null
@@ -108,6 +138,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "e4e2ce32126cbc55deec8c4a6ad9e03d";
+(node as any).hash = "0e85a99185061f3386843ca7d1de4d3a";
 
 export default node;

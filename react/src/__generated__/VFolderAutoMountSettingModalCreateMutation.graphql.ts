@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<bee078a4e4eb88bc866eddcfcfec5579>>
+ * @generated SignedSource<<9f9f1053beb82e14d5f50ea957be8c15>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -177,11 +177,26 @@ return {
                             "name": "node",
                             "plural": false,
                             "selections": [
+                              (v2/*: any*/),
+                              {
+                                "alias": null,
+                                "args": null,
+                                "kind": "ScalarField",
+                                "name": "entityId",
+                                "storageKey": null
+                              },
                               {
                                 "alias": null,
                                 "args": null,
                                 "kind": "ScalarField",
                                 "name": "scopeType",
+                                "storageKey": null
+                              },
+                              {
+                                "alias": null,
+                                "args": null,
+                                "kind": "ScalarField",
+                                "name": "scopeId",
                                 "storageKey": null
                               },
                               {
@@ -204,8 +219,7 @@ return {
                                 "kind": "ScalarField",
                                 "name": "mountPermission",
                                 "storageKey": null
-                              },
-                              (v2/*: any*/)
+                              }
                             ],
                             "storageKey": null
                           }
@@ -227,12 +241,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "53a41c596d6d67c4affc123ff09a6e81",
+    "cacheID": "7aebe7590733c8cde8c6cd2bc30b08bf",
     "id": null,
     "metadata": {},
     "name": "VFolderAutoMountSettingModalCreateMutation",
     "operationKind": "mutation",
-    "text": "mutation VFolderAutoMountSettingModalCreateMutation(\n  $input: CreateVFolderAutoMountInput!\n) {\n  createVfolderAutoMount(input: $input) {\n    vfolderAutoMount {\n      id\n      vfolder {\n        id\n        ...VFolderNodesV2AutoMountCellFragment\n      }\n    }\n  }\n}\n\nfragment VFolderNodesV2AutoMountCellFragment on VFolder {\n  vfolderAutoMounts(limit: 1) {\n    edges {\n      node {\n        scopeType\n        mountDestination\n        subpath\n        mountPermission\n        id\n      }\n    }\n  }\n}\n"
+    "text": "mutation VFolderAutoMountSettingModalCreateMutation(\n  $input: CreateVFolderAutoMountInput!\n) {\n  createVfolderAutoMount(input: $input) {\n    vfolderAutoMount {\n      id\n      vfolder {\n        id\n        ...VFolderNodesV2AutoMountCellFragment\n      }\n    }\n  }\n}\n\nfragment VFolderAutoMountSettingModalFragment on VFolderAutoMount {\n  entityId\n  mountDestination\n  subpath\n  mountPermission\n}\n\nfragment VFolderNodesV2AutoMountCellFragment on VFolder {\n  vfolderAutoMounts(limit: 1) {\n    edges {\n      node {\n        id\n        entityId\n        scopeType\n        scopeId\n        mountDestination\n        subpath\n        mountPermission\n        ...VFolderAutoMountSettingModalFragment\n      }\n    }\n  }\n}\n"
   }
 };
 })();
