@@ -97,7 +97,10 @@ export const AuditLogNodesPanelContent: React.FC<{
                       ? rbacTypeLabel(t, record.entityType)
                       : '-',
                 }
-              : { ...column, defaultHidden: false },
+              : column.key === 'status'
+                ? // A descending status sort answers INTERNAL_SERVER_ERROR (manager 26.10.0a5).
+                  { ...column, defaultHidden: false, sorter: false }
+                : { ...column, defaultHidden: false },
           )
       }
       pagination={{
