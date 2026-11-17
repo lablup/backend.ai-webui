@@ -37,6 +37,7 @@ import FailedLoginsPanel from './superadminCards/FailedLoginsPanel';
 import FailuresByEntityTypePanel from './superadminCards/FailuresByEntityTypePanel';
 import ResourcePoliciesPanel from './superadminCards/ResourcePoliciesPanel';
 import SchedulingFailuresPanel from './superadminCards/SchedulingFailuresPanel';
+import SessionLaunchesPanel from './superadminCards/SessionLaunchesPanel';
 import type {
   PanelComponentProps,
   PanelDefinition,
@@ -530,6 +531,19 @@ const SUPERADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     minSize: size(2, 3),
     settings: ['range'],
     // Addable from the sider; boards that already hold it keep it.
+    defaultHidden: true,
+  },
+  {
+    key: 'sessionLaunches',
+    page: ['admin'],
+    group: 'session',
+    titleKey: 'dashboard.card.SessionLaunches',
+    requires: SUPERADMIN_ONLY,
+    kind: 'custom',
+    Component: SessionLaunchesPanel,
+    defaultSize: size(2, 2),
+    minSize: size(2, 2),
+    settings: ['range'],
     defaultHidden: true,
   },
   {
