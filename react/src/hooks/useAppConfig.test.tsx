@@ -84,14 +84,6 @@ const mountScoped = async (
     environment.mock.resolve(read, payload);
   });
   await waitFor(() => expect(result.current).not.toBeNull());
-  // The mount reads the documents once more; answer it the same way.
-  const mountRead = await waitForOperation(
-    environment,
-    'useAppConfigScopedQuery',
-  );
-  act(() => {
-    environment.mock.resolve(mountRead, payload);
-  });
   return { environment, result, read };
 };
 
@@ -367,7 +359,7 @@ describe('useScopedAppConfig', () => {
     expect(merged.request.variables.configNames).toEqual(['domainConfig']);
   });
 
-  it('reads the documents again when another reader mounts on the stored copy', async () => {
+  it('serves another reader from the stored copy without a request', async () => {
     const hooks = await loadHooks();
     const { environment } = await mountScoped(
       { scope: USER, configNames: ['userConfig'] },
@@ -382,39 +374,10 @@ describe('useScopedAppConfig', () => {
     expect(second.result.current.scopedAppConfig.user?.userConfig).toEqual({
       themeFamily: 'ocean',
     });
-    await waitForOperation(environment, 'useAppConfigScopedQuery');
-  });
-
-  it('sends a mount read only after the writes queued on its scope settle', async () => {
-    const hooks = await loadHooks();
-    const { environment, result } = await mountScoped(
-      { scope: USER, configNames: ['userConfig'] },
-      { user: { userConfig: { a: 1 } } },
-      hooks,
-    );
-    let pending!: Promise<unknown>;
-    act(() => {
-      pending = result.current.upsertScopedAppConfig({
-        scope: USER,
-        configName: 'userConfig',
-        subKey: 'b',
-        value: 2,
-      });
-    });
-    await waitForOperation(environment, 'useAppConfigUpsertMutation');
-    renderHook(
-      () =>
-        hooks.useScopedAppConfig({ scope: USER, configNames: ['userConfig'] }),
-      { wrapper: wrapperFor(environment) },
-    );
     await act(async () => {
       await Promise.resolve();
     });
     expect(operationsNamed(environment, 'useAppConfigScopedQuery')).toEqual([]);
-
-    await answerUpsert(environment, 'user-0');
-    await act(() => pending);
-    await waitForOperation(environment, 'useAppConfigScopedQuery');
   });
 
   it('rejects requesting one scope type twice', async () => {
@@ -554,16 +517,13 @@ const mountMine = async (
       ),
     },
   } as any;
-  for (let i = 0; i < 2; i++) {
-    // The suspending read, then the mount read.
-    const read = await waitForOperation(
-      environment,
-      'useAppConfigMyFragmentsQuery',
-    );
-    act(() => {
-      environment.mock.resolve(read, payload);
-    });
-  }
+  const read = await waitForOperation(
+    environment,
+    'useAppConfigMyFragmentsQuery',
+  );
+  act(() => {
+    environment.mock.resolve(read, payload);
+  });
   await waitFor(() => expect(result.current).not.toBeNull());
   return { environment, result };
 };

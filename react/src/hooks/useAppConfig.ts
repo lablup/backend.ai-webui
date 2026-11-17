@@ -15,7 +15,6 @@ import {
 } from '../__generated__/useAppConfigScopedQuery.graphql';
 import { useAppConfigUpsertMutation } from '../__generated__/useAppConfigUpsertMutation.graphql';
 import * as _ from 'lodash-es';
-import { useEffect, useEffectEvent } from 'react';
 import {
   commitMutation,
   fetchQuery,
@@ -198,16 +197,6 @@ const queueKeyOf = (scope: { scopeType: string; scopeId?: string | null }) =>
   `${scope.scopeType}:${scope.scopeId ?? ''}`;
 const MY_QUEUE_KEY = 'USER:me';
 
-// A mount read sent while a write is in flight could land after that write's
-// response and put the older document back, so it waits for the queued writes.
-const readAfterQueuedWrites = (
-  keys: ReadonlyArray<string>,
-  read: () => Promise<unknown>,
-) =>
-  Promise.all(keys.map((key) => writeQueues.get(key)))
-    .then(read)
-    .catch(() => undefined);
-
 const serializeWrite = <T>(
   key: string,
   write: () => Promise<T>,
@@ -361,11 +350,10 @@ const refetchMergedAppConfig = (
   ).toPromise();
 
 /**
- * The raw documents of the scopes the request names, read in one request: the
- * store's copy renders first, and each mount reads them once more
- * (useLazyLoadQuery does not refetch a query another mounted reader still
- * retains). `upsert` writes on the documents the hook holds, one mutation per
- * scope, and resolves with what it wrote. Suspends; post-login only.
+ * The raw documents of the scopes the request names, read in one request the
+ * first time and from the store after that, until the page reloads. `upsert`
+ * writes on the documents the store holds, one mutation per scope, and
+ * resolves with what it wrote. Suspends; post-login only.
  */
 export const useScopedAppConfig = (request: ScopedAppConfigRequest) => {
   'use memo';
@@ -378,22 +366,8 @@ export const useScopedAppConfig = (request: ScopedAppConfigRequest) => {
   const data = useLazyLoadQuery<useAppConfigScopedQuery>(
     scopedQuery,
     variables,
-    { fetchPolicy: 'store-and-network' },
+    { fetchPolicy: 'store-or-network' },
   );
-
-  const refreshOnMount = useEffectEvent(() => {
-    const keys = SCOPE_KEYS.filter(
-      (key) => variables[namesVariable(key)].length > 0,
-    ).map((key) => queueKeyOf(variables[scopeVariable(key)]));
-    readAfterQueuedWrites(keys, () =>
-      fetchQuery<useAppConfigScopedQuery>(relayEnv, scopedQuery, variables, {
-        fetchPolicy: 'network-only',
-      }).toPromise(),
-    );
-  });
-  useEffect(() => {
-    refreshOnMount();
-  }, [operation.request.identifier]);
 
   const upsertScopedAppConfig = async (
     changes: AppConfigChange | Array<AppConfigChange>,
@@ -502,22 +476,8 @@ export const useMyAppConfigFragments = (configNames: Array<AppConfigName>) => {
   const data = useLazyLoadQuery<useAppConfigMyFragmentsQuery>(
     myFragmentsQuery,
     variables,
-    { fetchPolicy: 'store-and-network' },
+    { fetchPolicy: 'store-or-network' },
   );
-
-  const refreshOnMount = useEffectEvent(() => {
-    readAfterQueuedWrites([MY_QUEUE_KEY], () =>
-      fetchQuery<useAppConfigMyFragmentsQuery>(
-        relayEnv,
-        myFragmentsQuery,
-        variables,
-        { fetchPolicy: 'network-only' },
-      ).toPromise(),
-    );
-  });
-  useEffect(() => {
-    refreshOnMount();
-  }, [operation.request.identifier]);
 
   const upsertMyAppConfigFragments = async (
     changes: MyAppConfigChange | Array<MyAppConfigChange>,

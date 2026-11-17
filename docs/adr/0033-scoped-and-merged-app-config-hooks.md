@@ -6,7 +6,7 @@
 
 - `react/src/hooks/useAppConfig.ts` exposes three hooks. `useScopedAppConfig(request)` reads and writes the [raw documents](#glossary) of the scopes the caller names, each as a [scope object](#glossary) `{ type, id }`. `useMyAppConfigFragments(configNames)` reads and writes the signed-in user's own USER documents through the `my*` fields. `useMyAppConfig(configName, subKey)` reads the [merged view](#glossary) and never writes.
 - A write is one upsert per scope. `upsertScopedAppConfig` and `upsertMyAppConfigFragments` build each whole document from the copy the hook holds, let the upsert response update that copy, and resolve with the documents they wrote.
-- A hook renders the store's copy first and reads the documents once more on every mount, so the write base is the document as it stood when the screen mounted. A change that the CLI, another admin, or another tab makes after that is overwritten by the next write.
+- A hook reads its documents from the network the first time and from the store after that, until the page reloads, so the write base is the document as this page load first read it. A change that the CLI, another admin, or another tab makes after that is overwritten by the next write.
 - `loginConfigState` is a derived atom over three atoms: the base config, the public `settings` document, and the domain `settings` document. System Settings sets the layer it wrote, and a subscription copies every change into `baiClient._config`.
 
 ## Context
@@ -33,8 +33,8 @@ flowchart LR
     rawRec["AppConfigFragment records"]
     mergedRec["myAppConfigs result"]
   end
-  raw -- "store-and-network, plus a network-only read per mount" --> rawRec
-  mine -- "store-and-network, plus a network-only read per mount" --> rawRec
+  raw -- "store-or-network" --> rawRec
+  mine -- "store-or-network" --> rawRec
   rawRec -- "public, domain, user" --> scoped["useScopedAppConfig"]
   rawRec -- "own USER documents" --> own["useMyAppConfigFragments"]
   scoped -- "upsert: one mutation per scope" --> upsert
@@ -65,11 +65,11 @@ flowchart LR
 
 ### 1. Three hooks in `useAppConfig.ts`
 
-| Hook                                   | Reads                                                                    | Writes                                                | Fetch policy                                                     |
-| -------------------------------------- | ------------------------------------------------------------------------ | ----------------------------------------------------- | ---------------------------------------------------------------- |
-| `useScopedAppConfig(request)`          | `scopedAppConfigFragmentsByNames` once per requested scope, in one query | `upsertScopedAppConfig(changes)`, scoped mutation     | `store-and-network`, plus one `network-only` read on every mount |
-| `useMyAppConfigFragments(configNames)` | `myAppConfigFragmentsByNames`                                            | `upsertMyAppConfigFragments(changes)`, `my*` mutation | `store-and-network`, plus one `network-only` read on every mount |
-| `useMyAppConfig(configName, subKey?)`  | `myAppConfigs` for one config name per request                           | none                                                  | `store-or-network`                                               |
+| Hook                                   | Reads                                                                    | Writes                                                | Fetch policy       |
+| -------------------------------------- | ------------------------------------------------------------------------ | ----------------------------------------------------- | ------------------ |
+| `useScopedAppConfig(request)`          | `scopedAppConfigFragmentsByNames` once per requested scope, in one query | `upsertScopedAppConfig(changes)`, scoped mutation     | `store-or-network` |
+| `useMyAppConfigFragments(configNames)` | `myAppConfigFragmentsByNames`                                            | `upsertMyAppConfigFragments(changes)`, `my*` mutation | `store-or-network` |
+| `useMyAppConfig(configName, subKey?)`  | `myAppConfigs` for one config name per request                           | none                                                  | `store-or-network` |
 
 - **Lifecycle**: every hook suspends, so a caller sits under a `Suspense` boundary, and every hook runs only after sign-in.
 - **Scope object**: `AppConfigScope` is `{ type: 'public' }` or `{ type: 'domain' | 'user'; id: string }`. The caller passes the domain id (`useCurrentDomain().id`) or the user id; `PUBLIC_SCOPE` is the exported PUBLIC object.
@@ -77,7 +77,7 @@ flowchart LR
 - **One query**: `useAppConfigScopedQuery` holds three aliased `scopedAppConfigFragmentsByNames` fields (`public`, `domain`, `user`). Each carries `@skip(if:)` and `@catch(to: NULL)`. A skipped field gets `{ scopeType }` with no `scopeId`, which the input type allows.
 - **Return shape**: `useScopedAppConfig` returns `{ scopedAppConfig: { public, domain, user }, upsertScopedAppConfig }`. Each scope in `scopedAppConfig` is a map from the requested names to the raw document, `undefined` for a name the scope holds no fragment for, and the whole scope is `undefined` when it was not requested, was requested with no names, or was not readable. `useMyAppConfigFragments` returns `{ myAppConfigFragments, upsertMyAppConfigFragments }`, where `myAppConfigFragments` is the same map; its query has no `@catch`, so a read error reaches the error boundary.
 - **Own USER scope**: every screen that reads or writes only the signed-in user's `userConfig` uses `useMyAppConfigFragments`. `useScopedAppConfig` with a `user` scope is for a document of a user the caller names.
-- **Read on every mount**: `useLazyLoadQuery` does not fetch a query that another mounted reader still retains, such as `MainLayout`'s `userConfig` read. An effect in each raw-document hook therefore reads the documents with `network-only` every time the screen mounts. That read waits until the writes already queued on its scopes settle (`readAfterQueuedWrites`), so it cannot land after a later write's response and put the older document back.
+- **Read once per page load**: The raw-document hooks read with `store-or-network`, so a screen sends a request only while the store does not hold its documents, and renders the store's copy otherwise. A hook has no effect of its own: it reads and returns. The documents change in this tab only through this tab's upserts, whose responses update the store.
 - **Merged view per name**: `useMyAppConfig` asks `myAppConfigs` for its one config name, so a `domainConfig` reader reuses the `myAppConfigs(["domainConfig"])` result that the sign-in query (`loginSessionAuth.ts`) or `AnnouncementBanner` wrote, while the store still holds it. `MergedAppConfigName` limits `configName` to `domainConfig` and `publicConfigByDomain`.
 - **Domain slice**: `publicConfigByDomain` holds one slice per domain, so callers pass the domain name as the first path segment, both to a change's `subKey` (`[domainName, key]`) and to `useMyAppConfig('publicConfigByDomain', [domainName, key])`.
 
@@ -103,7 +103,7 @@ flowchart LR
 | both                   | `WebUISettingsPage` (superadmin only)                                                                                                       | `useScopedAppConfig([{ scope: { type: 'domain', id }, … }, { scope: PUBLIC_SCOPE, … }])` |
 
 - **Merged refetch**: a `domainConfig` write starts a `network-only` read of the merged `domainConfig` view after its upsert lands, because every user reads `domainConfig` through it. The write does not wait for that read, and a failed read leaves the merged view stale without failing the write. A `publicConfigByDomain` write does not refetch.
-- **Draft follows the refresh**: `WebUISettingList` seeds its draft from the saved documents. When the saved documents change, after the mount read or the page's own upsert, and the draft still equals the previous saved value, the draft takes the refreshed value instead of showing it as an edit.
+- **Draft follows the refresh**: `WebUISettingList` seeds its draft from the saved documents. When the saved documents change after the page's own upsert, and the draft still equals the previous saved value, the draft takes the refreshed value instead of showing it as an edit.
 
 ### 4. Settings layers in the login config
 
@@ -125,12 +125,13 @@ flowchart LR
 - **Merged view for `userConfig`**: `userConfig` readers use `useMyAppConfig` and write with the `my*` mutation. Rejected because the merged view has no per-scope split, so a whole-document write built on it would copy PUBLIC and DOMAIN values into the USER document, and ADR 0026 keeps dashboard board arrays out of a deep merge.
 - **One hook call per scope**: `useScopedAppConfig(scope, configName)` reads one scope per call, and a page that edits two scopes calls it twice. Rejected because the second call suspends only after the first read lands, so System Settings reads its two documents one after the other.
 - **Changed key on the merged atom**: after a write, the page sets the changed keys on `loginConfigState` directly. Rejected because `loginConfigState` holds the layers already applied, so a key a layer stops carrying keeps its old value, and nothing reached `baiClient._config`.
+- **Read on every mount**: an effect in each raw-document hook reads the documents with `network-only` whenever a screen mounts, so the write base is the document as it stood when the screen opened. Rejected because a reading hook then carries a fetch effect of its own, the first visit reads every document twice, and the mount read can land after a write's response and put the older document back.
 - **Re-read before each write**: each setter reads the raw document from the network before its upsert. Rejected because every change costs an extra request, and #10941 makes System Settings save on every change.
 
 ## Consequences
 
-- **Request count**: a change costs one upsert per scope; a `domainConfig` change costs one more request for the merged refetch. A screen reads its requested documents once per mount, and twice when the store held nothing for them: the suspending read and the mount read.
-- **Lost concurrent edits**: the next write overwrites a change that the CLI, another admin, or another tab of the same account made after the screen mounted. Remounting the screen or reloading the page picks the change up.
+- **Request count**: a change costs one upsert per scope; a `domainConfig` change costs one more request for the merged refetch. A screen reads its requested documents once per page load, the first time the store does not hold them.
+- **Lost concurrent edits**: the next write overwrites a change that the CLI, another admin, or another tab of the same account made after this page load read the document. Reloading the page picks the change up.
 - **Defaults from DOMAIN-scope `userConfig`**: a `userConfig` value written at DOMAIN scope does not reach the screens, because they read the USER raw document.
 - **Same-kind scopes**: the scoped query has one field per scope kind, so one call reads at most one domain and one user.
 - **Separate queues**: `useMyAppConfigFragments` and a `useScopedAppConfig` call for the signed-in user's own id queue their writes separately, so the two must not write the same document concurrently. No screen does.
