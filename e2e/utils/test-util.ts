@@ -791,26 +791,30 @@ export async function selectPropertyFilter(
   await searchBar.click();
   await page.getByRole('option', { name: propertyName, exact: true }).click();
 
-  // Fill the Value control in the edit popover it opens. The value editor's
-  // accessible name is "Value" (`t('@astryx.powersearch.valueEditor.value')`)
-  // regardless of which control renders it: free-text fields render a
-  // `TextInput` (`role="textbox"`, commits via the popover's Apply button);
-  // strict-selection fields render a `Selector` (`role="combobox"`, commits
-  // immediately on picking an option) — `PowerSearchValueEditor.tsx`.
-  const valueTextbox = page.getByRole('textbox', { name: 'Value' });
-  if (await valueTextbox.isVisible({ timeout: 3000 }).catch(() => false)) {
-    await valueTextbox.fill(searchValue);
-    await page.getByRole('button', { name: 'Apply', exact: true }).click();
-  } else {
-    await page.getByRole('combobox', { name: 'Value' }).click();
+  // The popover renders a "Value" textbox (Apply commits) or combobox (a pick commits).
+  const valueControl = page
+    .getByRole('textbox', { name: 'Value', exact: true })
+    .or(page.getByRole('combobox', { name: 'Value', exact: true }))
+    .filter({ visible: true })
+    .first();
+  await expect(valueControl).toBeVisible({ timeout: 30000 });
+  if ((await valueControl.getAttribute('role')) === 'combobox') {
+    await valueControl.click();
     await page.getByRole('option', { name: searchValue, exact: true }).click();
+  } else {
+    await valueControl.fill(searchValue);
+    await page.getByRole('button', { name: 'Apply', exact: true }).click();
   }
 
   // Committing the value hands focus back to the search bar, which reopens
   // the field typeahead (listbox "Search results") over the first table rows
   // and intercepts clicks on their action buttons. Close it before returning.
   const typeahead = page.getByRole('listbox', { name: 'Search results' });
-  if (await typeahead.isVisible({ timeout: 1000 }).catch(() => false)) {
+  const reopened = await typeahead
+    .waitFor({ state: 'visible', timeout: 1000 })
+    .then(() => true)
+    .catch(() => false);
+  if (reopened) {
     await searchBar.press('Escape');
     await expect(typeahead).toBeHidden({ timeout: 5000 });
   }
