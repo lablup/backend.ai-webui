@@ -68,6 +68,6 @@ export { default as useUpdateEffect } from './useUpdateEffect';
 export { default as useSessionTypeLabel } from './useSessionTypeLabel';
 export { useProjectResourceGroups, StorageHostFetchError, } from './useProjectResourceGroups';
 export type { ScalingGroupItem } from './useProjectResourceGroups';
-export { isAutoMountFolderName, mountableVFolderFilter, mountableVFolderScope, useSuspendedAutoMountedVFolders, } from './useMountableVFolders';
+export { isAutoMountFolderName, mountableVFolderFilter, mountableVFolderScope, notDeletedVFolderFilter, useSuspendedAutoMountedVFolders, } from './useMountableVFolders';
 export type { AutoMountedFolder, VFolderFilter, VFolderMountScope, VFolderScope, } from './useMountableVFolders';
 export * from './useBAIBreakpoint';
