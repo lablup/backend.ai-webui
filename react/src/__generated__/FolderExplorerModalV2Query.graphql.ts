@@ -27,7 +27,6 @@ export type FolderExplorerModalV2Query$data = {
       readonly name: string;
     };
     readonly ownership: {
-      readonly creatorId: string | null | undefined;
       readonly projectId: string | null | undefined;
       readonly userId: string | null | undefined;
     };
@@ -113,13 +112,6 @@ v10 = {
   "storageKey": null
 },
 v11 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "creatorId",
-  "storageKey": null
-},
-v12 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
@@ -355,7 +347,7 @@ return {
             "name": "accessControl",
             "plural": false,
             "selections": [
-              (v12/*: any*/),
+              (v11/*: any*/),
               {
                 "alias": null,
                 "args": null,
