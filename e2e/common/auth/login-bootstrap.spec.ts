@@ -229,7 +229,9 @@ test.describe(
       // After Log Out the form keeps the session's server; this re-asks only if it changed.
       await fillLoginEndpoint(page, webServerEndpoint);
       await loginForm(page).fill(userInfo.user.email);
-      await page.getByLabel('Password').fill(userInfo.user.password);
+      await page
+        .getByLabel('Password', { exact: true })
+        .fill(userInfo.user.password);
       const loginResponse = page.waitForResponse(
         (response) =>
           response.url() === `${webServerEndpoint}/server/login` &&

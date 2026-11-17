@@ -157,7 +157,7 @@ test.describe(
       // no sToken is present, so the ordinary LoginView panel still mounts.
       await fillLoginEndpoint(page, webServerEndpoint);
       await expect(page.getByLabel('Email or Username')).toBeVisible();
-      await expect(page.getByLabel('Password')).toBeVisible();
+      await expect(page.getByLabel('Password', { exact: true })).toBeVisible();
       await expect(page.getByRole('button', { name: /retry/i })).toHaveCount(0);
     });
 
