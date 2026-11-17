@@ -117,12 +117,7 @@ const VFOLDER_STATUSES_V2 = [
 const USAGE_MODE_FILTERS: Partial<
   Record<(typeof modeValues)[number], VFolderFilter>
 > = {
-  general: {
-    AND: [
-      { name: { iNotStartsWith: '.' } },
-      { usageMode: { equals: 'GENERAL' } },
-    ],
-  },
+  general: { usageMode: { equals: 'GENERAL' } },
   data: { usageMode: { equals: 'DATA' } },
   model: { usageMode: { equals: 'MODEL' } },
 };

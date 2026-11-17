@@ -116,11 +116,17 @@ describe('getVFolderMountConfigStatuses', () => {
 
   it('flags an alias that resolves onto an auto-mounted folder default path', () => {
     const statuses = getVFolderMountConfigStatuses(
-      [{ vfolderId: dataFolder, name: 'my-data', mountDestination: '.config' }],
-      { autoMountedFolders: [{ name: '.config' }] },
+      [
+        {
+          vfolderId: dataFolder,
+          name: 'my-data',
+          mountDestination: 'team-config',
+        },
+      ],
+      { autoMountedFolders: [{ name: 'team-config' }] },
     );
     expect(statuses[dataFolder]).toMatchObject({
-      mountDestination: '/home/work/.config',
+      mountDestination: '/home/work/team-config',
       aliasError: 'overlappingWithAutoMount',
     });
   });
@@ -128,7 +134,7 @@ describe('getVFolderMountConfigStatuses', () => {
   it('leaves an alias alone when no auto-mounted folder claims its path', () => {
     const statuses = getVFolderMountConfigStatuses(
       [{ vfolderId: dataFolder, name: 'my-data', mountDestination: 'data' }],
-      { autoMountedFolders: [{ name: '.config' }] },
+      { autoMountedFolders: [{ name: 'team-config' }] },
     );
     expect(statuses[dataFolder].aliasError).toBeUndefined();
   });

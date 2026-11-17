@@ -350,10 +350,14 @@ describe('SessionLauncherWebMCPTool', () => {
     delete (document as { modelContext?: unknown }).modelContext;
   });
 
-  const folderNode = (entityId: string, name: string, permission = 'RW') => ({
+  const folderNode = (
+    entityId: string,
+    name: string,
+    mountPermission = 'READ_WRITE',
+  ) => ({
     node: {
       entityId,
-      accessControl: { permission },
+      mountPermission,
       metadata: { name },
     },
   });
@@ -403,9 +407,8 @@ describe('SessionLauncherWebMCPTool', () => {
       folders: 'data,.local,no-mount,elsewhere',
     });
     expect(result).toMatchObject({
-      applied: { folders: ['data'] },
+      applied: { folders: ['data', '.local'] },
       rejected: [
-        { field: 'folders', reason: expect.stringContaining('".local"') },
         { field: 'folders', reason: expect.stringContaining('"no-mount"') },
         { field: 'folders', reason: expect.stringContaining('"elsewhere"') },
       ],

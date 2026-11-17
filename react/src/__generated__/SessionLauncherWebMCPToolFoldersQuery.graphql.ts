@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<94681b6123e9e2d34382e422c67b0163>>
+ * @generated SignedSource<<7262536a4df21a5938082982a0c882b3>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -153,13 +153,11 @@ export type SessionLauncherWebMCPToolFoldersQuery$data = {
   readonly scopedVFoldersV2: {
     readonly edges: ReadonlyArray<{
       readonly node: {
-        readonly accessControl: {
-          readonly permission: VFolderMountPermission;
-        };
         readonly entityId: string;
         readonly metadata: {
           readonly name: string;
         };
+        readonly mountPermission: VFolderMountPermission | null | undefined;
       };
     }>;
   } | null | undefined;
@@ -222,19 +220,8 @@ v5 = {
 v6 = {
   "alias": null,
   "args": null,
-  "concreteType": "VFolderAccessControlInfo",
-  "kind": "LinkedField",
-  "name": "accessControl",
-  "plural": false,
-  "selections": [
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "permission",
-      "storageKey": null
-    }
-  ],
+  "kind": "ScalarField",
+  "name": "mountPermission",
   "storageKey": null
 },
 v7 = {
@@ -364,16 +351,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "433d46d6963b3f6b7fc7c3965d86fae2",
+    "cacheID": "a21e2bd93e69dc1689966889c2d0d007",
     "id": null,
     "metadata": {},
     "name": "SessionLauncherWebMCPToolFoldersQuery",
     "operationKind": "query",
-    "text": "query SessionLauncherWebMCPToolFoldersQuery(\n  $scope: VFolderScope!\n  $filter: VFolderFilter\n  $orderBy: [VFolderOrderBy!]\n  $limit: Int!\n) {\n  scopedVFoldersV2(scope: $scope, filter: $filter, orderBy: $orderBy, limit: $limit) {\n    edges {\n      node {\n        entityId\n        accessControl {\n          permission\n        }\n        metadata {\n          name\n        }\n        id\n      }\n    }\n  }\n}\n"
+    "text": "query SessionLauncherWebMCPToolFoldersQuery(\n  $scope: VFolderScope!\n  $filter: VFolderFilter\n  $orderBy: [VFolderOrderBy!]\n  $limit: Int!\n) {\n  scopedVFoldersV2(scope: $scope, filter: $filter, orderBy: $orderBy, limit: $limit) {\n    edges {\n      node {\n        entityId\n        mountPermission\n        metadata {\n          name\n        }\n        id\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "495f743f2434a233e0737b7ddb883ffe";
+(node as any).hash = "008fb3775dd619f09d45d2217e5795af";
 
 export default node;

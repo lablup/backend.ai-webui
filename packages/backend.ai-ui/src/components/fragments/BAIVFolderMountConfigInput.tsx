@@ -423,7 +423,6 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
           optionFilter={{
             AND: _.compact([
               { status: { equals: 'READY' } },
-              { name: { notStartsWith: '.' } },
               {
                 autoMounts: {
                   none: {
