@@ -31,13 +31,13 @@ import BAIFormItem from './BAIFormItem';
 import EndpointHistoryField, {
   type EndpointHistoryEntry,
 } from './EndpointHistoryField';
+import './PasswordRevealInput.css';
 import SanitizedHtml from './SanitizedHtml';
 import type { TOTPActivateFormData } from './TOTPActivateModal';
 import { Banner } from '@lablup/ui-common/Banner';
 import { Button } from '@lablup/ui-common/Button';
 import { Heading } from '@lablup/ui-common/Heading';
 import { IconButton } from '@lablup/ui-common/IconButton';
-import { InputGroup } from '@lablup/ui-common/InputGroup';
 import { Link } from '@lablup/ui-common/Link';
 import { Spinner } from '@lablup/ui-common/Spinner';
 import { Text } from '@lablup/ui-common/Text';
@@ -773,15 +773,22 @@ const PasswordRevealInput: React.FC<
     : t('login.ShowPassword');
 
   return (
-    <InputGroup label={props['aria-label'] ?? toggleLabel} isLabelHidden>
-      <BAITextInput {...props} type={isRevealed ? 'text' : 'password'} />
+    <BAIFlex className="bai-password-reveal" align="center">
+      <BAITextInput
+        {...props}
+        type={isRevealed ? 'text' : 'password'}
+        controlClassName="bai-password-reveal__control"
+      />
       <IconButton
+        className="bai-password-reveal__toggle"
+        variant="ghost"
+        size="sm"
         icon={isRevealed ? <EyeOff size="1em" /> : <Eye size="1em" />}
         label={toggleLabel}
         isDisabled={props.disabled}
         onClick={() => setIsRevealed((v) => !v)}
       />
-    </InputGroup>
+    </BAIFlex>
   );
 };
 
