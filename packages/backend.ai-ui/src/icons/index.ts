@@ -14,6 +14,7 @@ export { default as BAIGaudiIcon } from './BAIGaudiIcon';
 export { default as BAIGitHubIcon } from './BAIGitHubIcon';
 export { default as BAIGitLabIcon } from './BAIGitLabIcon';
 export { default as BAIHuggingFaceIcon } from './BAIHuggingFaceIcon';
+export { default as BAIIntelIcon } from './BAIIntelIcon';
 export { default as BAIInteractiveSessionIcon } from './BAIInteractiveSessionIcon';
 export { default as BAIIpuIcon } from './BAIIpuIcon';
 export { default as BAIJupyterIcon } from './BAIJupyterIcon';

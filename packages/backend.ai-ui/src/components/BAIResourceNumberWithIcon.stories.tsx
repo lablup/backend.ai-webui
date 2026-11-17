@@ -92,6 +92,15 @@ const mockDeviceMetaData: DeviceMetaData = {
     number_format: { binary: false, round_length: 0 },
     display_icon: 'furiosa',
   },
+  // Intel XPU (Arc). The plugin reports `gpu1`, as the server does.
+  'xpu.device': {
+    slot_name: 'xpu.device',
+    description: 'Intel XPU-capable GPU',
+    human_readable_name: 'GPU',
+    display_unit: 'GPU',
+    number_format: { binary: false, round_length: 0 },
+    display_icon: 'gpu1',
+  },
   // Rebellions ATOM
   'atom.device': {
     slot_name: 'atom.device',
@@ -190,6 +199,7 @@ const meta: Meta<typeof BAIResourceNumberWithIcon> = {
         'gaudi2.device',
         'warboy.device',
         'rngd.device',
+        'xpu.device',
         'atom.device',
         'atom-plus.device',
         'atom-max.device',
@@ -311,6 +321,11 @@ export const ResourceTypes: Story = {
         <span style={{ width: 160 }}>FuriosaAI RNGD:</span>
         <BAIResourceNumberWithIcon type="rngd.device" value="1" />
       </BAIFlex>
+      {/* Intel XPU */}
+      <BAIFlex gap="sm" align="center">
+        <span style={{ width: 160 }}>Intel Arc (XPU):</span>
+        <BAIResourceNumberWithIcon type="xpu.device" value="1" />
+      </BAIFlex>
       {/* Rebellions */}
       <BAIFlex gap="sm" align="center">
         <span style={{ width: 160 }}>Rebellions ATOM:</span>
@@ -404,7 +419,7 @@ export const ServerConfiguredIcon: Story = {
       description: {
         story: `
 Demonstrates how the component handles devices whose \`display_icon\` is **not** in the built-in \`knownDeviceIcons\` set
-(\`nvidia\`, \`rocm\`, \`tpu\`, \`ipu\`, \`gaudi\`, \`furiosa\`, \`rebel\`, \`tenstorrent\`).
+(\`nvidia\`, \`rocm\`, \`tpu\`, \`ipu\`, \`gaudi\`, \`intel\`, \`furiosa\`, \`rebel\`, \`tenstorrent\`).
 
 **Icon resolution order for unknown devices:**
 1. \`display_icon\` is set but not in built-in set → loads \`{imagePath}/{display_icon}.svg\` from the host's icon directory
