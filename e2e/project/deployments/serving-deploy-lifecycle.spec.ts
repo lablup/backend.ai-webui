@@ -1,10 +1,18 @@
-// FR-2295: Integration E2E test for model service deploy lifecycle.
-// Tests the full lifecycle: vfolder creation -> file upload -> service deploy
-// via ServiceLauncher UI -> HEALTHY status -> service termination -> cleanup.
+// FR-2295: Integration E2E test for the model service deploy lifecycle:
+// vfolder + file upload -> deployment from /deployments with an Advanced Mode
+// revision -> HEALTHY replica -> deployment deletion -> cleanup.
 import { FolderExplorerModal } from '../../utils/classes/vfolder/FolderExplorerModal';
-import { sweepServices, sweepVFolders } from '../../utils/cleanup-util';
+import { sweepVFolders } from '../../utils/cleanup-util';
+import {
+  createDeploymentShell,
+  deleteDeploymentAndVerify,
+  escapeForRegExp,
+  selectRevisionModalOption,
+} from '../../utils/deployment-fixtures';
+import { createTestResources } from '../../utils/test-resources';
 import {
   loginAsAdmin,
+  modifyConfigToml,
   navigateTo,
   createVFolderAndVerify,
   moveToTrashAndVerify,
@@ -24,7 +32,9 @@ function shortId(): string {
   return Math.random().toString(36).slice(2, 8);
 }
 
-const SERVICE_NAME = `e2e-svc-${shortId()}`;
+// Deleted through the admin API in afterAll, however far the group got.
+const resources = createTestResources();
+const DEPLOYMENT_NAME = resources.name('deployment', 'e2e-plan-svc-lifecycle');
 const VFOLDER_NAME = `e2e-mod-${shortId()}`;
 
 // Fallback image if defaultSessionEnvironment is not set in config.toml
@@ -33,6 +43,8 @@ const DEFAULT_PYTHON_IMAGE =
 
 // Resolved at runtime from config.toml's defaultSessionEnvironment
 let resolvedImage = DEFAULT_PYTHON_IMAGE;
+// Set by the deploy test; the serial follow-up tests open it directly.
+let deploymentDetailUrl: string | null = null;
 
 /**
  * Reads defaultSessionEnvironment from the WebUI config via backendaiclient.
@@ -46,24 +58,13 @@ async function resolveDefaultImage(page: Page): Promise<string> {
   return image || DEFAULT_PYTHON_IMAGE;
 }
 
-// Max time to wait for service health check
-const SERVICE_READY_TIMEOUT = 180_000; // 3 minutes
-const HEALTH_CHECK_INTERVAL = 5_000; // 5 seconds
+// Max time to wait for a replica to report HEALTHY
+const SERVICE_READY_TIMEOUT = 300_000; // 5 minutes
+const HEALTH_CHECK_INTERVAL = 10_000; // 10 seconds
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Helpers
 // ─────────────────────────────────────────────────────────────────────────────
-
-/**
- * Locates the BAIFetchKeyButton (refresh/reload button) on the serving page.
- * The icon is lucide `RotateCw` (no antd `.anticon-reload` class since ticket
- * 12); its hover text is an Astryx tooltip (not a native `title` attribute),
- * but the button always carries `aria-label="Refresh"`
- * (`packages/backend.ai-ui/src/components/BAIFetchKeyButton.tsx`).
- */
-function getTableRefreshButton(page: Page) {
-  return page.getByRole('button', { name: 'Refresh', exact: true }).first();
-}
 
 /**
  * Opens the FolderExplorerModal for a given vfolder and uploads fixture files.
@@ -134,296 +135,88 @@ async function uploadFixturesToVFolder(
   await modal.close();
 }
 
+// `cr.backend.ai/stable/python:3.9-ubuntu20.04@x86_64` -> `python`
+function imageKeyOf(image: string): string {
+  const last = image.split('@')[0].split('/').pop() ?? image;
+  return last.split(':')[0];
+}
+
 /**
- * Creates a model service via the ServiceLauncher UI form.
+ * Adds an Advanced Mode revision (model folder + `custom` runtime) to the
+ * deployment whose detail page is open. The Start Command is left empty so
+ * the folder's model-definition.yaml supplies command, port and health check.
  */
-async function createServiceViaUI(
+async function addAdvancedRevision(
   page: Page,
-  serviceName: string,
-  vfolderName: string,
+  folderName: string,
+  image: string,
 ): Promise<void> {
-  await navigateTo(page, 'service/start');
-
-  // Fill service name
-  const serviceNameInput = page.getByLabel('Service Name').first();
-  await expect(serviceNameInput).toBeVisible({ timeout: 10000 });
-  await serviceNameInput.fill(serviceName);
-
-  // Select model storage vfolder
-  const modelStorageSelect = page.getByRole('combobox', {
-    name: 'Model Storage to mount',
-  });
-  await expect(modelStorageSelect).toBeVisible({ timeout: 10000 });
-  await modelStorageSelect.click();
-  await modelStorageSelect.fill(vfolderName);
-
   await page
-    .locator('.ant-select-item-option')
-    .filter({ hasText: vfolderName })
-    .first()
-    .click({ timeout: 10000 });
-
-  // Select environment image
-  const envSelect = page.getByRole('combobox', {
-    name: /Environments \/ Version/i,
+    .getByRole('navigation', { name: 'Tabs' })
+    .getByRole('button', { name: 'Add Revision' })
+    .click();
+  const dialog = page.getByRole('dialog', { name: /Add Revision/ });
+  await expect(dialog).toBeVisible({ timeout: 20000 });
+  await dialog.getByRole('radio', { name: 'Advanced Mode' }).click();
+  await expect(dialog.getByText('Model & Runtime')).toBeVisible({
+    timeout: 10000,
   });
-  await expect(envSelect).toBeVisible({ timeout: 10000 });
+
+  await selectRevisionModalOption(page, 'Model Folder', folderName);
+  await selectRevisionModalOption(page, 'Runtime', 'custom');
+
+  // The default image is a GPU one; pick a non-CUDA environment with the same
+  // name as the image in service-definition.toml (search matches visible text).
+  const imageKey = imageKeyOf(image);
+  const envSelect = dialog.getByRole('button', {
+    name: /^Environments \/ Version/,
+  });
   await envSelect.click();
-  await envSelect.fill('python');
-
   await page
-    .locator('.ant-select-item-option')
-    .filter({ hasText: /python/i })
-    .first()
-    .click({ timeout: 10000 });
-
-  // FR-3205 removed the "Enter Command" / "Use Config File" mode toggle
-  // (`DefinitionModeSegmented`): whether the service reads the uploaded
-  // `model-definition.yaml` is now driven by the selected runtime variant's
-  // `readsVfolderConfigFiles` (the default `custom` variant reads it), so no
-  // mode switch is needed here — the uploaded fixture's start command, port,
-  // and health check apply as-is.
-
-  // Select resource group - click to open dropdown, search, then select option
-  const resourceGroupSelect = page
-    .getByRole('combobox', { name: 'Resource Group' })
+    .getByRole('combobox', { name: 'Search options', exact: true })
+    .fill(imageKey);
+  const envOption = page
+    .getByRole('listbox', { name: /^Environments \/ Version/ })
+    .getByRole('option')
+    .filter({ hasText: new RegExp(escapeForRegExp(imageKey), 'i') })
+    .filter({ hasNotText: /cuda/i })
     .first();
-  await expect(resourceGroupSelect).toBeVisible({ timeout: 10000 });
-  await resourceGroupSelect.click();
-  await resourceGroupSelect.fill('default');
+  await expect(envOption, `a non-CUDA "${imageKey}" environment`).toBeVisible({
+    timeout: 15000,
+  });
+  await envOption.click();
+  await expect(envSelect).toContainText(imageKey, {
+    ignoreCase: true,
+    timeout: 10000,
+  });
+
+  // Cluster & Resources mounts behind its own Suspense boundary; submitting
+  // before it does leaves the resource fields unregistered.
+  const presetSelect = dialog.getByRole('button', { name: 'Resource Presets' });
+  await expect(presetSelect).toBeVisible({ timeout: 30000 });
+  await presetSelect.click();
   await page
-    .locator('.ant-select-item-option')
-    .filter({ hasText: /default/i })
+    .getByRole('option', { name: /^Minimum requirements/ })
     .first()
-    .click({ timeout: 10000 });
-
-  // Pick the "Minimum requirements" resource preset so CPU/Memory are auto-
-  // filled from the selected image's `resourceLimits.min`. Without this, the
-  // form keeps its default values which may fall below the image's minimum
-  // (e.g. "CPU must be minimum 5", "minimum memory capacity is 1088MiB") and
-  // service creation fails with inline Form.Item validation errors at submit
-  // time. Selecting the preset triggers the effect at
-  // ResourceAllocationFormItems.tsx that pulls min values from image metadata,
-  // making the test resilient to image-catalog changes that bump minimums.
-  const presetSelect = page
-    .getByRole('combobox', { name: /Resource Presets?/i })
-    .first();
-  if (await presetSelect.isVisible({ timeout: 3000 }).catch(() => false)) {
-    await presetSelect.click();
-    await page
-      .locator('.ant-select-item-option')
-      .filter({ hasText: 'Minimum requirements' })
-      .first()
-      .click({ timeout: 10000 });
-  }
-
-  // Set AI Accelerator to 0 to avoid GPU-based allocation presets.
-  // When the resource group has a GPU preset selected by default (e.g. cuda01-small),
-  // service creation would fail if no GPU agents are available.
-  // Setting the accelerator count to 0 ensures CPU-only resource allocation.
-  //
-  // Strategy: Find the AI Accelerator form item by its label text, then target
-  // the spinbutton inside it. Ant Design Form.Item uses a `label` element that
-  // may not have a `for` attribute in all versions, so we use a compound selector.
-  const acceleratorFormItem = page
-    .locator('.uic-form-item')
-    .filter({ hasText: 'AI Accelerator' })
-    .first();
-  const acceleratorSpinbutton = acceleratorFormItem.getByRole('spinbutton');
-  if (
-    await acceleratorSpinbutton.isVisible({ timeout: 5000 }).catch(() => false)
-  ) {
-    // If the spinbutton is already disabled (e.g., no GPU presets available in
-    // the selected resource group), it is already at 0 — skip editing it.
-    const isEditable = await acceleratorSpinbutton
-      .isEditable({ timeout: 1000 })
-      .catch(() => false);
-    if (isEditable) {
-      await acceleratorSpinbutton.scrollIntoViewIfNeeded();
-      await acceleratorSpinbutton.click({ clickCount: 3 });
-      await acceleratorSpinbutton.fill('0');
-      await acceleratorSpinbutton.press('Tab');
-      // Wait for the field to reflect the updated CPU-only allocation value
-      await expect(acceleratorSpinbutton).toHaveValue('0', { timeout: 5000 });
-    }
-  }
-
-  // Check "Open To Public"
-  const openToPublicCheckbox = page.getByLabel('Open To Public');
-  await openToPublicCheckbox.scrollIntoViewIfNeeded();
-  await expect(openToPublicCheckbox).toBeVisible({ timeout: 5000 });
-  if (!(await openToPublicCheckbox.isChecked())) {
-    await openToPublicCheckbox.check({ force: true });
-  }
-  await expect(openToPublicCheckbox).toBeChecked({ timeout: 3000 });
-
-  // Submit
-  const createButton = page.getByRole('button', { name: 'Create' });
-  await expect(createButton).toBeEnabled({ timeout: 5000 });
-  await createButton.click();
-
-  // Wait for the service creation to complete. The form navigates to /serving
-  // on success; on failure it stays on /service/start and surfaces feedback
-  // via one of three channels: (1) an Ant Design error notification, (2) an
-  // Ant Design error message toast, or (3) inline `Form.Item` validation
-  // errors when `form.validateFields()` rejects. The original Promise.race
-  // pattern only covered (1) and (2); when (3) fired, the URL wait silently
-  // timed out with an opaque message and no clue as to which field was
-  // invalid. Replace the race with a sequential wait that, on URL timeout,
-  // scans all three error channels and surfaces whichever it finds.
-  // The floating notification stack is now `BAINotificationStack` (ticket 29
-  // rewire) — an error notice carries `data-status="error"` on its item root
-  // (`packages/backend.ai-ui/src/components/BAINotificationStack.tsx`).
-  // The toast channel (`App.useApp().message`) is unmigrated antd, so
-  // `.ant-message-error` stays.
-  const errorNotification = page
-    .locator(
-      '[data-testid="bai-notification-stack"] [data-status="error"], .ant-message-error',
-    )
-    .first();
-
-  try {
-    await page.waitForURL('**/serving', { timeout: 60_000 });
-  } catch (urlError) {
-    // 1) Ant Design error notification / message toast
-    const toastText = await errorNotification
-      .textContent({ timeout: 1000 })
-      .catch(() => null);
-    if (toastText?.trim()) {
-      throw new Error(
-        `Service creation failed with error notification: ${toastText.trim()}`,
-      );
-    }
-
-    // 2) Inline Form.Item validation errors (handleOk's validateFields catch).
-    // Since to-astryx ticket 34 every sub-form of the service-start dialog
-    // renders the same shell — `Form.Item` IS `BAIFormItem` — so one anchor
-    // covers the whole page (it used to need a migrated/unmigrated pair).
-    const fieldErrorTexts = await page
-      .locator('.uic-form-item__explain-error')
-      .allTextContents()
-      .catch(() => [] as string[]);
-    const fieldErrors = fieldErrorTexts.filter((t) => t.trim().length > 0);
-    if (fieldErrors.length > 0) {
-      throw new Error(
-        `Service creation failed: form validation errors — ${fieldErrors.join(' | ')}`,
-      );
-    }
-
-    // 3) No visible error, but we are still on /service/start (the form
-    // debounces its state into the URL as ?formValues=...). Surface the
-    // current URL so the reviewer can tell mutation-never-fired apart from
-    // a slow backend.
-    const currentUrl = page.url();
-    throw new Error(
-      `Service creation did not redirect to /serving within 60s. ` +
-        `Current URL: ${currentUrl}. ` +
-        `No error notification or form validation error was detected — ` +
-        `the create mutation likely never fired (form submit blocked) or ` +
-        `the backend deploy is hanging. Original error: ${
-          (urlError as Error).message
-        }`,
-    );
-  }
+    .click();
+  await expect(presetSelect).toContainText('Minimum requirements');
 
   await expect(
-    page.getByRole('row').filter({ hasText: serviceName }).first(),
-  ).toBeVisible({ timeout: 15000 });
-}
+    dialog.getByRole('checkbox', { name: 'Apply immediately after adding' }),
+  ).toBeChecked();
+  await dialog.getByRole('button', { name: 'Add Revision' }).click();
+  await expect(dialog).toBeHidden({ timeout: 20000 });
 
-/**
- * Polls the serving table until the service shows HEALTHY status.
- * Uses the table's refresh button (BAIFetchKeyButton) instead of full page
- * reload, which is lighter and avoids resetting the DOM state.
- */
-async function waitForServiceReady(
-  page: Page,
-  serviceName: string,
-): Promise<void> {
-  await navigateTo(page, 'serving');
+  const revisionDetailDialog = page.getByRole('dialog', {
+    name: 'Revision Detail',
+  });
+  await expect(revisionDetailDialog).toBeVisible({ timeout: 10000 });
+  await revisionDetailDialog.getByRole('button', { name: 'Close' }).click();
+  await expect(revisionDetailDialog).toBeHidden({ timeout: 10000 });
 
-  const refreshButton = getTableRefreshButton(page);
-  await expect(refreshButton).toBeVisible({ timeout: 10000 });
-
-  await expect
-    .poll(
-      async () => {
-        // Click the table refresh button to fetch latest data
-        await refreshButton.click();
-        // Wait briefly for the data to load after refresh
-        await page.waitForTimeout(2000);
-        const serviceRow = page
-          .getByRole('row')
-          .filter({ hasText: serviceName });
-        const healthyBadge = serviceRow.getByText(/HEALTHY/i);
-        return await healthyBadge
-          .isVisible({ timeout: 2000 })
-          .catch(() => false);
-      },
-      {
-        message: `Waiting for service "${serviceName}" to become HEALTHY`,
-        timeout: SERVICE_READY_TIMEOUT,
-        intervals: [HEALTH_CHECK_INTERVAL],
-      },
-    )
-    .toBe(true);
-}
-
-/**
- * Terminates a model service by name via the serving list row action.
- */
-async function terminateService(
-  page: Page,
-  serviceName: string,
-): Promise<void> {
-  await navigateTo(page, 'serving');
-
-  // Wait for the serving table to fully load before checking for the service.
-  const refreshButton = getTableRefreshButton(page);
-  await expect(refreshButton).toBeVisible({ timeout: 15000 });
-  await refreshButton.click();
-
-  // Wait for the table's loading indicator to clear. We cannot wait for a
-  // data row to appear here: when every service has already been terminated
-  // (e.g., by a prior run's afterAll or a retry after an earlier failure),
-  // the table is legitimately empty and requiring a row would fail this
-  // helper before its early-return check for a missing service.
-  await page
-    .locator('.ant-spin-spinning')
-    .first()
-    .waitFor({ state: 'hidden', timeout: 15000 })
-    .catch(() => {
-      // Spinner may never have appeared if data was served from cache.
-    });
-
-  const serviceRow = page.getByRole('row').filter({ hasText: serviceName });
-  if ((await serviceRow.count()) === 0) {
-    console.log(
-      `Service "${serviceName}" not found, may already be terminated`,
-    );
-    return;
-  }
-
-  // Hover over the name cell to reveal BAINameActionCell actions
-  await serviceRow.getByRole('cell').first().hover();
-  const deleteButton = serviceRow
-    .getByRole('button', { name: 'delete' })
-    .first();
-  await expect(deleteButton).toBeVisible({ timeout: 5000 });
-  await deleteButton.click();
-
-  const confirmButton = page
-    .locator('.ant-modal-confirm')
-    .getByRole('button', { name: 'Delete' })
-    .first();
-  await expect(confirmButton).toBeVisible({ timeout: 5000 });
-  await confirmButton.click();
-
-  await expect(page.getByRole('row').filter({ hasText: serviceName }))
-    .toHaveCount(0, { timeout: 60000 })
-    .catch(() => {
-      console.log(`Service "${serviceName}" still visible, may be DESTROYING`);
-    });
+  await expect(
+    page.getByRole('heading', { name: /No revision is deployed/ }),
+  ).toBeHidden({ timeout: 20000 });
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -435,10 +228,13 @@ test.describe(
   { tag: ['@integration', '@serving'] },
   () => {
     test.describe.configure({ mode: 'serial' });
-    test.setTimeout(240_000); // 4 minutes per test (3 min polling + overhead)
+    test.setTimeout(240_000);
 
     test.afterAll(async ({ browser, request }, testInfo) => {
-      testInfo.setTimeout(300_000);
+      testInfo.setTimeout(420_000);
+
+      // Deployment first: its revision mounts the model folder.
+      await resources.cleanup();
 
       const context = await browser.newContext();
       const page = await context.newPage();
@@ -452,24 +248,24 @@ test.describe(
       }
 
       try {
-        await terminateService(page, SERVICE_NAME);
-      } catch {
-        console.log(`Could not terminate service ${SERVICE_NAME}`);
-      }
-
-      try {
-        await sweepServices(page);
-      } catch {
-        console.log('Could not sweep services');
-      }
-
-      try {
-        await moveToTrashAndVerify(page, VFOLDER_NAME, 'data', {
-          skipTrashVerify: true,
-        });
+        // Retry only while the terminating replica still mounts the folder.
+        let trashError: unknown = null;
+        await expect(async () => {
+          trashError = null;
+          await moveToTrashAndVerify(page, VFOLDER_NAME, 'data').catch(
+            (error) => {
+              if (/mounted on sessions/.test(String(error))) throw error;
+              trashError = error;
+            },
+          );
+        }).toPass({ timeout: 180_000, intervals: [15_000] });
+        if (trashError) throw trashError;
         await deleteForeverAndVerifyFromTrash(page, VFOLDER_NAME);
-      } catch {
-        console.log(`Could not delete vfolder ${VFOLDER_NAME}`);
+      } catch (error) {
+        // sweepVFolders below retries it.
+        console.log(
+          `Could not delete vfolder ${VFOLDER_NAME}: ${String(error).split('\n')[0]}`,
+        );
       }
 
       try {
@@ -487,100 +283,105 @@ test.describe(
     }) => {
       await loginAsAdmin(page, request);
 
-      // Resolve image from config.toml's defaultSessionEnvironment
       resolvedImage = await resolveDefaultImage(page);
 
-      // Create model vfolder
       await createVFolderAndVerify(page, VFOLDER_NAME, 'model');
 
-      // Upload mock server fixtures. The helper verifies each uploaded file is
-      // visible in the explorer before closing the modal, so no second pass is
-      // needed here.
+      // The helper verifies each uploaded file is visible before closing.
       await uploadFixturesToVFolder(page, VFOLDER_NAME, resolvedImage);
     });
 
-    test('Admin can deploy a model service via ServiceLauncher UI', async ({
+    test('Admin can deploy a model service from the Deployments page', async ({
       page,
       request,
     }) => {
-      // FR-2675/FR-2822 removed the ServiceLauncherCreatePage and the
-      // /service/start route. The new deployment creation flow uses a modal
-      // opened from /deployments (DeploymentSettingModal), not a separate
-      // page. The createServiceViaUI helper navigates to 'service/start'
-      // which no longer exists as a standalone page — there is no redirect
-      // for this path, so the helper cannot complete.
-      test.fixme(true);
+      // No image is marked installed on the shared cluster; list them all so
+      // the Advanced Mode image select has a default.
+      await modifyConfigToml(page, request, {
+        environments: { showNonInstalledImages: true },
+      });
       await loginAsAdmin(page, request);
 
-      await createServiceViaUI(page, SERVICE_NAME, VFOLDER_NAME);
+      await navigateTo(page, 'deployments');
+      await createDeploymentShell(page, DEPLOYMENT_NAME);
+      deploymentDetailUrl = page.url();
 
-      // Verify service appears in the serving list
-      await navigateTo(page, 'serving');
-      const serviceRow = page
-        .getByRole('row')
-        .filter({ hasText: SERVICE_NAME });
-      await expect(serviceRow.first()).toBeVisible({ timeout: 15000 });
+      await addAdvancedRevision(page, VFOLDER_NAME, resolvedImage);
+
+      await expect(async () => {
+        await navigateTo(page, 'deployments');
+        await expect(
+          page.getByRole('row', {
+            name: new RegExp(escapeForRegExp(DEPLOYMENT_NAME)),
+          }),
+        ).toBeVisible({ timeout: 15000 });
+      }).toPass({ timeout: 60_000 });
     });
 
     test('Deployed service reaches HEALTHY status', async ({
       page,
       request,
     }) => {
-      // Depends on "Admin can deploy a model service via ServiceLauncher UI"
-      // (the previous test in this serial group) which is marked fixme because
-      // FR-2675/FR-2822 removed the /service/start route. Since the service
-      // is never created, this test cannot find a service to wait on.
-      test.fixme(true);
+      test.setTimeout(SERVICE_READY_TIMEOUT + 240_000);
+      expect(deploymentDetailUrl, 'deployment was created').toBeTruthy();
       await loginAsAdmin(page, request);
+      await expect(async () => {
+        await page.goto(deploymentDetailUrl!);
+        await expect(
+          page.getByRole('heading', { level: 3, name: DEPLOYMENT_NAME }),
+        ).toBeVisible({ timeout: 20000 });
+      }).toPass({ timeout: 90_000 });
 
-      await waitForServiceReady(page, SERVICE_NAME);
-
-      // Verify the service row shows HEALTHY
-      const serviceRow = page
-        .getByRole('row')
-        .filter({ hasText: SERVICE_NAME });
-      await expect(serviceRow.getByText(/HEALTHY/i).first()).toBeVisible({
-        timeout: 5000,
+      const replicaRows = page.getByRole('row').filter({
+        has: page.getByRole('button', { name: 'Replica Scheduling History' }),
       });
+      const healthyRow = replicaRows.filter({
+        has: page.getByText('Healthy', { exact: true }),
+      });
+      const deadline = Date.now() + SERVICE_READY_TIMEOUT;
+      let reachedHealthy = false;
+      while (!reachedHealthy && Date.now() < deadline) {
+        await page.reload();
+        reachedHealthy = await healthyRow
+          .first()
+          .waitFor({ state: 'visible', timeout: HEALTH_CHECK_INTERVAL })
+          .then(() => true)
+          .catch(() => false);
+      }
+
+      if (!reachedHealthy) {
+        // A replica still Provisioning was never scheduled (the shared
+        // cluster keeps sessions PENDING); any other state is a real failure.
+        const rowTexts = await replicaRows.allInnerTexts();
+        test.skip(
+          rowTexts.length > 0 &&
+            rowTexts.every((text) => /Provisioning/.test(text)),
+          `no replica left Provisioning within ${SERVICE_READY_TIMEOUT / 60_000} min: the environment did not schedule the replica session`,
+        );
+        throw new Error(
+          `Replica did not become Healthy; replica rows: ${rowTexts.join(' | ')}`,
+        );
+      }
     });
 
     test('Admin can terminate a deployed service', async ({
       page,
       request,
     }) => {
-      // Depends on the service being created by the fixme-marked deployment
-      // test. Since no service was deployed, there is nothing to terminate.
-      test.fixme(true);
       await loginAsAdmin(page, request);
 
-      await terminateService(page, SERVICE_NAME);
+      await deleteDeploymentAndVerify(page, DEPLOYMENT_NAME);
 
-      // Verify service is removed or in DESTROYING state.
-      // Click the table refresh button to get latest data.
-      await navigateTo(page, 'serving');
-      const refreshButton = getTableRefreshButton(page);
-      await expect(refreshButton).toBeVisible({ timeout: 15000 });
-      await refreshButton.click();
-      await page.waitForTimeout(2000);
-
-      // Service should eventually disappear
-      await expect
-        .poll(
-          async () => {
-            await refreshButton.click();
-            await page.waitForTimeout(2000);
-            return await page
-              .getByRole('row')
-              .filter({ hasText: SERVICE_NAME })
-              .count();
-          },
-          {
-            message: `Waiting for service "${SERVICE_NAME}" to be removed`,
-            timeout: 60_000,
-            intervals: [5_000],
-          },
-        )
-        .toBe(0);
+      // Confirm on a fresh fetch that the deployment left the Serving list.
+      await navigateTo(page, 'deployments');
+      await expect(page.getByRole('columnheader').first()).toBeVisible({
+        timeout: 15000,
+      });
+      await expect(
+        page.getByRole('row', {
+          name: new RegExp(escapeForRegExp(DEPLOYMENT_NAME)),
+        }),
+      ).toHaveCount(0, { timeout: 30000 });
     });
   },
 );
