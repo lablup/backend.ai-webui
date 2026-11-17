@@ -180,4 +180,40 @@ describe('ResourceGroupSettingModal save handler', () => {
       });
     });
   });
+
+  it('removes a stored value when the user clears its field', async () => {
+    const user = userEvent.setup();
+    const { seenOperations } = renderEditModal();
+
+    // Clearing a shown field removes its key: the field is empty, so saving
+    // an old value back would silently undo the user's removal.
+    await user.clear(
+      await screen.findByRole('spinbutton', {
+        name: 'resourceGroup.PendingTimeout',
+      }),
+    );
+    await user.clear(
+      screen.getByRole('spinbutton', {
+        name: 'resourceGroup.RetriesToSkipDesc',
+      }),
+    );
+    await user.click(screen.getByRole('button', { name: /button.Save/ }));
+
+    await waitFor(() => {
+      const update = seenOperations.find(
+        (operation) =>
+          operation.name === 'ResourceGroupSettingModalUpdateMutation',
+      );
+      expect(update).toBeDefined();
+      const schedulerOpts = JSON.parse(update?.variables.input.scheduler_opts);
+      expect(schedulerOpts).not.toHaveProperty('pending_timeout');
+      expect(schedulerOpts.config).not.toHaveProperty('num_retries_to_skip');
+      // Unshown keys still survive the edit.
+      expect(schedulerOpts.config).toHaveProperty('extra_key', 'keep-me');
+      expect(schedulerOpts).toHaveProperty(
+        'agent_selection_strategy',
+        'dispersed',
+      );
+    });
+  });
 });
