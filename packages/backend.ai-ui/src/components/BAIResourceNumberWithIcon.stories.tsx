@@ -101,6 +101,14 @@ const mockDeviceMetaData: DeviceMetaData = {
     number_format: { binary: false, round_length: 0 },
     display_icon: 'gpu1',
   },
+  'xpu.shares': {
+    slot_name: 'xpu.shares',
+    description: 'Intel XPU-capable GPU (fractional)',
+    human_readable_name: 'fGPU',
+    display_unit: 'fGPU',
+    number_format: { binary: false, round_length: 1 },
+    display_icon: 'gpu1',
+  },
   // Rebellions ATOM
   'atom.device': {
     slot_name: 'atom.device',
@@ -200,6 +208,7 @@ const meta: Meta<typeof BAIResourceNumberWithIcon> = {
         'warboy.device',
         'rngd.device',
         'xpu.device',
+        'xpu.shares',
         'atom.device',
         'atom-plus.device',
         'atom-max.device',
@@ -325,6 +334,10 @@ export const ResourceTypes: Story = {
       <BAIFlex gap="sm" align="center">
         <span style={{ width: 160 }}>Intel Arc (XPU):</span>
         <BAIResourceNumberWithIcon type="xpu.device" value="1" />
+      </BAIFlex>
+      <BAIFlex gap="sm" align="center">
+        <span style={{ width: 160 }}>Intel Arc (XPU, fractional):</span>
+        <BAIResourceNumberWithIcon type="xpu.shares" value="0.5" />
       </BAIFlex>
       {/* Rebellions */}
       <BAIFlex gap="sm" align="center">
