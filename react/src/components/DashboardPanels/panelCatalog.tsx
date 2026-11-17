@@ -38,6 +38,7 @@ import FailuresByEntityTypePanel from './superadminCards/FailuresByEntityTypePan
 import ResourcePoliciesPanel from './superadminCards/ResourcePoliciesPanel';
 import SchedulingFailuresPanel from './superadminCards/SchedulingFailuresPanel';
 import SessionLaunchesPanel from './superadminCards/SessionLaunchesPanel';
+import TopFailureCausesPanel from './superadminCards/TopFailureCausesPanel';
 import type {
   PanelComponentProps,
   PanelDefinition,
@@ -584,6 +585,19 @@ const SUPERADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     defaultSize: size(2, 3),
     minSize: size(2, 3),
     settings: ['range'],
+  },
+  {
+    key: 'topFailureCauses',
+    page: ['admin'],
+    group: 'activity',
+    titleKey: 'dashboard.card.TopFailureCauses',
+    requires: SUPERADMIN_ONLY,
+    kind: 'custom',
+    Component: TopFailureCausesPanel,
+    defaultSize: size(4, 3),
+    minSize: size(2, 3),
+    settings: ['range'],
+    defaultHidden: true,
   },
   {
     // The member page's My Recent Sessions over the domain; the key is the one stored boards already carry.

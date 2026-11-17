@@ -849,6 +849,7 @@
       "NewBoardTitle": "Board {{number}}"
     },
     "card": {
+      "Action": "Aktion",
       "ActiveByType": "Aktiv nach Typ",
       "Admins": "Admins",
       "Agents": "Agents",
@@ -871,8 +872,10 @@
       "Failed": "Fehlgeschlagen",
       "FailedLogins": "Fehlgeschlagene Anmeldungen",
       "FailedLoginsTooltip": "Fehlgeschlagene Anmeldungen im Zeitraum der Karte.",
+      "FailureCausesSampled": "Gruppiert aus den neuesten {{sampled}} von {{total}} Fehlern.",
       "FailuresByEntityType": "Fehler nach Entitätstyp",
       "FailuresByEntityTypeTooltip": "Audit-Log-Einträge des aktuellen Projekts oder der aktuellen Domäne, die im Zeitraum der Karte mit einem Fehler endeten oder abgelehnt wurden, gezählt nach Entitätstyp.",
+      "FailuresOfAction": "Fehlgeschlagene Einträge: {{action}}",
       "FailuresOfType": "Fehlgeschlagene Einträge: {{type}}",
       "FailuresOnly": "Nur Fehler anzeigen",
       "FolderLimit": "Limit: {{max}}",
@@ -938,6 +941,8 @@
       "Terminated": "Beendet",
       "Terminating": "Wird beendet",
       "ThisRange": "Dieser Zeitraum",
+      "TopFailureCauses": "Häufigste Fehlerursachen",
+      "TopFailureCausesTooltip": "Audit-Log-Einträge des aktuellen Projekts oder der Domäne, die im Zeitraum der Karte mit einem Fehler endeten oder abgelehnt wurden, nach Aktion und Meldung gruppiert, häufigste zuerst. IDs und lange Zahlen in einer Meldung werden maskiert, damit eine Ursache als eine gruppiert wird.",
       "Unhealthy": "Fehlerhaft",
       "Unlimited": "Unbegrenzt",
       "ViewAll": "Alle anzeigen",

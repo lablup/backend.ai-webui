@@ -849,6 +849,7 @@
       "NewBoardTitle": "보드 {{number}}"
     },
     "card": {
+      "Action": "작업",
       "ActiveByType": "유형별 활성 세션",
       "Admins": "관리자",
       "Agents": "에이전트",
@@ -871,8 +872,10 @@
       "Failed": "실패",
       "FailedLogins": "로그인 실패",
       "FailedLoginsTooltip": "카드에 설정한 기간 동안의 로그인 실패를 보여 줍니다.",
+      "FailureCausesSampled": "실패 {{total}}건 중 최신 {{sampled}}건을 묶었습니다.",
       "FailuresByEntityType": "유형별 실패",
       "FailuresByEntityTypeTooltip": "카드에 설정한 기간 동안 현재 프로젝트나 도메인에서 오류로 끝났거나 거부된 감사로그 항목을 엔터티 유형별로 셉니다.",
+      "FailuresOfAction": "실패한 항목: {{action}}",
       "FailuresOfType": "실패 기록: {{type}}",
       "FailuresOnly": "실패만 보기",
       "FolderLimit": "한도: {{max}}개",
@@ -938,6 +941,8 @@
       "Terminated": "종료됨",
       "Terminating": "종료 중",
       "ThisRange": "이번 기간",
+      "TopFailureCauses": "주요 실패 원인",
+      "TopFailureCausesTooltip": "카드에 설정한 기간 동안 현재 프로젝트나 도메인에서 오류로 끝났거나 거부된 감사로그 항목을 작업과 메시지별로 묶어 많은 순으로 보여 줍니다. 같은 원인이 하나로 묶이도록 메시지 안의 ID와 긴 숫자는 가립니다.",
       "Unhealthy": "비정상",
       "Unlimited": "무제한",
       "ViewAll": "전체 보기",

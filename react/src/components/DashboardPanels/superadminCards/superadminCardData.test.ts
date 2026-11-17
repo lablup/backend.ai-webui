@@ -8,6 +8,8 @@ import {
   AUDIT_ENTITY_TYPES,
   LAUNCH_OUTCOME_STATUSES,
   entityTypeFailureFilters,
+  groupFailureCauses,
+  normalizeFailureMessage,
   launchOutcomeFilter,
   queueWaitStats,
 } from './superadminCardData';
@@ -85,5 +87,36 @@ describe('queueWaitStats', () => {
     expect(queueWaitStats([{ created_at: at(0), scheduled_at: null }])).toBe(
       null,
     );
+  });
+});
+
+describe('groupFailureCauses', () => {
+  it('masks ids so one cause about many entities groups as one', () => {
+    expect(
+      normalizeFailureMessage(
+        'Session 3f2b8c1e-1a2b-4c3d-8e9f-0a1b2c3d4e5f not found  (port 30123)',
+      ),
+    ).toBe('Session <id> not found (port <n>)');
+  });
+
+  it('groups by action and message, most frequent first, with shares', () => {
+    const causes = groupFailureCauses([
+      { actionName: 'create', description: 'quota exceeded' },
+      { actionName: 'create', description: 'quota exceeded' },
+      { actionName: 'create', description: 'image not found' },
+      { actionName: 'delete', description: 'quota exceeded' },
+    ]);
+    expect(
+      causes.map(({ actionName, message, count, percent }) => [
+        actionName,
+        message,
+        count,
+        percent,
+      ]),
+    ).toEqual([
+      ['create', 'quota exceeded', 2, 50],
+      ['create', 'image not found', 1, 25],
+      ['delete', 'quota exceeded', 1, 25],
+    ]);
   });
 });

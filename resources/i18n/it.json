@@ -849,6 +849,7 @@
       "NewBoardTitle": "Bacheca {{number}}"
     },
     "card": {
+      "Action": "Azione",
       "ActiveByType": "Attive per tipo",
       "Admins": "Amministratori",
       "Agents": "Agenti",
@@ -871,8 +872,10 @@
       "Failed": "Non riuscite",
       "FailedLogins": "Accessi non riusciti",
       "FailedLoginsTooltip": "Accessi non riusciti nel periodo della scheda.",
+      "FailureCausesSampled": "Raggruppati dai {{sampled}} errori più recenti su {{total}}.",
       "FailuresByEntityType": "Errori per tipo di entità",
       "FailuresByEntityTypeTooltip": "Voci del registro di audit del progetto o dominio attuale terminate con un errore o negate nell’intervallo della scheda, contate per tipo di entità.",
+      "FailuresOfAction": "Voci non riuscite: {{action}}",
       "FailuresOfType": "Voci non riuscite: {{type}}",
       "FailuresOnly": "Mostra solo errori",
       "FolderLimit": "Limite: {{max}}",
@@ -938,6 +941,8 @@
       "Terminated": "Terminato",
       "Terminating": "In terminazione",
       "ThisRange": "Questo periodo",
+      "TopFailureCauses": "Principali cause di errore",
+      "TopFailureCausesTooltip": "Voci del registro di audit del progetto o dominio corrente terminate con errore o negate nell'intervallo della scheda, raggruppate per azione e messaggio, dalle più frequenti. ID e numeri lunghi in un messaggio vengono mascherati affinché una stessa causa sia raggruppata come una.",
       "Unhealthy": "Non integro",
       "Unlimited": "Illimitato",
       "ViewAll": "Mostra tutto",

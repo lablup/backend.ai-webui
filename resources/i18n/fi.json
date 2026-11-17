@@ -849,6 +849,7 @@
       "NewBoardTitle": "Taulu {{number}}"
     },
     "card": {
+      "Action": "Toiminto",
       "ActiveByType": "Aktiiviset tyypeittäin",
       "Admins": "Ylläpitäjät",
       "Agents": "Agentit",
@@ -871,8 +872,10 @@
       "Failed": "Epäonnistuneet",
       "FailedLogins": "Epäonnistuneet kirjautumiset",
       "FailedLoginsTooltip": "Epäonnistuneet kirjautumiset kortin aikavälillä.",
+      "FailureCausesSampled": "Ryhmitelty {{total}} virheen uusimmasta {{sampled}} virheestä.",
       "FailuresByEntityType": "Virheet entiteettityypeittäin",
       "FailuresByEntityTypeTooltip": "Nykyisen projektin tai toimialueen tarkastuslokimerkinnät, jotka päättyivät virheeseen tai hylättiin kortin aikavälillä, entiteettityypeittäin.",
+      "FailuresOfAction": "Epäonnistuneet merkinnät: {{action}}",
       "FailuresOfType": "Epäonnistuneet merkinnät: {{type}}",
       "FailuresOnly": "Näytä vain epäonnistuneet",
       "FolderLimit": "Raja: {{max}}",
@@ -938,6 +941,8 @@
       "Terminated": "Päättynyt",
       "Terminating": "Lopetetaan",
       "ThisRange": "Tämä jakso",
+      "TopFailureCauses": "Yleisimmät virheiden syyt",
+      "TopFailureCausesTooltip": "Nykyisen projektin tai toimialueen tarkastuslokimerkinnät, jotka päättyivät virheeseen tai hylättiin kortin aikavälillä, ryhmiteltyinä toiminnon ja viestin mukaan yleisimmästä alkaen. Viestin tunnisteet ja pitkät numerot peitetään, jotta sama syy ryhmittyy yhdeksi.",
       "Unhealthy": "Ongelmia",
       "Unlimited": "Rajoittamaton",
       "ViewAll": "Näytä kaikki",
