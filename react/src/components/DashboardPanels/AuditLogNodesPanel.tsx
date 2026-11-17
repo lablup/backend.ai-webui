@@ -5,9 +5,10 @@
 import type { resourceRegistryAuditLogQuery } from '../../__generated__/resourceRegistryAuditLogQuery.graphql';
 import { rbacTypeLabel } from '../../helper/rbacElementTypes';
 import { useBAIPaginationOptionState } from '../../hooks/reactPaginationQueryOptions';
+import { isClusterAuditScope } from './cards/AuditLogPanel';
 import { chartTableFilter } from './chartSources';
 import { readPrimary } from './panelPermission';
-import { resourceRegistry } from './resourceRegistry';
+import { auditLogClusterQuery, resourceRegistry } from './resourceRegistry';
 import type { PanelDescriptor } from './types';
 import { useAuditLogQueryScope } from './useAuditLogQueryScope';
 import { useDashboardQueryScope } from './useDashboardFilters';
@@ -35,7 +36,7 @@ export const AuditLogNodesPanelContent: React.FC<{
   'use memo';
   const { t } = useTranslation();
   const queryScope = useDashboardQueryScope();
-  const auditScope = useAuditLogQueryScope('auditLog', fetchKey);
+  const auditScope = useAuditLogQueryScope('auditLog');
   const config = resourceRegistry.auditLog;
   const {
     baiPaginationOption,
@@ -63,7 +64,7 @@ export const AuditLogNodesPanelContent: React.FC<{
   const deferredVariables = useDeferredValue(variables);
   const deferredFetchKey = useDeferredValue(fetchKey);
   const data = useLazyLoadQuery<resourceRegistryAuditLogQuery>(
-    config.query,
+    isClusterAuditScope(auditScope) ? auditLogClusterQuery : config.query,
     deferredVariables,
     { fetchPolicy: 'store-and-network', fetchKey: deferredFetchKey },
   );

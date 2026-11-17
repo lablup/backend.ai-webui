@@ -10,19 +10,17 @@ import { useDashboardQueryScope } from './useDashboardFilters';
 
 /**
  * The page's audit log scope for a custom panel, as the built-in audit log card
- * reads it: the viewer's own actions, the project, or the current domain. Null
- * for any other source, which reads nothing.
+ * reads it: the viewer's own actions, the project, or on the superadmin page
+ * every record (`CLUSTER_AUDIT_SCOPE`). Null for any other source.
  */
 export const useAuditLogQueryScope = (
   source: ResourceKey,
-  fetchKey?: string,
 ): AuditLogScope | null => {
   'use memo';
   const { ownerId, projectId, domainId, domainName } = useDashboardQueryScope();
   const isAuditLog = source === 'auditLog';
   const domainScope = useDomainAuditScope(
     isAuditLog && !ownerId && !projectId ? { domainId, domainName } : null,
-    fetchKey,
   );
   if (!isAuditLog) return null;
   if (ownerId) return { triggeredUser: [{ value: ownerId }] };

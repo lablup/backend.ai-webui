@@ -2,7 +2,6 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import type { AuditLogPanelDomainScopeQuery } from '../../../__generated__/AuditLogPanelDomainScopeQuery.graphql';
 import type { AuditLogPanelScopedHistoryQuery } from '../../../__generated__/AuditLogPanelScopedHistoryQuery.graphql';
 import type {
   AuditLogPanelScopedListQuery,
@@ -85,79 +84,30 @@ export const auditLogScope = (
     ? { triggeredUser: [{ value: userId }] }
     : projectAuditScope(scope.projectId);
 
-// The manager has no page cap on these lists; one page has to carry every id of the domain.
-const DOMAIN_SCOPE_LIMIT = 10000;
-
 /**
- * The current domain's audit log scope: the domain and its projects, and every
- * action its users took. A domain entity scope alone leaves out the sessions,
- * folders and deployments in it (ADR 0027). Null `domain` reads nothing.
+ * The superadmin page's audit log scope: every record of the cluster, read
+ * through `adminAuditLogsV2`. An empty scope never reaches `scopedAuditLogsV2`.
  */
+export const CLUSTER_AUDIT_SCOPE: AuditLogScope = {};
+
+export const isClusterAuditScope = (scope: AuditLogScope | null | undefined) =>
+  !!scope && _.isEmpty(scope.entity) && _.isEmpty(scope.triggeredUser);
+
+/** The superadmin page's audit log scope; null `domain` (any other page) reads nothing. */
 export const useDomainAuditScope = (
   domain: Pick<
     Extract<CardScope, { kind: 'domain' }>,
     'domainId' | 'domainName'
   > | null,
-  fetchKey?: string,
-): AuditLogScope | null => {
-  'use memo';
-  const data = useLazyLoadQuery<AuditLogPanelDomainScopeQuery>(
-    graphql`
-      query AuditLogPanelDomainScopeQuery(
-        $domainName: String!
-        $limit: Int!
-        $on: Boolean!
-      ) {
-        projects: domainProjectsV2(
-          scope: { domainName: $domainName }
-          limit: $limit
-        ) @include(if: $on) {
-          edges {
-            node {
-              entityId
-            }
-          }
-        }
-        users: domainUsersV2(scope: { domainName: $domainName }, limit: $limit)
-          @include(if: $on) {
-          edges {
-            node {
-              entityId
-            }
-          }
-        }
-      }
-    `,
-    {
-      domainName: domain?.domainName ?? '',
-      limit: DOMAIN_SCOPE_LIMIT,
-      on: !!domain,
-    },
-    // Without a domain every field is skipped, so nothing is sent.
-    { fetchPolicy: domain ? 'store-and-network' : 'store-only', fetchKey },
-  );
-  if (!domain) return null;
-  return {
-    entity: [
-      { entityType: 'domain', entityId: domain.domainId },
-      ...(data.projects?.edges ?? []).map(({ node }) => ({
-        entityType: 'project',
-        entityId: node.entityId,
-      })),
-    ],
-    triggeredUser: (data.users?.edges ?? []).map(({ node }) => ({
-      value: node.entityId,
-    })),
-  };
-};
+): AuditLogScope | null => (domain ? CLUSTER_AUDIT_SCOPE : null);
 
 export const DomainAuditScope: React.FC<{
   scope: Extract<CardScope, { kind: 'domain' }>;
   fetchKey: string;
   children: (scope: AuditLogScope) => React.ReactNode;
-}> = ({ scope, fetchKey, children }) => {
+}> = ({ scope, children }) => {
   'use memo';
-  const auditScope = useDomainAuditScope(scope, fetchKey);
+  const auditScope = useDomainAuditScope(scope);
   return auditScope ? children(auditScope) : null;
 };
 
@@ -166,141 +116,274 @@ const ScopedAuditLogHistory: React.FC<
 > = ({ scope, variables, fetchKey, children }) => {
   'use memo';
   const data = useLazyLoadQuery<AuditLogPanelScopedHistoryQuery>(
-    graphql`
-      query AuditLogPanelScopedHistoryQuery(
-        $scope: AuditLogScope!
-        $previousSuccess: AuditLogFilter
-        $previousFailure: AuditLogFilter
-        $previousOn: Boolean!
-        $s0: AuditLogFilter
-        $s0On: Boolean!
-        $s1: AuditLogFilter
-        $s1On: Boolean!
-        $s2: AuditLogFilter
-        $s2On: Boolean!
-        $s3: AuditLogFilter
-        $s3On: Boolean!
-        $s4: AuditLogFilter
-        $s4On: Boolean!
-        $s5: AuditLogFilter
-        $s5On: Boolean!
-        $s6: AuditLogFilter
-        $s6On: Boolean!
-        $s7: AuditLogFilter
-        $s7On: Boolean!
-        $f0: AuditLogFilter
-        $f0On: Boolean!
-        $f1: AuditLogFilter
-        $f1On: Boolean!
-        $f2: AuditLogFilter
-        $f2On: Boolean!
-        $f3: AuditLogFilter
-        $f3On: Boolean!
-        $f4: AuditLogFilter
-        $f4On: Boolean!
-        $f5: AuditLogFilter
-        $f5On: Boolean!
-        $f6: AuditLogFilter
-        $f6On: Boolean!
-        $f7: AuditLogFilter
-        $f7On: Boolean!
-      ) {
-        previousSuccess: scopedAuditLogsV2(
-          scope: $scope
-          filter: $previousSuccess
-          limit: 1
-        ) @include(if: $previousOn) @catch(to: RESULT) {
-          count
-        }
-        previousFailure: scopedAuditLogsV2(
-          scope: $scope
-          filter: $previousFailure
-          limit: 1
-        ) @include(if: $previousOn) @catch(to: RESULT) {
-          count
-        }
-        s0: scopedAuditLogsV2(scope: $scope, filter: $s0, limit: 1)
-          @include(if: $s0On)
-          @catch(to: RESULT) {
-          count
-        }
-        s1: scopedAuditLogsV2(scope: $scope, filter: $s1, limit: 1)
-          @include(if: $s1On)
-          @catch(to: RESULT) {
-          count
-        }
-        s2: scopedAuditLogsV2(scope: $scope, filter: $s2, limit: 1)
-          @include(if: $s2On)
-          @catch(to: RESULT) {
-          count
-        }
-        s3: scopedAuditLogsV2(scope: $scope, filter: $s3, limit: 1)
-          @include(if: $s3On)
-          @catch(to: RESULT) {
-          count
-        }
-        s4: scopedAuditLogsV2(scope: $scope, filter: $s4, limit: 1)
-          @include(if: $s4On)
-          @catch(to: RESULT) {
-          count
-        }
-        s5: scopedAuditLogsV2(scope: $scope, filter: $s5, limit: 1)
-          @include(if: $s5On)
-          @catch(to: RESULT) {
-          count
-        }
-        s6: scopedAuditLogsV2(scope: $scope, filter: $s6, limit: 1)
-          @include(if: $s6On)
-          @catch(to: RESULT) {
-          count
-        }
-        s7: scopedAuditLogsV2(scope: $scope, filter: $s7, limit: 1)
-          @include(if: $s7On)
-          @catch(to: RESULT) {
-          count
-        }
-        f0: scopedAuditLogsV2(scope: $scope, filter: $f0, limit: 1)
-          @include(if: $f0On)
-          @catch(to: RESULT) {
-          count
-        }
-        f1: scopedAuditLogsV2(scope: $scope, filter: $f1, limit: 1)
-          @include(if: $f1On)
-          @catch(to: RESULT) {
-          count
-        }
-        f2: scopedAuditLogsV2(scope: $scope, filter: $f2, limit: 1)
-          @include(if: $f2On)
-          @catch(to: RESULT) {
-          count
-        }
-        f3: scopedAuditLogsV2(scope: $scope, filter: $f3, limit: 1)
-          @include(if: $f3On)
-          @catch(to: RESULT) {
-          count
-        }
-        f4: scopedAuditLogsV2(scope: $scope, filter: $f4, limit: 1)
-          @include(if: $f4On)
-          @catch(to: RESULT) {
-          count
-        }
-        f5: scopedAuditLogsV2(scope: $scope, filter: $f5, limit: 1)
-          @include(if: $f5On)
-          @catch(to: RESULT) {
-          count
-        }
-        f6: scopedAuditLogsV2(scope: $scope, filter: $f6, limit: 1)
-          @include(if: $f6On)
-          @catch(to: RESULT) {
-          count
-        }
-        f7: scopedAuditLogsV2(scope: $scope, filter: $f7, limit: 1)
-          @include(if: $f7On)
-          @catch(to: RESULT) {
-          count
-        }
-      }
-    `,
+    isClusterAuditScope(scope)
+      ? graphql`
+          query AuditLogPanelClusterHistoryQuery(
+            $previousSuccess: AuditLogFilter
+            $previousFailure: AuditLogFilter
+            $previousOn: Boolean!
+            $s0: AuditLogFilter
+            $s0On: Boolean!
+            $s1: AuditLogFilter
+            $s1On: Boolean!
+            $s2: AuditLogFilter
+            $s2On: Boolean!
+            $s3: AuditLogFilter
+            $s3On: Boolean!
+            $s4: AuditLogFilter
+            $s4On: Boolean!
+            $s5: AuditLogFilter
+            $s5On: Boolean!
+            $s6: AuditLogFilter
+            $s6On: Boolean!
+            $s7: AuditLogFilter
+            $s7On: Boolean!
+            $f0: AuditLogFilter
+            $f0On: Boolean!
+            $f1: AuditLogFilter
+            $f1On: Boolean!
+            $f2: AuditLogFilter
+            $f2On: Boolean!
+            $f3: AuditLogFilter
+            $f3On: Boolean!
+            $f4: AuditLogFilter
+            $f4On: Boolean!
+            $f5: AuditLogFilter
+            $f5On: Boolean!
+            $f6: AuditLogFilter
+            $f6On: Boolean!
+            $f7: AuditLogFilter
+            $f7On: Boolean!
+          ) {
+            previousSuccess: adminAuditLogsV2(
+              filter: $previousSuccess
+              limit: 1
+            ) @include(if: $previousOn) @catch(to: RESULT) {
+              count
+            }
+            previousFailure: adminAuditLogsV2(
+              filter: $previousFailure
+              limit: 1
+            ) @include(if: $previousOn) @catch(to: RESULT) {
+              count
+            }
+            s0: adminAuditLogsV2(filter: $s0, limit: 1)
+              @include(if: $s0On)
+              @catch(to: RESULT) {
+              count
+            }
+            s1: adminAuditLogsV2(filter: $s1, limit: 1)
+              @include(if: $s1On)
+              @catch(to: RESULT) {
+              count
+            }
+            s2: adminAuditLogsV2(filter: $s2, limit: 1)
+              @include(if: $s2On)
+              @catch(to: RESULT) {
+              count
+            }
+            s3: adminAuditLogsV2(filter: $s3, limit: 1)
+              @include(if: $s3On)
+              @catch(to: RESULT) {
+              count
+            }
+            s4: adminAuditLogsV2(filter: $s4, limit: 1)
+              @include(if: $s4On)
+              @catch(to: RESULT) {
+              count
+            }
+            s5: adminAuditLogsV2(filter: $s5, limit: 1)
+              @include(if: $s5On)
+              @catch(to: RESULT) {
+              count
+            }
+            s6: adminAuditLogsV2(filter: $s6, limit: 1)
+              @include(if: $s6On)
+              @catch(to: RESULT) {
+              count
+            }
+            s7: adminAuditLogsV2(filter: $s7, limit: 1)
+              @include(if: $s7On)
+              @catch(to: RESULT) {
+              count
+            }
+            f0: adminAuditLogsV2(filter: $f0, limit: 1)
+              @include(if: $f0On)
+              @catch(to: RESULT) {
+              count
+            }
+            f1: adminAuditLogsV2(filter: $f1, limit: 1)
+              @include(if: $f1On)
+              @catch(to: RESULT) {
+              count
+            }
+            f2: adminAuditLogsV2(filter: $f2, limit: 1)
+              @include(if: $f2On)
+              @catch(to: RESULT) {
+              count
+            }
+            f3: adminAuditLogsV2(filter: $f3, limit: 1)
+              @include(if: $f3On)
+              @catch(to: RESULT) {
+              count
+            }
+            f4: adminAuditLogsV2(filter: $f4, limit: 1)
+              @include(if: $f4On)
+              @catch(to: RESULT) {
+              count
+            }
+            f5: adminAuditLogsV2(filter: $f5, limit: 1)
+              @include(if: $f5On)
+              @catch(to: RESULT) {
+              count
+            }
+            f6: adminAuditLogsV2(filter: $f6, limit: 1)
+              @include(if: $f6On)
+              @catch(to: RESULT) {
+              count
+            }
+            f7: adminAuditLogsV2(filter: $f7, limit: 1)
+              @include(if: $f7On)
+              @catch(to: RESULT) {
+              count
+            }
+          }
+        `
+      : graphql`
+          query AuditLogPanelScopedHistoryQuery(
+            $scope: AuditLogScope!
+            $previousSuccess: AuditLogFilter
+            $previousFailure: AuditLogFilter
+            $previousOn: Boolean!
+            $s0: AuditLogFilter
+            $s0On: Boolean!
+            $s1: AuditLogFilter
+            $s1On: Boolean!
+            $s2: AuditLogFilter
+            $s2On: Boolean!
+            $s3: AuditLogFilter
+            $s3On: Boolean!
+            $s4: AuditLogFilter
+            $s4On: Boolean!
+            $s5: AuditLogFilter
+            $s5On: Boolean!
+            $s6: AuditLogFilter
+            $s6On: Boolean!
+            $s7: AuditLogFilter
+            $s7On: Boolean!
+            $f0: AuditLogFilter
+            $f0On: Boolean!
+            $f1: AuditLogFilter
+            $f1On: Boolean!
+            $f2: AuditLogFilter
+            $f2On: Boolean!
+            $f3: AuditLogFilter
+            $f3On: Boolean!
+            $f4: AuditLogFilter
+            $f4On: Boolean!
+            $f5: AuditLogFilter
+            $f5On: Boolean!
+            $f6: AuditLogFilter
+            $f6On: Boolean!
+            $f7: AuditLogFilter
+            $f7On: Boolean!
+          ) {
+            previousSuccess: scopedAuditLogsV2(
+              scope: $scope
+              filter: $previousSuccess
+              limit: 1
+            ) @include(if: $previousOn) @catch(to: RESULT) {
+              count
+            }
+            previousFailure: scopedAuditLogsV2(
+              scope: $scope
+              filter: $previousFailure
+              limit: 1
+            ) @include(if: $previousOn) @catch(to: RESULT) {
+              count
+            }
+            s0: scopedAuditLogsV2(scope: $scope, filter: $s0, limit: 1)
+              @include(if: $s0On)
+              @catch(to: RESULT) {
+              count
+            }
+            s1: scopedAuditLogsV2(scope: $scope, filter: $s1, limit: 1)
+              @include(if: $s1On)
+              @catch(to: RESULT) {
+              count
+            }
+            s2: scopedAuditLogsV2(scope: $scope, filter: $s2, limit: 1)
+              @include(if: $s2On)
+              @catch(to: RESULT) {
+              count
+            }
+            s3: scopedAuditLogsV2(scope: $scope, filter: $s3, limit: 1)
+              @include(if: $s3On)
+              @catch(to: RESULT) {
+              count
+            }
+            s4: scopedAuditLogsV2(scope: $scope, filter: $s4, limit: 1)
+              @include(if: $s4On)
+              @catch(to: RESULT) {
+              count
+            }
+            s5: scopedAuditLogsV2(scope: $scope, filter: $s5, limit: 1)
+              @include(if: $s5On)
+              @catch(to: RESULT) {
+              count
+            }
+            s6: scopedAuditLogsV2(scope: $scope, filter: $s6, limit: 1)
+              @include(if: $s6On)
+              @catch(to: RESULT) {
+              count
+            }
+            s7: scopedAuditLogsV2(scope: $scope, filter: $s7, limit: 1)
+              @include(if: $s7On)
+              @catch(to: RESULT) {
+              count
+            }
+            f0: scopedAuditLogsV2(scope: $scope, filter: $f0, limit: 1)
+              @include(if: $f0On)
+              @catch(to: RESULT) {
+              count
+            }
+            f1: scopedAuditLogsV2(scope: $scope, filter: $f1, limit: 1)
+              @include(if: $f1On)
+              @catch(to: RESULT) {
+              count
+            }
+            f2: scopedAuditLogsV2(scope: $scope, filter: $f2, limit: 1)
+              @include(if: $f2On)
+              @catch(to: RESULT) {
+              count
+            }
+            f3: scopedAuditLogsV2(scope: $scope, filter: $f3, limit: 1)
+              @include(if: $f3On)
+              @catch(to: RESULT) {
+              count
+            }
+            f4: scopedAuditLogsV2(scope: $scope, filter: $f4, limit: 1)
+              @include(if: $f4On)
+              @catch(to: RESULT) {
+              count
+            }
+            f5: scopedAuditLogsV2(scope: $scope, filter: $f5, limit: 1)
+              @include(if: $f5On)
+              @catch(to: RESULT) {
+              count
+            }
+            f6: scopedAuditLogsV2(scope: $scope, filter: $f6, limit: 1)
+              @include(if: $f6On)
+              @catch(to: RESULT) {
+              count
+            }
+            f7: scopedAuditLogsV2(scope: $scope, filter: $f7, limit: 1)
+              @include(if: $f7On)
+              @catch(to: RESULT) {
+              count
+            }
+          }
+        `,
     { scope, ...variables },
     { fetchPolicy: 'store-and-network', fetchKey },
   );
@@ -312,55 +395,102 @@ const ScopedAuditLog: React.FC<
 > = ({ scope, variables, fetchKey, children }) => {
   'use memo';
   const data = useLazyLoadQuery<AuditLogPanelScopedQuery>(
-    graphql`
-      query AuditLogPanelScopedQuery(
-        $scope: AuditLogScope!
-        $previousSuccess: AuditLogFilter
-        $previousFailure: AuditLogFilter
-        $previousOn: Boolean!
-        $liveS0: AuditLogFilter
-        $liveF0: AuditLogFilter
-        $live0On: Boolean!
-        $liveS1: AuditLogFilter
-        $liveF1: AuditLogFilter
-        $live1On: Boolean!
-      ) {
-        previousSuccess: scopedAuditLogsV2(
-          scope: $scope
-          filter: $previousSuccess
-          limit: 1
-        ) @include(if: $previousOn) @catch(to: RESULT) {
-          count
-        }
-        previousFailure: scopedAuditLogsV2(
-          scope: $scope
-          filter: $previousFailure
-          limit: 1
-        ) @include(if: $previousOn) @catch(to: RESULT) {
-          count
-        }
-        liveS0: scopedAuditLogsV2(scope: $scope, filter: $liveS0, limit: 1)
-          @include(if: $live0On)
-          @catch(to: RESULT) {
-          count
-        }
-        liveF0: scopedAuditLogsV2(scope: $scope, filter: $liveF0, limit: 1)
-          @include(if: $live0On)
-          @catch(to: RESULT) {
-          count
-        }
-        liveS1: scopedAuditLogsV2(scope: $scope, filter: $liveS1, limit: 1)
-          @include(if: $live1On)
-          @catch(to: RESULT) {
-          count
-        }
-        liveF1: scopedAuditLogsV2(scope: $scope, filter: $liveF1, limit: 1)
-          @include(if: $live1On)
-          @catch(to: RESULT) {
-          count
-        }
-      }
-    `,
+    isClusterAuditScope(scope)
+      ? graphql`
+          query AuditLogPanelClusterQuery(
+            $previousSuccess: AuditLogFilter
+            $previousFailure: AuditLogFilter
+            $previousOn: Boolean!
+            $liveS0: AuditLogFilter
+            $liveF0: AuditLogFilter
+            $live0On: Boolean!
+            $liveS1: AuditLogFilter
+            $liveF1: AuditLogFilter
+            $live1On: Boolean!
+          ) {
+            previousSuccess: adminAuditLogsV2(
+              filter: $previousSuccess
+              limit: 1
+            ) @include(if: $previousOn) @catch(to: RESULT) {
+              count
+            }
+            previousFailure: adminAuditLogsV2(
+              filter: $previousFailure
+              limit: 1
+            ) @include(if: $previousOn) @catch(to: RESULT) {
+              count
+            }
+            liveS0: adminAuditLogsV2(filter: $liveS0, limit: 1)
+              @include(if: $live0On)
+              @catch(to: RESULT) {
+              count
+            }
+            liveF0: adminAuditLogsV2(filter: $liveF0, limit: 1)
+              @include(if: $live0On)
+              @catch(to: RESULT) {
+              count
+            }
+            liveS1: adminAuditLogsV2(filter: $liveS1, limit: 1)
+              @include(if: $live1On)
+              @catch(to: RESULT) {
+              count
+            }
+            liveF1: adminAuditLogsV2(filter: $liveF1, limit: 1)
+              @include(if: $live1On)
+              @catch(to: RESULT) {
+              count
+            }
+          }
+        `
+      : graphql`
+          query AuditLogPanelScopedQuery(
+            $scope: AuditLogScope!
+            $previousSuccess: AuditLogFilter
+            $previousFailure: AuditLogFilter
+            $previousOn: Boolean!
+            $liveS0: AuditLogFilter
+            $liveF0: AuditLogFilter
+            $live0On: Boolean!
+            $liveS1: AuditLogFilter
+            $liveF1: AuditLogFilter
+            $live1On: Boolean!
+          ) {
+            previousSuccess: scopedAuditLogsV2(
+              scope: $scope
+              filter: $previousSuccess
+              limit: 1
+            ) @include(if: $previousOn) @catch(to: RESULT) {
+              count
+            }
+            previousFailure: scopedAuditLogsV2(
+              scope: $scope
+              filter: $previousFailure
+              limit: 1
+            ) @include(if: $previousOn) @catch(to: RESULT) {
+              count
+            }
+            liveS0: scopedAuditLogsV2(scope: $scope, filter: $liveS0, limit: 1)
+              @include(if: $live0On)
+              @catch(to: RESULT) {
+              count
+            }
+            liveF0: scopedAuditLogsV2(scope: $scope, filter: $liveF0, limit: 1)
+              @include(if: $live0On)
+              @catch(to: RESULT) {
+              count
+            }
+            liveS1: scopedAuditLogsV2(scope: $scope, filter: $liveS1, limit: 1)
+              @include(if: $live1On)
+              @catch(to: RESULT) {
+              count
+            }
+            liveF1: scopedAuditLogsV2(scope: $scope, filter: $liveF1, limit: 1)
+              @include(if: $live1On)
+              @catch(to: RESULT) {
+              count
+            }
+          }
+        `,
     { scope, ...variables },
     { fetchPolicy: 'store-and-network', fetchKey },
   );
@@ -375,29 +505,51 @@ export const ScopedAuditLogList: React.FC<
 > = ({ scope, variables, fetchKey, children }) => {
   'use memo';
   const data = useLazyLoadQuery<AuditLogPanelScopedListQuery>(
-    graphql`
-      query AuditLogPanelScopedListQuery(
-        $scope: AuditLogScope!
-        $filter: AuditLogFilter!
-        $limit: Int!
-        $offset: Int!
-      ) {
-        logs: scopedAuditLogsV2(
-          scope: $scope
-          filter: $filter
-          orderBy: [{ field: CREATED_AT, direction: DESC }]
-          limit: $limit
-          offset: $offset
-        ) @catch(to: RESULT) {
-          count
-          edges {
-            node {
-              ...BAIAuditLogNodesFragment
+    isClusterAuditScope(scope)
+      ? graphql`
+          query AuditLogPanelClusterListQuery(
+            $filter: AuditLogFilter!
+            $limit: Int!
+            $offset: Int!
+          ) {
+            logs: adminAuditLogsV2(
+              filter: $filter
+              orderBy: [{ field: CREATED_AT, direction: DESC }]
+              limit: $limit
+              offset: $offset
+            ) @catch(to: RESULT) {
+              count
+              edges {
+                node {
+                  ...BAIAuditLogNodesFragment
+                }
+              }
             }
           }
-        }
-      }
-    `,
+        `
+      : graphql`
+          query AuditLogPanelScopedListQuery(
+            $scope: AuditLogScope!
+            $filter: AuditLogFilter!
+            $limit: Int!
+            $offset: Int!
+          ) {
+            logs: scopedAuditLogsV2(
+              scope: $scope
+              filter: $filter
+              orderBy: [{ field: CREATED_AT, direction: DESC }]
+              limit: $limit
+              offset: $offset
+            ) @catch(to: RESULT) {
+              count
+              edges {
+                node {
+                  ...BAIAuditLogNodesFragment
+                }
+              }
+            }
+          }
+        `,
     { scope, ...variables },
     { fetchPolicy: 'store-and-network', fetchKey },
   );

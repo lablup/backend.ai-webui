@@ -369,6 +369,31 @@ const vfolderConfig: ResourceConfig<resourceRegistryVfolderQuery, VfolderNode> =
       selectOffsetConnection(readPrimary(data.scopedVFoldersV2)),
   };
 
+/** The audit log source's query on the superadmin page, which reads every record (`isClusterAuditScope`). */
+export const auditLogClusterQuery = graphql`
+  query resourceRegistryAuditLogClusterQuery(
+    $filter: AuditLogFilter
+    $orderBy: [AuditLogOrderBy!]
+    $limit: Int
+    $offset: Int
+  ) {
+    scopedAuditLogsV2: adminAuditLogsV2(
+      filter: $filter
+      orderBy: $orderBy
+      limit: $limit
+      offset: $offset
+    ) @catch(to: RESULT) {
+      count
+      edges {
+        node {
+          id
+          ...BAIAuditLogNodesFragment
+        }
+      }
+    }
+  }
+`;
+
 // Rows render through BAIAuditLogNodes (`kind: 'auditLogNodes'`), so no columns here.
 const auditLogConfig: ResourceConfig<resourceRegistryAuditLogQuery, unknown> = {
   key: 'auditLog',
