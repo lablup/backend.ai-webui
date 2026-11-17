@@ -31,7 +31,7 @@ import BAIFormItem from './BAIFormItem';
 import EndpointHistoryField, {
   type EndpointHistoryEntry,
 } from './EndpointHistoryField';
-import './PasswordRevealInput.css';
+import PasswordRevealInput from './PasswordRevealInput';
 import SanitizedHtml from './SanitizedHtml';
 import type { TOTPActivateFormData } from './TOTPActivateModal';
 import { Banner } from '@lablup/ui-common/Banner';
@@ -43,12 +43,6 @@ import { Spinner } from '@lablup/ui-common/Spinner';
 import { Text } from '@lablup/ui-common/Text';
 import { Tooltip } from '@lablup/ui-common/Tooltip';
 import { useTheme } from '@lablup/ui-common/theme';
-import {
-  colorVars,
-  sizeVars,
-  spacingVars,
-} from '@lablup/ui-common/theme/tokens.stylex';
-import * as stylex from '@stylexjs/stylex';
 import {
   BAI_Z_INDEX,
   BAIModal,
@@ -66,8 +60,6 @@ import {
   Info,
   ChevronRight,
   TriangleAlert,
-  Eye,
-  EyeOff,
 } from 'lucide-react';
 import React, { ReactNode, Suspense, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -764,67 +756,6 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
         />
       </BAIUnmountAfterClose>
     </>
-  );
-};
-
-// TextInput has no end slot, so the toggle sits over the control's trailing edge.
-const passwordRevealStyles = stylex.create({
-  control: {
-    paddingInlineEnd: `calc(${sizeVars['--size-element-sm']} + ${spacingVars['--spacing-1']} * 2)`,
-  },
-  toggle: {
-    position: 'absolute',
-    insetInlineEnd: spacingVars['--spacing-1'],
-    top: '50%',
-    transform: 'translateY(-50%)',
-    // Same tone as the endpoint line under the form.
-    color: colorVars['--color-text-secondary'],
-  },
-});
-
-// Form.Item injects value/onChange here; they pass straight to the input.
-const PasswordRevealInput: React.FC<
-  Omit<React.ComponentProps<typeof BAITextInput>, 'type' | 'controlXstyle'>
-> = (props) => {
-  'use memo';
-  const { t } = useTranslation();
-  const [isRevealed, setIsRevealed] = useState(false);
-  const toggleLabel = isRevealed
-    ? t('login.HidePassword')
-    : t('login.ShowPassword');
-
-  return (
-    <BAIFlex
-      className="bai-password-reveal"
-      align="center"
-      // The form logs in on any Enter that bubbles up, the toggle's included.
-      onKeyDown={(e) => {
-        if (e.key === 'Enter' && (e.target as HTMLElement).closest('button')) {
-          e.stopPropagation();
-        }
-      }}
-    >
-      <BAITextInput
-        {...props}
-        type={isRevealed ? 'text' : 'password'}
-        // Revealed text must not reach spellcheck services or keyboard autocorrect.
-        hasSpellCheck={false}
-        hasAutoCorrect={false}
-        autoCapitalize="none"
-        controlXstyle={passwordRevealStyles.control}
-      />
-      <IconButton
-        xstyle={passwordRevealStyles.toggle}
-        variant="ghost"
-        size="sm"
-        icon={isRevealed ? <EyeOff size="1em" /> : <Eye size="1em" />}
-        label={toggleLabel}
-        isDisabled={props.disabled}
-        // Keep focus (and the mobile keyboard) in the password field.
-        onMouseDown={(e: React.MouseEvent) => e.preventDefault()}
-        onClick={() => setIsRevealed((v) => !v)}
-      />
-    </BAIFlex>
   );
 };
 
