@@ -56,7 +56,9 @@ type FormInputType = {
   scheduler: string;
   pendingTimeout: number;
   retriesToSkip: number;
-  sftpProxies: string[];
+  // `sftpProxies` is undefined until its Form.Item registers: it sits behind a
+  // Suspense boundary while the SFTP map / proxy-options query loads.
+  sftpProxies: string[] | undefined;
 };
 
 interface ResourceGroupCreateModalProps extends BAIModalProps {
@@ -220,9 +222,16 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
               if (!baiClient.is_superadmin) {
                 return Promise.resolve();
               }
+              // The SFTP Form.Item is replaced by its Suspense fallback while
+              // the SFTP map or the proxy-options query is still loading, so an
+              // unregistered field reads `undefined` here. Skip the sync: "not
+              // loaded" must not mean "deselect all" (a deliberate clear is []).
+              if (values.sftpProxies === undefined) {
+                return Promise.resolve();
+              }
               const { added, removed } = computeProxyDelta(
                 currentSftpProxies,
-                values.sftpProxies ?? [],
+                values.sftpProxies,
               );
               return applyGroupProxyDelta([groupName], added, removed).then(
                 (results) => {
