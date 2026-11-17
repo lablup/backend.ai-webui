@@ -25,13 +25,16 @@ export const useAuditLogQueryScope = (
   const filters = useDashboardFilterContext();
   const { ownerId } = useDashboardQueryScope();
   if (source !== 'auditLog' || !filters) return null;
+  // The viewer's own actions need no project, so an unresolved URL project does not empty them.
+  if (filters.scope.kind === 'mine') {
+    return ownerId ? { triggeredUser: [{ value: ownerId }] } : null;
+  }
   const cardScope = resolveCardScope(filters.scope);
   if (!cardScope) return null;
   switch (cardScope.kind) {
     case 'domain':
       return CLUSTER_AUDIT_SCOPE;
     case 'mine':
-      return ownerId ? { triggeredUser: [{ value: ownerId }] } : null;
     case 'project':
       return projectAuditScope(cardScope.projectId);
   }
