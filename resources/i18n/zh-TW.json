@@ -2297,6 +2297,7 @@
     "EndpointUnreachable": "無法連線到此伺服器。請檢查位址與網路後再試一次。",
     "ForgotPassword": "忘記密碼？",
     "GoToLogin": "前往登入",
+    "HidePassword": "隱藏密碼",
     "InvalidChangePasswordToken": "令牌無效",
     "InvalidChangePasswordTokenMessage": "發出的用於更改密碼的令牌有錯誤。請發送另一封更改密碼的電子郵件，然後重試。",
     "LeaveService": "離開服務",
@@ -2321,6 +2322,7 @@
     "ServerUnreachable": "無法連線至伺服器。請檢查 API 端點並重試。",
     "SessionExpired": "您的登入工作階段已過期。請重新登入。",
     "SessionMode": "工作階段",
+    "ShowPassword": "顯示密碼",
     "SignUp": "註冊",
     "SignoutFinished": "註銷完畢。",
     "singleSignOn": {

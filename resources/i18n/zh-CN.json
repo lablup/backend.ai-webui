@@ -2296,6 +2296,7 @@
     "EndpointUnreachable": "无法连接到此服务器。请检查地址和网络后重试。",
     "ForgotPassword": "忘记密码？",
     "GoToLogin": "前往登录",
+    "HidePassword": "隐藏密码",
     "InvalidChangePasswordToken": "令牌无效",
     "InvalidChangePasswordTokenMessage": "发出的用于更改密码的令牌有错误。请发送另一封更改密码的电子邮件，然后重试。",
     "LeaveService": "离开服务",
@@ -2320,6 +2321,7 @@
     "ServerUnreachable": "无法连接到服务器。请检查 API 端点并重试。",
     "SessionExpired": "您的登录会话已过期。请重新登录。",
     "SessionMode": "会话",
+    "ShowPassword": "显示密码",
     "SignUp": "注册",
     "SignoutFinished": "注销完毕。",
     "singleSignOn": {

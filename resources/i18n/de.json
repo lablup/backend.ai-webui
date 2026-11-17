@@ -2296,6 +2296,7 @@
     "EndpointUnreachable": "Keine Verbindung zu diesem Server möglich. Prüfen Sie Adresse und Netzwerk und versuchen Sie es erneut.",
     "ForgotPassword": "Passwort vergessen?",
     "GoToLogin": "Zur Anmeldung",
+    "HidePassword": "Passwort verbergen",
     "InvalidChangePasswordToken": "Ungültiges Token",
     "InvalidChangePasswordTokenMessage": "Das ausgegebene Token zum Ändern des Kennworts weist einen Fehler auf. Bitte senden Sie eine weitere E-Mail zum Ändern des Passworts und versuchen Sie es erneut.",
     "LeaveService": "Dienst verlassen",
@@ -2320,6 +2321,7 @@
     "ServerUnreachable": "Verbindung zum Server nicht möglich. Bitte überprüfen Sie den API-Endpunkt und versuchen Sie es erneut.",
     "SessionExpired": "Ihre Anmeldesitzung ist abgelaufen. Bitte melden Sie sich erneut an.",
     "SessionMode": "Sitzung",
+    "ShowPassword": "Passwort anzeigen",
     "SignUp": "Anmelden",
     "SignoutFinished": "Abmeldung abgeschlossen.",
     "singleSignOn": {

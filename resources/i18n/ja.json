@@ -2296,6 +2296,7 @@
     "EndpointUnreachable": "このサーバーに接続できません。アドレスとネットワークを確認して、もう一度お試しください。",
     "ForgotPassword": "パスワードをお忘れですか？",
     "GoToLogin": "ログイン画面へ",
+    "HidePassword": "パスワードを隠す",
     "InvalidChangePasswordToken": "無効なトークン",
     "InvalidChangePasswordTokenMessage": "パスワードを変更するために発行されたトークンにエラーがあります。パスワードを変更するために別のメールを送信して、再試行してください。",
     "LeaveService": "サービスを終了する",
@@ -2320,6 +2321,7 @@
     "ServerUnreachable": "サーバーに接続できません。APIエンドポイントを確認して再試行してください。",
     "SessionExpired": "ログインセッションの有効期限が切れました。再度ログインしてください。",
     "SessionMode": "セッション",
+    "ShowPassword": "パスワードを表示",
     "SignUp": "サインアップ",
     "SignoutFinished": "サインアウトが終了しました。",
     "singleSignOn": {

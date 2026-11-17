@@ -2294,6 +2294,7 @@
     "EndpointUnreachable": "Tidak dapat menyambung ke pelayan ini. Semak alamat dan rangkaian, kemudian cuba lagi.",
     "ForgotPassword": "lupa kata laluan?",
     "GoToLogin": "Pergi ke log masuk",
+    "HidePassword": "Sembunyikan kata laluan",
     "InvalidChangePasswordToken": "Token tidak sah",
     "InvalidChangePasswordTokenMessage": "Token yang dikeluarkan untuk menukar kata laluan mempunyai ralat. Hantarkan e-mel lain untuk menukar kata laluan dan cuba lagi.",
     "LeaveService": "Tinggalkan Perkhidmatan",
@@ -2318,6 +2319,7 @@
     "ServerUnreachable": "Tidak dapat menyambung ke pelayan. Sila semak titik akhir API dan cuba lagi.",
     "SessionExpired": "Sesi log masuk anda telah tamat tempoh. Sila log masuk semula.",
     "SessionMode": "Sesi",
+    "ShowPassword": "Tunjukkan kata laluan",
     "SignUp": "Mendaftar",
     "SignoutFinished": "Log keluar selesai.",
     "singleSignOn": {

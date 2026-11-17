@@ -2295,6 +2295,7 @@
     "EndpointUnreachable": "Nie można połączyć się z tym serwerem. Sprawdź adres i sieć, a następnie spróbuj ponownie.",
     "ForgotPassword": "Zapomniałeś hasła?",
     "GoToLogin": "Przejdź do logowania",
+    "HidePassword": "Ukryj hasło",
     "InvalidChangePasswordToken": "Nieprawidłowy Token",
     "InvalidChangePasswordTokenMessage": "Wystawiony token do zmiany hasła zawiera błąd. Wyślij kolejnego e-maila w celu zmiany hasła i spróbuj ponownie.",
     "LeaveService": "Opuść usługę",
@@ -2319,6 +2320,7 @@
     "ServerUnreachable": "Nie można połączyć się z serwerem. Sprawdź punkt końcowy API i spróbuj ponownie.",
     "SessionExpired": "Twoja sesja logowania wygasła. Proszę zalogować się ponownie.",
     "SessionMode": "Sesja",
+    "ShowPassword": "Pokaż hasło",
     "SignUp": "Zapisz się",
     "SignoutFinished": "Wylogowanie zakończone.",
     "singleSignOn": {
