@@ -2331,6 +2331,7 @@
     "EndpointUnreachable": "이 서버에 연결할 수 없습니다. 주소와 네트워크를 확인한 뒤 다시 시도하세요.",
     "ForgotPassword": "비밀번호를 잊어버렸습니까?",
     "GoToLogin": "로그인 화면으로",
+    "HidePassword": "비밀번호 숨기기",
     "InvalidChangePasswordToken": "토큰 오류",
     "InvalidChangePasswordTokenMessage": "비밀번호 변경을 위해 발급된 토큰에 오류가 있습니다. 비밀번호 변경 이메일을 다시 보내고 시도해 보십시오.",
     "LeaveService": "서비스 탈퇴",
@@ -2355,6 +2356,7 @@
     "ServerUnreachable": "서버에 연결할 수 없습니다. API 엔드포인트를 확인하고 다시 시도해 주세요.",
     "SessionExpired": "로그인 세션이 만료되었습니다. 다시 로그인해 주세요.",
     "SessionMode": "세션",
+    "ShowPassword": "비밀번호 보기",
     "SignUp": "가입하기",
     "SignoutFinished": "탈퇴가 완료되었습니다.",
     "singleSignOn": {

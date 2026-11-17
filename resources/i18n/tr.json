@@ -2329,6 +2329,7 @@
     "EndpointUnreachable": "Bu sunucuya bağlanılamıyor. Adresi ve ağı kontrol edip yeniden deneyin.",
     "ForgotPassword": "Parolanızı mı unuttunuz?",
     "GoToLogin": "Girişe git",
+    "HidePassword": "Parolayı gizle",
     "InvalidChangePasswordToken": "Geçersiz Jeton",
     "InvalidChangePasswordTokenMessage": "Şifreyi değiştirmek için verilen jetonda hata var. Lütfen şifre değiştirmek için başka bir e-posta gönderin ve tekrar deneyin.",
     "LeaveService": "Hizmetten Ayrıl",
@@ -2353,6 +2354,7 @@
     "ServerUnreachable": "Sunucuya bağlanılamıyor. Lütfen API uç noktasını kontrol edin ve tekrar deneyin.",
     "SessionExpired": "Oturum açma oturumunuzun süresi doldu. Lütfen tekrar giriş yapın.",
     "SessionMode": "Oturum",
+    "ShowPassword": "Parolayı göster",
     "SignUp": "kaydol",
     "SignoutFinished": "Oturum kapatma işlemi tamamlandı.",
     "singleSignOn": {

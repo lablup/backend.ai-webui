@@ -37,6 +37,7 @@ import { Banner } from '@lablup/ui-common/Banner';
 import { Button } from '@lablup/ui-common/Button';
 import { Heading } from '@lablup/ui-common/Heading';
 import { IconButton } from '@lablup/ui-common/IconButton';
+import { InputGroup } from '@lablup/ui-common/InputGroup';
 import { Link } from '@lablup/ui-common/Link';
 import { Spinner } from '@lablup/ui-common/Spinner';
 import { Text } from '@lablup/ui-common/Text';
@@ -59,6 +60,8 @@ import {
   Info,
   ChevronRight,
   TriangleAlert,
+  Eye,
+  EyeOff,
 } from 'lucide-react';
 import React, { ReactNode, Suspense, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -360,8 +363,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
                   name="password"
                   style={{ marginBottom: token('--spacing-3') }}
                 >
-                  <BAITextInput
-                    type="password"
+                  <PasswordRevealInput
                     aria-label={t('login.Password', { postProcess: [] })}
                     placeholder={t('login.Password', { postProcess: [] })}
                     autoComplete="current-password"
@@ -756,6 +758,30 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
         />
       </BAIUnmountAfterClose>
     </>
+  );
+};
+
+// Form.Item injects value/onChange here; they pass straight to the input.
+const PasswordRevealInput: React.FC<
+  Omit<React.ComponentProps<typeof BAITextInput>, 'type'>
+> = (props) => {
+  'use memo';
+  const { t } = useTranslation();
+  const [isRevealed, setIsRevealed] = useState(false);
+  const toggleLabel = isRevealed
+    ? t('login.HidePassword')
+    : t('login.ShowPassword');
+
+  return (
+    <InputGroup label={props['aria-label'] ?? toggleLabel} isLabelHidden>
+      <BAITextInput {...props} type={isRevealed ? 'text' : 'password'} />
+      <IconButton
+        icon={isRevealed ? <EyeOff size="1em" /> : <Eye size="1em" />}
+        label={toggleLabel}
+        isDisabled={props.disabled}
+        onClick={() => setIsRevealed((v) => !v)}
+      />
+    </InputGroup>
   );
 };
 
