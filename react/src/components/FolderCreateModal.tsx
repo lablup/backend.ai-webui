@@ -2,7 +2,10 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { FolderCreateModalAutoMountMutation } from '../__generated__/FolderCreateModalAutoMountMutation.graphql';
+import {
+  FolderCreateModalAutoMountMutation,
+  FolderCreateModalAutoMountMutation$data,
+} from '../__generated__/FolderCreateModalAutoMountMutation.graphql';
 import { FolderCreateModalAutoMountPermissionQuery } from '../__generated__/FolderCreateModalAutoMountPermissionQuery.graphql';
 import { FolderCreateModalPermissionQuery } from '../__generated__/FolderCreateModalPermissionQuery.graphql';
 import {
@@ -69,13 +72,20 @@ export type FolderCreationResponse = NonNullable<
   FolderCreateModalProjectMutation$data['createVFolderInProject']
 >['vfolder'];
 
+export type FolderAutoMountCreationResponse = NonNullable<
+  FolderCreateModalAutoMountMutation$data['createVfolderAutoMount']
+>['vfolderAutoMount'];
+
 export interface FolderCreateModalProps extends Omit<
   BAIModalProps,
   'isOpen' | 'onOpenChange'
 > {
   /** App-level contract, kept: 9 consumers outside this area use it. */
   open?: boolean;
-  onRequestClose: (response?: FolderCreationResponse) => void;
+  onRequestClose: (
+    response?: FolderCreationResponse,
+    autoMountResponse?: FolderAutoMountCreationResponse,
+  ) => void;
   /**
    * Explicit project prop contract (ADR-0001). The page decides the project
    * context; this modal never reads the ambient current project.
@@ -329,6 +339,7 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
     }
 
     let autoMountError: string | undefined;
+    let autoMountResults: FolderAutoMountCreationResponse | undefined;
     if (wantsAutoMountSetting && vfolderResults && autoMountTarget) {
       // The folder exists by now; a refused auto-mount is reported, not undone.
       await commitCreateAutoMountMutation({
@@ -343,10 +354,14 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
           subpath: values.auto_mount_subpath?.trim() || '.',
           mountPermission: values.auto_mount_permission ?? 'READ_WRITE',
         },
-      }).catch((error) => {
-        logger.error(error);
-        autoMountError = getErrorMessage(error);
-      });
+      })
+        .then((res) => {
+          autoMountResults = res?.createVfolderAutoMount?.vfolderAutoMount;
+        })
+        .catch((error) => {
+          logger.error(error);
+          autoMountError = getErrorMessage(error);
+        });
     }
 
     if (vfolderResults) {
@@ -374,7 +389,7 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
       });
     }
 
-    onRequestClose(vfolderResults);
+    onRequestClose(vfolderResults, autoMountResults);
   };
 
   return (
