@@ -99,6 +99,14 @@ describe('groupFailureCauses', () => {
     ).toBe('Session <id> not found (port <n>)');
   });
 
+  it('masks times, hex ids and decimals too', () => {
+    expect(
+      normalizeFailureMessage(
+        'container 9f86d081884c7d65 failed at 2026-11-17T10:20:31Z asking 12.5 GiB',
+      ),
+    ).toBe('container <id> failed at <time> asking <n> GiB');
+  });
+
   it('groups by action and message, most frequent first, with shares', () => {
     const causes = groupFailureCauses([
       { actionName: 'create', description: 'quota exceeded' },

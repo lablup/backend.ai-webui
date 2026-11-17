@@ -157,15 +157,21 @@ export const queueWaitStats = (
 /** The failed audit entries the cause card groups, newest first. */
 export const FAILURE_CAUSE_SAMPLE_SIZE = 500;
 
+const ISO_TIME_PATTERN =
+  /\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}(:\d{2}(\.\d+)?)?(Z|[+-]\d{2}:?\d{2})?/g;
 const UUID_PATTERN =
   /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/gi;
-const LONG_NUMBER_PATTERN = /\b\d{4,}\b/g;
+// Container, image and request ids; 8+ hex characters with at least one digit.
+const HEX_ID_PATTERN = /\b(?=[0-9a-f]*\d)[0-9a-f]{8,}\b/gi;
+const NUMBER_PATTERN = /\b\d+\.\d+\b|\b\d{4,}\b/g;
 
-/** A message with its ids and long numbers masked, so one cause about many entities groups as one. */
+/** A message with its times, ids and numbers masked, so one cause about many entities groups as one. */
 export const normalizeFailureMessage = (message: string): string =>
   message
+    .replace(ISO_TIME_PATTERN, '<time>')
     .replace(UUID_PATTERN, '<id>')
-    .replace(LONG_NUMBER_PATTERN, '<n>')
+    .replace(HEX_ID_PATTERN, '<id>')
+    .replace(NUMBER_PATTERN, '<n>')
     .replace(/\s+/g, ' ')
     .trim();
 

@@ -389,6 +389,8 @@ const PROJECT_ADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
       admin: 'webui.menu.Deployments',
     }),
     defaultSize: size(2, 3),
+    // A full-width list on the superadmin board, where no 4-column card pairs with it.
+    defaultSizeByPage: { admin: size(6, 3) },
     minSize: size(2, 2),
     columnSettings: true,
   },
@@ -750,8 +752,8 @@ const PAGE_ORDER: Record<PanelPage, ReadonlyArray<string>> = {
     'activeAgents',
     'totalResourceWithinResourceGroup',
     'sessionsCreated',
-    'projectDeployments',
     'foldersByUsageMode',
+    'projectDeployments',
     // The audit log cards stay together, failures first.
     'topFailureCauses',
     'failuresByEntityType',

@@ -21,6 +21,7 @@ import {
 } from './superadminCardData';
 import { Text } from '@lablup/ui-common/Text';
 import {
+  BAIAuditLogActionName,
   BAIFlex,
   BAILink,
   BAIModal,
@@ -37,7 +38,7 @@ import { graphql, useLazyLoadQuery } from 'react-relay';
 /** The causes the card lists; the rest are in the sampled total. */
 const MAX_CAUSES = 10;
 
-// TODO(needs-backend): #11266 - a failure count grouped by cause would replace the client-side grouping.
+// TODO(needs-backend): #11284 - a failure count grouped by cause would replace the client-side grouping.
 const FailureCauses: React.FC<{
   scope: AuditLogScope;
   timeRange: DateTimeWindow;
@@ -77,6 +78,8 @@ const FailureCauses: React.FC<{
     { fetchPolicy: 'store-and-network', fetchKey },
   );
   const failures = readPrimary(data.failures);
+  // A failed read must not look like a range with no failures.
+  if (!failures) throw new Error('Could not read the failed audit log entries');
   const entries = filterOutNullAndUndefined(
     failures?.edges.map((edge) => edge?.node),
   );
@@ -112,7 +115,7 @@ const FailureCauses: React.FC<{
                   setIsListOpen(true);
                 }}
               >
-                {cause.actionName || '-'}
+                <BAIAuditLogActionName actionName={cause.actionName} />
               </BAILink>
             ),
           },
@@ -144,9 +147,12 @@ const FailureCauses: React.FC<{
       <BAIUnmountAfterClose>
         <BAIModal
           open={isListOpen}
-          title={t('dashboard.card.FailuresOfAction', {
-            action: listed?.actionName ?? '',
-          })}
+          title={
+            <>
+              {t('dashboard.card.FailuresOfAction', { action: '' })}
+              <BAIAuditLogActionName actionName={listed?.actionName} />
+            </>
+          }
           width={1400}
           footer={null}
           onCancel={() => setIsListOpen(false)}
