@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<b5bae54deccbeeda20a2591cbd2ff5b0>>
+ * @generated SignedSource<<b33e25e84226c0017b2c1142fe9970ca>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,14 +11,18 @@
 import { ConcreteRequest } from 'relay-runtime';
 import { Result } from "relay-runtime";
 export type SessionLaunchesPanelQuery$variables = {
-  failed: string;
+  cancelled: string;
+  error: string;
   pending: string;
   sampleSize: number;
   scopeId?: any | null | undefined;
   started: string;
 };
 export type SessionLaunchesPanelQuery$data = {
-  readonly failed: Result<{
+  readonly cancelled: Result<{
+    readonly count: number | null | undefined;
+  } | null | undefined, unknown>;
+  readonly error: Result<{
     readonly count: number | null | undefined;
   } | null | undefined, unknown>;
   readonly pending: Result<{
@@ -43,39 +47,44 @@ const node: ConcreteRequest = (function(){
 var v0 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "failed"
+  "name": "cancelled"
 },
 v1 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "pending"
+  "name": "error"
 },
 v2 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "sampleSize"
+  "name": "pending"
 },
 v3 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "scopeId"
+  "name": "sampleSize"
 },
 v4 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "started"
+  "name": "scopeId"
 },
 v5 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "started"
+},
+v6 = {
   "kind": "Literal",
   "name": "offset",
   "value": 0
 },
-v6 = {
+v7 = {
   "kind": "Variable",
   "name": "scope_id",
   "variableName": "scopeId"
 },
-v7 = [
+v8 = [
   {
     "kind": "Variable",
     "name": "filter",
@@ -86,63 +95,82 @@ v7 = [
     "name": "first",
     "variableName": "sampleSize"
   },
-  (v5/*: any*/),
+  (v6/*: any*/),
   {
     "kind": "Literal",
     "name": "order",
     "value": "-created_at"
   },
-  (v6/*: any*/)
+  (v7/*: any*/)
 ],
-v8 = {
+v9 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "count",
   "storageKey": null
 },
-v9 = {
+v10 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "created_at",
   "storageKey": null
 },
-v10 = {
+v11 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "scheduled_at",
   "storageKey": null
 },
-v11 = {
+v12 = {
   "kind": "Literal",
   "name": "first",
   "value": 1
 },
-v12 = [
-  (v8/*: any*/)
+v13 = [
+  (v9/*: any*/)
 ],
-v13 = {
-  "alias": "failed",
+v14 = {
+  "alias": "cancelled",
   "args": [
     {
       "kind": "Variable",
       "name": "filter",
-      "variableName": "failed"
+      "variableName": "cancelled"
     },
-    (v11/*: any*/),
-    (v5/*: any*/),
-    (v6/*: any*/)
+    (v12/*: any*/),
+    (v6/*: any*/),
+    (v7/*: any*/)
   ],
   "concreteType": "ComputeSessionConnection",
   "kind": "LinkedField",
   "name": "compute_session_nodes",
   "plural": false,
-  "selections": (v12/*: any*/),
+  "selections": (v13/*: any*/),
   "storageKey": null
 },
-v14 = {
+v15 = {
+  "alias": "error",
+  "args": [
+    {
+      "kind": "Variable",
+      "name": "filter",
+      "variableName": "error"
+    },
+    (v12/*: any*/),
+    (v6/*: any*/),
+    (v7/*: any*/)
+  ],
+  "concreteType": "ComputeSessionConnection",
+  "kind": "LinkedField",
+  "name": "compute_session_nodes",
+  "plural": false,
+  "selections": (v13/*: any*/),
+  "storageKey": null
+},
+v16 = {
   "alias": "pending",
   "args": [
     {
@@ -150,15 +178,15 @@ v14 = {
       "name": "filter",
       "variableName": "pending"
     },
-    (v11/*: any*/),
-    (v5/*: any*/),
-    (v6/*: any*/)
+    (v12/*: any*/),
+    (v6/*: any*/),
+    (v7/*: any*/)
   ],
   "concreteType": "ComputeSessionConnection",
   "kind": "LinkedField",
   "name": "compute_session_nodes",
   "plural": false,
-  "selections": (v12/*: any*/),
+  "selections": (v13/*: any*/),
   "storageKey": null
 };
 return {
@@ -168,7 +196,8 @@ return {
       (v1/*: any*/),
       (v2/*: any*/),
       (v3/*: any*/),
-      (v4/*: any*/)
+      (v4/*: any*/),
+      (v5/*: any*/)
     ],
     "kind": "Fragment",
     "metadata": null,
@@ -178,13 +207,13 @@ return {
         "kind": "CatchField",
         "field": {
           "alias": "started",
-          "args": (v7/*: any*/),
+          "args": (v8/*: any*/),
           "concreteType": "ComputeSessionConnection",
           "kind": "LinkedField",
           "name": "compute_session_nodes",
           "plural": false,
           "selections": [
-            (v8/*: any*/),
+            (v9/*: any*/),
             {
               "alias": null,
               "args": null,
@@ -201,8 +230,8 @@ return {
                   "name": "node",
                   "plural": false,
                   "selections": [
-                    (v9/*: any*/),
-                    (v10/*: any*/)
+                    (v10/*: any*/),
+                    (v11/*: any*/)
                   ],
                   "storageKey": null
                 }
@@ -216,12 +245,17 @@ return {
       },
       {
         "kind": "CatchField",
-        "field": (v13/*: any*/),
+        "field": (v14/*: any*/),
         "to": "RESULT"
       },
       {
         "kind": "CatchField",
-        "field": (v14/*: any*/),
+        "field": (v15/*: any*/),
+        "to": "RESULT"
+      },
+      {
+        "kind": "CatchField",
+        "field": (v16/*: any*/),
         "to": "RESULT"
       }
     ],
@@ -231,24 +265,25 @@ return {
   "kind": "Request",
   "operation": {
     "argumentDefinitions": [
-      (v3/*: any*/),
       (v4/*: any*/),
+      (v5/*: any*/),
       (v0/*: any*/),
       (v1/*: any*/),
-      (v2/*: any*/)
+      (v2/*: any*/),
+      (v3/*: any*/)
     ],
     "kind": "Operation",
     "name": "SessionLaunchesPanelQuery",
     "selections": [
       {
         "alias": "started",
-        "args": (v7/*: any*/),
+        "args": (v8/*: any*/),
         "concreteType": "ComputeSessionConnection",
         "kind": "LinkedField",
         "name": "compute_session_nodes",
         "plural": false,
         "selections": [
-          (v8/*: any*/),
+          (v9/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -265,8 +300,8 @@ return {
                 "name": "node",
                 "plural": false,
                 "selections": [
-                  (v9/*: any*/),
                   (v10/*: any*/),
+                  (v11/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -283,21 +318,22 @@ return {
         ],
         "storageKey": null
       },
-      (v13/*: any*/),
-      (v14/*: any*/)
+      (v14/*: any*/),
+      (v15/*: any*/),
+      (v16/*: any*/)
     ]
   },
   "params": {
-    "cacheID": "414bfd174fe76ce397837599f838e2a2",
+    "cacheID": "70e5dda33e6a7bcd795f1824e574c3f9",
     "id": null,
     "metadata": {},
     "name": "SessionLaunchesPanelQuery",
     "operationKind": "query",
-    "text": "query SessionLaunchesPanelQuery(\n  $scopeId: ScopeField\n  $started: String!\n  $failed: String!\n  $pending: String!\n  $sampleSize: Int!\n) {\n  started: compute_session_nodes(scope_id: $scopeId, first: $sampleSize, offset: 0, filter: $started, order: \"-created_at\") {\n    count\n    edges {\n      node {\n        created_at\n        scheduled_at\n        id\n      }\n    }\n  }\n  failed: compute_session_nodes(scope_id: $scopeId, first: 1, offset: 0, filter: $failed) {\n    count\n  }\n  pending: compute_session_nodes(scope_id: $scopeId, first: 1, offset: 0, filter: $pending) {\n    count\n  }\n}\n"
+    "text": "query SessionLaunchesPanelQuery(\n  $scopeId: ScopeField\n  $started: String!\n  $cancelled: String!\n  $error: String!\n  $pending: String!\n  $sampleSize: Int!\n) {\n  started: compute_session_nodes(scope_id: $scopeId, first: $sampleSize, offset: 0, filter: $started, order: \"-created_at\") {\n    count\n    edges {\n      node {\n        created_at\n        scheduled_at\n        id\n      }\n    }\n  }\n  cancelled: compute_session_nodes(scope_id: $scopeId, first: 1, offset: 0, filter: $cancelled) {\n    count\n  }\n  error: compute_session_nodes(scope_id: $scopeId, first: 1, offset: 0, filter: $error) {\n    count\n  }\n  pending: compute_session_nodes(scope_id: $scopeId, first: 1, offset: 0, filter: $pending) {\n    count\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "0c37fa3617773048309a34cd1e26c3de";
+(node as any).hash = "46314760f2f1ac4f03221279595d950f";
 
 export default node;

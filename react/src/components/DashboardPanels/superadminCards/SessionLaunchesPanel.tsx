@@ -28,7 +28,7 @@ import { graphql, useLazyLoadQuery } from 'react-relay';
 /** The newest started sessions the queue wait is computed over. */
 const WAIT_SAMPLE_SIZE = 100;
 
-// TODO(needs-backend): #11265 - a server-side queue wait aggregate would replace the sample.
+// TODO(needs-backend): #11284 - a server-side queue wait aggregate would replace the sample.
 const SessionLaunches: React.FC<{
   scopeId: string;
   timeRange: DateTimeWindow;
@@ -39,7 +39,8 @@ const SessionLaunches: React.FC<{
   const variables = useDeferredValue({
     scopeId,
     started: launchOutcomeFilter(timeRange, 'started'),
-    failed: launchOutcomeFilter(timeRange, 'failed'),
+    cancelled: launchOutcomeFilter(timeRange, 'cancelled'),
+    error: launchOutcomeFilter(timeRange, 'error'),
     pending: launchOutcomeFilter(timeRange, 'pending'),
     sampleSize: WAIT_SAMPLE_SIZE,
   });
@@ -48,7 +49,8 @@ const SessionLaunches: React.FC<{
       query SessionLaunchesPanelQuery(
         $scopeId: ScopeField
         $started: String!
-        $failed: String!
+        $cancelled: String!
+        $error: String!
         $pending: String!
         $sampleSize: Int!
       ) {
@@ -67,11 +69,19 @@ const SessionLaunches: React.FC<{
             }
           }
         }
-        failed: compute_session_nodes(
+        cancelled: compute_session_nodes(
           scope_id: $scopeId
           first: 1
           offset: 0
-          filter: $failed
+          filter: $cancelled
+        ) @catch(to: RESULT) {
+          count
+        }
+        error: compute_session_nodes(
+          scope_id: $scopeId
+          first: 1
+          offset: 0
+          filter: $error
         ) @catch(to: RESULT) {
           count
         }
@@ -89,13 +99,14 @@ const SessionLaunches: React.FC<{
     { fetchPolicy: 'store-and-network', fetchKey },
   );
   const counts = readCounts(data, LAUNCH_OUTCOMES);
-  const started = readPrimary(data.started);
-  const wait = queueWaitStats(
-    filterOutNullAndUndefined(started?.edges.map((edge) => edge?.node)),
+  const sampled = filterOutNullAndUndefined(
+    readPrimary(data.started)?.edges.map((edge) => edge?.node),
   );
+  const wait = queueWaitStats(sampled);
   const labels = {
     started: t('dashboard.card.LaunchStarted'),
-    failed: t('dashboard.card.LaunchFailed'),
+    cancelled: t('dashboard.card.LaunchCancelled'),
+    error: t('dashboard.card.Error'),
     pending: t('dashboard.card.Pending'),
   };
   return (
@@ -125,11 +136,11 @@ const SessionLaunches: React.FC<{
           },
         ]}
       />
-      {wait && (started?.count ?? 0) > wait.sampled ? (
+      {wait && (counts.started ?? 0) > sampled.length ? (
         <Text type="supporting" size="sm">
           {t('dashboard.card.QueueWaitSampled', {
-            sampled: wait.sampled,
-            total: started?.count ?? 0,
+            sampled: sampled.length,
+            total: counts.started,
           })}
         </Text>
       ) : null}

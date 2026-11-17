@@ -90,7 +90,6 @@ export const entityTypeFailureFilters = (
 /** Legacy session statuses by launch outcome; every status is in exactly one. */
 export const LAUNCH_OUTCOME_STATUSES = {
   started: [
-    'RESERVED',
     'SCHEDULED',
     'PREPARING',
     'PULLING',
@@ -103,13 +102,16 @@ export const LAUNCH_OUTCOME_STATUSES = {
     'TERMINATING',
     'TERMINATED',
   ],
-  failed: ['CANCELLED', 'ERROR'],
-  pending: ['PENDING', 'PREEMPTED', 'RESCHEDULING'],
+  cancelled: ['CANCELLED'],
+  // The manager does not say whether an error came before or after start.
+  error: ['ERROR'],
+  pending: ['PENDING', 'PREEMPTED', 'RESCHEDULING', 'RESERVED'],
 } as const;
 export type LaunchOutcome = keyof typeof LAUNCH_OUTCOME_STATUSES;
 export const LAUNCH_OUTCOMES: ReadonlyArray<LaunchOutcome> = [
   'started',
-  'failed',
+  'cancelled',
+  'error',
   'pending',
 ];
 

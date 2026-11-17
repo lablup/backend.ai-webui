@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { SESSION_STATUSES } from '../sessionFilterProperties';
 import { withinWindow } from '../timeRange';
 import {
   AUDIT_ENTITY_TYPES,
@@ -42,14 +43,15 @@ describe('launchOutcomeFilter', () => {
   };
 
   it('narrows the window to the outcome statuses', () => {
-    expect(launchOutcomeFilter(window, 'failed')).toBe(
-      'created_at >= "2026-10-26T00:00:00.000Z" & created_at < "2026-10-27T00:00:00.000Z" & status in ["CANCELLED","ERROR"]',
+    expect(launchOutcomeFilter(window, 'pending')).toBe(
+      'created_at >= "2026-10-26T00:00:00.000Z" & created_at < "2026-10-27T00:00:00.000Z" & status in ["PENDING","PREEMPTED","RESCHEDULING","RESERVED"]',
     );
   });
 
-  it('puts every status in exactly one outcome', () => {
+  it('puts every legacy session status in exactly one outcome', () => {
     const all = Object.values(LAUNCH_OUTCOME_STATUSES).flat();
     expect(new Set(all).size).toBe(all.length);
+    expect([...all].sort()).toEqual([...SESSION_STATUSES].sort());
   });
 });
 
