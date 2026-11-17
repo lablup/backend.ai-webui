@@ -69,10 +69,11 @@ const SessionLauncherStorageStep: React.FC<{
         autoMountScopeType={
           project.id === personalProject?.id ? 'USER' : 'PROJECT'
         }
-        onRequestClose={(response) => {
+        onRequestClose={(response, autoMountResponse) => {
           setIsCreateModalOpen(false);
           if (!response) return;
           mountConfigInputRef.current?.refetch();
+          if (autoMountResponse) return;
           const vfolderId = response.entityId;
           const mounts = form.getFieldValue('vfolderMounts') ?? [];
           if (_.some(mounts, (mount) => mount.vfolderId === vfolderId)) return;
