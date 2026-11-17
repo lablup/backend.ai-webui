@@ -383,6 +383,7 @@
     "RemoveAutoMountConfirm": "Bu klasörün otomatik bağlanması durdurulsun mu?",
     "ScopeProject": "Projede ayarlandı",
     "ScopeUser": "Kullanıcıda ayarlandı",
+    "SetOnOtherUserAutoMount": "Bu otomatik bağlama sizin için değil, klasör sahibi {{email}} için ayarlanır.",
     "Subpath": "Alt yol",
     "SubpathDesc": "Klasör içinde bağlanacak yol. '.' klasörün tamamını bağlar."
   },

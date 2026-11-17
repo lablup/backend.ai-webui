@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<6a903b67e6bffd0887cee585fadf94e3>>
+ * @generated SignedSource<<92a3e8982c2f0f04dc7923cefd4f29be>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -21,6 +21,7 @@ export type VFolderAutoMountMetadataSectionFragment$data = {
     readonly name: string;
   };
   readonly ownership: {
+    readonly creatorEmail: string | null | undefined;
     readonly creatorId: string | null | undefined;
     readonly project: {
       readonly basicInfo: {
@@ -117,6 +118,13 @@ const node: ReaderFragment = {
           "storageKey": null
         },
         {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "creatorEmail",
+          "storageKey": null
+        },
+        {
           "kind": "CatchField",
           "field": {
             "alias": null,
@@ -162,6 +170,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "0457fd4fa4d1c1f34d0d54d6243efe98";
+(node as any).hash = "af649adbe646d6afbd277b211aed53cb";
 
 export default node;

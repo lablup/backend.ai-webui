@@ -383,6 +383,7 @@
     "RemoveAutoMountConfirm": "Arrêter le montage automatique de ce dossier ?",
     "ScopeProject": "Défini sur le projet",
     "ScopeUser": "Défini sur l'utilisateur",
+    "SetOnOtherUserAutoMount": "Ce montage automatique est défini pour {{email}}, le propriétaire du dossier, et non pour vous.",
     "Subpath": "Sous-chemin",
     "SubpathDesc": "Chemin dans le dossier à monter. '.' monte le dossier entier."
   },

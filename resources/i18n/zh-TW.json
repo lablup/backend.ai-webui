@@ -383,6 +383,7 @@
     "RemoveAutoMountConfirm": "停止自動掛載此資料夾?",
     "ScopeProject": "在專案中設定",
     "ScopeUser": "在使用者中設定",
+    "SetOnOtherUserAutoMount": "此自動掛載將設定在資料夾擁有者 {{email}} 名下，而不是您。",
     "Subpath": "子路徑",
     "SubpathDesc": "要掛載的資料夾內路徑。'.' 表示掛載整個資料夾。"
   },

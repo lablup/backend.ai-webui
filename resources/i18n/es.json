@@ -383,6 +383,7 @@
     "RemoveAutoMountConfirm": "¿Dejar de montar automáticamente esta carpeta?",
     "ScopeProject": "Definido en el proyecto",
     "ScopeUser": "Definido en el usuario",
+    "SetOnOtherUserAutoMount": "Este montaje automático se establece para {{email}}, el propietario de la carpeta, no para usted.",
     "Subpath": "Subruta",
     "SubpathDesc": "Ruta dentro de la carpeta que se monta. '.' monta la carpeta completa."
   },

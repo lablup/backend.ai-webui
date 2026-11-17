@@ -383,6 +383,7 @@
     "RemoveAutoMountConfirm": "Hentikan mount otomatis folder ini?",
     "ScopeProject": "Diatur pada proyek",
     "ScopeUser": "Diatur pada pengguna",
+    "SetOnOtherUserAutoMount": "Mount otomatis ini diatur untuk {{email}}, pemilik folder, bukan untuk Anda.",
     "Subpath": "Subpath",
     "SubpathDesc": "Path di dalam folder yang di-mount. '.' me-mount seluruh folder."
   },

@@ -383,6 +383,7 @@
     "RemoveAutoMountConfirm": "Interrompere il montaggio automatico di questa cartella?",
     "ScopeProject": "Impostato sul progetto",
     "ScopeUser": "Impostato sull'utente",
+    "SetOnOtherUserAutoMount": "Questo montaggio automatico viene impostato per {{email}}, il proprietario della cartella, non per te.",
     "Subpath": "Sottopercorso",
     "SubpathDesc": "Percorso all'interno della cartella da montare. '.' monta l'intera cartella."
   },

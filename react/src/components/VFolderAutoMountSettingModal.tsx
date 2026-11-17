@@ -8,6 +8,7 @@ import type { VFolderAutoMountSettingModalUpdateMutation } from '../__generated_
 import { App } from '../app-shim';
 import { Form, type FormInstance } from '../form-engine';
 import BAIFormItem from './BAIFormItem';
+import { Banner } from '@lablup/ui-common/Banner';
 import { HStack } from '@lablup/ui-common/Stack';
 import { Text } from '@lablup/ui-common/Text';
 import {
@@ -42,6 +43,8 @@ export interface VFolderAutoMountSettingModalProps extends Omit<
   /** The auto-mount being edited; create mode when absent. */
   vfolderAutoMountFrgmt?: VFolderAutoMountSettingModalFragment$key | null;
   vfolder: { id: string; name: string };
+  /** Set when the auto-mount goes on another user's scope; shown as a notice. */
+  otherUserEmail?: string | null;
   onRequestClose: (success: boolean) => void;
 }
 
@@ -52,6 +55,7 @@ const VFolderAutoMountSettingModal: React.FC<
   scopeId,
   vfolderAutoMountFrgmt,
   vfolder,
+  otherUserEmail,
   onRequestClose,
   ...modalProps
 }) => {
@@ -162,6 +166,14 @@ const VFolderAutoMountSettingModal: React.FC<
       onCancel={() => onRequestClose(false)}
       confirmLoading={isSaving}
     >
+      {otherUserEmail ? (
+        <Banner
+          status="warning"
+          title={t('autoMount.SetOnOtherUserAutoMount', {
+            email: otherUserEmail,
+          })}
+        />
+      ) : null}
       <Form
         ref={formRef}
         layout="vertical"

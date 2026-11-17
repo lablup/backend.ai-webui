@@ -383,6 +383,7 @@
     "RemoveAutoMountConfirm": "Ngừng gắn tự động thư mục này?",
     "ScopeProject": "Đặt trên dự án",
     "ScopeUser": "Đặt trên người dùng",
+    "SetOnOtherUserAutoMount": "Tự động gắn kết này được đặt cho chủ thư mục {{email}}, không phải cho bạn.",
     "Subpath": "Đường dẫn con",
     "SubpathDesc": "Đường dẫn bên trong thư mục để gắn. '.' gắn toàn bộ thư mục."
   },

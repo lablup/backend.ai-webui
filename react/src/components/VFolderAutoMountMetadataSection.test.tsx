@@ -27,6 +27,11 @@ vi.mock('react-i18next', () => ({
   initReactI18next: { type: '3rdParty', init: () => {} },
 }));
 
+vi.mock('../hooks', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('../hooks')>()),
+  useSuspendedBackendaiClient: () => ({ user_uuid: 'viewer-user-id' }),
+}));
+
 const TestRenderer: React.FC = () => {
   'use memo';
   const { vfolderV2 } =

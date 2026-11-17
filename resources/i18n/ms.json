@@ -383,6 +383,7 @@
     "RemoveAutoMountConfirm": "Hentikan lekap automatik folder ini?",
     "ScopeProject": "Ditetapkan pada projek",
     "ScopeUser": "Ditetapkan pada pengguna",
+    "SetOnOtherUserAutoMount": "Lekap automatik ini ditetapkan untuk {{email}}, pemilik folder, bukan untuk anda.",
     "Subpath": "Sublaluan",
     "SubpathDesc": "Laluan dalam folder untuk dilekapkan. '.' melekapkan seluruh folder."
   },

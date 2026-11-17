@@ -9,6 +9,7 @@ import VFolderNodesV2AutoMountCellFragment, {
   type VFolderNodesV2AutoMountCellFragment$key,
 } from '../__generated__/VFolderNodesV2AutoMountCellFragment.graphql';
 import { App } from '../app-shim';
+import { useSuspendedBackendaiClient } from '../hooks';
 import VFolderAutoMountSettingModal, {
   type VFolderAutoMountScopeType,
 } from './VFolderAutoMountSettingModal';
@@ -48,6 +49,7 @@ const VFolderAutoMountMetadataSection: React.FC<
   const { message } = App.useApp();
   const { getErrorMessage } = useErrorMessageResolver();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const baiClient = useSuspendedBackendaiClient();
 
   // `project` is caught in this fragment, not at the explorer's node: a share
   // recipient reads the folder but not its project (#10647).
@@ -65,6 +67,7 @@ const VFolderAutoMountMetadataSection: React.FC<
           userId
           projectId
           creatorId
+          creatorEmail
           project @catch(to: NULL) {
             basicInfo {
               type
@@ -232,6 +235,11 @@ const VFolderAutoMountMetadataSection: React.FC<
             name: vfolder.metadata?.name ?? '',
           }}
           vfolderAutoMountFrgmt={autoMount}
+          otherUserEmail={
+            scope.scopeType === 'USER' && scope.scopeId !== baiClient.user_uuid
+              ? (vfolder.ownership?.creatorEmail ?? scope.scopeId)
+              : null
+          }
           onRequestClose={() => setIsModalOpen(false)}
         />
       ) : null}
