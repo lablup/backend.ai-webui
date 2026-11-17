@@ -63,7 +63,7 @@ const AUTO_MOUNTED_FOLDER_LIMIT = 100;
 
 /**
  * The ready folders the user's and the project's auto-mount settings mount
- * into a session in `scope`. Suspends. Callers passing the same scope share
+ * into a session in `scope`, without those the caller's mount level is NONE for. Suspends. Callers passing the same scope share
  * one query, so a `refetch` from any of them updates all.
  */
 export const useSuspendedAutoMountedVFolders = ({
@@ -91,6 +91,7 @@ export const useSuspendedAutoMountedVFolders = ({
                 vfolder {
                   host
                   status
+                  mountPermission
                   metadata {
                     name
                   }
@@ -111,6 +112,7 @@ export const useSuspendedAutoMountedVFolders = ({
   const autoMountedFolders: Array<AutoMountedFolder> = _.compact(
     _.map(scopedVfolderAutoMounts?.edges, ({ node }) =>
       node.vfolder?.status === 'READY' &&
+      node.vfolder.mountPermission !== 'NONE' &&
       _.includes(mountableHosts, node.vfolder.host)
         ? {
             vfolderId: node.vfolderId,
