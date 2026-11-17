@@ -12,10 +12,7 @@ import { auditEntityTypeLabels } from './chartSources';
 import { AUDIT_LOG_STATUSES } from './memberCards/memberCardData';
 import { readPrimary, type CaughtValue } from './panelPermission';
 import { getSessionFilterProperties } from './sessionFilterProperties';
-import {
-  AUDIT_ENTITY_TYPES,
-  UNLISTED_AUDIT_ENTITY_TYPES,
-} from './superadminCards/superadminCardData';
+import { AUDIT_ENTITY_TYPES } from './superadminCards/superadminCardData';
 import type {
   PanelDescriptor,
   ResourceConfig,
@@ -436,7 +433,6 @@ const auditLogConfig: ResourceConfig<resourceRegistryAuditLogQuery, unknown> = {
         const types = _.uniq([
           ...(context?.entityTypes ?? []),
           ...AUDIT_ENTITY_TYPES,
-          ...UNLISTED_AUDIT_ENTITY_TYPES,
         ]);
         const labels = auditEntityTypeLabels(t, types);
         return _.sortBy(

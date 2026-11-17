@@ -51,17 +51,6 @@ export const AUDIT_ENTITY_TYPES = [
 
 export type AuditEntityType = (typeof AUDIT_ENTITY_TYPES)[number];
 
-/** Entity types the manager writes to the audit log though `entityTypes` does not list them (manager 26.10). */
-export const UNLISTED_AUDIT_ENTITY_TYPES = [
-  'agent',
-  'auth',
-  'group',
-  'manager_admin',
-  'model_deployment',
-  'notification',
-  'vfolder_invitation',
-] as const;
-
 /** The count alias of each entity type the failure card queries. */
 export const ENTITY_TYPE_ALIASES = {
   session: 'session',

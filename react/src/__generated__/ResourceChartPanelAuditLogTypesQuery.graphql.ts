@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<9075fd5771074759e1d13fa8fadfd7b0>>
+ * @generated SignedSource<<7b6088e417a565ed09a35782807876a7>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -95,6 +95,9 @@ export type ResourceChartPanelAuditLogTypesQuery$variables = {
   scope: AuditLogScope;
 };
 export type ResourceChartPanelAuditLogTypesQuery$data = {
+  readonly entityTypes?: ReadonlyArray<{
+    readonly name: string;
+  }> | null | undefined;
   readonly newest?: Result<{
     readonly edges: ReadonlyArray<{
       readonly node: {
@@ -213,7 +216,21 @@ v10 = [
   },
   (v6/*: any*/)
 ],
-v11 = [
+v11 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "name",
+  "storageKey": null
+},
+v12 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "id",
+  "storageKey": null
+},
+v13 = [
   {
     "alias": null,
     "args": null,
@@ -231,13 +248,7 @@ v11 = [
         "plural": false,
         "selections": [
           (v8/*: any*/),
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "id",
-            "storageKey": null
-          }
+          (v12/*: any*/)
         ],
         "storageKey": null
       }
@@ -289,6 +300,22 @@ return {
               "storageKey": null
             },
             "to": "RESULT"
+          },
+          {
+            "kind": "CatchField",
+            "field": {
+              "alias": null,
+              "args": null,
+              "concreteType": "EntityType",
+              "kind": "LinkedField",
+              "name": "entityTypes",
+              "plural": true,
+              "selections": [
+                (v11/*: any*/)
+              ],
+              "storageKey": null
+            },
+            "to": "NULL"
           }
         ]
       }
@@ -319,7 +346,7 @@ return {
             "kind": "LinkedField",
             "name": "scopedAuditLogsV2",
             "plural": false,
-            "selections": (v11/*: any*/),
+            "selections": (v13/*: any*/),
             "storageKey": null
           },
           {
@@ -329,7 +356,20 @@ return {
             "kind": "LinkedField",
             "name": "scopedAuditLogsV2",
             "plural": false,
-            "selections": (v11/*: any*/),
+            "selections": (v13/*: any*/),
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "EntityType",
+            "kind": "LinkedField",
+            "name": "entityTypes",
+            "plural": true,
+            "selections": [
+              (v11/*: any*/),
+              (v12/*: any*/)
+            ],
             "storageKey": null
           }
         ]
@@ -337,16 +377,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "5d02e4c095e29c6736b9e311f73ee1c4",
+    "cacheID": "569b21e2a3766fcda516bfeccb69dac4",
     "id": null,
     "metadata": {},
     "name": "ResourceChartPanelAuditLogTypesQuery",
     "operationKind": "query",
-    "text": "query ResourceChartPanelAuditLogTypesQuery(\n  $scope: AuditLogScope!\n  $filter: AuditLogFilter\n  $limit: Int!\n  $on: Boolean!\n) {\n  newest: scopedAuditLogsV2(scope: $scope, filter: $filter, orderBy: [{field: CREATED_AT, direction: DESC}], limit: $limit) @include(if: $on) {\n    edges {\n      node {\n        entityType\n        id\n      }\n    }\n  }\n  oldest: scopedAuditLogsV2(scope: $scope, filter: $filter, orderBy: [{field: CREATED_AT, direction: ASC}], limit: $limit) @include(if: $on) {\n    edges {\n      node {\n        entityType\n        id\n      }\n    }\n  }\n}\n"
+    "text": "query ResourceChartPanelAuditLogTypesQuery(\n  $scope: AuditLogScope!\n  $filter: AuditLogFilter\n  $limit: Int!\n  $on: Boolean!\n) {\n  newest: scopedAuditLogsV2(scope: $scope, filter: $filter, orderBy: [{field: CREATED_AT, direction: DESC}], limit: $limit) @include(if: $on) {\n    edges {\n      node {\n        entityType\n        id\n      }\n    }\n  }\n  oldest: scopedAuditLogsV2(scope: $scope, filter: $filter, orderBy: [{field: CREATED_AT, direction: ASC}], limit: $limit) @include(if: $on) {\n    edges {\n      node {\n        entityType\n        id\n      }\n    }\n  }\n  entityTypes @include(if: $on) {\n    name\n    id\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "05e369ad31f46ff2cc3c0e90e8b54765";
+(node as any).hash = "53db60e94b3058b53d9e0ad3506a791f";
 
 export default node;

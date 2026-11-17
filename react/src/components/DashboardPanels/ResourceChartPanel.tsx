@@ -564,6 +564,9 @@ const useRankedAuditEntityTypes = (
                 }
               }
             }
+            entityTypes @include(if: $on) @catch(to: NULL) {
+              name
+            }
           }
         `
       : graphql`
@@ -597,6 +600,9 @@ const useRankedAuditEntityTypes = (
                 }
               }
             }
+            entityTypes @include(if: $on) @catch(to: NULL) {
+              name
+            }
           }
         `,
     sampleVariables,
@@ -605,11 +611,14 @@ const useRankedAuditEntityTypes = (
   const sampled = [sampleData.newest, sampleData.oldest].flatMap((result) =>
     result?.ok ? _.compact(result.value?.edges.map((e) => e?.node)) : [],
   );
+  // A type the manager does not list fails a count filtered by it (26.10.0a9), so only listed ones are counted.
+  const listed = new Set(
+    _.compact(sampleData.entityTypes?.map((type) => type?.name)),
+  );
   const candidates = isEnabled
-    ? _.uniq([...entityTypesByFrequency(sampled), ...AUDIT_ENTITY_TYPES]).slice(
-        0,
-        MAX_ENTITY_TYPE_CANDIDATES,
-      )
+    ? _.uniq([...entityTypesByFrequency(sampled), ...AUDIT_ENTITY_TYPES])
+        .filter((type) => listed.size === 0 || listed.has(type))
+        .slice(0, MAX_ENTITY_TYPE_CANDIDATES)
     : [];
   const countData = useLazyLoadQuery<ResourceChartPanelAuditLogTypeCountsQuery>(
     isClusterAuditScope(auditScope)
