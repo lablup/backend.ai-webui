@@ -161,8 +161,8 @@ const ISO_TIME_PATTERN =
   /\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}(:\d{2}(\.\d+)?)?(Z|[+-]\d{2}:?\d{2})?/g;
 const UUID_PATTERN =
   /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/gi;
-// Container, image and request ids; 8+ hex characters with at least one digit.
-const HEX_ID_PATTERN = /\b(?=[0-9a-f]*\d)[0-9a-f]{8,}\b/gi;
+// Container, image and request ids: 8+ hex characters with a digit and a letter, so a plain number stays a number.
+const HEX_ID_PATTERN = /\b(?=[0-9a-f]*\d)(?=[0-9a-f]*[a-f])[0-9a-f]{8,}\b/gi;
 const NUMBER_PATTERN = /\b\d+\.\d+\b|\b\d{4,}\b/g;
 
 /** A message with its times, ids and numbers masked, so one cause about many entities groups as one. */

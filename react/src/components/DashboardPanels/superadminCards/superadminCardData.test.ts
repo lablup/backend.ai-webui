@@ -107,6 +107,12 @@ describe('groupFailureCauses', () => {
     ).toBe('container <id> failed at <time> asking <n> GiB');
   });
 
+  it('keeps a long plain number a number, not an id', () => {
+    expect(normalizeFailureMessage('requested 10737418240 bytes')).toBe(
+      'requested <n> bytes',
+    );
+  });
+
   it('groups by action and message, most frequent first, with shares', () => {
     const causes = groupFailureCauses([
       { actionName: 'create', description: 'quota exceeded' },
