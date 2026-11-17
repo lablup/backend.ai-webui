@@ -25,7 +25,6 @@ import type { ScopedAuditLogQuery as ScopedAuditLogQueryType } from '../__genera
 import { formatToUUID } from '../helper';
 import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
-import { useAccessibleProjects } from '../hooks/useAccessibleProjects';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useIsProjectAgnosticPage } from '../hooks/useIsProjectAgnosticPage';
@@ -210,10 +209,6 @@ const useFolderExplorerQuery = (vfolderID: string) => {
           permissions @since(version: "26.9.0rc1")
           ownership {
             projectId
-            userId
-          }
-          accessControl {
-            ownershipType
           }
           ...FolderExplorerModalV2OwnershipFragment
           ...FolderExplorerHeaderV2Fragment
