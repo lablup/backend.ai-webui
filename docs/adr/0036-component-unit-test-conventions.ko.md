@@ -15,7 +15,7 @@
 - **Test count**: `react/src`에는 약 230개, `packages/backend.ai-ui/src`에는 약 110개의 `*.test.ts(x)` 파일이 있다. 기여자와 agent가 component를 바꿀 때마다 test를 더한다.
 - **No written convention**: `.github/instructions/react.instructions.md`는 unit test가 Vitest라는 것과 `VERIFY_TESTS=1 bash scripts/verify.sh`로 돌린다는 것만 적는다. test 파일마다 mock 방식과 범위를 제각각 정한다.
 - **Mocking in use today**: 약 40개 파일이 `relay-test-utils`의 `createMockEnvironment`를 쓰고, 8개는 `react-relay` 자체를 `vi.mock`으로 바꾼다. 많은 파일이 `useSuspendedBackendaiClient`나 `useConnectedBAIClient`를 `vi.mock`으로 바꾸고, 몇 개는 `fetch`를 `vi.stubGlobal`로 대신한다. MSW를 쓰는 test는 없다.
-- **`fetch` fallback**: `react/src/setupTests.ts`는 jsdom에 `fetch`가 없으면 fallback `global.fetch`를 설치한다. 그래서 stub을 빠뜨린 test도 `fetch`가 없어서 실패하지는 않는다.
+- **No `fetch` guard**: Node 24에서 jsdom environment는 Node 자체의 `fetch`를 그대로 두므로, `react/src/setupTests.ts`의 fallback은 실행되지 않는다. stub을 빠뜨린 test가 실제 요청을 보내도 아무것도 막지 않는다.
 - **Misuse cases in use today**: 일부 test는 type이 이미 막는 사용에 대한 error를 검사한다. 예를 들어 `packages/backend.ai-ui/src/components/BAIUnmountAfterClose.test.tsx`의 `should handle multiple children error gracefully`는 `@ts-expect-error`로 child 두 개를 넘기고 throw를 기대한다. 이런 test는 어떤 caller도 하지 않는 호출에 대한 React의 동작을 고정하고, 읽는 사람은 그것을 요구사항과 구별할 수 없다.
 
 ## 설계도
@@ -25,8 +25,8 @@ flowchart LR
   subgraph test["Vitest unit test"]
     spec["*.test.tsx<br/>render, 사용자 동작, assertion"]
     relayMock["createMockEnvironment<br/>queueOperationResolver"]
-    clientMock["client를 돌려주는 hook의<br/>vi.mock"]
-    fetchMock["vi.stubGlobal fetch"]
+    clientMock["client hook의 vi.mock<br/>또는 가짜 전역 client"]
+    fetchMock["vi.stubGlobal fetch<br/>또는 요청을 보내는 module의 vi.mock"]
   end
   component["검사 대상 component"]
   manager["Backend.AI manager<br/>닿지 않음"]
@@ -45,11 +45,18 @@ flowchart LR
 
 ### 1. 모든 API·network 경계를 mock한다
 
-- **Relay**: query나 fragment가 있는 component를 렌더하는 test는 `createMockEnvironment`로 만든 environment를 `RelayEnvironmentProvider`로 감싸서, component의 실제 query와 fragment가 돌게 한다. 렌더 중에 component가 보내는 operation은 `environment.mock.queueOperationResolver`가 응답하고, 클릭 뒤의 mutation처럼 test가 나중에 일으키는 operation은 `environment.mock.resolveMostRecentOperation`이 응답한다. 데이터는 `MockPayloadGenerator.generate(operation, resolvers)`로 만들고, resolver map에는 assertion이 읽는 field만 정한다. 기준은 `react/src/components/ImageList.test.tsx`이다. 새 test는 `react-relay`를 `vi.mock`으로 바꾸지 않는다.
-- **Backend.AI client in `react/src`**: test는 `react/src/hooks`를 `vi.mock`하면서 `importOriginal`로 다른 export를 유지하고, `useSuspendedBackendaiClient`나 `useAnonymousBackendaiClient`만 바꾼다. `ImageList.test.tsx`가 그렇게 한다. `react/vitest.config.ts`가 이미 `backend.ai-client`를 `react/__test__/backendAiClient.mock.js`로 alias하므로 어떤 test도 실제 client를 불러오지 않는다.
-- **Backend.AI client in BUI**: test는 `packages/backend.ai-ui/src/components/provider/BAIClientProvider/hooks/`의 `useConnectedBAIClient`나 `useAnonymousBAIClient`를 `vi.mock`으로 바꾼다. `BAIFileExplorer.createFolder.test.tsx`가 그렇게 한다.
-- **Partial client objects**: 가짜 client는 component가 호출하는 member만 가진다. 가짜를 만드는 곳에서 한 번, hook의 return type으로 cast한다: `as unknown as ReturnType<typeof useSuspendedBackendaiClient>`.
-- **`fetch`**: `fetch`를 직접 호출하는 component는 `vi.stubGlobal('fetch', ...)`로 test하고, test는 case마다 `vi.unstubAllGlobals`로 되돌린다.
+- **Relay queries**: query가 있는 component를 렌더하는 test는 그 component를 `RelayEnvironmentProvider` 안에 두고, provider의 environment는 `createMockEnvironment`로 만든다. 그래서 component의 실제 query와 fragment가 돈다. 데이터는 `MockPayloadGenerator.generate(operation, resolvers)`로 만들고, resolver map에는 assertion이 읽는 field만 정한다. 기준은 `react/src/components/ImageList.test.tsx`이다.
+- **Resolver queue**: `environment.mock.queueOperationResolver`의 resolver는 순서대로 쓰인다. 새 operation은 queue 맨 앞의 resolver에만 넘어가고, 그 resolver는 payload를 돌려주면 사라진다. 맨 앞 resolver가 아무것도 돌려주지 않으면 operation은 대기 상태로 남고 queue가 막힌다. test는 component가 렌더 중에 보내는 operation마다, 보내는 순서대로 resolver를 하나씩 queue에 넣는다. 클릭 뒤의 mutation처럼 test가 나중에 일으키는 operation은 `environment.mock.resolveMostRecentOperation`이 응답한다.
+- **Relay fragments only**: fragment만 읽는 component는 mock environment에서 `@relay_test_operation`을 붙인 test query 아래에 렌더한다. `react/src/components/FileBrowserButtonV2.test.tsx`가 그렇게 한다. 대신 `vi.mock('react-relay')`에서 `useFragment`가 ref를 그대로 데이터로 돌려주게 바꿀 수도 있다. `packages/backend.ai-ui/src/components/fragments/BAIRouteNodes.test.tsx`가 그렇게 한다.
+- **Shared `RelayEnvironment`**: `react/src/helper/loginSessionAuth.ts`처럼 `RelayEnvironment` module에 `fetchQuery`를 직접 부르는 코드는 그 module을 `vi.mock`해서 test한다. `react/src/helper/loginSessionAuth.test.ts`가 그렇게 한다.
+- **Backend.AI client hooks in `react/src`**: test는 `react/src/hooks`를 `vi.mock`하면서 `importOriginal`로 다른 export를 유지하고, 필요한 client hook(`useSuspendedBackendaiClient`, `useAnonymousBackendaiClient`)을 바꾼다. `ImageList.test.tsx`가 그렇게 한다.
+- **Hooks beside the client hook**: `useCurrentDomainValue` 같은 `react/src/hooks/index.tsx`의 hook은 module 안의 binding으로 실제 `useSuspendedBackendaiClient`를 부르고, mock은 그 binding을 바꾸지 않는다. test는 component가 부르는 그런 hook을 같은 `vi.mock`에서 하나씩 바꾼다. `FileBrowserButtonV2.test.tsx`가 `useCurrentDomainValue`를 그렇게 바꾼다.
+- **Global client**: `globalThis.backendaiclient`를 읽는 코드는 test가 그곳에 가짜를 넣고 case마다 지워서 test한다. `react/src/hooks/useLogout.test.ts`가 그렇게 한다.
+- **Backend.AI client in BUI**: test는 `packages/backend.ai-ui/src/components/provider/BAIClientProvider/hooks/`의 `useConnectedBAIClient`나 `useAnonymousBAIClient`를 `vi.mock`으로 바꾼다. `BAIFileExplorer.createFolder.test.tsx`가 그렇게 한다. 이 hook을 부르는 `react/src` 코드도 같은 방식으로 test한다.
+- **Partial client objects**: 가짜 client는 component가 호출하는 member만 가진다.
+- **Client package**: `react/vitest.config.ts`는 `backend.ai-client`를 빈 class를 export하는 `react/__test__/backendAiClient.mock.js`로 alias한다. client 자체의 error 처리를 검사하는 test는 `fetch`를 stub한 채 실제 `Client`를 상대 경로로 import할 수 있다. `react/src/hooks/useBackendAIAppLauncher.errors.test.ts`가 그렇게 한다.
+- **`fetch`**: `fetch`를 직접 호출하는 component는 `vi.stubGlobal('fetch', ...)`로 test하고, test는 case마다 `vi.unstubAllGlobals`로 되돌린다. 막아 주는 setup 파일이 없으므로 stub은 각 test가 직접 한다.
+- **Other request paths**: `XMLHttpRequest`로 `tus-js-client` upload를 하는 것처럼 다른 방법으로 요청을 보내는 component는 그 요청을 보내는 module을 `vi.mock`해서 test한다.
 - **No real requests**: unit test는 endpoint, credential, `config.toml`을 읽지 않는다. 실제 manager에 대한 동작은 e2e suite가 맡는다.
 - **Other mocks**: 이 절은 API·network 경계만 다룬다. component가 렌더하는 데 필요하면 test는 여전히 `react-i18next`, router, browser API를 mock할 수 있다.
 
@@ -70,7 +77,7 @@ flowchart LR
 ### 4. 규칙을 적어 두는 곳
 
 - **This ADR**: 규칙은 여기 있다. `AGENTS.md`(`CLAUDE.md`로 읽힌다)의 Core Guidelines에 여기를 가리키는 짧은 `Unit Tests` 항목이 있어서, test를 쓰는 agent가 매 session 규칙을 불러온다.
-- **Existing files**: tree 전체를 한 번에 고치지 않는다. test 파일은 다른 이유로 그 파일을 고칠 때 1~3절에 맞춘다.
+- **Existing files**: tree 전체를 한 번에 고치지 않는다. 변경은 자기가 추가하거나 고치는 case를 1~3절에 맞추고, 같은 파일의 다른 case는 그대로 둔다.
 
 ## 대안과 기각 사유
 
@@ -81,11 +88,11 @@ flowchart LR
 
 ## Consequences
 
-- **Faster, stable runs**: 어떤 unit test도 돌고 있는 manager에 의존하지 않으므로, Vitest suite는 CI와 어느 machine에서나 같게 돈다.
+- **Stable runs**: 1절을 따르는 test는 돌고 있는 manager에 의존하지 않으므로 CI와 어느 machine에서나 같게 돈다. `fetch` stub을 빠뜨린 test는 예외다. 어떤 setup 파일도 그 요청을 막지 않기 때문이다.
 - **Fewer cases per component**: 새 component는 그 목적에 대한 test와 함께 들어온다. reviewer는 test를 case 개수가 아니라 그 동작이 의도된 것인지로 판단한다.
 - **Misuse can regress unseen**: 동작이 바뀐 잘못된 사용은 사용자가 만나기 전까지 잡히지 않는다. 그때 수정이 test를 추가한다.
-- **Mixed tree**: 잘못된 사용을 검사하거나 type을 넘어서는 기존 test는 그 파일을 고칠 때까지 남는다. 한동안 읽는 사람은 두 방식을 모두 만난다.
-- **Mock drift**: mock한 client object나 payload가 실제 API와 어긋나도 unit test는 통과한다. 그것은 e2e suite와 component에 대한 `tsc`가 잡는다.
+- **Mixed tree**: 잘못된 사용을 검사하거나 type을 넘어서는 기존 test는 변경이 그 case를 고칠 때까지 남는다. 읽는 사람은 한 파일 안에서 두 방식을 모두 만날 수 있다.
+- **Mock drift**: `vi.mock` factory가 돌려주는 가짜 client는 client에 대해 type 검사를 받지 않으므로, 실제 API와 어긋나도 unit test는 통과한다. resolver map의 값과 ref를 그대로 돌려주는 `useFragment` mock도 schema에 대해 검사받지 않는다. 그런 어긋남은 e2e suite만 잡는다.
 
 ## 출처
 

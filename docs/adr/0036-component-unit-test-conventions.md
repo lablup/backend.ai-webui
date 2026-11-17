@@ -15,7 +15,7 @@
 - **Test count**: `react/src` holds about 230 `*.test.ts(x)` files and `packages/backend.ai-ui/src` about 110. Contributors and agents add more with each component change.
 - **No written convention**: `.github/instructions/react.instructions.md` says only that unit tests are Vitest and how `VERIFY_TESTS=1 bash scripts/verify.sh` runs them. Each test file chooses its own mocking and its own scope.
 - **Mocking in use today**: About 40 files use `createMockEnvironment` from `relay-test-utils`, and 8 replace `react-relay` itself with `vi.mock`. Many files replace `useSuspendedBackendaiClient` or `useConnectedBAIClient` through `vi.mock`, and a few stub `fetch` with `vi.stubGlobal`. No test uses MSW.
-- **`fetch` fallback**: `react/src/setupTests.ts` installs a fallback `global.fetch` when jsdom has none, so a test that forgets its stub does not fail on a missing `fetch`.
+- **No `fetch` guard**: Under Node 24 the jsdom environment keeps Node's own `fetch`, so the fallback in `react/src/setupTests.ts` never runs. Nothing stops a test that forgets its stub from sending a real request.
 - **Misuse cases in use today**: some tests assert errors for usage the types already reject, for example `should handle multiple children error gracefully` in `packages/backend.ai-ui/src/components/BAIUnmountAfterClose.test.tsx`, which passes two children under `@ts-expect-error` and expects a throw. Such a test fixes React's behavior for a call no caller makes, and a reader cannot tell it from a requirement.
 
 ## Diagram
@@ -25,8 +25,8 @@ flowchart LR
   subgraph test["Vitest unit test"]
     spec["*.test.tsx<br/>render, user actions, assertions"]
     relayMock["createMockEnvironment<br/>queueOperationResolver"]
-    clientMock["vi.mock of the hook<br/>that returns the client"]
-    fetchMock["vi.stubGlobal fetch"]
+    clientMock["vi.mock of the client hooks<br/>or a fake global client"]
+    fetchMock["vi.stubGlobal fetch<br/>or vi.mock of the sending module"]
   end
   component["Component under test"]
   manager["Backend.AI manager<br/>never reached"]
@@ -45,11 +45,18 @@ flowchart LR
 
 ### 1. Every API and network boundary is mocked
 
-- **Relay**: A test that renders a component with a query or fragment wraps it in `RelayEnvironmentProvider` with an environment from `createMockEnvironment`, so the component's real queries and fragments run. `environment.mock.queueOperationResolver` answers operations the component sends during render; `environment.mock.resolveMostRecentOperation` answers one the test triggers later, such as a mutation after a click. Data comes from `MockPayloadGenerator.generate(operation, resolvers)`, with a resolver map that sets only the fields the assertion reads. `react/src/components/ImageList.test.tsx` is the reference. A new test does not replace `react-relay` with `vi.mock`.
-- **Backend.AI client in `react/src`**: A test replaces `useSuspendedBackendaiClient` or `useAnonymousBackendaiClient` with a `vi.mock` of `react/src/hooks` that keeps the other exports through `importOriginal`, as `ImageList.test.tsx` does. `react/vitest.config.ts` already aliases `backend.ai-client` to `react/__test__/backendAiClient.mock.js`, so no test loads the real client.
-- **Backend.AI client in BUI**: A test replaces `useConnectedBAIClient` or `useAnonymousBAIClient` from `packages/backend.ai-ui/src/components/provider/BAIClientProvider/hooks/` with `vi.mock`, as `BAIFileExplorer.createFolder.test.tsx` does.
-- **Partial client objects**: The fake client holds only the members the component calls. It is typed with one cast to the hook's return type, `as unknown as ReturnType<typeof useSuspendedBackendaiClient>`, written once where the fake is built.
-- **`fetch`**: A component that calls `fetch` directly is tested with `vi.stubGlobal('fetch', ...)`, and the test restores it with `vi.unstubAllGlobals` after each case.
+- **Relay queries**: A test that renders a component with a query puts it inside `RelayEnvironmentProvider`, whose environment comes from `createMockEnvironment`, so the component's real queries and fragments run. Data comes from `MockPayloadGenerator.generate(operation, resolvers)`, with a resolver map that sets only the fields the assertion reads. `react/src/components/ImageList.test.tsx` is the reference.
+- **Resolver queue**: `environment.mock.queueOperationResolver` resolvers are consumed in order. Each new operation is offered only to the resolver at the head of the queue, which is removed once it returns a payload; a head resolver that returns nothing leaves the operation pending and blocks the queue. A test queues one resolver per operation the component sends during render, in the order the component sends them. `environment.mock.resolveMostRecentOperation` answers an operation the test triggers later, such as a mutation after a click.
+- **Relay fragments only**: A component that only reads a fragment is rendered under a test query marked `@relay_test_operation` in a mock environment, as `react/src/components/FileBrowserButtonV2.test.tsx` does. A test may instead replace `useFragment` in a `vi.mock('react-relay')` that returns the ref as the data, as `packages/backend.ai-ui/src/components/fragments/BAIRouteNodes.test.tsx` does.
+- **Shared `RelayEnvironment`**: Code that calls `fetchQuery` on the `RelayEnvironment` module, such as `react/src/helper/loginSessionAuth.ts`, is tested with a `vi.mock` of that module, as `react/src/helper/loginSessionAuth.test.ts` does.
+- **Backend.AI client hooks in `react/src`**: A test replaces the client hooks it needs (`useSuspendedBackendaiClient`, `useAnonymousBackendaiClient`) in a `vi.mock` of `react/src/hooks` that keeps the other exports through `importOriginal`, as `ImageList.test.tsx` does.
+- **Hooks beside the client hook**: Hooks in `react/src/hooks/index.tsx` such as `useCurrentDomainValue` call the real `useSuspendedBackendaiClient` through the module's own binding, which the mock does not replace. A test replaces each such hook the component calls in the same `vi.mock`, as `FileBrowserButtonV2.test.tsx` does with `useCurrentDomainValue`.
+- **Global client**: Code that reads `globalThis.backendaiclient` is tested with a fake assigned there and removed after each case, as `react/src/hooks/useLogout.test.ts` does.
+- **Backend.AI client in BUI**: A test replaces `useConnectedBAIClient` or `useAnonymousBAIClient` from `packages/backend.ai-ui/src/components/provider/BAIClientProvider/hooks/` with `vi.mock`, as `BAIFileExplorer.createFolder.test.tsx` does. `react/src` code that calls these hooks is tested the same way.
+- **Partial client objects**: The fake client holds only the members the component calls.
+- **Client package**: `react/vitest.config.ts` aliases `backend.ai-client` to `react/__test__/backendAiClient.mock.js`, which exports empty classes. A test of the client's own error handling may import the real `Client` by relative path with `fetch` stubbed, as `react/src/hooks/useBackendAIAppLauncher.errors.test.ts` does.
+- **`fetch`**: A component that calls `fetch` directly is tested with `vi.stubGlobal('fetch', ...)`, and the test restores it with `vi.unstubAllGlobals` after each case. No setup file installs a guard, so the stub is each test's own job.
+- **Other request paths**: A component that sends a request another way, such as an upload through `tus-js-client` over `XMLHttpRequest`, is tested with a `vi.mock` of the module that sends it.
 - **No real requests**: A unit test never reads an endpoint, a credential, or `config.toml`. Behavior against a real manager belongs to the e2e suites.
 - **Other mocks**: This section governs only API and network boundaries. A test may still mock `react-i18next`, the router, or a browser API when the component needs it to render.
 
@@ -70,7 +77,7 @@ flowchart LR
 ### 4. Where the rules are written
 
 - **This ADR**: The rules live here. `AGENTS.md` (read through `CLAUDE.md`) has a short `Unit Tests` entry under Core Guidelines that points here, so agents writing tests load the rules in every session.
-- **Existing files**: The tree is not swept. A test file is brought in line with sections 1 to 3 when a change edits it for another reason.
+- **Existing files**: The tree is not swept. A change brings the cases it adds or edits in line with sections 1 to 3, and the other cases in the same file stay as they are.
 
 ## Rejected alternatives
 
@@ -81,11 +88,11 @@ flowchart LR
 
 ## Consequences
 
-- **Faster, stable runs**: No unit test depends on a running manager, so the Vitest suites run the same in CI and on any machine.
+- **Stable runs**: A test that follows section 1 depends on no running manager, so it runs the same in CI and on any machine. A test that forgets its `fetch` stub is the exception, because no setup file blocks the request.
 - **Fewer cases per component**: A new component ships with tests for what it is for. Reviewers judge a test by whether its behavior is intended, not by how many cases there are.
 - **Misuse can regress unseen**: A misuse that changes behavior is not caught until a user meets it. The fix then adds the test.
-- **Mixed tree**: Existing tests that assert misuse or reach past their types stay until their files are edited. A reader can meet both styles for a while.
-- **Mock drift**: A mocked client object or payload can drift from the real API, and the unit test still passes. The e2e suites and `tsc` on the component are what catch that.
+- **Mixed tree**: Existing tests that assert misuse or reach past their types stay until a change edits those cases. A reader can meet both styles in one file.
+- **Mock drift**: A fake client returned from a `vi.mock` factory is not type-checked against the client, so it can drift from the real API while the unit test still passes. Resolver-map values and a `useFragment` mock that returns the ref are not checked against the schema either. Only the e2e suites catch that drift.
 
 ## Sources
 

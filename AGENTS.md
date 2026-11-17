@@ -108,7 +108,9 @@ read `package.json` / `pnpm-workspace.yaml` / `ls` rather than expecting a list 
 
 ### Unit Tests (detail: `docs/adr/0036-component-unit-test-conventions.md`)
 
-- Mock every API and network boundary: Relay through `createMockEnvironment`, the Backend.AI client through a `vi.mock` of the hook that returns it, `fetch` through `vi.stubGlobal`. No unit test reaches a manager.
+- Applies to Vitest unit tests of components and hooks under `react/src` and `packages/backend.ai-ui/src`.
+- Mock every API and network boundary, for example Relay through `createMockEnvironment`, the Backend.AI client through a `vi.mock` of the hook that returns it, `fetch` through `vi.stubGlobal`; the ADR lists the other paths. No unit test reaches a manager.
+- Hooks beside the client hook in `react/src/hooks` (`useCurrentDomainValue`, …) call the real client hook: replace each one the component calls in the same `vi.mock`.
 - Test what the component is meant to do, with props its type allows. Do not add cases for misuse (forbidden props, `@ts-expect-error` input, missing providers); add one only with the fix for a bug it caused.
 
 ### On-Demand Skills (loaded only when needed)
