@@ -1,1 +1,0 @@
-import{n as e}from"./rolldown-runtime-sJBDdmOt.js";var t,n,r;function i(){return(i=e((()=>{t=`data-astryx-edge-comp`,n={keTefX:`x1kftj4p`,k71WvV:`x92e2el`,$$css:!0},r={inset:e=>[n,{"--x-126w13d":(e=>typeof e==`number`?e+`px`:e??void 0)(`calc(-1 * ${e})`),"--x-4drmnv":(e=>typeof e==`number`?e+`px`:e??void 0)(`calc(-1 * ${e})`)}]}})))()}export{r as n,i as r,t};
