@@ -157,6 +157,13 @@ test.describe(
               });
               break;
             case 'number':
+              // Unset number rows are empty, with the default as placeholder.
+              await expect(rowInput(row)).toHaveValue('');
+              await expect(rowInput(row)).toHaveAttribute(
+                'placeholder',
+                String(defaultValue),
+              );
+              break;
             case 'string':
               await expect(rowInput(row)).toHaveValue(String(defaultValue));
               break;
@@ -216,14 +223,18 @@ test.describe(
       await signInAsAdmin(page, request);
       await openWebUISettings(page);
       const row = settingRow(page, 'maxCPUCoresPerContainer');
-      const before = await rowInput(row).inputValue();
+      const defaultValue = await rowInput(row).getAttribute('placeholder');
 
-      await commitRowInput(row, String(Number(before) + 1));
+      await commitRowInput(row, String(Number(defaultValue) + 1));
       await expect(changedMarker(row)).toBeVisible();
       await expect(applyButton(page)).toBeEnabled();
 
       await resetRow(page, row);
-      await expect(rowInput(row)).toHaveValue(before);
+      await expect(rowInput(row)).toHaveValue('');
+      await expect(rowInput(row)).toHaveAttribute(
+        'placeholder',
+        defaultValue ?? '',
+      );
       await expect(changedMarker(row)).toHaveCount(0);
     });
 
