@@ -345,7 +345,7 @@ const DashboardPanelModal: React.FC<DashboardPanelModalProps> = ({
   return (
     <BAIModal
       open={open}
-      width="min(960px, 95vw)"
+      width="min(1280px, 95vw)"
       title={
         initialPanel
           ? t('dashboard.panelModal.EditPanel')
@@ -558,8 +558,12 @@ const DashboardPanelModal: React.FC<DashboardPanelModalProps> = ({
             border: `1px solid ${token('--color-border')}`,
             borderRadius: token('--radius-inner'),
             padding: token('--spacing-3'),
-            maxHeight: 360,
-            overflow: 'auto',
+            // A table sits flush under the border; its header row is its top edge.
+            ...(panelType === 'resourceTable' ? { paddingTop: 0 } : {}),
+            // The modal body scrolls and the table scrolls sideways on its own;
+            // this only clips the table's full-bleed edges to the box.
+            minWidth: 0,
+            overflow: 'hidden',
           }}
         >
           {open ? (
