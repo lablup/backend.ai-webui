@@ -86,18 +86,16 @@ const VFolderAutoMountMetadataSection: React.FC<
   // ADR 0031: a personal project's folder auto-mounts for its user, any other
   // project folder for its project; null when the project cannot be read.
   const { userId, projectId, creatorId, project } = vfolder.ownership ?? {};
-  const addScope: AutoMountScope | null =
-    vfolder.accessControl?.ownershipType === 'USER'
-      ? userId
-        ? { scopeType: 'USER', scopeId: userId }
-        : null
-      : !projectId || !project
-        ? null
-        : project.basicInfo.type === 'PERSONAL'
-          ? creatorId
-            ? { scopeType: 'USER', scopeId: creatorId }
-            : null
-          : { scopeType: 'PROJECT', scopeId: projectId };
+  const addScope = ((): AutoMountScope | null => {
+    if (vfolder.accessControl?.ownershipType === 'USER') {
+      return userId ? { scopeType: 'USER', scopeId: userId } : null;
+    }
+    if (!projectId || !project) return null;
+    if (project.basicInfo.type !== 'PERSONAL') {
+      return { scopeType: 'PROJECT', scopeId: projectId };
+    }
+    return creatorId ? { scopeType: 'USER', scopeId: creatorId } : null;
+  })();
   const scope: AutoMountScope | null = autoMount
     ? {
         scopeType: autoMount.scopeType as VFolderAutoMountScopeType,

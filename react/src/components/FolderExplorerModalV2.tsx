@@ -570,11 +570,7 @@ const FolderExplorerBody: React.FC<{
               ) : null}
               {vfolderNode ? (
                 <BAIErrorBoundary>
-                  <Suspense fallback={<BAISkeleton rows={3} />}>
-                    <VFolderAutoMountMetadataSection
-                      vfolderFrgmt={vfolderNode}
-                    />
-                  </Suspense>
+                  <VFolderAutoMountMetadataSection vfolderFrgmt={vfolderNode} />
                 </BAIErrorBoundary>
               ) : null}
             </VStack>
