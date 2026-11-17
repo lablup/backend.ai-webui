@@ -68,13 +68,10 @@ export interface WebUISizeSetting {
   max: string;
 }
 
-/** The agent live stats System Settings can hide. */
-export const AGENT_LIVE_STAT_OPTIONS: ReadonlyArray<{
-  value: string;
-  label: string;
-}> = [
-  { value: 'net_rx', label: 'Net Rx' },
-  { value: 'net_tx', label: 'Net Tx' },
+/** The agent `live_stat.node` keys `showAgentNetworkStats` turns off. */
+export const AGENT_NETWORK_STAT_KEYS: ReadonlyArray<string> = [
+  'net_rx',
+  'net_tx',
 ];
 
 /** The SSO vendors the login form renders a button for. */
@@ -310,10 +307,7 @@ export const WEBUI_SETTING_DEFINITIONS: ReadonlyArray<WebUISettingDefinition> =
     def('menuBlocklist', 'domain', 'stringList', 'menu', 'blockList'),
     def('menuInactivelist', 'domain', 'stringList', 'menu', 'inactiveList'),
     def('hideAgents', 'domain', 'boolean', 'menu'),
-    {
-      ...def('hiddenAgentLiveStats', 'domain', 'stringList', 'menu'),
-      options: AGENT_LIVE_STAT_OPTIONS,
-    },
+    def('showAgentNetworkStats', 'domain', 'boolean', 'menu'),
     def('enableReservoir', 'domain', 'boolean', 'menu'),
     def('fasttrackEndpoint', 'domain', 'string', 'menu'),
     def('manualUrl', 'domain', 'string', 'menu'),

@@ -60,9 +60,7 @@ const AgentDetailModal: React.FC<AgentDetailModalProps> = ({
     agentNodeFrgmt,
   );
   const parsedLiveStat = JSON.parse(agent?.live_stat || '{}');
-  const { hiddenAgentLiveStats } = useEffectiveLoginConfig();
-  const showsNetTx = !hiddenAgentLiveStats.includes('net_tx');
-  const showsNetRx = !hiddenAgentLiveStats.includes('net_rx');
+  const { showAgentNetworkStats } = useEffectiveLoginConfig();
   const parsedAvailableSlots = JSON.parse(agent?.available_slots || '{}');
 
   return (
@@ -120,39 +118,35 @@ const AgentDetailModal: React.FC<AgentDetailModalProps> = ({
                 />
               </BAIFlex>
             ) : null}
-            {parsedLiveStat?.node && (showsNetTx || showsNetRx) ? (
+            {parsedLiveStat?.node && showAgentNetworkStats ? (
               <BAIFlex direction="column" gap="xxs" align="start">
                 <Heading level={5}>{t('session.launcher.Network')}</Heading>
-                {showsNetTx && (
-                  <BAIFlex gap="xl">
-                    <Text>TX:</Text>
-                    <Text>
-                      {
-                        convertToDecimalUnit(
-                          parsedLiveStat?.node?.net_tx?.current,
-                          'm',
-                          2,
-                        )?.displayValue
-                      }
-                      B
-                    </Text>
-                  </BAIFlex>
-                )}
-                {showsNetRx && (
-                  <BAIFlex gap="xl">
-                    <Text>RX:</Text>
-                    <Text>
-                      {
-                        convertToDecimalUnit(
-                          parsedLiveStat?.node?.net_rx?.current,
-                          'm',
-                          2,
-                        )?.displayValue
-                      }
-                      B
-                    </Text>
-                  </BAIFlex>
-                )}
+                <BAIFlex gap="xl">
+                  <Text>TX:</Text>
+                  <Text>
+                    {
+                      convertToDecimalUnit(
+                        parsedLiveStat?.node?.net_tx?.current,
+                        'm',
+                        2,
+                      )?.displayValue
+                    }
+                    B
+                  </Text>
+                </BAIFlex>
+                <BAIFlex gap="xl">
+                  <Text>RX:</Text>
+                  <Text>
+                    {
+                      convertToDecimalUnit(
+                        parsedLiveStat?.node?.net_rx?.current,
+                        'm',
+                        2,
+                      )?.displayValue
+                    }
+                    B
+                  </Text>
+                </BAIFlex>
               </BAIFlex>
             ) : null}
           </BAIFlex>

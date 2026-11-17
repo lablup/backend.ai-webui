@@ -7,6 +7,7 @@ import {
   AgentListQuery$data,
   AgentListQuery$variables,
 } from '../__generated__/AgentListQuery.graphql';
+import { AGENT_NETWORK_STAT_KEYS } from '../helper/webuiSettings';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useThemeMode } from '../hooks/useThemeMode';
@@ -65,7 +66,7 @@ const AgentList: React.FC<AgentListProps> = ({
   'use memo';
   const { t } = useTranslation();
   const { isDarkMode } = useThemeMode();
-  const { hiddenAgentLiveStats } = useEffectiveLoginConfig();
+  const { showAgentNetworkStats } = useEffectiveLoginConfig();
   const [currentAgentInfo, setCurrentAgentInfo] = useState<Agent | null>();
   const [queryParams, setQueryParams] = useQueryStates({
     status: parseAsString.withDefault('ALIVE'),
@@ -341,7 +342,9 @@ const AgentList: React.FC<AgentListProps> = ({
       <BAIAgentTable
         resizable
         agentsFragment={agentNodes}
-        hiddenLiveStatKeys={hiddenAgentLiveStats}
+        hiddenLiveStatKeys={
+          showAgentNetworkStats ? undefined : AGENT_NETWORK_STAT_KEYS
+        }
         onClickAgentName={(agent) => {
           const targetAgent = _.find(
             agent_nodes?.edges,

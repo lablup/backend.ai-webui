@@ -70,8 +70,8 @@ export interface LoginConfigState {
   systemSSHImage: string;
   defaultFileBrowserImage: string;
   hideAgents: boolean;
-  /** Live-stat keys the agent views leave out (`net_rx`, `net_tx`). */
-  hiddenAgentLiveStats: string[];
+  /** Whether the agent views show Net Rx/Tx. */
+  showAgentNetworkStats: boolean;
   enablePipeline: boolean;
   connection_mode: 'SESSION' | 'API';
   maxCountForPreopenPorts: number;
@@ -146,7 +146,7 @@ export function getDefaultLoginConfig(): LoginConfigState {
     systemSSHImage: '',
     defaultFileBrowserImage: '',
     hideAgents: true,
-    hiddenAgentLiveStats: [],
+    showAgentNetworkStats: true,
     enablePipeline: false,
     connection_mode: 'SESSION',
     maxCountForPreopenPorts: 10,
