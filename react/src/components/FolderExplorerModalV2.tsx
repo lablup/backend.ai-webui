@@ -19,13 +19,15 @@
    tickets 25/28 own their internals).
 */
 import { FolderExplorerModalV2OwnershipFragment$key } from '../__generated__/FolderExplorerModalV2OwnershipFragment.graphql';
-import { FolderExplorerModalV2OwnershipProjectQuery } from '../__generated__/FolderExplorerModalV2OwnershipProjectQuery.graphql';
+import FolderExplorerModalV2OwnershipProjectQueryNode, {
+  type FolderExplorerModalV2OwnershipProjectQuery,
+} from '../__generated__/FolderExplorerModalV2OwnershipProjectQuery.graphql';
 import { FolderExplorerModalV2Query } from '../__generated__/FolderExplorerModalV2Query.graphql';
 import type { ScopedAuditLogQuery as ScopedAuditLogQueryType } from '../__generated__/ScopedAuditLogQuery.graphql';
+import type { VFolderNodesV2AutoMountCellFragment$key } from '../__generated__/VFolderNodesV2AutoMountCellFragment.graphql';
 import { formatToUUID } from '../helper';
 import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
-import { useAccessibleProjects } from '../hooks/useAccessibleProjects';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useIsProjectAgnosticPage } from '../hooks/useIsProjectAgnosticPage';
@@ -125,6 +127,40 @@ interface FolderExplorerProps extends Omit<
   onRequestClose: () => void;
 }
 
+// A personal project's folder auto-mounts for its creator, its project's only
+// user (ADR 0031); `group_node` reads the type without a project role (FR-3983).
+const ProjectFolderAutoMountSection: React.FC<{
+  vfolderFrgmt: VFolderNodesV2AutoMountCellFragment$key;
+  projectId: string;
+  creatorId?: string | null;
+  vfolder: { id: string; name: string };
+}> = ({ vfolderFrgmt, projectId, creatorId, vfolder }) => {
+  'use memo';
+  const { group_node } =
+    useLazyLoadQuery<FolderExplorerModalV2OwnershipProjectQuery>(
+      FolderExplorerModalV2OwnershipProjectQueryNode,
+      { projectId: toGlobalId('GroupNode', projectId) },
+    );
+  if (group_node?.type === 'PERSONAL') {
+    return creatorId ? (
+      <VFolderAutoMountMetadataSection
+        vfolderFrgmt={vfolderFrgmt}
+        scopeType="USER"
+        scopeId={creatorId}
+        vfolder={vfolder}
+      />
+    ) : null;
+  }
+  return (
+    <VFolderAutoMountMetadataSection
+      vfolderFrgmt={vfolderFrgmt}
+      scopeType="PROJECT"
+      scopeId={projectId}
+      vfolder={vfolder}
+    />
+  );
+};
+
 // Read through the legacy `group_node`, which skips the RBAC own check that
 // `vfolderV2.ownership.project` runs, so a personal project is recognised even
 // when the caller holds no project role on it (FR-3983).
@@ -211,6 +247,7 @@ const useFolderExplorerQuery = (vfolderID: string) => {
           ownership {
             projectId
             userId
+            creatorId
           }
           accessControl {
             ownershipType

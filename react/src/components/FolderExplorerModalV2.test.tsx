@@ -107,12 +107,6 @@ vi.mock('../hooks/useCurrentProject', async (importOriginal) => {
 // is pinned per scenario (the sanctioned location mock for route-derived
 // pieces).
 let mockIsProjectAgnosticPage = false;
-vi.mock('../hooks/useAccessibleProjects', () => ({
-  useAccessibleProjects: () => ({
-    personalProject: { id: 'personal-project-id', name: 'me' },
-  }),
-}));
-
 vi.mock('../hooks/useIsProjectAgnosticPage', async (importOriginal) => {
   const originalModule =
     await importOriginal<typeof import('../hooks/useIsProjectAgnosticPage')>();
@@ -500,8 +494,6 @@ describe('FolderExplorerModalV2 project context (ADR-0001, FR-3413)', () => {
     expect(
       screen.queryByText('data.BelongsToDifferentProject'),
     ).not.toBeInTheDocument();
-    // ...and the project-type lookup behind it is not issued either.
-    expect(findOwnershipProjectOperation(seenOperations)).toBeUndefined();
 
     // Permission calculation follows the folder's OWN project — never the
     // ambient decoy.
