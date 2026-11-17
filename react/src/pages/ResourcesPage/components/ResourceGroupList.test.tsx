@@ -129,14 +129,8 @@ describe('ResourceGroupList refresh after a change', () => {
     ]);
     expect(await screen.findByText('group a')).toBeInTheDocument();
 
-    // jsdom has no width, so the row actions sit in the overflow menu.
     await user.click(
-      screen.getByRole('button', {
-        name: 'comp:BAINameActionCell.MoreActions',
-      }),
-    );
-    await user.click(
-      await screen.findByRole('menuitem', { name: 'resourceGroup.Deactivate' }),
+      screen.getByRole('button', { name: 'resourceGroup.Deactivate' }),
     );
     const confirmButtons = await screen.findAllByRole('button', {
       name: 'resourceGroup.Deactivate',
@@ -174,7 +168,7 @@ describe('ResourceGroupList refresh after a change', () => {
       { description: 'old description', isActive: true },
     ]);
 
-    await user.click(await screen.findByText('rg-a'));
+    await user.click(await screen.findByRole('button', { name: 'rg-a' }));
     await user.click(await screen.findByText('save-in-drawer'));
 
     await resolveListQuery(environment, [
