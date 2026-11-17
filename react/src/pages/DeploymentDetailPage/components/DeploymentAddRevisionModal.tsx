@@ -64,6 +64,7 @@ import {
   type ParsedModelDefinition,
 } from '../../../helper/parseModelDefinitionYaml';
 import { useSuspendedBackendaiClient } from '../../../hooks';
+import { useAccessibleProjects } from '../../../hooks/useAccessibleProjects';
 import { useBAISettingUserState } from '../../../hooks/useBAISetting';
 import { useModelDefinitionPlaceholders } from '../../../hooks/useModelDefinitionDefaults';
 import { useMountableStorageHosts } from '../../../hooks/useMountableStorageHosts';
@@ -640,6 +641,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
     baiClient.user_uuid,
     deploymentProject?.id,
   );
+  const { personalProject } = useAccessibleProjects();
   const commonEnvVars = useCommonEnvVarConfigs();
   // Single-string `command` + `shell` (BA-6742); older managers get the
   // deprecated `startCommand` token list instead.
@@ -2746,6 +2748,11 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
         // would write back a folder this revision cannot mount.
         open={isModelFolderCreateModalOpen && !!deploymentProject}
         project={deploymentProject}
+        autoMountScopeType={
+          deploymentProject && deploymentProject.id === personalProject?.id
+            ? 'USER'
+            : 'PROJECT'
+        }
         initialValues={{ usage_mode: 'model' }}
         onRequestClose={(result) => {
           setIsModelFolderCreateModalOpen(false);
