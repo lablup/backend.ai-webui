@@ -390,7 +390,6 @@ const PROJECT_ADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     }),
     defaultSize: size(2, 3),
     minSize: size(2, 2),
-    defaultHidden: ['admin'],
     columnSettings: true,
   },
   {
@@ -748,12 +747,14 @@ const PAGE_ORDER: Record<PanelPage, ReadonlyArray<string>> = {
     'agentStats',
     'pendingSessions',
     'sessionLaunches',
-    'topFailureCauses',
-    'failuresByEntityType',
     'activeAgents',
     'totalResourceWithinResourceGroup',
     'sessionsCreated',
+    'projectDeployments',
     'foldersByUsageMode',
+    // The audit log cards stay together, failures first.
+    'topFailureCauses',
+    'failuresByEntityType',
     'projectAuditLog',
   ],
 };
