@@ -49,7 +49,7 @@ flowchart LR
 
 ### 1. The owning scope is the only scope
 
-- **Scope choice**: Every WebUI path that creates an auto-mount derives the scope from the folder's owner. A folder whose `accessControl.ownershipType` is `USER` gets the `USER` scope of `ownership.userId`. A project-owned folder of a personal project gets the `USER` scope of its creator, that project's only user, whoever opens it; the explorer reads the project type through `group_node`, which needs no project role (FR-3983). Any other folder gets the `PROJECT` scope of `ownership.projectId`.
+- **Scope choice**: Every WebUI path that creates an auto-mount derives the scope from the folder's owner. A folder whose `accessControl.ownershipType` is `USER` gets the `USER` scope of `ownership.userId`. A project-owned folder of the user's personal project gets the current user's `USER` scope, the same scope `FolderCreateModal` uses there. Any other folder gets the `PROJECT` scope of `ownership.projectId`.
 - **Creation paths**: `FolderCreateModal` always creates a project folder with `createVFolderInProject`, in the personal project too. In the personal project it auto-mounts the folder for the user; in any other project it auto-mounts the folder for that project. Neither component decides the scope itself: the caller of `FolderCreateModal` passes `autoMountScopeType` (`USER` when the target is the caller's personal project, `PROJECT` by default), and `FolderExplorerModalV2` passes the scope to `VFolderAutoMountMetadataSection`.
 - **Folder entry points**: An auto-mount is added only from a folder: `FolderCreateModal` and the folder explorer's `VFolderAutoMountMetadataSection`. `VFolderAutoMountSettingModal` always receives that folder and offers no folder picker.
 
