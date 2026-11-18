@@ -39,7 +39,6 @@ vi.mock('../hooks/useAppConfig', () => ({
     },
     upsertScopedAppConfig: async () => ({}),
   }),
-  updateMyAppConfigLocally: () => {},
 }));
 
 // Stand-in for the lazily-imported Monaco editor: `onMount` fires only when the

@@ -82,7 +82,7 @@ sequenceDiagram
 - **Refused write**: the page puts back the confirmed value of each key the refused write carried, unless the row changed again since, queues another write if the scope still differs from the confirmed values, and opens an error modal (`webuiSettings.NotSaved`, `webuiSettings.NotSavedItems`) naming those settings.
 - **Leaving the page**: a `beforeunload` prompt runs only while a write is in flight. The settings session registers it and removes it when the session ends, so it still guards a write that outlives the page.
 - **Unreadable scope**: `WebUISettingsPage` shows its error boundary when the PUBLIC or DOMAIN document cannot be read, because a change rebuilds both settings layers from the page's reads.
-- **No refetch**: a write does not read the merged view (`domainConfig`, `publicConfigByDomain`) again: the settings reach this tab through `loginConfigState`, and a `useMyAppConfig` reader reads on mount (ADR 0033). Other signed-in users see a change after they reload, which the notice at the top of the page says. The page's saved documents come from the raw read of `useScopedAppConfig`, which the upsert response updates, so the session ends once no write is in flight.
+- **Atom reload**: a write to the signed-in domain or to PUBLIC reloads `myAppConfigState`, and the reloads asked for while one runs fold into one (ADR 0033). The settings themselves reach this tab through `loginConfigState` before the write. Other signed-in users see a change after they reload, which the notice at the top of the page says. The page's saved documents come from the raw read of `useScopedAppConfig`, which the upsert response updates, so the session ends once no write is in flight.
 
 ### 4. Who sees a change, and when
 

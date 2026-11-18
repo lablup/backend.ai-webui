@@ -24,39 +24,37 @@ const SavedWebUISettingList: React.FC = () => {
   'use memo';
   const { id: domainId, name: domainName } = useCurrentDomain();
   const domainScope = { type: 'domain', id: domainId } as const;
-  // One request for both documents the page edits.
-  const { scopedAppConfig, upsertScopedAppConfig } = useScopedAppConfig([
-    { scope: domainScope, configNames: ['domainConfig'] },
-    { scope: PUBLIC_SCOPE, configNames: ['publicConfigByDomain'] },
+  // One read per scope, one after the other (ADR 0033).
+  const domain = useScopedAppConfig(domainScope, ['domainConfig']);
+  const publicConfig = useScopedAppConfig(PUBLIC_SCOPE, [
+    'publicConfigByDomain',
   ]);
   // A change rebuilds both settings layers from these reads, so an unreadable
   // scope would reset its live settings to the defaults: show the error instead.
-  if (!scopedAppConfig.domain || !scopedAppConfig.public) {
+  if (!domain.scopedAppConfig || !publicConfig.scopedAppConfig) {
     throw new Error(
-      `System Settings could not read the ${scopedAppConfig.domain ? 'public' : 'domain'} settings document`,
+      `System Settings could not read the ${domain.scopedAppConfig ? 'public' : 'domain'} settings document`,
     );
   }
   return (
     <WebUISettingList
       savedDomainSettings={
-        scopedAppConfig.domain?.domainConfig?.[WEBUI_SETTINGS_CONFIG_KEY]
+        domain.scopedAppConfig.domainConfig?.[WEBUI_SETTINGS_CONFIG_KEY]
       }
       savedPublicSettings={
-        scopedAppConfig.public?.publicConfigByDomain?.[domainName]?.[
+        publicConfig.scopedAppConfig.publicConfigByDomain?.[domainName]?.[
           WEBUI_SETTINGS_CONFIG_KEY
         ]
       }
       setDomainSettings={async (value) => {
-        await upsertScopedAppConfig({
-          scope: domainScope,
+        await domain.upsertScopedAppConfig({
           configName: 'domainConfig',
           subKey: WEBUI_SETTINGS_CONFIG_KEY,
           value,
         });
       }}
       setPublicSettings={async (value) => {
-        await upsertScopedAppConfig({
-          scope: PUBLIC_SCOPE,
+        await publicConfig.upsertScopedAppConfig({
           configName: 'publicConfigByDomain',
           subKey: [domainName, WEBUI_SETTINGS_CONFIG_KEY],
           value,

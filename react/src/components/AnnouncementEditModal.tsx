@@ -10,10 +10,7 @@ import {
   withAnnouncement,
 } from '../helper/announcement';
 import { useCurrentDomain } from '../hooks';
-import {
-  updateMyAppConfigLocally,
-  useScopedAppConfig,
-} from '../hooks/useAppConfig';
+import { useScopedAppConfig } from '../hooks/useAppConfig';
 import './AnnouncementEditModal.css';
 import BAICodeEditor from './BAICodeEditor';
 import BAIFormItem from './BAIFormItem';
@@ -50,7 +47,6 @@ import {
 } from 'lucide-react';
 import { Suspense, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRelayEnvironment } from 'react-relay';
 
 type MonacoEditorInstance = Parameters<OnMount>[0];
 type MonacoNamespace = Parameters<OnMount>[1];
@@ -117,26 +113,21 @@ const AnnouncementEditModalContent: React.FC<AnnouncementEditModalProps> = ({
 
   const { id: domainId } = useCurrentDomain();
   const domainScope = { type: 'domain', id: domainId } as const;
-  const { scopedAppConfig, upsertScopedAppConfig } = useScopedAppConfig({
-    scope: domainScope,
-    configNames: ['domainConfig'],
-  });
-  const announcement = readDomainAnnouncement(
-    scopedAppConfig.domain?.domainConfig?.settings,
+  const { scopedAppConfig, upsertScopedAppConfig } = useScopedAppConfig(
+    domainScope,
+    ['domainConfig'],
   );
-  const relayEnv = useRelayEnvironment();
-  // Keeps the System Settings keys beside the announcement; only this user's
-  // banner shows the change at once.
-  const writeAnnouncement = async (next: DomainAnnouncement | undefined) => {
-    const update = (current: unknown) => withAnnouncement(current, next);
-    await upsertScopedAppConfig({
-      scope: domainScope,
+  const announcement = readDomainAnnouncement(
+    scopedAppConfig?.domainConfig?.settings,
+  );
+  // Keeps the System Settings keys beside the announcement; the write reloads
+  // this user's banner (ADR 0033), other users see it after a reload.
+  const writeAnnouncement = (next: DomainAnnouncement | undefined) =>
+    upsertScopedAppConfig({
       configName: 'domainConfig',
       subKey: 'settings',
-      value: update,
+      value: (current: unknown) => withAnnouncement(current, next),
     });
-    updateMyAppConfigLocally(relayEnv, 'domainConfig', 'settings', update);
-  };
 
   const formRef = useRef<FormInstance<AnnouncementFormValues>>(null);
   const [bodyDraft, setBodyDraft] = useState<string>();
