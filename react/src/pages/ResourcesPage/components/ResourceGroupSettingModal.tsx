@@ -101,10 +101,13 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
   // field below skeletons until the map resolves, then mounts with its prefill
   // as the Form.Item `initialValue` — the rest of the form renders immediately.
   const deferredOpen = useDeferredValue(modalProps.open);
-  const { data: proxyResourceGroups, isFetching: isSftpMapFetching } =
-    useSFTPProxyResourceGroupsQuery({
-      enabled: baiClient.is_superadmin && !!deferredOpen,
-    });
+  const {
+    data: proxyResourceGroups,
+    isFetching: isSftpMapFetching,
+    isError: isSftpMapError,
+  } = useSFTPProxyResourceGroupsQuery({
+    enabled: baiClient.is_superadmin && !!deferredOpen,
+  });
   const currentSftpProxies = proxiesServingGroups(
     proxyResourceGroups,
     resourceGroup?.name ? [resourceGroup.name] : [],
@@ -188,10 +191,9 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
           isInFlightCommitCreateResourceGroup ||
           isInFlightCommitAssociateDomain ||
           isInFlightCommitUpdateResourceGroup ||
-          // Saving while the SFTP map still loads would skip the proxy sync,
-          // so the OK button shows loading until the select is live
-          // (superadmin-only; the map query is disabled otherwise).
-          (baiClient.is_superadmin && isSftpMapLoading),
+          // Hold the save while the SFTP map loads, but not once it has failed:
+          // a failed map skips only the proxy sync, the rest still saves.
+          (baiClient.is_superadmin && isSftpMapLoading && !isSftpMapError),
       }}
       onOk={() => {
         formRef.current
