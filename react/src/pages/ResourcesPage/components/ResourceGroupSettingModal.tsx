@@ -66,6 +66,13 @@ interface ResourceGroupCreateModalProps extends BAIModalProps {
   onRequestClose?: (success: boolean) => void;
 }
 
+// The form fields that map into scheduler_opts: on save the form value is set
+// at the dotted path, and a cleared field (null) removes it (_.set / _.unset).
+const SCHEDULER_OPT_FIELDS = [
+  { formKey: 'pendingTimeout', optsKey: 'pending_timeout' },
+  { formKey: 'retriesToSkip', optsKey: 'config.num_retries_to_skip' },
+] as const;
+
 const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
   resourceGroupFrgmt,
   onRequestClose,
@@ -202,20 +209,13 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
               ...schedulerOpts,
               allowed_session_types: values.allowedSessionTypes,
             };
-            if (values.pendingTimeout != null) {
-              mergedSchedulerOpts.pending_timeout = values.pendingTimeout;
-            } else {
-              delete mergedSchedulerOpts.pending_timeout;
-            }
-            if (values.retriesToSkip != null) {
-              mergedSchedulerOpts.config = {
-                ...schedulerOpts?.config,
-                num_retries_to_skip: values.retriesToSkip,
-              };
-            } else if (schedulerOpts?.config != null) {
-              const { num_retries_to_skip: _removed, ...restConfig } =
-                schedulerOpts.config;
-              mergedSchedulerOpts.config = restConfig;
+            for (const { formKey, optsKey } of SCHEDULER_OPT_FIELDS) {
+              const value = values[formKey];
+              if (value == null) {
+                _.unset(mergedSchedulerOpts, optsKey);
+              } else {
+                _.set(mergedSchedulerOpts, optsKey, value);
+              }
             }
             const input = {
               scheduler: values.scheduler,
