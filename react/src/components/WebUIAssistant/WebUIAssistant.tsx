@@ -56,10 +56,12 @@ const WebUIAssistantFloating: React.FC = () => {
     if (!isOpen || isConnectOpen) return;
     const onKeyDown = (event: KeyboardEvent) => {
       // Skip an Escape a modal, popover or IME composition already consumed.
+      // Native-dialog modals close on `cancel` without preventDefault on keydown.
       if (
         event.key === 'Escape' &&
         !event.defaultPrevented &&
-        !event.isComposing
+        !event.isComposing &&
+        !document.querySelector('dialog[open]')
       ) {
         setIsOpen(false);
       }
@@ -116,21 +118,23 @@ const WebUIAssistantFloating: React.FC = () => {
             />
           </BAIFlex>
         </BAIFlex>
-        {!hasBeenShown ? null : !profile || !connection?.baseURL ? (
-          <BAIFlex justify="center" align="center" style={{ flex: '1 1 0%' }}>
-            <Spinner />
-          </BAIFlex>
-        ) : (
-          <ErrorBoundaryWithNullFallback>
-            <WebUIAssistantChat
-              key={`${conversationKey}-${connection.baseURL}-${connection.apiKey ?? ''}`}
-              profile={profile}
-              baseURL={connection.baseURL}
-              apiKey={connection.apiKey}
-              onChangeConnection={() => setIsConnectOpen(true)}
-            />
-          </ErrorBoundaryWithNullFallback>
-        )}
+        {hasBeenShown &&
+          (!profile || !connection?.baseURL ? (
+            <BAIFlex justify="center" align="center" style={{ flex: '1 1 0%' }}>
+              <Spinner />
+            </BAIFlex>
+          ) : (
+            <ErrorBoundaryWithNullFallback>
+              <WebUIAssistantChat
+                key={`${conversationKey}-${connection.baseURL}-${connection.apiKey ?? ''}`}
+                profile={profile}
+                baseURL={connection.baseURL}
+                apiKey={connection.apiKey}
+                isVisible={isPanelShown}
+                onChangeConnection={() => setIsConnectOpen(true)}
+              />
+            </ErrorBoundaryWithNullFallback>
+          ))}
       </BAIFlex>
       <IconButton
         className="webui-assistant-fab"

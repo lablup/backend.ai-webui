@@ -13,7 +13,7 @@ import {
 import CustomEndpointForm from '../Chat/CustomEndpointForm';
 import DeploymentSelect from '../Chat/DeploymentSelect';
 import DeploymentTokenSelect from '../Chat/DeploymentTokenSelect';
-import { fetchOpenAIModels } from '../Chat/openAIModels';
+import { fetchOpenAIModels, isAuthRejected } from '../Chat/openAIModels';
 import {
   WEBUI_ASSISTANT_CONFIG_KEY,
   type WebUIAssistantConnection,
@@ -32,6 +32,7 @@ import {
   Suspense,
   useEffect,
   useEffectEvent,
+  useRef,
   useState,
   useTransition,
 } from 'react';
@@ -84,7 +85,13 @@ const WebUIAssistantConnectModal: React.FC<WebUIAssistantConnectModalProps> = ({
   const [endpointURL, setEndpointURL] = useState<string | null>();
   const [failure, setFailure] = useState<string>();
   const [isConnecting, setIsConnecting] = useState(false);
-  const [, startDeploymentTransition] = useTransition();
+  const [isDeploymentPending, startDeploymentTransition] = useTransition();
+  // A probe still running when the user cancels must not save the abandoned connection.
+  const isClosedRef = useRef(false);
+  const close = () => {
+    isClosedRef.current = true;
+    onRequestClose();
+  };
   const savedCustomURL =
     saved && !saved.deploymentId ? saved.baseURL : undefined;
 
@@ -103,10 +110,10 @@ const WebUIAssistantConnectModal: React.FC<WebUIAssistantConnectModalProps> = ({
     setIsConnecting(true);
     try {
       const probe = await fetchOpenAIModels(baseURL, token);
+      if (isClosedRef.current) return;
       if (probe.error || probe.data.length === 0) {
         setFailure(
-          probe.error?.kind === 'http' &&
-            (probe.error.status === 401 || probe.error.status === 403)
+          isAuthRejected(probe.error)
             ? t('webuiAssistant.ConnectionRejected')
             : t('webuiAssistant.EndpointUnreachable', { url: baseURL }),
         );
@@ -126,12 +133,13 @@ const WebUIAssistantConnectModal: React.FC<WebUIAssistantConnectModalProps> = ({
       width={520}
       okText={t('webuiAssistant.Connect')}
       okButtonProps={{
-        disabled: isCustom || !deploymentId || !endpointURL,
+        disabled:
+          isCustom || !deploymentId || !endpointURL || isDeploymentPending,
       }}
       footer={isCustom ? null : undefined}
       confirmLoading={isConnecting}
       onOk={connectDeployment}
-      onCancel={onRequestClose}
+      onCancel={close}
       {...modalProps}
     >
       <BAIFlex direction="column" align="stretch" gap="md">
@@ -188,7 +196,7 @@ const WebUIAssistantConnectModal: React.FC<WebUIAssistantConnectModalProps> = ({
               (error) => message.error(getErrorMessage(error)),
             )
           }
-          onCancel={onRequestClose}
+          onCancel={close}
           apiKeyHint={t('webuiAssistant.ApiKeySavedHint')}
         />
       )}

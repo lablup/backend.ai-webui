@@ -66,9 +66,19 @@ export function readNavigation(yamlText) {
       byLang[lang] = [];
       continue;
     }
-    // Block (`path: a.md`) and flow (`- { title: A, path: a.md }`) entries.
-    const path = /(?:^\s*-?\s*|[{,]\s*)path:\s*["']?([^"'\s#,}]+)/.exec(line);
-    if (lang && path) byLang[lang].push(path[1]);
+    if (!lang) continue;
+    // A flow line (`- { title: A, path: a.md }`) can hold several paths; quoted
+    // values other than a path are blanked so a title cannot read as one.
+    const paths = /^\s*-\s*\{/.test(line)
+      ? [
+          ...line
+            .replace(/(path:\s*)?("[^"]*"|'[^']*')/g, (m, key) =>
+              key ? m : '""',
+            )
+            .matchAll(/[{,]\s*path:\s*["']?([^"'\s#,}\]]+)/g),
+        ].map((m) => m[1])
+      : [/^\s*-?\s*path:\s*["']?([^"'\s#]+)/.exec(line)?.[1]].filter(Boolean);
+    byLang[lang].push(...paths);
   }
   return byLang;
 }

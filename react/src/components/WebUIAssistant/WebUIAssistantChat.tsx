@@ -8,7 +8,11 @@ import type { AIAgent } from '../../hooks/useAIAgent';
 import { useHelpURL, useManualBaseURL } from '../../hooks/useHelpURL';
 import ChatMessageContent from '../Chat/ChatMessageContent';
 import type { ChatMessage as ChatUIMessage } from '../Chat/ChatModel';
-import { fetchOpenAIModels, type ModelsFetchError } from '../Chat/openAIModels';
+import {
+  fetchOpenAIModels,
+  isAuthRejected,
+  type ModelsFetchError,
+} from '../Chat/openAIModels';
 import { streamChatCompletion } from '../Chat/streamChatCompletion';
 import {
   createManualIndex,
@@ -54,6 +58,8 @@ interface WebUIAssistantChatProps {
   /** OpenAI-compatible base URL (`…/v1`). */
   baseURL: string;
   apiKey?: string;
+  /** Whether the panel is on screen; the model list is polled only then. */
+  isVisible: boolean;
   /** Lets the user fix a connection the endpoint rejects or cannot be reached on. */
   onChangeConnection: () => void;
 }
@@ -68,6 +74,7 @@ const WebUIAssistantChat: React.FC<WebUIAssistantChatProps> = ({
   profile,
   baseURL: apiBaseURL,
   apiKey: token,
+  isVisible,
   onChangeConnection,
 }) => {
   'use memo';
@@ -95,25 +102,33 @@ const WebUIAssistantChat: React.FC<WebUIAssistantChatProps> = ({
     },
     enabled: !!apiBaseURL,
     retry: false,
-    // Poll while a deployment starts up (no models yet, or not reachable yet); an HTTP error will not fix itself.
-    refetchInterval: (query) =>
-      query.state.data?.length ||
-      (query.state.error as ModelsQueryError | null)?.detail.kind === 'http'
+    // Poll while the panel is shown and a deployment starts up; a rejected key will not fix itself.
+    refetchInterval: (query) => {
+      const error = query.state.error;
+      return !isVisible ||
+        query.state.data?.length ||
+        (error instanceof ModelsQueryError && isAuthRejected(error.detail))
         ? false
-        : MODEL_POLL_INTERVAL_MS,
+        : MODEL_POLL_INTERVAL_MS;
+    },
   });
   const models = modelsQuery.data ?? [];
-  const modelsError = (modelsQuery.error as ModelsQueryError | null)?.detail;
+  const modelsError =
+    modelsQuery.error instanceof ModelsQueryError
+      ? modelsQuery.error.detail
+      : undefined;
   const preferredModelId = profile.modelPreferences?.preferredModelId;
   const modelId =
     models.find((model) => model.id === preferredModelId)?.id ?? models[0]?.id;
-  const isTokenRejected =
-    modelsError?.kind === 'http' &&
-    (modelsError.status === 401 || modelsError.status === 403);
+  const isTokenRejected = isAuthRejected(modelsError);
 
   // `null` = the manual is not loaded, which the prompt must not report as "nothing matched".
   const pickExcerpts = (question: string): ManualSection[] | null => {
-    if (!manualIndex) return null;
+    if (!manualIndex) {
+      // The chat stays mounted, so a failed load is retried on the next question.
+      if (manualQuery.isError) void manualQuery.refetch();
+      return null;
+    }
     const hits = searchManual(
       manualIndex,
       question,
