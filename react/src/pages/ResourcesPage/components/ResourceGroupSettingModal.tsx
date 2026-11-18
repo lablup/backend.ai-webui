@@ -54,8 +54,10 @@ type FormInputType = {
   active: boolean;
   public: boolean;
   scheduler: string;
-  pendingTimeout: number;
-  retriesToSkip: number;
+  // validateFields() returns null for a cleared field; INITIAL_FORM_VALUES
+  // seeds null when the stored value is absent.
+  pendingTimeout: number | null;
+  retriesToSkip: number | null;
   sftpProxies: string[];
 };
 
@@ -63,6 +65,13 @@ interface ResourceGroupCreateModalProps extends BAIModalProps {
   resourceGroupFrgmt?: ResourceGroupSettingModalFragment$key | null | undefined;
   onRequestClose?: (success: boolean) => void;
 }
+
+// The form fields that map into scheduler_opts: on save the form value is set
+// at the dotted path, and a cleared field (null) removes it (_.set / _.unset).
+const SCHEDULER_OPT_FIELDS = [
+  { formKey: 'pendingTimeout', optsKey: 'pending_timeout' },
+  { formKey: 'retriesToSkip', optsKey: 'config.num_retries_to_skip' },
+] as const;
 
 const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
   resourceGroupFrgmt,
@@ -161,12 +170,14 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
     ],
     active: resourceGroup?.is_active ?? true,
     public: resourceGroup?.is_public ?? true,
-    pendingTimeout: schedulerOpts?.pending_timeout
-      ? _.toNumber(schedulerOpts?.pending_timeout)
-      : null,
-    retriesToSkip: schedulerOpts?.config?.num_retries_to_skip
-      ? _.toNumber(schedulerOpts?.config?.num_retries_to_skip)
-      : null,
+    pendingTimeout:
+      schedulerOpts?.pending_timeout != null
+        ? _.toNumber(schedulerOpts?.pending_timeout)
+        : null,
+    retriesToSkip:
+      schedulerOpts?.config?.num_retries_to_skip != null
+        ? _.toNumber(schedulerOpts?.config?.num_retries_to_skip)
+        : null,
     wsProxyAddress: resourceGroup?.wsproxy_addr,
   });
 
@@ -191,20 +202,25 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
         formRef.current
           ?.validateFields()
           .then((values: FormInputType) => {
+            // The manager replaces the whole scheduler_opts value, so merge
+            // over the stored one: keys the form does not show survive, and a
+            // cleared shown field removes its key.
+            const mergedSchedulerOpts: Record<string, unknown> = {
+              ...schedulerOpts,
+              allowed_session_types: values.allowedSessionTypes,
+            };
+            for (const { formKey, optsKey } of SCHEDULER_OPT_FIELDS) {
+              const value = values[formKey];
+              if (value == null) {
+                _.unset(mergedSchedulerOpts, optsKey);
+              } else {
+                _.set(mergedSchedulerOpts, optsKey, value);
+              }
+            }
             const input = {
               scheduler: values.scheduler,
               description: values.description ?? null,
-              scheduler_opts: JSON.stringify({
-                allowed_session_types: values.allowedSessionTypes,
-                ...(values.pendingTimeout && {
-                  pending_timeout: values.pendingTimeout,
-                }),
-                ...(values.retriesToSkip && {
-                  config: {
-                    num_retries_to_skip: values.retriesToSkip,
-                  },
-                }),
-              }),
+              scheduler_opts: JSON.stringify(mergedSchedulerOpts),
               is_public: values.public,
               is_active: values.active,
               wsproxy_addr: values.wsProxyAddress,
@@ -251,10 +267,6 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
                   input: input,
                 },
                 onCompleted: ({ modify_scaling_group: res }, errors) => {
-                  if (!res?.ok) {
-                    message.error(res?.msg);
-                    return;
-                  }
                   if (errors && errors.length > 0) {
                     const errorMsgList = _.map(
                       errors,
@@ -263,6 +275,10 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
                     for (const error of errorMsgList) {
                       message.error(error);
                     }
+                    return;
+                  }
+                  if (!res?.ok) {
+                    message.error(res?.msg);
                     return;
                   }
                   message.success(t('resourceGroup.ResourceGroupModified'));
@@ -471,7 +487,7 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
             />
           </BAIFormItem>
           <BAIFormItem label={t('resourceGroup.SchedulerOptions')}>
-            <BAICard styles={{ body: { paddingBottom: 0 } }}>
+            <BAICard>
               <BAIFormItem
                 label={
                   <BAIFlex gap="xxs">
