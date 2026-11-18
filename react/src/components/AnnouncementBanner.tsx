@@ -9,7 +9,7 @@ import {
   summarizeAnnouncementTitle,
 } from '../helper/announcement';
 import { useCurrentUserRole } from '../hooks/backendai';
-import { useMyAppConfig } from '../hooks/useAppConfig';
+import { useMyAppConfigValue } from '../hooks/useAppConfig';
 import './AnnouncementBanner.css';
 import { Banner } from '@lablup/ui-common/Banner';
 import { Button } from '@lablup/ui-common/Button';
@@ -51,7 +51,7 @@ const AnnouncementBanner: React.FC = () => {
   // reveals.
   const [isExpanded, { toggle: toggleExpanded }] = useToggle(false);
   const announcement = readDomainAnnouncement(
-    useMyAppConfig('domainConfig', 'settings'),
+    useMyAppConfigValue('domainConfig', 'settings'),
   );
   const [dismissedKey, setDismissedKey] = useSessionStorageState<
     string | undefined

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<1449fe5f795b939002251c8975fb1473>>
+ * @generated SignedSource<<e61edb9339baef6b2f1177c567eec54e>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -357,7 +357,9 @@ v15 = {
       "kind": "Literal",
       "name": "configNames",
       "value": [
-        "domainConfig"
+        "publicConfigByDomain",
+        "domainConfig",
+        "userConfig"
       ]
     }
   ],
@@ -381,7 +383,7 @@ v15 = {
       "storageKey": null
     }
   ],
-  "storageKey": "myAppConfigs(configNames:[\"domainConfig\"])"
+  "storageKey": "myAppConfigs(configNames:[\"publicConfigByDomain\",\"domainConfig\",\"userConfig\"])"
 };
 return {
   "fragment": {
@@ -480,16 +482,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "04f3ad9178f19fccbd456339c590fc18",
+    "cacheID": "7798b7d571f0a8d72b0aefcf027338ef",
     "id": null,
     "metadata": {},
     "name": "loginSessionAuthMyUserQuery",
     "operationKind": "query",
-    "text": "query loginSessionAuthMyUserQuery(\n  $recentProjectName: String!\n  $hasRecentProject: Boolean!\n  $needsAccessKey: Boolean!\n) {\n  myUserV2 {\n    id\n    entityId\n    basicInfo {\n      email\n      fullName\n    }\n    organization {\n      domainName\n      role\n    }\n    domain {\n      entityId\n      basicInfo {\n        name\n      }\n      id\n    }\n    recentProject: projects(filter: {isActive: true, type: {equals: GENERAL}, name: {equals: $recentProjectName}}, limit: 1) @include(if: $hasRecentProject) {\n      edges {\n        node {\n          id\n          entityId\n          basicInfo {\n            name\n          }\n        }\n      }\n    }\n    defaultProject: projects(filter: {isActive: true, type: {equals: GENERAL}}, orderBy: [{field: NAME, direction: ASC}], limit: 1) {\n      edges {\n        node {\n          id\n          entityId\n          basicInfo {\n            name\n          }\n        }\n      }\n    }\n  }\n  myKeypairs(filter: {isDefault: true}, limit: 1) @include(if: $needsAccessKey) {\n    edges {\n      node {\n        id\n        accessKey\n      }\n    }\n  }\n  myAppConfigs(configNames: [\"domainConfig\"]) {\n    configName\n    config\n  }\n}\n"
+    "text": "query loginSessionAuthMyUserQuery(\n  $recentProjectName: String!\n  $hasRecentProject: Boolean!\n  $needsAccessKey: Boolean!\n) {\n  myUserV2 {\n    id\n    entityId\n    basicInfo {\n      email\n      fullName\n    }\n    organization {\n      domainName\n      role\n    }\n    domain {\n      entityId\n      basicInfo {\n        name\n      }\n      id\n    }\n    recentProject: projects(filter: {isActive: true, type: {equals: GENERAL}, name: {equals: $recentProjectName}}, limit: 1) @include(if: $hasRecentProject) {\n      edges {\n        node {\n          id\n          entityId\n          basicInfo {\n            name\n          }\n        }\n      }\n    }\n    defaultProject: projects(filter: {isActive: true, type: {equals: GENERAL}}, orderBy: [{field: NAME, direction: ASC}], limit: 1) {\n      edges {\n        node {\n          id\n          entityId\n          basicInfo {\n            name\n          }\n        }\n      }\n    }\n  }\n  myKeypairs(filter: {isDefault: true}, limit: 1) @include(if: $needsAccessKey) {\n    edges {\n      node {\n        id\n        accessKey\n      }\n    }\n  }\n  myAppConfigs(configNames: [\"publicConfigByDomain\", \"domainConfig\", \"userConfig\"]) {\n    configName\n    config\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "0e05a1a48023d853991cc948f18ecbf3";
+(node as any).hash = "49da0e1473fb8b87f7829785f12190af";
 
 export default node;

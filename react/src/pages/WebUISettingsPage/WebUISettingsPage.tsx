@@ -32,43 +32,41 @@ const SavedWebUISettingList: React.FC = () => {
   'use memo';
   const { id: domainId, name: domainName } = useCurrentDomain();
   const domainScope = { type: 'domain', id: domainId } as const;
-  // One request for both documents the page edits.
-  const { scopedAppConfig, upsertScopedAppConfig } = useScopedAppConfig([
-    { scope: domainScope, configNames: ['domainConfig'] },
-    { scope: PUBLIC_SCOPE, configNames: ['publicConfigByDomain'] },
+  // One read per scope, one after the other (ADR 0033).
+  const domain = useScopedAppConfig(domainScope, ['domainConfig']);
+  const publicConfig = useScopedAppConfig(PUBLIC_SCOPE, [
+    'publicConfigByDomain',
   ]);
   const setDomainWebUISettings = useSetAtom(domainWebUISettingsState);
   const setPublicWebUISettings = useSetAtom(publicWebUISettingsState);
   return (
     <WebUISettingList
       savedDomainSettings={
-        scopedAppConfig.domain?.domainConfig?.[WEBUI_SETTINGS_CONFIG_KEY]
+        domain.scopedAppConfig?.domainConfig?.[WEBUI_SETTINGS_CONFIG_KEY]
       }
       savedPublicSettings={
-        scopedAppConfig.public?.publicConfigByDomain?.[domainName]?.[
+        publicConfig.scopedAppConfig?.publicConfigByDomain?.[domainName]?.[
           WEBUI_SETTINGS_CONFIG_KEY
         ]
       }
       setDomainSettings={async (value) => {
-        const writtenDocuments = await upsertScopedAppConfig({
-          scope: domainScope,
+        const writtenDocuments = await domain.upsertScopedAppConfig({
           configName: 'domainConfig',
           subKey: WEBUI_SETTINGS_CONFIG_KEY,
           value,
         });
         setDomainWebUISettings(
-          writtenDocuments.domain?.domainConfig?.[WEBUI_SETTINGS_CONFIG_KEY],
+          writtenDocuments.domainConfig?.[WEBUI_SETTINGS_CONFIG_KEY],
         );
       }}
       setPublicSettings={async (value) => {
-        const writtenDocuments = await upsertScopedAppConfig({
-          scope: PUBLIC_SCOPE,
+        const writtenDocuments = await publicConfig.upsertScopedAppConfig({
           configName: 'publicConfigByDomain',
           subKey: [domainName, WEBUI_SETTINGS_CONFIG_KEY],
           value,
         });
         setPublicWebUISettings(
-          writtenDocuments.public?.publicConfigByDomain?.[domainName]?.[
+          writtenDocuments.publicConfigByDomain?.[domainName]?.[
             WEBUI_SETTINGS_CONFIG_KEY
           ],
         );

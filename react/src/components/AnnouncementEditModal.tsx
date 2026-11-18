@@ -112,17 +112,16 @@ const AnnouncementEditModalContent: React.FC<AnnouncementEditModalProps> = ({
 
   const { id: domainId } = useCurrentDomain();
   const domainScope = { type: 'domain', id: domainId } as const;
-  const { scopedAppConfig, upsertScopedAppConfig } = useScopedAppConfig({
-    scope: domainScope,
-    configNames: ['domainConfig'],
-  });
+  const { scopedAppConfig, upsertScopedAppConfig } = useScopedAppConfig(
+    domainScope,
+    ['domainConfig'],
+  );
   const announcement = readDomainAnnouncement(
-    scopedAppConfig.domain?.domainConfig?.settings,
+    scopedAppConfig?.domainConfig?.settings,
   );
   // Keeps the System Settings keys beside the announcement.
   const writeAnnouncement = (next: DomainAnnouncement | undefined) =>
     upsertScopedAppConfig({
-      scope: domainScope,
       configName: 'domainConfig',
       subKey: 'settings',
       value: (current: unknown) => withAnnouncement(current, next),

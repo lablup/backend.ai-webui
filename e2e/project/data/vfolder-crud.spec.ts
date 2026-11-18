@@ -159,7 +159,7 @@ test.describe(
         await page.route('**/admin/gql', async (route) => {
           if (
             !(route.request().postData() ?? '').includes(
-              'useAppConfigMyFragmentsQuery',
+              'loginSessionAuthMyUserQuery',
             )
           ) {
             await route.fallback();
@@ -167,7 +167,7 @@ test.describe(
           }
           const response = await route.fetch();
           const body = await response.json();
-          for (const entry of body?.data?.myAppConfigFragmentsByNames ?? []) {
+          for (const entry of body?.data?.myAppConfigs ?? []) {
             if (entry?.configName !== 'userConfig') continue;
             const isString = typeof entry.config === 'string';
             const config = isString

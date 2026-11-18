@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { App } from '../app-shim';
-import { useMyAppConfigFragments } from './useAppConfig';
+import { useMyAppConfig } from './useAppConfig';
 import { SessionHistory, useBAISettingUserState } from './useBAISetting';
 import {
   useEventNotStable,
@@ -27,10 +27,8 @@ const useSessionHistoryStore = (key: SessionHistoryKey) => {
   'use memo';
   const { message } = App.useApp();
   const { getErrorMessage } = useErrorMessageResolver();
-  const { myAppConfigFragments, upsertMyAppConfigFragments } =
-    useMyAppConfigFragments(['userConfig']);
-  const serverValue = myAppConfigFragments.userConfig?.[key] as
-    Array<SessionHistory> | undefined;
+  const [serverValue, setServerValue] =
+    useMyAppConfig<Array<SessionHistory>>(key);
   const [localValue, setLocalValue] = useBAISettingUserState(key);
   // Shows the written value while the write is in flight.
   const [pending, setPending] = useState<{ value: Array<SessionHistory> }>();
@@ -38,11 +36,7 @@ const useSessionHistoryStore = (key: SessionHistoryKey) => {
   /** Writes `next` after the writes already queued on `userConfig`; false when it failed (the error is shown). */
   const write = async (next: Array<SessionHistory>): Promise<boolean> => {
     try {
-      await upsertMyAppConfigFragments({
-        configName: 'userConfig',
-        subKey: key,
-        value: next,
-      });
+      await setServerValue(next);
       return true;
     } catch (error) {
       message.error(getErrorMessage(error));

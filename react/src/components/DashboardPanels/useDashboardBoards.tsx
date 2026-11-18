@@ -4,10 +4,7 @@
  */
 import { App } from '../../app-shim';
 import { useCurrentDomainValue } from '../../hooks';
-import {
-  useMyAppConfig,
-  useMyAppConfigFragments,
-} from '../../hooks/useAppConfig';
+import { useMyAppConfig, useMyAppConfigValue } from '../../hooks/useAppConfig';
 import {
   activeBoardOf,
   keepUnreadablePanels,
@@ -63,8 +60,7 @@ export interface DashboardBoardsState {
 /**
  * One page's boards in `userConfig.dashboard`, falling back to the role template.
  *
- * Only this hook writes `userConfig.dashboard`, and only into the USER
- * fragment: a deep merge across scopes would mix board arrays.
+ * Only this hook writes `userConfig.dashboard`.
  */
 export const useDashboardBoards = (
   page: PanelPage,
@@ -74,12 +70,13 @@ export const useDashboardBoards = (
   const { message } = App.useApp();
   const { getErrorMessage } = useErrorMessageResolver();
   const domainName = useCurrentDomainValue();
-  const { myAppConfigFragments, upsertMyAppConfigFragments } =
-    useMyAppConfigFragments(['userConfig']);
-  const storedDashboard = myAppConfigFragments.userConfig?.dashboard as
-    Record<string, unknown> | undefined;
-  const domainTemplates = useMyAppConfig('domainConfig', 'dashboardTemplates');
-  const publicTemplates = useMyAppConfig('publicConfigByDomain', [
+  const [storedDashboard, setStoredDashboard] =
+    useMyAppConfig<Record<string, unknown>>('dashboard');
+  const domainTemplates = useMyAppConfigValue(
+    'domainConfig',
+    'dashboardTemplates',
+  );
+  const publicTemplates = useMyAppConfigValue('publicConfigByDomain', [
     domainName,
     'dashboardTemplates',
   ]);
@@ -116,13 +113,13 @@ export const useDashboardBoards = (
           { update, resolve: resolveStored, keep },
         ] of batch) {
           // Replayed on the latest stored document, so this tab's earlier writes survive.
-          await upsertMyAppConfigFragments({
-            configName: 'userConfig',
-            subKey: ['dashboard', writtenPage],
-            value: (stored: unknown) => {
-              const written = update(resolveStored(stored));
-              return keep ? keep(written, stored) : written;
-            },
+          await setStoredDashboard((dashboard) => {
+            const stored = dashboard?.[writtenPage];
+            const written = update(resolveStored(stored));
+            return {
+              ...dashboard,
+              [writtenPage]: keep ? keep(written, stored) : written,
+            };
           });
         }
       } catch (error) {
@@ -130,7 +127,7 @@ export const useDashboardBoards = (
         message.error(getErrorMessage(error));
         throw error;
       }
-      // The upsert response already updated the stored document.
+      // The write already updated myAppConfigState.
       setOptimistic(settle(batch));
     };
   });

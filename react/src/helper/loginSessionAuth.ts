@@ -102,8 +102,10 @@ const myUserQuery = graphql`
         }
       }
     }
-    # The domain's System Settings; a failed read keeps the base config.
-    myAppConfigs(configNames: ["domainConfig"]) @catch(to: NULL) {
+    # Seeds myAppConfigState (ADR 0033); a failed read keeps the base config.
+    myAppConfigs(
+      configNames: ["publicConfigByDomain", "domainConfig", "userConfig"]
+    ) @catch(to: NULL) {
       configName
       config
     }
@@ -381,6 +383,9 @@ export async function connectViaGQL(
     jotaiStore.set(baseLoginConfigState, cfg);
   }
   jotaiStore.set(domainWebUISettingsState, domainSettings);
+  // Before `applyConfigToClient` marks the client ready, so no screen renders without it.
+  const { setMyAppConfigs } = await import('../hooks/useAppConfig');
+  setMyAppConfigs(jotaiStore, response?.myAppConfigs);
   const effectiveCfg = jotaiStore.get(loginConfigState) ?? cfg;
 
   applyConfigToClient({
@@ -623,6 +628,8 @@ export async function loadConfigFromWebServer(
   );
   // The previous server's domain settings stop applying until this one's sign-in.
   jotaiStore.set(domainWebUISettingsState, undefined);
+  const { clearMyAppConfigs } = await import('../hooks/useAppConfig');
+  clearMyAppConfigs(jotaiStore);
   const effectiveLoginConfig = jotaiStore.get(loginConfigState)!;
   jotaiStore.set(autoLogoutState, effectiveLoginConfig.autoLogout);
   // loginPluginState stays on the bundled value; whether the joined

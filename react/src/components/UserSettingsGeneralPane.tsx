@@ -8,7 +8,7 @@
 */
 import { App } from '../app-shim';
 import { useSuspendedBackendaiClient } from '../hooks';
-import { useMyAppConfigFragments } from '../hooks/useAppConfig';
+import { useMyAppConfig } from '../hooks/useAppConfig';
 import {
   useBAISettingGeneralState,
   useBAISettingUserState,
@@ -50,9 +50,7 @@ const UserSettingsGeneralPane = () => {
   } = useCustomThemeConfig();
   // `userConfig.themeFamily` is the authoritative store; the localStorage
   // FOUC mirror is written only after the server accepts (FR-1964).
-  const { upsertMyAppConfigFragments } = useMyAppConfigFragments([
-    'userConfig',
-  ]);
+  const [, setUserConfigThemeFamily] = useMyAppConfig<string>('themeFamily');
   // The select shows the chosen family while the write is in flight.
   const [pendingThemeFamily, setPendingThemeFamily] = useState<{
     family: string | undefined;
@@ -60,11 +58,7 @@ const UserSettingsGeneralPane = () => {
   const persistThemeFamily = async (next: string | undefined) => {
     setPendingThemeFamily({ family: next });
     try {
-      await upsertMyAppConfigFragments({
-        configName: 'userConfig',
-        subKey: 'themeFamily',
-        value: next,
-      });
+      await setUserConfigThemeFamily(next);
       setThemeFamily(next);
     } catch (error) {
       message.error(getErrorMessage(error));
