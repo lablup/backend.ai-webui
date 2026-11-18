@@ -1508,7 +1508,7 @@
     "Tags": "Etiketler",
     "TagsPlaceholder": "Etiketleri virgülle ayırarak girin",
     "TagsTooltip": "Dağıtımları düzenlemek ve filtrelemek için isteğe bağlı etiketler. Eklemek için Enter veya virgüle basın.",
-    "TensorParallelFgpuMismatch": "TP \"{{tp}}\", ancak istenen fGPU miktarı \"{{gpu}}\". TP ile fGPU miktarı eşleşmelidir.",
+    "TensorParallelFgpuMismatch": "İstenen fGPU miktarı \"{{gpu}}\", ancak TP \"{{tp}}\" en az \"{{tp}}\" GPU gerektirir.",
     "TensorParallelFgpuNotInteger": "TP \"{{tp}}\", ancak istenen fGPU miktarı (\"{{gpu}}\") tam sayı değil. TP 2 ve üzeri tüm GPU gerektirir.",
     "ToStatus": "Hedef Durum",
     "TrafficRatio": "Trafik Oranı",

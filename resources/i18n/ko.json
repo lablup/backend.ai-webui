@@ -1508,7 +1508,7 @@
     "Tags": "태그",
     "TagsPlaceholder": "쉼표로 구분하여 태그를 입력하세요",
     "TagsTooltip": "배포를 정리하고 필터링하기 위한 선택적 라벨입니다. Enter 또는 쉼표로 추가하세요.",
-    "TensorParallelFgpuMismatch": "TP는 \"{{tp}}\"인데 요청한 fGPU 양은 \"{{gpu}}\"입니다. TP와 fGPU 양을 일치시키세요.",
+    "TensorParallelFgpuMismatch": "요청한 fGPU 양은 \"{{gpu}}\"이지만 TP \"{{tp}}\"에는 최소 \"{{tp}}\"장의 GPU가 필요합니다.",
     "TensorParallelFgpuNotInteger": "TP는 \"{{tp}}\"인데 요청한 fGPU 양(\"{{gpu}}\")이 정수가 아닙니다. TP가 2 이상이면 GPU 전체 단위가 필요합니다.",
     "ToStatus": "이후 상태",
     "TrafficRatio": "트래픽 비율",

@@ -142,9 +142,9 @@ describe('tensorParallelFgpuWarningKind', () => {
     expect(tensorParallelFgpuWarningKind(1, 1)).toBeNull();
   });
 
-  it('raises the mismatch warning when the TP value and fGPU quantity differ', () => {
-    expect(tensorParallelFgpuWarningKind(1, 2)).toBe('mismatch');
+  it('raises the mismatch warning when the fGPU quantity is below the TP value', () => {
     expect(tensorParallelFgpuWarningKind(2, 1)).toBe('mismatch');
+    expect(tensorParallelFgpuWarningKind(4, 2)).toBe('mismatch');
   });
 
   it('raises the non-integer warning for TP 2+ with a fractional fGPU quantity', () => {
@@ -152,8 +152,10 @@ describe('tensorParallelFgpuWarningKind', () => {
     expect(tensorParallelFgpuWarningKind(4, 0.5)).toBe('nonInteger');
   });
 
-  it('raises no warning when they match', () => {
+  it('raises no warning when the fGPU quantity meets or exceeds the TP value', () => {
     expect(tensorParallelFgpuWarningKind(2, 2)).toBeNull();
+    expect(tensorParallelFgpuWarningKind(1, 2)).toBeNull();
+    expect(tensorParallelFgpuWarningKind(2, 3)).toBeNull();
   });
 });
 

@@ -81,13 +81,12 @@ export const effectiveTensorParallelValue = (
 };
 
 /**
- * Which warning the TP value and the fGPU quantity raise:
- * - `nonInteger` — TP 2 or higher with a fractional fGPU quantity (a
- *   non-integer split cannot satisfy multi-GPU tensor parallelism);
- * - `mismatch` — TP value and fGPU quantity differ.
- * The specific non-integer warning wins when both hold. A single TP over a
- * fractional share of one GPU (0 < fGPU ≤ 1) is the intended way to split one
- * GPU and raises no warning.
+ * Which warning the TP value and the fGPU quantity raise: `nonInteger` for
+ * TP 2+ with a fractional fGPU quantity, `mismatch` when the fGPU quantity
+ * is below the TP value (the split needs at least that many GPUs; more is
+ * fine). The non-integer warning wins when both hold. A single TP over a
+ * fractional share of one GPU (0 < fGPU ≤ 1) is the intended way to split
+ * one GPU and raises no warning.
  */
 export const tensorParallelFgpuWarningKind = (
   tpValue: number,
@@ -95,7 +94,7 @@ export const tensorParallelFgpuWarningKind = (
 ): TensorParallelFgpuWarningKind | null => {
   if (tpValue === 1 && fgpuQuantity > 0 && fgpuQuantity <= 1) return null;
   if (tpValue >= 2 && !Number.isInteger(fgpuQuantity)) return 'nonInteger';
-  if (tpValue !== fgpuQuantity) return 'mismatch';
+  if (fgpuQuantity < tpValue) return 'mismatch';
   return null;
 };
 

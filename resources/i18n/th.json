@@ -1504,7 +1504,7 @@
     "Tags": "แท็ก",
     "TagsPlaceholder": "ป้อนแท็ก คั่นด้วยเครื่องหมายจุลภาค",
     "TagsTooltip": "ป้ายกำกับที่ไม่บังคับสำหรับจัดระเบียบและกรองการปรับใช้ กด Enter หรือจุลภาคเพื่อเพิ่ม",
-    "TensorParallelFgpuMismatch": "TP เป็น \"{{tp}}\" แต่จำนวน fGPU ที่ขอเป็น \"{{gpu}}\" TP และจำนวน fGPU ควรตรงกัน",
+    "TensorParallelFgpuMismatch": "จำนวน fGPU ที่ขอเป็น \"{{gpu}}\" แต่ TP \"{{tp}}\" ต้องใช้ GPU อย่างน้อย \"{{tp}}\" หน่วย",
     "TensorParallelFgpuNotInteger": "TP เป็น \"{{tp}}\" แต่จำนวน fGPU ที่ขอ (\"{{gpu}}\") ไม่ใช่จำนวนเต็ม TP 2 ขึ้นไปต้องใช้ GPU ทั้งหน่วย",
     "ToStatus": "สู่สถานะ",
     "TrafficRatio": "อัตราส่วนทราฟฟิก",

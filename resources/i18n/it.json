@@ -1508,7 +1508,7 @@
     "Tags": "Tag",
     "TagsPlaceholder": "Inserisci i tag, separati da virgole",
     "TagsTooltip": "Etichette opzionali per organizzare e filtrare le distribuzioni. Premi Invio o virgola per aggiungere.",
-    "TensorParallelFgpuMismatch": "TP è \"{{tp}}\", ma la quantità di fGPU richiesta è \"{{gpu}}\". TP e la quantità di fGPU devono corrispondere.",
+    "TensorParallelFgpuMismatch": "La quantità di fGPU richiesta è \"{{gpu}}\", ma TP \"{{tp}}\" richiede almeno \"{{tp}}\" GPU.",
     "TensorParallelFgpuNotInteger": "TP è \"{{tp}}\", ma la quantità di fGPU richiesta (\"{{gpu}}\") non è un numero intero. Con TP 2 o superiore sono richieste GPU intere.",
     "ToStatus": "Vai allo stato",
     "TrafficRatio": "Rapporto traffico",
