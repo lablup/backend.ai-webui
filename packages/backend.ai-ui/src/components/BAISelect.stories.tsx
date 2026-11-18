@@ -207,6 +207,37 @@ export const WithTooltip: Story = {
   ),
 };
 
+export const MultipleSelectionTooltip: Story = {
+  name: 'MultipleSelectionTooltip',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'In multiple mode the trigger names three labels, then "+N"; hovering or focusing it lists every selected label. `showTooltip={false}` turns the tooltip off.',
+      },
+    },
+  },
+  render: () => (
+    <BAIFlex direction="column" gap="md">
+      <BAISelect
+        mode="multiple"
+        aria-label="With tooltip"
+        options={sampleOptions}
+        defaultValue={['option1', 'option2', 'option3', 'option4']}
+        style={{ width: 250 }}
+      />
+      <BAISelect
+        mode="multiple"
+        aria-label="Without tooltip"
+        showTooltip={false}
+        options={sampleOptions}
+        defaultValue={['option1', 'option2', 'option3', 'option4']}
+        style={{ width: 250 }}
+      />
+    </BAIFlex>
+  ),
+};
+
 // Footer in dropdown
 export const WithFooter: Story = {
   render: () => (
