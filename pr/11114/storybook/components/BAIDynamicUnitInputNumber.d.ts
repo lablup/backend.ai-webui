@@ -19,6 +19,8 @@ export interface BAIDynamicUnitInputNumberProps extends Omit<BAINumberInputProps
     /** Accessible name. Hidden when absent (the field usually sits under one). */
     label?: string;
     isLabelHidden?: boolean;
+    /** Width of the input group, as `NumberInput`'s `width` takes it. */
+    width?: number | string;
     style?: CSSProperties;
     className?: string;
     [key: `data-${string}`]: string | undefined;
