@@ -136,8 +136,14 @@ describe('effectiveTensorParallelValue', () => {
 });
 
 describe('tensorParallelFgpuWarningKind', () => {
+  it('raises no warning for a single TP over a fractional share of one GPU', () => {
+    expect(tensorParallelFgpuWarningKind(1, 0.5)).toBeNull();
+    expect(tensorParallelFgpuWarningKind(1, 0.6)).toBeNull();
+    expect(tensorParallelFgpuWarningKind(1, 1)).toBeNull();
+  });
+
   it('raises the mismatch warning when the TP value and fGPU quantity differ', () => {
-    expect(tensorParallelFgpuWarningKind(1, 0.5)).toBe('mismatch');
+    expect(tensorParallelFgpuWarningKind(1, 2)).toBe('mismatch');
     expect(tensorParallelFgpuWarningKind(2, 1)).toBe('mismatch');
   });
 
@@ -147,7 +153,6 @@ describe('tensorParallelFgpuWarningKind', () => {
   });
 
   it('raises no warning when they match', () => {
-    expect(tensorParallelFgpuWarningKind(1, 1)).toBeNull();
     expect(tensorParallelFgpuWarningKind(2, 2)).toBeNull();
   });
 });
