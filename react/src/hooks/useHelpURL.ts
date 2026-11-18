@@ -13,7 +13,7 @@ import {
   USER_SETTINGS_PARAM,
 } from '../helper/userSettingsModal';
 import { useWebUILocation } from './index';
-import { useCurrentMenuKey } from './useRouteScope';
+import { useCurrentMenuKey, useRouteScope } from './useRouteScope';
 import { useEffectiveLoginConfig } from './useWebUIConfig';
 
 // Languages the hosted user manual is published in; others fall back to English.
@@ -69,6 +69,7 @@ export const useHelpURL = (): string | null => {
   // `/project/:name/<feature>` the first pathname segment is the scope prefix,
   // so the lookup uses the matched route's menu key, not the pathname.
   const routeMenuKey = useCurrentMenuKey() || '';
+  const routeScope = useRouteScope();
   const searchParams = new URLSearchParams(location.search);
   // An open settings modal covers whatever page is underneath, so it owns the
   // help target — otherwise the "?" would answer for the page behind it.
@@ -80,7 +81,12 @@ export const useHelpURL = (): string | null => {
 
   return resolveHelpURL(
     manualUrl,
-    hostedBaseURL + resolveHelpDocPath(matchingKey, activeTab),
+    hostedBaseURL +
+      resolveHelpDocPath(
+        matchingKey,
+        activeTab,
+        settingsCategory ? undefined : routeScope,
+      ),
   );
 };
 

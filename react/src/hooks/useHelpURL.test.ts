@@ -15,6 +15,10 @@ import { renderHook } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 const effective = vi.hoisted(() => ({ manualUrl: null as string | null }));
+const route = vi.hoisted(() => ({
+  menuKey: '',
+  scope: 'project' as 'project' | 'projectAdmin' | 'admin',
+}));
 
 vi.mock('../components/DefaultProviders', () => ({
   useCurrentLanguage: () => ['ko'],
@@ -23,7 +27,8 @@ vi.mock('./index', () => ({
   useWebUILocation: () => ({ search: '' }),
 }));
 vi.mock('./useRouteScope', () => ({
-  useCurrentMenuKey: () => '',
+  useCurrentMenuKey: () => route.menuKey,
+  useRouteScope: () => route.scope,
 }));
 vi.mock('./useWebUIConfig', () => ({
   useEffectiveLoginConfig: () => effective,
@@ -98,6 +103,8 @@ describe('useHelpURL', () => {
   afterEach(() => {
     globalThis.packageVersion = originalVersion;
     effective.manualUrl = null;
+    route.menuKey = '';
+    route.scope = 'project';
   });
 
   it('opens the hosted manual for the current version and language by default', () => {
@@ -106,6 +113,17 @@ describe('useHelpURL', () => {
     expect(result.current?.startsWith(`${HOSTED_MANUAL_ROOT}/26.10/ko/`)).toBe(
       true,
     );
+  });
+
+  it.each([
+    ['projectAdmin', 'project_admin.html#project-admin-dashboard'],
+    ['admin', 'admin_menu.html#admin-dashboard'],
+  ] as const)('opens the %s dashboard section of the manual', (scope, path) => {
+    globalThis.packageVersion = '26.10.1';
+    route.menuKey = 'admin-dashboard';
+    route.scope = scope;
+    const { result } = renderHook(() => useHelpURL());
+    expect(result.current).toBe(`${HOSTED_MANUAL_ROOT}/26.10/ko/${path}`);
   });
 
   it('reads manualUrl from the effective login config', () => {
