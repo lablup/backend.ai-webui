@@ -58,7 +58,9 @@ type FormInputType = {
   // seeds null when the stored value is absent.
   pendingTimeout: number | null;
   retriesToSkip: number | null;
-  sftpProxies: string[];
+  // `sftpProxies` is undefined until its Form.Item registers: it sits behind a
+  // Suspense boundary while the SFTP map / proxy-options query loads.
+  sftpProxies: string[] | undefined;
 };
 
 interface ResourceGroupCreateModalProps extends BAIModalProps {
@@ -108,10 +110,13 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
   // field below skeletons until the map resolves, then mounts with its prefill
   // as the Form.Item `initialValue` — the rest of the form renders immediately.
   const deferredOpen = useDeferredValue(modalProps.open);
-  const { data: proxyResourceGroups, isFetching: isSftpMapFetching } =
-    useSFTPProxyResourceGroupsQuery({
-      enabled: baiClient.is_superadmin && !!deferredOpen,
-    });
+  const {
+    data: proxyResourceGroups,
+    isFetching: isSftpMapFetching,
+    isError: isSftpMapError,
+  } = useSFTPProxyResourceGroupsQuery({
+    enabled: baiClient.is_superadmin && !!deferredOpen,
+  });
   const currentSftpProxies = proxiesServingGroups(
     proxyResourceGroups,
     resourceGroup?.name ? [resourceGroup.name] : [],
@@ -196,7 +201,10 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
         loading:
           isInFlightCommitCreateResourceGroup ||
           isInFlightCommitAssociateDomain ||
-          isInFlightCommitUpdateResourceGroup,
+          isInFlightCommitUpdateResourceGroup ||
+          // Hold the save while the SFTP map loads, but not once it has failed:
+          // a failed map skips only the proxy sync, the rest still saves.
+          (baiClient.is_superadmin && isSftpMapLoading && !isSftpMapError),
       }}
       onOk={() => {
         formRef.current
@@ -236,9 +244,16 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
               if (!baiClient.is_superadmin) {
                 return Promise.resolve();
               }
+              // The SFTP Form.Item is replaced by its Suspense fallback while
+              // the SFTP map or the proxy-options query is still loading, so an
+              // unregistered field reads `undefined` here. Skip the sync: "not
+              // loaded" must not mean "deselect all" (a deliberate clear is []).
+              if (values.sftpProxies === undefined) {
+                return Promise.resolve();
+              }
               const { added, removed } = computeProxyDelta(
                 currentSftpProxies,
-                values.sftpProxies ?? [],
+                values.sftpProxies,
               );
               return applyGroupProxyDelta([groupName], added, removed).then(
                 (results) => {
