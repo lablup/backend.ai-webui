@@ -49,7 +49,7 @@ import ResourceAllocationFormItems, {
   type ResourceAllocationFormValue,
 } from '../../../components/SessionFormItems/ResourceAllocationFormItems';
 import '../../../components/collapsible-section.css';
-import { Form, type FormInstance } from '../../../form-engine';
+import { Form, type FormInstance, type NamePath } from '../../../form-engine';
 import { convertToBinaryUnit } from '../../../helper';
 import {
   DEFAULT_MODEL_SERVICE_SHELL,
@@ -731,11 +731,11 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
   // namespace (registered by RuntimeParameterFormSection), so required presets
   // participate in normal form validation. Touched keys are kept in a ref —
   // changing them must not re-render the modal, and they are only read at
-  // submit time. The groups live in a ref too: they are read at submit time
-  // and by the TP/fGPU accelerator rule, which re-validates the field when
-  // the runtime params change.
+  // submit time. The groups live in a ref too, read at submit time and by the
+  // TP/fGPU rule; only the TP parameter's key is state, for its dependencies.
   const runtimeParamTouchedKeysRef = useRef<Set<string>>(new Set());
   const runtimeParamGroupsRef = useRef<RuntimeParameterGroup[] | null>(null);
+  const [tpParamKey, setTpParamKey] = useState<string>();
 
   // Initial preset values fed into `RuntimeParameterFormSection` for non-custom
   // variants in edit mode, keyed by preset id. State (not ref) so the child
@@ -1345,11 +1345,20 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
     );
   };
 
-  // Warns under the AI Accelerator field when the TP runtime parameter and
-  // the requested fGPU quantity conflict (lablup/backend.ai-webui#11283).
-  // `extraAcceleratorDependencies` re-validates the field when a runtime
-  // parameter changes, so the warning reacts to TP edits without touching
-  // the accelerator.
+  // Warns when the TP runtime parameter and the requested fGPU quantity
+  // conflict (lablup/backend.ai-webui#11283). Dependencies match exact paths
+  // only, so the TP field's own path is listed, not just its namespace.
+  const tpFgpuDependencies: NamePath[] = tpParamKey
+    ? [[RUNTIME_PARAMS_NAMESPACE], [RUNTIME_PARAMS_NAMESPACE, tpParamKey]]
+    : [[RUNTIME_PARAMS_NAMESPACE]];
+  // A variant switch adds or drops the TP parameter without a field edit.
+  useEffect(() => {
+    customForm
+      .validateFields([['resource', 'accelerator'], 'allocationPreset'], {
+        dirty: true,
+      })
+      .catch(() => {});
+  }, [customForm, tpParamKey]);
   const tpFgpuAcceleratorRules = [
     {
       warningOnly: true,
@@ -2531,6 +2540,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                       }}
                       onGroupsLoaded={(groups) => {
                         runtimeParamGroupsRef.current = groups;
+                        setTpParamKey(findTensorParallelParam(groups)?.key);
                       }}
                       initialPresetValues={initialRuntimePresetValues}
                     />
@@ -2607,7 +2617,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                 hideResourceGroupFormItem
                 keepRestoredAllocation
                 extraAcceleratorRules={tpFgpuAcceleratorRules}
-                extraAcceleratorDependencies={[[RUNTIME_PARAMS_NAMESPACE]]}
+                extraAcceleratorDependencies={tpFgpuDependencies}
               />
             </Suspense>
           ) : null}

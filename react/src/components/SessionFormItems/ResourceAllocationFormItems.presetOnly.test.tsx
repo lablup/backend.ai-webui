@@ -12,6 +12,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import '@testing-library/jest-dom';
 import {
   act,
+  fireEvent,
   render,
   renderHook,
   screen,
@@ -162,14 +163,22 @@ const cpuOnlyImage = makeImage([]);
 
 const PRESET_ID = 'preset-cuda';
 
+type ExtraAcceleratorRules = React.ComponentProps<
+  typeof ResourceAllocationFormItems
+>['extraAcceleratorRules'];
+
 const renderRestored = ({
   label,
   image,
   enableResourcePresets = true,
+  extraAcceleratorRules,
+  withTpField = false,
 }: {
   label: string | null;
   image: Image;
   enableResourcePresets?: boolean;
+  extraAcceleratorRules?: ExtraAcceleratorRules;
+  withTpField?: boolean;
 }) => {
   const environment = createMockEnvironment();
   // One resolver per query: the resource group, then the preset availability.
@@ -219,6 +228,7 @@ const renderRestored = ({
               resourceGroup: 'mock-rg',
               allocationPreset: label,
               environments: { image },
+              runtimeParams: { tp: '1' },
               resource: {
                 cpu: 1,
                 mem: '1g',
@@ -228,10 +238,17 @@ const renderRestored = ({
               },
             }}
           >
+            {withTpField ? (
+              <Form.Item name={['runtimeParams', 'tp']}>
+                <input aria-label="tp" />
+              </Form.Item>
+            ) : null}
             <ResourceAllocationFormItems
               project={{ id: 'project-id', name: 'project-name' }}
               enableResourcePresets={enableResourcePresets}
               keepRestoredAllocation
+              extraAcceleratorRules={extraAcceleratorRules}
+              extraAcceleratorDependencies={[['runtimeParams', 'tp']]}
             />
           </Form>
         </Suspense>
@@ -313,5 +330,68 @@ describe('where an accelerator type the image does not support is reported', () 
     allowCustomResourceAllocation = true;
     const form = renderRestored({ label: 'custom', image: rocmOrTpuImage });
     await expectOneErrorOn(form, 'resource_accelerator');
+  });
+});
+
+describe('caller accelerator rules (extraAcceleratorRules)', () => {
+  const WARNING = 'TP_NEEDS_MORE_GPUS';
+  let formRef: FormInstance | undefined;
+  const tpRule: ExtraAcceleratorRules = [
+    {
+      warningOnly: true,
+      validator: async (_rule, value) => {
+        const tp = Number(formRef?.getFieldValue(['runtimeParams', 'tp']));
+        if (value < tp) return Promise.reject(WARNING);
+      },
+    },
+  ];
+
+  const renderWithTpRule = async () => {
+    const form = renderRestored({
+      label: PRESET_ID,
+      image: makeImage(['cuda']),
+      extraAcceleratorRules: tpRule,
+      withTpField: true,
+    });
+    formRef = form;
+    await screen.findByTestId('mock-resource-group-select');
+    await act(async () => {
+      await form
+        .validateFields([['resource', 'accelerator'], 'allocationPreset'])
+        .catch(() => {});
+    });
+    return form;
+  };
+
+  const setTp = async (value: string) => {
+    await act(async () => {
+      fireEvent.change(screen.getByLabelText('tp'), { target: { value } });
+    });
+  };
+
+  it('preset-only mode: reports on the visible Resource Presets item and follows a TP-only edit', async () => {
+    allowCustomResourceAllocation = false;
+    await renderWithTpRule();
+    expect(screen.queryByText(WARNING)).toBeNull();
+
+    await setTp('2');
+    const warning = await screen.findByText(WARNING);
+    expect(itemOf(warning)).toBe('allocationPreset');
+
+    await setTp('1');
+    await waitFor(() => expect(screen.queryByText(WARNING)).toBeNull());
+  });
+
+  it('free mode: reports on the accelerator item and follows a TP-only edit', async () => {
+    allowCustomResourceAllocation = true;
+    await renderWithTpRule();
+    expect(screen.queryByText(WARNING)).toBeNull();
+
+    await setTp('2');
+    const warning = await screen.findByText(WARNING);
+    expect(itemOf(warning)).toBe('resource_accelerator');
+
+    await setTp('1');
+    await waitFor(() => expect(screen.queryByText(WARNING)).toBeNull());
   });
 });

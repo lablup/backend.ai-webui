@@ -151,15 +151,19 @@ interface ResourceAllocationFormItemsProps {
    * for `sessionType === 'system'` (FR-3996).
    */
   includeSFTPResourceGroups?: boolean;
+  /**
+   * Caller rules on the accelerator quantity. In preset-only mode the
+   * accelerator item is hidden, so they report on the Resource Presets item
+   * instead (ADR 0016).
+   */
   extraAcceleratorRules?: Array<{
     warningOnly?: boolean;
     validator: (rule: unknown, value: number) => Promise<void>;
   }>;
   /**
-   * Extra `dependencies` for the accelerator Form.Item: caller rules that
-   * read fields outside this fragment (e.g. the runtime-params namespace)
-   * re-validate when those fields change. The built-in dependencies
-   * (`acceleratorType`, `cluster_size`, `mem`) stay.
+   * Extra `dependencies` for the item that reports `extraAcceleratorRules`:
+   * the exact paths of outside fields those rules read, so they re-validate
+   * when one changes.
    */
   extraAcceleratorDependencies?: ReadonlyArray<NamePath>;
   /** Keep a prefilled `allocationPreset: 'custom'` and its values in preset-only mode (a cloned revision). */
@@ -357,6 +361,9 @@ const ResourceAllocationFormItems: React.FC<
   const mode: AllocationMode = baiClient._config.allowCustomResourceAllocation
     ? 'free'
     : 'preset-only';
+  // Same item choice as `acceleratorTypeErrorTarget` (ADR 0016).
+  const extraAcceleratorRulesTarget =
+    mode === 'free' || !enableResourcePresets ? 'accelerator' : 'preset';
   const ruleContext: RuleContext = {
     mode,
     enableResourcePresets: !!enableResourcePresets,
@@ -455,6 +462,11 @@ const ResourceAllocationFormItems: React.FC<
           label={t('resourcePreset.ResourcePresets')}
           name="allocationPreset"
           style={{ marginBottom: token('--spacing-2') }}
+          dependencies={
+            extraAcceleratorRulesTarget === 'preset'
+              ? [...(extraAcceleratorDependencies ?? [])]
+              : undefined
+          }
           rules={[
             {
               required: true,
@@ -515,6 +527,16 @@ const ResourceAllocationFormItems: React.FC<
                 if (message) return Promise.reject(message);
               },
             }),
+            ...(extraAcceleratorRulesTarget === 'preset'
+              ? _.map(extraAcceleratorRules, (rule) => ({
+                  warningOnly: rule.warningOnly,
+                  validator: (validatorRule: unknown) =>
+                    rule.validator(
+                      validatorRule,
+                      form.getFieldValue(['resource', 'accelerator']),
+                    ),
+                }))
+              : []),
           ]}
         >
           <ResourcePresetSelect
@@ -1090,7 +1112,10 @@ const ResourceAllocationFormItems: React.FC<
                                     return Promise.resolve();
                                   },
                                 },
-                                ...(extraAcceleratorRules ?? []),
+                                ...(extraAcceleratorRulesTarget ===
+                                'accelerator'
+                                  ? (extraAcceleratorRules ?? [])
+                                  : []),
                               ]
                         }
                       >
