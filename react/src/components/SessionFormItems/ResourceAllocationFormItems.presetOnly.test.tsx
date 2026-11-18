@@ -173,12 +173,14 @@ const renderRestored = ({
   enableResourcePresets = true,
   extraAcceleratorRules,
   withTpField = false,
+  initialTp = '1',
 }: {
   label: string | null;
   image: Image;
   enableResourcePresets?: boolean;
   extraAcceleratorRules?: ExtraAcceleratorRules;
   withTpField?: boolean;
+  initialTp?: string;
 }) => {
   const environment = createMockEnvironment();
   // One resolver per query: the resource group, then the preset availability.
@@ -228,7 +230,7 @@ const renderRestored = ({
               resourceGroup: 'mock-rg',
               allocationPreset: label,
               environments: { image },
-              runtimeParams: { tp: '1' },
+              runtimeParams: { tp: initialTp },
               resource: {
                 cpu: 1,
                 mem: '1g',
@@ -380,6 +382,19 @@ describe('caller accelerator rules (extraAcceleratorRules)', () => {
 
     await setTp('1');
     await waitFor(() => expect(screen.queryByText(WARNING)).toBeNull());
+  });
+
+  it('free mode: a restored mismatch shows on load, before any edit', async () => {
+    allowCustomResourceAllocation = true;
+    formRef = renderRestored({
+      label: PRESET_ID,
+      image: makeImage(['cuda']),
+      extraAcceleratorRules: tpRule,
+      withTpField: true,
+      initialTp: '2',
+    });
+    const warning = await screen.findByText(WARNING);
+    expect(itemOf(warning)).toBe('resource_accelerator');
   });
 
   it('free mode: reports on the accelerator item and follows a TP-only edit', async () => {

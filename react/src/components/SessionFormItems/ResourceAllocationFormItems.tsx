@@ -418,6 +418,14 @@ const ResourceAllocationFormItems: React.FC<
     if (mode === 'free' || !enableResourcePresets) {
       names.push(['resource', 'acceleratorType']);
     }
+    // A restored accelerator shows the caller's warning on load, not on first edit.
+    if (
+      !_.isEmpty(extraAcceleratorRules) &&
+      extraAcceleratorRulesTarget === 'accelerator' &&
+      Number(form.getFieldValue(['resource', 'accelerator'])) > 0
+    ) {
+      names.push(['resource', 'accelerator']);
+    }
     if (label) names.push('allocationPreset');
     if (names.length > 0) form.validateFields(names).catch(() => {});
   });

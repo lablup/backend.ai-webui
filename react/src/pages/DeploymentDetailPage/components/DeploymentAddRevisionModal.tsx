@@ -1351,12 +1351,14 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
   const tpFgpuDependencies: NamePath[] = tpParamKey
     ? [[RUNTIME_PARAMS_NAMESPACE], [RUNTIME_PARAMS_NAMESPACE, tpParamKey]]
     : [[RUNTIME_PARAMS_NAMESPACE]];
-  // A variant switch adds or drops the TP parameter without a field edit.
+  // A variant switch or a restored revision brings the TP parameter without a
+  // field edit. An empty accelerator is skipped: it would show `required`.
   useEffect(() => {
+    if (Number(customForm.getFieldValue(['resource', 'accelerator'])) > 0) {
+      customForm.validateFields([['resource', 'accelerator']]).catch(() => {});
+    }
     customForm
-      .validateFields([['resource', 'accelerator'], 'allocationPreset'], {
-        dirty: true,
-      })
+      .validateFields(['allocationPreset'], { dirty: true })
       .catch(() => {});
   }, [customForm, tpParamKey]);
   const tpFgpuAcceleratorRules = [
