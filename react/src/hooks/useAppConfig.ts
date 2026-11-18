@@ -203,14 +203,9 @@ export const setMyAppConfigs = (
 export const clearMyAppConfigs = (store: JotaiStore) =>
   store.set(myAppConfigState, { status: 'idle', configs: {} });
 
-/**
- * Reads the signed-in user's merged `publicConfigByDomain`, `domainConfig`
- * and `userConfig` into `myAppConfigState`. Changes made elsewhere show after
- * the next call (a reload, a `reset`, or an admin's own-scope save).
- */
-export const loadMyAppConfig = async (
+const readMyAppConfigs = async (
   store: JotaiStore,
-  environment: IEnvironment = RelayEnvironment,
+  environment: IEnvironment,
 ): Promise<void> => {
   const data = await fetchQuery<useAppConfigLoadQuery>(
     environment,
@@ -221,6 +216,37 @@ export const loadMyAppConfig = async (
     .toPromise()
     .catch(() => undefined);
   setMyAppConfigs(store, data?.myAppConfigs);
+};
+
+const runningLoads = new WeakMap<JotaiStore, Promise<void>>();
+const queuedLoads = new WeakMap<JotaiStore, Promise<void>>();
+
+/**
+ * Reads the signed-in user's merged `publicConfigByDomain`, `domainConfig`
+ * and `userConfig` into `myAppConfigState`. Calls made while a read runs
+ * share one read that starts after it, so it reflects every write landed by then.
+ */
+export const loadMyAppConfig = (
+  store: JotaiStore,
+  environment: IEnvironment = RelayEnvironment,
+): Promise<void> => {
+  const start = () => {
+    const read = readMyAppConfigs(store, environment).finally(() => {
+      if (runningLoads.get(store) === read) runningLoads.delete(store);
+    });
+    runningLoads.set(store, read);
+    return read;
+  };
+  const running = runningLoads.get(store);
+  if (!running) return start();
+  const queued =
+    queuedLoads.get(store) ??
+    running.then(() => {
+      queuedLoads.delete(store);
+      return start();
+    });
+  queuedLoads.set(store, queued);
+  return queued;
 };
 
 const commitMyUserConfig = (

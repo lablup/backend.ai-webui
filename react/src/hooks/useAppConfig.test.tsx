@@ -366,6 +366,28 @@ describe('myAppConfigState', () => {
     expect(store.get(hooks.myAppConfigState).status).toBe('failed');
   });
 
+  it('folds the loads asked for while one runs into one later load', async () => {
+    const { hooks, environment, store } = await setup();
+    const first = hooks.loadMyAppConfig(store, environment);
+    const second = hooks.loadMyAppConfig(store, environment);
+    const third = hooks.loadMyAppConfig(store, environment);
+    expect(second).toBe(third);
+    const read = await waitForOperation(environment, 'useAppConfigLoadQuery');
+    environment.mock.resolve(read, { data: { myAppConfigs: rows({ x: 1 }) } });
+    await first;
+    await waitFor(() =>
+      expect(
+        operationsNamed(environment, 'useAppConfigLoadQuery'),
+      ).toHaveLength(1),
+    );
+    const again = operationsNamed(environment, 'useAppConfigLoadQuery')[0];
+    environment.mock.resolve(again, { data: { myAppConfigs: rows({ x: 2 }) } });
+    await second;
+    expect(store.get(hooks.myAppConfigState).configs.userConfig).toEqual({
+      x: 2,
+    });
+  });
+
   it('reset removes the key from the USER document, then reloads the domain default', async () => {
     const { hooks, environment, store } = await setup();
     hooks.setMyAppConfigs(store, rows({ x: 9, y: 1 }));
