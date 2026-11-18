@@ -11,7 +11,7 @@ import { startAccountUserSettingsSync } from '../../helper/accountUserSettingsSy
 import { USER_SETTINGS_CONFIG_KEY } from '../../helper/userSettingsAppConfig';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../../hooks';
 import { useResourceSlotsDetails } from '../../hooks/backendai';
-import { useMyAppConfig, useMyAppConfigStatus } from '../../hooks/useAppConfig';
+import { useMyAppConfig } from '../../hooks/useAppConfig';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
 import { useCustomThemeConfig } from '../../hooks/useCustomThemeConfig';
 import useKeyboardShortcut from '../../hooks/useKeyboardShortcut';
@@ -531,12 +531,16 @@ export const CSSTokenVariables = () => {
 const DismissSplashOnMount = () => {
   'use memo';
   useSuspendedBackendaiClient();
-  const [userConfigFamily] = useMyAppConfig('themeFamily');
+  const [userConfigFamily, , , userConfigStatus] = useMyAppConfig(
+    'userConfig',
+    'themeFamily',
+  );
   const [serverSettings, setServerSettings] = useMyAppConfig(
+    'userConfig',
     USER_SETTINGS_CONFIG_KEY,
   );
   // A failed sign-in read keeps the mirrored family and leaves no base to sync settings on.
-  const isUserConfigLoaded = useMyAppConfigStatus() === 'loaded';
+  const isUserConfigLoaded = userConfigStatus === 'loaded';
   const { setActiveThemeFamily } = useCustomThemeConfig();
   const { logger } = useBAILogger();
   const applyUserConfig = useEffectEvent(() => {

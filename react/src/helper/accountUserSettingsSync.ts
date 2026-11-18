@@ -17,7 +17,7 @@ import {
 } from './userSettingsAppConfig';
 import * as _ from 'lodash-es';
 
-/** The `set` of `useMyAppConfig(USER_SETTINGS_CONFIG_KEY)`. */
+/** The `set` of `useMyAppConfig('userConfig', USER_SETTINGS_CONFIG_KEY)`. */
 type SetServerSettings = (
   update: (current: unknown) => unknown,
 ) => Promise<void>;
