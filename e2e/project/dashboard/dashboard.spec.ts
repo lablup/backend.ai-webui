@@ -19,16 +19,16 @@ async function mockUserConfig(
 ) {
   await page.route('**/admin/gql', async (route) => {
     const request = route.request();
-    let body: { query?: string; variables?: Record<string, any> } = {};
+    let body: { query?: string } = {};
     try {
       body = JSON.parse(request.postData() ?? '{}');
     } catch {
       // not a GraphQL JSON body
     }
+    // `userConfig` comes only from the sign-in query; `navigateTo` reloads the page, which sends it again.
     const isUserConfigQuery =
       request.method() === 'POST' &&
-      /query\s+useAppConfigMyQuery\b/.test(body.query ?? '') &&
-      (body.variables?.configNames ?? []).includes('userConfig');
+      /query\s+loginSessionAuthMyUserQuery\b/.test(body.query ?? '');
     if (!isUserConfigQuery) {
       await route.fallback();
       return;
