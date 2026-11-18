@@ -131,4 +131,16 @@ describe('splitManualMarkdown', () => {
     expect(sections[1].text).toContain('note: Heads up');
     expect(sections[1].text).toContain('# not a heading');
   });
+
+  it('leaves no tag behind when tags are nested', () => {
+    const { sections } = splitManualMarkdown(
+      [
+        '## Title <scr<b>ipt>x',
+        '',
+        'Body <scr<i>ipt>alert(1)</scr</i>ipt> text.',
+      ].join('\n'),
+    );
+    expect(sections[0].heading).not.toMatch(/<script/i);
+    expect(sections[0].text).not.toMatch(/<\/?script/i);
+  });
 });

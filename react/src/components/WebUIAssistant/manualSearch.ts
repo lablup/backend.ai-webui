@@ -129,15 +129,27 @@ export function manualSectionURL(
   return `${manualBaseURL}${section.page}.html${section.anchor ? `#${section.anchor}` : ''}`;
 }
 
+// Repeats until nothing changes, so a nested `<scr<x>ipt>` cannot leave a tag behind.
+const stripTags = (text: string, tag: RegExp) => {
+  let previous: string;
+  do {
+    previous = text;
+    text = text.replace(tag, '');
+  } while (text !== previous);
+  return text;
+};
+
 const cleanMarkdownLine = (line: string) =>
-  line
-    .replace(/!\[[^\]]*\]\([^)]*\)/g, '')
-    .replace(
-      /^:::(\w+)\[(.*)\]\s*$/,
-      (_m, kind: string, title: string) => `${kind}: ${title}`,
-    )
-    .replace(/^:::\w*\s*$/, '')
-    .replace(/<\/?[a-zA-Z][^>]*>/g, '');
+  stripTags(
+    line
+      .replace(/!\[[^\]]*\]\([^)]*\)/g, '')
+      .replace(
+        /^:::(\w+)\[(.*)\]\s*$/,
+        (_m, kind: string, title: string) => `${kind}: ${title}`,
+      )
+      .replace(/^:::\w*\s*$/, ''),
+    /<\/?[a-zA-Z][^>]*>/g,
+  );
 
 /**
  * Splits one manual page's Markdown into h1–h3 sections. The manual puts an
@@ -165,7 +177,7 @@ export function splitManualMarkdown(markdown: string): {
     const heading = !inFence && /^(#{1,3})\s+(.+?)\s*#*\s*$/.exec(line);
     if (heading) {
       raw.push(current);
-      const title = heading[2].replace(/<[^>]+>/g, '').trim();
+      const title = stripTags(heading[2], /<[^>]+>/g).trim();
       if (heading[1].length === 1 && !pageTitle) pageTitle = title;
       current = { heading: title, anchor: pendingAnchor, lines: [] };
       pendingAnchor = undefined;
