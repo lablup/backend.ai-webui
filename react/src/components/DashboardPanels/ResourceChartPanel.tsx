@@ -277,7 +277,7 @@ const DAY_MS = 24 * 60 * 60 * 1000;
 // The bar and line charts keep their axes readable down to this height.
 const CHART_MIN_HEIGHT = 120;
 // The chart's share of the panel when the table is listed under it.
-const CHART_HEIGHT_WITH_TABLE = 200;
+export const CHART_HEIGHT_WITH_TABLE = 200;
 
 const styles = stylex.create({
   // Takes the panel's remaining height; the chart inside reads it back.
