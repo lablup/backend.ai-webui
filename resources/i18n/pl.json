@@ -1508,6 +1508,8 @@
     "Tags": "Tagi",
     "TagsPlaceholder": "Wprowadź tagi, oddzielone przecinkami",
     "TagsTooltip": "Opcjonalne etykiety do organizowania i filtrowania wdrożeń. Naciśnij Enter lub przecinek, aby dodać.",
+    "TensorParallelFgpuMismatch": "Żądana ilość fGPU to \"{{gpu}}\", ale TP \"{{tp}}\" wymaga co najmniej \"{{tp}}\" GPU.",
+    "TensorParallelFgpuNotInteger": "TP wynosi \"{{tp}}\", ale żądana ilość fGPU \"{{gpu}}\" nie jest liczbą całkowitą. Przy TP 2 lub wyższym wymagane są pełne GPU.",
     "ToStatus": "Przejdź do statusu",
     "TrafficRatio": "Stosunek ruchu",
     "TrafficStatus": "Status ruchu",

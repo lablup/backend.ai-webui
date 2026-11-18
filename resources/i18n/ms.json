@@ -1508,6 +1508,8 @@
     "Tags": "Tag",
     "TagsPlaceholder": "Masukkan tag, dipisahkan dengan koma",
     "TagsTooltip": "Label pilihan untuk mengatur dan menapis deployment. Tekan Enter atau koma untuk menambah.",
+    "TensorParallelFgpuMismatch": "Kuantiti fGPU yang diminta ialah \"{{gpu}}\", tetapi TP \"{{tp}}\" memerlukan sekurang-kurangnya \"{{tp}}\" GPU.",
+    "TensorParallelFgpuNotInteger": "TP ialah \"{{tp}}\", tetapi kuantiti fGPU yang diminta \"{{gpu}}\" bukan nombor bulat. TP 2 atau lebih memerlukan GPU penuh.",
     "ToStatus": "Ke Status",
     "TrafficRatio": "Nisbah Trafik",
     "TrafficStatus": "Status Trafik",

@@ -1508,6 +1508,8 @@
     "Tags": "Thẻ",
     "TagsPlaceholder": "Nhập thẻ, phân cách bằng dấu phẩy",
     "TagsTooltip": "Nhãn tùy chọn để tổ chức và lọc các triển khai. Nhấn Enter hoặc dấu phẩy để thêm.",
+    "TensorParallelFgpuMismatch": "Số lượng fGPU được yêu cầu là \"{{gpu}}\", nhưng TP \"{{tp}}\" cần ít nhất \"{{tp}}\" GPU.",
+    "TensorParallelFgpuNotInteger": "TP là \"{{tp}}\", nhưng số lượng fGPU được yêu cầu \"{{gpu}}\" không phải là số nguyên. TP từ 2 trở lên cần GPU nguyên đơn vị.",
     "ToStatus": "Đến trạng thái",
     "TrafficRatio": "Tỷ lệ lưu lượng",
     "TrafficStatus": "Trạng thái lưu lượng",

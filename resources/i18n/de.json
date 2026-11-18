@@ -1508,6 +1508,8 @@
     "Tags": "Tags",
     "TagsPlaceholder": "Tags eingeben, durch Kommas getrennt",
     "TagsTooltip": "Optionale Labels zum Organisieren und Filtern von Bereitstellungen. Enter oder Komma drücken, um hinzuzufügen.",
+    "TensorParallelFgpuMismatch": "Die angeforderte fGPU-Menge ist \"{{gpu}}\", aber TP \"{{tp}}\" benötigt mindestens \"{{tp}}\" GPUs.",
+    "TensorParallelFgpuNotInteger": "TP ist \"{{tp}}\", aber die angeforderte fGPU-Menge \"{{gpu}}\" ist keine ganze Zahl. Ab TP 2 sind ganze GPUs erforderlich.",
     "ToStatus": "Zum Status",
     "TrafficRatio": "Datenverkehrsanteil",
     "TrafficStatus": "Datenverkehrsstatus",

@@ -1508,6 +1508,8 @@
     "Tags": "标签",
     "TagsPlaceholder": "输入标签，以逗号分隔",
     "TagsTooltip": "用于组织和筛选部署的可选标签。按 Enter 或逗号添加。",
+    "TensorParallelFgpuMismatch": "请求的 fGPU 数量为 \"{{gpu}}\"，但 TP \"{{tp}}\" 至少需要 \"{{tp}}\" 个 GPU。",
+    "TensorParallelFgpuNotInteger": "TP 为 \"{{tp}}\"，但请求的 fGPU 数量 \"{{gpu}}\" 不是整数。TP 为 2 或以上时需要整个 GPU。",
     "ToStatus": "查看状态",
     "TrafficRatio": "流量比例",
     "TrafficStatus": "流量状态",

@@ -1508,6 +1508,8 @@
     "Tags": "Tunnisteet",
     "TagsPlaceholder": "Syötä tunnisteet, pilkuilla erotettuna",
     "TagsTooltip": "Valinnaisia merkintöjä käyttöönottojen järjestämiseen ja suodattamiseen. Paina Enter tai pilkku lisätäksesi.",
+    "TensorParallelFgpuMismatch": "Pyydetty fGPU-määrä on \"{{gpu}}\", mutta TP \"{{tp}}\" vaatii vähintään \"{{tp}}\" GPU:ta.",
+    "TensorParallelFgpuNotInteger": "TP on \"{{tp}}\", mutta pyydetty fGPU-määrä \"{{gpu}}\" ei ole kokonaisluku. TP-arvolla 2 tai suuremmalla tarvitaan kokonaisia GPU:ita.",
     "ToStatus": "Kohdetila",
     "TrafficRatio": "Liikennesuhde",
     "TrafficStatus": "Liikenteen tila",
