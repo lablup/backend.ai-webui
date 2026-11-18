@@ -1,6 +1,6 @@
 # 0026 — Dashboard boards in manager app config
 
-> 이 ADR이 이름으로 부르는 app config hook과 쓰기 기준(**Optimistic state**, **Replay on the server value**, **Same-panel edits**, **Shared queue scope**)은 [ADR 0033](0033-scoped-and-merged-app-config-hooks.ko.md)이 대체한다. 이제 쓰기는 이번 페이지 로드가 읽고 이 탭의 upsert로 갱신한 USER 문서 위에서 만든다.
+> 이 ADR이 이름으로 부르는 app config hook과 쓰기 기준(**Optimistic state**, **Replay on the server value**, **Same-panel edits**, **Shared queue scope**)은 [ADR 0033](0033-scoped-and-merged-app-config-hooks.ko.md)이 대체한다. 이제 쓰기는 로그인이 `myAppConfigState`에 읽어 둔 merged `userConfig` 위에서 만든다. ADR 0033은 manager의 merge가 배열을 통째로 교체한다는 사실도 기록한다. 따라서 DOMAIN scope의 보드 목록은 사용자의 목록과 섞이지 않는다(위의 **Deep merge of arrays**는 성립하지 않는다).
 
 ## Summary
 
