@@ -103,6 +103,8 @@ export interface FolderCreateModalProps extends Omit<
   alertMessage?: React.ReactNode;
   /** Scope the folder's auto-mount is set on; the caller decides (ADR 0031). */
   autoMountScopeType?: VFolderAutoMountScopeType;
+  /** The `USER` scope's user when it is not the caller, with an email for the notice. */
+  autoMountUser?: { id: string; email?: string | null };
 }
 
 const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
@@ -113,6 +115,7 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
   folderType,
   alertMessage,
   autoMountScopeType = 'PROJECT',
+  autoMountUser,
   ...modalProps
 }) => {
   'use memo';
@@ -180,7 +183,7 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
   const isPersonalTarget = autoMountScopeType === 'USER';
   const autoMountTarget = effectiveProject
     ? isPersonalTarget
-      ? { scopeType: 'user', scopeId: baiClient.user_uuid }
+      ? { scopeType: 'user', scopeId: autoMountUser?.id ?? baiClient.user_uuid }
       : { scopeType: 'project', scopeId: effectiveProject.id }
     : null;
   const autoMountTargetKey = autoMountTarget
@@ -684,6 +687,16 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
                       className="bai-toggle-section__content"
                       align="stretch"
                     >
+                      {isPersonalTarget &&
+                      autoMountUser &&
+                      autoMountUser.id !== baiClient.user_uuid ? (
+                        <Banner
+                          status="warning"
+                          title={t('autoMount.SetOnOtherUserAutoMount', {
+                            email: autoMountUser.email ?? autoMountUser.id,
+                          })}
+                        />
+                      ) : null}
                       <BAIFormItem
                         label={t('autoMount.MountDestination')}
                         tooltip={t('autoMount.MountDestinationDesc')}

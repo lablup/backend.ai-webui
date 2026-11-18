@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<81977e70b3013a051dcaf208f4a62862>>
+ * @generated SignedSource<<0736548fd22142ed5da5ec73d07cd611>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,8 +9,15 @@
 // @ts-nocheck
 
 import { ReaderFragment } from 'relay-runtime';
+export type ProjectTypeV2 = "GENERAL" | "MODEL_STORE" | "PERSONAL" | "%future added value";
 import { FragmentRefs } from "relay-runtime";
 export type DeploymentAddRevisionModal_deployment$data = {
+  readonly creator: {
+    readonly basicInfo: {
+      readonly email: string;
+    };
+    readonly entityId: string;
+  } | null | undefined;
   readonly currentRevision: {
     readonly modelMountConfig: {
       readonly vfolderId: string;
@@ -24,6 +31,7 @@ export type DeploymentAddRevisionModal_deployment$data = {
     readonly projectV2: {
       readonly basicInfo: {
         readonly name: string;
+        readonly type: ProjectTypeV2;
       };
     } | null | undefined;
     readonly resourceGroupName: string;
@@ -35,7 +43,15 @@ export type DeploymentAddRevisionModal_deployment$key = {
   readonly " $fragmentSpreads": FragmentRefs<"DeploymentAddRevisionModal_deployment">;
 };
 
-const node: ReaderFragment = {
+const node: ReaderFragment = (function(){
+var v0 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "entityId",
+  "storageKey": null
+};
+return {
   "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": null,
@@ -48,13 +64,7 @@ const node: ReaderFragment = {
       "name": "id",
       "storageKey": null
     },
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "entityId",
-      "storageKey": null
-    },
+    (v0/*: any*/),
     {
       "alias": null,
       "args": null,
@@ -99,8 +109,45 @@ const node: ReaderFragment = {
                   "kind": "ScalarField",
                   "name": "name",
                   "storageKey": null
+                },
+                {
+                  "alias": null,
+                  "args": null,
+                  "kind": "ScalarField",
+                  "name": "type",
+                  "storageKey": null
                 }
               ],
+              "storageKey": null
+            }
+          ],
+          "storageKey": null
+        }
+      ],
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "concreteType": "UserV2",
+      "kind": "LinkedField",
+      "name": "creator",
+      "plural": false,
+      "selections": [
+        (v0/*: any*/),
+        {
+          "alias": null,
+          "args": null,
+          "concreteType": "UserV2BasicInfo",
+          "kind": "LinkedField",
+          "name": "basicInfo",
+          "plural": false,
+          "selections": [
+            {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
+              "name": "email",
               "storageKey": null
             }
           ],
@@ -147,7 +194,8 @@ const node: ReaderFragment = {
   "type": "ModelDeployment",
   "abstractKey": null
 };
+})();
 
-(node as any).hash = "53528ece27f449c66552e272c594899f";
+(node as any).hash = "eff2aff130416b378ae0db3cf6deb13e";
 
 export default node;
