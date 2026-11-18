@@ -45,6 +45,16 @@ describe('buildAssistantSystemPrompt', () => {
     expect(prompt).not.toContain('Current page');
   });
 
+  it('does not call an unloaded manual a miss', () => {
+    const prompt = buildAssistantSystemPrompt({
+      basePrompt: 'p',
+      excerpts: null,
+      manualBaseURL: base,
+    });
+    expect(prompt).toContain('The manual is not available right now.');
+    expect(prompt).not.toContain('No manual section matched');
+  });
+
   it('truncates long excerpts', () => {
     const prompt = buildAssistantSystemPrompt({
       basePrompt: 'p',

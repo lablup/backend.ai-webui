@@ -48,15 +48,25 @@ const WebUIAssistantFloating: React.FC = () => {
   const isConnected = !!connection?.baseURL;
   const isPanelShown = isOpen && isConnected;
   const title = profile?.translations?.[lang]?.name || profile?.name;
+  // The chat (manual download, /models probe) mounts on first open (ADR 0031) and then stays.
+  const [hasBeenShown, setHasBeenShown] = useState(false);
+  if (isPanelShown && !hasBeenShown) setHasBeenShown(true);
 
   useEffect(() => {
-    if (!isOpen) return;
+    if (!isOpen || isConnectOpen) return;
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setIsOpen(false);
+      // Skip an Escape a modal, popover or IME composition already consumed.
+      if (
+        event.key === 'Escape' &&
+        !event.defaultPrevented &&
+        !event.isComposing
+      ) {
+        setIsOpen(false);
+      }
     };
     document.addEventListener('keydown', onKeyDown);
     return () => document.removeEventListener('keydown', onKeyDown);
-  }, [isOpen]);
+  }, [isOpen, isConnectOpen]);
 
   return (
     <>
@@ -106,7 +116,7 @@ const WebUIAssistantFloating: React.FC = () => {
             />
           </BAIFlex>
         </BAIFlex>
-        {!profile || !connection?.baseURL ? (
+        {!hasBeenShown ? null : !profile || !connection?.baseURL ? (
           <BAIFlex justify="center" align="center" style={{ flex: '1 1 0%' }}>
             <Spinner />
           </BAIFlex>

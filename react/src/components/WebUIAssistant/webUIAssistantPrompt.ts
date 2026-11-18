@@ -39,7 +39,8 @@ export function buildAssistantSystemPrompt({
 }: {
   basePrompt: string;
   page?: AssistantPageContext;
-  excerpts: ManualSection[];
+  /** `null` when the manual could not be loaded. */
+  excerpts: ManualSection[] | null;
   manualBaseURL: string;
 }): string {
   const parts = [basePrompt.trim()];
@@ -49,18 +50,20 @@ export function buildAssistantSystemPrompt({
     );
   }
   parts.push(
-    excerpts.length === 0
-      ? '## Manual excerpts\n(No manual section matched this question.)'
-      : [
-          '## Manual excerpts',
-          ...excerpts.map((section, i) => {
-            const text =
-              section.text.length > MAX_EXCERPT_CHARS
-                ? `${section.text.slice(0, MAX_EXCERPT_CHARS)}…`
-                : section.text;
-            return `### [${i + 1}] ${section.pageTitle} › ${section.heading}\nURL: ${manualSectionURL(manualBaseURL, section)}\n\n${text}`;
-          }),
-        ].join('\n\n'),
+    excerpts === null
+      ? '## Manual excerpts\n(The manual is not available right now. Answer without manual references and do not claim the manual lacks the topic.)'
+      : excerpts.length === 0
+        ? '## Manual excerpts\n(No manual section matched this question.)'
+        : [
+            '## Manual excerpts',
+            ...excerpts.map((section, i) => {
+              const text =
+                section.text.length > MAX_EXCERPT_CHARS
+                  ? `${section.text.slice(0, MAX_EXCERPT_CHARS)}…`
+                  : section.text;
+              return `### [${i + 1}] ${section.pageTitle} › ${section.heading}\nURL: ${manualSectionURL(manualBaseURL, section)}\n\n${text}`;
+            }),
+          ].join('\n\n'),
   );
   return parts.join('\n\n');
 }

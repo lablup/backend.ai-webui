@@ -8,7 +8,7 @@ import type { AIAgent } from '../../hooks/useAIAgent';
 import { useHelpURL, useManualBaseURL } from '../../hooks/useHelpURL';
 import ChatMessageContent from '../Chat/ChatMessageContent';
 import type { ChatMessage as ChatUIMessage } from '../Chat/ChatModel';
-import { fetchOpenAIModels } from '../Chat/openAIModels';
+import { fetchOpenAIModels, type ModelsFetchError } from '../Chat/openAIModels';
 import { streamChatCompletion } from '../Chat/streamChatCompletion';
 import {
   createManualIndex,
@@ -37,9 +37,17 @@ import { Text } from '@lablup/ui-common/Text';
 import { DefaultChatTransport } from 'ai';
 import { BAIFlex, useEventNotStable } from 'backend.ai-ui';
 import { MessageCircleQuestion } from 'lucide-react';
+import { useEffect, useEffectEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 
 const MODEL_POLL_INTERVAL_MS = 5000;
+
+/** Thrown so a failed refetch keeps the last model list instead of replacing it. */
+class ModelsQueryError extends Error {
+  constructor(readonly detail: ModelsFetchError) {
+    super(detail.kind);
+  }
+}
 
 interface WebUIAssistantChatProps {
   profile: AIAgent;
@@ -80,21 +88,32 @@ const WebUIAssistantChat: React.FC<WebUIAssistantChatProps> = ({
 
   const modelsQuery = useTanQuery({
     queryKey: ['webui-assistant-models', apiBaseURL, token],
-    queryFn: () => fetchOpenAIModels(apiBaseURL ?? '', token),
+    queryFn: async () => {
+      const result = await fetchOpenAIModels(apiBaseURL ?? '', token);
+      if (result.error) throw new ModelsQueryError(result.error);
+      return result.data;
+    },
     enabled: !!apiBaseURL,
+    retry: false,
+    // Poll while a deployment starts up (no models yet, or not reachable yet); an HTTP error will not fix itself.
     refetchInterval: (query) =>
-      query.state.data?.data.length ? false : MODEL_POLL_INTERVAL_MS,
+      query.state.data?.length ||
+      (query.state.error as ModelsQueryError | null)?.detail.kind === 'http'
+        ? false
+        : MODEL_POLL_INTERVAL_MS,
   });
-  const models = modelsQuery.data?.data ?? [];
-  const modelsError = modelsQuery.data?.error;
+  const models = modelsQuery.data ?? [];
+  const modelsError = (modelsQuery.error as ModelsQueryError | null)?.detail;
   const preferredModelId = profile.modelPreferences?.preferredModelId;
   const modelId =
     models.find((model) => model.id === preferredModelId)?.id ?? models[0]?.id;
   const isTokenRejected =
-    modelsError?.kind === 'http' && modelsError.status === 401;
+    modelsError?.kind === 'http' &&
+    (modelsError.status === 401 || modelsError.status === 403);
 
-  const pickExcerpts = (question: string): ManualSection[] => {
-    if (!manualIndex) return [];
+  // `null` = the manual is not loaded, which the prompt must not report as "nothing matched".
+  const pickExcerpts = (question: string): ManualSection[] | null => {
+    if (!manualIndex) return null;
     const hits = searchManual(
       manualIndex,
       question,
@@ -139,6 +158,15 @@ const WebUIAssistantChat: React.FC<WebUIAssistantChatProps> = ({
       }),
     }),
   });
+
+  // useChat does not abort on unmount (Clear conversation, a new connection).
+  const stopOnUnmount = useEffectEvent(() => stop());
+  useEffect(
+    () => () => {
+      stopOnUnmount();
+    },
+    [],
+  );
 
   const isStreaming = status === 'streaming' || status === 'submitted';
   const isModelReady = !!modelId;

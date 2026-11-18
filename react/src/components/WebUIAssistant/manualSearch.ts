@@ -31,6 +31,8 @@ export interface ManualHit {
 }
 
 const CJK_OR_THAI = /[฀-๿぀-ヿ一-鿿가-힯]/;
+// A run splits where the script changes, so `GPU를` indexes `gpu` as a word.
+const SCRIPT_SEGMENT = /[฀-๿぀-ヿ一-鿿가-힯]+|[^฀-๿぀-ヿ一-鿿가-힯]+/gu;
 const STOP_WORDS = new Set(
   'the a an and or of to in on for is are be can how do does i my me you your it this that with what where when which from by as at use using'.split(
     ' ',
@@ -44,7 +46,10 @@ const BM25_B = 0.75;
 /** Latin words (2+ chars, minus stop words) and character bigrams for CJK / Thai runs. */
 export function tokenize(text: string): string[] {
   const tokens: string[] = [];
-  for (const run of text.toLowerCase().match(/[\p{L}\p{N}]+/gu) ?? []) {
+  const runs = (text.toLowerCase().match(/[\p{L}\p{M}\p{N}]+/gu) ?? []).flatMap(
+    (run) => run.match(SCRIPT_SEGMENT) ?? [],
+  );
+  for (const run of runs) {
     if (!CJK_OR_THAI.test(run)) {
       if (run.length >= 2 && !STOP_WORDS.has(run)) tokens.push(run);
       continue;

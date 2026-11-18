@@ -28,7 +28,13 @@ import {
   useErrorMessageResolver,
   type BAIModalProps,
 } from 'backend.ai-ui';
-import { Suspense, useEffect, useEffectEvent, useState } from 'react';
+import {
+  Suspense,
+  useEffect,
+  useEffectEvent,
+  useState,
+  useTransition,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
@@ -77,6 +83,10 @@ const WebUIAssistantConnectModal: React.FC<WebUIAssistantConnectModalProps> = ({
   );
   const [endpointURL, setEndpointURL] = useState<string | null>();
   const [failure, setFailure] = useState<string>();
+  const [isConnecting, setIsConnecting] = useState(false);
+  const [, startDeploymentTransition] = useTransition();
+  const savedCustomURL =
+    saved && !saved.deploymentId ? saved.baseURL : undefined;
 
   const save = async (connection: WebUIAssistantConnection) => {
     await updateMyUserAppConfig(WEBUI_ASSISTANT_CONFIG_KEY, connection);
@@ -85,24 +95,28 @@ const WebUIAssistantConnectModal: React.FC<WebUIAssistantConnectModalProps> = ({
     onRequestClose();
   };
 
+  // BAIModal does not await onOk, so the pending state and failures stay in here.
   const connectDeployment = async () => {
     const baseURL = endpointURL ? deploymentBaseURL(endpointURL) : undefined;
-    if (!deploymentId || !baseURL) return;
+    if (!deploymentId || !baseURL || isConnecting) return;
     setFailure(undefined);
-    const probe = await fetchOpenAIModels(baseURL, token);
-    if (probe.error || probe.data.length === 0) {
-      const reason =
-        probe.error?.kind === 'http' && probe.error.status === 401
-          ? t('webuiAssistant.ConnectionRejected')
-          : t('webuiAssistant.EndpointUnreachable', { url: baseURL });
-      setFailure(reason);
-      throw new Error(reason);
-    }
+    setIsConnecting(true);
     try {
+      const probe = await fetchOpenAIModels(baseURL, token);
+      if (probe.error || probe.data.length === 0) {
+        setFailure(
+          probe.error?.kind === 'http' &&
+            (probe.error.status === 401 || probe.error.status === 403)
+            ? t('webuiAssistant.ConnectionRejected')
+            : t('webuiAssistant.EndpointUnreachable', { url: baseURL }),
+        );
+        return;
+      }
       await save({ baseURL, apiKey: token, deploymentId });
     } catch (error) {
       message.error(getErrorMessage(error));
-      throw error;
+    } finally {
+      setIsConnecting(false);
     }
   };
 
@@ -115,6 +129,7 @@ const WebUIAssistantConnectModal: React.FC<WebUIAssistantConnectModalProps> = ({
         disabled: isCustom || !deploymentId || !endpointURL,
       }}
       footer={isCustom ? null : undefined}
+      confirmLoading={isConnecting}
       onOk={connectDeployment}
       onCancel={onRequestClose}
       {...modalProps}
@@ -126,13 +141,16 @@ const WebUIAssistantConnectModal: React.FC<WebUIAssistantConnectModalProps> = ({
             <DeploymentSelect
               value={isCustom ? undefined : deploymentId}
               onChange={(id) => {
-                setIsCustom(false);
-                setDeploymentId(id);
-                setToken(undefined);
-                setEndpointURL(undefined);
-                setFailure(undefined);
+                // A transition keeps the modal on screen while DeploymentSelect's value query loads.
+                startDeploymentTransition(() => {
+                  setIsCustom(false);
+                  setDeploymentId(id);
+                  setToken(undefined);
+                  setEndpointURL(undefined);
+                  setFailure(undefined);
+                });
               }}
-              customEndpointURL={isCustom ? (saved?.baseURL ?? ' ') : undefined}
+              customEndpointURL={isCustom ? (savedCustomURL ?? ' ') : undefined}
               onSelectCustomEndpoint={() => {
                 setIsCustom(true);
                 setFailure(undefined);
@@ -163,7 +181,7 @@ const WebUIAssistantConnectModal: React.FC<WebUIAssistantConnectModalProps> = ({
       </BAIFlex>
       {isCustom && (
         <CustomEndpointForm
-          baseURL={saved?.deploymentId ? undefined : saved?.baseURL}
+          baseURL={savedCustomURL}
           apiKey={saved?.deploymentId ? undefined : saved?.apiKey}
           onSubmit={(values) =>
             save({ baseURL: values.baseURL, apiKey: values.apiKey }).catch(

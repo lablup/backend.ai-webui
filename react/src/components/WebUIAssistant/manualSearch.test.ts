@@ -52,6 +52,14 @@ describe('tokenize', () => {
     expect(tokenize('폴더 공유')).toEqual(['폴더', '공유']);
     expect(tokenize('공유하기')).toEqual(['공유', '유하', '하기']);
   });
+
+  it('splits a run where the script changes', () => {
+    expect(tokenize('GPU를 할당')).toEqual(['gpu', '를', '할당']);
+  });
+
+  it('keeps Thai vowel and tone marks inside the word', () => {
+    expect(tokenize('เซสชัน')).not.toContain('น');
+  });
 });
 
 describe('searchManual', () => {

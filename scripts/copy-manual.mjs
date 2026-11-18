@@ -53,6 +53,7 @@ export function readNavigation(yamlText) {
   let inNavigation = false;
   let lang;
   for (const line of yamlText.split("\n")) {
+    if (/^\s*(#|$)/.test(line)) continue;
     if (/^\S/.test(line)) {
       inNavigation = /^navigation:\s*$/.test(line);
       lang = undefined;
@@ -65,7 +66,8 @@ export function readNavigation(yamlText) {
       byLang[lang] = [];
       continue;
     }
-    const path = /^\s*-?\s*path:\s*["']?([^"'\s#]+)/.exec(line);
+    // Block (`path: a.md`) and flow (`- { title: A, path: a.md }`) entries.
+    const path = /(?:^\s*-?\s*|[{,]\s*)path:\s*["']?([^"'\s#,}]+)/.exec(line);
     if (lang && path) byLang[lang].push(path[1]);
   }
   return byLang;
