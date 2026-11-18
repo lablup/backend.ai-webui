@@ -1496,7 +1496,7 @@
     "TagsPlaceholder": "Enter tags, separated by commas",
     "TagsTooltip": "Optional labels for organizing and filtering deployments. Press Enter or comma to add.",
     "TensorParallelFgpuMismatch": "The requested fGPU quantity is \"{{gpu}}\", but TP \"{{tp}}\" requires at least \"{{tp}}\" GPUs.",
-    "TensorParallelFgpuNotInteger": "TP is \"{{tp}}\", but the requested fGPU quantity (\"{{gpu}}\") is not a whole number. TP 2 or higher requires whole GPUs.",
+    "TensorParallelFgpuNotInteger": "TP is \"{{tp}}\", but the requested fGPU quantity \"{{gpu}}\" is not a whole number. TP 2 or higher requires whole GPUs.",
     "ToStatus": "To Status",
     "TrafficRatio": "Traffic Ratio",
     "TrafficStatus": "Traffic Status",

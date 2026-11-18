@@ -1509,7 +1509,7 @@
     "TagsPlaceholder": "Ingrese etiquetas, separadas por comas",
     "TagsTooltip": "Etiquetas opcionales para organizar y filtrar implementaciones. Presione Enter o coma para añadir.",
     "TensorParallelFgpuMismatch": "La cantidad de fGPU solicitada es \"{{gpu}}\", pero TP \"{{tp}}\" requiere al menos \"{{tp}}\" GPU.",
-    "TensorParallelFgpuNotInteger": "TP es \"{{tp}}\", pero la cantidad de fGPU solicitada (\"{{gpu}}\") no es un número entero. Con TP 2 o superior se requieren GPU completas.",
+    "TensorParallelFgpuNotInteger": "TP es \"{{tp}}\", pero la cantidad de fGPU solicitada \"{{gpu}}\" no es un número entero. Con TP 2 o superior se requieren GPU completas.",
     "ToStatus": "Ver estado",
     "TrafficRatio": "Proporción de tráfico",
     "TrafficStatus": "Estado del tráfico",

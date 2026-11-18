@@ -1509,7 +1509,7 @@
     "TagsPlaceholder": "Masukkan tag, dipisahkan dengan koma",
     "TagsTooltip": "Label opsional untuk mengorganisir dan memfilter deployment. Tekan Enter atau koma untuk menambahkan.",
     "TensorParallelFgpuMismatch": "Jumlah fGPU yang diminta adalah \"{{gpu}}\", tetapi TP \"{{tp}}\" memerlukan setidaknya \"{{tp}}\" GPU.",
-    "TensorParallelFgpuNotInteger": "TP adalah \"{{tp}}\", tetapi jumlah fGPU yang diminta (\"{{gpu}}\") bukan bilangan bulat. TP 2 atau lebih memerlukan GPU utuh.",
+    "TensorParallelFgpuNotInteger": "TP adalah \"{{tp}}\", tetapi jumlah fGPU yang diminta \"{{gpu}}\" bukan bilangan bulat. TP 2 atau lebih memerlukan GPU utuh.",
     "ToStatus": "Ke status",
     "TrafficRatio": "Rasio Lalu Lintas",
     "TrafficStatus": "Status Lalu Lintas",
