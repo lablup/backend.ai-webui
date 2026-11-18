@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<a21bd773ea4025c98288fddab337f665>>
+ * @generated SignedSource<<511485c1ce4b609d99fef9d40c31467a>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -105,18 +105,6 @@ v5 = {
 v6 = {
   "alias": null,
   "args": null,
-  "concreteType": "ProjectBasicInfo",
-  "kind": "LinkedField",
-  "name": "basicInfo",
-  "plural": false,
-  "selections": [
-    (v3/*: any*/)
-  ],
-  "storageKey": null
-},
-v7 = {
-  "alias": null,
-  "args": null,
   "concreteType": "ModelDeploymentNetworkAccess",
   "kind": "LinkedField",
   "name": "networkAccess",
@@ -139,14 +127,14 @@ v7 = {
   ],
   "storageKey": null
 },
-v8 = {
+v7 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "desiredReplicaCount",
   "storageKey": null
 },
-v9 = [
+v8 = [
   {
     "alias": null,
     "args": null,
@@ -155,7 +143,7 @@ v9 = [
     "storageKey": null
   }
 ],
-v10 = {
+v9 = {
   "alias": "runningReplicas",
   "args": [
     {
@@ -172,23 +160,23 @@ v10 = {
   "kind": "LinkedField",
   "name": "replicas",
   "plural": false,
-  "selections": (v9/*: any*/),
+  "selections": (v8/*: any*/),
   "storageKey": "replicas(filter:{\"status\":{\"equals\":\"RUNNING\"}})"
 },
-v11 = {
+v10 = {
   "alias": null,
   "args": null,
   "concreteType": "AccessTokenConnection",
   "kind": "LinkedField",
   "name": "accessTokens",
   "plural": false,
-  "selections": (v9/*: any*/),
+  "selections": (v8/*: any*/),
   "storageKey": null
 },
-v12 = [
+v11 = [
   (v2/*: any*/)
 ],
-v13 = {
+v12 = {
   "alias": null,
   "args": null,
   "concreteType": "UserV2BasicInfo",
@@ -206,21 +194,21 @@ v13 = {
   ],
   "storageKey": null
 },
-v14 = {
+v13 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "vfolderId",
   "storageKey": null
 },
-v15 = {
+v14 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "row_id",
   "storageKey": null
 },
-v16 = {
+v15 = {
   "alias": null,
   "args": null,
   "concreteType": "VirtualFolderNode",
@@ -230,32 +218,32 @@ v16 = {
   "selections": [
     (v2/*: any*/),
     (v3/*: any*/),
-    (v15/*: any*/)
+    (v14/*: any*/)
   ],
   "storageKey": null
 },
-v17 = {
+v16 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "mountDestination",
   "storageKey": null
 },
-v18 = {
+v17 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "definitionPath",
   "storageKey": null
 },
-v19 = {
+v18 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "subpath",
   "storageKey": null
 },
-v20 = {
+v19 = {
   "alias": null,
   "args": null,
   "concreteType": "ClusterConfig",
@@ -280,18 +268,18 @@ v20 = {
   ],
   "storageKey": null
 },
-v21 = {
+v20 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "value",
   "storageKey": null
 },
-v22 = [
+v21 = [
   (v3/*: any*/),
-  (v21/*: any*/)
+  (v20/*: any*/)
 ],
-v23 = {
+v22 = {
   "alias": null,
   "args": null,
   "concreteType": "ResourceConfig",
@@ -314,7 +302,7 @@ v23 = {
           "kind": "LinkedField",
           "name": "entries",
           "plural": true,
-          "selections": (v22/*: any*/),
+          "selections": (v21/*: any*/),
           "storageKey": null
         }
       ],
@@ -323,7 +311,7 @@ v23 = {
   ],
   "storageKey": null
 },
-v24 = {
+v23 = {
   "alias": null,
   "args": null,
   "concreteType": "AllocatedResourceSlot",
@@ -348,14 +336,14 @@ v24 = {
   ],
   "storageKey": null
 },
-v25 = {
+v24 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "mountPerm",
   "storageKey": null
 },
-v26 = {
+v25 = {
   "alias": null,
   "args": null,
   "concreteType": "EnvironmentVariables",
@@ -370,20 +358,20 @@ v26 = {
       "kind": "LinkedField",
       "name": "entries",
       "plural": true,
-      "selections": (v22/*: any*/),
+      "selections": (v21/*: any*/),
       "storageKey": null
     }
   ],
   "storageKey": null
 },
-v27 = {
+v26 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "key",
   "storageKey": null
 },
-v28 = {
+v27 = {
   "alias": null,
   "args": null,
   "concreteType": "RuntimeVariantPresetValue",
@@ -398,7 +386,7 @@ v28 = {
       "name": "presetId",
       "storageKey": null
     },
-    (v21/*: any*/),
+    (v20/*: any*/),
     {
       "alias": null,
       "args": null,
@@ -423,7 +411,7 @@ v28 = {
           "name": "targetSpec",
           "plural": false,
           "selections": [
-            (v27/*: any*/)
+            (v26/*: any*/)
           ],
           "storageKey": null
         },
@@ -434,49 +422,49 @@ v28 = {
   ],
   "storageKey": null
 },
-v29 = {
+v28 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "inferenceRuntimeConfig",
   "storageKey": null
 },
-v30 = {
+v29 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "modelPath",
   "storageKey": null
 },
-v31 = {
+v30 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "command",
   "storageKey": null
 },
-v32 = {
+v31 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "shell",
   "storageKey": null
 },
-v33 = {
+v32 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "startCommand",
   "storageKey": null
 },
-v34 = {
+v33 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "port",
   "storageKey": null
 },
-v35 = {
+v34 = {
   "alias": null,
   "args": null,
   "concreteType": "PreStartAction",
@@ -501,53 +489,53 @@ v35 = {
   ],
   "storageKey": null
 },
-v36 = {
+v35 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "path",
   "storageKey": null
 },
-v37 = {
+v36 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "maxRetries",
   "storageKey": null
 },
-v38 = {
+v37 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "initialDelay",
   "storageKey": null
 },
-v39 = {
+v38 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "interval",
   "storageKey": null
 },
-v40 = {
+v39 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "maxWaitTime",
   "storageKey": null
 },
-v41 = {
+v40 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "expectedStatusCode",
   "storageKey": null
 },
-v42 = [
-  (v27/*: any*/),
-  (v21/*: any*/)
+v41 = [
+  (v26/*: any*/),
+  (v20/*: any*/)
 ],
-v43 = {
+v42 = {
   "alias": null,
   "args": null,
   "concreteType": "ImageV2",
@@ -596,7 +584,7 @@ v43 = {
           "kind": "LinkedField",
           "name": "tags",
           "plural": true,
-          "selections": (v42/*: any*/),
+          "selections": (v41/*: any*/),
           "storageKey": null
         },
         {
@@ -606,7 +594,7 @@ v43 = {
           "kind": "LinkedField",
           "name": "labels",
           "plural": true,
-          "selections": (v42/*: any*/),
+          "selections": (v41/*: any*/),
           "storageKey": null
         }
       ],
@@ -615,25 +603,32 @@ v43 = {
   ],
   "storageKey": null
 },
-v44 = {
+v43 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "revisionNumber",
   "storageKey": null
 },
-v45 = {
+v44 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "fieldId",
   "storageKey": null
 },
-v46 = {
+v45 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "createdAt",
+  "storageKey": null
+},
+v46 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "entityId",
   "storageKey": null
 };
 return {
@@ -673,14 +668,25 @@ return {
                   "name": "projectV2",
                   "plural": false,
                   "selections": [
-                    (v6/*: any*/)
+                    {
+                      "alias": null,
+                      "args": null,
+                      "concreteType": "ProjectBasicInfo",
+                      "kind": "LinkedField",
+                      "name": "basicInfo",
+                      "plural": false,
+                      "selections": [
+                        (v3/*: any*/)
+                      ],
+                      "storageKey": null
+                    }
                   ],
                   "storageKey": null
                 }
               ],
               "storageKey": null
             },
-            (v7/*: any*/),
+            (v6/*: any*/),
             {
               "alias": null,
               "args": null,
@@ -689,12 +695,12 @@ return {
               "name": "replicaState",
               "plural": false,
               "selections": [
-                (v8/*: any*/)
+                (v7/*: any*/)
               ],
               "storageKey": null
             },
+            (v9/*: any*/),
             (v10/*: any*/),
-            (v11/*: any*/),
             {
               "alias": null,
               "args": null,
@@ -702,7 +708,7 @@ return {
               "kind": "LinkedField",
               "name": "currentRevision",
               "plural": false,
-              "selections": (v12/*: any*/),
+              "selections": (v11/*: any*/),
               "storageKey": null
             },
             {
@@ -712,7 +718,7 @@ return {
               "kind": "LinkedField",
               "name": "deployingRevision",
               "plural": false,
-              "selections": (v12/*: any*/),
+              "selections": (v11/*: any*/),
               "storageKey": null
             },
             {
@@ -723,7 +729,7 @@ return {
               "name": "creator",
               "plural": false,
               "selections": [
-                (v13/*: any*/)
+                (v12/*: any*/)
               ],
               "storageKey": null
             },
@@ -800,7 +806,25 @@ return {
                 "name": "projectV2",
                 "plural": false,
                 "selections": [
-                  (v6/*: any*/),
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "ProjectBasicInfo",
+                    "kind": "LinkedField",
+                    "name": "basicInfo",
+                    "plural": false,
+                    "selections": [
+                      (v3/*: any*/),
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "type",
+                        "storageKey": null
+                      }
+                    ],
+                    "storageKey": null
+                  },
                   (v2/*: any*/)
                 ],
                 "storageKey": null
@@ -829,7 +853,7 @@ return {
             ],
             "storageKey": null
           },
-          (v7/*: any*/),
+          (v6/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -838,7 +862,7 @@ return {
             "name": "replicaState",
             "plural": false,
             "selections": [
-              (v8/*: any*/),
+              (v7/*: any*/),
               {
                 "alias": null,
                 "args": null,
@@ -849,8 +873,8 @@ return {
             ],
             "storageKey": null
           },
+          (v9/*: any*/),
           (v10/*: any*/),
-          (v11/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -868,11 +892,11 @@ return {
                 "name": "modelMountConfig",
                 "plural": false,
                 "selections": [
-                  (v14/*: any*/),
+                  (v13/*: any*/),
+                  (v15/*: any*/),
                   (v16/*: any*/),
                   (v17/*: any*/),
-                  (v18/*: any*/),
-                  (v19/*: any*/)
+                  (v18/*: any*/)
                 ],
                 "storageKey": null
               },
@@ -883,9 +907,9 @@ return {
                 "name": "revisionPresetId",
                 "storageKey": null
               },
-              (v20/*: any*/),
+              (v19/*: any*/),
+              (v22/*: any*/),
               (v23/*: any*/),
-              (v24/*: any*/),
               {
                 "alias": null,
                 "args": null,
@@ -894,7 +918,7 @@ return {
                 "name": "extraMounts",
                 "plural": true,
                 "selections": [
-                  (v14/*: any*/),
+                  (v13/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -905,13 +929,13 @@ return {
                     "selections": [
                       (v3/*: any*/),
                       (v2/*: any*/),
-                      (v15/*: any*/)
+                      (v14/*: any*/)
                     ],
                     "storageKey": null
                   },
-                  (v17/*: any*/),
-                  (v19/*: any*/),
-                  (v25/*: any*/)
+                  (v16/*: any*/),
+                  (v18/*: any*/),
+                  (v24/*: any*/)
                 ],
                 "storageKey": null
               },
@@ -950,9 +974,9 @@ return {
                     ],
                     "storageKey": null
                   },
-                  (v26/*: any*/),
-                  (v28/*: any*/),
-                  (v29/*: any*/)
+                  (v25/*: any*/),
+                  (v27/*: any*/),
+                  (v28/*: any*/)
                 ],
                 "storageKey": null
               },
@@ -973,7 +997,7 @@ return {
                     "plural": true,
                     "selections": [
                       (v3/*: any*/),
-                      (v30/*: any*/),
+                      (v29/*: any*/),
                       {
                         "alias": null,
                         "args": null,
@@ -982,11 +1006,11 @@ return {
                         "name": "service",
                         "plural": false,
                         "selections": [
+                          (v30/*: any*/),
                           (v31/*: any*/),
                           (v32/*: any*/),
                           (v33/*: any*/),
                           (v34/*: any*/),
-                          (v35/*: any*/),
                           {
                             "alias": null,
                             "args": null,
@@ -1002,16 +1026,16 @@ return {
                                 "name": "enable",
                                 "storageKey": null
                               },
+                              (v35/*: any*/),
                               (v36/*: any*/),
                               (v37/*: any*/),
                               (v38/*: any*/),
                               (v39/*: any*/),
-                              (v40/*: any*/),
-                              (v41/*: any*/)
+                              (v40/*: any*/)
                             ],
                             "storageKey": null
                           },
-                          (v32/*: any*/)
+                          (v31/*: any*/)
                         ],
                         "storageKey": null
                       }
@@ -1021,10 +1045,10 @@ return {
                 ],
                 "storageKey": null
               },
+              (v42/*: any*/),
               (v43/*: any*/),
               (v44/*: any*/),
-              (v45/*: any*/),
-              (v46/*: any*/)
+              (v45/*: any*/)
             ],
             "storageKey": null
           },
@@ -1037,12 +1061,12 @@ return {
             "plural": false,
             "selections": [
               (v2/*: any*/),
-              (v45/*: any*/),
               (v44/*: any*/),
-              (v46/*: any*/),
-              (v20/*: any*/),
-              (v24/*: any*/),
+              (v43/*: any*/),
+              (v45/*: any*/),
+              (v19/*: any*/),
               (v23/*: any*/),
+              (v22/*: any*/),
               {
                 "alias": null,
                 "args": null,
@@ -1064,9 +1088,9 @@ return {
                     ],
                     "storageKey": null
                   },
-                  (v29/*: any*/),
-                  (v26/*: any*/),
-                  (v28/*: any*/)
+                  (v28/*: any*/),
+                  (v25/*: any*/),
+                  (v27/*: any*/)
                 ],
                 "storageKey": null
               },
@@ -1078,11 +1102,11 @@ return {
                 "name": "modelMountConfig",
                 "plural": false,
                 "selections": [
-                  (v14/*: any*/),
+                  (v13/*: any*/),
+                  (v16/*: any*/),
                   (v17/*: any*/),
                   (v18/*: any*/),
-                  (v19/*: any*/),
-                  (v16/*: any*/)
+                  (v15/*: any*/)
                 ],
                 "storageKey": null
               },
@@ -1094,14 +1118,14 @@ return {
                 "name": "extraMounts",
                 "plural": true,
                 "selections": [
-                  (v14/*: any*/),
-                  (v17/*: any*/),
-                  (v25/*: any*/),
-                  (v16/*: any*/)
+                  (v13/*: any*/),
+                  (v16/*: any*/),
+                  (v24/*: any*/),
+                  (v15/*: any*/)
                 ],
                 "storageKey": null
               },
-              (v43/*: any*/),
+              (v42/*: any*/),
               {
                 "alias": null,
                 "args": null,
@@ -1119,7 +1143,7 @@ return {
                     "plural": true,
                     "selections": [
                       (v3/*: any*/),
-                      (v30/*: any*/),
+                      (v29/*: any*/),
                       {
                         "alias": null,
                         "args": null,
@@ -1128,11 +1152,11 @@ return {
                         "name": "service",
                         "plural": false,
                         "selections": [
+                          (v30/*: any*/),
+                          (v32/*: any*/),
                           (v31/*: any*/),
                           (v33/*: any*/),
-                          (v32/*: any*/),
                           (v34/*: any*/),
-                          (v35/*: any*/),
                           {
                             "alias": null,
                             "args": null,
@@ -1141,12 +1165,12 @@ return {
                             "name": "healthCheck",
                             "plural": false,
                             "selections": [
+                              (v35/*: any*/),
+                              (v37/*: any*/),
                               (v36/*: any*/),
                               (v38/*: any*/),
-                              (v37/*: any*/),
                               (v39/*: any*/),
-                              (v40/*: any*/),
-                              (v41/*: any*/)
+                              (v40/*: any*/)
                             ],
                             "storageKey": null
                           }
@@ -1170,18 +1194,13 @@ return {
             "name": "creator",
             "plural": false,
             "selections": [
-              (v13/*: any*/),
-              (v2/*: any*/)
+              (v12/*: any*/),
+              (v2/*: any*/),
+              (v46/*: any*/)
             ],
             "storageKey": null
           },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "entityId",
-            "storageKey": null
-          },
+          (v46/*: any*/),
           {
             "alias": null,
             "args": [
@@ -1212,10 +1231,10 @@ return {
                     "name": "node",
                     "plural": false,
                     "selections": [
-                      (v27/*: any*/),
-                      (v21/*: any*/),
+                      (v26/*: any*/),
+                      (v20/*: any*/),
                       (v2/*: any*/),
-                      (v45/*: any*/)
+                      (v44/*: any*/)
                     ],
                     "storageKey": null
                   }
@@ -1231,12 +1250,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "9d06cb82a2e12edaf62f31b9978363b3",
+    "cacheID": "3c45cc3a5728c3e1f87701ccf179daee",
     "id": null,
     "metadata": {},
     "name": "DeploymentDetailPageQuery",
     "operationKind": "query",
-    "text": "query DeploymentDetailPageQuery(\n  $deploymentId: ID!\n) {\n  deployment(id: $deploymentId) {\n    id\n    metadata {\n      name\n      status\n      projectId\n      projectV2 {\n        basicInfo {\n          name\n        }\n        id\n      }\n    }\n    networkAccess {\n      openToPublic\n      endpointUrl\n    }\n    replicaState {\n      desiredReplicaCount\n    }\n    runningReplicas: replicas(filter: {status: {equals: RUNNING}}) {\n      count\n    }\n    accessTokens {\n      count\n    }\n    currentRevision {\n      id\n    }\n    deployingRevision {\n      id\n    }\n    creator {\n      basicInfo {\n        email\n      }\n      id\n    }\n    ...DeploymentAddRevisionModal_deployment\n    ...DeploymentBasicInfoCard_deployment\n    ...DeploymentRevisionCard_deployment\n    ...DeploymentReplicasCard_deployment\n    ...DeploymentAccessTokensCard_deployment\n    ...DeploymentAutoScalingCard_deployment\n  }\n}\n\nfragment BAIDeploymentTagTokens_metadata on ModelDeploymentMetadata {\n  tags\n}\n\nfragment BAIEntityLabelSettingModalFragment on EntityLabelConnection {\n  edges {\n    node {\n      fieldId\n      key\n      value\n      id\n    }\n  }\n}\n\nfragment BAIEntityLabelTokensFragment on EntityLabelConnection {\n  edges {\n    node {\n      key\n      value\n      id\n    }\n  }\n}\n\nfragment BAIImageNodeSimpleTagV2Fragment on ImageV2 {\n  identity {\n    canonicalName\n    architecture\n  }\n  metadata {\n    tags {\n      key\n      value\n    }\n    labels {\n      key\n      value\n    }\n  }\n}\n\nfragment DeploymentAccessTokensCard_deployment on ModelDeployment {\n  id\n  entityId\n  networkAccess {\n    endpointUrl\n  }\n}\n\nfragment DeploymentAddRevisionModal_deployment on ModelDeployment {\n  id\n  entityId\n  metadata {\n    resourceGroupName\n    projectId\n    projectV2 {\n      basicInfo {\n        name\n      }\n      id\n    }\n  }\n  currentRevision {\n    modelMountConfig {\n      vfolderId\n    }\n    ...DeploymentAddRevisionModal_revisionSource\n    id\n  }\n}\n\nfragment DeploymentAddRevisionModal_revisionSource on ModelRevision {\n  revisionPresetId\n  clusterConfig {\n    mode\n    size\n  }\n  resourceConfig {\n    resourceOpts {\n      entries {\n        name\n        value\n      }\n    }\n  }\n  resourceSlots {\n    slotName\n    quantity\n  }\n  extraMounts {\n    vfolderId\n    vfolder {\n      name\n      id\n    }\n    mountDestination\n    subpath\n  }\n  modelRuntimeConfig {\n    runtimeVariantId\n    runtimeVariant {\n      name\n      readsVfolderConfigFiles @since(version: \"26.8.0\")\n      id\n    }\n    environ {\n      entries {\n        name\n        value\n      }\n    }\n    runtimeVariantPresetValues {\n      presetId\n      value\n    }\n  }\n  modelMountConfig {\n    vfolderId\n    vfolder {\n      id\n      name\n    }\n    mountDestination\n    definitionPath\n    subpath\n  }\n  modelDefinition {\n    models {\n      name\n      modelPath\n      service {\n        command @since(version: \"26.7.0\")\n        shell @since(version: \"26.7.0\")\n        startCommand\n        port\n        preStartActions {\n          action\n          args\n        }\n        healthCheck {\n          enable\n          path\n          maxRetries\n          initialDelay\n          interval\n          maxWaitTime\n          expectedStatusCode\n        }\n      }\n    }\n  }\n  imageV2 {\n    id\n    identity {\n      canonicalName\n      architecture\n    }\n  }\n}\n\nfragment DeploymentAutoScalingCard_deployment on ModelDeployment {\n  id\n  entityId\n  metadata {\n    status\n  }\n  creator {\n    basicInfo {\n      email\n    }\n    id\n  }\n}\n\nfragment DeploymentBasicInfoCard_deployment on ModelDeployment {\n  id\n  entityId\n  ...DeploymentSettingModal_deployment\n  metadata {\n    name\n    projectId\n    domainName\n    status\n    resourceGroupName\n    projectV2 {\n      basicInfo {\n        name\n      }\n      id\n    }\n    ...BAIDeploymentTagTokens_metadata\n  }\n  networkAccess {\n    openToPublic\n    endpointUrl\n  }\n  replicaState {\n    desiredReplicaCount\n  }\n  entityLabels(limit: 100) {\n    ...BAIEntityLabelTokensFragment\n    ...BAIEntityLabelSettingModalFragment\n  }\n}\n\nfragment DeploymentCurrentRevisionTab_deployment on ModelDeployment {\n  id\n  currentRevision {\n    id\n    revisionNumber\n    ...DeploymentRevisionDetail_revision\n  }\n  deployingRevision {\n    id\n    fieldId\n    revisionNumber\n    ...DeploymentRevisionDetail_revision\n  }\n}\n\nfragment DeploymentReplicasCard_deployment on ModelDeployment {\n  id\n}\n\nfragment DeploymentRevisionCard_deployment on ModelDeployment {\n  id\n  entityId\n  ...DeploymentCurrentRevisionTab_deployment\n  ...DeploymentRevisionHistoryTab_deployment\n}\n\nfragment DeploymentRevisionDetail_revision on ModelRevision {\n  id\n  fieldId\n  revisionNumber\n  createdAt\n  clusterConfig {\n    mode\n    size\n  }\n  resourceSlots {\n    slotName\n    quantity\n  }\n  resourceConfig {\n    resourceOpts {\n      entries {\n        name\n        value\n      }\n    }\n  }\n  modelRuntimeConfig {\n    runtimeVariant {\n      name\n      id\n    }\n    inferenceRuntimeConfig\n    environ {\n      entries {\n        name\n        value\n      }\n    }\n    runtimeVariantPresetValues {\n      presetId\n      value\n      preset {\n        name\n        displayName\n        targetSpec {\n          key\n        }\n        id\n      }\n    }\n  }\n  modelMountConfig {\n    vfolderId\n    mountDestination\n    definitionPath\n    subpath\n    vfolder {\n      id\n      name\n      ...FolderLink_vfolderNode\n    }\n  }\n  extraMounts {\n    vfolderId\n    mountDestination\n    mountPerm\n    vfolder {\n      id\n      name\n      ...FolderLink_vfolderNode\n    }\n  }\n  imageV2 {\n    id\n    identity {\n      canonicalName\n      architecture\n    }\n    ...BAIImageNodeSimpleTagV2Fragment\n  }\n  modelDefinition {\n    models {\n      name\n      modelPath\n      service {\n        command @since(version: \"26.7.0\")\n        startCommand\n        shell\n        port\n        preStartActions {\n          action\n          args\n        }\n        healthCheck {\n          path\n          initialDelay\n          maxRetries\n          interval\n          maxWaitTime\n          expectedStatusCode\n        }\n      }\n    }\n  }\n}\n\nfragment DeploymentRevisionHistoryTab_deployment on ModelDeployment {\n  id\n  entityId\n  metadata {\n    status\n    projectId\n  }\n  ...DeploymentAddRevisionModal_deployment\n}\n\nfragment DeploymentSettingModal_deployment on ModelDeployment {\n  id\n  entityId\n  metadata {\n    name\n    tags\n    resourceGroupName\n  }\n  networkAccess {\n    openToPublic\n  }\n  replicaState {\n    replicaCount\n    desiredReplicaCount\n  }\n}\n\nfragment FolderLink_vfolderNode on VirtualFolderNode {\n  row_id\n  name\n  ...VFolderNodeIdenticonFragment\n}\n\nfragment VFolderNodeIdenticonFragment on VirtualFolderNode {\n  id\n}\n"
+    "text": "query DeploymentDetailPageQuery(\n  $deploymentId: ID!\n) {\n  deployment(id: $deploymentId) {\n    id\n    metadata {\n      name\n      status\n      projectId\n      projectV2 {\n        basicInfo {\n          name\n        }\n        id\n      }\n    }\n    networkAccess {\n      openToPublic\n      endpointUrl\n    }\n    replicaState {\n      desiredReplicaCount\n    }\n    runningReplicas: replicas(filter: {status: {equals: RUNNING}}) {\n      count\n    }\n    accessTokens {\n      count\n    }\n    currentRevision {\n      id\n    }\n    deployingRevision {\n      id\n    }\n    creator {\n      basicInfo {\n        email\n      }\n      id\n    }\n    ...DeploymentAddRevisionModal_deployment\n    ...DeploymentBasicInfoCard_deployment\n    ...DeploymentRevisionCard_deployment\n    ...DeploymentReplicasCard_deployment\n    ...DeploymentAccessTokensCard_deployment\n    ...DeploymentAutoScalingCard_deployment\n  }\n}\n\nfragment BAIDeploymentTagTokens_metadata on ModelDeploymentMetadata {\n  tags\n}\n\nfragment BAIEntityLabelSettingModalFragment on EntityLabelConnection {\n  edges {\n    node {\n      fieldId\n      key\n      value\n      id\n    }\n  }\n}\n\nfragment BAIEntityLabelTokensFragment on EntityLabelConnection {\n  edges {\n    node {\n      key\n      value\n      id\n    }\n  }\n}\n\nfragment BAIImageNodeSimpleTagV2Fragment on ImageV2 {\n  identity {\n    canonicalName\n    architecture\n  }\n  metadata {\n    tags {\n      key\n      value\n    }\n    labels {\n      key\n      value\n    }\n  }\n}\n\nfragment DeploymentAccessTokensCard_deployment on ModelDeployment {\n  id\n  entityId\n  networkAccess {\n    endpointUrl\n  }\n}\n\nfragment DeploymentAddRevisionModal_deployment on ModelDeployment {\n  id\n  entityId\n  metadata {\n    resourceGroupName\n    projectId\n    projectV2 {\n      basicInfo {\n        name\n        type\n      }\n      id\n    }\n  }\n  creator {\n    entityId\n    basicInfo {\n      email\n    }\n    id\n  }\n  currentRevision {\n    modelMountConfig {\n      vfolderId\n    }\n    ...DeploymentAddRevisionModal_revisionSource\n    id\n  }\n}\n\nfragment DeploymentAddRevisionModal_revisionSource on ModelRevision {\n  revisionPresetId\n  clusterConfig {\n    mode\n    size\n  }\n  resourceConfig {\n    resourceOpts {\n      entries {\n        name\n        value\n      }\n    }\n  }\n  resourceSlots {\n    slotName\n    quantity\n  }\n  extraMounts {\n    vfolderId\n    vfolder {\n      name\n      id\n    }\n    mountDestination\n    subpath\n  }\n  modelRuntimeConfig {\n    runtimeVariantId\n    runtimeVariant {\n      name\n      readsVfolderConfigFiles @since(version: \"26.8.0\")\n      id\n    }\n    environ {\n      entries {\n        name\n        value\n      }\n    }\n    runtimeVariantPresetValues {\n      presetId\n      value\n    }\n  }\n  modelMountConfig {\n    vfolderId\n    vfolder {\n      id\n      name\n    }\n    mountDestination\n    definitionPath\n    subpath\n  }\n  modelDefinition {\n    models {\n      name\n      modelPath\n      service {\n        command @since(version: \"26.7.0\")\n        shell @since(version: \"26.7.0\")\n        startCommand\n        port\n        preStartActions {\n          action\n          args\n        }\n        healthCheck {\n          enable\n          path\n          maxRetries\n          initialDelay\n          interval\n          maxWaitTime\n          expectedStatusCode\n        }\n      }\n    }\n  }\n  imageV2 {\n    id\n    identity {\n      canonicalName\n      architecture\n    }\n  }\n}\n\nfragment DeploymentAutoScalingCard_deployment on ModelDeployment {\n  id\n  entityId\n  metadata {\n    status\n  }\n  creator {\n    basicInfo {\n      email\n    }\n    id\n  }\n}\n\nfragment DeploymentBasicInfoCard_deployment on ModelDeployment {\n  id\n  entityId\n  ...DeploymentSettingModal_deployment\n  metadata {\n    name\n    projectId\n    domainName\n    status\n    resourceGroupName\n    projectV2 {\n      basicInfo {\n        name\n      }\n      id\n    }\n    ...BAIDeploymentTagTokens_metadata\n  }\n  networkAccess {\n    openToPublic\n    endpointUrl\n  }\n  replicaState {\n    desiredReplicaCount\n  }\n  entityLabels(limit: 100) {\n    ...BAIEntityLabelTokensFragment\n    ...BAIEntityLabelSettingModalFragment\n  }\n}\n\nfragment DeploymentCurrentRevisionTab_deployment on ModelDeployment {\n  id\n  currentRevision {\n    id\n    revisionNumber\n    ...DeploymentRevisionDetail_revision\n  }\n  deployingRevision {\n    id\n    fieldId\n    revisionNumber\n    ...DeploymentRevisionDetail_revision\n  }\n}\n\nfragment DeploymentReplicasCard_deployment on ModelDeployment {\n  id\n}\n\nfragment DeploymentRevisionCard_deployment on ModelDeployment {\n  id\n  entityId\n  ...DeploymentCurrentRevisionTab_deployment\n  ...DeploymentRevisionHistoryTab_deployment\n}\n\nfragment DeploymentRevisionDetail_revision on ModelRevision {\n  id\n  fieldId\n  revisionNumber\n  createdAt\n  clusterConfig {\n    mode\n    size\n  }\n  resourceSlots {\n    slotName\n    quantity\n  }\n  resourceConfig {\n    resourceOpts {\n      entries {\n        name\n        value\n      }\n    }\n  }\n  modelRuntimeConfig {\n    runtimeVariant {\n      name\n      id\n    }\n    inferenceRuntimeConfig\n    environ {\n      entries {\n        name\n        value\n      }\n    }\n    runtimeVariantPresetValues {\n      presetId\n      value\n      preset {\n        name\n        displayName\n        targetSpec {\n          key\n        }\n        id\n      }\n    }\n  }\n  modelMountConfig {\n    vfolderId\n    mountDestination\n    definitionPath\n    subpath\n    vfolder {\n      id\n      name\n      ...FolderLink_vfolderNode\n    }\n  }\n  extraMounts {\n    vfolderId\n    mountDestination\n    mountPerm\n    vfolder {\n      id\n      name\n      ...FolderLink_vfolderNode\n    }\n  }\n  imageV2 {\n    id\n    identity {\n      canonicalName\n      architecture\n    }\n    ...BAIImageNodeSimpleTagV2Fragment\n  }\n  modelDefinition {\n    models {\n      name\n      modelPath\n      service {\n        command @since(version: \"26.7.0\")\n        startCommand\n        shell\n        port\n        preStartActions {\n          action\n          args\n        }\n        healthCheck {\n          path\n          initialDelay\n          maxRetries\n          interval\n          maxWaitTime\n          expectedStatusCode\n        }\n      }\n    }\n  }\n}\n\nfragment DeploymentRevisionHistoryTab_deployment on ModelDeployment {\n  id\n  entityId\n  metadata {\n    status\n    projectId\n  }\n  ...DeploymentAddRevisionModal_deployment\n}\n\nfragment DeploymentSettingModal_deployment on ModelDeployment {\n  id\n  entityId\n  metadata {\n    name\n    tags\n    resourceGroupName\n  }\n  networkAccess {\n    openToPublic\n  }\n  replicaState {\n    replicaCount\n    desiredReplicaCount\n  }\n}\n\nfragment FolderLink_vfolderNode on VirtualFolderNode {\n  row_id\n  name\n  ...VFolderNodeIdenticonFragment\n}\n\nfragment VFolderNodeIdenticonFragment on VirtualFolderNode {\n  id\n}\n"
   }
 };
 })();

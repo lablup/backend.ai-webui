@@ -50,6 +50,7 @@ flowchart LR
 ### 1. 소유 scope만이 유일한 scope다
 
 - **Scope choice**: auto-mount를 만드는 WebUI의 모든 경로는 폴더 소유자로부터 scope를 정한다. `accessControl.ownershipType`이 `USER`인 폴더는 `ownership.userId`의 `USER` scope를 받는다. `ownership.project.basicInfo.type`이 `PERSONAL`인 프로젝트 소유 폴더는 누가 열든 그 프로젝트의 유일한 사용자인 `ownership.creatorId`의 `USER` scope를 받는다. 그 밖의 폴더는 `ownership.projectId`의 `PROJECT` scope를 받는다.
+- **Revision model folder**: `DeploymentAddRevisionModal`은 배포 프로젝트(`metadata.projectV2.basicInfo.type`)가 `PERSONAL`이면 배포의 `creator`와 함께 `USER`를, 아니면 `PROJECT`를 넘긴다. 그래서 슈퍼어드민이 다른 사용자의 개인 프로젝트 배포에 리비전을 추가할 때 새 폴더는 그 주인에게 auto-mount되고, 이때 `FolderCreateModal`도 같은 다른 사용자 경고를 보여준다.
 - **Another user's scope**: `USER` scope가 호출한 사람 자신의 것이 아닐 때(슈퍼어드민이 다른 사용자의 폴더를 다룰 때), `VFolderAutoMountSettingModal`은 그 사용자의 auto-mount로 지정된다는 경고를 `ownership.creatorEmail`로 이름을 밝혀 보여준다.
 - **Creation paths**: `FolderCreateModal`은 개인 프로젝트에서도 항상 `createVFolderInProject`로 프로젝트 폴더를 만든다. 개인 프로젝트에서는 그 폴더를 사용자에게 auto-mount하고, 다른 프로젝트에서는 그 프로젝트에 auto-mount한다. 두 component 모두 scope를 스스로 정하지 않는다. `FolderCreateModal`을 여는 쪽이 `autoMountScopeType`을 넘기고(대상이 자기 개인 프로젝트면 `USER`, 기본값은 `PROJECT`), `VFolderAutoMountMetadataSection`은 폴더에 대한 자기 fragment로 scope를 정한다.
 - **Folder entry points**: auto-mount는 폴더에서만 추가한다. `FolderCreateModal`과 폴더 탐색기의 `VFolderAutoMountMetadataSection`이 그곳이다. `VFolderAutoMountSettingModal`은 항상 그 폴더를 받고, 폴더 선택 박스를 보여주지 않는다.

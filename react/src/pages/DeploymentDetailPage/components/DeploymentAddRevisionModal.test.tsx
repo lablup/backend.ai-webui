@@ -79,12 +79,6 @@ vi.mock('../../../hooks/useCurrentProject', async (importOriginal) => {
 
 // Mode is user-persisted; tests pin it per scenario.
 let mockMode: 'preset' | 'custom' = 'preset';
-vi.mock('../../../hooks/useAccessibleProjects', () => ({
-  useAccessibleProjects: () => ({
-    personalProject: { id: 'personal-project-id', name: 'me' },
-  }),
-}));
-
 vi.mock('../../../hooks/useBAISetting', async (importOriginal) => {
   const originalModule =
     await importOriginal<typeof import('../../../hooks/useBAISetting')>();

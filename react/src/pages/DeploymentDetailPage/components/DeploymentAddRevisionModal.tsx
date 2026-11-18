@@ -64,7 +64,6 @@ import {
   type ParsedModelDefinition,
 } from '../../../helper/parseModelDefinitionYaml';
 import { useSuspendedBackendaiClient } from '../../../hooks';
-import { useAccessibleProjects } from '../../../hooks/useAccessibleProjects';
 import { useBAISettingUserState } from '../../../hooks/useBAISetting';
 import { useModelDefinitionPlaceholders } from '../../../hooks/useModelDefinitionDefaults';
 import { useMountableStorageHosts } from '../../../hooks/useMountableStorageHosts';
@@ -489,7 +488,14 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
           projectV2 {
             basicInfo {
               name
+              type
             }
+          }
+        }
+        creator {
+          entityId
+          basicInfo {
+            email
           }
         }
         currentRevision {
@@ -641,7 +647,6 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
     baiClient.user_uuid,
     deploymentProject?.id,
   );
-  const { personalProject } = useAccessibleProjects();
   const commonEnvVars = useCommonEnvVarConfigs();
   // Single-string `command` + `shell` (BA-6742); older managers get the
   // deprecated `startCommand` token list instead.
@@ -2748,10 +2753,20 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
         // would write back a folder this revision cannot mount.
         open={isModelFolderCreateModalOpen && !!deploymentProject}
         project={deploymentProject}
+        // ADR 0031: a personal project's deployment auto-mounts on its owner.
         autoMountScopeType={
-          deploymentProject && deploymentProject.id === personalProject?.id
+          deployment?.metadata?.projectV2?.basicInfo?.type === 'PERSONAL'
             ? 'USER'
             : 'PROJECT'
+        }
+        autoMountUser={
+          deployment?.metadata?.projectV2?.basicInfo?.type === 'PERSONAL' &&
+          deployment.creator
+            ? {
+                id: deployment.creator.entityId,
+                email: deployment.creator.basicInfo.email,
+              }
+            : undefined
         }
         initialValues={{ usage_mode: 'model' }}
         onRequestClose={(result) => {
