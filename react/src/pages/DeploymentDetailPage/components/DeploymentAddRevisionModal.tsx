@@ -2324,16 +2324,18 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                         }}
                       </BAIFormItem>
                     </BAIFlex>
+                    {/* Warns when the selected preset's TP value and its fGPU
+                        quantity conflict (lablup/backend.ai-webui#11283).
+                        Inside the item so the message sits right under the
+                        input, like a validation warning — outside it would sit
+                        a form-item margin below. */}
+                    <PresetTensorParallelFgpuWarning
+                      presetId={presetFormSelectedPresetId}
+                    />
                   </BAIFormItem>
                 );
               }}
             </BAIFormItem>
-
-            {/* Warns when the selected preset's TP value and its fGPU
-                quantity conflict (lablup/backend.ai-webui#11283). */}
-            <PresetTensorParallelFgpuWarning
-              presetId={presetFormSelectedPresetId}
-            />
           </Form>
         )
       ) : (
