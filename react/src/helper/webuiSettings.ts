@@ -57,8 +57,10 @@ export interface WebUISettingDefinition {
 export interface WebUISizeSetting {
   /** The unit the stored number is in: `''` bytes, `'m'` MiB. */
   storedUnit: '' | 'm';
-  /** The value stored for Unlimited. */
+  /** The value stored when the toggle is on. */
   unlimitedValue: number;
+  /** What the toggle means for this setting: no limit, or a size the WebUI picks. */
+  toggleLabel: 'Unlimited' | 'Automatic';
   units: Array<'m' | 'g' | 't'>;
   defaultUnit: 'm' | 'g' | 't';
   /** The input's bounds in size notation (`"100g"`). */
@@ -254,6 +256,7 @@ export const WEBUI_SETTING_DEFINITIONS: ReadonlyArray<WebUISettingDefinition> =
       size: {
         storedUnit: '',
         unlimitedValue: -1,
+        toggleLabel: 'Unlimited',
         units: ['m', 'g', 't'],
         defaultUnit: 'g',
         min: '1m',
@@ -269,6 +272,7 @@ export const WEBUI_SETTING_DEFINITIONS: ReadonlyArray<WebUISettingDefinition> =
       size: {
         storedUnit: 'm',
         unlimitedValue: 0,
+        toggleLabel: 'Automatic',
         units: ['m', 'g'],
         defaultUnit: 'm',
         min: '1m',

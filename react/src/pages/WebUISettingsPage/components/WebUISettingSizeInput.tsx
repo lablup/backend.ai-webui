@@ -22,7 +22,7 @@ interface WebUISettingSizeInputProps {
   onChange: (value: number) => void;
 }
 
-/** A stored size number edited as `"<n><unit>"`, with an Unlimited toggle. */
+/** A stored size number edited as `"<n><unit>"`, with an Unlimited or Automatic toggle. */
 const WebUISettingSizeInput: React.FC<WebUISettingSizeInputProps> = ({
   label,
   value,
@@ -66,12 +66,12 @@ const WebUISettingSizeInput: React.FC<WebUISettingSizeInputProps> = ({
           if (checked) onChange(size.unlimitedValue);
         }}
       >
-        {t('webuiSettings.Unlimited')}
+        {t(`webuiSettings.${size.toggleLabel}`)}
       </BAICheckboxInput>
       <BAIDynamicUnitInputNumber
         label={label}
         isLabelHidden
-        style={{ width }}
+        width={width}
         units={size.units}
         defaultUnit={size.defaultUnit}
         min={size.min}

@@ -127,7 +127,7 @@ describe('WebUISettingList', () => {
     expect(modalError).not.toHaveBeenCalled();
   });
 
-  it('saves a whole number when a fraction is typed into a whole-number row', async () => {
+  it('rounds a fraction typed into a whole-number row to the nearest whole number', async () => {
     domainWrite.mockResolvedValue();
     renderList();
     const input = within(
@@ -141,16 +141,17 @@ describe('WebUISettingList', () => {
     const saved = (
       writtenDoc(domainWrite, 0) as { maxCountForPreopenPorts: number }
     ).maxCountForPreopenPorts;
-    expect(Number.isInteger(saved)).toBe(true);
+    expect(saved).toBe(3);
   });
 
-  it('shows a size row at its Unlimited default with the size disabled', () => {
+  it('shows a size row at its toggle default with the size disabled', () => {
     renderList();
-    for (const key of ['maxFileUploadSize', 'fileUploadChunkSize']) {
+    for (const [key, toggle] of [
+      ['maxFileUploadSize', 'webuiSettings.Unlimited'],
+      ['fileUploadChunkSize', 'webuiSettings.Automatic'],
+    ]) {
       const row = within(screen.getByTestId(`webui-setting-${key}`));
-      expect(
-        row.getByRole('checkbox', { name: 'webuiSettings.Unlimited' }),
-      ).toBeChecked();
+      expect(row.getByRole('checkbox', { name: toggle })).toBeChecked();
       expect(row.getByRole('spinbutton')).toHaveAttribute(
         'aria-disabled',
         'true',
@@ -158,13 +159,13 @@ describe('WebUISettingList', () => {
     }
   });
 
-  it('stores nothing on unticking Unlimited until a size is entered', async () => {
+  it('stores nothing on unticking Automatic until a size is entered', async () => {
     domainWrite.mockResolvedValue();
     renderList();
     const row = within(screen.getByTestId('webui-setting-fileUploadChunkSize'));
 
     fireEvent.click(
-      row.getByRole('checkbox', { name: 'webuiSettings.Unlimited' }),
+      row.getByRole('checkbox', { name: 'webuiSettings.Automatic' }),
     );
     expect(domainWrite).not.toHaveBeenCalled();
     const input = row.getByRole('spinbutton');
@@ -176,7 +177,7 @@ describe('WebUISettingList', () => {
     expect(domainWrite).toHaveBeenCalledTimes(1);
     expect(writtenDoc(domainWrite, 0)).toEqual({ fileUploadChunkSize: 64 });
     expect(
-      row.getByRole('checkbox', { name: 'webuiSettings.Unlimited' }),
+      row.getByRole('checkbox', { name: 'webuiSettings.Automatic' }),
     ).not.toBeChecked();
   });
 
