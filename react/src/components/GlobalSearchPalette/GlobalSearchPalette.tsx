@@ -23,12 +23,11 @@ import {
   CommandPaletteInput,
 } from '@lablup/ui-common/CommandPalette';
 import { Kbd } from '@lablup/ui-common/Kbd';
-import { Skeleton } from '@lablup/ui-common/Skeleton';
 import { HStack, VStack } from '@lablup/ui-common/Stack';
 import { Text } from '@lablup/ui-common/Text';
 import { textSizeVars } from '@lablup/ui-common/theme/tokens.stylex';
 import * as stylex from '@stylexjs/stylex';
-import { useBAILogger } from 'backend.ai-ui';
+import { BAISkeleton, useBAILogger } from 'backend.ai-ui';
 import { Settings } from 'lucide-react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -78,11 +77,22 @@ const BOOTSTRAP_PLACEHOLDER = (
   <VStack gap={2} width="100%">
     {[0, 1, 2].map((index) => (
       <HStack key={index} gap={2} align="center" width="100%">
-        <Skeleton index={index} radius={2} xstyle={styles.iconSlot} />
+        <BAISkeleton
+          variant="block"
+          startIndex={index}
+          radius={2}
+          xstyle={styles.iconSlot}
+        />
         <VStack gap={0.5} xstyle={styles.placeholderColumn}>
-          <Skeleton index={index} radius={1} xstyle={styles.placeholderLabel} />
-          <Skeleton
-            index={index}
+          <BAISkeleton
+            variant="block"
+            startIndex={index}
+            radius={1}
+            xstyle={styles.placeholderLabel}
+          />
+          <BAISkeleton
+            variant="block"
+            startIndex={index}
             radius={1}
             xstyle={styles.placeholderSecondary}
           />
