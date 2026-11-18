@@ -13,6 +13,7 @@ import { useBoardItemVisibility } from './DashboardRefreshContext';
 import { DashboardResourceGroupsProvider } from './DashboardResourceGroups';
 import PanelSettingsModal from './PanelSettingsModal';
 import { boardSortsAtom } from './ResourceTablePanel';
+import { dashboardAssistantBridgeAtom } from './assistantActions';
 import { dashboardScopeKey } from './dashboardScope';
 import { DeniedPanelsContext, useDeniedPanels } from './panelPermission';
 import { panelSettingOverridesAtom } from './panelSettingOverrides';
@@ -35,10 +36,11 @@ import {
   BAISkeleton,
   BAIUnmountAfterClose,
   type BAIBoardProps,
+  useEventNotStable,
 } from 'backend.ai-ui';
 import { useAtom, useSetAtom } from 'jotai';
 import * as _ from 'lodash-es';
-import React, { Suspense, useRef, useState } from 'react';
+import React, { Suspense, useEffect, useRef, useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 
 /**
@@ -138,6 +140,8 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
     settingsTargetOf,
     updatePanelSettings,
     boards,
+    assistantCards,
+    applyAssistantActions,
   } = useDashboardBoard({
     page,
     catalog,
@@ -150,6 +154,19 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
   const settingsTarget = settingsPanelId
     ? settingsTargetOf(settingsPanelId)
     : null;
+
+  // Hands the WebUI Assistant this board's cards while the page is mounted.
+  const setAssistantBridge = useSetAtom(dashboardAssistantBridgeAtom);
+  const applyFromAssistant = useEventNotStable(applyAssistantActions);
+  const assistantCardsKey = JSON.stringify(assistantCards);
+  useEffect(() => {
+    setAssistantBridge({
+      page,
+      cards: JSON.parse(assistantCardsKey),
+      apply: applyFromAssistant,
+    });
+  }, [page, assistantCardsKey, applyFromAssistant, setAssistantBridge]);
+  useEffect(() => () => setAssistantBridge(null), [setAssistantBridge]);
 
   const filters = useDashboardFilters(page, boards, project);
   const scopeKey = dashboardScopeKey(page, filters.scope);

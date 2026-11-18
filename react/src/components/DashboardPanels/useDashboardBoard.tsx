@@ -9,6 +9,12 @@ import { useEffectiveLoginConfig } from '../../hooks/useWebUIConfig';
 import DashboardPanelContent from './DashboardPanelContent';
 import PanelFrame from './PanelFrame';
 import { PanelHeaderSettingsContext } from './PanelSettingsHeaderControls';
+import {
+  applyAssistantActions as applyActionsToBoard,
+  settingsTouchedBy,
+  type DashboardAssistantAction,
+  type DashboardAssistantCard,
+} from './assistantActions';
 import type { BoardLayoutEntry } from './boardLayout';
 import {
   addPanel,
@@ -41,7 +47,7 @@ import {
   overriddenSettings,
   panelSettingOverridesAtom,
 } from './panelSettingOverrides';
-import { mergeSettings, panelDefinitionOf } from './panelSettings';
+import { hasSetting, mergeSettings, panelDefinitionOf } from './panelSettings';
 import { availableResourceKeys, resolvePanelTitle } from './resourceRegistry';
 import type {
   DashboardBoard,
@@ -139,6 +145,12 @@ export interface UseDashboardBoardResult {
     settings: PanelSettings | undefined,
   ) => void;
   boards: DashboardBoardsState;
+  /** The cards the WebUI Assistant may change, on-board ones first in board order. */
+  assistantCards: Array<DashboardAssistantCard>;
+  /** Applies the WebUI Assistant's proposed changes in one save. */
+  applyAssistantActions: (
+    actions: ReadonlyArray<DashboardAssistantAction>,
+  ) => void;
 }
 
 export interface PanelSettingsTarget {
@@ -420,6 +432,56 @@ export const useDashboardBoard = ({
     return legacyPanel ? [legacyPanel] : [];
   });
 
+  const titleOf = (panel: PersistedPanelV2, definition: PanelDefinition) => {
+    const legacyPanel = toLegacyPanel(panel, definition);
+    return legacyPanel
+      ? resolvePanelTitle(legacyPanel.descriptor, t)
+      : t(panelTitleKey(definition, role, page));
+  };
+  const assistantCardOf = (
+    panel: PersistedPanelV2,
+    shown: boolean,
+  ): DashboardAssistantCard | null => {
+    const catalogDefinition = definitionByKey.get(panel.key);
+    if (!catalogDefinition) return null;
+    const definition = panelDefinitionOf(catalogDefinition, panel);
+    return {
+      id: panel.id,
+      title: titleOf(panel, definition),
+      shown,
+      ...(shown
+        ? { columnSpan: panel.columnSpan, rowSpan: panel.rowSpan }
+        : {}),
+      ...(hasSetting(definition, 'range')
+        ? { range: panel.settings?.range ?? 'default' }
+        : {}),
+    };
+  };
+  const onBoardIds = new Set(boardItems.map((item) => item.id));
+  const assistantCards = [
+    ...board.panels
+      .filter((panel) => onBoardIds.has(panel.id))
+      .map((panel) => assistantCardOf(panel, true)),
+    // User-made panels taken off the board, then the catalog cards not on it.
+    ...board.panels
+      .filter((panel) => panel.hidden && isRenderable(panel))
+      .map((panel) => assistantCardOf(panel, false)),
+    ...siderEntries(visibleEntries)
+      .filter(
+        (entry) => !board.panels.some((p) => p.key === entry.definition.key),
+      )
+      .map((entry) =>
+        assistantCardOf(
+          {
+            id: entry.definition.key,
+            key: entry.definition.key,
+            ...entry.definition.defaultSize,
+          },
+          false,
+        ),
+      ),
+  ].filter((card): card is DashboardAssistantCard => !!card);
+
   return {
     boardItems,
     onLayoutChange: (reported) => save(applyLayout(board, reported)),
@@ -478,5 +540,17 @@ export const useDashboardBoard = ({
       save(resetBoard(board, catalog, page, template));
     },
     boards,
+    assistantCards,
+    applyAssistantActions: (actions) => {
+      const next = applyActionsToBoard(board, actions, {
+        definitionByKey,
+        catalog,
+        page,
+        template,
+      });
+      if (next === board) return;
+      clearOverrides(settingsTouchedBy(actions));
+      save(next);
+    },
   };
 };
