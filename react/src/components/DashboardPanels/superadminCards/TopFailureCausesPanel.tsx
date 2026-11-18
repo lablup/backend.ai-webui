@@ -21,7 +21,6 @@ import {
 } from './superadminCardData';
 import { Text } from '@lablup/ui-common/Text';
 import {
-  BAIAuditLogActionName,
   BAIFlex,
   BAILink,
   BAIModal,
@@ -30,6 +29,7 @@ import {
   BAIText,
   BAIUnmountAfterClose,
   filterOutNullAndUndefined,
+  useAuditLogActionLabel,
 } from 'backend.ai-ui';
 import React, { Suspense, useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -46,6 +46,7 @@ const FailureCauses: React.FC<{
 }> = ({ scope, timeRange, fetchKey }) => {
   'use memo';
   const { t } = useTranslation();
+  const actionLabel = useAuditLogActionLabel();
   const filter = failuresWithin(timeRange);
   const variables = { scope, filter, limit: FAILURE_CAUSE_SAMPLE_SIZE };
   const deferredVariables = useDeferredValue(variables);
@@ -115,7 +116,7 @@ const FailureCauses: React.FC<{
                   setIsListOpen(true);
                 }}
               >
-                <BAIAuditLogActionName actionName={cause.actionName} />
+                {actionLabel(cause.actionName)}
               </BAILink>
             ),
           },
@@ -147,12 +148,9 @@ const FailureCauses: React.FC<{
       <BAIUnmountAfterClose>
         <BAIModal
           open={isListOpen}
-          title={
-            <>
-              {t('dashboard.card.FailuresOfAction', { action: '' })}
-              <BAIAuditLogActionName actionName={listed?.actionName} />
-            </>
-          }
+          title={t('dashboard.card.FailuresOfAction', {
+            action: actionLabel(listed?.actionName),
+          })}
           width={1400}
           footer={null}
           onCancel={() => setIsListOpen(false)}
