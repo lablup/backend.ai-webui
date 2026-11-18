@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { App } from '../app-shim';
-import { useMyAppConfig, useMyAppConfigStatus } from './useAppConfig';
+import { useMyAppConfig } from './useAppConfig';
 import { SessionHistory, useBAISettingUserState } from './useBAISetting';
 import {
   useEventNotStable,
@@ -27,10 +27,11 @@ const useSessionHistoryStore = (key: SessionHistoryKey) => {
   'use memo';
   const { message } = App.useApp();
   const { getErrorMessage } = useErrorMessageResolver();
-  const [serverValue, setServerValue] =
-    useMyAppConfig<Array<SessionHistory>>(key);
+  const [serverValue, setServerValue, , userConfigStatus] = useMyAppConfig<
+    Array<SessionHistory>
+  >('userConfig', key);
   // Without a loaded userConfig, `undefined` does not mean the server has no history.
-  const isUserConfigLoaded = useMyAppConfigStatus() === 'loaded';
+  const isUserConfigLoaded = userConfigStatus === 'loaded';
   const [localValue, setLocalValue] = useBAISettingUserState(key);
   // Shows the written value while the write is in flight.
   const [pending, setPending] = useState<{ value: Array<SessionHistory> }>();

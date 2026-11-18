@@ -45,6 +45,7 @@ vi.mock('../hooks/useAppConfig', () => ({
     clientState.skipSharedConfirm,
     () => Promise.resolve(),
     () => Promise.resolve(),
+    'loaded',
   ],
 }));
 

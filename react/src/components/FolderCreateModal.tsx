@@ -159,7 +159,7 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
         : undefined;
 
   const [skipSharedFolderConfirmValue, setSkipSharedFolderConfirm] =
-    useMyAppConfig<boolean>(SKIP_PROJECT_FOLDER_CONFIRM_KEY);
+    useMyAppConfig<boolean>('userConfig', SKIP_PROJECT_FOLDER_CONFIRM_KEY);
   const skipSharedFolderConfirm = !!skipSharedFolderConfirmValue;
   const [isSharedConfirmOpen, setIsSharedConfirmOpen] = useState(false);
   const [dontAskAgain, setDontAskAgain] = useState(false);

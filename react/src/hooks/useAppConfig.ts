@@ -33,7 +33,7 @@ import {
 /**
  * App config documents (FR-1964). Design: ADR 0033.
  * - `loadMyAppConfig` reads the signed-in user's merged view into an atom.
- * - `useMyAppConfig` / `useMyAppConfigValue` read that atom; only `userConfig` is written from it.
+ * - `useMyAppConfig` reads that atom; only `userConfig` is written from it.
  * - `useScopedAppConfig` reads and writes one scope's raw documents (admin pages).
  */
 export type AppConfigName =
@@ -289,29 +289,46 @@ const writeMyUserConfig = async (
   });
 };
 
+export type MyAppConfigSetter<T> = (
+  update: T | undefined | ((current: T | undefined) => T | undefined),
+) => Promise<void>;
+
 /**
- * `userConfig` at `subKey` with its setter and reset. `set` writes the USER
- * document; `reset` removes the key there and reloads, so the DOMAIN-scope
- * default shows again. Both reject before sign-in or after a failed first read.
+ * One merged document from the atom, at `subKey` (pass `[domainName, ...]` for
+ * a domain's `publicConfigByDomain` slice), with the atom's read status.
+ * Only `userConfig` gets `set` (writes the USER document) and `reset` (removes
+ * the key there and reloads, so the DOMAIN-scope default shows again); both
+ * reject while the status is not `loaded`.
  */
-export const useMyAppConfig = <T = unknown>(
+export function useMyAppConfig<T = unknown>(
+  configName: 'userConfig',
   subKey: AppConfigSubKey,
 ): [
   T | undefined,
-  (
-    update: T | undefined | ((current: T | undefined) => T | undefined),
-  ) => Promise<void>,
+  MyAppConfigSetter<T>,
   () => Promise<void>,
-] => {
+  MyAppConfigState['status'],
+];
+export function useMyAppConfig<T = AppConfigDocument>(
+  configName: MergedAppConfigName,
+  subKey?: AppConfigSubKey,
+): [T | undefined, undefined, undefined, MyAppConfigState['status']];
+export function useMyAppConfig(
+  configName: AppConfigName,
+  subKey?: AppConfigSubKey,
+) {
   'use memo';
   const store = useStore();
   const environment = useRelayEnvironment();
-  const { configs } = useAtomValue(myAppConfigState);
-  const value = _.get(configs.userConfig, subKey) as T | undefined;
+  const { status, configs } = useAtomValue(myAppConfigState);
+  const doc = configs[configName];
+  const value = subKey === undefined ? doc : _.get(doc, subKey);
 
-  const set = (
-    update: T | undefined | ((current: T | undefined) => T | undefined),
-  ) =>
+  if (configName !== 'userConfig' || subKey === undefined) {
+    return [value, undefined, undefined, status];
+  }
+
+  const set: MyAppConfigSetter<unknown> = (update) =>
     serializeWrite(MY_QUEUE_KEY, () =>
       writeMyUserConfig(store, environment, subKey, update),
     );
@@ -323,27 +340,8 @@ export const useMyAppConfig = <T = unknown>(
       await loadMyAppConfig(store, environment);
     });
 
-  return [value, set, reset];
-};
-
-/** `loaded` once sign-in stored an answer; `set` and `reset` refuse otherwise. */
-export const useMyAppConfigStatus = (): MyAppConfigState['status'] => {
-  'use memo';
-  return useAtomValue(myAppConfigState).status;
-};
-
-/**
- * The merged `domainConfig` or `publicConfigByDomain` at `subKey` (pass
- * `[domainName, ...]` for a domain's public slice). Read only.
- */
-export const useMyAppConfigValue = <T = AppConfigDocument>(
-  configName: MergedAppConfigName,
-  subKey?: AppConfigSubKey,
-): T | undefined => {
-  'use memo';
-  const doc = useAtomValue(myAppConfigState).configs[configName];
-  return (subKey === undefined ? doc : _.get(doc, subKey)) as T | undefined;
-};
+  return [value, set, reset, status];
+}
 
 const scopeRefOf = (scope: AppConfigScope) =>
   scope.type === 'public'

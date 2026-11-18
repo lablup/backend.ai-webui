@@ -4,7 +4,7 @@
  */
 import { App } from '../../app-shim';
 import { useCurrentDomainValue } from '../../hooks';
-import { useMyAppConfig, useMyAppConfigValue } from '../../hooks/useAppConfig';
+import { useMyAppConfig } from '../../hooks/useAppConfig';
 import {
   activeBoardOf,
   keepUnreadablePanels,
@@ -70,13 +70,14 @@ export const useDashboardBoards = (
   const { message } = App.useApp();
   const { getErrorMessage } = useErrorMessageResolver();
   const domainName = useCurrentDomainValue();
-  const [storedDashboard, setStoredDashboard] =
-    useMyAppConfig<Record<string, unknown>>('dashboard');
-  const domainTemplates = useMyAppConfigValue(
+  const [storedDashboard, setStoredDashboard] = useMyAppConfig<
+    Record<string, unknown>
+  >('userConfig', 'dashboard');
+  const [domainTemplates] = useMyAppConfig(
     'domainConfig',
     'dashboardTemplates',
   );
-  const publicTemplates = useMyAppConfigValue('publicConfigByDomain', [
+  const [publicTemplates] = useMyAppConfig('publicConfigByDomain', [
     domainName,
     'dashboardTemplates',
   ]);

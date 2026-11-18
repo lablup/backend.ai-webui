@@ -9,7 +9,7 @@ import {
 } from '../../astryx-theme';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../../hooks';
 import { useResourceSlotsDetails } from '../../hooks/backendai';
-import { useMyAppConfig, useMyAppConfigStatus } from '../../hooks/useAppConfig';
+import { useMyAppConfig } from '../../hooks/useAppConfig';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
 import { useCustomThemeConfig } from '../../hooks/useCustomThemeConfig';
 import useKeyboardShortcut from '../../hooks/useKeyboardShortcut';
@@ -525,9 +525,12 @@ export const CSSTokenVariables = () => {
 const DismissSplashOnMount = () => {
   'use memo';
   useSuspendedBackendaiClient();
-  const [userConfigFamily] = useMyAppConfig('themeFamily');
+  const [userConfigFamily, , , userConfigStatus] = useMyAppConfig(
+    'userConfig',
+    'themeFamily',
+  );
   // A failed sign-in read keeps the mirrored family instead of clearing it.
-  const isUserConfigLoaded = useMyAppConfigStatus() === 'loaded';
+  const isUserConfigLoaded = userConfigStatus === 'loaded';
   const { setActiveThemeFamily } = useCustomThemeConfig();
   const syncThemeFamilyMirror = useEffectEvent(() => {
     if (!isUserConfigLoaded) return;

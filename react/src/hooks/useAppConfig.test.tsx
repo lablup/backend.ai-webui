@@ -319,29 +319,34 @@ describe('myAppConfigState', () => {
     hooks.setMyAppConfigs(store, rows({ themeFamily: 'dark' }));
     const wrapper = wrapperFor(environment, store);
     expect(
-      renderHook(() => hooks.useMyAppConfig('themeFamily'), { wrapper }).result
-        .current[0],
-    ).toBe('dark');
-    expect(
-      renderHook(() => hooks.useMyAppConfigValue('domainConfig', 'settings'), {
+      renderHook(() => hooks.useMyAppConfig('userConfig', 'themeFamily'), {
         wrapper,
-      }).result.current,
-    ).toEqual({ s: 1 });
+      }).result.current[0],
+    ).toBe('dark');
+    const domain = renderHook(
+      () => hooks.useMyAppConfig('domainConfig', 'settings'),
+      { wrapper },
+    ).result.current;
+    expect(domain[0]).toEqual({ s: 1 });
+    expect(domain[1]).toBeUndefined();
+    expect(domain[3]).toBe('loaded');
     expect(
       renderHook(
-        () =>
-          hooks.useMyAppConfigValue('publicConfigByDomain', ['default', 't']),
+        () => hooks.useMyAppConfig('publicConfigByDomain', ['default', 't']),
         { wrapper },
-      ).result.current,
+      ).result.current[0],
     ).toBe('p');
   });
 
   it('writes the merged userConfig with the change to the USER scope', async () => {
     const { hooks, environment, store } = await setup();
     hooks.setMyAppConfigs(store, rows({ dashboard: { a: [1] }, x: 1 }));
-    const { result } = renderHook(() => hooks.useMyAppConfig<number>('x'), {
-      wrapper: wrapperFor(environment, store),
-    });
+    const { result } = renderHook(
+      () => hooks.useMyAppConfig<number>('userConfig', 'x'),
+      {
+        wrapper: wrapperFor(environment, store),
+      },
+    );
     await act(async () => {
       const pending = result.current[1]((current) => (current ?? 0) + 1);
       const sent = await answerUpsert(
@@ -361,9 +366,12 @@ describe('myAppConfigState', () => {
   it('keeps the value when the write fails', async () => {
     const { hooks, environment, store } = await setup();
     hooks.setMyAppConfigs(store, rows({ x: 1 }));
-    const { result } = renderHook(() => hooks.useMyAppConfig<number>('x'), {
-      wrapper: wrapperFor(environment, store),
-    });
+    const { result } = renderHook(
+      () => hooks.useMyAppConfig<number>('userConfig', 'x'),
+      {
+        wrapper: wrapperFor(environment, store),
+      },
+    );
     await act(async () => {
       const pending = result.current[1](5);
       const upsert = await waitForOperation(
@@ -382,9 +390,12 @@ describe('myAppConfigState', () => {
   ] as const)('refuses to write %s', async (_label, answer) => {
     const { hooks, environment, store } = await setup();
     if (answer === null) hooks.setMyAppConfigs(store, null);
-    const { result } = renderHook(() => hooks.useMyAppConfig<number>('x'), {
-      wrapper: wrapperFor(environment, store),
-    });
+    const { result } = renderHook(
+      () => hooks.useMyAppConfig<number>('userConfig', 'x'),
+      {
+        wrapper: wrapperFor(environment, store),
+      },
+    );
     await expect(result.current[1](1)).rejects.toThrow('not written');
     await expect(result.current[2]()).rejects.toThrow('not written');
     expect(environment.mock.getAllOperations()).toHaveLength(0);
@@ -437,9 +448,12 @@ describe('myAppConfigState', () => {
   it('reset removes the key from the USER document, then reloads the domain default', async () => {
     const { hooks, environment, store } = await setup();
     hooks.setMyAppConfigs(store, rows({ x: 9, y: 1 }));
-    const { result } = renderHook(() => hooks.useMyAppConfig<number>('x'), {
-      wrapper: wrapperFor(environment, store),
-    });
+    const { result } = renderHook(
+      () => hooks.useMyAppConfig<number>('userConfig', 'x'),
+      {
+        wrapper: wrapperFor(environment, store),
+      },
+    );
     await act(async () => {
       const pending = result.current[2]();
       const sent = await answerUpsert(
@@ -466,7 +480,7 @@ describe('myAppConfigState', () => {
       publicConfigByDomain: {},
     });
     const { result: my } = renderHook(
-      () => ctx.hooks.useMyAppConfig<number>('x'),
+      () => ctx.hooks.useMyAppConfig<number>('userConfig', 'x'),
       {
         wrapper: wrapperFor(ctx.environment, ctx.store),
       },
@@ -495,9 +509,12 @@ describe('myAppConfigState', () => {
   it('sends a set made during a reset after its reload', async () => {
     const { hooks, environment, store } = await setup();
     hooks.setMyAppConfigs(store, rows({ x: 9 }));
-    const { result } = renderHook(() => hooks.useMyAppConfig<number>('x'), {
-      wrapper: wrapperFor(environment, store),
-    });
+    const { result } = renderHook(
+      () => hooks.useMyAppConfig<number>('userConfig', 'x'),
+      {
+        wrapper: wrapperFor(environment, store),
+      },
+    );
     await act(async () => {
       const reset = result.current[2]();
       const set = result.current[1]((c) => c);
