@@ -1690,6 +1690,11 @@
       "keys": [
         "button.More",
         "data.ModelStore",
+        "diagnostics.AppConfig",
+        "diagnostics.AppConfigFixtureRegisterMissing",
+        "diagnostics.AppConfigFixtureRegistered",
+        "diagnostics.AppConfigFixtureReset",
+        "diagnostics.AppConfigFixtureResetConfirmDesc",
         "diagnostics.ContentSecurityPolicy",
         "diagnostics.EndpointConnectivity",
         "diagnostics.ExportCSV",
