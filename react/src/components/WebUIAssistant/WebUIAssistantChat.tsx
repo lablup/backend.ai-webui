@@ -27,6 +27,7 @@ import { Banner } from '@lablup/ui-common/Banner';
 import { Button } from '@lablup/ui-common/Button';
 import {
   ChatComposer,
+  ChatComposerInput,
   ChatMessage,
   ChatMessageBubble,
   ChatMessageList,
@@ -35,6 +36,7 @@ import { Spinner } from '@lablup/ui-common/Spinner';
 import { Text } from '@lablup/ui-common/Text';
 import { DefaultChatTransport } from 'ai';
 import { BAIFlex, useEventNotStable } from 'backend.ai-ui';
+import { MessageCircleQuestion } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 const MODEL_POLL_INTERVAL_MS = 5000;
@@ -148,7 +150,12 @@ const WebUIAssistantChat: React.FC<WebUIAssistantChatProps> = ({
         align="center"
         justify="center"
         gap="sm"
-        style={{ flex: 1 }}
+        style={{
+          flex: '1 1 0%',
+          minHeight: 0,
+          overflowY: 'auto',
+          padding: 'var(--spacing-3) var(--spacing-4)',
+        }}
       >
         {isTokenRejected ? (
           <Banner
@@ -182,14 +189,13 @@ const WebUIAssistantChat: React.FC<WebUIAssistantChatProps> = ({
   const isWaitingForFirstToken =
     isStreaming && (lastMessage?.role === 'user' || !lastMessage);
 
-  // One array child: ChatMessageList shows `emptyState` only for an empty array.
   const messageItems = [
     ...messages.map((message, index) => {
       const text = messageText(message);
       const isUser = message.role === 'user';
       return (
         <ChatMessage key={message.id} sender={isUser ? 'user' : 'assistant'}>
-          <ChatMessageBubble variant={isUser ? 'filled' : 'ghost'}>
+          <ChatMessageBubble>
             {isUser ? (
               text
             ) : (
@@ -206,7 +212,7 @@ const WebUIAssistantChat: React.FC<WebUIAssistantChatProps> = ({
     ...(isWaitingForFirstToken
       ? [
           <ChatMessage key="thinking" sender="assistant">
-            <ChatMessageBubble variant="ghost">
+            <ChatMessageBubble>
               <BAIFlex gap="xs">
                 <Spinner size="sm" />
                 <Text color="secondary">{t('chatui.Thinking')}</Text>
@@ -218,46 +224,84 @@ const WebUIAssistantChat: React.FC<WebUIAssistantChatProps> = ({
   ];
 
   return (
-    <BAIFlex
-      direction="column"
-      align="stretch"
-      gap="sm"
-      style={{ flex: 1, minHeight: 0 }}
-    >
-      {manualQuery.isError && (
-        <Banner
-          status="warning"
-          title={t('webuiAssistant.ManualUnavailable')}
-        />
-      )}
+    <>
       <BAIFlex
         direction="column"
         align="stretch"
+        gap="sm"
         className="webui-assistant-panel__messages"
-      >
-        <ChatMessageList
-          density="compact"
-          isStreaming={isStreaming}
-          emptyState={
-            <Text color="secondary">{t('webuiAssistant.EmptyState')}</Text>
-          }
-        >
-          {messageItems}
-        </ChatMessageList>
-      </BAIFlex>
-      {error?.message && (
-        <Banner status="error" title={error.message} role="alert" />
-      )}
-      <ChatComposer
-        density="compact"
-        placeholder={t('webuiAssistant.Placeholder')}
-        isStopShown={isStreaming}
-        onStop={stop}
-        onSubmit={(value) => {
-          if (value.trim()) sendMessage({ text: value });
+        style={{
+          flex: '1 1 0%',
+          minHeight: 0,
+          overflowY: 'auto',
+          padding: 'var(--spacing-3) var(--spacing-4)',
         }}
-      />
-    </BAIFlex>
+      >
+        {manualQuery.isError && (
+          <Banner
+            status="warning"
+            title={t('webuiAssistant.ManualUnavailable')}
+          />
+        )}
+        {messageItems.length === 0 ? (
+          <BAIFlex
+            direction="column"
+            align="center"
+            justify="center"
+            gap="sm"
+            style={{ flex: '1 1 0%', textAlign: 'center' }}
+          >
+            <MessageCircleQuestion
+              size={32}
+              // A global rule sizes SVGs to 1em, so `size` alone stays at text size.
+              style={{ fontSize: 32 }}
+              color="var(--color-text-secondary)"
+              aria-hidden
+            />
+            <Text color="secondary">{t('webuiAssistant.EmptyState')}</Text>
+          </BAIFlex>
+        ) : (
+          <ChatMessageList density="compact" isStreaming={isStreaming}>
+            {messageItems}
+          </ChatMessageList>
+        )}
+        {error?.message && (
+          <Banner status="error" title={error.message} role="alert" />
+        )}
+      </BAIFlex>
+      <BAIFlex
+        direction="column"
+        align="stretch"
+        style={{
+          flexShrink: 0,
+          borderTop: '1px solid var(--color-border)',
+          padding: 'var(--spacing-3) var(--spacing-4)',
+        }}
+      >
+        <ChatComposer
+          density="compact"
+          elevation="none"
+          style={
+            {
+              '--radius-chat': 'var(--radius-container)',
+            } as React.CSSProperties
+          }
+          placeholder={t('webuiAssistant.Placeholder')}
+          isStopShown={isStreaming}
+          onStop={stop}
+          onSubmit={(value) => {
+            if (value.trim()) sendMessage({ text: value });
+          }}
+          input={
+            <ChatComposerInput
+              label={t('webuiAssistant.Placeholder')}
+              hasHistory={false}
+              pasteAsToken={false}
+            />
+          }
+        />
+      </BAIFlex>
+    </>
   );
 };
 

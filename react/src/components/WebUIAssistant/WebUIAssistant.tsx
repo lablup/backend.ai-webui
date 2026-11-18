@@ -17,7 +17,8 @@ import {
 } from './webUIAssistantPrompt';
 import { IconButton } from '@lablup/ui-common/IconButton';
 import { Spinner } from '@lablup/ui-common/Spinner';
-import { BAICard, BAIFlex, BAIUnmountAfterClose } from 'backend.ai-ui';
+import { Text } from '@lablup/ui-common/Text';
+import { BAIFlex, BAIUnmountAfterClose } from 'backend.ai-ui';
 import { MessageCircle, PlugZap, RotateCcw, X } from 'lucide-react';
 import { Suspense, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -69,63 +70,57 @@ const WebUIAssistantFloating: React.FC = () => {
         role="dialog"
         aria-label={title}
       >
-        <BAICard
-          size="small"
-          title={
-            <BAIFlex gap="xs" align="center">
-              <MessageCircle size="1em" />
-              {title}
-            </BAIFlex>
-          }
-          extra={
-            <BAIFlex gap="xxs" align="center">
-              <IconButton
-                variant="ghost"
-                size="sm"
-                icon={<PlugZap size="1em" />}
-                label={t('webuiAssistant.ChangeConnection')}
-                tooltip={t('webuiAssistant.ChangeConnection')}
-                onClick={() => setIsConnectOpen(true)}
-              />
-              <IconButton
-                variant="ghost"
-                size="sm"
-                icon={<RotateCcw size="1em" />}
-                label={t('webuiAssistant.ClearConversation')}
-                tooltip={t('webuiAssistant.ClearConversation')}
-                onClick={() => setConversationKey((key) => key + 1)}
-              />
-              <IconButton
-                variant="ghost"
-                size="sm"
-                icon={<X size="1em" />}
-                label={t('button.Close')}
-                tooltip={t('button.Close')}
-                onClick={() => setIsOpen(false)}
-              />
-            </BAIFlex>
-          }
+        <BAIFlex
+          justify="between"
+          align="center"
+          gap="xs"
+          className="webui-assistant-panel__header"
+          style={{
+            flexShrink: 0,
+            padding:
+              'var(--spacing-2) var(--spacing-2) var(--spacing-2) var(--spacing-4)',
+          }}
         >
-          <BAIFlex
-            direction="column"
-            align="stretch"
-            className="webui-assistant-panel__body"
-          >
-            {!profile || !connection?.baseURL ? (
-              <Spinner />
-            ) : (
-              <ErrorBoundaryWithNullFallback>
-                <WebUIAssistantChat
-                  key={`${conversationKey}-${connection.baseURL}-${connection.apiKey ?? ''}`}
-                  profile={profile}
-                  baseURL={connection.baseURL}
-                  apiKey={connection.apiKey}
-                  onChangeConnection={() => setIsConnectOpen(true)}
-                />
-              </ErrorBoundaryWithNullFallback>
-            )}
+          <BAIFlex gap="xs" align="center">
+            <MessageCircle size="1em" />
+            <Text weight="semibold" color="inherit">
+              {title}
+            </Text>
           </BAIFlex>
-        </BAICard>
+          <BAIFlex gap="xxs" align="center">
+            <IconButton
+              variant="ghost"
+              size="sm"
+              icon={<PlugZap size="1em" />}
+              label={t('webuiAssistant.ChangeConnection')}
+              tooltip={t('webuiAssistant.ChangeConnection')}
+              onClick={() => setIsConnectOpen(true)}
+            />
+            <IconButton
+              variant="ghost"
+              size="sm"
+              icon={<RotateCcw size="1em" />}
+              label={t('webuiAssistant.ClearConversation')}
+              tooltip={t('webuiAssistant.ClearConversation')}
+              onClick={() => setConversationKey((key) => key + 1)}
+            />
+          </BAIFlex>
+        </BAIFlex>
+        {!profile || !connection?.baseURL ? (
+          <BAIFlex justify="center" align="center" style={{ flex: '1 1 0%' }}>
+            <Spinner />
+          </BAIFlex>
+        ) : (
+          <ErrorBoundaryWithNullFallback>
+            <WebUIAssistantChat
+              key={`${conversationKey}-${connection.baseURL}-${connection.apiKey ?? ''}`}
+              profile={profile}
+              baseURL={connection.baseURL}
+              apiKey={connection.apiKey}
+              onChangeConnection={() => setIsConnectOpen(true)}
+            />
+          </ErrorBoundaryWithNullFallback>
+        )}
       </BAIFlex>
       <IconButton
         className="webui-assistant-fab"

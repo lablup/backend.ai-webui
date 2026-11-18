@@ -44,24 +44,28 @@
     );
     z-index: var(--bai-z-assistant);
     width: min(400px, calc(100vw - var(--webui-assistant-inset) * 2));
-    box-shadow: var(--shadow-high, 0 8px 24px rgb(0 0 0 / 16%));
-    border-radius: var(--radius-container, 8px);
-  }
-
-  .webui-assistant-panel__body {
     height: min(
-      520px,
+      600px,
       calc(
         100dvh - var(--webui-header-height, 60px) -
-          var(--webui-assistant-fab-size) - var(--spacing-6) * 4 - 56px
+          var(--webui-assistant-fab-size) - var(--spacing-6) * 3
       )
     );
-    min-height: 240px;
+    min-height: 320px;
+    overflow: hidden;
+    background: var(--color-background-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-container);
+    box-shadow: var(--shadow-high);
   }
 
-  .webui-assistant-panel__messages {
-    flex: 1;
-    min-height: 0;
-    overflow-y: auto;
+  /* Layout (flex, padding, border) is inline: BAIFlex's inline style beats classes. */
+  .webui-assistant-panel__header {
+    background: var(--color-accent);
+    color: var(--color-on-accent);
+  }
+
+  .webui-assistant-panel__header button {
+    color: inherit;
   }
 }
