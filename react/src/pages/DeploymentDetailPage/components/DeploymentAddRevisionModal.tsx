@@ -40,6 +40,7 @@ import ModelServiceHealthCheckFormItems from '../../../components/ModelServiceFo
 import PreStartActionsFormList from '../../../components/ModelServiceFormItems/PreStartActionsFormList';
 import ServiceConfigurationFormItems from '../../../components/ModelServiceFormItems/ServiceConfigurationFormItems';
 import RuntimeParameterFormSection, {
+  RUNTIME_PARAMS_NAMESPACE,
   type RuntimeParameterValues,
 } from '../../../components/RuntimeParameterFormSection';
 import ResourceAllocationFormItems, {
@@ -73,10 +74,13 @@ import {
 } from '../../../hooks/useRuntimeParameterSchema';
 import { useCommonEnvVarConfigs } from '../../../hooks/useVariantConfigs';
 import type { ProjectContextOrNull } from '../../../types/projectContext';
+import {
+  effectiveTensorParallelValue,
+  findTensorParallelParam,
+  tensorParallelFgpuWarningKind,
+} from '../helper/tensorParallelWarning';
 import ModelCardSelect from './ModelCardSelect';
-import PresetTensorParallelFgpuWarning, {
-  CustomTensorParallelFgpuWarning,
-} from './TensorParallelFgpuWarning';
+import PresetTensorParallelFgpuWarning from './TensorParallelFgpuWarning';
 import { Banner } from '@lablup/ui-common/Banner';
 import { Button } from '@lablup/ui-common/Button';
 import { ButtonGroup } from '@lablup/ui-common/ButtonGroup';
@@ -727,12 +731,11 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
   // namespace (registered by RuntimeParameterFormSection), so required presets
   // participate in normal form validation. Touched keys are kept in a ref —
   // changing them must not re-render the modal, and they are only read at
-  // submit time. The groups live in both a ref (the submit-time read) and
-  // state (the TP/fGPU warning, which re-renders with them).
+  // submit time. The groups live in a ref too: they are read at submit time
+  // and by the TP/fGPU accelerator rule, which re-validates the field when
+  // the runtime params change.
   const runtimeParamTouchedKeysRef = useRef<Set<string>>(new Set());
   const runtimeParamGroupsRef = useRef<RuntimeParameterGroup[] | null>(null);
-  const [runtimeParamGroups, setRuntimeParamGroups] =
-    useState<ReadonlyArray<RuntimeParameterGroup> | null>(null);
 
   // Initial preset values fed into `RuntimeParameterFormSection` for non-custom
   // variants in edit mode, keyed by preset id. State (not ref) so the child
@@ -1341,6 +1344,52 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
       runtimeParamTouchedKeysRef.current,
     );
   };
+
+  // Warns under the AI Accelerator field when the TP runtime parameter and
+  // the requested fGPU quantity conflict (lablup/backend.ai-webui#11283).
+  // `extraAcceleratorDependencies` re-validates the field when a runtime
+  // parameter changes, so the warning reacts to TP edits without touching
+  // the accelerator.
+  const tpFgpuAcceleratorRules = [
+    {
+      warningOnly: true,
+      validator: async (_rule: unknown, value: number) => {
+        const tpParam = findTensorParallelParam(runtimeParamGroupsRef.current);
+        if (!tpParam) return Promise.resolve();
+        const accelType = customForm.getFieldValue([
+          'resource',
+          'acceleratorType',
+        ]);
+        if (typeof accelType !== 'string' || !accelType.endsWith('.shares')) {
+          return Promise.resolve();
+        }
+        if (!Number.isFinite(value) || value <= 0) return Promise.resolve();
+        const tpValue = effectiveTensorParallelValue(
+          tpParam,
+          customForm.getFieldValue(RUNTIME_PARAMS_NAMESPACE),
+        );
+        if (tpValue == null) return Promise.resolve();
+        const kind = tensorParallelFgpuWarningKind(tpValue, value);
+        if (kind === 'nonInteger') {
+          return Promise.reject(
+            t('deployment.TensorParallelFgpuNotInteger', {
+              tp: tpValue,
+              gpu: value,
+            }),
+          );
+        }
+        if (kind === 'mismatch') {
+          return Promise.reject(
+            t('deployment.TensorParallelFgpuMismatch', {
+              tp: tpValue,
+              gpu: value,
+            }),
+          );
+        }
+        return Promise.resolve();
+      },
+    },
+  ];
 
   // `scrollToFirstError` walks `errorFields` in field *registration* order, not
   // DOM order, so DOM order is resolved by querying the document instead — the
@@ -2480,7 +2529,6 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                       }}
                       onGroupsLoaded={(groups) => {
                         runtimeParamGroupsRef.current = groups;
-                        setRuntimeParamGroups(groups);
                       }}
                       initialPresetValues={initialRuntimePresetValues}
                     />
@@ -2556,13 +2604,11 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                 enableResourcePresets
                 hideResourceGroupFormItem
                 keepRestoredAllocation
+                extraAcceleratorRules={tpFgpuAcceleratorRules}
+                extraAcceleratorDependencies={[[RUNTIME_PARAMS_NAMESPACE]]}
               />
             </Suspense>
           ) : null}
-
-          {/* Warns when the TP runtime parameter and the requested fGPU
-              quantity conflict (lablup/backend.ai-webui#11283). */}
-          <CustomTensorParallelFgpuWarning groups={runtimeParamGroups} />
 
           {/* PILOT-DECISION: antd Collapse (single bordered panel) → Astryx
               Collapsible: the boxed/bordered panel chrome is dropped (Astryx

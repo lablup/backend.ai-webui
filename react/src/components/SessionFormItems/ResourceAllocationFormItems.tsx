@@ -155,6 +155,13 @@ interface ResourceAllocationFormItemsProps {
     warningOnly?: boolean;
     validator: (rule: unknown, value: number) => Promise<void>;
   }>;
+  /**
+   * Extra `dependencies` for the accelerator Form.Item: caller rules that
+   * read fields outside this fragment (e.g. the runtime-params namespace)
+   * re-validate when those fields change. The built-in dependencies
+   * (`acceleratorType`, `cluster_size`, `mem`) stay.
+   */
+  extraAcceleratorDependencies?: ReadonlyArray<NamePath>;
   /** Keep a prefilled `allocationPreset: 'custom'` and its values in preset-only mode (a cloned revision). */
   keepRestoredAllocation?: boolean;
 }
@@ -226,6 +233,7 @@ const ResourceAllocationFormItems: React.FC<
   hideResourceGroupFormItem = false,
   includeSFTPResourceGroups = false,
   extraAcceleratorRules,
+  extraAcceleratorDependencies,
   keepRestoredAllocation = false,
 }) => {
   const form = Form.useFormInstance<MergedResourceAllocationFormValue>();
@@ -932,6 +940,7 @@ const ResourceAllocationFormItems: React.FC<
                           ['resource', 'acceleratorType'],
                           'cluster_size',
                           ['resource', 'mem'],
+                          ...(extraAcceleratorDependencies ?? []),
                         ]}
                         // Unified-memory slots clear the accelerator field
                         // (it stays empty, not mirrored) and disable direct
