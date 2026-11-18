@@ -1,6 +1,6 @@
-import { BAIKeypairSelectPaginatedQuery } from '../../__generated__/BAIKeypairSelectPaginatedQuery.graphql';
+import { BAIKeypairSelectPaginatedQuery, KeypairFilter } from '../../__generated__/BAIKeypairSelectPaginatedQuery.graphql';
 import { BAIComplexSelectProps } from '../BAIComplexSelect';
-export type AstryxKeypairNode = NonNullable<NonNullable<BAIKeypairSelectPaginatedQuery['response']['keypair_list']>['items'][number]>;
+export type AstryxKeypairNode = NonNullable<BAIKeypairSelectPaginatedQuery['response']['adminKeypairsV2']>['edges'][number]['node'];
 export interface BAIKeypairSelectRef {
     refetch: () => void;
 }
@@ -8,7 +8,7 @@ export interface BAIKeypairSelectProps extends Omit<BAIComplexSelectProps, 'opti
     /** Plain key(s), as the antd `BAIKeypairSelect` exposes. */
     value?: string | Array<string> | null;
     onChange?: (value: string | Array<string> | undefined) => void;
-    filter?: string;
+    filter?: KeypairFilter;
     ref?: React.Ref<BAIKeypairSelectRef>;
 }
 declare const BAIKeypairSelect: React.FC<BAIKeypairSelectProps>;
