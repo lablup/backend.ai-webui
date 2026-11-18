@@ -187,7 +187,11 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
         loading:
           isInFlightCommitCreateResourceGroup ||
           isInFlightCommitAssociateDomain ||
-          isInFlightCommitUpdateResourceGroup,
+          isInFlightCommitUpdateResourceGroup ||
+          // Saving while the SFTP map still loads would skip the proxy sync,
+          // so the OK button shows loading until the select is live
+          // (superadmin-only; the map query is disabled otherwise).
+          (baiClient.is_superadmin && isSftpMapLoading),
       }}
       onOk={() => {
         formRef.current
