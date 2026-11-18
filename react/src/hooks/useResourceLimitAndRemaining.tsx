@@ -30,6 +30,25 @@ export const isMatchingMaxPerContainer = (configName: string, key: string) => {
   }
   return false;
 };
+/**
+ * The shmem cap in `g`: the smaller of `maxShmPerContainer` (GiB; a value of
+ * 0 or less, or a non-number, sets no cap) and the memory maximum `memMax`.
+ */
+export const getShmemMaxLimit = (
+  maxShmPerContainer: unknown,
+  memMax: string | undefined,
+): string | undefined => {
+  const cap =
+    _.isFinite(maxShmPerContainer) && (maxShmPerContainer as number) > 0
+      ? (maxShmPerContainer as number)
+      : undefined;
+  const minValue = _.min([
+    cap,
+    memMax === undefined ? undefined : convertToBinaryUnit(memMax, 'g')?.number,
+  ]);
+  return minValue !== undefined ? minValue + 'g' : undefined;
+};
+
 export interface MergedResourceLimits {
   accelerators: {
     [key: string]:
@@ -269,7 +288,7 @@ export const useResourceLimitAndRemaining = ({
   );
 
   // Helper function to create resource limits with optional resource group limits
-  const createResourceLimits = (
+  const createSlotLimits = (
     includeResourceGroupLimits: boolean,
   ): MergedResourceLimits => ({
     cpu:
@@ -377,6 +396,26 @@ export const useResourceLimitAndRemaining = ({
       {} as MergedResourceLimits['accelerators'],
     ),
   });
+
+  const createResourceLimits = (
+    includeResourceGroupLimits: boolean,
+  ): MergedResourceLimits => {
+    const limits = createSlotLimits(includeResourceGroupLimits);
+    return {
+      ...limits,
+      shmem:
+        resourceSlots?.mem === undefined
+          ? undefined
+          : {
+              max: getShmemMaxLimit(
+                ignorePerContainerConfig
+                  ? undefined
+                  : baiClient._config.maxShmPerContainer,
+                limits.mem?.max,
+              ),
+            },
+    };
+  };
 
   const resourceLimits = createResourceLimits(true);
 

@@ -555,6 +555,62 @@ describe('applyRule — user events', () => {
   });
 });
 
+describe('applyRule — shared-memory cap', () => {
+  const capped = (max: string) =>
+    makeCtx({
+      resourceLimits: {
+        ...makeCtx().resourceLimits,
+        shmem: { min: '256m', max },
+      },
+    });
+
+  it('a mem edit with automatic shmem on writes no more than the cap', () => {
+    const values = makeValues({ resource: { ...makeValues().resource } });
+    expect(
+      applyRule(
+        values,
+        { type: 'user.setResource', field: 'mem', value: '8g' },
+        capped('0.5g'),
+      ).resource?.shmem,
+    ).toBe('0.5g');
+  });
+
+  it('turning automatic shmem on writes no more than the cap', () => {
+    const values = makeValues({
+      resource: { ...makeValues().resource, mem: '8g', shmem: '2g' },
+      enabledAutomaticShmem: false,
+    });
+    expect(
+      applyRule(
+        values,
+        { type: 'user.toggleAutoShmem', on: true },
+        capped('0.5g'),
+      ).resource?.shmem,
+    ).toBe('0.5g');
+  });
+
+  it('automatic shmem above a cap that shrank is lowered, and settles', () => {
+    const values = makeValues({
+      resource: { ...makeValues().resource, mem: '8g', shmem: '1g' },
+    });
+    const patch = applyRule(values, dataChanged, capped('0.5g'));
+    expect(patch.resource?.shmem).toBe('0.5g');
+    expect(
+      applyRule(written(values, patch), dataChanged, capped('0.5g')),
+    ).toEqual({});
+  });
+
+  it('a manual shmem is left to the input and its validator', () => {
+    const values = makeValues({
+      resource: { ...makeValues().resource, mem: '8g', shmem: '2g' },
+      enabledAutomaticShmem: false,
+    });
+    expect(
+      applyRule(values, dataChanged, capped('0.5g')).resource?.shmem,
+    ).toBeUndefined();
+  });
+});
+
 describe('applyRule — data.changed', () => {
   it('sizes automatic shmem for custom amounts restored without it', () => {
     const restored = (mem: string) =>

@@ -263,6 +263,12 @@ describe('getAutomaticShmem', () => {
     expect(getAutomaticShmem('2g', '1g')).toBe(AUTOMATIC_DEFAULT_SHMEM);
     expect(getAutomaticShmem('4g', '4g')).toBe(AUTOMATIC_DEFAULT_SHMEM);
   });
+
+  it('never exceeds the cap when one is given', () => {
+    expect(getAutomaticShmem('8g', '1g', '0.5g')).toBe('0.5g');
+    expect(getAutomaticShmem('8g', '1g', '2g')).toBe('1g');
+    expect(getAutomaticShmem('2g', '1g', '0.03125g')).toBe('0.03125g');
+  });
 });
 
 describe('pickChangedResourceValues', () => {

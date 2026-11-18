@@ -674,6 +674,38 @@ test.describe(
       await page.context().close();
     });
 
+    test('maxShmPerContainer from the domain document caps the launcher shared memory', async ({
+      browser,
+      request,
+    }) => {
+      await api.writeSettings('domain', {
+        maxShmPerContainer: 1,
+        allowCustomResourceAllocation: true,
+      });
+
+      const page = await signInAsAdminInNewContext(browser, request);
+      expect(await readClientConfig(page, 'maxShmPerContainer')).toBe(1);
+      // Manual shmem on a 4 GiB allocation, so the 1 GiB cap is the smaller bound.
+      const formValues = {
+        allocationPreset: 'custom',
+        resource: { cpu: 1, mem: '4g', shmem: '1g', accelerator: 0 },
+        enabledAutomaticShmem: false,
+      };
+      await navigateTo(
+        page,
+        `session/start?step=1&formValues=${encodeURIComponent(JSON.stringify(formValues))}`,
+      );
+      await expect(
+        page.getByRole('button', { name: 'Resource Presets' }),
+      ).toBeVisible({ timeout: 30_000 });
+      const shmemInput = page.getByRole('spinbutton', {
+        name: /Shared Memory/,
+      });
+      await expect(shmemInput).toBeVisible();
+      await expect(shmemInput).toHaveAttribute('aria-valuemax', '1');
+      await page.context().close();
+    });
+
     test('download panel keys from the domain document remove the Downloads menu item', async ({
       browser,
       request,

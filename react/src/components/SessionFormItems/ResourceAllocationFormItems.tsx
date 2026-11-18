@@ -819,6 +819,7 @@ const ResourceAllocationFormItems: React.FC<
                     </Form.Item>
                     <SharedMemoryFormItems
                       min={resourceLimits.shmem?.min}
+                      max={resourceLimits.shmem?.max}
                       onChangeResourceShmem={(value) => {
                         runRule({
                           type: 'user.setResource',

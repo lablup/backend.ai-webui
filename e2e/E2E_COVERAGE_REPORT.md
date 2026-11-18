@@ -12,7 +12,7 @@
 
 **Scope:** Coverage metrics apply only to the routes listed below and do **not** include all entries from `react/src/routes.tsx`. Routes such as `/admin-dashboard` (not yet exposed in menu) and `/ai-agent` (experimental) are currently out of scope.
 
-**Overall (in-scope routes): 427 / 582 features covered (73%)**
+**Overall (in-scope routes): 428 / 582 features covered (74%)**
 
 | Page                     | Route                                            | Features | Covered | Status  |
 | ------------------------ | ------------------------------------------------ | :------: | :-----: | :-----: |
@@ -54,8 +54,8 @@
 | Runtime Parameters       | `/admin/deployments?tab=runtime-variant-presets` |    5     |    5    | ✅ 100% |
 | Project-Agnostic Scope   | `/admin/*` (except `admin-dashboard`)            |    5     |    5    | ✅ 100% |
 | Global Search Palette    | (header, every route)                            |    8     |    8    | ✅ 100% |
-| System Settings          | `/admin/system-settings`                         |    37    |   33    | 🔶 89%  |
-| **Total**                |                                                  | **582**  | **427** | **73%** |
+| System Settings          | `/admin/system-settings`                         |    37    |   34    | 🔶 92%  |
+| **Total**                |                                                  | **582**  | **428** | **74%** |
 
 ---
 
@@ -1398,10 +1398,10 @@ The spec writes the cluster-wide `settings` documents, so it runs sequentially (
 | `openPortToPublic`, `allowPreferredPort`, `allowNonAuthTCP` → app launcher modal of a running session                                                                                                        | ✅     | `app launcher and commit controls follow the domain document (all on / all off)`                                                                                      |
 | `enableContainerCommit` → Request Container Commit button of a running session                                                                                                                               | ✅     | same test                                                                                                                                                             |
 | `appDownloadUrl` → Desktop App download URL                                                                                                                                                                  | 🔶     | the tab is asserted; the URL goes through `window.open` and is not                                                                                                    |
-| `maxShmPerContainer` → launcher shmem cap                                                                                                                                                                    | ❌     | nothing reads it today; #10709 wires it up                                                                                                                            |
+| `maxShmPerContainer` → launcher shmem cap                                                                                                                                                                    | ✅     | `maxShmPerContainer from the domain document caps the launcher shared memory`                                                                                         |
 | Accelerator caps other than CPU (`maxCUDADevicesPerContainer`, …)                                                                                                                                            | ❌     | need the device in the resource group                                                                                                                                 |
 
-**Coverage: 🔶 33/37 features**
+**Coverage: 🔶 34/37 features**
 
 ---
 

@@ -38,18 +38,26 @@ export const AUTOMATIC_DEFAULT_SHMEM = '64m';
 /**
  * The shmem the automatic rule picks for a memory size `M_plus_S`: `1g` once
  * M+S reaches both 4G and the image's minimum memory + 1G, otherwise
- * `AUTOMATIC_DEFAULT_SHMEM`.
+ * `AUTOMATIC_DEFAULT_SHMEM`; never more than `maxShmem` when it is set.
  */
-export const getAutomaticShmem = (M_plus_S: string, imageMinMem: string) => {
-  return compareNumberWithUnits(M_plus_S, '4g') >= 0 &&
+export const getAutomaticShmem = (
+  M_plus_S: string,
+  imageMinMem: string,
+  maxShmem?: string,
+) => {
+  const shmem =
+    compareNumberWithUnits(M_plus_S, '4g') >= 0 &&
     compareNumberWithUnits(
       M_plus_S,
       addNumberWithUnits(imageMinMem, '1g') || '0b',
     ) >= 0 &&
     // if 1G < AUTOMATIC_DEFAULT_SHMEM, no need to apply 1G rule
     compareNumberWithUnits('1g', AUTOMATIC_DEFAULT_SHMEM) > 0
-    ? '1g'
-    : AUTOMATIC_DEFAULT_SHMEM;
+      ? '1g'
+      : AUTOMATIC_DEFAULT_SHMEM;
+  return maxShmem && compareNumberWithUnits(shmem, maxShmem) > 0
+    ? maxShmem
+    : shmem;
 };
 
 /**
@@ -273,7 +281,11 @@ export const getPresetResourceFields = (
     mem,
     shmem: hasPresetShmem
       ? convertToBinaryUnit(preset.shared_memory || 0, 'g', 2)?.value
-      : getAutomaticShmem(mem || '0g', ctx.imageMinMem),
+      : getAutomaticShmem(
+          mem || '0g',
+          ctx.imageMinMem,
+          ctx.resourceLimits.shmem?.max,
+        ),
     accelerator: acceleratorType
       ? Number(acceleratorSlots[acceleratorType] || 0)
       : 0,
@@ -346,6 +358,7 @@ const applyMinimumRequired = (draft: Draft, ctx: RuleContext) => {
     draft.resource.shmem = getAutomaticShmem(
       draft.resource.mem || '0g',
       ctx.imageMinMem,
+      ctx.resourceLimits.shmem?.max,
     );
   }
 };
@@ -415,6 +428,7 @@ const applyDataChanged = (
     draft.resource.shmem = getAutomaticShmem(
       draft.resource.mem as string,
       ctx.imageMinMem,
+      ctx.resourceLimits.shmem?.max,
     );
   }
 };
@@ -545,6 +559,7 @@ export const applyRule = (
         draft.resource.shmem = getAutomaticShmem(
           event.value || '0g',
           ctx.imageMinMem,
+          ctx.resourceLimits.shmem?.max,
         );
       }
       break;
@@ -554,6 +569,7 @@ export const applyRule = (
         draft.resource.shmem = getAutomaticShmem(
           draft.resource.mem || '0g',
           ctx.imageMinMem,
+          ctx.resourceLimits.shmem?.max,
         );
       }
       break;
@@ -592,6 +608,16 @@ export const applyRule = (
     draft.resource.accelerator !== undefined
   ) {
     draft.resource.accelerator = undefined;
+  }
+  // Automatic shmem stays under the cap, which can shrink with the group's limits.
+  const maxShmem = ctx.resourceLimits.shmem?.max;
+  if (
+    draft.enabledAutomaticShmem &&
+    maxShmem &&
+    draft.resource.shmem &&
+    compareNumberWithUnits(draft.resource.shmem, maxShmem) > 0
+  ) {
+    draft.resource.shmem = maxShmem;
   }
   // shmem is a setting: its edit and the automatic toggle never move the label.
   draft.allocationPreset = deriveAllocationPreset(draft, ctx, {
