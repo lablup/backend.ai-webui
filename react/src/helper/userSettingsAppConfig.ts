@@ -92,8 +92,9 @@ export const readLocalAccountUserSettings = (
   for (const key of accountStorageKeys(storage)) {
     const raw = storage.getItem(key);
     const value = rawToSetting(raw);
-    // A stored `null` is a choice (e.g. auto-refresh off), unlike an unset key.
-    if (value !== null || raw === 'null') {
+    // A stored `null` or empty string is a choice (auto-refresh off, no
+    // condition), unlike an unset key.
+    if (value !== null || raw === 'null' || raw === '' || raw === '""') {
       settings[key.slice(USER_SETTING_STORAGE_PREFIX.length)] = value;
     }
   }
@@ -103,24 +104,6 @@ export const readLocalAccountUserSettings = (
 /** Drops the pre-ADR 0032 localStorage copies once the account holds them. */
 export const removeLocalAccountUserSettings = (storage: Storage): void => {
   accountStorageKeys(storage).forEach((key) => storage.removeItem(key));
-};
-
-/** `current` settings with `batch` applied; an `undefined` value removes the key. */
-export const applyUserSettingChanges = (
-  current: unknown,
-  batch: WriteBatch<string, unknown>,
-): Record<string, unknown> => {
-  const next: Record<string, unknown> = _.isPlainObject(current)
-    ? { ...(current as Record<string, unknown>) }
-    : {};
-  batch.forEach((value, name) => {
-    if (value === undefined) {
-      delete next[name];
-    } else {
-      next[name] = value;
-    }
-  });
-  return next;
 };
 
 export const USER_SETTINGS_WRITE_DELAY_MS = 500;

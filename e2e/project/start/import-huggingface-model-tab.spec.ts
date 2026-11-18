@@ -9,6 +9,10 @@ import {
   modifyConfigToml,
   navigateTo,
 } from '../../utils/test-util';
+import {
+  waitForAccountSettingsSync,
+  waitForAccountSettingWrite,
+} from '../../utils/user-settings-util';
 import { test, expect, Page } from '@playwright/test';
 
 const HF_TAB_NAME = /Import Hugging Face Model/i;
@@ -39,24 +43,24 @@ const setHuggingFaceImportSetting = async (
   page: Page,
   value: boolean | undefined,
 ) => {
-  const saved = page.waitForResponse(
-    (response) =>
-      response.url().includes('/admin/gql') &&
-      (response.request().postData() ?? '').includes(
-        'useAppConfigMyUpsertMutation',
-      ),
+  const name = 'experimental_import_from_huggingface';
+  await waitForAccountSettingsSync(page);
+  // An account that already holds the value sends no write.
+  const saved = waitForAccountSettingWrite(page, name, value, 5_000).catch(
+    (error: Error) => {
+      if (error.name !== 'TimeoutError') throw error;
+    },
   );
-  await page.evaluate((next) => {
-    document.dispatchEvent(
-      new CustomEvent('backendaiwebui.settings:set', {
-        detail: {
-          namespace: 'user',
-          name: 'experimental_import_from_huggingface',
-          value: next,
-        },
-      }),
-    );
-  }, value);
+  await page.evaluate(
+    ({ name, next }) => {
+      document.dispatchEvent(
+        new CustomEvent('backendaiwebui.settings:set', {
+          detail: { namespace: 'user', name, value: next },
+        }),
+      );
+    },
+    { name, next: value },
+  );
   await saved;
 };
 

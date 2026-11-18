@@ -2,6 +2,7 @@
 // sections: 7. Column Visibility, 8. Refresh, 10. Query Template Copy
 import { createTestResources } from '../../../utils/test-resources';
 import { loginAsAdmin, webuiEndpoint } from '../../../utils/test-util';
+import { waitForAccountSettingsWrite } from '../../../utils/user-settings-util';
 import { test, expect, Page } from '@playwright/test';
 
 // Every preset a test names is declared here and purged via the admin API in
@@ -123,8 +124,19 @@ test.describe(
       await settingsModal
         .getByRole('checkbox', { name: 'Updated At' })
         .uncheck();
+      // The columns are an account setting (ADR 0032): wait for the restore to land.
+      const restored = waitForAccountSettingsWrite(page, (settings) => {
+        const overrides = settings[
+          'table_column_overrides.AdminPrometheusPreset'
+        ] as Record<string, { hidden?: boolean }> | undefined;
+        return (
+          overrides?.createdAt?.hidden !== false &&
+          overrides?.updatedAt?.hidden !== false
+        );
+      });
       await settingsModal.getByRole('button', { name: 'Apply' }).click();
       await expect(settingsModal).toBeHidden({ timeout: 30000 });
+      await restored;
     });
 
     // 7.2 Superadmin can hide the "Created At" and "Updated At" columns again

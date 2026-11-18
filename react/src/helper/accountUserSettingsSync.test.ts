@@ -88,6 +88,44 @@ describe('startAccountUserSettingsSync', () => {
     stop();
   });
 
+  it("drops this browser's pre-0032 values when the account has settings", () => {
+    localStorage.setItem(P + 'compact_sidebar', 'true');
+    localStorage.setItem(P + 'has_opened_tour_back_to_user_view', 'true');
+    const { upsert } = createUpsert({ session_monitor_rows: 5 });
+    const stop = start({ session_monitor_rows: 5 }, upsert);
+    expect(getAccountUserSettings()).toEqual({ session_monitor_rows: 5 });
+    expect(localStorage.getItem(P + 'compact_sidebar')).toBeNull();
+    expect(localStorage.getItem(P + 'has_opened_tour_back_to_user_view')).toBe(
+      'true',
+    );
+    expect(upsert).not.toHaveBeenCalled();
+    stop();
+  });
+
+  it('carries a failed batch in the next write', async () => {
+    const { held, upsert } = createUpsert({});
+    upsert.mockRejectedValueOnce(new Error('refused'));
+    const stop = start({}, upsert);
+    document.dispatchEvent(
+      new CustomEvent('backendaiwebui.settings:set', {
+        detail: { namespace: 'user', name: 'compact_sidebar', value: true },
+      }),
+    );
+    await vi.advanceTimersByTimeAsync(USER_SETTINGS_WRITE_DELAY_MS);
+    expect(held.settings).toEqual({});
+    document.dispatchEvent(
+      new CustomEvent('backendaiwebui.settings:set', {
+        detail: { namespace: 'user', name: 'session_monitor_rows', value: 7 },
+      }),
+    );
+    await vi.advanceTimersByTimeAsync(USER_SETTINGS_WRITE_DELAY_MS);
+    expect(held.settings).toEqual({
+      compact_sidebar: true,
+      session_monitor_rows: 7,
+    });
+    stop();
+  });
+
   it('saves nothing to the account in an act-as tab', async () => {
     actAs.target = { userId: 'u', email: 'x@y', name: 'x' };
     localStorage.setItem(P + 'compact_sidebar', 'true');

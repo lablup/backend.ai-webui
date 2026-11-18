@@ -8,7 +8,6 @@ import {
 } from '../hooks/useBAISetting';
 import { getActAsTarget } from './actAs';
 import {
-  applyUserSettingChanges,
   flushUserSettingsSync,
   readLocalAccountUserSettings,
   removeLocalAccountUserSettings,
@@ -49,23 +48,20 @@ export const startAccountUserSettingsSync = ({
   // An act-as tab shows the target's settings and saves nothing to that account.
   if (isActAs) return () => {};
 
-  const writeSettings = setServerSettings;
-  // A document still without `settings` (the copy failed) is rebuilt from
-  // memory, so a batch does not drop the other settings.
-  const baseOf = (current: unknown) =>
-    _.isPlainObject(current) ? current : getAccountUserSettings();
-
+  if (hasServerSettings) {
+    // The account holds them already; on a shared browser they would reach the next account.
+    removeLocalAccountUserSettings(localStorage);
+  }
+  // The memory holds every change, a failed batch's included, so each write carries it.
   startUserSettingsSync(
-    async (batch) => {
-      await writeSettings((current) =>
-        applyUserSettingChanges(baseOf(current), batch),
-      );
-    },
+    () => setServerSettings(() => getAccountUserSettings()),
     (error) => onError('Failed to save user settings', error),
   );
   if (!_.isEmpty(local)) {
     // The local copies stay until the write succeeds, so a failure retries at the next sign-in.
-    writeSettings(baseOf)
+    setServerSettings((current) =>
+      _.isPlainObject(current) ? current : getAccountUserSettings(),
+    )
       .then(() => removeLocalAccountUserSettings(localStorage))
       .catch((error) =>
         onError('Failed to copy user settings to userConfig', error),

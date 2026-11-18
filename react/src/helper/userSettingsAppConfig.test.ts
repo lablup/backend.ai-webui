@@ -3,7 +3,6 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import {
-  applyUserSettingChanges,
   isAccountUserSetting,
   queueUserSettingWrite,
   rawToSetting,
@@ -64,6 +63,16 @@ describe('pre-ADR 0032 localStorage copies', () => {
       compact_sidebar: true,
       session_monitor_rows: 5,
       'fetchKeyAutoUpdateDelay.list': null,
+      resource_panel_type: null,
+    });
+  });
+
+  it('copies a stored empty string as null, a choice like "no condition"', () => {
+    localStorage.setItem(P + 'session_monitor_condition', '');
+    localStorage.setItem(P + 'resource_panel_type', '""');
+    expect(readLocalAccountUserSettings(localStorage)).toEqual({
+      session_monitor_condition: null,
+      resource_panel_type: null,
     });
   });
 
@@ -79,31 +88,6 @@ describe('pre-ADR 0032 localStorage copies', () => {
       'true',
     );
     expect(localStorage.getItem(P + 'preserve_login')).toBe('true');
-  });
-});
-
-describe('applyUserSettingChanges', () => {
-  it('sets, removes and keeps null on top of the current document', () => {
-    expect(
-      applyUserSettingChanges(
-        { compact_sidebar: true, session_monitor_rows: 5 },
-        new Map<string, unknown>([
-          ['compact_sidebar', undefined],
-          ['session_monitor_sort', 'name'],
-          ['fetchKeyAutoUpdateDelay.list', null],
-        ]),
-      ),
-    ).toEqual({
-      session_monitor_rows: 5,
-      session_monitor_sort: 'name',
-      'fetchKeyAutoUpdateDelay.list': null,
-    });
-  });
-
-  it('starts from an empty document when there is none', () => {
-    expect(
-      applyUserSettingChanges(undefined, new Map([['compact_sidebar', true]])),
-    ).toEqual({ compact_sidebar: true });
   });
 });
 

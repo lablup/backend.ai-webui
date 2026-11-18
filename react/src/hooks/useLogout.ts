@@ -23,6 +23,17 @@ function clearLoginStorage() {
   sessionStorage.clear();
 }
 
+const SETTINGS_FLUSH_TIMEOUT_MS = 3000;
+
+/** Sends the debounced account settings, giving up after a bound so a slow manager cannot hold logout. */
+const flushUserSettingsBeforeLogout = () =>
+  Promise.race([
+    flushUserSettingsSync(),
+    new Promise<void>((resolve) =>
+      setTimeout(resolve, SETTINGS_FLUSH_TIMEOUT_MS),
+    ),
+  ]);
+
 /**
  * Logs out the backendaiclient if it exists and is in SESSION mode,
  * then nullifies the global reference.
@@ -85,7 +96,7 @@ async function performLogoutCleanup(notificationMessage: string) {
     );
 
     // Send the debounced account settings while the client can still write.
-    await flushUserSettingsSync();
+    await flushUserSettingsBeforeLogout();
     await logoutBackendAIClient();
     clearLoginStorage();
 
@@ -118,6 +129,7 @@ async function performAppCloseCleanup(notificationMessage: string) {
       }),
     );
 
+    await flushUserSettingsBeforeLogout();
     await logoutBackendAIClient();
     clearLoginStorage();
   }

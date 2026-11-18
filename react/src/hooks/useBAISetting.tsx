@@ -16,6 +16,7 @@ import type { AgentEndpointBindings, AgentProfile } from './useAIAgent';
 import { type BAIBoardItem, BAITableColumnOverrideRecord } from 'backend.ai-ui';
 import { atom, useAtom, useAtomValue } from 'jotai';
 import { atomFamily } from 'jotai-family';
+import * as _ from 'lodash-es';
 import { SetStateAction } from 'react';
 
 export interface UserSettings {
@@ -144,6 +145,12 @@ const accountSettingAtom = (name: string) =>
         typeof newValueOrUpdater === 'function'
           ? newValueOrUpdater(current[name] ?? null)
           : newValueOrUpdater;
+      // An unchanged value (an absent key set to `undefined` included) writes nothing.
+      if (
+        _.isEqual(current[name], newValue) &&
+        name in current === (newValue !== undefined)
+      )
+        return;
       const next = { ...current, [name]: newValue };
       if (newValue === undefined) delete next[name];
       set(accountUserSettingsAtom, next);

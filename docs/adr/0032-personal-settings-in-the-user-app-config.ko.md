@@ -73,14 +73,14 @@ flowchart LR
 - **Atom**: `react/src/hooks/useBAISetting.tsx`의 `accountUserSettingsAtom`은 `userConfig.settings`와 같은 평탄 모양의 `Record<string, unknown>`을 담는다. `setAccountUserSettings`가 값을 통째로 바꾸고, `getAccountUserSettings`가 React 밖에서 읽는다.
 - **Read path**: account setting이면 `SettingAtomFamily`가 `accountUserSettingsAtom[name] ?? null`을 돌려준다. setter는 atom을 바꾼 뒤 `queueUserSettingWrite`를 부른다. 둘 다 localStorage와 `backendaiOptions`를 건드리지 않는다. device-local setting은 localStorage 경로를 그대로 쓴다.
 - **Stored or unset**: `useHasStoredUserSetting(name)`은 설정에 값이 있는지를 돌려주며, 명시적인 `null`도 값으로 본다. account setting이면 atom에 키가 있는지를 읽으므로, 로그인 시드나 사용자의 선택이 키를 넣으면 값이 `null`로 같아도 component가 다시 render된다.
-- **Sign-in seed**: `DismissSplashOnMount`(`MainLayout.tsx`)는 로그인이 `myAppConfigState`를 채운 뒤에야 렌더한다. 이 컴포넌트의 mount effect가 splash를 걷기 전에 `useMyAppConfig('settings')`의 값과 `set`으로 `startAccountUserSettingsSync`를 부르므로, splash가 걷힐 때 화면은 계정의 값을 보여 준다. 이 함수는 stop을 돌려주고 effect의 cleanup이 그것을 부른다. `useMyAppConfigStatus()`가 `loaded`가 아니면 쓰기의 기준이 없으므로 effect는 sync를 시작하지 않는다.
+- **Sign-in seed**: `DismissSplashOnMount`(`MainLayout.tsx`)는 로그인이 `myAppConfigState`를 채운 뒤에야 렌더한다. 이 컴포넌트의 mount effect가 splash를 걷기 전에 `useMyAppConfig('userConfig', USER_SETTINGS_CONFIG_KEY)`의 값과 `set`으로 `startAccountUserSettingsSync`를 부르므로, splash가 걷힐 때 화면은 계정의 값을 보여 준다. 이 함수는 stop을 돌려주고 effect의 cleanup이 그것을 부른다. `useMyAppConfig('userConfig', 'themeFamily')`가 네 번째 원소로 돌려주는 읽기 상태가 `loaded`가 아니면 쓰기의 기준이 없으므로 effect는 sync를 시작하지 않는다.
 - **Before sign-in**: account setting은 기본값을 읽는다. 로그인 전 화면 중 account setting을 읽는 곳은 없다.
 
 ### 4. One-time copy
 
 - **Trigger**: 로그인 시 `userConfig.settings`가 없으면 `startAccountUserSettingsSync`가 `readLocalAccountUserSettings(localStorage)`, 즉 이 결정 이전에 이 브라우저가 저장한 account setting으로 atom을 채운다. 그 값이 비어 있지 않으면 문서로 쓴다.
-- **Cleanup**: 복사가 성공하면 `removeLocalAccountUserSettings`가 그 키를 localStorage에서 지운다. 복사가 실패하면 남겨 두므로, `settings`가 없는 계정으로 다음에 로그인할 때 다시 복사한다.
-- **Base of a write**: writer는 이 탭이 가진 문서 사본 위에 batch를 적용한다. 그 사본에 `settings`가 없으면(복사가 실패했으면) 대신 `getAccountUserSettings()` 위에 적용하므로, 다른 설정을 잃지 않는다.
+- **Cleanup**: 복사가 성공하면 `removeLocalAccountUserSettings`가 그 키를 localStorage에서 지운다. 복사가 실패하면 남겨 두므로, `settings`가 없는 계정으로 다음에 로그인할 때 다시 복사한다. 계정에 이미 `settings`가 있으면 act-as가 아닌 로그인이 그 키를 바로 지우므로, 공유 브라우저의 다음 계정이 이 값을 받지 않는다.
+- **Base of the copy**: 복사는 이 탭이 가진 문서 사본에 이미 있는 `settings`를 유지하고, 없으면 `getAccountUserSettings()`를 쓴다.
 - **Concurrent copy**: 복사는 가진 문서에 이미 있는 `settings`를 유지한다. 같은 때 복사하는 다른 탭이나 기기는 막지 못하며, 나중에 쓴 쪽이 먼저 쓴 복사를 덮어쓴다.
 - **Shared browser**: 여러 계정이 브라우저 하나를 쓰면, 업그레이드 뒤 `settings` 없이 처음 로그인한 계정이 이 브라우저의 값을 받고 그 값은 지워진다. ADR 0026의 대시보드 보드와 달리 이 값은 작은 선호 설정이고, 어떤 계정도 자기가 가진 데이터를 잃지 않는다.
 
@@ -88,10 +88,10 @@ flowchart LR
 
 - **Queue**: `queueUserSettingWrite(name, value)`는 account setting 변경을 500ms debounce(`USER_SETTINGS_WRITE_DELAY_MS`)의 `createWriteQueue`(`react/src/components/DashboardPanels/writeQueue.ts`)에 넣는다. debounce 안의 변경은 batch 하나로 합치고, batch는 앞 batch가 끝난 뒤에야 시작한다.
 - **Callers**: `SettingAtomFamily` setter의 account 분기가 `queueUserSettingWrite`를 부른다. `backendaiwebui.settings:set`과 `backendaiwebui.settings:delete` listener는 이 setter를 거쳐 도달한다.
-- **Replay on the held document**: `startUserSettingsSync`가 설치한 writer는 §4의 기준 위에서 `useMyAppConfig('settings')`의 `set`을 `current => applyUserSettingChanges(current, batch)`로 부른다. batch는 `myAppConfigState`가 가진 `userConfig`에서 자기 키만 바꾼다(ADR 0033). `set`은 이 쓰기를 이 탭의 다른 `userConfig` 쓰기(대시보드, 테마 family) 뒤에 줄 세운다. `undefined` 값은 키를 지운다.
+- **Write the held settings**: `startUserSettingsSync`가 설치한 writer는 `useMyAppConfig('userConfig', USER_SETTINGS_CONFIG_KEY)`의 `set`을 `() => getAccountUserSettings()`로 부른다. atom은 실패한 batch의 변경까지 모든 변경을 이미 담고 있으므로, 쓰기마다 앞서 실패한 쓰기가 놓친 값을 함께 보낸다. 이 쓰기는 `myAppConfigState`가 가진 `userConfig`에서 `settings` 키만 바꾼다(ADR 0033). `set`은 이 쓰기를 이 탭의 다른 `userConfig` 쓰기(대시보드, 테마 family) 뒤에 줄 세운다. setter가 `undefined`를 받으면 atom에서 키를 지우므로, 쓰는 `settings`에도 그 키가 없다.
 - **One read**: 로그인이 페이지 로드마다 `userConfig`를 한 번 읽는다. `DismissSplashOnMount`가 `settings` 값과 그 `set`을 `startAccountUserSettingsSync`에 넘기고, 이 함수는 문서를 읽지 않는다.
-- **Lifetime**: `startAccountUserSettingsSync`가 queue를 시작하기 전에는 queue가 아무것도 보내지 않는다. 이 함수는 탭이 숨겨질 때와 `pagehide` 때 queue를 flush하고, 그 stop은 `DismissSplashOnMount`가 unmount될 때 flush하며, `useLogout`은 client를 지우기 전에 flush한다.
-- **Failure**: 실패한 쓰기는 `useBAILogger`로 기록하고, atom은 page를 새로 고칠 때까지 새 값을 유지한다.
+- **Lifetime**: `startAccountUserSettingsSync`가 queue를 시작하기 전에는 queue가 아무것도 보내지 않는다. 이 함수는 탭이 숨겨질 때와 `pagehide` 때 queue를 flush하고, 그 stop은 `DismissSplashOnMount`가 unmount될 때 flush하며, `useLogout`은 로그아웃과 Electron 창 닫기에서 client를 지우기 전에 최대 3초까지 기다리며 flush한다.
+- **Failure**: 실패한 쓰기는 `useBAILogger`로 기록한다. atom은 새 값을 유지하고, 다음 쓰기가 그 값을 보낸다.
 
 ### 6. An act-as tab saves nothing
 

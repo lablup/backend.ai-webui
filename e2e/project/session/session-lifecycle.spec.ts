@@ -4,6 +4,7 @@ import { createMockSessionNode } from '../../mocks/session/session-list-mock';
 import { SessionDetailPage } from '../../utils/classes/session/SessionDetailPage';
 import { SessionLauncher } from '../../utils/classes/session/SessionLauncher';
 import { loginAsAdmin, loginAsUser, navigateTo } from '../../utils/test-util';
+import { waitForAccountSettingWrite } from '../../utils/user-settings-util';
 import { test, expect, type Page } from '@playwright/test';
 
 // NOTE: These tests are currently marked as test.fixme() due to Backend.AI infrastructure limitations.
@@ -356,9 +357,19 @@ const setSessionMonitorEnabled = async (page: Page, enabled: boolean) => {
   const checkbox = settingsDialog
     .getByTestId('items-experimental-session-monitor')
     .getByRole('checkbox', { name: 'Session monitor' });
+  // It is an account setting (ADR 0032): wait until userConfig stored a change.
+  const saved =
+    (await checkbox.isChecked()) === enabled
+      ? Promise.resolve()
+      : waitForAccountSettingWrite(
+          page,
+          'experimental_session_monitor',
+          enabled,
+        );
   await checkbox.setChecked(enabled);
   await settingsDialog.getByRole('button', { name: 'Close' }).click();
   await expect(settingsDialog).toBeHidden();
+  await saved;
 };
 
 const sessionMonitorChip = (page: Page) =>
@@ -394,6 +405,13 @@ test.describe(
   'Session Monitor - Header chip and popover',
   { tag: ['@regression', '@session', '@functional'] },
   () => {
+    // The shared account keeps the flag, so a test that fails midway turns it back off.
+    test.afterEach(async ({ page }) => {
+      if (await page.getByTestId('user-dropdown-button').isVisible()) {
+        await setSessionMonitorEnabled(page, false);
+      }
+    });
+
     test('User can enable the session monitor and see their unfinished session count in the header', async ({
       page,
       request,
