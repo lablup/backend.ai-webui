@@ -2,11 +2,12 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import scopedQueryNode from '../__generated__/useAppConfigScopedQuery.graphql';
 import type { AppConfigScope } from './useAppConfig';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { createStore, Provider } from 'jotai';
 import { ReactNode, Suspense } from 'react';
-import { RelayEnvironmentProvider } from 'react-relay';
+import { fetchQuery, RelayEnvironmentProvider } from 'react-relay';
 import { createMockEnvironment } from 'relay-test-utils';
 
 vi.mock('./index', () => ({
@@ -222,6 +223,51 @@ describe('useScopedAppConfig', () => {
     });
   });
 
+  it('reads again when a read that started during the write lands after it', async () => {
+    const ctx = await setup();
+    const { result } = await mountScoped(ctx, OTHER_DOMAIN, {
+      domainConfig: { a: 0 },
+    });
+    await act(async () => {
+      const pending = result.current.upsertScopedAppConfig({
+        configName: 'domainConfig',
+        subKey: 'a',
+        value: 1,
+      });
+      await waitForOperation(ctx.environment, 'useAppConfigUpsertMutation');
+      // Another reader fetches the same documents while the mutation is in flight.
+      fetchQuery(ctx.environment, scopedQueryNode, {
+        scope: { scopeType: 'DOMAIN', scopeId: 'domain-2' },
+        configNames: ['domainConfig'],
+      }).subscribe({});
+      const lateRead = await waitForOperation(
+        ctx.environment,
+        'useAppConfigScopedQuery',
+      );
+      await answerUpsert(ctx.environment, 'useAppConfigUpsertMutation');
+      ctx.environment.mock.resolve(lateRead, {
+        data: {
+          scopedAppConfigFragmentsByNames: [
+            { id: 'read-0', configName: 'domainConfig', config: { a: 0 } },
+          ],
+        },
+      });
+      const again = await waitForOperation(
+        ctx.environment,
+        'useAppConfigScopedQuery',
+      );
+      ctx.environment.mock.resolve(again, {
+        data: {
+          scopedAppConfigFragmentsByNames: [
+            { id: 'read-0', configName: 'domainConfig', config: { a: 1 } },
+          ],
+        },
+      });
+      await pending;
+    });
+    expect(result.current.scopedAppConfig?.domainConfig).toEqual({ a: 1 });
+  });
+
   it('rejects a name it was not called with', async () => {
     const ctx = await setup();
     const { result } = await mountScoped(ctx, PUBLIC, {
@@ -411,6 +457,39 @@ describe('myAppConfigState', () => {
       await pending;
     });
     expect(result.current[0]).toBe(3);
+  });
+
+  it('queues the reload after a scoped write behind a pending set', async () => {
+    const ctx = await setup();
+    ctx.hooks.setMyAppConfigs(ctx.store, rows({ x: 1 }));
+    const { result: scoped } = await mountScoped(ctx, PUBLIC, {
+      publicConfigByDomain: {},
+    });
+    const { result: my } = renderHook(
+      () => ctx.hooks.useMyAppConfig<number>('x'),
+      {
+        wrapper: wrapperFor(ctx.environment, ctx.store),
+      },
+    );
+    await act(async () => {
+      const set = my.current[1](2);
+      const write = scoped.current.upsertScopedAppConfig({
+        configName: 'publicConfigByDomain',
+        subKey: 'a',
+        value: 1,
+      });
+      await answerUpsert(ctx.environment, 'useAppConfigMyUpsertMutation');
+      await answerUpsert(ctx.environment, 'useAppConfigUpsertMutation');
+      await Promise.all([set, write]);
+      const reload = await waitForOperation(
+        ctx.environment,
+        'useAppConfigLoadQuery',
+      );
+      ctx.environment.mock.resolve(reload, {
+        data: { myAppConfigs: rows({ x: 2 }) },
+      });
+    });
+    await waitFor(() => expect(my.current[0]).toBe(2));
   });
 
   it('sends a set made during a reset after its reload', async () => {

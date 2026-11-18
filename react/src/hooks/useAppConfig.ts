@@ -326,6 +326,12 @@ export const useMyAppConfig = <T = unknown>(
   return [value, set, reset];
 };
 
+/** `loaded` once sign-in stored an answer; `set` and `reset` refuse otherwise. */
+export const useMyAppConfigStatus = (): MyAppConfigState['status'] => {
+  'use memo';
+  return useAtomValue(myAppConfigState).status;
+};
+
 /**
  * The merged `domainConfig` or `publicConfigByDomain` at `subKey` (pass
  * `[domainName, ...]` for a domain's public slice). Read only.
@@ -498,14 +504,31 @@ export const useScopedAppConfig = (
           config: docs[configName] ?? {},
         })),
       );
+      // A mount's read sent before the write landed would put the old document back: read once more after it.
+      const lateRead = __internal.getPromiseForActiveRequest(
+        environment,
+        operation.request,
+      );
+      if (lateRead) {
+        await lateRead.catch(() => undefined);
+        await fetchQuery<useAppConfigScopedQuery>(
+          environment,
+          scopedQuery,
+          variables,
+          { fetchPolicy: 'network-only' },
+        )
+          .toPromise()
+          .catch(() => undefined);
+      }
       return _.pick(docs, touched);
     });
     if (
       scope.type === 'public' ||
       (scope.type === 'domain' && scope.id === signedInDomainId)
     ) {
-      // Not awaited: the write has landed, and a failed reload keeps the previous answer.
-      loadMyAppConfig(store, environment);
+      // Not awaited. Queued with the userConfig writes, so its answer cannot
+      // replace a `set` that lands while it reads.
+      serializeWrite(MY_QUEUE_KEY, () => loadMyAppConfig(store, environment));
     }
     return written;
   };

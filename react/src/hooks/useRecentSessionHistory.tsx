@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { App } from '../app-shim';
-import { useMyAppConfig } from './useAppConfig';
+import { useMyAppConfig, useMyAppConfigStatus } from './useAppConfig';
 import { SessionHistory, useBAISettingUserState } from './useBAISetting';
 import {
   useEventNotStable,
@@ -29,6 +29,8 @@ const useSessionHistoryStore = (key: SessionHistoryKey) => {
   const { getErrorMessage } = useErrorMessageResolver();
   const [serverValue, setServerValue] =
     useMyAppConfig<Array<SessionHistory>>(key);
+  // Without a loaded userConfig, `undefined` does not mean the server has no history.
+  const isUserConfigLoaded = useMyAppConfigStatus() === 'loaded';
   const [localValue, setLocalValue] = useBAISettingUserState(key);
   // Shows the written value while the write is in flight.
   const [pending, setPending] = useState<{ value: Array<SessionHistory> }>();
@@ -55,6 +57,7 @@ const useSessionHistoryStore = (key: SessionHistoryKey) => {
 
   const migrateLocalHistory = useEffectEvent(() => {
     if (
+      !isUserConfigLoaded ||
       migratingKeys.has(key) ||
       serverValue !== undefined ||
       _.isEmpty(localValue)
