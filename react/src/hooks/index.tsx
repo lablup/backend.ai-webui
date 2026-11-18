@@ -381,9 +381,10 @@ export type BackendAIClient = {
     [key: string]: any;
   };
   setting: {
+    list: (prefix?: string) => Promise<any>;
     get: (key: string) => Promise<any>;
     set: (key: string, value: any) => Promise<any>;
-    delete: (key: string, prefix: boolean) => Promise<any>;
+    delete: (key: string, prefix?: boolean) => Promise<any>;
   };
   get_resource_slots: () => Promise<any>;
   start_watcher_agent: (agentId: string) => Promise<any>;

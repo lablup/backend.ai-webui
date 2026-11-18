@@ -4,12 +4,15 @@
  */
 import { App } from '../../../app-shim';
 import SettingList, { SettingGroup } from '../../../components/SettingList';
+import WebUILink from '../../../components/WebUILink';
 import { useSuspendedBackendaiClient } from '../../../hooks';
+import { SETTING_ARRIVAL_PARAM } from '../../../hooks/useSettingArrival';
+import OpenIDConnectSettingModal from './OpenIDConnectSettingModal';
 import OverlayNetworkSettingModal from './OverlayNetworkSettingModal';
 import SchedulerSettingModal from './SchedulerSettingModal';
 import { Banner } from '@lablup/ui-common/Banner';
 import { Button } from '@lablup/ui-common/Button';
-import { useToggle } from 'backend.ai-ui';
+import { BAIUnmountAfterClose, useToggle } from 'backend.ai-ui';
 import { Settings } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -92,6 +95,7 @@ const ConfigurationsSettingList = () => {
     useToggle(false);
   const [isOpenSchedulerModal, { toggle: toggleSchedulerModal }] =
     useToggle(false);
+  const [isOpenOpenIDModal, { toggle: toggleOpenIDModal }] = useToggle(false);
   const [options, setOptions] = useState<BAIConfigurationsSetting>({
     ...defaultConfigurationsSettings,
   });
@@ -195,6 +199,35 @@ const ConfigurationsSettingList = () => {
               icon={<Settings size="1em" />}
               label={t('settings.Config')}
               onClick={toggleSchedulerModal}
+            />
+          ),
+          showResetButton: false,
+        },
+      ],
+    },
+    {
+      'data-testid': 'settings-sso',
+      title: t('settings.sso.SingleSignOn'),
+      description: (
+        <>
+          {t('settings.sso.SingleSignOnDesc')}{' '}
+          <WebUILink
+            to={`/admin/system-settings?tab=settings&${SETTING_ARRIVAL_PARAM}=webuiSettings.SingleSignOnVendors`}
+          >
+            {t('settings.sso.ShowSignInButton')}
+          </WebUILink>
+        </>
+      ),
+      settingItems: [
+        {
+          type: 'custom',
+          title: t('settings.sso.OpenIDConnect'),
+          description: t('settings.sso.OpenIDConnectDesc'),
+          children: (
+            <Button
+              icon={<Settings size="1em" />}
+              label={t('settings.Config')}
+              onClick={toggleOpenIDModal}
             />
           ),
           showResetButton: false,
@@ -450,6 +483,12 @@ const ConfigurationsSettingList = () => {
         onRequestClose={toggleSchedulerModal}
         open={isOpenSchedulerModal}
       />
+      <BAIUnmountAfterClose>
+        <OpenIDConnectSettingModal
+          onRequestClose={toggleOpenIDModal}
+          open={isOpenOpenIDModal}
+        />
+      </BAIUnmountAfterClose>
     </>
   );
 };
