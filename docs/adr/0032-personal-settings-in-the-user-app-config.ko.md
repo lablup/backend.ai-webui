@@ -13,7 +13,7 @@
 ## Context
 
 - **localStorage settings**: `useBAISettingUserState`(`react/src/hooks/useBAISetting.tsx`)는 사용자 설정마다 localStorage의 `backendaiwebui.settings.user.<name>`에 저장한다. 브라우저를 바꾼 사용자는 투어 플래그, 테이블 컬럼 선택, 실험 기능 토글, 세션 런처 선호를 잃는다.
-- **App config documents**: `react/src/hooks/useAppConfig.ts`의 `useMyAppConfigFragments(['userConfig'])`는 로그인한 사용자 자신의 USER 문서를 읽고, `upsertMyAppConfigFragments`로 그 문서를 쓴다. 쓰기는 사용자마다 한 번에 하나씩, hook이 가진 문서 위에서 한다([ADR 0033](0033-scoped-and-merged-app-config-hooks.ko.md)). [ADR 0026](0026-dashboard-boards-in-manager-app-config.ko.md)은 이미 대시보드 보드를 `userConfig.dashboard`에 저장하고, FR-3834는 테마 family를 `userConfig.themeFamily`에 저장한다.
+- **App config documents**: `react/src/hooks/useAppConfig.ts`의 `useMyAppConfig(subKey)`는 로그인이 채운 `myAppConfigState`에서 로그인한 사용자의 merged `userConfig`를 읽고, 그 `set`이 USER 문서를 쓴다. 쓰기는 사용자마다 한 번에 하나씩 한다([ADR 0033](0033-scoped-and-merged-app-config-hooks.ko.md)). [ADR 0026](0026-dashboard-boards-in-manager-app-config.ko.md)은 이미 대시보드 보드를 `userConfig.dashboard`에 저장하고, FR-3834는 테마 family를 `userConfig.themeFamily`에 저장한다.
 - **Synchronous readers**: 약 100곳의 call site가 render 중에 사용자 설정을 읽는다. app config 읽기는 suspend하며 로그인된 Relay environment가 필요하다. React 밖에서 account setting을 읽는 코드는 없다. `backendaiOptions`(`react/src/global-stores.ts`)는 device-local 키만 읽는다.
 - **Seeded tests**: e2e spec과 walkthrough 실행은 로그인 전에 localStorage에 투어 플래그를 써서, 투어가 검사할 화면을 가리지 않게 한다.
 - **Act-as**: act-as 탭(`react/src/helper/actAs.ts`)은 my* 읽기를 `X-BackendAI-Act-As`와 함께 보내므로 그 탭의 `userConfig`는 대상 사용자의 문서이고, 이 탭은 super admin의 다른 탭과 localStorage를 공유한다.
@@ -34,7 +34,7 @@ flowchart LR
   hook -- "render 중 읽기" --> memory
   hook -- "setter가 값을 바꿈" --> memory
   hook -- "account setting 변경" --> queue
-  queue -- "upsertMyAppConfigFragments settings<br/>가진 문서 위에 변경 적용" --> user
+  queue -- "settings에 useMyAppConfig set<br/>atom의 문서 위에 변경 적용" --> user
   user -- "DismissSplashOnMount의 userConfig 읽기" --> sync
   sync -- "setAccountUserSettings" --> memory
   legacy -- "settings가 없으면 한 번 읽기" --> sync
@@ -73,7 +73,7 @@ flowchart LR
 - **Atom**: `react/src/hooks/useBAISetting.tsx`의 `accountUserSettingsAtom`은 `userConfig.settings`와 같은 평탄 모양의 `Record<string, unknown>`을 담는다. `setAccountUserSettings`가 값을 통째로 바꾸고, `getAccountUserSettings`가 React 밖에서 읽는다.
 - **Read path**: account setting이면 `SettingAtomFamily`가 `accountUserSettingsAtom[name] ?? null`을 돌려준다. setter는 atom을 바꾼 뒤 `queueUserSettingWrite`를 부른다. 둘 다 localStorage와 `backendaiOptions`를 건드리지 않는다. device-local setting은 localStorage 경로를 그대로 쓴다.
 - **Stored or unset**: `useHasStoredUserSetting(name)`은 설정에 값이 있는지를 돌려주며, 명시적인 `null`도 값으로 본다. account setting이면 atom에 키가 있는지를 읽으므로, 로그인 시드나 사용자의 선택이 키를 넣으면 값이 `null`로 같아도 component가 다시 render된다.
-- **Sign-in seed**: `DismissSplashOnMount`(`MainLayout.tsx`)는 이미 `userConfig`에서 suspend하며, 이것이 페이지 로드의 첫 읽기다. 이 컴포넌트의 mount effect가 splash를 걷기 전에 `userConfig.settings`와 `upsertMyAppConfigFragments`로 `startAccountUserSettingsSync`를 부르므로, splash가 걷힐 때 화면은 계정의 값을 보여 준다. 이 함수는 stop을 돌려주고 effect의 cleanup이 그것을 부른다. `useMyAppConfigFragments`는 읽기만 하고, sync는 그 일부가 아니다.
+- **Sign-in seed**: `DismissSplashOnMount`(`MainLayout.tsx`)는 로그인이 `myAppConfigState`를 채운 뒤에야 렌더한다. 이 컴포넌트의 mount effect가 splash를 걷기 전에 `useMyAppConfig('settings')`의 값과 `set`으로 `startAccountUserSettingsSync`를 부르므로, splash가 걷힐 때 화면은 계정의 값을 보여 준다. 이 함수는 stop을 돌려주고 effect의 cleanup이 그것을 부른다.
 - **Before sign-in**: account setting은 기본값을 읽는다. 로그인 전 화면 중 account setting을 읽는 곳은 없다.
 
 ### 4. One-time copy
@@ -88,8 +88,8 @@ flowchart LR
 
 - **Queue**: `queueUserSettingWrite(name, value)`는 account setting 변경을 500ms debounce(`USER_SETTINGS_WRITE_DELAY_MS`)의 `createWriteQueue`(`react/src/components/DashboardPanels/writeQueue.ts`)에 넣는다. debounce 안의 변경은 batch 하나로 합치고, batch는 앞 batch가 끝난 뒤에야 시작한다.
 - **Callers**: `SettingAtomFamily` setter의 account 분기가 `queueUserSettingWrite`를 부른다. `backendaiwebui.settings:set`과 `backendaiwebui.settings:delete` listener는 이 setter를 거쳐 도달한다.
-- **Replay on the held document**: `startUserSettingsSync`가 설치한 writer는 §4의 기준 위에서 `upsertMyAppConfigFragments({ configName: 'userConfig', subKey: 'settings', value: current => applyUserSettingChanges(current, batch) })`를 부른다. batch는 이 탭의 Relay store가 가진 문서 사본에서 자기 키만 바꾼다. 이 사본은 페이지 로드마다 한 번 읽는다(ADR 0033). `upsertMyAppConfigFragments`는 이 쓰기를 이 탭의 다른 `userConfig` 쓰기(대시보드, 테마 family) 뒤에 줄 세운다. `undefined` 값은 키를 지운다.
-- **One read**: `userConfig`는 페이지 로드마다 한 번 읽는다. `DismissSplashOnMount`가 읽은 `settings`와 `upsertMyAppConfigFragments`를 `startAccountUserSettingsSync`에 넘기고, 이 함수는 문서를 읽지 않는다.
+- **Replay on the held document**: `startUserSettingsSync`가 설치한 writer는 §4의 기준 위에서 `useMyAppConfig('settings')`의 `set`을 `current => applyUserSettingChanges(current, batch)`로 부른다. batch는 `myAppConfigState`가 가진 `userConfig`에서 자기 키만 바꾼다(ADR 0033). `set`은 이 쓰기를 이 탭의 다른 `userConfig` 쓰기(대시보드, 테마 family) 뒤에 줄 세운다. `undefined` 값은 키를 지운다.
+- **One read**: 로그인이 페이지 로드마다 `userConfig`를 한 번 읽는다. `DismissSplashOnMount`가 `settings` 값과 그 `set`을 `startAccountUserSettingsSync`에 넘기고, 이 함수는 문서를 읽지 않는다.
 - **Lifetime**: `startAccountUserSettingsSync`가 queue를 시작하기 전에는 queue가 아무것도 보내지 않는다. 이 함수는 탭이 숨겨질 때와 `pagehide` 때 queue를 flush하고, 그 stop은 `DismissSplashOnMount`가 unmount될 때 flush하며, `useLogout`은 client를 지우기 전에 flush한다.
 - **Failure**: 실패한 쓰기는 `useBAILogger`로 기록하고, atom은 page를 새로 고칠 때까지 새 값을 유지한다.
 
@@ -101,7 +101,7 @@ flowchart LR
 ## 대안과 기각 사유
 
 - **localStorage mirror**: localStorage가 account setting의 사본을 두고, 로그인 읽기가 그 사본을 덮어쓴다. 로그인 전 새로 고침에도 값이 남는다. mirror 때문에 공유 계정의 문서가 e2e spec이 심은 값을 덮어쓰고, act-as 대상의 설정이 super admin의 다른 탭으로 옮겨 가고, 값이 바뀔 때마다 모든 setting atom을 다시 읽어야 하므로 기각한다.
-- **Read on each screen**: call site마다 `useMyAppConfigFragments`로 `userConfig.settings`를 읽는다. atom이 필요 없다. 약 100곳의 call site가 store에 문서가 없을 때마다 각자 suspend하고, setter마다 Relay store를 직접 고치지 않으면 변경이 debounce된 쓰기가 끝난 뒤에야 보이므로 기각한다.
+- **Read on each screen**: call site마다 `useMyAppConfig`로 `userConfig.settings`를 읽는다. 별도의 settings atom이 필요 없다. `set`은 서버가 쓰기를 받아들인 뒤에야 `myAppConfigState`를 갱신하므로, 변경이 debounce된 쓰기가 끝난 뒤에야 보여 기각한다.
 - **Move every key**: `UserSettings` 전부를 `userConfig.settings`로 옮긴다. 규칙이 단순하다. 로그인 흐름이 문서를 읽기 전에 `endpoints`, `preserve_login`, `selected_language`가 필요하고 agent binding에 token이 들어갈 수 있으므로 기각한다.
 - **No migration**: ADR 0026 §5처럼 기본값에서 시작한다. 다른 계정으로 잘못 복사되는 일이 없다. 사용자가 몇 달에 걸쳐 정한 투어 플래그와 컬럼 선택을 잃고, 잘못된 계정으로의 복사는 선호 설정 하나의 비용이므로 기각한다.
 - **One app config key per setting**: 설정마다 `userConfig`의 최상위 키로 둔다. 설정을 이름으로 읽을 수 있다. 테이블별 이름은 끝이 열려 있고, 하위 키 하나가 사용자의 다른 키(`dashboard`, `themeFamily`)와 분리를 유지하므로 기각한다.

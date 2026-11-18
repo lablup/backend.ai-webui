@@ -19,22 +19,19 @@ vi.mock('./actAs', () => ({ getActAsTarget: () => actAs.target }));
 
 const P = USER_SETTING_STORAGE_PREFIX;
 
-// Stands in for upsertMyAppConfigFragments on a held `settings` sub-key.
+// Stands in for the `set` of useMyAppConfig on a held `settings` sub-key.
 const createUpsert = (initial: unknown) => {
   const held = { settings: initial };
-  const upsert = vi.fn(
-    async ({ value }: { value: (current: unknown) => unknown }) => {
-      held.settings = value(held.settings);
-      return {} as never;
-    },
-  );
+  const upsert = vi.fn(async (update: (current: unknown) => unknown) => {
+    held.settings = update(held.settings);
+  });
   return { held, upsert };
 };
 
 const start = (serverSettings: unknown, upsert: unknown) =>
   startAccountUserSettingsSync({
     serverSettings,
-    upsertMyAppConfigFragments: upsert as never,
+    setServerSettings: upsert as never,
     onError: vi.fn(),
   });
 

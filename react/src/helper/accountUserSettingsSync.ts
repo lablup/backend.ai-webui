@@ -2,7 +2,6 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import type { useMyAppConfigFragments } from '../hooks/useAppConfig';
 import {
   getAccountUserSettings,
   setAccountUserSettings,
@@ -15,13 +14,13 @@ import {
   removeLocalAccountUserSettings,
   startUserSettingsSync,
   stopUserSettingsSync,
-  USER_SETTINGS_CONFIG_KEY,
 } from './userSettingsAppConfig';
 import * as _ from 'lodash-es';
 
-type UpsertMyAppConfigFragments = ReturnType<
-  typeof useMyAppConfigFragments
->['upsertMyAppConfigFragments'];
+/** The `set` of `useMyAppConfig(USER_SETTINGS_CONFIG_KEY)`. */
+type SetServerSettings = (
+  update: (current: unknown) => unknown,
+) => Promise<void>;
 
 /**
  * Seeds the account settings from `userConfig.settings`, copies this browser's
@@ -30,11 +29,11 @@ type UpsertMyAppConfigFragments = ReturnType<
  */
 export const startAccountUserSettingsSync = ({
   serverSettings,
-  upsertMyAppConfigFragments,
+  setServerSettings,
   onError,
 }: {
   serverSettings: unknown;
-  upsertMyAppConfigFragments: UpsertMyAppConfigFragments;
+  setServerSettings: SetServerSettings;
   onError: (message: string, error: unknown) => void;
 }): (() => void) => {
   const hasServerSettings = _.isPlainObject(serverSettings);
@@ -47,12 +46,7 @@ export const startAccountUserSettingsSync = ({
   // An act-as tab shows the target's settings and saves nothing to that account.
   if (getActAsTarget()) return () => {};
 
-  const writeSettings = (update: (current: unknown) => unknown) =>
-    upsertMyAppConfigFragments({
-      configName: 'userConfig',
-      subKey: USER_SETTINGS_CONFIG_KEY,
-      value: update,
-    });
+  const writeSettings = setServerSettings;
   // A document still without `settings` (the copy failed) is rebuilt from
   // memory, so a batch does not drop the other settings.
   const baseOf = (current: unknown) =>

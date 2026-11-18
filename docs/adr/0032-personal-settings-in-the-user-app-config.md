@@ -13,7 +13,7 @@
 ## Context
 
 - **localStorage settings**: `useBAISettingUserState` (`react/src/hooks/useBAISetting.tsx`) stores each user setting in localStorage under `backendaiwebui.settings.user.<name>`. A user who switches browsers loses tour flags, table column choices, experimental toggles, and session launcher preferences.
-- **App config documents**: `useMyAppConfigFragments(['userConfig'])` in `react/src/hooks/useAppConfig.ts` reads the signed-in user's own USER document and writes it with `upsertMyAppConfigFragments`, one write at a time per user, on the document the hook holds ([ADR 0033](0033-scoped-and-merged-app-config-hooks.md)). [ADR 0026](0026-dashboard-boards-in-manager-app-config.md) already stores dashboard boards in `userConfig.dashboard`, and FR-3834 stores the theme family in `userConfig.themeFamily`.
+- **App config documents**: `useMyAppConfig(subKey)` in `react/src/hooks/useAppConfig.ts` reads the signed-in user's merged `userConfig` from `myAppConfigState`, which sign-in fills, and its `set` writes the USER document, one write at a time per user ([ADR 0033](0033-scoped-and-merged-app-config-hooks.md)). [ADR 0026](0026-dashboard-boards-in-manager-app-config.md) already stores dashboard boards in `userConfig.dashboard`, and FR-3834 stores the theme family in `userConfig.themeFamily`.
 - **Synchronous readers**: About a hundred call sites read a user setting during render. The app config read suspends and needs a signed-in Relay environment. No code outside React reads an account setting: `backendaiOptions` (`react/src/global-stores.ts`) reads only device-local keys.
 - **Seeded tests**: e2e specs and walkthrough runs write tour flags into localStorage before sign-in, so the tours do not cover the page they test.
 - **Act-as**: An act-as tab (`react/src/helper/actAs.ts`) sends the my* reads with `X-BackendAI-Act-As`, so its `userConfig` is the target user's document, and it shares localStorage with the super admin's other tabs.
@@ -34,7 +34,7 @@ flowchart LR
   hook -- "read during render" --> memory
   hook -- "setter updates the value" --> memory
   hook -- "account setting changed" --> queue
-  queue -- "upsertMyAppConfigFragments settings<br/>changes applied on the held document" --> user
+  queue -- "useMyAppConfig set on settings<br/>changes applied on the atom's document" --> user
   user -- "DismissSplashOnMount's userConfig read" --> sync
   sync -- "setAccountUserSettings" --> memory
   legacy -- "read once when settings is absent" --> sync
@@ -73,7 +73,7 @@ flowchart LR
 - **Atom**: `accountUserSettingsAtom` in `react/src/hooks/useBAISetting.tsx` holds `Record<string, unknown>`, the same flat shape as `userConfig.settings`. `setAccountUserSettings` replaces it and `getAccountUserSettings` reads it outside React.
 - **Read path**: For an account setting, `SettingAtomFamily` returns `accountUserSettingsAtom[name] ?? null`. The setter updates the atom, then calls `queueUserSettingWrite`. Neither touches localStorage or `backendaiOptions`. A device-local setting keeps the localStorage path.
 - **Stored or unset**: `useHasStoredUserSetting(name)` returns whether the setting holds a value, an explicit `null` included. For an account setting it reads whether the atom has the key, so a component re-renders when the sign-in seed or a pick adds the key even while the value stays `null`.
-- **Sign-in seed**: `DismissSplashOnMount` (`MainLayout.tsx`) already suspends on `userConfig`, the first read of it in the page load. Its mount effect calls `startAccountUserSettingsSync` with `userConfig.settings` and `upsertMyAppConfigFragments` before it dismisses the splash, so the page shows the account's values when the splash goes. The function returns a stop that the effect's cleanup calls. `useMyAppConfigFragments` only reads; the sync is not part of it.
+- **Sign-in seed**: `DismissSplashOnMount` (`MainLayout.tsx`) renders only after sign-in has filled `myAppConfigState`. Its mount effect calls `startAccountUserSettingsSync` with the value and the `set` of `useMyAppConfig('settings')` before it dismisses the splash, so the page shows the account's values when the splash goes. The function returns a stop that the effect's cleanup calls.
 - **Before sign-in**: An account setting reads its default. No pre-sign-in surface reads one.
 
 ### 4. One-time copy
@@ -88,8 +88,8 @@ flowchart LR
 
 - **Queue**: `queueUserSettingWrite(name, value)` puts a change of an account setting into a `createWriteQueue` (`react/src/components/DashboardPanels/writeQueue.ts`) with a 500ms debounce (`USER_SETTINGS_WRITE_DELAY_MS`). Changes within the debounce are joined into one batch, and a batch starts only after the previous one finished.
 - **Callers**: The account branch of the `SettingAtomFamily` setter calls `queueUserSettingWrite`. The `backendaiwebui.settings:set` and `backendaiwebui.settings:delete` listeners reach it through that setter.
-- **Replay on the held document**: `startUserSettingsSync` installs a writer that calls `upsertMyAppConfigFragments({ configName: 'userConfig', subKey: 'settings', value: current => applyUserSettingChanges(current, batch) })`, with the base of §4. The batch changes only its own keys on the copy of the document this tab's Relay store holds (read once per page load, ADR 0033), and `upsertMyAppConfigFragments` queues it behind this tab's other `userConfig` writes (the dashboard, the theme family). An `undefined` value removes the key.
-- **One read**: `userConfig` is read once per page load. `DismissSplashOnMount` passes the `settings` it read and `upsertMyAppConfigFragments` to `startAccountUserSettingsSync`, which does not read the document.
+- **Replay on the held document**: `startUserSettingsSync` installs a writer that calls the `set` of `useMyAppConfig('settings')` with `current => applyUserSettingChanges(current, batch)`, with the base of §4. The batch changes only its own keys on the `userConfig` that `myAppConfigState` holds (ADR 0033), and `set` queues it behind this tab's other `userConfig` writes (the dashboard, the theme family). An `undefined` value removes the key.
+- **One read**: sign-in reads `userConfig` once per page load. `DismissSplashOnMount` passes the `settings` value and its `set` to `startAccountUserSettingsSync`, which does not read the document.
 - **Lifetime**: The queue sends nothing before `startAccountUserSettingsSync` started it. The function flushes the queue when the tab is hidden and on `pagehide`, its stop flushes it when `DismissSplashOnMount` unmounts, and `useLogout` flushes it before it clears the client.
 - **Failure**: A failed write is logged with `useBAILogger`, and the atom keeps the new value until the page is reloaded.
 
@@ -101,7 +101,7 @@ flowchart LR
 ## Rejected alternatives
 
 - **localStorage mirror**: localStorage keeps a copy of the account settings, which the sign-in read overwrites. A value survives a reload before sign-in. This is rejected because the mirror lets a shared account's document overwrite what e2e specs seed, carries an act-as target's settings into the super admin's other tabs, and needs every setting atom re-read after it changes.
-- **Read on each screen**: Each call site reads `userConfig.settings` through `useMyAppConfigFragments`. No atom is needed. This is rejected because about a hundred call sites would each suspend whenever the store no longer holds the document, and a change would show only after the debounced write lands unless every setter also patched the Relay store.
+- **Read on each screen**: Each call site reads `userConfig.settings` through `useMyAppConfig`. No settings atom is needed. This is rejected because `set` updates `myAppConfigState` only after the server accepts the write, so a change would show only after the debounced write lands.
 - **Move every key**: All of `UserSettings` goes to `userConfig.settings`. The rule is simple. This is rejected because the login flow needs `endpoints`, `preserve_login`, and `selected_language` before any document can be read, and an agent binding can carry a token.
 - **No migration**: Follow ADR 0026 §5 and start from defaults. Nothing is copied into the wrong account. This is rejected because users would lose tour flags and column choices they set over months, and a wrong-account copy costs only a preference.
 - **One app config key per setting**: Each setting becomes a top-level key of `userConfig`. A setting can be read by name. This is rejected because the per-table names are open-ended, and a flat sub-key keeps the user's other keys (`dashboard`, `themeFamily`) apart.

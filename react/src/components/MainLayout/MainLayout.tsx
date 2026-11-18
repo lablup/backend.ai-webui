@@ -11,7 +11,7 @@ import { startAccountUserSettingsSync } from '../../helper/accountUserSettingsSy
 import { USER_SETTINGS_CONFIG_KEY } from '../../helper/userSettingsAppConfig';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../../hooks';
 import { useResourceSlotsDetails } from '../../hooks/backendai';
-import { useMyAppConfigFragments } from '../../hooks/useAppConfig';
+import { useMyAppConfig } from '../../hooks/useAppConfig';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
 import { useCustomThemeConfig } from '../../hooks/useCustomThemeConfig';
 import useKeyboardShortcut from '../../hooks/useKeyboardShortcut';
@@ -522,19 +522,19 @@ export const CSSTokenVariables = () => {
  * (its own `Suspense`), so nothing else in this boundary suspends and the
  * splash was torn down before login had even finished.
  *
- * Also suspends on the signed-in user's `userConfig.themeFamily` and copies
- * it into the localStorage mirror BEFORE the splash goes, so the account's
- * family is what the page reveals (FR-3834). The mirror survives logout; the
- * next login overrides it here. The same read seeds the account's personal
+ * Also copies the signed-in user's `userConfig.themeFamily`, which sign-in
+ * loaded before the client became ready, into the localStorage mirror BEFORE
+ * the splash goes (FR-3834). The mirror survives logout; the next login
+ * overrides it here. The same `userConfig` seeds the account's personal
  * settings, before the splash goes too, and starts their sync (ADR 0032).
  */
 const DismissSplashOnMount = () => {
   'use memo';
   useSuspendedBackendaiClient();
-  const { myAppConfigFragments, upsertMyAppConfigFragments } =
-    useMyAppConfigFragments(['userConfig']);
-  const userConfig = myAppConfigFragments.userConfig;
-  const userConfigFamily = userConfig?.themeFamily;
+  const [userConfigFamily] = useMyAppConfig('themeFamily');
+  const [serverSettings, setServerSettings] = useMyAppConfig(
+    USER_SETTINGS_CONFIG_KEY,
+  );
   const { setActiveThemeFamily } = useCustomThemeConfig();
   const { logger } = useBAILogger();
   const applyUserConfig = useEffectEvent(() => {
@@ -542,8 +542,8 @@ const DismissSplashOnMount = () => {
       typeof userConfigFamily === 'string' ? userConfigFamily : undefined,
     );
     return startAccountUserSettingsSync({
-      serverSettings: userConfig?.[USER_SETTINGS_CONFIG_KEY],
-      upsertMyAppConfigFragments,
+      serverSettings,
+      setServerSettings,
       onError: (message, error) => logger.error(message, error),
     });
   });
