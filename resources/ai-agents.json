@@ -2790,6 +2790,7 @@
     },
     {
       "id": "webui-assistant",
+      "hidden": true,
       "name": "WebUI Assistant",
       "description": "Answers questions about using the Backend.AI WebUI from its user manual, with links to the sections it used.",
       "version": "1.0.0",

@@ -4408,7 +4408,6 @@
     }
   },
   "webuiAssistant": {
-    "ApiKeySavedHint": "Saved to your account with the endpoint, so you do not have to enter it again.",
     "ChangeConnection": "Change connection",
     "ClearConversation": "Clear conversation",
     "Connect": "Connect",

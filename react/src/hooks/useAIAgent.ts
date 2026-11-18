@@ -69,6 +69,8 @@ export interface AgentProfile {
   tags?: string[];
   isBuiltin?: boolean;
   isCommunity?: boolean;
+  /** Used by a feature directly; left out of the AI Agents page and the chat agent select. */
+  hidden?: boolean;
   sourceUrl?: string | null;
   createdAt: string;
   updatedAt: string;

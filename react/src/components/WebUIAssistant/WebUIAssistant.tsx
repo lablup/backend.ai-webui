@@ -5,6 +5,7 @@
 import { useAIAgent } from '../../hooks/useAIAgent';
 import { useMyAppConfig } from '../../hooks/useAppConfig';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
+import { useCustomEndpointApiKey } from '../Chat/customEndpointKeyStore';
 import { useCurrentLanguage } from '../DefaultProviders';
 import ErrorBoundaryWithNullFallback from '../ErrorBoundaryWithNullFallback';
 import './WebUIAssistant.css';
@@ -13,6 +14,7 @@ import WebUIAssistantConnectModal from './WebUIAssistantConnectModal';
 import {
   WEBUI_ASSISTANT_AGENT_ID,
   WEBUI_ASSISTANT_CONFIG_KEY,
+  WEBUI_ASSISTANT_KEY_ID,
   type WebUIAssistantConnection,
 } from './webUIAssistantPrompt';
 import { IconButton } from '@lablup/ui-common/IconButton';
@@ -45,7 +47,9 @@ const WebUIAssistantFloating: React.FC = () => {
   const [conversationKey, setConversationKey] = useState(0);
 
   const profile = agents.find((agent) => agent.id === WEBUI_ASSISTANT_AGENT_ID);
-  const isConnected = !!connection?.baseURL;
+  const apiKey = useCustomEndpointApiKey(WEBUI_ASSISTANT_KEY_ID);
+  const isConnected =
+    !!connection?.baseURL && (!connection.hasApiKey || !!apiKey);
   const isPanelShown = isOpen && isConnected;
   const title = profile?.translations?.[lang]?.name || profile?.name;
   // The chat (manual download, /models probe) mounts on first open (ADR 0031) and then stays.
@@ -119,17 +123,17 @@ const WebUIAssistantFloating: React.FC = () => {
           </BAIFlex>
         </BAIFlex>
         {hasBeenShown &&
-          (!profile || !connection?.baseURL ? (
+          (!profile || !connection || !isConnected ? (
             <BAIFlex justify="center" align="center" style={{ flex: '1 1 0%' }}>
               <Spinner />
             </BAIFlex>
           ) : (
             <ErrorBoundaryWithNullFallback>
               <WebUIAssistantChat
-                key={`${conversationKey}-${connection.baseURL}-${connection.apiKey ?? ''}`}
+                key={`${conversationKey}-${connection.baseURL}-${apiKey ?? ''}`}
                 profile={profile}
                 baseURL={connection.baseURL}
-                apiKey={connection.apiKey}
+                apiKey={apiKey}
                 isVisible={isPanelShown}
                 onChangeConnection={() => setIsConnectOpen(true)}
               />

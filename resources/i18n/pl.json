@@ -4426,7 +4426,6 @@
     }
   },
   "webuiAssistant": {
-    "ApiKeySavedHint": "Jest zapisywany na Twoim koncie razem z punktem końcowym, więc nie musisz go wpisywać ponownie.",
     "ChangeConnection": "Zmień połączenie",
     "ClearConversation": "Wyczyść rozmowę",
     "Connect": "Połącz",

@@ -4425,7 +4425,6 @@
     }
   },
   "webuiAssistant": {
-    "ApiKeySavedHint": "Wird zusammen mit dem Endpunkt in Ihrem Konto gespeichert, sodass Sie ihn nicht erneut eingeben müssen.",
     "ChangeConnection": "Verbindung ändern",
     "ClearConversation": "Unterhaltung löschen",
     "Connect": "Verbinden",

@@ -4423,7 +4423,6 @@
     }
   },
   "webuiAssistant": {
-    "ApiKeySavedHint": "Disimpan dalam akaun anda bersama endpoint, jadi anda tidak perlu memasukkannya semula.",
     "ChangeConnection": "Tukar sambungan",
     "ClearConversation": "Kosongkan perbualan",
     "Connect": "Sambung",

@@ -4423,7 +4423,6 @@
     }
   },
   "webuiAssistant": {
-    "ApiKeySavedHint": "Uç noktayla birlikte hesabınıza kaydedilir, yeniden girmeniz gerekmez.",
     "ChangeConnection": "Bağlantıyı değiştir",
     "ClearConversation": "Sohbeti temizle",
     "Connect": "Bağlan",

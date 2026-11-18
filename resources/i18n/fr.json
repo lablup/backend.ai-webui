@@ -4426,7 +4426,6 @@
     }
   },
   "webuiAssistant": {
-    "ApiKeySavedHint": "Enregistrée dans votre compte avec le point de terminaison ; vous n'avez pas à la saisir de nouveau.",
     "ChangeConnection": "Modifier la connexion",
     "ClearConversation": "Effacer la conversation",
     "Connect": "Connecter",

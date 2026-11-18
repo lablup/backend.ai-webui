@@ -4426,7 +4426,6 @@
     }
   },
   "webuiAssistant": {
-    "ApiKeySavedHint": "엔드포인트와 함께 내 계정에 저장되어 다시 입력하지 않아도 됩니다.",
     "ChangeConnection": "연결 변경",
     "ClearConversation": "대화 지우기",
     "Connect": "연결",

@@ -4424,7 +4424,6 @@
     }
   },
   "webuiAssistant": {
-    "ApiKeySavedHint": "Tallennetaan tilillesi päätepisteen kanssa, joten sitä ei tarvitse syöttää uudelleen.",
     "ChangeConnection": "Vaihda yhteys",
     "ClearConversation": "Tyhjennä keskustelu",
     "Connect": "Yhdistä",

@@ -4423,7 +4423,6 @@
     }
   },
   "webuiAssistant": {
-    "ApiKeySavedHint": "É salva na sua conta junto com o endpoint, então você não precisa digitá-la novamente.",
     "ChangeConnection": "Alterar conexão",
     "ClearConversation": "Limpar conversa",
     "Connect": "Conectar",

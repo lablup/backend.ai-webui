@@ -4423,7 +4423,6 @@
     }
   },
   "webuiAssistant": {
-    "ApiKeySavedHint": "Αποθηκεύεται στον λογαριασμό σας μαζί με το endpoint, ώστε να μην χρειάζεται να το εισαγάγετε ξανά.",
     "ChangeConnection": "Αλλαγή σύνδεσης",
     "ClearConversation": "Εκκαθάριση συνομιλίας",
     "Connect": "Σύνδεση",

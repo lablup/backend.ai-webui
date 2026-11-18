@@ -4425,7 +4425,6 @@
     }
   },
   "webuiAssistant": {
-    "ApiKeySavedHint": "与端点一起保存在你的账户中，无需再次输入。",
     "ChangeConnection": "更改连接",
     "ClearConversation": "清空对话",
     "Connect": "连接",

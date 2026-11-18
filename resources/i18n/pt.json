@@ -4425,7 +4425,6 @@
     }
   },
   "webuiAssistant": {
-    "ApiKeySavedHint": "É guardada na sua conta com o endpoint, por isso não precisa de a introduzir novamente.",
     "ChangeConnection": "Alterar ligação",
     "ClearConversation": "Limpar conversa",
     "Connect": "Ligar",

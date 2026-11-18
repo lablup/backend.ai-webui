@@ -4425,7 +4425,6 @@
     }
   },
   "webuiAssistant": {
-    "ApiKeySavedHint": "エンドポイントと一緒にアカウントに保存されるため、再入力は不要です。",
     "ChangeConnection": "接続を変更",
     "ClearConversation": "会話をクリア",
     "Connect": "接続",

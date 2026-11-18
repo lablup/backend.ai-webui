@@ -186,6 +186,7 @@ const AIAgentPage: React.FC = () => {
   const { t } = useTranslation();
   const { agents, builtInAgents, deleteAgent, getEndpointBinding } =
     useAIAgent();
+  const listedAgents = agents.filter((agent) => !agent.hidden);
   const webuiNavigate = useWebUINavigate();
   const buildProjectPath = useProjectPath();
 
@@ -229,7 +230,7 @@ const AIAgentPage: React.FC = () => {
             `xxxl={6}` = 24/6). Same recipe as ModelStoreListPageV2 (both
             flagged in the census as the repo's two `xxxl` sites). */}
         <Grid columns={{ minWidth: 496, max: 4 }} gap={4}>
-          {agents.map((agent) => {
+          {listedAgents.map((agent) => {
             const isOverridden = !agent.isCustom
               ? false
               : builtInIds.has(agent.id);

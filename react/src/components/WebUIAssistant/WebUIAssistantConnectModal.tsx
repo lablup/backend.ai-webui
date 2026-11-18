@@ -13,9 +13,14 @@ import {
 import CustomEndpointForm from '../Chat/CustomEndpointForm';
 import DeploymentSelect from '../Chat/DeploymentSelect';
 import DeploymentTokenSelect from '../Chat/DeploymentTokenSelect';
+import {
+  setCustomEndpointApiKey,
+  useCustomEndpointApiKey,
+} from '../Chat/customEndpointKeyStore';
 import { fetchOpenAIModels, isAuthRejected } from '../Chat/openAIModels';
 import {
   WEBUI_ASSISTANT_CONFIG_KEY,
+  WEBUI_ASSISTANT_KEY_ID,
   type WebUIAssistantConnection,
 } from './webUIAssistantPrompt';
 import { Banner } from '@lablup/ui-common/Banner';
@@ -72,6 +77,7 @@ const WebUIAssistantConnectModal: React.FC<WebUIAssistantConnectModalProps> = ({
   const saved = useMyAppConfig<WebUIAssistantConnection>(
     WEBUI_ASSISTANT_CONFIG_KEY,
   );
+  const savedApiKey = useCustomEndpointApiKey(WEBUI_ASSISTANT_KEY_ID);
   const updateMyUserAppConfig = useUpdateMyUserAppConfig();
   const refetchMyAppConfig = useRefetchMyAppConfig();
 
@@ -80,7 +86,7 @@ const WebUIAssistantConnectModal: React.FC<WebUIAssistantConnectModalProps> = ({
   );
   const [deploymentId, setDeploymentId] = useState(saved?.deploymentId);
   const [token, setToken] = useState(
-    saved?.deploymentId ? saved.apiKey : undefined,
+    saved?.deploymentId ? savedApiKey : undefined,
   );
   const [endpointURL, setEndpointURL] = useState<string | null>();
   const [failure, setFailure] = useState<string>();
@@ -95,8 +101,16 @@ const WebUIAssistantConnectModal: React.FC<WebUIAssistantConnectModalProps> = ({
   const savedCustomURL =
     saved && !saved.deploymentId ? saved.baseURL : undefined;
 
-  const save = async (connection: WebUIAssistantConnection) => {
-    await updateMyUserAppConfig(WEBUI_ASSISTANT_CONFIG_KEY, connection);
+  // Only the endpoint is saved; the key stays in memory, as on the chat page.
+  const save = async ({
+    apiKey,
+    ...connection
+  }: WebUIAssistantConnection & { apiKey?: string }) => {
+    await updateMyUserAppConfig(WEBUI_ASSISTANT_CONFIG_KEY, {
+      ...connection,
+      hasApiKey: !!apiKey,
+    });
+    setCustomEndpointApiKey(WEBUI_ASSISTANT_KEY_ID, apiKey);
     await refetchMyAppConfig();
     message.success(t('webuiAssistant.Connected'));
     onRequestClose();
@@ -190,14 +204,13 @@ const WebUIAssistantConnectModal: React.FC<WebUIAssistantConnectModalProps> = ({
       {isCustom && (
         <CustomEndpointForm
           baseURL={savedCustomURL}
-          apiKey={saved?.deploymentId ? undefined : saved?.apiKey}
+          apiKey={savedCustomURL ? savedApiKey : undefined}
           onSubmit={(values) =>
             save({ baseURL: values.baseURL, apiKey: values.apiKey }).catch(
               (error) => message.error(getErrorMessage(error)),
             )
           }
           onCancel={close}
-          apiKeyHint={t('webuiAssistant.ApiKeySavedHint')}
         />
       )}
     </BAIModal>

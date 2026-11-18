@@ -8,16 +8,19 @@ import { manualSectionURL, type ManualSection } from './manualSearch';
 export const WEBUI_ASSISTANT_AGENT_ID = 'webui-assistant';
 /** `userConfig` key holding each user's own connection. */
 export const WEBUI_ASSISTANT_CONFIG_KEY = 'webuiAssistant';
+/** `customEndpointKeyStore` id of the assistant's API key, which stays in memory. */
+export const WEBUI_ASSISTANT_KEY_ID = 'webui-assistant';
 /** Where the user manual's Markdown is served (`scripts/copy-manual.mjs`). */
 export const MANUAL_RESOURCE_BASE = 'resources/manual/';
 
-/** An OpenAI-compatible endpoint, picked from a deployment or typed in. */
+/** An OpenAI-compatible endpoint, picked from a deployment or typed in; the key is not saved. */
 export interface WebUIAssistantConnection {
   /** OpenAI base URL, ending in `/v1` for a deployment. */
   baseURL: string;
-  apiKey?: string;
   /** Set when the endpoint is a Backend.AI deployment. */
   deploymentId?: string;
+  /** The endpoint needs a key, so after a reload the user connects again. */
+  hasApiKey?: boolean;
 }
 
 export const WEBUI_ASSISTANT_EXCERPT_COUNT = 5;

@@ -4427,7 +4427,6 @@
     }
   },
   "webuiAssistant": {
-    "ApiKeySavedHint": "Disimpan di akun Anda bersama endpoint, jadi Anda tidak perlu memasukkannya lagi.",
     "ChangeConnection": "Ubah koneksi",
     "ClearConversation": "Hapus percakapan",
     "Connect": "Hubungkan",

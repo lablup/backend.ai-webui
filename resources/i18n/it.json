@@ -4423,7 +4423,6 @@
     }
   },
   "webuiAssistant": {
-    "ApiKeySavedHint": "Viene salvata nel tuo account insieme all'endpoint, così non devi reinserirla.",
     "ChangeConnection": "Modifica connessione",
     "ClearConversation": "Cancella conversazione",
     "Connect": "Connetti",

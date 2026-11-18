@@ -4409,7 +4409,6 @@
     }
   },
   "webuiAssistant": {
-    "ApiKeySavedHint": "บันทึกไว้ในบัญชีของคุณพร้อมกับเอนด์พอยต์ จึงไม่ต้องป้อนอีก",
     "ChangeConnection": "เปลี่ยนการเชื่อมต่อ",
     "ClearConversation": "ล้างการสนทนา",
     "Connect": "เชื่อมต่อ",

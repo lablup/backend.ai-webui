@@ -4425,7 +4425,6 @@
     }
   },
   "webuiAssistant": {
-    "ApiKeySavedHint": "Được lưu vào tài khoản của bạn cùng với endpoint nên bạn không cần nhập lại.",
     "ChangeConnection": "Đổi kết nối",
     "ClearConversation": "Xóa cuộc trò chuyện",
     "Connect": "Kết nối",

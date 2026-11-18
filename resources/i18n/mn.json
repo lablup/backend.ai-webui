@@ -4425,7 +4425,6 @@
     }
   },
   "webuiAssistant": {
-    "ApiKeySavedHint": "Endpoint-той хамт таны бүртгэлд хадгалагдах тул дахин оруулах шаардлагагүй.",
     "ChangeConnection": "Холболтыг өөрчлөх",
     "ClearConversation": "Ярианы түүхийг арилгах",
     "Connect": "Холбох",
