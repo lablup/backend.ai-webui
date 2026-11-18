@@ -86,7 +86,6 @@ const WebUIAssistantChat: React.FC<WebUIAssistantChatProps> = ({
   const helpURL = useHelpURL();
   const { baseURL: manualBaseURL, docsLang } = useManualBaseURL();
   const dashboard = useAtomValue(dashboardAssistantBridgeAtom);
-  const dashboardCardIds = new Set(dashboard?.cards.map((card) => card.id));
   const [appliedMessageIds, setAppliedMessageIds] = useState<
     ReadonlySet<string>
   >(() => new Set());
@@ -246,7 +245,7 @@ const WebUIAssistantChat: React.FC<WebUIAssistantChatProps> = ({
       const isMessageStreaming = isStreaming && index === messages.length - 1;
       const { text, actions } = isUser
         ? { text: messageText(message), actions: [] }
-        : extractDashboardActions(messageText(message), dashboardCardIds);
+        : extractDashboardActions(messageText(message), dashboard?.cards ?? []);
       return (
         <ChatMessage key={message.id} sender={isUser ? 'user' : 'assistant'}>
           <ChatMessageBubble>
