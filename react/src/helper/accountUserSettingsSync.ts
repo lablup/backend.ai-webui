@@ -37,14 +37,17 @@ export const startAccountUserSettingsSync = ({
   onError: (message: string, error: unknown) => void;
 }): (() => void) => {
   const hasServerSettings = _.isPlainObject(serverSettings);
-  const local = hasServerSettings
-    ? {}
-    : readLocalAccountUserSettings(localStorage);
+  const isActAs = !!getActAsTarget();
+  // An act-as tab must not show this browser's own pre-0032 values as the target's.
+  const local =
+    hasServerSettings || isActAs
+      ? {}
+      : readLocalAccountUserSettings(localStorage);
   setAccountUserSettings(
     hasServerSettings ? (serverSettings as Record<string, unknown>) : local,
   );
   // An act-as tab shows the target's settings and saves nothing to that account.
-  if (getActAsTarget()) return () => {};
+  if (isActAs) return () => {};
 
   const writeSettings = setServerSettings;
   // A document still without `settings` (the copy failed) is rebuilt from

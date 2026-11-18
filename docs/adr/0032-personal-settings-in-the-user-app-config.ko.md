@@ -73,7 +73,7 @@ flowchart LR
 - **Atom**: `react/src/hooks/useBAISetting.tsx`의 `accountUserSettingsAtom`은 `userConfig.settings`와 같은 평탄 모양의 `Record<string, unknown>`을 담는다. `setAccountUserSettings`가 값을 통째로 바꾸고, `getAccountUserSettings`가 React 밖에서 읽는다.
 - **Read path**: account setting이면 `SettingAtomFamily`가 `accountUserSettingsAtom[name] ?? null`을 돌려준다. setter는 atom을 바꾼 뒤 `queueUserSettingWrite`를 부른다. 둘 다 localStorage와 `backendaiOptions`를 건드리지 않는다. device-local setting은 localStorage 경로를 그대로 쓴다.
 - **Stored or unset**: `useHasStoredUserSetting(name)`은 설정에 값이 있는지를 돌려주며, 명시적인 `null`도 값으로 본다. account setting이면 atom에 키가 있는지를 읽으므로, 로그인 시드나 사용자의 선택이 키를 넣으면 값이 `null`로 같아도 component가 다시 render된다.
-- **Sign-in seed**: `DismissSplashOnMount`(`MainLayout.tsx`)는 로그인이 `myAppConfigState`를 채운 뒤에야 렌더한다. 이 컴포넌트의 mount effect가 splash를 걷기 전에 `useMyAppConfig('settings')`의 값과 `set`으로 `startAccountUserSettingsSync`를 부르므로, splash가 걷힐 때 화면은 계정의 값을 보여 준다. 이 함수는 stop을 돌려주고 effect의 cleanup이 그것을 부른다.
+- **Sign-in seed**: `DismissSplashOnMount`(`MainLayout.tsx`)는 로그인이 `myAppConfigState`를 채운 뒤에야 렌더한다. 이 컴포넌트의 mount effect가 splash를 걷기 전에 `useMyAppConfig('settings')`의 값과 `set`으로 `startAccountUserSettingsSync`를 부르므로, splash가 걷힐 때 화면은 계정의 값을 보여 준다. 이 함수는 stop을 돌려주고 effect의 cleanup이 그것을 부른다. `useMyAppConfigStatus()`가 `loaded`가 아니면 쓰기의 기준이 없으므로 effect는 sync를 시작하지 않는다.
 - **Before sign-in**: account setting은 기본값을 읽는다. 로그인 전 화면 중 account setting을 읽는 곳은 없다.
 
 ### 4. One-time copy

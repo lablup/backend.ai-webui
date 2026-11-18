@@ -93,6 +93,8 @@ describe('startAccountUserSettingsSync', () => {
     localStorage.setItem(P + 'compact_sidebar', 'true');
     const { upsert } = createUpsert(undefined);
     const stop = start(undefined, upsert);
+    // This browser's own local values are not shown as the target's.
+    expect(getAccountUserSettings()).toEqual({});
     queueUserSettingWrite('session_monitor_rows', 9);
     await vi.advanceTimersByTimeAsync(USER_SETTINGS_WRITE_DELAY_MS);
     expect(upsert).not.toHaveBeenCalled();
