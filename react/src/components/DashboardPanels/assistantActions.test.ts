@@ -70,7 +70,12 @@ const board: DashboardBoard = {
   knownKeys: ['a', 'b', 'c'],
 };
 
-const ids = new Set(['a', 'b', 'c', 'mine']);
+const ids = [
+  { id: 'a', title: 'My sessions' },
+  { id: 'b', title: 'Activity' },
+  { id: 'c', title: 'Pending Sessions and Reasons', range: 'default' },
+  { id: 'mine', title: 'Sessions' },
+];
 
 describe('sanitizeAssistantActions', () => {
   it('keeps well-formed actions on listed ids and drops the rest', () => {
@@ -85,6 +90,7 @@ describe('sanitizeAssistantActions', () => {
             { type: 'resize', id: 'a' },
             { type: 'setRange', id: 'c', range: 'now-7d' },
             { type: 'setRange', id: 'c', range: 'yesterday' },
+            { type: 'setRange', id: 'a', range: 'now-1h' },
             { type: 'reset' },
             'hide a',
           ],
@@ -96,6 +102,28 @@ describe('sanitizeAssistantActions', () => {
       { type: 'resize', id: 'a', columnSpan: 3, rowSpan: undefined },
       { type: 'setRange', id: 'c', range: 'now-7d' },
       { type: 'reset' },
+    ]);
+  });
+
+  it('resolves a paraphrased id by the card id or title', () => {
+    expect(
+      sanitizeAssistantActions(
+        [
+          { type: 'hide', id: 'pendingSessionsAndReasons' },
+          { type: 'hide', id: 'pendingSessionsReasons' },
+          { type: 'hide', id: 'MY_SESSIONS' },
+          { type: 'show', id: 'B' },
+          { type: 'show', id: '???' },
+          { type: 'show', id: 'session' },
+        ],
+        ids,
+      ),
+    ).toEqual([
+      { type: 'hide', id: 'c' },
+      { type: 'hide', id: 'c' },
+      { type: 'hide', id: 'a' },
+      { type: 'show', id: 'b' },
+      { type: 'show', id: 'mine' },
     ]);
   });
 

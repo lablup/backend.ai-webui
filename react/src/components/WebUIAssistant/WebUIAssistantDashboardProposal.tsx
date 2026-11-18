@@ -70,7 +70,13 @@ const WebUIAssistantDashboardProposal: React.FC<
         <LayoutDashboard size="1em" aria-hidden />
         <Text weight="semibold">{t('webuiAssistant.DashboardChanges')}</Text>
       </BAIFlex>
-      <ul style={{ margin: 0, paddingInlineStart: 'var(--spacing-5)' }}>
+      <ul
+        style={{
+          margin: 0,
+          paddingInlineStart: 'var(--spacing-5)',
+          listStyle: 'disc',
+        }}
+      >
         {actions.map((action, index) => (
           <li key={index}>
             <Text>{describe(action)}</Text>

@@ -64,10 +64,68 @@ const toInt = (value: unknown): number | undefined =>
     ? Math.round(value)
     : undefined;
 
-/** The actions in a raw JSON value, keeping only the well-formed ones on known ids. */
+type AssistantCardRef = Pick<DashboardAssistantCard, 'id' | 'title' | 'range'>;
+
+const normalize = (value: string) =>
+  value.toLowerCase().replace(/[^\p{L}\p{N}]/gu, '');
+
+const bigrams = (value: string) =>
+  Array.from({ length: Math.max(value.length - 1, 0) }, (_v, i) =>
+    value.slice(i, i + 2),
+  );
+
+/** Sørensen-Dice similarity of two strings' character bigrams, 0 to 1. */
+const similarity = (a: string, b: string) => {
+  const left = bigrams(a);
+  const right = bigrams(b);
+  if (!left.length || !right.length) return a === b ? 1 : 0;
+  const pool = [...right];
+  const shared = left.filter((pair) => {
+    const index = pool.indexOf(pair);
+    if (index < 0) return false;
+    pool.splice(index, 1);
+    return true;
+  }).length;
+  return (2 * shared) / (left.length + right.length);
+};
+
+const MIN_ID_SIMILARITY = 0.75;
+
+/**
+ * The listed card `id` names. Small models paraphrase ids
+ * (`pendingSessionsReasons` for `pendingSessions`), so an inexact id takes the
+ * card whose id or title is clearly the closest, and none when two tie.
+ */
+const resolveCardId = (
+  id: unknown,
+  cards: ReadonlyArray<AssistantCardRef>,
+): string | undefined => {
+  if (typeof id !== 'string') return undefined;
+  if (cards.some((card) => card.id === id)) return id;
+  const key = normalize(id);
+  if (!key) return undefined;
+  const [best, second] = _.orderBy(
+    cards.map((card) => ({
+      id: card.id,
+      score: Math.max(
+        similarity(key, normalize(card.id)),
+        similarity(key, normalize(card.title)),
+      ),
+    })),
+    'score',
+    'desc',
+  );
+  return best &&
+    best.score >= MIN_ID_SIMILARITY &&
+    best.score > (second?.score ?? 0)
+    ? best.id
+    : undefined;
+};
+
+/** The actions in a raw JSON value, keeping only the well-formed ones on listed cards. */
 export const sanitizeAssistantActions = (
   value: unknown,
-  knownIds: ReadonlySet<string>,
+  cards: ReadonlyArray<AssistantCardRef>,
 ): Array<DashboardAssistantAction> => {
   const list = Array.isArray(value)
     ? value
@@ -77,12 +135,13 @@ export const sanitizeAssistantActions = (
       : [];
   return list.flatMap((raw): Array<DashboardAssistantAction> => {
     if (!_.isPlainObject(raw)) return [];
-    const { type, id, columnSpan, rowSpan, range } = raw as Record<
+    const { type, columnSpan, rowSpan, range, ...rest } = raw as Record<
       string,
       unknown
     >;
     if (type === 'reset') return [{ type }];
-    if (typeof id !== 'string' || !knownIds.has(id)) return [];
+    const id = resolveCardId(rest.id, cards);
+    if (!id) return [];
     switch (type) {
       case 'show':
       case 'hide':
@@ -97,7 +156,11 @@ export const sanitizeAssistantActions = (
           : [{ type, id, columnSpan: columns, rowSpan: rows }];
       }
       case 'setRange':
-        return isRangePreset(range) ? [{ type, id, range }] : [];
+        // Only cards listed with a range take one.
+        return isRangePreset(range) &&
+          cards.find((card) => card.id === id)?.range !== undefined
+          ? [{ type, id, range }]
+          : [];
       default:
         return [];
     }
@@ -110,7 +173,7 @@ export const sanitizeAssistantActions = (
  */
 export const extractDashboardActions = (
   text: string,
-  knownIds: ReadonlySet<string>,
+  cards: ReadonlyArray<AssistantCardRef>,
 ): { text: string; actions: Array<DashboardAssistantAction> } => {
   const start = text.indexOf(OPEN_FENCE);
   if (start < 0) return { text, actions: [] };
@@ -126,7 +189,7 @@ export const extractDashboardActions = (
   } catch {
     return { text: visible, actions: [] };
   }
-  return { text: visible, actions: sanitizeAssistantActions(parsed, knownIds) };
+  return { text: visible, actions: sanitizeAssistantActions(parsed, cards) };
 };
 
 const moveTo = (
@@ -243,6 +306,6 @@ export const buildDashboardPromptSection = (
       'Action types: show {id}, hide {id}, moveToTop {id}, moveToBottom {id}, ' +
         `resize {id, columnSpan 1-${BOARD_COLUMNS}, rowSpan 1-${MAX_ROW_SPAN}}, ` +
         `setRange {id, range: ${RANGE_PRESETS.join(' | ')}} (only cards with a range), reset {} (the default layout).`,
-      'Use only ids from the list above, and match a card by its title in any language. The user applies the change with a button, so never say it is already done. Do not add the block when the user only asks a question.',
+      'Copy the id exactly as it appears before the first | in the list; never make one up. Match the card the user names by its title, in any language. The user applies the change with a button, so never say it is already done. Do not add the block when the user only asks a question.',
     ].join('\n'),
   ].join('\n\n');
