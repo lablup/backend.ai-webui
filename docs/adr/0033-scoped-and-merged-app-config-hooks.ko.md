@@ -8,7 +8,7 @@
 - 관리자 페이지가 아닌 화면은 app config를 이 atom에서만 `useMyAppConfig(configName, subKey?)`로 읽는다. 이 hook은 세 이름을 모두 읽고 `userConfig`만 쓴다. 자체 query를 보내지 않고 suspend하지 않는다.
 - 관리자 페이지는 `useScopedAppConfig(scope, configNames)`로 scope 하나의 [raw document](#용어)를 읽고 쓴다. 이 hook은 `network-only`로 읽고 atom에는 쓰지 않는다. PUBLIC이나 로그인한 domain에 쓰면 atom을 다시 읽는다.
 - 이 설계는 manager의 기본 [allow-list](#용어)에 기댄다. `publicConfigByDomain`과 `domainConfig`는 각각 scope 하나에서 오고, 두 scope(DOMAIN과 USER)를 merge하는 것은 `userConfig`뿐이다.
-- `loginConfigState`는 base config, public `settings` 문서, domain `settings` 문서에서 계산하는 derived atom이다.
+- `loginConfigState`는 base config, public `settings` 문서, domain `settings` 문서에서 계산하는 derived atom이다. `setEffectiveWebUISettings`가 두 `settings` atom을 set하며, settings는 `baiClient._config`에 복사하지 않는다(ADR 0031).
 
 ## Context
 
@@ -17,7 +17,7 @@
 - **Default allow-list**: manager migration `ede445fb9d0d`가 `publicConfigByDomain`을 PUBLIC(rank 100)에, `domainConfig`를 DOMAIN(200)에, `userConfig`를 DOMAIN(200)과 USER(300)에 seed한다. 따라서 로그인한 사용자 본인 domain에 대해서는 merged `publicConfigByDomain`과 `domainConfig`가 raw document와 같다.
 - **Merge scope**: `myAppConfigs`는 superadmin에게도 호출자 본인의 domain만 merge한다. `publicConfigByDomain`은 PUBLIC 문서 하나라서 모든 domain의 slice가 내려온다.
 - **Read permissions**: `myAppConfigs`는 모든 role에 세 이름을 모두 응답한다. `scopedAppConfigFragmentsByNames`는 DOMAIN scope를 superadmin에게만 응답한다. 거부되는 scoped field가 다른 field와 같은 요청에 들어 있으면 manager는 요청 전체를 `data: null`로 응답하며, 거부된 field의 `@catch`로는 다른 field의 data를 되찾지 못한다.
-- **Settings at sign-in**: ADR 0028은 public과 domain `settings` 문서를 `config.toml` 위에 층으로 쌓는다. `loginSessionAuth.ts`의 `connectViaGQL`이 로그인할 때 `myAppConfigs`를 읽고, `applyConfigToClient`가 유효 config를 `baiClient._config`에 복사하고 client를 ready로 만든다.
+- **Settings at sign-in**: ADR 0028은 public과 domain `settings` 문서를 `config.toml` 위에 층으로 쌓는다. `loginSessionAuth.ts`의 `connectViaGQL`이 로그인할 때 `myAppConfigs`를 읽는다. ADR 0031은 settings를 `loginConfigState`에만 두며, `applyConfigToClient`는 연결 field만 `baiClient._config`에 복사하고 client를 ready로 만든다.
 
 ## 설계도
 
@@ -47,19 +47,17 @@ flowchart LR
 ```mermaid
 flowchart LR
   sign["connectViaGQL"]
-  page["WebUISettingsPage"]
+  page["WebUISettingList<br/>setEffectiveWebUISettings"]
   base["baseLoginConfigState<br/>config.toml 또는 기본값"]
   pub["publicWebUISettingsState<br/>public settings slice"]
   dom["domainWebUISettingsState<br/>domainConfig.settings"]
   eff["loginConfigState<br/>derived atom"]
-  client["baiClient._config<br/>settings field"]
   sign -- "로그인 때의 domainConfig.settings" --> dom
-  page -- "upsert가 돌려준 settings 문서" --> pub
-  page -- "upsert가 돌려준 settings 문서" --> dom
+  page -- "페이지 값으로 만든 settings 문서" --> pub
+  page -- "페이지 값으로 만든 settings 문서" --> dom
   base -- "LoginConfigState" --> eff
   pub -- "settings 문서, 먼저 적용" --> eff
   dom -- "settings 문서, 두 번째로 적용" --> eff
-  eff -- "jotaiStore.sub, applySettingsToClient" --> client
 ```
 
 ## Decision
@@ -110,18 +108,16 @@ flowchart LR
 
 ### 4. 로그인 config의 settings 층
 
-| Atom                       | 담는 값                                                                            | 쓰는 곳                                                                           |
-| -------------------------- | ---------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
-| `baseLoginConfigState`     | `LoginConfigState`로 처리한 `config.toml`, 또는 기본값                             | `initializeConfigOnce`, `loadConfigFromWebServer`, 비어 있을 때의 `connectViaGQL` |
-| `publicWebUISettingsState` | 로그인 페이지 domain의 public `settings` slice                                     | `initializeConfigOnce`, `loadConfigFromWebServer`, `WebUISettingsPage`            |
-| `domainWebUISettingsState` | 로그인한 domain의 `domainConfig.settings`                                          | `connectViaGQL`, `WebUISettingsPage`                                              |
-| `loginConfigState`         | derived: base에 public 문서, 그다음 domain 문서를 `applyWebUISettings`로 적용한 값 | 없음, 읽기 전용                                                                   |
+| Atom                       | 담는 값                                                                                                                    | 쓰는 곳                                                                           |
+| -------------------------- | -------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| `baseLoginConfigState`     | `LoginConfigState`로 처리한 `config.toml`, 또는 기본값                                                                     | `initializeConfigOnce`, `loadConfigFromWebServer`, 비어 있을 때의 `connectViaGQL` |
+| `publicWebUISettingsState` | 로그인 페이지 domain의 public `settings` slice                                                                             | `initializeConfigOnce`, `loadConfigFromWebServer`, `setEffectiveWebUISettings`    |
+| `domainWebUISettingsState` | 로그인한 domain의 `domainConfig.settings`                                                                                  | `connectViaGQL`, `setEffectiveWebUISettings`                                      |
+| `loginConfigState`         | derived: `withWebUISettings`가 base의 모든 setting을 코드 기본값으로 되돌린 뒤 public 문서, 그다음 domain 문서를 적용한 값 | 없음, 읽기 전용                                                                   |
 
-- **Layer write**: `WebUISettingsPage`는 `upsertScopedAppConfig`가 돌려준 `settings` 문서 전체로 `domainWebUISettingsState`나 `publicWebUISettingsState`를 set한다. 그래서 `loginConfigState`와 그 reader가 refetch 없이 갱신된다.
-- **Same domain**: `WebUISettingsPage`는 로그인한 domain의 public slice를 `publicWebUISettingsState`에 쓰는데, 이 atom은 로그인 페이지 domain의 slice를 담는다. 배포 하나는 domain 하나를 서비스하므로 두 slice는 같다.
+- **Layer write**: `WebUISettingList`는 쓰기마다 그 전에 페이지 값으로 만든 `settings` 문서 전체로 `setEffectiveWebUISettings`를 부른다(ADR 0031). 그래서 `loginConfigState`와 그 reader가 곧바로 갱신된다.
+- **Same domain**: `setEffectiveWebUISettings`는 로그인한 domain의 public slice를 `publicWebUISettingsState`에 쓰는데, 이 atom은 로그인 페이지 domain의 slice를 담는다. 배포 하나는 domain 하나를 서비스하므로 두 slice는 같다.
 - **Settings copy**: `loginConfigState`가 읽는 사본은 층 atom이고, `AnnouncementBanner`와 대시보드 template이 읽는 사본은 `myAppConfigState.configs.domainConfig`다. `myAppConfigState`를 다시 읽어도 층 atom에는 쓰지 않는다.
-- **Client mirror**: `DefaultProviders.tsx`에서 `jotaiStore`에 한 번 설치한 `syncLoginConfigToClient`가, `baiClient.ready`가 true이고 `baiClient._config`가 있는 동안 `loginConfigState`가 바뀔 때마다 `applySettingsToClient`를 부른다.
-- **Reload after Apply**: mount할 때 `baiClient._config`를 한 번 읽는 화면은 다시 mount할 때까지 옛 값을 유지하므로, `WebUISettingList`는 Apply 뒤 페이지를 새로고침한다.
 
 ## 대안과 기각 사유
 

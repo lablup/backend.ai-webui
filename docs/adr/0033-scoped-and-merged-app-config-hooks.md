@@ -8,7 +8,7 @@
 - Screens that are not admin pages read app config only from that atom through `useMyAppConfig(configName, subKey?)`, which reads all three names and writes only `userConfig`. It sends no query of its own and does not suspend.
 - Admin pages read and write one scope's [raw documents](#glossary) with `useScopedAppConfig(scope, configNames)`, which reads with `network-only` and does not write the atom. A write to PUBLIC or to the signed-in domain reloads the atom.
 - The design rests on the manager's default [allow-list](#glossary): `publicConfigByDomain` and `domainConfig` each come from one scope, and only `userConfig` merges two (DOMAIN and USER).
-- `loginConfigState` is a derived atom over the base config, the public `settings` document and the domain `settings` document.
+- `loginConfigState` is a derived atom over the base config, the public `settings` document and the domain `settings` document. `setEffectiveWebUISettings` sets the two `settings` atoms, and the settings are not copied onto `baiClient._config` (ADR 0031).
 
 ## Context
 
@@ -17,7 +17,7 @@
 - **Default allow-list**: the manager migration `ede445fb9d0d` seeds `publicConfigByDomain` at PUBLIC (rank 100), `domainConfig` at DOMAIN (200), and `userConfig` at DOMAIN (200) and USER (300). For the signed-in user's own domain, the merged `publicConfigByDomain` and `domainConfig` therefore equal their raw documents.
 - **Merge scope**: `myAppConfigs` merges the caller's own domain only, for a superadmin too. `publicConfigByDomain` is one PUBLIC document, so every domain's slice comes back.
 - **Read permissions**: `myAppConfigs` answers all three names for every role. `scopedAppConfigFragmentsByNames` answers the DOMAIN scope only for a superadmin. When a denied scoped field shares a request with other fields, the manager answers the whole request with `data: null`, and `@catch` on the denied field does not bring the other fields back.
-- **Settings at sign-in**: ADR 0028 layers the public and the domain `settings` documents over `config.toml`. `connectViaGQL` in `loginSessionAuth.ts` reads `myAppConfigs` at sign-in, and `applyConfigToClient` copies the effective config into `baiClient._config` and marks the client ready.
+- **Settings at sign-in**: ADR 0028 layers the public and the domain `settings` documents over `config.toml`. `connectViaGQL` in `loginSessionAuth.ts` reads `myAppConfigs` at sign-in. ADR 0031 keeps the settings in `loginConfigState` only; `applyConfigToClient` copies just the connection fields onto `baiClient._config` and marks the client ready.
 
 ## Diagram
 
@@ -47,19 +47,17 @@ flowchart LR
 ```mermaid
 flowchart LR
   sign["connectViaGQL"]
-  page["WebUISettingsPage"]
+  page["WebUISettingList<br/>setEffectiveWebUISettings"]
   base["baseLoginConfigState<br/>config.toml or defaults"]
   pub["publicWebUISettingsState<br/>public settings slice"]
   dom["domainWebUISettingsState<br/>domainConfig.settings"]
   eff["loginConfigState<br/>derived atom"]
-  client["baiClient._config<br/>settings fields"]
   sign -- "domainConfig.settings at sign-in" --> dom
-  page -- "settings document the upsert returned" --> pub
-  page -- "settings document the upsert returned" --> dom
+  page -- "settings document built from the page's values" --> pub
+  page -- "settings document built from the page's values" --> dom
   base -- "LoginConfigState" --> eff
   pub -- "settings document, applied first" --> eff
   dom -- "settings document, applied second" --> eff
-  eff -- "jotaiStore.sub, applySettingsToClient" --> client
 ```
 
 ## Decision
@@ -110,18 +108,16 @@ flowchart LR
 
 ### 4. Settings layers in the login config
 
-| Atom                       | Holds                                                                                       | Written by                                                                          |
-| -------------------------- | ------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
-| `baseLoginConfigState`     | `config.toml` processed into `LoginConfigState`, or the defaults                            | `initializeConfigOnce`, `loadConfigFromWebServer`; `connectViaGQL` when still empty |
-| `publicWebUISettingsState` | the public `settings` slice of the login page's domain                                      | `initializeConfigOnce`, `loadConfigFromWebServer`, `WebUISettingsPage`              |
-| `domainWebUISettingsState` | the signed-in domain's `domainConfig.settings`                                              | `connectViaGQL`, `WebUISettingsPage`                                                |
-| `loginConfigState`         | derived: the base with the public, then the domain document applied by `applyWebUISettings` | nothing; read only                                                                  |
+| Atom                       | Holds                                                                                                                                | Written by                                                                          |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------- |
+| `baseLoginConfigState`     | `config.toml` processed into `LoginConfigState`, or the defaults                                                                     | `initializeConfigOnce`, `loadConfigFromWebServer`; `connectViaGQL` when still empty |
+| `publicWebUISettingsState` | the public `settings` slice of the login page's domain                                                                               | `initializeConfigOnce`, `loadConfigFromWebServer`, `setEffectiveWebUISettings`      |
+| `domainWebUISettingsState` | the signed-in domain's `domainConfig.settings`                                                                                       | `connectViaGQL`, `setEffectiveWebUISettings`                                        |
+| `loginConfigState`         | derived: `withWebUISettings` resets every setting of the base to its code default, then applies the public, then the domain document | nothing; read only                                                                  |
 
-- **Layer write**: `WebUISettingsPage` sets `domainWebUISettingsState` or `publicWebUISettingsState` to the whole `settings` document `upsertScopedAppConfig` returned, so `loginConfigState` and its readers update without a refetch.
-- **Same domain**: `WebUISettingsPage` writes the signed-in domain's public slice into `publicWebUISettingsState`, which holds the login page's domain slice. A deployment serves one domain, so the two are the same slice.
+- **Layer write**: `WebUISettingList` calls `setEffectiveWebUISettings` with the whole `settings` documents built from the page's values before each write (ADR 0031), so `loginConfigState` and its readers update at once.
+- **Same domain**: `setEffectiveWebUISettings` writes the signed-in domain's public slice into `publicWebUISettingsState`, which holds the login page's domain slice. A deployment serves one domain, so the two are the same slice.
 - **Settings copy**: the layer atoms are the copy `loginConfigState` reads; `myAppConfigState.configs.domainConfig` is the copy `AnnouncementBanner` and the dashboard templates read. A reload of `myAppConfigState` does not write the layer atoms.
-- **Client mirror**: `syncLoginConfigToClient`, installed once on `jotaiStore` in `DefaultProviders.tsx`, calls `applySettingsToClient` on every change of `loginConfigState` while `baiClient.ready` is true and `baiClient._config` exists.
-- **Reload after Apply**: `WebUISettingList` reloads the page after Apply, because screens that read `baiClient._config` once at mount keep the old value until they mount again.
 
 ## Rejected alternatives
 
