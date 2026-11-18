@@ -39,5 +39,12 @@
       "reason": "Bundled by pkg into the backend.ai-local-proxy release binaries (src/wsproxy)."
     }
   ],
-  "entries": []
+  "entries": [
+    {
+      "id": "GHSA-fc5q-39xc-vjpf",
+      "package": "picomatch",
+      "reason": "No patched release yet (vulnerable <=4.0.7, 2.x included). Every shipped path is build tooling that is never bundled: packages/eslint-config-bai's typescript-eslint and eslint-plugin-import globbing, and @lablup/ui-common's codemod CLI (@astryxdesign/cli > jscodeshift). Raise the picomatch overrides in pnpm-workspace.yaml and drop this entry once a fix ships (#11296).",
+      "expires": "2026-12-31"
+    }
+  ]
 }
