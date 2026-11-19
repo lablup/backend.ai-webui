@@ -178,9 +178,47 @@ const toDocuments = (
     ]),
   );
 
+// The `userConfig` the server last accepted (read or written): the base a failed write rolls back to.
+const confirmedUserConfigs = new WeakMap<JotaiStore, AppConfigDocument>();
+
+/** Leaf paths where two documents differ; arrays and scalars are leaves. */
+const changedPaths = (
+  a: unknown,
+  b: unknown,
+  path: Array<string> = [],
+): Array<Array<string>> => {
+  if (_.isPlainObject(a) && _.isPlainObject(b)) {
+    const keys = _.union(_.keys(a), _.keys(b));
+    return keys.flatMap((key) =>
+      changedPaths(
+        (a as AppConfigDocument)[key],
+        (b as AppConfigDocument)[key],
+        [...path, key],
+      ),
+    );
+  }
+  return _.isEqual(a, b) ? [] : [path];
+};
+
+/** `target` with the value of `source` at each path (`undefined` removes it). */
+const withPaths = (
+  target: AppConfigDocument,
+  source: AppConfigDocument,
+  paths: Array<Array<string>>,
+): AppConfigDocument => {
+  const next = _.cloneDeep(target);
+  for (const path of paths) {
+    const value = _.get(source, path);
+    if (value === undefined) _.unset(next, path);
+    else _.set(next, path, _.cloneDeep(value));
+  }
+  return next;
+};
+
 /**
  * Stores a `myAppConfigs` answer (the sign-in query's or `loadMyAppConfig`'s).
- * A failed read keeps an earlier answer as the base; with none, writes are refused.
+ * A `userConfig` change not sent yet is applied again on the answer. A failed
+ * read keeps an earlier answer as the base; with none, writes are refused.
  */
 export const setMyAppConfigs = (
   store: JotaiStore,
@@ -190,18 +228,29 @@ export const setMyAppConfigs = (
     | undefined,
 ) => {
   if (rows) {
-    store.set(myAppConfigState, {
-      status: 'loaded',
-      configs: toDocuments(rows),
-    });
+    const configs = toDocuments(rows);
+    const server = configs.userConfig ?? {};
+    const confirmed = confirmedUserConfigs.get(store);
+    const current = store.get(myAppConfigState).configs.userConfig;
+    if (confirmed && current) {
+      configs.userConfig = withPaths(
+        server,
+        current,
+        changedPaths(confirmed, current),
+      );
+    }
+    confirmedUserConfigs.set(store, server);
+    store.set(myAppConfigState, { status: 'loaded', configs });
   } else if (store.get(myAppConfigState).status !== 'loaded') {
     store.set(myAppConfigState, { status: 'failed', configs: {} });
   }
 };
 
 /** Back to the state before sign-in, for joining another server. */
-export const clearMyAppConfigs = (store: JotaiStore) =>
+export const clearMyAppConfigs = (store: JotaiStore) => {
+  confirmedUserConfigs.delete(store);
   store.set(myAppConfigState, { status: 'idle', configs: {} });
+};
 
 const readMyAppConfigs = async (
   store: JotaiStore,
@@ -268,10 +317,12 @@ const commitMyUserConfig = (
     });
   });
 
-/** Unqueued: callers run it inside `serializeWrite(MY_QUEUE_KEY, …)`. */
-const writeMyUserConfig = async (
+/**
+ * Changes `userConfig` in the atom at once; `sendMyUserConfig` stores it. Throws
+ * while the status is not `loaded`, since there is no document to build on.
+ */
+export const applyMyUserConfig = (
   store: JotaiStore,
-  environment: IEnvironment,
   subKey: AppConfigSubKey,
   update: AppConfigUpdate,
 ) => {
@@ -280,14 +331,50 @@ const writeMyUserConfig = async (
     throw new Error('userConfig could not be read, so it is not written');
   }
   // The merged view is the base: DOMAIN-scope `userConfig` keys are copied into the USER document.
-  const next = applySubKey(configs.userConfig ?? {}, subKey, update);
-  await commitMyUserConfig(environment, next);
-  const latest = store.get(myAppConfigState);
   store.set(myAppConfigState, {
-    ...latest,
-    configs: { ...latest.configs, userConfig: next },
+    status,
+    configs: {
+      ...configs,
+      userConfig: applySubKey(configs.userConfig ?? {}, subKey, update),
+    },
   });
 };
+
+/** Unqueued: callers run it inside `serializeWrite(MY_QUEUE_KEY, …)`. */
+const sendMyUserConfigNow = async (
+  store: JotaiStore,
+  environment: IEnvironment,
+) => {
+  const sent = store.get(myAppConfigState).configs.userConfig ?? {};
+  const confirmed = confirmedUserConfigs.get(store) ?? {};
+  if (_.isEqual(sent, confirmed)) return;
+  try {
+    await commitMyUserConfig(environment, sent);
+    confirmedUserConfigs.set(store, sent);
+  } catch (error) {
+    // Roll back only what this write carried, and only where nothing changed it since.
+    const latest = store.get(myAppConfigState);
+    const current = latest.configs.userConfig ?? {};
+    const failed = changedPaths(confirmed, sent).filter((path) =>
+      _.isEqual(_.get(current, path), _.get(sent, path)),
+    );
+    store.set(myAppConfigState, {
+      ...latest,
+      configs: {
+        ...latest.configs,
+        userConfig: withPaths(current, confirmed, failed),
+      },
+    });
+    throw error;
+  }
+};
+
+/** Sends the atom's `userConfig` as the USER document, after the writes queued before it. */
+export const sendMyUserConfig = (
+  store: JotaiStore,
+  environment: IEnvironment = RelayEnvironment,
+): Promise<void> =>
+  serializeWrite(MY_QUEUE_KEY, () => sendMyUserConfigNow(store, environment));
 
 export type MyAppConfigSetter<T> = (
   update: T | undefined | ((current: T | undefined) => T | undefined),
@@ -296,9 +383,10 @@ export type MyAppConfigSetter<T> = (
 /**
  * One merged document from the atom, at `subKey` (pass `[domainName, ...]` for
  * a domain's `publicConfigByDomain` slice), with the atom's read status.
- * Only `userConfig` gets `set` (writes the USER document) and `reset` (removes
- * the key there and reloads, so the DOMAIN-scope default shows again); both
- * reject while the status is not `loaded`.
+ * Only `userConfig` gets `set` (shows the change at once, then writes the USER
+ * document; a failed write rolls the change back) and `reset` (removes the key
+ * there and reloads, so the DOMAIN-scope default shows again); both reject
+ * while the status is not `loaded`.
  */
 export function useMyAppConfig<T = unknown>(
   configName: 'userConfig',
@@ -328,17 +416,27 @@ export function useMyAppConfig(
     return [value, undefined, undefined, status];
   }
 
-  const set: MyAppConfigSetter<unknown> = (update) =>
-    serializeWrite(MY_QUEUE_KEY, () =>
-      writeMyUserConfig(store, environment, subKey, update),
-    );
+  const set: MyAppConfigSetter<unknown> = (update) => {
+    try {
+      applyMyUserConfig(store, subKey, update);
+    } catch (error) {
+      return Promise.reject(error);
+    }
+    return sendMyUserConfig(store, environment);
+  };
 
-  // One queued task, so a write sent during the reset builds on the reloaded document.
-  const reset = () =>
-    serializeWrite(MY_QUEUE_KEY, async () => {
-      await writeMyUserConfig(store, environment, subKey, undefined);
+  // One queued task: the write, then the reload that brings the DOMAIN default back.
+  const reset = () => {
+    try {
+      applyMyUserConfig(store, subKey, undefined);
+    } catch (error) {
+      return Promise.reject(error);
+    }
+    return serializeWrite(MY_QUEUE_KEY, async () => {
+      await sendMyUserConfigNow(store, environment);
       await loadMyAppConfig(store, environment);
     });
+  };
 
   return [value, set, reset, status];
 }

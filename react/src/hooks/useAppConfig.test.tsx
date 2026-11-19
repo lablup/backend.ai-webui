@@ -363,7 +363,7 @@ describe('myAppConfigState', () => {
     expect(result.current[0]).toBe(2);
   });
 
-  it('keeps the value when the write fails', async () => {
+  it('shows the change at once and rolls it back when the write fails', async () => {
     const { hooks, environment, store } = await setup();
     hooks.setMyAppConfigs(store, rows({ x: 1 }));
     const { result } = renderHook(
@@ -372,8 +372,12 @@ describe('myAppConfigState', () => {
         wrapper: wrapperFor(environment, store),
       },
     );
+    let pending: Promise<void> = Promise.resolve();
+    act(() => {
+      pending = result.current[1](5);
+    });
+    expect(result.current[0]).toBe(5);
     await act(async () => {
-      const pending = result.current[1](5);
       const upsert = await waitForOperation(
         environment,
         'useAppConfigMyUpsertMutation',
@@ -382,6 +386,72 @@ describe('myAppConfigState', () => {
       await expect(pending).rejects.toThrow('boom');
     });
     expect(result.current[0]).toBe(1);
+  });
+
+  it('rolls back only what the failed write carried', async () => {
+    const { hooks, environment, store } = await setup();
+    hooks.setMyAppConfigs(store, rows({ x: 1, y: 1 }));
+    const userConfig = () =>
+      store.get(hooks.myAppConfigState).configs.userConfig;
+    await act(async () => {
+      hooks.applyMyUserConfig(store, 'x', 5);
+      const first = hooks.sendMyUserConfig(store, environment);
+      const upsert = await waitForOperation(
+        environment,
+        'useAppConfigMyUpsertMutation',
+      );
+      // Made while the first write is in flight: y is new, x is changed again.
+      hooks.applyMyUserConfig(store, 'y', 7);
+      const second = hooks.sendMyUserConfig(store, environment);
+      environment.mock.reject(upsert, new Error('boom'));
+      await expect(first).rejects.toThrow('boom');
+      expect(userConfig()).toEqual({ x: 1, y: 7 });
+      const sent = await answerUpsert(
+        environment,
+        'useAppConfigMyUpsertMutation',
+      );
+      expect(sent.items[0].config).toEqual({ x: 1, y: 7 });
+      await second;
+    });
+  });
+
+  it('keeps a later change to the key a failed write carried', async () => {
+    const { hooks, environment, store } = await setup();
+    hooks.setMyAppConfigs(store, rows({ x: 1 }));
+    await act(async () => {
+      hooks.applyMyUserConfig(store, 'x', 5);
+      const first = hooks.sendMyUserConfig(store, environment);
+      const upsert = await waitForOperation(
+        environment,
+        'useAppConfigMyUpsertMutation',
+      );
+      hooks.applyMyUserConfig(store, 'x', 6);
+      const second = hooks.sendMyUserConfig(store, environment);
+      environment.mock.reject(upsert, new Error('boom'));
+      await expect(first).rejects.toThrow('boom');
+      const sent = await answerUpsert(
+        environment,
+        'useAppConfigMyUpsertMutation',
+      );
+      expect(sent.items[0].config).toEqual({ x: 6 });
+      await second;
+    });
+  });
+
+  it('keeps a change not sent yet when it reloads', async () => {
+    const { hooks, environment, store } = await setup();
+    hooks.setMyAppConfigs(store, rows({ x: 1 }));
+    hooks.applyMyUserConfig(store, 'x', 2);
+    const pending = hooks.loadMyAppConfig(store, environment);
+    const read = await waitForOperation(environment, 'useAppConfigLoadQuery');
+    environment.mock.resolve(read, {
+      data: { myAppConfigs: rows({ x: 1, z: 3 }) },
+    });
+    await pending;
+    expect(store.get(hooks.myAppConfigState).configs.userConfig).toEqual({
+      x: 2,
+      z: 3,
+    });
   });
 
   it.each([
@@ -506,7 +576,7 @@ describe('myAppConfigState', () => {
     await waitFor(() => expect(my.current[0]).toBe(2));
   });
 
-  it('sends a set made during a reset after its reload', async () => {
+  it('sends a change made during a reset after its reload', async () => {
     const { hooks, environment, store } = await setup();
     hooks.setMyAppConfigs(store, rows({ x: 9 }));
     const { result } = renderHook(
@@ -517,8 +587,14 @@ describe('myAppConfigState', () => {
     );
     await act(async () => {
       const reset = result.current[2]();
-      const set = result.current[1]((c) => c);
-      await answerUpsert(environment, 'useAppConfigMyUpsertMutation');
+      hooks.applyMyUserConfig(store, 'y', 5);
+      const set = hooks.sendMyUserConfig(store, environment);
+      const resetWrite = await answerUpsert(
+        environment,
+        'useAppConfigMyUpsertMutation',
+      );
+      // The reset's write already carries y: the atom held it when the write was sent.
+      expect(resetWrite.items[0].config).toEqual({ y: 5 });
       const reload = await waitForOperation(
         environment,
         'useAppConfigLoadQuery',
@@ -527,15 +603,18 @@ describe('myAppConfigState', () => {
         operationsNamed(environment, 'useAppConfigMyUpsertMutation'),
       ).toHaveLength(0);
       environment.mock.resolve(reload, {
-        data: { myAppConfigs: rows({ x: 3 }) },
+        data: { myAppConfigs: rows({ x: 3, y: 5 }) },
       });
       await reset;
-      const sent = await answerUpsert(
-        environment,
-        'useAppConfigMyUpsertMutation',
-      );
-      expect(sent.items[0].config).toEqual({ x: 3 });
       await set;
+    });
+    // y was confirmed by the reset's write, so nothing is sent again.
+    expect(
+      operationsNamed(environment, 'useAppConfigMyUpsertMutation'),
+    ).toHaveLength(0);
+    expect(store.get(hooks.myAppConfigState).configs.userConfig).toEqual({
+      x: 3,
+      y: 5,
     });
   });
 });

@@ -34,8 +34,9 @@ flowchart LR
   atom["myAppConfigState<br/>jotai atom"]
   merged -- "로그인 query, loadMyAppConfig" --> atom
   atom -- "subKey의 configName, status" --> my["useMyAppConfig"]
-  my -- "set, reset: userConfig 전체" --> myUpsert
-  myUpsert -- "쓴 문서" --> atom
+  my -- "set, reset: 변경을 즉시" --> atom
+  atom -- "userConfig 전체" --> myUpsert
+  myUpsert -. "실패한 쓰기: 그 경로를 되돌림" .-> atom
   raw -- "raw document, network-only" --> scoped["useScopedAppConfig<br/>관리자 페이지"]
   scoped -- "호출마다 mutation 하나" --> upsert
   upsert -. "PUBLIC 또는 로그인한 domain: queue에 넣은 loadMyAppConfig" .-> merged
@@ -67,7 +68,7 @@ flowchart LR
 
 - **Atom**: `react/src/hooks/useAppConfig.ts`의 `myAppConfigState`는 `{ status, configs }`를 담는다. `configs`는 `publicConfigByDomain`, `domainConfig`, `userConfig` 각각을 merge된 문서에 대응시키고, `status`는 `idle`, `loaded`, `failed` 중 하나다. `useMyAppConfig`가 네 번째 값으로 `status`를 돌려준다.
 - **Sign-in read**: `loginSessionAuthMyUserQuery`가 세 이름의 `myAppConfigs`를 `@catch(to: NULL)`로 선택하고, `connectViaGQL`이 `applyConfigToClient`가 client를 ready로 만들기 전에 응답을 `setMyAppConfigs`에 넘긴다. `useSuspendedBackendaiClient` 뒤의 화면은 atom이 응답을 담기 전에 렌더하지 않는다.
-- **Reload**: `loadMyAppConfig(store, environment?)`는 일반 함수다. 같은 세 이름을 `fetchQuery`와 `network-only`로 읽고 `setMyAppConfigs`로 응답을 저장한다. 읽기가 진행 중일 때 들어온 호출은 그 뒤에 시작하는 읽기 하나를 함께 쓰므로, 쓰기가 몰려도 읽기는 많아야 두 번이다.
+- **Reload**: `loadMyAppConfig(store, environment?)`는 일반 함수다. 같은 세 이름을 `fetchQuery`와 `network-only`로 읽고 `setMyAppConfigs`로 응답을 저장한다. 읽기가 진행 중일 때 들어온 호출은 그 뒤에 시작하는 읽기 하나를 함께 쓰므로, 쓰기가 몰려도 읽기는 많아야 두 번이다. atom에서 바꿨지만 아직 보내지 않은 `userConfig` 변경은 응답 위에 다시 적용하므로, 다시 읽어도 사라지지 않는다.
 - **Failed read**: 첫 읽기가 실패하면 `setMyAppConfigs`가 `status: 'failed'`로 둔다. 이후 읽기가 실패하면 이전 응답과 `loaded` 상태를 유지한다. 그 응답이 여전히 다음 쓰기의 기준이 될 수 있기 때문이다.
 - **Failed-read readers**: 값이 없음을 "계정에 값이 없다"로 해석하는 reader는 먼저 `useMyAppConfig`가 돌려준 `status`를 확인한다. `status`가 `loaded`가 아니면 `DismissSplashOnMount`는 mirror에 있는 테마 family를 유지하고, `useSessionHistoryStore`는 로컬 기록을 옮기지 않는다.
 - **Server switch**: `loadConfigFromWebServer`가 `clearMyAppConfigs`를 불러서 이전 서버의 문서가 계속 적용되지 않게 한다.
@@ -80,12 +81,13 @@ flowchart LR
 | `useMyAppConfig<T>('userConfig', subKey)`                           | `[value, set, reset, status]`           | `subKey`의 `configs.userConfig`            | `myAtomicBulkUpsertAppConfigFragments`를 거친 USER scope |
 | `useMyAppConfig<T>('domainConfig' \| 'publicConfigByDomain', subKey?)` | `[value, undefined, undefined, status]` | `subKey`의 `configs[configName]`, 또는 전체 | 없음                                                     |
 
-- **Write base**: `set(update)`는 atom의 merge된 `userConfig`에 `update`(값, 또는 현재 값을 받는 함수. `undefined`는 키를 지운다)를 적용하고 결과 전체를 USER 문서로 보낸다. mutation이 성공하면 `set`이 그 문서를 atom에 저장하고, 실패하면 atom을 그대로 둔다.
+- **Write base**: `set(update)`는 atom의 merge된 `userConfig`에 `update`(값, 또는 현재 값을 받는 함수. `undefined`는 키를 지운다)를 즉시 적용하고(`applyMyUserConfig`), atom의 `userConfig` 전체를 USER 문서로 보낸다(`sendMyUserConfig`). 보낼 문서가 서버가 마지막으로 받아들인 문서와 같으면 아무것도 보내지 않는다.
+- **Rollback**: module은 서버가 마지막으로 받아들인 `userConfig`(읽은 것이든 쓴 것이든)를 기억한다. 쓰기가 실패하면 보낸 문서가 그 문서와 다른 경로마다 받아들인 값으로 되돌린다. 단, 쓰기를 보낸 뒤 다시 바뀐 경로는 그대로 둔다. 그 뒤 `set`은 reject한다.
 - **Reset**: `reset()`은 같은 방식으로 USER 문서에서 `subKey`를 지운 뒤 `loadMyAppConfig`를 부른다. 그러면 그 키의 DOMAIN scope `userConfig` 값이 다시 보인다.
 - **Refused write**: `status`가 `loaded`가 아니면 `set`과 `reset`은 아무것도 보내지 않고 reject한다.
-- **Ordering**: `USER:me` key의 module 단위 queue 하나가 모든 `set`, 모든 `reset`, scoped 쓰기 뒤의 다시 읽기를 실행한다. 작업은 앞 작업이 끝난 뒤 시작하고 앞 작업이 남긴 atom을 기준으로 다음 USER 문서를 만든다. 그래서 다시 읽기가 읽는 도중에 끝난 `set`을 덮어쓰지 못한다. `reset`은 쓰기와 다시 읽기를 작업 하나로 실행하므로, `reset` 도중에 들어온 `set`은 다시 읽은 문서를 기준으로 만든다.
+- **Ordering**: `USER:me` key의 module 단위 queue 하나가 모든 `set`, 모든 `reset`, scoped 쓰기 뒤의 다시 읽기를 실행한다. 작업은 앞 작업이 끝난 뒤 시작하고 앞 작업이 남긴 atom을 기준으로 다음 USER 문서를 만든다. 그래서 다시 읽기가 읽는 도중에 끝난 `set`을 덮어쓰지 못한다. `reset`은 쓰기와 다시 읽기를 작업 하나로 실행한다. 다시 읽기는 보내지 않은 변경을 남기므로, `reset` 도중에 한 변경은 다시 읽은 뒤에도 atom에 남는다.
 - **Domain slice**: `publicConfigByDomain`은 domain마다 slice를 하나씩 담으므로, 호출부는 domain 이름을 경로의 첫 segment로 넘긴다. 예: `useMyAppConfig('publicConfigByDomain', [domainName, key])`.
-- **Optimistic display**: hook은 서버가 받아들인 값만 보여 준다. 대기 중인 값을 보여 주는 호출부는 `useDashboardBoards`, `useSessionHistoryStore`, `UserSettingsGeneralPane`처럼 그 값을 직접 들고 있다.
+- **Optimistic display**: `userConfig` 변경은 서버가 저장하기 전에 즉시 보이고, 쓰기가 실패하면 되돌아간다. `useDashboardBoards`, `useSessionHistoryStore`, `UserSettingsGeneralPane`은 여전히 대기 중인 값을 직접 들고 있다.
 
 ### 3. `useScopedAppConfig`
 
@@ -127,7 +129,7 @@ flowchart LR
 - **Relay store as the shared copy**: 각 hook이 `store-or-network`로 문서를 읽고, 페이지 로드마다 사본 하나를 Relay store가 공유하게 한다. 로그인 읽기 한 번이 이미 세 이름을 모두 답하는데도 읽는 화면마다 자기 query를 보내거나 기다리며 suspend하므로 기각했다.
 - **One request for every scope**: `useScopedAppConfig`가 scope 여러 개를 받아 alias field들로 된 query 하나로 읽는다. 거부되는 DOMAIN field가 있으면 manager가 요청 전체를 `data: null`로 응답해 읽을 수 없는 scope 하나가 읽을 수 있는 scope까지 가리므로 기각했다.
 - **Changed keys on a merged atom**: scoped 쓰기 뒤 페이지가 바뀐 키를 `myAppConfigState`나 derived `loginConfigState`에 set한다. manager의 merge를 클라이언트에서 반복하고, 쓴 문서에 더는 없는 키가 옛 값을 유지하므로 기각했다. §4는 대신 층 문서 전체를 바꾼다.
-- **Optimistic atom update in `set`**: `set`이 mutation 전에 atom을 쓰고 실패하면 되돌린다. 현재 호출부가 이미 대기 중인 값을 직접 들고 있고, 되돌리기가 optimistic 값을 기준으로 만든 다음 쓰기까지 되돌릴 수 있어 기각했다.
+- **Atom written after the server accepts**: `set`이 mutation이 성공한 뒤에만 문서를 atom에 저장한다. 그러면 변경이 왕복이 끝난 뒤에야 보여서, 즉시 보여야 하는 호출부마다 같은 값의 대기 사본을 들고 있어야 하고, 계정 설정의 debounce 쓰기는 따로 atom을 하나 더 둬야 해서(ADR 0032) 기각했다.
 
 ## Consequences
 
@@ -135,6 +137,7 @@ flowchart LR
 - **Copied defaults**: merged view가 쓰기 기준이므로 첫 `set`이 DOMAIN scope `userConfig`의 키를 모두 USER 문서로 복사한다. 그 사용자의 해당 키는 이후 DOMAIN 기본값이 바뀌어도 따라가지 않으며, `reset`에 넘긴 키만 다시 따른다.
 - **Object defaults**: 객체는 키별로 merge되므로, 객체인 DOMAIN scope 기본값은 사용자의 객체 아래에 하위 키를 남긴다. `reset`은 USER 문서에서 키를 지우고 기본값을 다시 보여 주며, 기본값을 숨기려면 `set(null)`이 필요하다.
 - **Allow-list dependency**: allow-list가 `publicConfigByDomain`이나 `domainConfig`에 scope를 추가하면 `useMyAppConfig`가 그 이름에 대해 더는 raw document를 돌려주지 않는다. `userConfig`에 PUBLIC을 추가하면 `set`이 PUBLIC 값도 USER 문서로 복사한다.
+- **Shown before stored**: 변경은 서버가 저장하기 전에 보이고, 실패한 쓰기는 자신이 실어 보낸 경로만 되돌린다.
 - **Lost concurrent edits**: atom을 마지막으로 읽은 뒤 다른 탭이나 CLI가 USER 문서에 한 변경은 `set`이 덮어쓴다.
 - **Act-as**: act-as 탭은 대상 계정의 `userConfig`를 읽고 쓴다.
 

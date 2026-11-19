@@ -34,8 +34,9 @@ flowchart LR
   atom["myAppConfigState<br/>jotai atom"]
   merged -- "sign-in query, loadMyAppConfig" --> atom
   atom -- "configName at subKey, status" --> my["useMyAppConfig"]
-  my -- "set, reset: whole userConfig" --> myUpsert
-  myUpsert -- "written document" --> atom
+  my -- "set, reset: the change, at once" --> atom
+  atom -- "whole userConfig" --> myUpsert
+  myUpsert -. "failed write: its paths rolled back" .-> atom
   raw -- "raw documents, network-only" --> scoped["useScopedAppConfig<br/>admin pages"]
   scoped -- "one mutation per call" --> upsert
   upsert -. "PUBLIC or signed-in domain: queued loadMyAppConfig" .-> merged
@@ -67,7 +68,7 @@ flowchart LR
 
 - **Atom**: `myAppConfigState` in `react/src/hooks/useAppConfig.ts` holds `{ status, configs }`. `configs` maps each of `publicConfigByDomain`, `domainConfig` and `userConfig` to its merged document; `status` is `idle`, `loaded` or `failed`. `useMyAppConfig` returns `status` as its fourth item.
 - **Sign-in read**: `loginSessionAuthMyUserQuery` selects `myAppConfigs` for the three names with `@catch(to: NULL)`, and `connectViaGQL` passes the answer to `setMyAppConfigs` before `applyConfigToClient` marks the client ready. No screen behind `useSuspendedBackendaiClient` renders before the atom holds the answer.
-- **Reload**: `loadMyAppConfig(store, environment?)` is a plain function. It reads the same three names with `fetchQuery` and `network-only` and stores the answer through `setMyAppConfigs`. Calls made while a read runs share one read that starts after it, so a burst of writes costs at most two reads.
+- **Reload**: `loadMyAppConfig(store, environment?)` is a plain function. It reads the same three names with `fetchQuery` and `network-only` and stores the answer through `setMyAppConfigs`. Calls made while a read runs share one read that starts after it, so a burst of writes costs at most two reads. A `userConfig` change made in the atom and not sent yet is applied again on the answer, so a reload does not undo it.
 - **Failed read**: when the first read fails, `setMyAppConfigs` sets `status: 'failed'`. A failed later read keeps the earlier answer and its `loaded` status, because that answer is still a base the next write can build on.
 - **Failed-read readers**: a reader that treats a missing value as "the account has none" checks the `status` `useMyAppConfig` returns first. `DismissSplashOnMount` keeps the mirrored theme family, and `useSessionHistoryStore` does not move the local history, while `status` is not `loaded`.
 - **Server switch**: `loadConfigFromWebServer` calls `clearMyAppConfigs`, so the previous server's documents do not stay applied.
@@ -80,12 +81,13 @@ flowchart LR
 | `useMyAppConfig<T>('userConfig', subKey)`                           | `[value, set, reset, status]`           | `configs.userConfig` at `subKey`          | the USER scope, through `myAtomicBulkUpsertAppConfigFragments` |
 | `useMyAppConfig<T>('domainConfig' \| 'publicConfigByDomain', subKey?)` | `[value, undefined, undefined, status]` | `configs[configName]` at `subKey`, or all | nothing                                                        |
 
-- **Write base**: `set(update)` applies `update` (a value, or a function of the current value; `undefined` removes the key) to the merged `userConfig` in the atom and sends the whole result as the USER document. After the mutation succeeds, `set` stores that document in the atom; a failed mutation leaves the atom as it was.
+- **Write base**: `set(update)` applies `update` (a value, or a function of the current value; `undefined` removes the key) to the merged `userConfig` in the atom at once (`applyMyUserConfig`), then sends the atom's whole `userConfig` as the USER document (`sendMyUserConfig`). A send whose document equals the one the server last accepted sends nothing.
+- **Rollback**: the module keeps the `userConfig` the server last accepted, read or written. When a write fails, each path where its document differs from that one goes back to the accepted value, unless the path changed again after the write was sent; `set` then rejects.
 - **Reset**: `reset()` removes `subKey` from the USER document the same way, then calls `loadMyAppConfig`, so the DOMAIN-scope `userConfig` value at that key shows again.
 - **Refused write**: `set` and `reset` reject without sending anything while `status` is not `loaded`.
-- **Ordering**: one module-level queue, keyed `USER:me`, runs every `set`, every `reset`, and the reload after a scoped write. A task starts after the previous one settles and builds on the atom it left, so a reload cannot replace a `set` that lands while it reads. `reset` runs its write and its reload as one task, so a `set` made during a `reset` builds on the reloaded document.
+- **Ordering**: one module-level queue, keyed `USER:me`, runs every `set`, every `reset`, and the reload after a scoped write. A task starts after the previous one settles and builds on the atom it left, so a reload cannot replace a `set` that lands while it reads. `reset` runs its write and its reload as one task; a change made during a `reset` stays in the atom through the reload, which keeps unsent changes.
 - **Domain slice**: `publicConfigByDomain` holds one slice per domain, so callers pass the domain name as the first path segment, `useMyAppConfig('publicConfigByDomain', [domainName, key])`.
-- **Optimistic display**: the hooks show a value only after the server accepted it. A caller that shows a pending value keeps it itself, as `useDashboardBoards`, `useSessionHistoryStore` and `UserSettingsGeneralPane` do.
+- **Optimistic display**: a `userConfig` change shows at once, before the server stores it, and a failed write takes it back. `useDashboardBoards`, `useSessionHistoryStore` and `UserSettingsGeneralPane` still keep their own pending value.
 
 ### 3. `useScopedAppConfig`
 
@@ -127,7 +129,7 @@ flowchart LR
 - **Relay store as the shared copy**: each hook reads its documents with `store-or-network` and relies on the Relay store to share one copy per page load. Rejected because every reading screen sends or waits for a query of its own and suspends, while one sign-in read already answers all three names.
 - **One request for every scope**: `useScopedAppConfig` takes several scopes and reads them in one query of aliased fields. Rejected because a denied DOMAIN field makes the manager answer the whole request with `data: null`, so one unreadable scope hides the readable ones.
 - **Changed keys on a merged atom**: after a scoped write, the page sets the changed keys on `myAppConfigState` or on the derived `loginConfigState`. Rejected because it repeats the manager's merge in the client, and a key the written document no longer carries would keep its old value. §4 instead replaces a whole layer document.
-- **Optimistic atom update in `set`**: `set` writes the atom before the mutation and rolls it back on failure. Rejected because the current callers already keep their own pending value, and a rollback could undo a later write that built on the optimistic value.
+- **Atom written after the server accepts**: `set` stores the document in the atom only after the mutation succeeds. Rejected because a change then shows only after the round trip, so every caller that needs it at once keeps a pending copy of the same value, and the account settings' debounced writes would need a second atom of their own (ADR 0032).
 
 ## Consequences
 
@@ -135,6 +137,7 @@ flowchart LR
 - **Copied defaults**: the first `set` copies every DOMAIN-scope `userConfig` key into the USER document, because the merged view is the write base. Those keys no longer follow later changes of the DOMAIN default for that user; only a key passed to `reset` does.
 - **Object defaults**: a DOMAIN-scope default that is an object keeps its sub-keys under a user's object, because objects merge key by key. `reset` removes the key from the USER document and shows the default again; hiding a default needs `set(null)`.
 - **Allow-list dependency**: if the allow-list adds a scope to `publicConfigByDomain` or `domainConfig`, `useMyAppConfig` no longer returns the raw document for it; if it adds PUBLIC to `userConfig`, `set` also copies PUBLIC values into the USER document.
+- **Shown before stored**: a change is visible before the server stores it, and a failed write takes back only the paths it carried.
 - **Lost concurrent edits**: a `set` overwrites a change another tab or the CLI made to the USER document after the atom was last read.
 - **Act-as**: an act-as tab reads and writes the target account's `userConfig`.
 
