@@ -62,6 +62,15 @@ export function getAIErrorMessage(error: unknown): string {
       return error.message;
     } else if (typeof error === 'string') {
       return error;
+    } else if (error && typeof error === 'object') {
+      // A stream error part can carry the server's raw `{ message }` or `{ error: { message } }`.
+      const body = error as {
+        message?: unknown;
+        error?: { message?: unknown };
+      };
+      const message = body.message ?? body.error?.message;
+      if (typeof message === 'string' && message) return message;
+      return 'Unknown error:' + JSON.stringify(error);
     }
     return 'Unknown error:' + error;
   } catch {

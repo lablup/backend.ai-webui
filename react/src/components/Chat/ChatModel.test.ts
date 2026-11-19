@@ -37,4 +37,14 @@ describe('getAIErrorMessage', () => {
     expect(getAIErrorMessage(callError('{"detail":"x"}'))).toBe('Bad Request');
     expect(getAIErrorMessage(callError())).toBe('Bad Request');
   });
+
+  it('reads a plain error object from a stream error part', () => {
+    expect(getAIErrorMessage({ message: 'slot unavailable' })).toBe(
+      'slot unavailable',
+    );
+    expect(
+      getAIErrorMessage({ error: { message: 'context size exceeded' } }),
+    ).toBe('context size exceeded');
+    expect(getAIErrorMessage({ code: 500 })).toBe('Unknown error:{"code":500}');
+  });
 });
