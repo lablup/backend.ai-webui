@@ -144,6 +144,64 @@ test.describe(
     );
 
     // -----------------------------------------------------------------------
+    // Session Launches Widget (superadmin only)
+    // -----------------------------------------------------------------------
+    test.describe('Session Launches Widget', () => {
+      // A new superadmin board shows the card; a board saved before it existed
+      // appends it at the bottom. Show it from the edit sider in case this
+      // account hid it, and hide it again afterwards when it was hidden.
+      let addedCard = false;
+      const setCardShown = async (page: Page, shown: boolean) => {
+        const dashboardBar = page.getByTestId('dashboard-filter-bar');
+        await dashboardBar.getByRole('button', { name: 'Edit' }).click();
+        const checkbox = page.getByRole('checkbox', {
+          name: 'Session Launches',
+          exact: true,
+        });
+        await expect(checkbox).toBeVisible({ timeout: WIDGET_TIMEOUT });
+        const wasShown = await checkbox.isChecked();
+        if (wasShown !== shown) await checkbox.click();
+        await dashboardBar.getByRole('button', { name: 'Close' }).click();
+        return wasShown;
+      };
+
+      test.beforeEach(async ({ page, request }) => {
+        await loginAsAdmin(page, request);
+        await navigateTo(page, 'admin/dashboard');
+        addedCard = !(await setCardShown(page, true));
+      });
+
+      test.afterEach(async ({ page }) => {
+        if (addedCard) await setCardShown(page, false);
+      });
+
+      test('Admin can view the Session Launches card on the superadmin dashboard', async ({
+        page,
+      }) => {
+        // 1. Locate the "Session Launches" card (scroll: a saved board puts it last)
+        const widget = page.locator('.uic-board-item').filter({
+          has: page.getByText('Session Launches', { exact: true }),
+        });
+        await widget.scrollIntoViewIfNeeded({ timeout: WIDGET_TIMEOUT });
+        await expect(widget).toBeVisible({ timeout: WIDGET_TIMEOUT });
+
+        // 2. Verify the launch outcome counts and the queue wait stats
+        for (const label of [
+          'Started',
+          'Cancelled',
+          'Error',
+          'Pending',
+          'Mean queue wait (scheduled)',
+          'Median queue wait (scheduled)',
+        ]) {
+          await expect(widget.getByText(label, { exact: true })).toBeVisible({
+            timeout: WIDGET_TIMEOUT,
+          });
+        }
+      });
+    });
+
+    // -----------------------------------------------------------------------
     // 11. Recently Created Sessions Widget
     // -----------------------------------------------------------------------
     test.describe('Recently Created Sessions Widget', () => {
