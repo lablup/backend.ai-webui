@@ -942,7 +942,7 @@
       "Terminating": "終了中",
       "ThisRange": "今回の期間",
       "TopFailureCauses": "監査ログ: 主な失敗原因",
-      "TopFailureCausesTooltip": "カードの期間内に現在のドメインとそのすべてのプロジェクト、ドメインのユーザーのすべての操作のうち、エラーになった、または拒否された監査ログ項目を操作とメッセージ別にまとめ、多い順に表示します。同じ原因が一つにまとまるよう、メッセージ内のIDと長い数字は伏せます。",
+      "TopFailureCausesTooltip": "選択した期間の失敗を原因別にまとめて表示します。",
       "Unhealthy": "異常",
       "Unlimited": "無制限",
       "ViewAll": "すべて表示",

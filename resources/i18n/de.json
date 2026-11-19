@@ -942,7 +942,7 @@
       "Terminating": "Wird beendet",
       "ThisRange": "Dieser Zeitraum",
       "TopFailureCauses": "Audit-Protokoll: Häufigste Fehlerursachen",
-      "TopFailureCausesTooltip": "Audit-Log-Einträge der aktuellen Domäne, all ihrer Projekte und aller Aktionen ihrer Benutzer, die im Zeitraum der Karte mit einem Fehler endeten oder abgelehnt wurden, nach Aktion und Meldung gruppiert, häufigste zuerst. IDs und lange Zahlen in einer Meldung werden maskiert, damit eine Ursache als eine gruppiert wird.",
+      "TopFailureCausesTooltip": "Gruppiert fehlgeschlagene Vorgänge nach Ursache im ausgewählten Zeitraum.",
       "Unhealthy": "Fehlerhaft",
       "Unlimited": "Unbegrenzt",
       "ViewAll": "Alle anzeigen",

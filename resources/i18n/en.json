@@ -929,7 +929,7 @@
       "Terminating": "Terminating",
       "ThisRange": "This range",
       "TopFailureCauses": "Audit Log: Top Failure Causes",
-      "TopFailureCausesTooltip": "Audit log entries of the current domain, all of its projects and every action its users took that ended in an error or were denied in the card's time range, grouped by action and message, most frequent first. IDs and long numbers in a message are masked so that one cause groups as one.",
+      "TopFailureCausesTooltip": "Groups failures by cause for the selected time range.",
       "Unhealthy": "Unhealthy",
       "Unlimited": "Unlimited",
       "ViewAll": "View all",

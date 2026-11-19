@@ -942,7 +942,7 @@
       "Terminating": "종료 중",
       "ThisRange": "이번 기간",
       "TopFailureCauses": "감사로그: 주요 실패 원인",
-      "TopFailureCausesTooltip": "카드에 설정한 기간 동안 현재 도메인과 그 안의 모든 프로젝트, 도메인 사용자의 모든 작업 중 오류로 끝났거나 거부된 감사로그 항목을 작업과 메시지별로 묶어 많은 순으로 보여 줍니다. 같은 원인이 하나로 묶이도록 메시지 안의 ID와 긴 숫자는 가립니다.",
+      "TopFailureCausesTooltip": "설정한 기간 동안 실패한 작업을 원인별로 묶어 보여 줍니다.",
       "Unhealthy": "비정상",
       "Unlimited": "무제한",
       "ViewAll": "전체 보기",

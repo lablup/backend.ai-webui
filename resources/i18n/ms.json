@@ -942,7 +942,7 @@
       "Terminating": "Sedang ditamatkan",
       "ThisRange": "Julat ini",
       "TopFailureCauses": "Log Audit: Punca Kegagalan Utama",
-      "TopFailureCausesTooltip": "Entri log audit domain semasa, semua projeknya dan semua tindakan penggunanya yang berakhir dengan ralat atau ditolak dalam julat masa kad, dikumpulkan mengikut tindakan dan mesej, yang paling kerap dahulu. ID dan nombor panjang dalam mesej disembunyikan supaya satu punca dikumpulkan sebagai satu.",
+      "TopFailureCausesTooltip": "Mengumpulkan kegagalan mengikut punca dalam julat masa yang dipilih.",
       "Unhealthy": "Tidak sihat",
       "Unlimited": "Tanpa had",
       "ViewAll": "Lihat semua",

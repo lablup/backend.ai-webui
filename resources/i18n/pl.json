@@ -942,7 +942,7 @@
       "Terminating": "Kończenie",
       "ThisRange": "Ten okres",
       "TopFailureCauses": "Dziennik audytu: Najczęstsze przyczyny błędów",
-      "TopFailureCausesTooltip": "Wpisy dziennika audytu bieżącej domeny, wszystkich jej projektów i wszystkich akcji jej użytkowników, które zakończyły się błędem lub odmową w zakresie czasu karty, pogrupowane według akcji i komunikatu, od najczęstszych. Identyfikatory i długie liczby w komunikacie są maskowane, aby jedna przyczyna tworzyła jedną grupę.",
+      "TopFailureCausesTooltip": "Grupuje niepowodzenia według przyczyny w wybranym przedziale czasu.",
       "Unhealthy": "Niesprawny",
       "Unlimited": "Bez limitu",
       "ViewAll": "Pokaż wszystko",

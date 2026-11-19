@@ -942,7 +942,7 @@
       "Terminating": "Menghentikan",
       "ThisRange": "Rentang ini",
       "TopFailureCauses": "Log Audit: Penyebab Kegagalan Teratas",
-      "TopFailureCausesTooltip": "Entri log audit domain saat ini, semua proyeknya, dan semua aksi penggunanya yang berakhir dengan error atau ditolak dalam rentang waktu kartu, dikelompokkan menurut aksi dan pesan, yang paling sering lebih dulu. ID dan angka panjang dalam pesan disamarkan agar satu penyebab dikelompokkan sebagai satu.",
+      "TopFailureCausesTooltip": "Mengelompokkan kegagalan berdasarkan penyebab pada rentang waktu yang dipilih.",
       "Unhealthy": "Tidak sehat",
       "Unlimited": "Tidak terbatas",
       "ViewAll": "Lihat semua",

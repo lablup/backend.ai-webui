@@ -942,7 +942,7 @@
       "Terminating": "In terminazione",
       "ThisRange": "Questo periodo",
       "TopFailureCauses": "Registro di controllo: Principali cause di errore",
-      "TopFailureCausesTooltip": "Voci del registro di audit del dominio corrente, di tutti i suoi progetti e di ogni azione dei suoi utenti terminate con errore o negate nell'intervallo della scheda, raggruppate per azione e messaggio, dalle più frequenti. ID e numeri lunghi in un messaggio vengono mascherati affinché una stessa causa sia raggruppata come una.",
+      "TopFailureCausesTooltip": "Raggruppa gli errori per causa nell'intervallo selezionato.",
       "Unhealthy": "Non integro",
       "Unlimited": "Illimitato",
       "ViewAll": "Mostra tutto",
