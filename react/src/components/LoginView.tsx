@@ -56,7 +56,7 @@ import {
   loginWithSAML,
   probeManager,
 } from '../helper/loginSessionAuth';
-import { resolvePluginScriptUrl } from '../helper/pluginPath';
+import { resolveLoginPluginScriptUrl } from '../helper/pluginPath';
 import { resolveInitialLanguage } from '../helper/resolveInitialLanguage';
 import { useElectronEndpointStep } from '../hooks/useElectronEndpointStep';
 import { useLoginOrchestration } from '../hooks/useLoginOrchestration';
@@ -330,12 +330,16 @@ const LoginView: React.FC<{
     }
   }
 
-  // Load the login plugin once config is ready; it is served from
+  // Load the login plugin once the endpoint step closes; it is served from
   // `/dist/plugins/` like page plugins, never bundled.
+  const isAccountFormShown = !endpointStep.isStepOpen;
   useEffect(() => {
-    if (!isConfigLoaded || !loginPlugin) return;
-
-    const pluginUrl = resolvePluginScriptUrl(loginPlugin, apiEndpoint);
+    const pluginUrl = resolveLoginPluginScriptUrl({
+      path: loginPlugin,
+      apiEndpoint,
+      isConfigLoaded,
+      isAccountFormShown,
+    });
     if (!pluginUrl) return;
 
     // `@vite-ignore` opts out of Vite's static analysis. The URL is an
@@ -344,7 +348,7 @@ const LoginView: React.FC<{
     import(/* @vite-ignore */ pluginUrl).catch(() => {
       setLoginError({ message: t('error.LoginPluginLoadFailed') });
     });
-  }, [isConfigLoaded, loginPlugin, apiEndpoint, t]);
+  }, [isConfigLoaded, isAccountFormShown, loginPlugin, apiEndpoint, t]);
 
   // Keep configRef in sync
   useEffect(() => {
