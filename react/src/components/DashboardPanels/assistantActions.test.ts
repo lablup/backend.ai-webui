@@ -4,9 +4,9 @@
  */
 import {
   applyAssistantActions,
-  buildDashboardPromptSection,
-  extractDashboardActions,
+  buildDashboardEditPrompt,
   isNoopAction,
+  parseDashboardActions,
   sanitizeAssistantActions,
   settingsTouchedBy,
 } from './assistantActions';
@@ -135,33 +135,28 @@ describe('sanitizeAssistantActions', () => {
   });
 });
 
-describe('extractDashboardActions', () => {
-  it('strips the block from the text and parses its actions', () => {
+describe('parseDashboardActions', () => {
+  it('reads a fenced block', () => {
     expect(
-      extractDashboardActions(
-        'Sure, I will hide it.\n```dashboard-actions\n{"actions":[{"type":"hide","id":"a"}]}\n```',
+      parseDashboardActions(
+        'Sure.\n```dashboard-actions\n{"actions":[{"type":"hide","id":"a"}]}\n```',
         ids,
       ),
-    ).toEqual({
-      text: 'Sure, I will hide it.',
-      actions: [{ type: 'hide', id: 'a' }],
-    });
+    ).toEqual([{ type: 'hide', id: 'a' }]);
   });
 
-  it('hides an unclosed block while it streams', () => {
+  it('reads bare JSON around other text', () => {
     expect(
-      extractDashboardActions('Okay.\n```dashboard-actions\n{"act', ids),
-    ).toEqual({ text: 'Okay.', actions: [] });
+      parseDashboardActions(
+        'Here: {"actions":[{"type":"show","id":"b"}]} done',
+        ids,
+      ),
+    ).toEqual([{ type: 'show', id: 'b' }]);
   });
 
-  it('leaves text without a block and ignores invalid JSON', () => {
-    expect(extractDashboardActions('Plain answer', ids)).toEqual({
-      text: 'Plain answer',
-      actions: [],
-    });
-    expect(
-      extractDashboardActions('x\n```dashboard-actions\nnot json\n```', ids),
-    ).toEqual({ text: 'x', actions: [] });
+  it('returns nothing for text without JSON or with invalid JSON', () => {
+    expect(parseDashboardActions('Plain answer', ids)).toEqual([]);
+    expect(parseDashboardActions('{not json}', ids)).toEqual([]);
   });
 });
 
@@ -246,9 +241,9 @@ describe('settingsTouchedBy', () => {
   });
 });
 
-describe('buildDashboardPromptSection', () => {
-  it('lists the cards and the action format', () => {
-    const section = buildDashboardPromptSection({
+describe('buildDashboardEditPrompt', () => {
+  it('lists the cards and asks for JSON only', () => {
+    const prompt = buildDashboardEditPrompt({
       page: 'project',
       cards: [
         {
@@ -261,9 +256,9 @@ describe('buildDashboardPromptSection', () => {
         { id: 'c', title: 'Activity', shown: false, range: 'default' },
       ],
     });
-    expect(section).toContain('- a | My sessions | on board | size 2x2');
-    expect(section).toContain('- c | Activity | not on board | range default');
-    expect(section).toContain('```dashboard-actions');
+    expect(prompt).toContain('- a | My sessions | on board | size 2x2');
+    expect(prompt).toContain('- c | Activity | not on board | range default');
+    expect(prompt).toContain('Reply with only a JSON object');
   });
 });
 

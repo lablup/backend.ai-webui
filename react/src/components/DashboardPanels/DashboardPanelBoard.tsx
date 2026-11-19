@@ -4,6 +4,7 @@
  */
 import type { ProjectContextOrNull } from '../../types/projectContext';
 import { dashboardEditModeAtom } from '../dashboardEditModeAtom';
+import DashboardAssistantSection from './DashboardAssistantSection';
 import DashboardBoardSection from './DashboardBoardSection';
 import DashboardBoardTabs from './DashboardBoardTabs';
 import DashboardEditSider from './DashboardEditSider';
@@ -14,7 +15,7 @@ import { useBoardItemVisibility } from './DashboardRefreshContext';
 import { DashboardResourceGroupsProvider } from './DashboardResourceGroups';
 import PanelSettingsModal from './PanelSettingsModal';
 import { boardSortsAtom } from './ResourceTablePanel';
-import { dashboardAssistantBridgeAtom } from './assistantActions';
+import type { DashboardAssistantAction } from './assistantActions';
 import { dashboardScopeKey } from './dashboardScope';
 import { DeniedPanelsContext, useDeniedPanels } from './panelPermission';
 import { panelSettingOverridesAtom } from './panelSettingOverrides';
@@ -37,11 +38,10 @@ import {
   BAISkeleton,
   BAIUnmountAfterClose,
   type BAIBoardProps,
-  useEventNotStable,
 } from 'backend.ai-ui';
 import { useAtom, useSetAtom } from 'jotai';
 import * as _ from 'lodash-es';
-import React, { Suspense, useEffect, useRef, useState } from 'react';
+import React, { Suspense, useRef, useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 
 /**
@@ -117,6 +117,9 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
   const [settingsPanelId, setSettingsPanelId] = useState<string | null>(null);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const boardContainerRef = useRef<HTMLDivElement>(null);
+  // A WebUI Assistant proposal the board previews until Apply or Discard.
+  const [draftActions, setDraftActions] =
+    useState<ReadonlyArray<DashboardAssistantAction> | null>(null);
 
   // These atoms are global: clear them when leaving the page, but not when a
   // suspending query remounts the board on the same path (that would drop an early click).
@@ -152,6 +155,7 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
     isRefetching,
     queryRefs,
     deniedPanelIds: denied.deniedPanels,
+    draftActions: draftActions ?? undefined,
     onRequestEditCustomPanel: (panel) =>
       setPanelModalState({ open: true, panel }),
   });
@@ -159,20 +163,18 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
     ? settingsTargetOf(settingsPanelId)
     : null;
 
-  // Hands the WebUI Assistant this board's cards while the page is mounted.
-  const setAssistantBridge = useSetAtom(dashboardAssistantBridgeAtom);
-  const applyFromAssistant = useEventNotStable(applyAssistantActions);
+  // Outlines and scrolls to the cards a WebUI Assistant proposal changes.
   const highlightedCardRef = useRef<Element | null>(null);
   const cardElementOf = (id: string) =>
     boardContainerRef.current?.querySelector(
       `[data-board-item-id="${CSS.escape(id)}"]`,
     ) ?? null;
-  const highlightCard = useEventNotStable((id: string | null) => {
+  const highlightCard = (id: string | null) => {
     highlightedCardRef.current?.classList.remove(ASSISTANT_HIGHLIGHT_CLASS);
     highlightedCardRef.current = id ? cardElementOf(id) : null;
     highlightedCardRef.current?.classList.add(ASSISTANT_HIGHLIGHT_CLASS);
-  });
-  const revealCard = useEventNotStable((id: string) => {
+  };
+  const revealCard = (id: string) => {
     // Two frames: the save re-renders the board before the card exists.
     requestAnimationFrame(() =>
       requestAnimationFrame(() => {
@@ -186,25 +188,7 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
         );
       }),
     );
-  });
-  const assistantCardsKey = JSON.stringify(assistantCards);
-  useEffect(() => {
-    setAssistantBridge({
-      page,
-      cards: JSON.parse(assistantCardsKey),
-      apply: applyFromAssistant,
-      highlight: highlightCard,
-      reveal: revealCard,
-    });
-  }, [
-    page,
-    assistantCardsKey,
-    applyFromAssistant,
-    highlightCard,
-    revealCard,
-    setAssistantBridge,
-  ]);
-  useEffect(() => () => setAssistantBridge(null), [setAssistantBridge]);
+  };
 
   const filters = useDashboardFilters(page, boards, project);
   const scopeKey = dashboardScopeKey(page, filters.scope);
@@ -285,6 +269,25 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
         {editMode ? (
           <DashboardEditSider
             page={page}
+            assistantSection={
+              <DashboardAssistantSection
+                page={page}
+                cards={assistantCards}
+                onPreview={setDraftActions}
+                onApply={(actions) => {
+                  applyAssistantActions(actions);
+                  setDraftActions(null);
+                  const changedId = actions.flatMap((action) =>
+                    action.type === 'reset' || action.type === 'hide'
+                      ? []
+                      : [action.id],
+                  )[0];
+                  if (changedId) revealCard(changedId);
+                }}
+                onHighlight={highlightCard}
+                onReveal={revealCard}
+              />
+            }
             catalogEntries={catalogEntries}
             activeKeys={activeKeys}
             deniedKeys={deniedKeys}

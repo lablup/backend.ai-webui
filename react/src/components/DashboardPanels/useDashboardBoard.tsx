@@ -117,6 +117,8 @@ export interface UseDashboardBoardOptions {
   catalog: ReadonlyArray<PanelDefinition>;
   /** Panels the viewer may not read: left off the board, kept in the stored one. */
   deniedPanelIds?: ReadonlyMap<string, string>;
+  /** Proposed changes the board previews without saving them. */
+  draftActions?: ReadonlyArray<DashboardAssistantAction>;
 }
 
 export interface UseDashboardBoardResult {
@@ -167,6 +169,7 @@ export const useDashboardBoard = ({
   onRequestEditCustomPanel,
   catalog,
   deniedPanelIds,
+  draftActions,
 }: UseDashboardBoardOptions): UseDashboardBoardResult => {
   'use memo';
   const { t } = useTranslation();
@@ -417,12 +420,20 @@ export const useDashboardBoard = ({
     );
   };
 
+  const shownBoard = draftActions?.length
+    ? applyActionsToBoard(board, draftActions, {
+        definitionByKey,
+        catalog,
+        page,
+        template,
+      })
+    : board;
   const boardItems: Array<BAIBoardItem> = toBoardLayout(
-    board,
+    shownBoard,
     catalog,
     isRenderable,
   ).map((entry) => {
-    const panel = board.panels.find((item) => item.id === entry.id)!;
+    const panel = shownBoard.panels.find((item) => item.id === entry.id)!;
     return { ...entry, data: { content: contentOf(panel) } };
   });
 
@@ -457,7 +468,10 @@ export const useDashboardBoard = ({
         : {}),
     };
   };
-  const onBoardIds = new Set(boardItems.map((item) => item.id));
+  // The saved board, not a preview: the cards describe what Apply changes.
+  const onBoardIds = new Set(
+    toBoardLayout(board, catalog, isRenderable).map((entry) => entry.id),
+  );
   const assistantCards = [
     ...board.panels
       .filter((panel) => onBoardIds.has(panel.id))
@@ -484,7 +498,10 @@ export const useDashboardBoard = ({
 
   return {
     boardItems,
-    onLayoutChange: (reported) => save(applyLayout(board, reported)),
+    // A preview is not saved, so a move made on it would land on the stored layout.
+    onLayoutChange: (reported) => {
+      if (!draftActions?.length) save(applyLayout(board, reported));
+    },
     catalogEntries: siderEntries(visibleEntries),
     // Catalog keys of the cards on the board, plus the ids of the user-made panels shown on it.
     activeKeys: new Set(

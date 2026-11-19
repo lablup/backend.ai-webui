@@ -42,12 +42,9 @@ export function buildAssistantSystemPrompt({
   page,
   excerpts,
   manualBaseURL,
-  dashboard,
 }: {
   basePrompt: string;
   page?: AssistantPageContext;
-  /** Set on a dashboard page: the cards the assistant may change and how to propose it. */
-  dashboard?: string;
   /** `null` when the manual could not be loaded. */
   excerpts: ManualSection[] | null;
   manualBaseURL: string;
@@ -59,7 +56,6 @@ export function buildAssistantSystemPrompt({
         (page.manualURL ? `\nManual page: ${page.manualURL}` : ''),
     );
   }
-  if (dashboard) parts.push(dashboard);
   parts.push(
     excerpts === null
       ? '## Manual excerpts\n(The manual is not available right now. Answer without manual references and do not claim the manual lacks the topic.)'
