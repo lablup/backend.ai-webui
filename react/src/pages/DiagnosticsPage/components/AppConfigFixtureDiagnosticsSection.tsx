@@ -4,15 +4,21 @@
  */
 import type { AppConfigFixtureDiagnosticsSectionAllowListMutation } from '../../../__generated__/AppConfigFixtureDiagnosticsSectionAllowListMutation.graphql';
 import type { AppConfigFixtureDiagnosticsSectionDefinitionMutation } from '../../../__generated__/AppConfigFixtureDiagnosticsSectionDefinitionMutation.graphql';
+import type { AppConfigFixtureDiagnosticsSectionPurgeAllowListMutation } from '../../../__generated__/AppConfigFixtureDiagnosticsSectionPurgeAllowListMutation.graphql';
+import type { AppConfigFixtureDiagnosticsSectionPurgeImpactQuery } from '../../../__generated__/AppConfigFixtureDiagnosticsSectionPurgeImpactQuery.graphql';
 import type { AppConfigFixtureDiagnosticsSectionPurgeMutation } from '../../../__generated__/AppConfigFixtureDiagnosticsSectionPurgeMutation.graphql';
 import type { AppConfigFixtureDiagnosticsSectionQuery } from '../../../__generated__/AppConfigFixtureDiagnosticsSectionQuery.graphql';
+import type { AppConfigFixtureDiagnosticsSectionRankMutation } from '../../../__generated__/AppConfigFixtureDiagnosticsSectionRankMutation.graphql';
 import { App } from '../../../app-shim';
 import {
-  APP_CONFIG_FIXTURE,
   analyzeAppConfigFixture,
   checkAppConfigFixture,
+  formatAppConfigAllowListEntry,
+  hasAppConfigFixturePurge,
+  hasAppConfigFixtureRepair,
   planAppConfigFixtureRepair,
-  planAppConfigFixtureReRegistration,
+  type AppConfigFixtureRepairPlan,
+  type AppConfigScopeType,
 } from '../../../diagnostics/rules/appConfigRules';
 import { DiagnosticResult } from '../../../types/diagnostics';
 import DiagnosticResultList from './DiagnosticResultList';
@@ -20,18 +26,25 @@ import {
   BAIButton,
   BAIDeleteConfirmModal,
   BAIFlex,
+  BAIText,
   useErrorMessageResolver,
   useFetchKey,
   useMutationWithPromise,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { RotateCcw, Wrench } from 'lucide-react';
-import { useEffect, useEffectEvent, useState, useTransition } from 'react';
+import { Wrench } from 'lucide-react';
+import {
+  Suspense,
+  useEffect,
+  useEffectEvent,
+  useState,
+  useTransition,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
-// The literal the reset confirm asks for; the modal shows it in its input label.
-const RESET_CONFIRM_TEXT = 'reset';
+// The literal the purge confirm asks for; the modal shows it in its input label.
+const PURGE_CONFIRM_TEXT = 'purge';
 
 interface AppConfigFixtureDiagnosticsSectionProps {
   hidePassed?: boolean;
@@ -50,10 +63,9 @@ const AppConfigFixtureDiagnosticsSection: React.FC<
   const { getErrorMessage } = useErrorMessageResolver();
   const [localFetchKey, updateLocalFetchKey] = useFetchKey();
   const [isRefetching, startRefetchTransition] = useTransition();
-  const [isResetModalOpen, setIsResetModalOpen] = useState(false);
-  const [isResetting, setIsResetting] = useState(false);
+  const [isPurgeModalOpen, setIsPurgeModalOpen] = useState(false);
+  const [isRepairing, setIsRepairing] = useState(false);
 
-  const configNames = APP_CONFIG_FIXTURE.definitions;
   const { adminAppConfigDefinitions, adminAppConfigAllowLists } =
     useLazyLoadQuery<AppConfigFixtureDiagnosticsSectionQuery>(
       graphql`
@@ -93,7 +105,7 @@ const AppConfigFixtureDiagnosticsSection: React.FC<
   if (!adminAppConfigDefinitions || !adminAppConfigAllowLists) {
     throw new Error('Failed to load the app config definitions or allow list.');
   }
-  // A truncated page would make the check and the reset miss rows.
+  // A truncated page would make the check and the repair miss rows.
   if (
     adminAppConfigDefinitions.count > adminAppConfigDefinitions.edges.length ||
     adminAppConfigAllowLists.count > adminAppConfigAllowLists.edges.length
@@ -112,7 +124,7 @@ const AppConfigFixtureDiagnosticsSection: React.FC<
   }));
   const analysis = analyzeAppConfigFixture(definitions, allowList);
   const results = checkAppConfigFixture(analysis);
-  const plan = planAppConfigFixtureRepair(analysis, definitions);
+  const plan = planAppConfigFixtureRepair(analysis);
   const hasIssues = results.some((r) => r.severity !== 'passed');
 
   const reportHasIssues = useEffectEvent(() => onHasIssues?.(hasIssues));
@@ -154,13 +166,43 @@ const AppConfigFixtureDiagnosticsSection: React.FC<
         }
       `,
     );
-  const commitPurge =
+  const commitUpdateRanks =
+    useMutationWithPromise<AppConfigFixtureDiagnosticsSectionRankMutation>(
+      graphql`
+        mutation AppConfigFixtureDiagnosticsSectionRankMutation(
+          $items: [UpdateAppConfigAllowListInput!]!
+        ) {
+          partialBulkUpdateAppConfigAllowLists(input: { items: $items }) {
+            failed {
+              id
+              message
+            }
+          }
+        }
+      `,
+    );
+  const commitPurgeDefinitions =
     useMutationWithPromise<AppConfigFixtureDiagnosticsSectionPurgeMutation>(
       graphql`
         mutation AppConfigFixtureDiagnosticsSectionPurgeMutation(
           $definitionIds: [UUID!]!
         ) {
           partialBulkPurgeAppConfigDefinitions(input: { ids: $definitionIds }) {
+            failed {
+              id
+              message
+            }
+          }
+        }
+      `,
+    );
+  const commitPurgeAllowList =
+    useMutationWithPromise<AppConfigFixtureDiagnosticsSectionPurgeAllowListMutation>(
+      graphql`
+        mutation AppConfigFixtureDiagnosticsSectionPurgeAllowListMutation(
+          $allowListIds: [UUID!]!
+        ) {
+          partialBulkPurgeAppConfigAllowLists(input: { ids: $allowListIds }) {
             failed {
               id
               message
@@ -176,118 +218,181 @@ const AppConfigFixtureDiagnosticsSection: React.FC<
     });
   };
 
-  // Definitions first: an allow-list entry names a registered definition.
-  const register = async ({
-    createDefinitions,
-    createAllowList,
-  }: Pick<typeof plan, 'createDefinitions' | 'createAllowList'>) => {
-    for (const configName of createDefinitions) {
-      await commitCreateDefinition({ input: { configName } });
-    }
-    for (const entry of createAllowList) {
-      await commitCreateAllowList({ input: entry });
-    }
-  };
-
-  const registerMissing = async () => {
-    try {
-      await register(plan);
-      message.success(t('diagnostics.AppConfigFixtureRegistered'));
-    } catch (error) {
-      message.error(getErrorMessage(error));
-    } finally {
-      refetch();
-    }
-  };
-
-  const resetFixture = async () => {
-    setIsResetting(true);
-    try {
-      const res = await commitPurge({
-        definitionIds: plan.purgeDefinitionIds,
-      });
-      const failed = res.partialBulkPurgeAppConfigDefinitions.failed ?? [];
-      const errors = failed.map((f) => f.message);
-      // Re-register what was purged even when some purges failed, so the fixture is never left absent.
+  // Every step runs even when an earlier one fails; the failures are reported together.
+  const repair = async () => {
+    setIsRepairing(true);
+    const errors: string[] = [];
+    const runStep = async (step: () => Promise<string[] | void>) => {
       try {
-        await register(
-          planAppConfigFixtureReRegistration(
-            definitions,
-            failed.map((f) => String(f.id)),
-          ),
-        );
+        errors.push(...((await step()) ?? []));
       } catch (error) {
         errors.push(getErrorMessage(error));
+      }
+    };
+    try {
+      if (plan.purgeAllowList.length > 0) {
+        await runStep(async () => {
+          const res = await commitPurgeAllowList({
+            allowListIds: plan.purgeAllowList.map((e) => e.entityId),
+          });
+          return res.partialBulkPurgeAppConfigAllowLists.failed.map(
+            (f) => f.message,
+          );
+        });
+      }
+      if (plan.purgeDefinitions.length > 0) {
+        await runStep(async () => {
+          const res = await commitPurgeDefinitions({
+            definitionIds: plan.purgeDefinitions.map((d) => d.entityId),
+          });
+          return res.partialBulkPurgeAppConfigDefinitions.failed.map(
+            (f) => f.message,
+          );
+        });
+      }
+      // Definitions first: an allow-list entry names a registered definition.
+      for (const configName of plan.createDefinitions) {
+        await runStep(async () => {
+          await commitCreateDefinition({ input: { configName } });
+        });
+      }
+      for (const entry of plan.createAllowList) {
+        await runStep(async () => {
+          await commitCreateAllowList({ input: entry });
+        });
+      }
+      if (plan.updateRanks.length > 0) {
+        await runStep(async () => {
+          const res = await commitUpdateRanks({ items: plan.updateRanks });
+          return res.partialBulkUpdateAppConfigAllowLists.failed.map(
+            (f) => f.message,
+          );
+        });
       }
       if (errors.length > 0) {
         message.error(errors.join('\n'));
       } else {
-        message.success(t('diagnostics.AppConfigFixtureRegistered'));
+        message.success(t('diagnostics.AppConfigFixtureRepaired'));
       }
-    } catch (error) {
-      message.error(getErrorMessage(error));
     } finally {
-      // Close even on failure: the refetched plan may no longer be a reset.
-      setIsResetModalOpen(false);
-      setIsResetting(false);
+      // Close even on failure: the refetched plan may no longer purge anything.
+      setIsPurgeModalOpen(false);
+      setIsRepairing(false);
       refetch();
     }
   };
 
-  const purgedNames = _.uniq(
-    definitions
-      .filter((d) => plan.purgeDefinitionIds.includes(d.entityId))
-      .map((d) => d.configName),
-  );
-  const resetNames = purgedNames.length > 0 ? purgedNames : configNames;
+  const hasPurge = hasAppConfigFixturePurge(plan);
 
   return (
     <BAIFlex direction="column" align="stretch" gap="sm">
       <DiagnosticResultList results={results} hidePassed={hidePassed} />
-      {plan.mode !== 'none' && (
+      {hasAppConfigFixtureRepair(plan) && (
         <BAIFlex justify="end">
-          {plan.mode === 'create' ? (
+          {hasPurge ? (
+            <BAIButton
+              danger
+              icon={<Wrench size="1em" />}
+              loading={isRefetching || isRepairing}
+              onClick={() => setIsPurgeModalOpen(true)}
+            >
+              {t('diagnostics.AppConfigFixtureRepair')}
+            </BAIButton>
+          ) : (
             <BAIButton
               type="primary"
               icon={<Wrench size="1em" />}
               loading={isRefetching}
-              action={registerMissing}
+              action={repair}
             >
-              {t('diagnostics.AppConfigFixtureRegisterMissing')}
-            </BAIButton>
-          ) : (
-            <BAIButton
-              danger
-              icon={<RotateCcw size="1em" />}
-              loading={isRefetching || isResetting}
-              onClick={() => setIsResetModalOpen(true)}
-            >
-              {t('diagnostics.AppConfigFixtureReset')}
+              {t('diagnostics.AppConfigFixtureRepair')}
             </BAIButton>
           )}
         </BAIFlex>
       )}
       <BAIDeleteConfirmModal
-        open={isResetModalOpen}
-        title={t('diagnostics.AppConfigFixtureReset')}
-        description={t('diagnostics.AppConfigFixtureResetConfirmDesc', {
-          names: resetNames.join(', '),
-        })}
-        items={resetNames.map((name) => ({ key: name, label: name }))}
-        confirmText={RESET_CONFIRM_TEXT}
+        open={isPurgeModalOpen}
+        title={t('diagnostics.AppConfigFixtureRepair')}
+        description={
+          <BAIFlex direction="column" align="stretch" gap="xs">
+            <BAIText>
+              {t('diagnostics.AppConfigFixturePurgeConfirmDesc')}
+            </BAIText>
+            {isPurgeModalOpen && (
+              <Suspense fallback={null}>
+                <AppConfigFixturePurgeImpact plan={plan} />
+              </Suspense>
+            )}
+          </BAIFlex>
+        }
+        items={[
+          ...plan.purgeDefinitions.map((d) => ({
+            key: d.entityId,
+            label: d.configName,
+          })),
+          ...plan.purgeAllowList.map((e) => ({
+            key: e.entityId,
+            label: formatAppConfigAllowListEntry(e),
+          })),
+        ]}
+        confirmText={PURGE_CONFIRM_TEXT}
         requireConfirmInput
-        inputProps={{ placeholder: RESET_CONFIRM_TEXT }}
-        okText={t('diagnostics.AppConfigFixtureReset')}
-        confirmLoading={isResetting}
+        inputProps={{ placeholder: PURGE_CONFIRM_TEXT }}
+        okText={t('diagnostics.AppConfigFixtureRepair')}
+        confirmLoading={isRepairing}
         onOk={() => {
-          void resetFixture();
+          void repair();
         }}
         onCancel={() => {
           // The purge cannot be cancelled once it started; keep the dialog until it settles.
-          if (!isResetting) setIsResetModalOpen(false);
+          if (!isRepairing) setIsPurgeModalOpen(false);
         }}
       />
     </BAIFlex>
+  );
+};
+
+/** How many stored settings (fragments) the purge deletes with the entries it removes. */
+const AppConfigFixturePurgeImpact: React.FC<{
+  plan: AppConfigFixtureRepairPlan;
+}> = ({ plan }) => {
+  'use memo';
+  const { t } = useTranslation();
+  const { adminAppConfigFragments } =
+    useLazyLoadQuery<AppConfigFixtureDiagnosticsSectionPurgeImpactQuery>(
+      graphql`
+        query AppConfigFixtureDiagnosticsSectionPurgeImpactQuery(
+          $filter: AppConfigFragmentFilter!
+        ) {
+          adminAppConfigFragments(filter: $filter, limit: 1, offset: 0) {
+            count
+          }
+        }
+      `,
+      {
+        filter: {
+          OR: [
+            ...plan.purgeDefinitions.map((d) => ({
+              configName: { equals: d.configName },
+            })),
+            ...plan.purgeAllowList.map((e) => ({
+              configName: { equals: e.configName },
+              scopeType: {
+                equals: e.scopeType.toUpperCase() as AppConfigScopeType,
+              },
+            })),
+          ],
+        },
+      },
+      { fetchPolicy: 'network-only' },
+    );
+  if (!adminAppConfigFragments) return null;
+  return (
+    <BAIText type="danger">
+      {t('diagnostics.AppConfigFixturePurgeFragmentCount', {
+        count: adminAppConfigFragments.count,
+      })}
+    </BAIText>
   );
 };
 

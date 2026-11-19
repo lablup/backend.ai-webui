@@ -6,8 +6,9 @@ import {
   APP_CONFIG_FIXTURE,
   analyzeAppConfigFixture,
   checkAppConfigFixture,
+  hasAppConfigFixturePurge,
+  hasAppConfigFixtureRepair,
   planAppConfigFixtureRepair,
-  planAppConfigFixtureReRegistration,
 } from '../appConfigRules';
 import type {
   RegisteredAppConfigAllowListEntry,
@@ -34,7 +35,7 @@ const run = (
   return {
     analysis,
     results: checkAppConfigFixture(analysis),
-    plan: planAppConfigFixtureRepair(analysis, definitions),
+    plan: planAppConfigFixtureRepair(analysis),
   };
 };
 
@@ -44,7 +45,7 @@ describe('app config fixture check', () => {
     expect(results).toHaveLength(1);
     expect(results[0].id).toBe('app-config-fixture-passed');
     expect(results[0].severity).toBe('passed');
-    expect(plan.mode).toBe('none');
+    expect(hasAppConfigFixtureRepair(plan)).toBe(false);
   });
 
   it('accepts lowercase scope types', () => {
@@ -56,42 +57,20 @@ describe('app config fixture check', () => {
     expect(results.map((r) => r.id)).toEqual(['app-config-fixture-passed']);
   });
 
-  it('treats any other config name as unexpected and purges it on reset', () => {
-    const { results, plan } = run(
-      [...fullDefinitions(), { entityId: 'other', configName: 'otherConfig' }],
-      [
-        ...fullAllowList(),
-        {
-          entityId: 'other-al',
-          configName: 'otherConfig',
-          scopeType: 'domain',
-          rank: 200,
-        },
-      ],
-    );
-    expect(results.map((r) => r.id)).toEqual(['app-config-fixture-unexpected']);
-    expect(results[0].interpolationValues?.items).toBe(
-      'otherConfig, otherConfig @ domain (200)',
-    );
-    expect(plan.mode).toBe('reset');
-    expect(plan.purgeDefinitionIds).toContain('other');
-    expect(plan.purgeDefinitionIds).toHaveLength(4);
-  });
-
-  it('reports everything missing on an empty manager and plans a create', () => {
+  it('reports everything missing on an empty manager and plans only creates', () => {
     const { results, plan } = run([], []);
     expect(results.map((r) => r.id)).toEqual(['app-config-fixture-missing']);
     expect(results[0].severity).toBe('critical');
     expect(results[0].remediationKey).toBe(
-      'diagnostics.AppConfigFixtureMissingFix',
+      'diagnostics.AppConfigFixtureRepairFix',
     );
     expect(results[0].interpolationValues?.items).toBe(
       'userConfig, domainConfig, publicConfigByDomain, userConfig @ domain (200), userConfig @ user (300), domainConfig @ domain (200), publicConfigByDomain @ public (100)',
     );
-    expect(plan.mode).toBe('create');
     expect(plan.createDefinitions).toEqual(APP_CONFIG_FIXTURE.definitions);
     expect(plan.createAllowList).toEqual(APP_CONFIG_FIXTURE.allowList);
-    expect(plan.purgeDefinitionIds).toEqual([]);
+    expect(hasAppConfigFixturePurge(plan)).toBe(false);
+    expect(plan.updateRanks).toEqual([]);
   });
 
   it('creates only the missing allow-list entry', () => {
@@ -99,14 +78,14 @@ describe('app config fixture check', () => {
       (e) => !(e.configName === 'userConfig' && e.scopeType === 'USER'),
     );
     const { plan } = run(fullDefinitions(), allowList);
-    expect(plan.mode).toBe('create');
     expect(plan.createDefinitions).toEqual([]);
     expect(plan.createAllowList).toEqual([
       { configName: 'userConfig', scopeType: 'USER', rank: 300 },
     ]);
+    expect(hasAppConfigFixturePurge(plan)).toBe(false);
   });
 
-  it('treats a wrong rank as malformed and plans a reset', () => {
+  it('corrects a wrong rank in place without purging', () => {
     const allowList = fullAllowList().map((e) =>
       e.configName === 'domainConfig' ? { ...e, rank: 150 } : e,
     );
@@ -115,13 +94,44 @@ describe('app config fixture check', () => {
     expect(results[0].interpolationValues?.items).toBe(
       'domainConfig @ domain (150) → 200',
     );
-    expect(plan.mode).toBe('reset');
-    expect(plan.purgeDefinitionIds).toHaveLength(3);
-    expect(plan.createDefinitions).toEqual(APP_CONFIG_FIXTURE.definitions);
-    expect(plan.createAllowList).toEqual(APP_CONFIG_FIXTURE.allowList);
+    expect(plan.updateRanks).toEqual([
+      { id: 'al-domainConfig-DOMAIN', rank: 200 },
+    ]);
+    expect(hasAppConfigFixturePurge(plan)).toBe(false);
+    expect(plan.createDefinitions).toEqual([]);
+    expect(plan.createAllowList).toEqual([]);
   });
 
-  it('treats an extra scope for a fixture name as malformed', () => {
+  it('purges only a misnamed definition and registers the right one', () => {
+    const definitions = fullDefinitions().map((d) =>
+      d.configName === 'domainConfig'
+        ? { entityId: 'typo', configName: 'ddomainConfig' }
+        : d,
+    );
+    const allowList = fullAllowList().map((e) =>
+      e.configName === 'domainConfig'
+        ? { ...e, entityId: 'typo-al', configName: 'ddomainConfig' }
+        : e,
+    );
+    const { results, plan } = run(definitions, allowList);
+    expect(results.map((r) => r.id)).toEqual([
+      'app-config-fixture-missing',
+      'app-config-fixture-unexpected',
+    ]);
+    expect(results[1].interpolationValues?.items).toBe('ddomainConfig');
+    expect(results[1].remediationKey).toBe(
+      'diagnostics.AppConfigFixtureUnexpectedFix',
+    );
+    // The misnamed definition's allow-list entry goes with it.
+    expect(plan.purgeDefinitions.map((d) => d.entityId)).toEqual(['typo']);
+    expect(plan.purgeAllowList).toEqual([]);
+    expect(plan.createDefinitions).toEqual(['domainConfig']);
+    expect(plan.createAllowList).toEqual([
+      { configName: 'domainConfig', scopeType: 'DOMAIN', rank: 200 },
+    ]);
+  });
+
+  it('purges only an extra scope of a fixture name', () => {
     const { results, plan } = run(fullDefinitions(), [
       ...fullAllowList(),
       {
@@ -135,19 +145,11 @@ describe('app config fixture check', () => {
     expect(results[0].interpolationValues?.items).toBe(
       'userConfig @ public (100)',
     );
-    expect(plan.mode).toBe('reset');
-    expect(plan.purgeDefinitionIds).toHaveLength(3);
+    expect(plan.purgeAllowList.map((e) => e.entityId)).toEqual(['extra']);
+    expect(plan.purgeDefinitions).toEqual([]);
   });
 
-  it('treats a duplicate definition as malformed', () => {
-    const { results } = run(
-      [...fullDefinitions(), { entityId: 'dup', configName: 'userConfig' }],
-      fullAllowList(),
-    );
-    expect(results.map((r) => r.id)).toEqual(['app-config-fixture-unexpected']);
-  });
-
-  it('reports missing and malformed together, and the reset wins', () => {
+  it('plans every kind of repair together', () => {
     const allowList = fullAllowList()
       .filter((e) => e.configName !== 'publicConfigByDomain')
       .map((e) =>
@@ -155,33 +157,19 @@ describe('app config fixture check', () => {
           ? { ...e, rank: 1 }
           : e,
       );
-    const { results, plan } = run(fullDefinitions(), allowList);
+    const { results, plan } = run(
+      [...fullDefinitions(), { entityId: 'other', configName: 'otherConfig' }],
+      allowList,
+    );
     expect(results.map((r) => r.id)).toEqual([
       'app-config-fixture-missing',
       'app-config-fixture-wrong-rank',
+      'app-config-fixture-unexpected',
     ]);
-    expect(results[0].remediationKey).toBe(
-      'diagnostics.AppConfigFixtureResetFix',
-    );
-    expect(plan.mode).toBe('reset');
-  });
-
-  it('re-registers only what a partial purge removed', () => {
-    const definitions = fullDefinitions();
-    const next = planAppConfigFixtureReRegistration(definitions, [
-      'def-userConfig',
+    expect(plan.createAllowList).toEqual([
+      { configName: 'publicConfigByDomain', scopeType: 'PUBLIC', rank: 100 },
     ]);
-    expect(next.createDefinitions).toEqual([
-      'domainConfig',
-      'publicConfigByDomain',
-    ]);
-    expect(next.createAllowList.map((e) => e.configName)).toEqual([
-      'domainConfig',
-      'publicConfigByDomain',
-    ]);
-    expect(planAppConfigFixtureReRegistration(definitions, [])).toEqual({
-      createDefinitions: APP_CONFIG_FIXTURE.definitions,
-      createAllowList: APP_CONFIG_FIXTURE.allowList,
-    });
+    expect(plan.updateRanks).toEqual([{ id: 'al-userConfig-USER', rank: 300 }]);
+    expect(plan.purgeDefinitions.map((d) => d.entityId)).toEqual(['other']);
   });
 });
