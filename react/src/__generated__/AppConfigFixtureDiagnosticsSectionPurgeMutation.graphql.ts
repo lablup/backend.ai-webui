@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<8282d11a9a3b247f4ed0064170f41848>>
+ * @generated SignedSource<<9564fbe2188a50ff9355efa9a1adb0f7>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,16 +10,9 @@
 
 import { ConcreteRequest } from 'relay-runtime';
 export type AppConfigFixtureDiagnosticsSectionPurgeMutation$variables = {
-  allowListIds: ReadonlyArray<string>;
   definitionIds: ReadonlyArray<string>;
 };
 export type AppConfigFixtureDiagnosticsSectionPurgeMutation$data = {
-  readonly partialBulkPurgeAppConfigAllowLists: {
-    readonly failed: ReadonlyArray<{
-      readonly id: string;
-      readonly message: string;
-    }>;
-  };
   readonly partialBulkPurgeAppConfigDefinitions: {
     readonly failed: ReadonlyArray<{
       readonly id: string;
@@ -37,64 +30,10 @@ var v0 = [
   {
     "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "allowListIds"
-  },
-  {
-    "defaultValue": null,
-    "kind": "LocalArgument",
     "name": "definitionIds"
   }
 ],
 v1 = [
-  {
-    "alias": null,
-    "args": null,
-    "concreteType": "PartialBulkFailure",
-    "kind": "LinkedField",
-    "name": "failed",
-    "plural": true,
-    "selections": [
-      {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "id",
-        "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "message",
-        "storageKey": null
-      }
-    ],
-    "storageKey": null
-  }
-],
-v2 = [
-  {
-    "alias": null,
-    "args": [
-      {
-        "fields": [
-          {
-            "kind": "Variable",
-            "name": "ids",
-            "variableName": "allowListIds"
-          }
-        ],
-        "kind": "ObjectValue",
-        "name": "input"
-      }
-    ],
-    "concreteType": "PartialBulkAppConfigAllowListsPayload",
-    "kind": "LinkedField",
-    "name": "partialBulkPurgeAppConfigAllowLists",
-    "plural": false,
-    "selections": (v1/*: any*/),
-    "storageKey": null
-  },
   {
     "alias": null,
     "args": [
@@ -114,7 +53,33 @@ v2 = [
     "kind": "LinkedField",
     "name": "partialBulkPurgeAppConfigDefinitions",
     "plural": false,
-    "selections": (v1/*: any*/),
+    "selections": [
+      {
+        "alias": null,
+        "args": null,
+        "concreteType": "PartialBulkFailure",
+        "kind": "LinkedField",
+        "name": "failed",
+        "plural": true,
+        "selections": [
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "id",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "message",
+            "storageKey": null
+          }
+        ],
+        "storageKey": null
+      }
+    ],
     "storageKey": null
   }
 ];
@@ -124,7 +89,7 @@ return {
     "kind": "Fragment",
     "metadata": null,
     "name": "AppConfigFixtureDiagnosticsSectionPurgeMutation",
-    "selections": (v2/*: any*/),
+    "selections": (v1/*: any*/),
     "type": "Mutation",
     "abstractKey": null
   },
@@ -133,19 +98,19 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "AppConfigFixtureDiagnosticsSectionPurgeMutation",
-    "selections": (v2/*: any*/)
+    "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "6d06d15584d446dfd2cb0ce1f4ce78f8",
+    "cacheID": "380fa76a2cf3b730dab87f32b6ccc0d1",
     "id": null,
     "metadata": {},
     "name": "AppConfigFixtureDiagnosticsSectionPurgeMutation",
     "operationKind": "mutation",
-    "text": "mutation AppConfigFixtureDiagnosticsSectionPurgeMutation(\n  $allowListIds: [UUID!]!\n  $definitionIds: [UUID!]!\n) {\n  partialBulkPurgeAppConfigAllowLists(input: {ids: $allowListIds}) {\n    failed {\n      id\n      message\n    }\n  }\n  partialBulkPurgeAppConfigDefinitions(input: {ids: $definitionIds}) {\n    failed {\n      id\n      message\n    }\n  }\n}\n"
+    "text": "mutation AppConfigFixtureDiagnosticsSectionPurgeMutation(\n  $definitionIds: [UUID!]!\n) {\n  partialBulkPurgeAppConfigDefinitions(input: {ids: $definitionIds}) {\n    failed {\n      id\n      message\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "8cc36e4c2779c0061dc2626b73b15937";
+(node as any).hash = "3504eb48c0db99fbbbd471482deabf8c";
 
 export default node;

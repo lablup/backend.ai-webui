@@ -12,6 +12,7 @@ import {
   analyzeAppConfigFixture,
   checkAppConfigFixture,
   planAppConfigFixtureRepair,
+  planAppConfigFixtureReRegistration,
 } from '../../../diagnostics/rules/appConfigRules';
 import { DiagnosticResult } from '../../../types/diagnostics';
 import DiagnosticResultList from './DiagnosticResultList';
@@ -25,7 +26,7 @@ import {
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { RotateCcw, Wrench } from 'lucide-react';
-import { useEffect, useState, useTransition } from 'react';
+import { useEffect, useEffectEvent, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
@@ -100,11 +101,15 @@ const AppConfigFixtureDiagnosticsSection: React.FC<
       },
     );
 
-  const definitions = _.map(adminAppConfigDefinitions?.edges, (e) => ({
+  // A field that errored resolves to null; analysing it as empty would report everything missing.
+  if (!adminAppConfigDefinitions || !adminAppConfigAllowLists) {
+    throw new Error('Failed to load the app config definitions or allow list.');
+  }
+  const definitions = _.map(adminAppConfigDefinitions.edges, (e) => ({
     entityId: String(e.node.entityId),
     configName: e.node.configName,
   }));
-  const allowList = _.map(adminAppConfigAllowLists?.edges, (e) => ({
+  const allowList = _.map(adminAppConfigAllowLists.edges, (e) => ({
     entityId: String(e.node.entityId),
     configName: e.node.configName,
     scopeType: e.node.scopeType,
@@ -112,16 +117,19 @@ const AppConfigFixtureDiagnosticsSection: React.FC<
   }));
   const analysis = analyzeAppConfigFixture(definitions, allowList);
   const results = checkAppConfigFixture(analysis);
-  const plan = planAppConfigFixtureRepair(analysis, definitions, allowList);
+  const plan = planAppConfigFixtureRepair(analysis, definitions);
   const hasIssues = results.some((r) => r.severity !== 'passed');
 
-  useEffect(() => {
-    onHasIssues?.(hasIssues);
-  }, [hasIssues, onHasIssues]);
+  const reportHasIssues = useEffectEvent(() => onHasIssues?.(hasIssues));
+  const reportResults = useEffectEvent(() => onResultsChange?.(results));
 
   useEffect(() => {
-    onResultsChange?.(results);
-  }, [results, onResultsChange]);
+    reportHasIssues();
+  }, [hasIssues]);
+
+  useEffect(() => {
+    reportResults();
+  }, [results]);
 
   const commitCreateDefinition =
     useMutationWithPromise<AppConfigFixtureDiagnosticsSectionDefinitionMutation>(
@@ -155,15 +163,8 @@ const AppConfigFixtureDiagnosticsSection: React.FC<
     useMutationWithPromise<AppConfigFixtureDiagnosticsSectionPurgeMutation>(
       graphql`
         mutation AppConfigFixtureDiagnosticsSectionPurgeMutation(
-          $allowListIds: [UUID!]!
           $definitionIds: [UUID!]!
         ) {
-          partialBulkPurgeAppConfigAllowLists(input: { ids: $allowListIds }) {
-            failed {
-              id
-              message
-            }
-          }
           partialBulkPurgeAppConfigDefinitions(input: { ids: $definitionIds }) {
             failed {
               id
@@ -181,18 +182,21 @@ const AppConfigFixtureDiagnosticsSection: React.FC<
   };
 
   // Definitions first: an allow-list entry names a registered definition.
-  const register = async () => {
-    for (const configName of plan.createDefinitions) {
+  const register = async ({
+    createDefinitions,
+    createAllowList,
+  }: Pick<typeof plan, 'createDefinitions' | 'createAllowList'>) => {
+    for (const configName of createDefinitions) {
       await commitCreateDefinition({ input: { configName } });
     }
-    for (const entry of plan.createAllowList) {
+    for (const entry of createAllowList) {
       await commitCreateAllowList({ input: entry });
     }
   };
 
   const registerMissing = async () => {
     try {
-      await register();
+      await register(plan);
       message.success(t('diagnostics.AppConfigFixtureRegistered'));
     } catch (error) {
       message.error(getErrorMessage(error));
@@ -205,17 +209,19 @@ const AppConfigFixtureDiagnosticsSection: React.FC<
     setIsResetting(true);
     try {
       const res = await commitPurge({
-        allowListIds: plan.purgeAllowListIds,
         definitionIds: plan.purgeDefinitionIds,
       });
-      const failed = [
-        ...(res.partialBulkPurgeAppConfigAllowLists.failed ?? []),
-        ...(res.partialBulkPurgeAppConfigDefinitions.failed ?? []),
-      ];
+      const failed = res.partialBulkPurgeAppConfigDefinitions.failed ?? [];
+      // Re-register what was purged even when some purges failed, so the fixture is never left absent.
+      await register(
+        planAppConfigFixtureReRegistration(
+          definitions,
+          failed.map((f) => String(f.id)),
+        ),
+      );
       if (failed.length > 0) {
         throw new Error(failed.map((f) => f.message).join('\n'));
       }
-      await register();
       message.success(t('diagnostics.AppConfigFixtureRegistered'));
       setIsResetModalOpen(false);
     } catch (error) {
@@ -231,6 +237,7 @@ const AppConfigFixtureDiagnosticsSection: React.FC<
       .filter((d) => plan.purgeDefinitionIds.includes(d.entityId))
       .map((d) => d.configName),
   );
+  const resetNames = purgedNames.length > 0 ? purgedNames : configNames;
 
   return (
     <BAIFlex direction="column" align="stretch" gap="sm">
@@ -250,7 +257,7 @@ const AppConfigFixtureDiagnosticsSection: React.FC<
             <BAIButton
               danger
               icon={<RotateCcw size="1em" />}
-              loading={isRefetching}
+              loading={isRefetching || isResetting}
               onClick={() => setIsResetModalOpen(true)}
             >
               {t('diagnostics.AppConfigFixtureReset')}
@@ -261,10 +268,10 @@ const AppConfigFixtureDiagnosticsSection: React.FC<
       <BAIDeleteConfirmModal
         open={isResetModalOpen}
         title={t('diagnostics.AppConfigFixtureReset')}
-        description={t('diagnostics.AppConfigFixtureResetConfirmDesc')}
-        items={(purgedNames.length > 0 ? purgedNames : configNames).map(
-          (name) => ({ key: name, label: name }),
-        )}
+        description={t('diagnostics.AppConfigFixtureResetConfirmDesc', {
+          names: resetNames.join(', '),
+        })}
+        items={resetNames.map((name) => ({ key: name, label: name }))}
         confirmText={RESET_CONFIRM_TEXT}
         requireConfirmInput
         inputProps={{ placeholder: RESET_CONFIRM_TEXT }}
@@ -273,7 +280,10 @@ const AppConfigFixtureDiagnosticsSection: React.FC<
         onOk={() => {
           void resetFixture();
         }}
-        onCancel={() => setIsResetModalOpen(false)}
+        onCancel={() => {
+          // The purge cannot be cancelled once it started; keep the dialog until it settles.
+          if (!isResetting) setIsResetModalOpen(false);
+        }}
       />
     </BAIFlex>
   );

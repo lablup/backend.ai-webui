@@ -2,20 +2,20 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import type { AppConfigScopeType } from '../../__generated__/AppConfigFixtureDiagnosticsSectionAllowListMutation.graphql';
+import type { AppConfigName } from '../../hooks/useAppConfig';
 import type { DiagnosticResult } from '../../types/diagnostics';
 import * as _ from 'lodash-es';
 
-export type AppConfigScopeType = 'PUBLIC' | 'DOMAIN' | 'USER';
-
 export interface AppConfigFixtureAllowListEntry {
-  configName: string;
+  configName: AppConfigName;
   scopeType: AppConfigScopeType;
   rank: number;
 }
 
 /** The app config definitions and allow list the manager must have registered (#10229). */
 export const APP_CONFIG_FIXTURE: {
-  definitions: string[];
+  definitions: AppConfigName[];
   allowList: AppConfigFixtureAllowListEntry[];
 } = {
   definitions: ['userConfig', 'domainConfig', 'publicConfigByDomain'],
@@ -58,7 +58,7 @@ export function analyzeAppConfigFixture(
   definitions: RegisteredAppConfigDefinition[],
   allowList: RegisteredAppConfigAllowListEntry[],
 ): AppConfigFixtureAnalysis {
-  const fixtureNames = new Set(APP_CONFIG_FIXTURE.definitions);
+  const fixtureNames = new Set<string>(APP_CONFIG_FIXTURE.definitions);
   const relevantDefinitions = definitions.filter((d) =>
     fixtureNames.has(d.configName),
   );
@@ -140,7 +140,7 @@ export function checkAppConfigFixture(
   if (isAppConfigFixtureMissing(analysis)) {
     results.push({
       id: 'app-config-fixture-missing',
-      severity: 'warning',
+      severity: 'critical',
       category: 'appConfig',
       titleKey: 'diagnostics.AppConfigFixtureMissing',
       descriptionKey: 'diagnostics.AppConfigFixtureMissingDesc',
@@ -210,9 +210,8 @@ export function checkAppConfigFixture(
 }
 
 export interface AppConfigFixtureRepairPlan {
-  /** `create` registers what is missing; `reset` purges these config names and registers the fixture again. */
+  /** `create` registers what is missing; `reset` purges these definitions (their allow-list entries cascade) and registers the fixture again. */
   mode: 'none' | 'create' | 'reset';
-  purgeAllowListIds: string[];
   purgeDefinitionIds: string[];
   createDefinitions: string[];
   createAllowList: AppConfigFixtureAllowListEntry[];
@@ -221,15 +220,11 @@ export interface AppConfigFixtureRepairPlan {
 export function planAppConfigFixtureRepair(
   analysis: AppConfigFixtureAnalysis,
   definitions: RegisteredAppConfigDefinition[],
-  allowList: RegisteredAppConfigAllowListEntry[],
 ): AppConfigFixtureRepairPlan {
   if (isAppConfigFixtureMalformed(analysis)) {
-    const fixtureNames = new Set(APP_CONFIG_FIXTURE.definitions);
+    const fixtureNames = new Set<string>(APP_CONFIG_FIXTURE.definitions);
     return {
       mode: 'reset',
-      purgeAllowListIds: allowList
-        .filter((a) => fixtureNames.has(a.configName))
-        .map((a) => a.entityId),
       purgeDefinitionIds: definitions
         .filter((d) => fixtureNames.has(d.configName))
         .map((d) => d.entityId),
@@ -240,7 +235,6 @@ export function planAppConfigFixtureRepair(
   if (isAppConfigFixtureMissing(analysis)) {
     return {
       mode: 'create',
-      purgeAllowListIds: [],
       purgeDefinitionIds: [],
       createDefinitions: analysis.missingDefinitions,
       createAllowList: analysis.missingAllowList,
@@ -248,9 +242,31 @@ export function planAppConfigFixtureRepair(
   }
   return {
     mode: 'none',
-    purgeAllowListIds: [],
     purgeDefinitionIds: [],
     createDefinitions: [],
     createAllowList: [],
+  };
+}
+
+/**
+ * What a reset registers after its purge: the fixture minus the definitions
+ * whose purge failed, which still exist with their allow-list entries.
+ */
+export function planAppConfigFixtureReRegistration(
+  definitions: RegisteredAppConfigDefinition[],
+  failedPurgeIds: string[],
+): Pick<AppConfigFixtureRepairPlan, 'createDefinitions' | 'createAllowList'> {
+  const surviving = new Set<string>(
+    definitions
+      .filter((d) => failedPurgeIds.includes(d.entityId))
+      .map((d) => d.configName),
+  );
+  return {
+    createDefinitions: APP_CONFIG_FIXTURE.definitions.filter(
+      (name) => !surviving.has(name),
+    ),
+    createAllowList: APP_CONFIG_FIXTURE.allowList.filter(
+      (e) => !surviving.has(e.configName),
+    ),
   };
 }

@@ -7,6 +7,7 @@ import {
   analyzeAppConfigFixture,
   checkAppConfigFixture,
   planAppConfigFixtureRepair,
+  planAppConfigFixtureReRegistration,
 } from '../appConfigRules';
 import type {
   RegisteredAppConfigAllowListEntry,
@@ -33,7 +34,7 @@ const run = (
   return {
     analysis,
     results: checkAppConfigFixture(analysis),
-    plan: planAppConfigFixtureRepair(analysis, definitions, allowList),
+    plan: planAppConfigFixtureRepair(analysis, definitions),
   };
 };
 
@@ -69,7 +70,7 @@ describe('app config fixture check', () => {
   it('reports everything missing on an empty manager and plans a create', () => {
     const { results, plan } = run([], []);
     expect(results.map((r) => r.id)).toEqual(['app-config-fixture-missing']);
-    expect(results[0].severity).toBe('warning');
+    expect(results[0].severity).toBe('critical');
     expect(results[0].remediationKey).toBe(
       'diagnostics.AppConfigFixtureMissingFix',
     );
@@ -105,7 +106,6 @@ describe('app config fixture check', () => {
     );
     expect(plan.mode).toBe('reset');
     expect(plan.purgeDefinitionIds).toHaveLength(3);
-    expect(plan.purgeAllowListIds).toHaveLength(4);
     expect(plan.createDefinitions).toEqual(APP_CONFIG_FIXTURE.definitions);
     expect(plan.createAllowList).toEqual(APP_CONFIG_FIXTURE.allowList);
   });
@@ -125,7 +125,7 @@ describe('app config fixture check', () => {
       'userConfig @ public (100)',
     );
     expect(plan.mode).toBe('reset');
-    expect(plan.purgeAllowListIds).toContain('extra');
+    expect(plan.purgeDefinitionIds).toHaveLength(3);
   });
 
   it('treats a duplicate definition as malformed', () => {
@@ -153,5 +153,24 @@ describe('app config fixture check', () => {
       'diagnostics.AppConfigFixtureResetFix',
     );
     expect(plan.mode).toBe('reset');
+  });
+
+  it('re-registers only what a partial purge removed', () => {
+    const definitions = fullDefinitions();
+    const next = planAppConfigFixtureReRegistration(definitions, [
+      'def-userConfig',
+    ]);
+    expect(next.createDefinitions).toEqual([
+      'domainConfig',
+      'publicConfigByDomain',
+    ]);
+    expect(next.createAllowList.map((e) => e.configName)).toEqual([
+      'domainConfig',
+      'publicConfigByDomain',
+    ]);
+    expect(planAppConfigFixtureReRegistration(definitions, [])).toEqual({
+      createDefinitions: APP_CONFIG_FIXTURE.definitions,
+      createAllowList: APP_CONFIG_FIXTURE.allowList,
+    });
   });
 });

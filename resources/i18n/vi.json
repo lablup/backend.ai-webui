@@ -1593,7 +1593,7 @@
     "AppConfigFixtureRegisterMissing": "Đăng ký các mục còn thiếu",
     "AppConfigFixtureRegistered": "Đã đăng ký fixture cấu hình ứng dụng.",
     "AppConfigFixtureReset": "Đặt lại cấu hình ứng dụng",
-    "AppConfigFixtureResetConfirmDesc": "Xóa mọi định nghĩa và mục danh sách cho phép của các tên cấu hình này rồi đăng ký lại fixture? Xóa một định nghĩa cũng xóa mọi thứ được lưu bên dưới: toàn bộ cài đặt người dùng, miền, công khai đã lưu và chủ đề Branding sẽ bị mất.",
+    "AppConfigFixtureResetConfirmDesc": "Xóa mọi định nghĩa và mục danh sách cho phép của {{names}} rồi đăng ký lại fixture? Xóa một định nghĩa cũng xóa mọi thứ được lưu bên dưới: toàn bộ cài đặt người dùng, miền, công khai đã lưu và chủ đề Branding sẽ bị mất.",
     "AppConfigFixtureResetFix": "Nhấn Đặt lại cấu hình ứng dụng để xóa các tên cấu hình này và đăng ký lại fixture. Cài đặt đã lưu và chủ đề Branding sẽ bị xóa.",
     "AppConfigFixtureUnexpected": "Mục cấu hình ứng dụng không mong đợi",
     "AppConfigFixtureUnexpectedDesc": "Các định nghĩa hoặc mục danh sách cho phép sau được đăng ký với tên cấu hình của WebUI nhưng không thuộc fixture (rank trong ngoặc): {{items}}.",

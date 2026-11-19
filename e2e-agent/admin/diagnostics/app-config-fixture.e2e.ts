@@ -9,10 +9,7 @@ test(
   },
   async ({ app, agent }) => {
     await app.open("/admin/diagnostics");
+    // Read-only: registering writes server-global app config (.claude/rules/e2e-admin-prep-via-api.md rule 5).
     await agent.act('Find the "App Config" section and read its result');
-    await agent.act(
-      'If entries are missing, press "Register Missing Entries"',
-    );
-    await agent.act('Read the "App Config" result again');
   },
 );

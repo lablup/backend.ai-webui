@@ -1593,7 +1593,7 @@
     "AppConfigFixtureRegisterMissing": "Registrar entradas ausentes",
     "AppConfigFixtureRegistered": "A fixture de configuração do app está registrada.",
     "AppConfigFixtureReset": "Redefinir configuração do app",
-    "AppConfigFixtureResetConfirmDesc": "Excluir todas as definições e entradas da lista de permissões destes nomes de configuração e registrar a fixture novamente? Excluir uma definição também apaga tudo o que está salvo nela: todas as configurações de usuário, domínio e públicas salvas e o tema de Branding serão perdidos.",
+    "AppConfigFixtureResetConfirmDesc": "Excluir todas as definições e entradas da lista de permissões de {{names}} e registrar a fixture novamente? Excluir uma definição também apaga tudo o que está salvo nela: todas as configurações de usuário, domínio e públicas salvas e o tema de Branding serão perdidos.",
     "AppConfigFixtureResetFix": "Clique em Redefinir configuração do app para excluir estes nomes de configuração e registrar a fixture novamente. As configurações salvas e o tema de Branding serão excluídos.",
     "AppConfigFixtureUnexpected": "Entradas de configuração do app inesperadas",
     "AppConfigFixtureUnexpectedDesc": "Estas definições ou entradas da lista de permissões estão registradas com os nomes de configuração da WebUI, mas não fazem parte da fixture (rank entre parênteses): {{items}}.",

@@ -1593,7 +1593,7 @@
     "AppConfigFixtureRegisterMissing": "注册缺失条目",
     "AppConfigFixtureRegistered": "已注册应用配置 fixture。",
     "AppConfigFixtureReset": "重置应用配置",
-    "AppConfigFixtureResetConfirmDesc": "要删除这些应用配置名称的所有定义和允许列表条目,然后重新注册 fixture 吗?删除定义也会删除其下存储的所有内容:所有已保存的用户、域和公共设置以及品牌主题都将丢失。",
+    "AppConfigFixtureResetConfirmDesc": "要删除 {{names}} 的所有定义和允许列表条目,然后重新注册 fixture 吗?删除定义也会删除其下存储的所有内容:所有已保存的用户、域和公共设置以及品牌主题都将丢失。",
     "AppConfigFixtureResetFix": "点击“重置应用配置”以删除这些应用配置名称并重新注册 fixture。已保存的设置和品牌主题将被删除。",
     "AppConfigFixtureUnexpected": "意外的应用配置条目",
     "AppConfigFixtureUnexpectedDesc": "以下定义或允许列表条目以 WebUI 应用配置名称注册,但不属于 fixture(括号内为 rank):{{items}}。",

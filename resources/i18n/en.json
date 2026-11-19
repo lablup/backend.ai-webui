@@ -1580,7 +1580,7 @@
     "AppConfigFixtureRegisterMissing": "Register Missing Entries",
     "AppConfigFixtureRegistered": "The app config fixture is registered.",
     "AppConfigFixtureReset": "Reset App Config",
-    "AppConfigFixtureResetConfirmDesc": "Purge every definition and allow-list entry for these app config names, then register the fixture again? Purging a definition also deletes everything stored under it: all saved user, domain and public settings and the Branding theme are lost.",
+    "AppConfigFixtureResetConfirmDesc": "Purge every definition and allow-list entry for {{names}}, then register the fixture again? Purging a definition also deletes everything stored under it: all saved user, domain and public settings and the Branding theme are lost.",
     "AppConfigFixtureResetFix": "Click Reset App Config to purge these app config names and register the fixture again. Saved settings and the Branding theme are deleted.",
     "AppConfigFixtureUnexpected": "Unexpected App Config Entries",
     "AppConfigFixtureUnexpectedDesc": "These definitions or allow-list entries are registered for the WebUI app config names but are not part of the fixture (rank in parentheses): {{items}}.",
