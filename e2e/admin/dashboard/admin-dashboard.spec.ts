@@ -183,8 +183,11 @@ test.describe(
           .filter({ hasText: 'Recently Created Sessions' });
         await expect(widget).toBeVisible({ timeout: WIDGET_TIMEOUT });
 
-        // 2. Verify the sessions table container is displayed
-        await expect(widget.getByRole('table')).toBeVisible();
+        // 2. Verify the sessions table is displayed. A card shown from the sider
+        // fetches its sessions only then, and the domain query can take seconds.
+        await expect(widget.getByRole('table')).toBeVisible({
+          timeout: WIDGET_TIMEOUT,
+        });
       });
 
       test('Admin can refresh the dashboard and the Recently Created Sessions widget keeps rendering', async ({
@@ -203,7 +206,9 @@ test.describe(
         await refreshButton.click();
 
         // 3. Verify the widget still renders after refresh
-        await expect(widget.getByRole('table')).toBeVisible();
+        await expect(widget.getByRole('table')).toBeVisible({
+          timeout: WIDGET_TIMEOUT,
+        });
       });
     });
   },
