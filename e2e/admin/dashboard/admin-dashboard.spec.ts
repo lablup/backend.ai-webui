@@ -206,5 +206,105 @@ test.describe(
         await expect(widget.getByRole('table')).toBeVisible();
       });
     });
+
+    // -----------------------------------------------------------------------
+    // Audit Log: Top Failure Causes Widget
+    // -----------------------------------------------------------------------
+    test.describe('Audit Log Top Failure Causes Widget', () => {
+      const CARD_TITLE = 'Audit Log: Top Failure Causes';
+      // A stored board may hide the card, so each test shows it from the
+      // edit sider (personal userConfig) and hides it again afterwards.
+      let addedCard = false;
+      const setCardShown = async (page: Page, shown: boolean) => {
+        const dashboardBar = page.getByTestId('dashboard-filter-bar');
+        await dashboardBar.getByRole('button', { name: 'Edit' }).click();
+        const checkbox = page.getByRole('checkbox', {
+          name: CARD_TITLE,
+          exact: true,
+        });
+        await expect(checkbox).toBeVisible({ timeout: WIDGET_TIMEOUT });
+        const wasShown = await checkbox.isChecked();
+        if (wasShown !== shown) await checkbox.click();
+        await dashboardBar.getByRole('button', { name: 'Close' }).click();
+        return wasShown;
+      };
+      const failureCausesWidget = (page: Page) =>
+        page.locator('.uic-board-item').filter({
+          has: page.getByRole('heading', { name: CARD_TITLE, exact: true }),
+        });
+
+      test.beforeEach(async ({ page, request }) => {
+        await loginAsAdmin(page, request);
+        await navigateTo(page, 'admin/dashboard');
+        addedCard = !(await setCardShown(page, true));
+      });
+
+      test.afterEach(async ({ page }) => {
+        if (addedCard) await setCardShown(page, false);
+      });
+
+      test('Admin can view the Audit Log Top Failure Causes card on the superadmin dashboard', async ({
+        page,
+      }) => {
+        // 1. Locate the card and its table
+        const widget = failureCausesWidget(page);
+        await expect(widget).toBeVisible({ timeout: WIDGET_TIMEOUT });
+        const table = widget.getByRole('table');
+        await expect(table).toBeVisible({ timeout: WIDGET_TIMEOUT });
+
+        // 2. Verify the Action / Reason / Count / Share columns
+        for (const column of ['Action', 'Reason', 'Count', 'Share']) {
+          await expect(
+            table.getByRole('columnheader', { name: column, exact: true }),
+          ).toBeVisible();
+        }
+
+        // 3. Verify either failure cause rows or the empty state
+        await expect(
+          table
+            .locator('tbody tr td:first-child')
+            .getByRole('button')
+            .first()
+            .or(table.getByText('No failures', { exact: true })),
+        ).toBeVisible({ timeout: WIDGET_TIMEOUT });
+      });
+
+      test('Admin can open and close the failed entries of an action from the Top Failure Causes card', async ({
+        page,
+      }) => {
+        const widget = failureCausesWidget(page);
+        const table = widget.getByRole('table');
+        await expect(table).toBeVisible({ timeout: WIDGET_TIMEOUT });
+        // The Action cell is a BAILink without href, so it has the button role.
+        const actionLinks = table
+          .locator('tbody tr td:first-child')
+          .getByRole('button');
+        await expect(
+          actionLinks
+            .first()
+            .or(table.getByText('No failures', { exact: true })),
+        ).toBeVisible({ timeout: WIDGET_TIMEOUT });
+        test.skip(
+          (await actionLinks.count()) === 0,
+          'No failed audit log entries in the selected time range',
+        );
+
+        // 1. Click the first action and verify its failed entries modal
+        const actionLink = actionLinks.first();
+        const actionLabel = (await actionLink.innerText()).trim();
+        await actionLink.click();
+        const modal = page.getByRole('dialog', {
+          name: `Failed entries: ${actionLabel}`,
+        });
+        await expect(modal).toBeVisible();
+        await expect(modal.getByRole('table')).toBeVisible({
+          timeout: WIDGET_TIMEOUT,
+        });
+
+        // 2. Close the modal and verify it disappears
+        await modal.getByRole('button', { name: 'Close' }).click();
+        await expect(modal).toBeHidden();
+      });
+    });
   },
 );
