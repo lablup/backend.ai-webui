@@ -19,7 +19,9 @@ import {
   useCustomEndpointApiKey,
 } from '../Chat/customEndpointKeyStore';
 import { fetchOpenAIModels } from '../Chat/openAIModels';
-import WebUIAssistantEndpointForm from './WebUIAssistantEndpointForm';
+import WebUIAssistantEndpointForm, {
+  type WebUIAssistantEndpointFormHandle,
+} from './WebUIAssistantEndpointForm';
 import {
   WEBUI_ASSISTANT_CONFIG_KEY,
   WEBUI_ASSISTANT_KEY_ID,
@@ -165,6 +167,19 @@ const WebUIAssistantConnectModal: React.FC<WebUIAssistantConnectModalProps> = ({
       endpointURL === undefined ||
       tokenProbe === 'probing');
 
+  const endpointFormRef = useRef<WebUIAssistantEndpointFormHandle>(null);
+  const connectCustom = async () => {
+    if (isConnecting) return;
+    setIsConnecting(true);
+    try {
+      await endpointFormRef.current?.submit();
+    } catch (error) {
+      message.error(getErrorMessage(error));
+    } finally {
+      setIsConnecting(false);
+    }
+  };
+
   // BAIModal does not await onOk, so the pending state and failures stay in here.
   const connectDeployment = async () => {
     const baseURL = deploymentURL;
@@ -198,15 +213,14 @@ const WebUIAssistantConnectModal: React.FC<WebUIAssistantConnectModalProps> = ({
       okText={t('webuiAssistant.Connect')}
       okButtonProps={{
         disabled:
-          isCustom ||
-          !deploymentId ||
-          !endpointURL ||
-          isDeploymentLoading ||
-          (needsToken && !token),
+          !isCustom &&
+          (!deploymentId ||
+            !endpointURL ||
+            isDeploymentLoading ||
+            (needsToken && !token)),
       }}
-      footer={isCustom ? null : undefined}
       confirmLoading={isConnecting}
-      onOk={connectDeployment}
+      onOk={isCustom ? connectCustom : connectDeployment}
       onCancel={close}
       {...modalProps}
     >
@@ -312,14 +326,12 @@ const WebUIAssistantConnectModal: React.FC<WebUIAssistantConnectModalProps> = ({
         )}
         {isCustom && (
           <WebUIAssistantEndpointForm
+            ref={endpointFormRef}
             baseURL={savedCustomURL}
             apiKey={savedCustomURL ? savedApiKey : undefined}
             onSubmit={(values) =>
-              save({ baseURL: values.baseURL, apiKey: values.apiKey }).catch(
-                (error) => message.error(getErrorMessage(error)),
-              )
+              save({ baseURL: values.baseURL, apiKey: values.apiKey })
             }
-            onCancel={close}
           />
         )}
       </BAIFlex>

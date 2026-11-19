@@ -10,14 +10,18 @@ import { Banner } from '@lablup/ui-common/Banner';
 import { Button } from '@lablup/ui-common/Button';
 import { useTheme } from '@lablup/ui-common/theme';
 import { BAIFlex, BAITextInput } from 'backend.ai-ui';
-import { LinkIcon } from 'lucide-react';
-import { useState } from 'react';
+import { useImperativeHandle, useState, type Ref } from 'react';
 import { useTranslation } from 'react-i18next';
 
 export type WebUIAssistantEndpointFormValues = {
   baseURL: string;
   apiKey?: string;
 };
+
+export interface WebUIAssistantEndpointFormHandle {
+  /** Validates, probes `/models`, and resolves after `onSubmit` settles or the probe fails. */
+  submit: () => Promise<void>;
+}
 
 interface WebUIAssistantEndpointFormProps {
   baseURL?: string;
@@ -26,8 +30,9 @@ interface WebUIAssistantEndpointFormProps {
   onSubmit: (
     values: WebUIAssistantEndpointFormValues,
     models: ChatModel[],
-  ) => void;
-  onCancel?: () => void;
+  ) => Promise<void> | void;
+  /** The connect modal's footer submits through this handle. */
+  ref?: Ref<WebUIAssistantEndpointFormHandle>;
 }
 
 type ProbeFailure = ModelsFetchError | { kind: 'no-models' };
@@ -45,7 +50,7 @@ const WebUIAssistantEndpointForm: React.FC<WebUIAssistantEndpointFormProps> = ({
   baseURL,
   apiKey,
   onSubmit,
-  onCancel,
+  ref,
 }) => {
   'use memo';
   const { t } = useTranslation();
@@ -72,15 +77,14 @@ const WebUIAssistantEndpointForm: React.FC<WebUIAssistantEndpointFormProps> = ({
         setFailure({ error: { kind: 'no-models' }, baseURL: normalized });
         return;
       }
-      onSubmit({ baseURL: normalized, apiKey: key }, result.data);
+      await onSubmit({ baseURL: normalized, apiKey: key }, result.data);
     } finally {
       setIsBusy(false);
     }
   };
 
-  const submit = () => {
-    form.validateFields().then(connect);
-  };
+  const submit = () => form.validateFields().then(connect, () => undefined);
+  useImperativeHandle(ref, () => ({ submit }));
 
   const retryWithV1 = (url: string) => {
     form.setFieldsValue({ baseURL: url });
@@ -199,7 +203,7 @@ const WebUIAssistantEndpointForm: React.FC<WebUIAssistantEndpointFormProps> = ({
             placeholder="https://api.example.com/v1"
             disabled={isBusy}
             hasAutoFocus={!baseURL}
-            onEnter={submit}
+            onEnter={() => void submit()}
           />
         </BAIFormItem>
         <BAIFormItem
@@ -213,26 +217,9 @@ const WebUIAssistantEndpointForm: React.FC<WebUIAssistantEndpointFormProps> = ({
             placeholder="sk-…"
             disabled={isBusy}
             autoComplete="off"
-            onEnter={submit}
+            onEnter={() => void submit()}
           />
         </BAIFormItem>
-        <BAIFlex direction="row" gap="xs">
-          <Button
-            variant="primary"
-            icon={<LinkIcon size="1em" />}
-            isLoading={isBusy}
-            label={t('chatui.customEndpoint.Connect')}
-            onClick={submit}
-          />
-          {onCancel ? (
-            <Button
-              variant="secondary"
-              isDisabled={isBusy}
-              label={t('button.Cancel')}
-              onClick={onCancel}
-            />
-          ) : null}
-        </BAIFlex>
       </Form>
     </BAIFlex>
   );
