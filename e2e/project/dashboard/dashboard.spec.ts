@@ -654,6 +654,159 @@ test.describe(
         ).toHaveCount(0);
         await deletePersisted;
       });
+
+      test('Admin can add a custom Audit Log table panel from the dashboard edit sider', async ({
+        page,
+        request,
+      }) => {
+        // 1. Login as admin, open the dashboard, and enter edit mode
+        await loginAsAdmin(page, request);
+        await navigateTo(page, 'summary');
+        await expect(
+          page.getByRole('heading', { name: 'My Sessions' }),
+        ).toBeVisible({ timeout: WIDGET_TIMEOUT });
+        await page
+          .getByTestId('dashboard-filter-bar')
+          .getByRole('button', { name: 'Edit' })
+          .click();
+
+        // 2. Open the panel modal and pick the "Audit Log" data source
+        await page.getByRole('button', { name: 'Add', exact: true }).click();
+        const modal = page.getByRole('dialog').filter({ hasText: 'Add panel' });
+        await expect(modal).toBeVisible();
+        await modal.getByRole('combobox', { name: 'Data source' }).click();
+        await page
+          .getByRole('option', { name: 'Audit Log', exact: true })
+          .click();
+        await expect(
+          modal.getByRole('combobox', { name: 'Data source' }),
+        ).toHaveText('Audit Log');
+
+        // 3. Title the panel with a unique name and add it
+        const panelTitle = `e2e-audit-panel-${Date.now()}`;
+        await modal
+          .getByRole('textbox', { name: 'Title', exact: true })
+          .fill(panelTitle);
+        await modal.getByRole('button', { name: 'Add', exact: true }).click();
+        await expect(modal).toBeHidden();
+
+        // 4. The new panel is an audit log table: Time, Action and Result columns
+        const panel = page
+          .locator('.uic-board-item')
+          .filter({ hasText: panelTitle });
+        await expect(panel).toBeVisible({ timeout: WIDGET_TIMEOUT });
+        for (const column of ['Time', 'Action', 'Result']) {
+          await expect(
+            panel.getByRole('columnheader', { name: column, exact: true }),
+          ).toBeVisible({ timeout: WIDGET_TIMEOUT });
+        }
+
+        // 5. Clean up: the board is saved in the account's app config
+        await page
+          .getByText(panelTitle, { exact: true })
+          // The board item renders the title first; the sider row comes last.
+          .last()
+          .locator('xpath=ancestor::*[.//button[@aria-label="Delete"]][1]')
+          .getByRole('button', { name: 'Delete' })
+          .click();
+        const deletePersisted = page.waitForResponse(
+          (response) => {
+            const body = response.request().postData() ?? '';
+            return (
+              body.includes('useAppConfigMyUpsertMutation') &&
+              !body.includes(panelTitle) &&
+              response.ok()
+            );
+          },
+          { timeout: WIDGET_TIMEOUT },
+        );
+        await page
+          .getByRole('button', { name: 'Confirm', exact: true })
+          .click();
+        await expect(
+          page.locator('.uic-board-item').filter({ hasText: panelTitle }),
+        ).toHaveCount(0);
+        await deletePersisted;
+      });
+
+      test('Admin sees Entity type and Result as list conditions for the Audit Log source', async ({
+        page,
+        request,
+      }) => {
+        // 1. Login as admin, open the dashboard, and open the panel modal
+        await loginAsAdmin(page, request);
+        await navigateTo(page, 'summary');
+        await expect(
+          page.getByRole('heading', { name: 'My Sessions' }),
+        ).toBeVisible({ timeout: WIDGET_TIMEOUT });
+        await page
+          .getByTestId('dashboard-filter-bar')
+          .getByRole('button', { name: 'Edit' })
+          .click();
+        await page.getByRole('button', { name: 'Add', exact: true }).click();
+        const modal = page.getByRole('dialog').filter({ hasText: 'Add panel' });
+        await expect(modal).toBeVisible();
+
+        // 2. Switch the data source to "Audit Log"
+        await modal.getByRole('combobox', { name: 'Data source' }).click();
+        await page
+          .getByRole('option', { name: 'Audit Log', exact: true })
+          .click();
+
+        // 3. The condition filter offers the audit log properties
+        await modal.getByRole('combobox', { name: 'Search filters' }).click();
+        for (const property of [
+          'Entity type',
+          'Result',
+          'Action',
+          'Operation',
+        ]) {
+          await expect(
+            page.getByRole('option', { name: property, exact: true }),
+          ).toBeVisible();
+        }
+
+        // 4. Entity type is picked from a list, not typed
+        await page
+          .getByRole('option', { name: 'Entity type', exact: true })
+          .click();
+        const field = modal.getByRole('combobox', { name: 'Field' });
+        await expect(field).toHaveText('Entity type');
+        await expect(
+          modal.getByRole('combobox', { name: 'Value' }),
+        ).toBeVisible();
+        await expect(modal.getByRole('textbox', { name: 'Value' })).toHaveCount(
+          0,
+        );
+
+        // 5. Result is a list of outcomes too
+        await field.click();
+        await page.getByRole('option', { name: 'Result', exact: true }).click();
+        await expect(field).toHaveText('Result');
+        const resultValue = modal.getByRole('combobox', { name: 'Value' });
+        await resultValue.click();
+        await expect(
+          page.getByRole('option', { name: 'Success', exact: true }),
+        ).toBeVisible();
+        await page.keyboard.press('Escape');
+        await expect(modal).toBeVisible();
+
+        // 6. Action and Operation are free-text conditions
+        for (const property of ['Action', 'Operation']) {
+          await field.click();
+          await page
+            .getByRole('option', { name: property, exact: true })
+            .click();
+          await expect(field).toHaveText(property);
+          await expect(
+            modal.getByRole('textbox', { name: 'Value' }),
+          ).toBeVisible();
+        }
+
+        // 7. Cancel closes the modal without adding a panel
+        await modal.getByRole('button', { name: 'Cancel' }).last().click();
+        await expect(modal).toBeHidden();
+      });
     });
   },
 );
