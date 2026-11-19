@@ -62,6 +62,12 @@ export const ENTITY_TYPE_ALIASES = {
   artifact_registry: 'artifactRegistry',
 } as const satisfies Record<AuditEntityType, string>;
 
+/** The audit log entries of `window` that ended in an error or were denied. */
+export const failuresWithin = (window: DateTimeWindow): AuditLogFilter => ({
+  ...withinWindow('createdAt', window),
+  status: { in: [...AUDIT_FAILURE_STATUSES] },
+});
+
 /** Failure counts per entity type, plus every other type as `other`. */
 export const entityTypeFailureFilters = (
   window: DateTimeWindow,
@@ -70,8 +76,7 @@ export const entityTypeFailureFilters = (
   AuditLogFilter
 > => {
   const failures = (entityType: AuditLogFilter['entityType']) => ({
-    ...withinWindow('createdAt', window),
-    status: { in: [...AUDIT_FAILURE_STATUSES] },
+    ...failuresWithin(window),
     entityType,
   });
   const byType = (type: AuditEntityType) => failures({ equals: type });
@@ -147,4 +152,57 @@ export const queueWaitStats = (
         ? waits[middle]
         : (waits[middle - 1] + waits[middle]) / 2,
   };
+};
+
+/** The failed audit entries the cause card groups, newest first. */
+export const FAILURE_CAUSE_SAMPLE_SIZE = 500;
+
+const ISO_TIME_PATTERN =
+  /\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}(:\d{2}(\.\d+)?)?(Z|[+-]\d{2}:?\d{2})?/g;
+const UUID_PATTERN =
+  /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/gi;
+// Container, image and request ids: 8+ hex characters with a digit and a letter, so a plain number stays a number.
+const HEX_ID_PATTERN = /\b(?=[0-9a-f]*\d)(?=[0-9a-f]*[a-f])[0-9a-f]{8,}\b/gi;
+const NUMBER_PATTERN = /\b\d+\.\d+\b|\b\d{4,}\b/g;
+
+/** A message with its times, ids and numbers masked, so one cause about many entities groups as one. */
+export const normalizeFailureMessage = (message: string): string =>
+  message
+    .replace(ISO_TIME_PATTERN, '<time>')
+    .replace(UUID_PATTERN, '<id>')
+    .replace(HEX_ID_PATTERN, '<id>')
+    .replace(NUMBER_PATTERN, '<n>')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+export interface FailureCause {
+  key: string;
+  actionName: string;
+  message: string;
+  count: number;
+  percent: number;
+}
+
+/** Failed entries grouped by action and normalized message, most frequent first. */
+export const groupFailureCauses = (
+  entries: ReadonlyArray<{
+    readonly actionName?: string | null;
+    readonly description?: string | null;
+  }>,
+): Array<FailureCause> => {
+  const groups = new Map<string, Omit<FailureCause, 'percent'>>();
+  for (const entry of entries) {
+    const actionName = entry.actionName ?? '';
+    const message = normalizeFailureMessage(entry.description ?? '');
+    const key = `${actionName}\u0000${message}`;
+    const group = groups.get(key);
+    if (group) group.count += 1;
+    else groups.set(key, { key, actionName, message, count: 1 });
+  }
+  return [...groups.values()]
+    .sort((a, b) => b.count - a.count || a.key.localeCompare(b.key))
+    .map((group) => ({
+      ...group,
+      percent: Math.round((group.count / entries.length) * 100),
+    }));
 };

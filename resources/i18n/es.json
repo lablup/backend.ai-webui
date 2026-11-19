@@ -849,6 +849,7 @@
       "NewBoardTitle": "Tablero {{number}}"
     },
     "card": {
+      "Action": "Acción",
       "ActiveByType": "Activas por tipo",
       "Admins": "Administradores",
       "Agents": "Agentes",
@@ -871,8 +872,10 @@
       "Failed": "Fallidas",
       "FailedLogins": "Inicios de sesión fallidos",
       "FailedLoginsTooltip": "Inicios de sesión fallidos en el periodo de la tarjeta.",
+      "FailureCausesSampled": "Agrupado a partir de los {{sampled}} fallos más recientes de {{total}}.",
       "FailuresByEntityType": "Fallos por tipo de entidad",
       "FailuresByEntityTypeTooltip": "Entradas del registro de auditoría del proyecto o dominio actual que terminaron en error o fueron denegadas en el periodo de la tarjeta, contadas por tipo de entidad.",
+      "FailuresOfAction": "Entradas fallidas: {{action}}",
       "FailuresOfType": "Entradas fallidas: {{type}}",
       "FailuresOnly": "Mostrar solo fallos",
       "FolderLimit": "Límite: {{max}}",
@@ -938,6 +941,8 @@
       "Terminated": "Terminado",
       "Terminating": "Terminando",
       "ThisRange": "Este periodo",
+      "TopFailureCauses": "Registro de auditoría: Principales causas de fallo",
+      "TopFailureCausesTooltip": "Agrupa los fallos por causa durante el periodo seleccionado.",
       "Unhealthy": "Con problemas",
       "Unlimited": "Ilimitado",
       "ViewAll": "Ver todo",

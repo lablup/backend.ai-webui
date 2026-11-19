@@ -849,6 +849,7 @@
       "NewBoardTitle": "Papan {{number}}"
     },
     "card": {
+      "Action": "Aksi",
       "ActiveByType": "Aktif menurut jenis",
       "Admins": "Admin",
       "Agents": "Agen",
@@ -871,8 +872,10 @@
       "Failed": "Gagal",
       "FailedLogins": "Login gagal",
       "FailedLoginsTooltip": "Login gagal dalam rentang waktu kartu.",
+      "FailureCausesSampled": "Dikelompokkan dari {{sampled}} kegagalan terbaru dari {{total}}.",
       "FailuresByEntityType": "Kegagalan per jenis entitas",
       "FailuresByEntityTypeTooltip": "Entri log audit proyek atau domain saat ini yang berakhir dengan kesalahan atau ditolak dalam rentang waktu kartu, dihitung per jenis entitas.",
+      "FailuresOfAction": "Entri gagal: {{action}}",
       "FailuresOfType": "Entri gagal: {{type}}",
       "FailuresOnly": "Tampilkan kegagalan saja",
       "FolderLimit": "Batas: {{max}}",
@@ -938,6 +941,8 @@
       "Terminated": "Dihentikan",
       "Terminating": "Menghentikan",
       "ThisRange": "Rentang ini",
+      "TopFailureCauses": "Log Audit: Penyebab Kegagalan Teratas",
+      "TopFailureCausesTooltip": "Mengelompokkan kegagalan berdasarkan penyebab pada rentang waktu yang dipilih.",
       "Unhealthy": "Tidak sehat",
       "Unlimited": "Tidak terbatas",
       "ViewAll": "Lihat semua",

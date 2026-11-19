@@ -849,6 +849,7 @@
       "NewBoardTitle": "看板 {{number}}"
     },
     "card": {
+      "Action": "操作",
       "ActiveByType": "依類型的活動工作階段",
       "Admins": "管理員",
       "Agents": "代理程式",
@@ -871,8 +872,10 @@
       "Failed": "失敗",
       "FailedLogins": "登入失敗",
       "FailedLoginsTooltip": "卡片時間範圍內的登入失敗次數。",
+      "FailureCausesSampled": "已對 {{total}} 個失敗中最新的 {{sampled}} 個進行分組。",
       "FailuresByEntityType": "依實體類型的失敗",
       "FailuresByEntityTypeTooltip": "依實體類型統計卡片時間範圍內目前專案或網域中以錯誤結束或遭拒絕的稽核日誌項目。",
+      "FailuresOfAction": "失敗項目:{{action}}",
       "FailuresOfType": "失敗紀錄：{{type}}",
       "FailuresOnly": "僅顯示失敗",
       "FolderLimit": "上限: {{max}}",
@@ -938,6 +941,8 @@
       "Terminated": "已終止",
       "Terminating": "終止中",
       "ThisRange": "本時段",
+      "TopFailureCauses": "稽核日誌: 主要失敗原因",
+      "TopFailureCausesTooltip": "依原因分組顯示所選時間範圍內的失敗。",
       "Unhealthy": "異常",
       "Unlimited": "無限制",
       "ViewAll": "查看全部",

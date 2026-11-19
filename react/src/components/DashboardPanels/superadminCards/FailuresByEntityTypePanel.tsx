@@ -38,7 +38,7 @@ import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
 /** One entity type's failed audit entries in the card's window, a page at a time. */
-const FailedEntries: React.FC<{
+export const FailedEntries: React.FC<{
   scope: AuditLogScope;
   filter: AuditLogFilter;
   fetchKey: string;

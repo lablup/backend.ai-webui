@@ -849,6 +849,7 @@
       "NewBoardTitle": "ボード {{number}}"
     },
     "card": {
+      "Action": "操作",
       "ActiveByType": "タイプ別のアクティブ",
       "Admins": "管理者",
       "Agents": "エージェント",
@@ -871,8 +872,10 @@
       "Failed": "失敗",
       "FailedLogins": "サインイン失敗",
       "FailedLoginsTooltip": "カードの期間におけるサインイン失敗を表示します。",
+      "FailureCausesSampled": "失敗 {{total}} 件のうち最新 {{sampled}} 件をまとめました。",
       "FailuresByEntityType": "エンティティタイプ別の失敗",
       "FailuresByEntityTypeTooltip": "カードに設定した期間に、現在のプロジェクトまたはドメインでエラーで終了したか拒否された監査ログ項目をエンティティ種類別に数えます。",
+      "FailuresOfAction": "失敗した項目: {{action}}",
       "FailuresOfType": "失敗した記録: {{type}}",
       "FailuresOnly": "失敗のみ表示",
       "FolderLimit": "上限: {{max}}",
@@ -938,6 +941,8 @@
       "Terminated": "終了",
       "Terminating": "終了中",
       "ThisRange": "今回の期間",
+      "TopFailureCauses": "監査ログ: 主な失敗原因",
+      "TopFailureCausesTooltip": "選択した期間の失敗を原因別にまとめて表示します。",
       "Unhealthy": "異常",
       "Unlimited": "無制限",
       "ViewAll": "すべて表示",

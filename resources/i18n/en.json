@@ -836,6 +836,7 @@
       "NewBoardTitle": "Board {{number}}"
     },
     "card": {
+      "Action": "Action",
       "ActiveByType": "Active by type",
       "Admins": "Admins",
       "Agents": "Agents",
@@ -858,8 +859,10 @@
       "Failed": "Failed",
       "FailedLogins": "Failed sign-ins",
       "FailedLoginsTooltip": "Failed sign-ins in the card's time range.",
+      "FailureCausesSampled": "Grouped from the newest {{sampled}} of {{total}} failures.",
       "FailuresByEntityType": "Failures by Entity Type",
       "FailuresByEntityTypeTooltip": "Audit log entries of the current project or domain that ended in an error or were denied in the card's time range, counted per entity type.",
+      "FailuresOfAction": "Failed entries: {{action}}",
       "FailuresOfType": "Failed entries: {{type}}",
       "FailuresOnly": "Show failures only",
       "FolderLimit": "Limit: {{max}}",
@@ -925,6 +928,8 @@
       "Terminated": "Terminated",
       "Terminating": "Terminating",
       "ThisRange": "This range",
+      "TopFailureCauses": "Audit Log: Top Failure Causes",
+      "TopFailureCausesTooltip": "Groups failures by cause for the selected time range.",
       "Unhealthy": "Unhealthy",
       "Unlimited": "Unlimited",
       "ViewAll": "View all",

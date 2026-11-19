@@ -849,6 +849,7 @@
       "NewBoardTitle": "Pano {{number}}"
     },
     "card": {
+      "Action": "İşlem",
       "ActiveByType": "Türe göre etkin",
       "Admins": "Yöneticiler",
       "Agents": "Ajanlar",
@@ -871,8 +872,10 @@
       "Failed": "Başarısız",
       "FailedLogins": "Başarısız oturum açmalar",
       "FailedLoginsTooltip": "Kartın zaman aralığındaki başarısız oturum açmalar.",
+      "FailureCausesSampled": "{{total}} hatanın en yeni {{sampled}} tanesi gruplandı.",
       "FailuresByEntityType": "Varlık türüne göre hatalar",
       "FailuresByEntityTypeTooltip": "Kartın zaman aralığında geçerli proje veya alan adında hatayla biten ya da reddedilen denetim günlüğü kayıtları, varlık türüne göre sayılır.",
+      "FailuresOfAction": "Başarısız girdiler: {{action}}",
       "FailuresOfType": "Başarısız kayıtlar: {{type}}",
       "FailuresOnly": "Yalnızca hataları göster",
       "FolderLimit": "Sınır: {{max}}",
@@ -938,6 +941,8 @@
       "Terminated": "Sonlandırıldı",
       "Terminating": "Sonlandırılıyor",
       "ThisRange": "Bu dönem",
+      "TopFailureCauses": "Denetim Günlüğü: Başlıca Hata Nedenleri",
+      "TopFailureCausesTooltip": "Seçilen zaman aralığındaki başarısızlıkları nedene göre gruplandırır.",
       "Unhealthy": "Sağlıksız",
       "Unlimited": "Sınırsız",
       "ViewAll": "Tümünü görüntüle",

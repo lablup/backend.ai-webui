@@ -849,6 +849,7 @@
       "NewBoardTitle": "Tableau {{number}}"
     },
     "card": {
+      "Action": "Action",
       "ActiveByType": "Actives par type",
       "Admins": "Administrateurs",
       "Agents": "Agents",
@@ -871,8 +872,10 @@
       "Failed": "Échouées",
       "FailedLogins": "Connexions échouées",
       "FailedLoginsTooltip": "Connexions échouées sur la période de la carte.",
+      "FailureCausesSampled": "Regroupé à partir des {{sampled}} échecs les plus récents sur {{total}}.",
       "FailuresByEntityType": "Échecs par type d'entité",
       "FailuresByEntityTypeTooltip": "Entrées du journal d’audit du projet ou du domaine actuel terminées en erreur ou refusées sur la période de la carte, comptées par type d’entité.",
+      "FailuresOfAction": "Entrées en échec : {{action}}",
       "FailuresOfType": "Entrées en échec : {{type}}",
       "FailuresOnly": "Afficher les échecs uniquement",
       "FolderLimit": "Limite : {{max}}",
@@ -938,6 +941,8 @@
       "Terminated": "Terminé",
       "Terminating": "Arrêt en cours",
       "ThisRange": "Cette période",
+      "TopFailureCauses": "Journal d'audit: Principales causes d'échec",
+      "TopFailureCausesTooltip": "Regroupe les échecs par cause pour la période sélectionnée.",
       "Unhealthy": "Défaillant",
       "Unlimited": "Illimité",
       "ViewAll": "Tout afficher",

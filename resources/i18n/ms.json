@@ -849,6 +849,7 @@
       "NewBoardTitle": "Papan {{number}}"
     },
     "card": {
+      "Action": "Tindakan",
       "ActiveByType": "Aktif mengikut jenis",
       "Admins": "Pentadbir",
       "Agents": "Ejen",
@@ -871,8 +872,10 @@
       "Failed": "Gagal",
       "FailedLogins": "Log masuk gagal",
       "FailedLoginsTooltip": "Log masuk gagal dalam julat masa kad.",
+      "FailureCausesSampled": "Dikumpulkan daripada {{sampled}} kegagalan terkini daripada {{total}}.",
       "FailuresByEntityType": "Kegagalan mengikut jenis entiti",
       "FailuresByEntityTypeTooltip": "Entri log audit projek atau domain semasa yang berakhir dengan ralat atau ditolak dalam julat masa kad, dikira mengikut jenis entiti.",
+      "FailuresOfAction": "Entri gagal: {{action}}",
       "FailuresOfType": "Entri gagal: {{type}}",
       "FailuresOnly": "Tunjukkan kegagalan sahaja",
       "FolderLimit": "Had: {{max}}",
@@ -938,6 +941,8 @@
       "Terminated": "Ditamatkan",
       "Terminating": "Sedang ditamatkan",
       "ThisRange": "Julat ini",
+      "TopFailureCauses": "Log Audit: Punca Kegagalan Utama",
+      "TopFailureCausesTooltip": "Mengumpulkan kegagalan mengikut punca dalam julat masa yang dipilih.",
       "Unhealthy": "Tidak sihat",
       "Unlimited": "Tanpa had",
       "ViewAll": "Lihat semua",

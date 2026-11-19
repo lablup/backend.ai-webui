@@ -849,6 +849,7 @@
       "NewBoardTitle": "Доска {{number}}"
     },
     "card": {
+      "Action": "Действие",
       "ActiveByType": "Активные по типу",
       "Admins": "Администраторы",
       "Agents": "Агенты",
@@ -871,8 +872,10 @@
       "Failed": "С ошибкой",
       "FailedLogins": "Неудачные входы",
       "FailedLoginsTooltip": "Неудачные входы за период карточки.",
+      "FailureCausesSampled": "Сгруппировано по {{sampled}} последним из {{total}} сбоев.",
       "FailuresByEntityType": "Сбои по типу объекта",
       "FailuresByEntityTypeTooltip": "Записи журнала аудита текущего проекта или домена, завершившиеся ошибкой или отклонённые за период карточки, по типам сущностей.",
+      "FailuresOfAction": "Неудачные записи: {{action}}",
       "FailuresOfType": "Неудачные записи: {{type}}",
       "FailuresOnly": "Только сбои",
       "FolderLimit": "Лимит: {{max}}",
@@ -938,6 +941,8 @@
       "Terminated": "Завершено",
       "Terminating": "Завершается",
       "ThisRange": "Этот период",
+      "TopFailureCauses": "Журнал аудита: Основные причины сбоев",
+      "TopFailureCausesTooltip": "Группирует сбои по причинам за выбранный период.",
       "Unhealthy": "Неисправно",
       "Unlimited": "Без ограничений",
       "ViewAll": "Показать все",

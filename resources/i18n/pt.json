@@ -849,6 +849,7 @@
       "NewBoardTitle": "Painel {{number}}"
     },
     "card": {
+      "Action": "Ação",
       "ActiveByType": "Ativas por tipo",
       "Admins": "Administradores",
       "Agents": "Agentes",
@@ -871,8 +872,10 @@
       "Failed": "Falhadas",
       "FailedLogins": "Inícios de sessão falhados",
       "FailedLoginsTooltip": "Inícios de sessão falhados no período do cartão.",
+      "FailureCausesSampled": "Agrupado a partir das {{sampled}} falhas mais recentes de {{total}}.",
       "FailuresByEntityType": "Falhas por tipo de entidade",
       "FailuresByEntityTypeTooltip": "Entradas do registo de auditoria do projeto ou domínio atual que terminaram em erro ou foram negadas no período do cartão, contadas por tipo de entidade.",
+      "FailuresOfAction": "Entradas com falha: {{action}}",
       "FailuresOfType": "Entradas com falha: {{type}}",
       "FailuresOnly": "Mostrar apenas falhas",
       "FolderLimit": "Limite: {{max}}",
@@ -938,6 +941,8 @@
       "Terminated": "Terminado",
       "Terminating": "A terminar",
       "ThisRange": "Este período",
+      "TopFailureCauses": "Registro de auditoria: Principais causas de falha",
+      "TopFailureCausesTooltip": "Agrupa as falhas por causa no período selecionado.",
       "Unhealthy": "Com problemas",
       "Unlimited": "Ilimitado",
       "ViewAll": "Ver tudo",

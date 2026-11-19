@@ -846,6 +846,7 @@
       "NewBoardTitle": "บอร์ด {{number}}"
     },
     "card": {
+      "Action": "การดำเนินการ",
       "ActiveByType": "ที่ใช้งานอยู่ตามประเภท",
       "Admins": "ผู้ดูแล",
       "Agents": "เอเจนต์",
@@ -868,8 +869,10 @@
       "Failed": "ล้มเหลว",
       "FailedLogins": "การลงชื่อเข้าใช้ที่ล้มเหลว",
       "FailedLoginsTooltip": "การลงชื่อเข้าใช้ที่ล้มเหลวในช่วงเวลาของการ์ด",
+      "FailureCausesSampled": "จัดกลุ่มจากความล้มเหลวล่าสุด {{sampled}} จาก {{total}} รายการ",
       "FailuresByEntityType": "ความล้มเหลวตามประเภทเอนทิตี",
       "FailuresByEntityTypeTooltip": "รายการบันทึกการตรวจสอบของโปรเจกต์หรือโดเมนปัจจุบันที่จบด้วยข้อผิดพลาดหรือถูกปฏิเสธในช่วงเวลาของการ์ด นับตามประเภทเอนทิตี",
+      "FailuresOfAction": "รายการที่ล้มเหลว: {{action}}",
       "FailuresOfType": "รายการที่ล้มเหลว: {{type}}",
       "FailuresOnly": "แสดงเฉพาะที่ล้มเหลว",
       "FolderLimit": "ขีดจำกัด: {{max}}",
@@ -935,6 +938,8 @@
       "Terminated": "สิ้นสุดแล้ว",
       "Terminating": "กำลังยุติ",
       "ThisRange": "ช่วงนี้",
+      "TopFailureCauses": "บันทึกการตรวจสอบ: สาเหตุความล้มเหลวหลัก",
+      "TopFailureCausesTooltip": "จัดกลุ่มความล้มเหลวตามสาเหตุในช่วงเวลาที่เลือก",
       "Unhealthy": "ผิดปกติ",
       "Unlimited": "ไม่จำกัด",
       "ViewAll": "ดูทั้งหมด",

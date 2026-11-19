@@ -849,6 +849,7 @@
       "NewBoardTitle": "Tablica {{number}}"
     },
     "card": {
+      "Action": "Akcja",
       "ActiveByType": "Aktywne według typu",
       "Admins": "Administratorzy",
       "Agents": "Agenty",
@@ -871,8 +872,10 @@
       "Failed": "Nieudane",
       "FailedLogins": "Nieudane logowania",
       "FailedLoginsTooltip": "Nieudane logowania w zakresie czasu karty.",
+      "FailureCausesSampled": "Pogrupowano {{sampled}} najnowszych z {{total}} błędów.",
       "FailuresByEntityType": "Błędy według typu encji",
       "FailuresByEntityTypeTooltip": "Wpisy dziennika audytu bieżącego projektu lub domeny zakończone błędem lub odrzucone w zakresie czasu karty, liczone według typu encji.",
+      "FailuresOfAction": "Nieudane wpisy: {{action}}",
       "FailuresOfType": "Nieudane wpisy: {{type}}",
       "FailuresOnly": "Pokaż tylko niepowodzenia",
       "FolderLimit": "Limit: {{max}}",
@@ -938,6 +941,8 @@
       "Terminated": "Zakończono",
       "Terminating": "Kończenie",
       "ThisRange": "Ten okres",
+      "TopFailureCauses": "Dziennik audytu: Najczęstsze przyczyny błędów",
+      "TopFailureCausesTooltip": "Grupuje niepowodzenia według przyczyny w wybranym przedziale czasu.",
       "Unhealthy": "Niesprawny",
       "Unlimited": "Bez limitu",
       "ViewAll": "Pokaż wszystko",

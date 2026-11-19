@@ -849,6 +849,7 @@
       "NewBoardTitle": "Bảng {{number}}"
     },
     "card": {
+      "Action": "Thao tác",
       "ActiveByType": "Đang hoạt động theo loại",
       "Admins": "Quản trị viên",
       "Agents": "Agent",
@@ -871,8 +872,10 @@
       "Failed": "Thất bại",
       "FailedLogins": "Đăng nhập thất bại",
       "FailedLoginsTooltip": "Số lần đăng nhập thất bại trong khoảng thời gian của thẻ.",
+      "FailureCausesSampled": "Nhóm từ {{sampled}} lỗi mới nhất trong {{total}} lỗi.",
       "FailuresByEntityType": "Lỗi theo loại thực thể",
       "FailuresByEntityTypeTooltip": "Các mục nhật ký kiểm tra của dự án hoặc miền hiện tại kết thúc bằng lỗi hoặc bị từ chối trong khoảng thời gian của thẻ, đếm theo loại thực thể.",
+      "FailuresOfAction": "Mục thất bại: {{action}}",
       "FailuresOfType": "Mục thất bại: {{type}}",
       "FailuresOnly": "Chỉ hiện lỗi",
       "FolderLimit": "Giới hạn: {{max}}",
@@ -938,6 +941,8 @@
       "Terminated": "Đã kết thúc",
       "Terminating": "Đang kết thúc",
       "ThisRange": "Khoảng này",
+      "TopFailureCauses": "Nhật ký kiểm tra: Nguyên nhân lỗi hàng đầu",
+      "TopFailureCausesTooltip": "Nhóm các lỗi theo nguyên nhân trong khoảng thời gian đã chọn.",
       "Unhealthy": "Có lỗi",
       "Unlimited": "Không giới hạn",
       "ViewAll": "Xem tất cả",
