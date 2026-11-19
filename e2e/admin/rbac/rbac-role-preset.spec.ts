@@ -364,9 +364,7 @@ test.describe(
       // The role list's Scope Type value is a custom select (a `Scope Type`
       // button), which commits only on Apply — unlike `applyEnumFilter`.
       await openFilterField(page, 'Scope Type');
-      await page
-        .getByRole('button', { name: 'Scope Type', exact: true })
-        .click();
+      await page.getByRole('button', { name: /^Scope Type\b/ }).click();
       await page.getByRole('option', { name: 'Project', exact: true }).click();
       await settleTableAfter(page, 'RBACManagementPageQuery', () =>
         page.getByRole('button', { name: 'Apply', exact: true }).click(),
