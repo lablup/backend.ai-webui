@@ -4441,7 +4441,7 @@
     "Open": "Avaa WebUI-avustaja",
     "Placeholder": "Kysy WebUI:sta",
     "Token": "Tunnus",
-    "TokenHint": "Jätä tyhjäksi, jos käyttöönotto on julkinen."
+    "TokenHint": "Tämä käyttöönotto ei ole julkinen. Valitse jokin sen käyttötunnuksista."
   },
   "webuiSettings": {
     "AllowAnonymousChangePassword": "Salli salasanan nollaus",

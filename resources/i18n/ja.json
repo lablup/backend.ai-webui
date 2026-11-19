@@ -4442,7 +4442,7 @@
     "Open": "WebUI アシスタントを開く",
     "Placeholder": "WebUI について質問する",
     "Token": "トークン",
-    "TokenHint": "公開デプロイの場合は空欄のままにしてください。"
+    "TokenHint": "このデプロイメントは公開されていません。アクセストークンを選択してください。"
   },
   "webuiSettings": {
     "AllowAnonymousChangePassword": "パスワードの再設定を許可",

@@ -4442,7 +4442,7 @@
     "Open": "Mở trợ lý WebUI",
     "Placeholder": "Đặt câu hỏi về WebUI",
     "Token": "Token",
-    "TokenHint": "Để trống nếu triển khai mở công khai."
+    "TokenHint": "Bản triển khai này không công khai. Hãy chọn một trong các token truy cập của nó."
   },
   "webuiSettings": {
     "AllowAnonymousChangePassword": "Cho phép đặt lại mật khẩu",

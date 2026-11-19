@@ -24,6 +24,7 @@ import {
   type WebUIAssistantConnection,
 } from './webUIAssistantPrompt';
 import { Banner } from '@lablup/ui-common/Banner';
+import { Spinner } from '@lablup/ui-common/Spinner';
 import { Text } from '@lablup/ui-common/Text';
 import {
   BAIFlex,
@@ -89,6 +90,11 @@ const WebUIAssistantConnectModal: React.FC<WebUIAssistantConnectModalProps> = ({
     saved?.deploymentId ? savedApiKey : undefined,
   );
   const [endpointURL, setEndpointURL] = useState<string | null>();
+  // As on the chat page, a deployment is tried without a token first; the token field shows only when it is rejected.
+  const [probed, setProbed] = useState<{
+    url: string;
+    result: 'open' | 'needsToken' | 'failed';
+  }>();
   const [failure, setFailure] = useState<string>();
   const [isConnecting, setIsConnecting] = useState(false);
   const [isDeploymentPending, startDeploymentTransition] = useTransition();
@@ -116,14 +122,42 @@ const WebUIAssistantConnectModal: React.FC<WebUIAssistantConnectModalProps> = ({
     onRequestClose();
   };
 
+  const deploymentURL =
+    !isCustom && endpointURL ? deploymentBaseURL(endpointURL) : undefined;
+  useEffect(() => {
+    if (!deploymentURL) return;
+    let isStale = false;
+    fetchOpenAIModels(deploymentURL).then((probe) => {
+      if (isStale) return;
+      setProbed({
+        url: deploymentURL,
+        result: isAuthRejected(probe.error)
+          ? 'needsToken'
+          : probe.error || probe.data.length === 0
+            ? 'failed'
+            : 'open',
+      });
+    });
+    return () => {
+      isStale = true;
+    };
+  }, [deploymentURL]);
+  const tokenProbe = !deploymentURL
+    ? undefined
+    : probed?.url === deploymentURL
+      ? probed.result
+      : 'probing';
+  const needsToken = tokenProbe === 'needsToken';
+
   // BAIModal does not await onOk, so the pending state and failures stay in here.
   const connectDeployment = async () => {
-    const baseURL = endpointURL ? deploymentBaseURL(endpointURL) : undefined;
+    const baseURL = deploymentURL;
     if (!deploymentId || !baseURL || isConnecting) return;
+    const apiKey = needsToken ? token : undefined;
     setFailure(undefined);
     setIsConnecting(true);
     try {
-      const probe = await fetchOpenAIModels(baseURL, token);
+      const probe = await fetchOpenAIModels(baseURL, apiKey);
       if (isClosedRef.current) return;
       if (probe.error || probe.data.length === 0) {
         setFailure(
@@ -133,7 +167,7 @@ const WebUIAssistantConnectModal: React.FC<WebUIAssistantConnectModalProps> = ({
         );
         return;
       }
-      await save({ baseURL, apiKey: token, deploymentId });
+      await save({ baseURL, apiKey, deploymentId });
     } catch (error) {
       message.error(getErrorMessage(error));
     } finally {
@@ -148,7 +182,12 @@ const WebUIAssistantConnectModal: React.FC<WebUIAssistantConnectModalProps> = ({
       okText={t('webuiAssistant.Connect')}
       okButtonProps={{
         disabled:
-          isCustom || !deploymentId || !endpointURL || isDeploymentPending,
+          isCustom ||
+          !deploymentId ||
+          !endpointURL ||
+          isDeploymentPending ||
+          tokenProbe === 'probing' ||
+          (needsToken && !token),
       }}
       footer={isCustom ? null : undefined}
       confirmLoading={isConnecting}
@@ -185,21 +224,40 @@ const WebUIAssistantConnectModal: React.FC<WebUIAssistantConnectModalProps> = ({
                 deploymentId={deploymentId}
                 onResolved={setEndpointURL}
               />
-              <Form.Item
-                label={t('webuiAssistant.Token')}
-                extra={t('webuiAssistant.TokenHint')}
-              >
-                <DeploymentTokenSelect
-                  deploymentId={deploymentId}
-                  value={token}
-                  onChange={setToken}
-                  style={{ width: '100%' }}
-                />
-              </Form.Item>
+              {tokenProbe === 'probing' && (
+                <BAIFlex gap="xs" align="center">
+                  <Spinner size="sm" />
+                  <Text color="secondary">
+                    {t('webuiAssistant.ModelLoading')}
+                  </Text>
+                </BAIFlex>
+              )}
+              {needsToken && (
+                <Form.Item
+                  label={t('webuiAssistant.Token')}
+                  extra={t('webuiAssistant.TokenHint')}
+                >
+                  <DeploymentTokenSelect
+                    deploymentId={deploymentId}
+                    value={token}
+                    onChange={setToken}
+                    style={{ width: '100%' }}
+                  />
+                </Form.Item>
+              )}
             </Suspense>
           )}
         </Form>
-        {failure && <Banner status="error" role="alert" title={failure} />}
+        {(failure || tokenProbe === 'failed') && (
+          <Banner
+            status="error"
+            role="alert"
+            title={
+              failure ??
+              t('webuiAssistant.EndpointUnreachable', { url: deploymentURL })
+            }
+          />
+        )}
         {isCustom && (
           <CustomEndpointForm
             isPlain

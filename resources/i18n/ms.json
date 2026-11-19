@@ -4440,7 +4440,7 @@
     "Open": "Buka Pembantu WebUI",
     "Placeholder": "Tanya soalan tentang WebUI",
     "Token": "Token",
-    "TokenHint": "Biarkan kosong untuk penggunaan yang terbuka kepada umum."
+    "TokenHint": "Penggunaan ini bukan awam. Pilih salah satu token aksesnya."
   },
   "webuiSettings": {
     "AllowAnonymousChangePassword": "Benarkan tetapan semula kata laluan",

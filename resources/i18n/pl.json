@@ -4443,7 +4443,7 @@
     "Open": "Otwórz asystenta WebUI",
     "Placeholder": "Zadaj pytanie o WebUI",
     "Token": "Token",
-    "TokenHint": "Pozostaw puste dla wdrożenia publicznego."
+    "TokenHint": "To wdrożenie nie jest publiczne. Wybierz jeden z jego tokenów dostępu."
   },
   "webuiSettings": {
     "AllowAnonymousChangePassword": "Zezwalaj na resetowanie hasła",

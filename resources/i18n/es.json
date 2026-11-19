@@ -4440,7 +4440,7 @@
     "Open": "Abrir el asistente de WebUI",
     "Placeholder": "Haga una pregunta sobre WebUI",
     "Token": "Token",
-    "TokenHint": "Déjelo vacío para un despliegue abierto al público."
+    "TokenHint": "Este despliegue no es público. Elija uno de sus tokens de acceso."
   },
   "webuiSettings": {
     "AllowAnonymousChangePassword": "Permitir el restablecimiento de contraseña",

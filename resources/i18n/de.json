@@ -4442,7 +4442,7 @@
     "Open": "WebUI-Assistent öffnen",
     "Placeholder": "Stellen Sie eine Frage zur WebUI",
     "Token": "Token",
-    "TokenHint": "Bei einer öffentlichen Bereitstellung leer lassen."
+    "TokenHint": "Diese Bereitstellung ist nicht öffentlich. Wählen Sie eines ihrer Zugriffstoken."
   },
   "webuiSettings": {
     "AllowAnonymousChangePassword": "Zurücksetzen des Passworts erlauben",

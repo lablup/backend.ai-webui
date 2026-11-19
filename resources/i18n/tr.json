@@ -4440,7 +4440,7 @@
     "Open": "WebUI Asistanını aç",
     "Placeholder": "WebUI hakkında bir soru sorun",
     "Token": "Belirteç",
-    "TokenHint": "Herkese açık bir dağıtım için boş bırakın."
+    "TokenHint": "Bu dağıtım herkese açık değil. Erişim belirteçlerinden birini seçin."
   },
   "webuiSettings": {
     "AllowAnonymousChangePassword": "Parola sıfırlamaya izin ver",

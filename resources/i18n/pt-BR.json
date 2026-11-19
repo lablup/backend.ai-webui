@@ -4440,7 +4440,7 @@
     "Open": "Abrir o assistente da WebUI",
     "Placeholder": "Faça uma pergunta sobre a WebUI",
     "Token": "Token",
-    "TokenHint": "Deixe em branco para uma implantação aberta ao público."
+    "TokenHint": "Esta implantação não é pública. Escolha um de seus tokens de acesso."
   },
   "webuiSettings": {
     "AllowAnonymousChangePassword": "Permitir redefinição de senha",

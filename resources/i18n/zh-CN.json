@@ -4442,7 +4442,7 @@
     "Open": "打开 WebUI 助手",
     "Placeholder": "询问关于 WebUI 的问题",
     "Token": "令牌",
-    "TokenHint": "公开的部署可以留空。"
+    "TokenHint": "此部署未公开。请选择其中一个访问令牌。"
   },
   "webuiSettings": {
     "AllowAnonymousChangePassword": "允许重置密码",

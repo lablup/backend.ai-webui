@@ -4444,7 +4444,7 @@
     "Open": "Buka Asisten WebUI",
     "Placeholder": "Ajukan pertanyaan tentang WebUI",
     "Token": "Token",
-    "TokenHint": "Kosongkan untuk penerapan yang terbuka untuk publik."
+    "TokenHint": "Deployment ini tidak publik. Pilih salah satu token aksesnya."
   },
   "webuiSettings": {
     "AllowAnonymousChangePassword": "Izinkan pengaturan ulang kata sandi",

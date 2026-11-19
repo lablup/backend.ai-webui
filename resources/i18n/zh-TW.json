@@ -4444,7 +4444,7 @@
     "Open": "開啟 WebUI 助理",
     "Placeholder": "詢問關於 WebUI 的問題",
     "Token": "權杖",
-    "TokenHint": "公開的部署可以留空。"
+    "TokenHint": "此部署未公開。請選擇其中一個存取權杖。"
   },
   "webuiSettings": {
     "AllowAnonymousChangePassword": "允許重設密碼",

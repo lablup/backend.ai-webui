@@ -4443,7 +4443,7 @@
     "Open": "Ouvrir l'assistant WebUI",
     "Placeholder": "Posez une question sur la WebUI",
     "Token": "Jeton",
-    "TokenHint": "Laissez vide pour un déploiement ouvert au public."
+    "TokenHint": "Ce déploiement n'est pas public. Choisissez l'un de ses jetons d'accès."
   },
   "webuiSettings": {
     "AllowAnonymousChangePassword": "Autoriser la réinitialisation du mot de passe",

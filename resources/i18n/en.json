@@ -4425,7 +4425,7 @@
     "Open": "Open WebUI Assistant",
     "Placeholder": "Ask a question about WebUI",
     "Token": "Token",
-    "TokenHint": "Leave it empty for a deployment that is open to the public."
+    "TokenHint": "This deployment is not public. Pick one of its access tokens."
   },
   "webuiSettings": {
     "AllowAnonymousChangePassword": "Password reset",

@@ -4440,7 +4440,7 @@
     "Open": "Apri l'assistente WebUI",
     "Placeholder": "Fai una domanda sulla WebUI",
     "Token": "Token",
-    "TokenHint": "Lascia vuoto per una distribuzione aperta al pubblico."
+    "TokenHint": "Questo deployment non è pubblico. Scegli uno dei suoi token di accesso."
   },
   "webuiSettings": {
     "AllowAnonymousChangePassword": "Consenti la reimpostazione della password",

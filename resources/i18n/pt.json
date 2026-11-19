@@ -4442,7 +4442,7 @@
     "Open": "Abrir o assistente da WebUI",
     "Placeholder": "Faça uma pergunta sobre a WebUI",
     "Token": "Token",
-    "TokenHint": "Deixe em branco para uma implementação aberta ao público."
+    "TokenHint": "Esta implementação não é pública. Escolha um dos seus tokens de acesso."
   },
   "webuiSettings": {
     "AllowAnonymousChangePassword": "Permitir a reposição da palavra-passe",
