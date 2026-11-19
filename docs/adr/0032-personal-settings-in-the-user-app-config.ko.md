@@ -13,7 +13,7 @@
 ## Context
 
 - **localStorage settings**: `useBAISettingUserState`(`react/src/hooks/useBAISetting.tsx`)는 사용자 설정마다 localStorage의 `backendaiwebui.settings.user.<name>`에 저장한다. 브라우저를 바꾼 사용자는 투어 플래그, 테이블 컬럼 선택, 실험 기능 토글, 세션 런처 선호를 잃는다.
-- **App config documents**: `react/src/hooks/useAppConfig.ts`의 `useMyAppConfig(subKey)`는 로그인이 채운 `myAppConfigState`에서 로그인한 사용자의 merged `userConfig`를 읽고, 그 `set`이 USER 문서를 쓴다. 쓰기는 사용자마다 한 번에 하나씩 한다([ADR 0033](0033-scoped-and-merged-app-config-hooks.ko.md)). [ADR 0026](0026-dashboard-boards-in-manager-app-config.ko.md)은 이미 대시보드 보드를 `userConfig.dashboard`에 저장하고, FR-3834는 테마 family를 `userConfig.themeFamily`에 저장한다.
+- **App config documents**: `react/src/hooks/useAppConfig.ts`의 `useMyAppConfig('userConfig', subKey)`는 로그인이 채운 `myAppConfigState`에서 로그인한 사용자의 merged `userConfig`를 읽고, 그 `set`이 USER 문서를 쓴다. 쓰기는 사용자마다 한 번에 하나씩 한다([ADR 0033](0033-scoped-and-merged-app-config-hooks.ko.md)). [ADR 0026](0026-dashboard-boards-in-manager-app-config.ko.md)은 이미 대시보드 보드를 `userConfig.dashboard`에 저장하고, FR-3834는 테마 family를 `userConfig.themeFamily`에 저장한다.
 - **Synchronous readers**: 약 100곳의 call site가 render 중에 사용자 설정을 읽는다. app config 읽기는 suspend하며 로그인된 Relay environment가 필요하다. React 밖에서 account setting을 읽는 코드는 없다. `backendaiOptions`(`react/src/global-stores.ts`)는 device-local 키만 읽는다.
 - **Seeded tests**: e2e spec과 walkthrough 실행은 로그인 전에 localStorage에 투어 플래그를 써서, 투어가 검사할 화면을 가리지 않게 한다.
 - **Act-as**: act-as 탭(`react/src/helper/actAs.ts`)은 my* 읽기를 `X-BackendAI-Act-As`와 함께 보내므로 그 탭의 `userConfig`는 대상 사용자의 문서이고, 이 탭은 super admin의 다른 탭과 localStorage를 공유한다.
