@@ -17,7 +17,10 @@
     />
     <script>
       (() => {
-        const t = localStorage.getItem("adr-viewer:theme");
+        let t = null;
+        try {
+          t = localStorage.getItem("adr-viewer:theme");
+        } catch {}
         const dark = t
           ? t === "dark"
           : matchMedia("(prefers-color-scheme: dark)").matches;
@@ -603,7 +606,6 @@
         position: relative;
         color: var(--text);
         letter-spacing: -0.018em;
-        scroll-margin-top: calc(var(--header-h) + 24px);
         text-wrap: balance;
       }
       .doc h2 {
@@ -1653,6 +1655,7 @@
           expand: "Expand",
           copy: "Copy",
           copied: "Copied",
+          copyFail: "Copy failed",
           mmdErr: "Mermaid diagram failed to render",
           zoomHint: "Scroll to zoom · Drag to pan · Esc to close",
           loadingIdx: "Indexing full text…",
@@ -1682,6 +1685,7 @@
           expand: "확대",
           copy: "복사",
           copied: "복사됨",
+          copyFail: "복사 실패",
           mmdErr: "Mermaid 다이어그램을 그리지 못했습니다",
           zoomHint: "스크롤로 확대 · 드래그로 이동 · Esc로 닫기",
           loadingIdx: "본문 색인 중…",
@@ -1721,7 +1725,14 @@
         x: '<path d="M6 6l12 12M18 6 6 18"/>',
       };
 
-      const ref = new URLSearchParams(location.search).get("ref");
+      const qRef = new URLSearchParams(location.search).get("ref");
+      const ref =
+        qRef &&
+        /^[A-Za-z0-9._/-]+$/.test(qRef) &&
+        !qRef.startsWith("/") &&
+        !qRef.split("/").includes("..")
+          ? qRef
+          : null;
       const builtRef = document
         .querySelector('meta[name="adr-ref"]')
         .content.trim();
@@ -1754,6 +1765,8 @@
         route: null,
         idx: new Map(),
         docs: new Map(),
+        ready: new Set(),
+        view: 0,
         corpus: new Map(),
         text: {},
         heads: [],
@@ -1781,6 +1794,13 @@
         return map.get(key);
       };
 
+      const decode = (s) => {
+        try {
+          return decodeURIComponent(s);
+        } catch {
+          return s;
+        }
+      };
       function parseHash() {
         const raw = location.hash.replace(/^#\/?/, "");
         const qi = raw.indexOf("?");
@@ -1788,8 +1808,7 @@
         const q = new URLSearchParams(qi < 0 ? "" : raw.slice(qi + 1));
         const [first, ...rest] = path.split("/");
         const id = /^\d{4}$/.test(first) ? first : null;
-        const anchor =
-          id && rest.length ? decodeURIComponent(rest.join("/")) : null;
+        const anchor = id && rest.length ? decode(rest.join("/")) : null;
         const l = q.get("lang");
         return { id, anchor, lang: l === "ko" || l === "en" ? l : null };
       }
@@ -1832,7 +1851,7 @@
                 return `<figure class="diagram loading" data-i="${diagrams.length - 1}"></figure>`;
               }
               const hl = HL[l];
-              return `<div class="code"${l ? ` data-lang="${esc(l)}"` : ""}><pre><code${hl ? ` data-hl="${hl}"` : ""}>${esc(text)}</code></pre><button class="copy" type="button">${icon(ICON.copy)}<span>${T[S.lang].copy}</span></button></div>`;
+              return `<div class="code"${l ? ` data-lang="${esc(l)}"` : ""}><pre><code${hl ? ` data-hl="${hl}"` : ""}>${esc(text)}</code></pre></div>`;
             },
             table(token) {
               return `<div class="table-wrap">${super.table(token)}</div>`;
@@ -1842,7 +1861,23 @@
         return { m, slugger, diagrams };
       }
       const sanitize = (html) =>
-        DOMPurify.sanitize(html, { ADD_ATTR: ["target"] });
+        DOMPurify.sanitize(html, {
+          ADD_ATTR: ["target"],
+          FORBID_TAGS: [
+            "form",
+            "input",
+            "button",
+            "textarea",
+            "select",
+            "style",
+          ],
+        });
+      const sanitizeSvg = (svg) =>
+        DOMPurify.sanitize(svg, {
+          USE_PROFILES: { svg: true, svgFilters: true, html: true },
+          ADD_TAGS: ["foreignObject"],
+          HTML_INTEGRATION_POINTS: { foreignobject: true },
+        });
 
       let hljsP;
       const getHljs = () =>
@@ -1904,7 +1939,12 @@
       }
 
       const loadDoc = (entry) =>
-        memo(S.docs, entry.file, () => fetchText("adr/" + entry.file));
+        memo(S.docs, entry.file, () =>
+          fetchText("adr/" + entry.file).then((md) => {
+            S.ready.add(entry.file);
+            return md;
+          }),
+        );
 
       function rewriteLinks(root, basePath, curId) {
         for (const a of $$("a[href]", root)) {
@@ -1919,14 +1959,14 @@
             continue;
           }
           if (raw.startsWith("#")) {
-            const anchor = decodeURIComponent(raw.slice(1));
+            const anchor = decode(raw.slice(1));
             a.setAttribute("href", curId ? href(curId, anchor) : "#/");
             a.dataset.anchor = anchor;
             continue;
           }
           const u = new URL(raw, "https://repo.invalid/" + basePath);
-          const path = decodeURIComponent(u.pathname.slice(1));
-          const hash = decodeURIComponent(u.hash.slice(1));
+          const path = decode(u.pathname.slice(1));
+          const hash = decode(u.hash.slice(1));
           const adr = /^docs\/adr\/(\d{4})-[^/]*?(\.ko)?\.md$/.exec(path);
           const arch = /^docs\/ARCHITECTURE(\.ko)?\.md$/.exec(path);
           if (adr) {
@@ -1963,6 +2003,11 @@
           }
         }
         rewriteLinks(root, basePath, curId);
+        for (const c of $$("div.code", root))
+          c.insertAdjacentHTML(
+            "beforeend",
+            `<button class="copy" type="button">${icon(ICON.copy)}<span>${t.copy}</span></button>`,
+          );
         if (curId) {
           for (const el of root.children) {
             if (el.tagName === "H2") break;
@@ -2045,8 +2090,8 @@
 
       async function renderDiagrams(root) {
         const figs = $$("figure.diagram", root);
-        if (!figs.length) return;
         const seq = ++renderSeq;
+        if (!figs.length) return;
         root.dataset.diagrams = "pending";
         let mermaid;
         try {
@@ -2073,7 +2118,7 @@
             const { svg } = await mermaid.render(`mmd-${seq}-${k}`, f._src);
             if (seq !== renderSeq) return;
             f.className = "diagram ok";
-            f.innerHTML = `<div class="diagram-scroll">${svg}</div>`;
+            f.innerHTML = `<div class="diagram-scroll">${sanitizeSvg(svg)}</div>`;
             fitDiagram(f);
             f.insertAdjacentHTML(
               "beforeend",
@@ -2122,6 +2167,8 @@
         ]
           .map((w) => (w ? `<i style="width:${w}%"></i>` : "<br>"))
           .join("")}</div>`;
+        els.toc.innerHTML = "";
+        S.heads = [];
       }
 
       function showState(title, body, glyph = ICON.warn) {
@@ -2132,8 +2179,10 @@
 
       async function showLanding(opts = {}) {
         const t = T[S.lang];
+        const seq = S.view;
         els.shell.classList.add("landing");
         const { tokens, ti, entries } = await loadIndex(S.lang);
+        if (seq !== S.view) return;
         const { m, slugger } = makeMarked();
         const h1 = tokens.findIndex(
           (x) => x.type === "heading" && x.depth === 1,
@@ -2144,9 +2193,11 @@
         const firstH2 = tokens.findIndex(
           (x, i) => i > h1 && x.type === "heading",
         );
-        const lead = tokens.slice(h1 + 1, firstH2 < 0 ? ti : firstH2);
-        const mid = tokens.slice(firstH2 < 0 ? ti : firstH2, ti);
-        const rest = tokens.slice(ti + 1);
+        const end = ti < 0 ? tokens.length : ti;
+        const split = firstH2 < 0 ? end : Math.min(firstH2, end);
+        const lead = tokens.slice(h1 + 1, split);
+        const mid = tokens.slice(split, end);
+        const rest = ti < 0 ? [] : tokens.slice(ti + 1);
         const part = (arr) =>
           m.parser(Object.assign(arr, { links: tokens.links }));
         const cards = entries
@@ -2174,8 +2225,10 @@
 
       async function showAdr(id, anchor, opts = {}) {
         const t = T[S.lang];
+        const seq = S.view;
         els.shell.classList.remove("landing");
         const idx = await loadIndex(S.lang);
+        if (seq !== S.view) return;
         const i = idx.entries.findIndex((e) => e.id === id);
         if (i < 0)
           return showState(
@@ -2183,7 +2236,7 @@
             `${esc(t.notFoundBody)} <code>${esc(id)}</code>`,
           );
         const entry = idx.entries[i];
-        const cached = S.docs.has(entry.file);
+        const cached = S.ready.has(entry.file);
         if (!cached && !opts.keep) {
           setLoading();
           scrollTo(0, 0);
@@ -2192,9 +2245,11 @@
         try {
           md = await loadDoc(entry);
         } catch (e) {
-          return showState(t.fail, `<code>${esc(e.message)}</code>`);
+          if (seq === S.view)
+            showState(t.fail, `<code>${esc(e.message)}</code>`);
+          return;
         }
-        if (S.route?.id !== id) return;
+        if (seq !== S.view) return;
         const { m, slugger, diagrams } = makeMarked();
         const tokens = m.lexer(md);
         let title = entry.title;
@@ -2228,9 +2283,8 @@
         highlightCode(prose);
         document.title = `${id} — ${title} · Backend.AI WebUI ADR`;
         buildToc(id, entry);
-        if (S.highlight) {
-          const first = markHits(prose, S.highlight);
-          S.highlight = null;
+        if (opts.highlight) {
+          const first = markHits(prose, opts.highlight);
           if (first && !anchor) {
             requestAnimationFrame(() =>
               first.scrollIntoView({ block: "center" }),
@@ -2241,7 +2295,10 @@
         if (opts.keep) restorePosition(opts.keep);
         else if (anchor) scrollToAnchor(anchor, false);
         else if (!S.pendingFirst) scrollTo(0, 0);
-        renderDiagrams(prose).then(spy);
+        renderDiagrams(prose).then(() => {
+          if (opts.keep && pinned.el?.isConnected) restorePosition(opts.keep);
+          spy();
+        });
         spy();
       }
 
@@ -2269,11 +2326,16 @@
           box.scrollTop += r.top - b.top - b.height / 3;
       }
 
+      const anchorPad = () =>
+        parseFloat(
+          getComputedStyle(document.documentElement).scrollPaddingTop,
+        ) || 0;
       function spy() {
         if (!S.heads.length) return;
+        const at = anchorPad() + 8;
         let cur = S.heads[0];
         for (const h of S.heads) {
-          if (h.getBoundingClientRect().top <= 120) cur = h;
+          if (h.getBoundingClientRect().top <= at) cur = h;
           else break;
         }
         if (
@@ -2339,7 +2401,7 @@
           behavior: smooth ? "smooth" : "instant",
           block: "start",
         });
-        pin(el, parseFloat(getComputedStyle(el).scrollMarginTop) || 0);
+        pin(el, anchorPad());
         return true;
       }
 
@@ -2437,18 +2499,19 @@
       }
 
       function highlightText(s, terms) {
-        const e = esc(s);
-        if (!terms.length) return e;
-        return e.replace(
-          new RegExp(terms.map((x) => escRe(esc(x))).join("|"), "gi"),
-          "<mark>$&</mark>",
-        );
+        if (!terms.length) return esc(s);
+        return String(s)
+          .split(new RegExp(`(${terms.map(escRe).join("|")})`, "gi"))
+          .map((p, i) => (i % 2 ? `<mark>${esc(p)}</mark>` : esc(p)))
+          .join("");
       }
 
       const nav = { key: null, idx: null };
       async function renderNav() {
-        const t = T[S.lang];
-        const idx = await loadIndex(S.lang);
+        const lang = S.lang;
+        const t = T[lang];
+        const idx = await loadIndex(lang);
+        if (lang !== S.lang) return;
         const q = S.query.trim().toLowerCase();
         const terms = q.split(/\s+/).filter(Boolean);
         const corpus = S.text[S.lang];
@@ -2545,26 +2608,30 @@
         S.lang = nextLang;
         store.set("lang", S.lang);
         const prev = S.route;
+        const highlight = S.highlight;
+        S.highlight = null;
         S.route = r;
         document.body.classList.remove("nav-open");
         applyChrome();
         renderNav();
         if (
-          !opts.keep &&
           !langChanged &&
           prev &&
           prev.id === r.id &&
           r.id &&
           els.doc.querySelector(".prose")
         ) {
-          if (r.anchor) scrollToAnchor(r.anchor);
+          if (opts.keep) restorePosition(opts.keep);
+          else if (r.anchor) scrollToAnchor(r.anchor);
           return;
         }
+        const seq = ++S.view;
         try {
-          if (r.id) await showAdr(r.id, r.anchor, opts);
+          if (r.id) await showAdr(r.id, r.anchor, { ...opts, highlight });
           else await showLanding(opts);
         } catch (e) {
-          showState(T[S.lang].fail, `<code>${esc(e.message)}</code>`);
+          if (seq === S.view)
+            showState(T[S.lang].fail, `<code>${esc(e.message)}</code>`);
         }
         S.pendingFirst = false;
       }
@@ -2572,7 +2639,7 @@
       function switchLang(l) {
         if (l === S.lang) return;
         const keep = capturePosition();
-        history.replaceState(null, "", href(parseHash().id, null, l));
+        history.replaceState(history.state, "", href(parseHash().id, null, l));
         route({ keep });
         if (S.query) ensureCorpus(l);
       }
@@ -2681,8 +2748,17 @@
         zoomCmd(e.target.closest("[data-z]")?.dataset.z),
       );
 
+      function highlightCurrent(q) {
+        const prose = $(".prose", els.doc);
+        const first = prose && markHits(prose, q);
+        if (!first) return;
+        pin(null);
+        first.scrollIntoView({ block: "center" });
+      }
+
       document.addEventListener("click", async (e) => {
-        const top = e.target.closest("[data-top]");
+        const plain = !(e.metaKey || e.ctrlKey || e.shiftKey || e.altKey);
+        const top = plain && e.target.closest("[data-top]");
         if (top) {
           e.preventDefault();
           scrollTo({ top: 0, behavior: "smooth" });
@@ -2690,10 +2766,15 @@
         }
         const copy = e.target.closest(".copy");
         if (copy) {
-          await navigator.clipboard?.writeText(
-            $("pre", copy.parentElement).textContent,
-          );
-          copy.lastChild.textContent = T[S.lang].copied;
+          let ok = true;
+          try {
+            await navigator.clipboard.writeText(
+              $("pre", copy.parentElement).textContent,
+            );
+          } catch {
+            ok = false;
+          }
+          copy.lastChild.textContent = T[S.lang][ok ? "copied" : "copyFail"];
           setTimeout(() => (copy.lastChild.textContent = T[S.lang].copy), 1400);
           return;
         }
@@ -2703,15 +2784,22 @@
           if (svg) openZoom(svg);
           return;
         }
-        const a = e.target.closest("a[data-anchor]");
-        if (a && S.route?.id) {
+        const a = plain && e.target.closest("a[data-anchor]");
+        if (a) {
           e.preventDefault();
-          if (scrollToAnchor(a.dataset.anchor))
-            history.replaceState(null, "", href(S.route.id, a.dataset.anchor));
+          if (scrollToAnchor(a.dataset.anchor) && S.route?.id)
+            history.replaceState(
+              history.state,
+              "",
+              href(S.route.id, a.dataset.anchor),
+            );
           return;
         }
-        const item = e.target.closest(".nav-item[data-id]");
-        if (item && S.query.trim()) S.highlight = S.query.trim();
+        const item = plain && e.target.closest(".nav-item[data-id]");
+        if (item && S.query.trim()) {
+          if (item.dataset.id === S.route?.id) highlightCurrent(S.query.trim());
+          else S.highlight = S.query.trim();
+        }
         if (e.target.closest(".scrim"))
           document.body.classList.remove("nav-open");
       });
@@ -2745,8 +2833,11 @@
       els.input.addEventListener("keydown", (e) => {
         if (e.key === "Enter") {
           const first = $(".nav-item[data-id]", els.nav);
-          if (first) {
+          if (first && first.dataset.id === S.route?.id) {
+            if (S.query.trim()) highlightCurrent(S.query.trim());
+          } else if (first) {
             S.highlight = S.query.trim() || null;
+            savePos();
             location.hash = first.getAttribute("href");
           }
         }
@@ -2785,7 +2876,36 @@
           figs.forEach((f, i) => fitDiagram(f, widths[i]));
         });
       });
-      addEventListener("hashchange", () => route());
+      history.scrollRestoration = "manual";
+      let saveTimer = 0;
+      const savePos = () => {
+        clearTimeout(saveTimer);
+        if (S.view && !$(".skeleton", els.doc))
+          history.replaceState(
+            { ...history.state, pos: capturePosition() },
+            "",
+          );
+      };
+      addEventListener(
+        "scroll",
+        () => {
+          clearTimeout(saveTimer);
+          saveTimer = setTimeout(savePos, 200);
+        },
+        { passive: true },
+      );
+      document.addEventListener(
+        "click",
+        (e) => {
+          if (e.target.closest('a[href^="#"]')) savePos();
+        },
+        true,
+      );
+      addEventListener("hashchange", () => {
+        clearTimeout(saveTimer);
+        const keep = history.state?.pos;
+        route(keep ? { keep } : {});
+      });
 
       const initial = parseHash();
       S.lang =
@@ -2799,7 +2919,8 @@
       if (!initial.lang)
         history.replaceState(null, "", href(initial.id, initial.anchor));
       S.pendingFirst = true;
-      route();
+      const initialPos = history.state?.pos;
+      route(initialPos ? { keep: initialPos } : {});
     </script>
   </body>
 </html>
