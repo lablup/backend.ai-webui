@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="color-scheme" content="light dark" />
+    <meta name="adr-ref" content="" />
     <title>Architecture Decision Records · Backend.AI WebUI</title>
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
     <link
@@ -1663,6 +1664,7 @@
           inForce: "decisions in force",
           languages: "languages",
           source: "Source",
+          localCopy: "local copy",
           lang: "English",
           clearRef: "Back to the published copy",
         },
@@ -1691,6 +1693,7 @@
           inForce: "개 결정 발효 중",
           languages: "개 언어",
           source: "출처",
+          localCopy: "로컬 사본",
           lang: "한국어",
           clearRef: "게시된 사본으로 돌아가기",
         },
@@ -1719,7 +1722,11 @@
       };
 
       const ref = new URLSearchParams(location.search).get("ref");
-      const blobRef = ref || "main";
+      const builtRef = document
+        .querySelector('meta[name="adr-ref"]')
+        .content.trim();
+      const viewRef = ref || builtRef;
+      const blobRef = viewRef || "main";
       const srcUrl = (p) =>
         ref
           ? `https://raw.githubusercontent.com/${REPO}/${encodeURI(ref)}/docs/${p}`
@@ -2213,7 +2220,7 @@
             ${prev ? `<a class="prev" href="${href(prev.id)}"><small>← ${t.prev}</small><strong><span class="n">${prev.id}</span>${esc(prev.title)}</strong></a>` : ""}
             ${next ? `<a class="next" href="${href(next.id)}"><small>${t.next} →</small><strong><span class="n">${next.id}</span>${esc(next.title)}</strong></a>` : ""}
           </nav>
-          <footer class="doc-foot"><span>${t.source}: <a href="${blobUrl(repoPath)}" target="_blank" rel="noopener">${esc(repoPath)}</a> @ ${esc(blobRef)}</span><a href="#" data-top>${t.top} ↑</a></footer>`;
+          <footer class="doc-foot"><span>${t.source}: <a href="${blobUrl(repoPath)}" target="_blank" rel="noopener">${esc(repoPath)}</a> @ ${esc(viewRef || t.localCopy)}</span><a href="#" data-top>${t.top} ↑</a></footer>`;
         els.doc.innerHTML = sanitize(html);
         els.doc.lang = S.lang;
         const prose = $(".prose", els.doc);
