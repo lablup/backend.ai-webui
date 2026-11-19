@@ -1,4 +1,4 @@
-# 0031 — System Settings changes applied without a reload
+# 0034 — System Settings changes applied without a reload
 
 > ADR 0028의 네 부분을 대체한다. "값이 정해지는 순서" 설계도의 `applyConfigToClient` 간선, "저장" 설계도, 4절의 `_config` 복사와 "Apply and Reset" 문구, Consequences의 "Reload to apply"다. ADR 0028의 나머지는 그대로 유효하다.
 

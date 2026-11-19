@@ -2,7 +2,7 @@
 
 > The write hooks this ADR names (**Write scope**) are replaced by [ADR 0033](0033-scoped-and-merged-app-config-hooks.md): a save changes `settings` on the raw document the page read, without reading it again.
 
-> ADR 0031 replaces the `applyConfigToClient` edge of the first diagram, the "Saving" diagram, the `_config` copy and the "Apply and Reset" wording of section 4, and the "Reload to apply" consequence.
+> ADR 0034 replaces the `applyConfigToClient` edge of the first diagram, the "Saving" diagram, the `_config` copy and the "Apply and Reset" wording of section 4, and the "Reload to apply" consequence.
 
 ## Summary
 

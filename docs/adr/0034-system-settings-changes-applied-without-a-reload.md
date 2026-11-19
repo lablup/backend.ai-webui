@@ -1,4 +1,4 @@
-# 0031 — System Settings changes applied without a reload
+# 0034 — System Settings changes applied without a reload
 
 > Replaces four parts of ADR 0028: the `applyConfigToClient` edge of the "Order in which a value is decided" diagram, the "Saving" diagram, the `_config` copy and the "Apply and Reset" wording of section 4, and the "Reload to apply" consequence. The rest of ADR 0028 stays in force.
 
