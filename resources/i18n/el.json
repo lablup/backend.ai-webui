@@ -4423,6 +4423,7 @@
     }
   },
   "webuiAssistant": {
+    "ApiKeyHint": "Αποθηκεύεται σε αυτό το πρόγραμμα περιήγησης και διαγράφεται κατά την αποσύνδεση.",
     "ChangeConnection": "Αλλαγή σύνδεσης",
     "ClearConversation": "Εκκαθάριση συνομιλίας",
     "ClearConversationConfirm": "Εκκαθάριση αυτής της συνομιλίας;",

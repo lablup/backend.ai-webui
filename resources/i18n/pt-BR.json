@@ -4423,6 +4423,7 @@
     }
   },
   "webuiAssistant": {
+    "ApiKeyHint": "Salva neste navegador e removida ao sair.",
     "ChangeConnection": "Alterar conexão",
     "ClearConversation": "Limpar conversa",
     "ClearConversationConfirm": "Limpar esta conversa?",

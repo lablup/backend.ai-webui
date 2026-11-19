@@ -4423,6 +4423,7 @@
     }
   },
   "webuiAssistant": {
+    "ApiKeyHint": "Bu tarayıcıda saklanır ve oturumu kapattığınızda silinir.",
     "ChangeConnection": "Bağlantıyı değiştir",
     "ClearConversation": "Sohbeti temizle",
     "ClearConversationConfirm": "Bu sohbet temizlensin mi?",

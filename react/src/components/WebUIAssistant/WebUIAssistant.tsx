@@ -10,6 +10,7 @@ import ErrorBoundaryWithNullFallback from '../ErrorBoundaryWithNullFallback';
 import './WebUIAssistant.css';
 import WebUIAssistantChat from './WebUIAssistantChat';
 import WebUIAssistantConnectModal from './WebUIAssistantConnectModal';
+import WebUIAssistantKeyRestorer from './WebUIAssistantKeyRestorer';
 import { WEBUI_ASSISTANT_PROFILE } from './webUIAssistantProfile';
 import {
   WEBUI_ASSISTANT_CONFIG_KEY,
@@ -171,6 +172,9 @@ const WebUIAssistantFloating: React.FC = () => {
           setIsOpen((open) => !open);
         }}
       />
+      {connection?.hasApiKey && !apiKey && (
+        <WebUIAssistantKeyRestorer connection={connection} />
+      )}
       <Suspense fallback={null}>
         <BAIUnmountAfterClose>
           <WebUIAssistantConnectModal

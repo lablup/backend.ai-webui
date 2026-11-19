@@ -4426,6 +4426,7 @@
     }
   },
   "webuiAssistant": {
+    "ApiKeyHint": "Enregistrée dans ce navigateur et supprimée à la déconnexion.",
     "ChangeConnection": "Modifier la connexion",
     "ClearConversation": "Effacer la conversation",
     "ClearConversationConfirm": "Effacer cette conversation ?",

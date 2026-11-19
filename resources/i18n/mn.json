@@ -4425,6 +4425,7 @@
     }
   },
   "webuiAssistant": {
+    "ApiKeyHint": "Энэ хөтөчид хадгалагдаж, гарахад устгагдана.",
     "ChangeConnection": "Холболтыг өөрчлөх",
     "ClearConversation": "Ярианы түүхийг арилгах",
     "ClearConversationConfirm": "Энэ ярианы түүхийг арилгах уу?",

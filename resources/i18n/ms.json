@@ -4423,6 +4423,7 @@
     }
   },
   "webuiAssistant": {
+    "ApiKeyHint": "Disimpan dalam pelayar ini dan dibuang apabila anda log keluar.",
     "ChangeConnection": "Tukar sambungan",
     "ClearConversation": "Kosongkan perbualan",
     "ClearConversationConfirm": "Kosongkan perbualan ini?",

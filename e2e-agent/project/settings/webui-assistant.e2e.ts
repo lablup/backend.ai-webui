@@ -16,7 +16,7 @@ test(
       'Press the round "Open WebUI Assistant" button at the bottom right',
     );
     await agent.act(
-      'In the "Connect WebUI Assistant" dialog, choose a running deployment in the "Model endpoint" field',
+      'In the "Connect WebUI Assistant" dialog, choose a running deployment in the "Deployment" field',
     );
     await agent.act(
       'If a "Token" field appears for a private deployment, choose one of its tokens',

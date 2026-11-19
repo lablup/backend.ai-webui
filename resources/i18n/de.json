@@ -4425,6 +4425,7 @@
     }
   },
   "webuiAssistant": {
+    "ApiKeyHint": "Wird in diesem Browser gespeichert und beim Abmelden gelöscht.",
     "ChangeConnection": "Verbindung ändern",
     "ClearConversation": "Unterhaltung löschen",
     "ClearConversationConfirm": "Diese Unterhaltung löschen?",

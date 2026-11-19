@@ -4424,6 +4424,7 @@
     }
   },
   "webuiAssistant": {
+    "ApiKeyHint": "Tallennetaan tähän selaimeen ja poistetaan, kun kirjaudut ulos.",
     "ChangeConnection": "Vaihda yhteys",
     "ClearConversation": "Tyhjennä keskustelu",
     "ClearConversationConfirm": "Tyhjennetäänkö tämä keskustelu?",

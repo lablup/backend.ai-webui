@@ -57,6 +57,7 @@ const WebUIAssistantEndpointForm: React.FC<WebUIAssistantEndpointFormProps> = ({
   const { token } = useTheme();
   const [form] = Form.useForm<WebUIAssistantEndpointFormValues>();
   const [isBusy, setIsBusy] = useState(false);
+
   const [failure, setFailure] = useState<{
     error: ProbeFailure;
     baseURL: string;
@@ -196,7 +197,7 @@ const WebUIAssistantEndpointForm: React.FC<WebUIAssistantEndpointFormProps> = ({
                     ),
             },
           ]}
-          extra={t('chatui.customEndpoint.BaseURLHint')}
+          tooltip={t('chatui.customEndpoint.BaseURLHint')}
         >
           <BAITextInput
             aria-label={t('chatui.customEndpoint.BaseURL')}
@@ -209,7 +210,7 @@ const WebUIAssistantEndpointForm: React.FC<WebUIAssistantEndpointFormProps> = ({
         <BAIFormItem
           label={t('chatui.customEndpoint.ApiKey')}
           name="apiKey"
-          extra={t('chatui.customEndpoint.ApiKeyHint')}
+          tooltip={t('webuiAssistant.ApiKeyHint')}
         >
           <BAITextInput
             type="password"

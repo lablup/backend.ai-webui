@@ -4427,6 +4427,7 @@
     }
   },
   "webuiAssistant": {
+    "ApiKeyHint": "Disimpan di browser ini dan dihapus saat Anda keluar.",
     "ChangeConnection": "Ubah koneksi",
     "ClearConversation": "Hapus percakapan",
     "ClearConversationConfirm": "Hapus percakapan ini?",

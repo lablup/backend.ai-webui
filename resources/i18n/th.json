@@ -4409,6 +4409,7 @@
     }
   },
   "webuiAssistant": {
+    "ApiKeyHint": "บันทึกไว้ในเบราว์เซอร์นี้และจะถูกลบเมื่อออกจากระบบ",
     "ChangeConnection": "เปลี่ยนการเชื่อมต่อ",
     "ClearConversation": "ล้างการสนทนา",
     "ClearConversationConfirm": "ล้างการสนทนานี้หรือไม่",

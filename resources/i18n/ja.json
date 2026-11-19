@@ -4425,6 +4425,7 @@
     }
   },
   "webuiAssistant": {
+    "ApiKeyHint": "このブラウザに保存され、ログアウトすると削除されます。",
     "ChangeConnection": "接続を変更",
     "ClearConversation": "会話をクリア",
     "ClearConversationConfirm": "この会話をクリアしますか？",

@@ -22,6 +22,7 @@ import { fetchOpenAIModels } from '../Chat/openAIModels';
 import WebUIAssistantEndpointForm, {
   type WebUIAssistantEndpointFormHandle,
 } from './WebUIAssistantEndpointForm';
+import { storeApiKey } from './storedApiKey';
 import {
   WEBUI_ASSISTANT_CONFIG_KEY,
   WEBUI_ASSISTANT_KEY_ID,
@@ -199,6 +200,8 @@ const WebUIAssistantConnectModal: React.FC<WebUIAssistantConnectModalProps> = ({
         return;
       }
       await save({ baseURL, apiKey, deploymentId });
+      // A deployment's token is read again from the deployment after a reload, so no custom key is kept.
+      storeApiKey();
     } catch (error) {
       message.error(getErrorMessage(error));
     } finally {
@@ -246,7 +249,7 @@ const WebUIAssistantConnectModal: React.FC<WebUIAssistantConnectModalProps> = ({
         </BAISegmentedControl>
         {!isCustom && (
           <Form layout="vertical">
-            <Form.Item label={t('webuiAssistant.Endpoint')} required>
+            <Form.Item label={t('webuiAssistant.Deployment')} required>
               <BAIFlex gap="xs" align="center">
                 <BAIFlex direction="column" align="stretch" style={{ flex: 1 }}>
                   <DeploymentSelect
@@ -329,9 +332,10 @@ const WebUIAssistantConnectModal: React.FC<WebUIAssistantConnectModalProps> = ({
             ref={endpointFormRef}
             baseURL={savedCustomURL}
             apiKey={savedCustomURL ? savedApiKey : undefined}
-            onSubmit={(values) =>
-              save({ baseURL: values.baseURL, apiKey: values.apiKey })
-            }
+            onSubmit={async (values) => {
+              await save({ baseURL: values.baseURL, apiKey: values.apiKey });
+              storeApiKey(values.baseURL, values.apiKey);
+            }}
           />
         )}
       </BAIFlex>

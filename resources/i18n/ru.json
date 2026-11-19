@@ -4423,6 +4423,7 @@
     }
   },
   "webuiAssistant": {
+    "ApiKeyHint": "Сохраняется в этом браузере и удаляется при выходе.",
     "ChangeConnection": "Изменить подключение",
     "ClearConversation": "Очистить разговор",
     "ClearConversationConfirm": "Очистить этот разговор?",
