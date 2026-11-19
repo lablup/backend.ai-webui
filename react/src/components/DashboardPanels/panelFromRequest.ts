@@ -186,7 +186,7 @@ export const sanitizeConditions = (
 const quoteMinilang = (property: FilterProperty | undefined, value: string) =>
   property?.type === 'number' || property?.type === 'boolean'
     ? value
-    : `"${value.replace(/"/g, '\\"')}"`;
+    : `"${value.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"`;
 
 /** The conditions in the source's own filter format: a minilang string or a `GraphQLFilter`. */
 export const filterOfConditions = (
