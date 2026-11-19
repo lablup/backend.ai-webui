@@ -5,7 +5,7 @@
 > Unfamiliar terms are collected in the [Glossary](#glossary) at the end.
 
 - Sign-in reads the signed-in user's [merged view](#glossary) of `publicConfigByDomain`, `domainConfig` and `userConfig` once and stores it in the jotai atom `myAppConfigState`. `loadMyAppConfig()` reads it again on demand.
-- Screens that are not admin pages read app config only from that atom: `useMyAppConfig(subKey)` reads and writes `userConfig`, and `useMyAppConfigValue(configName, subKey?)` reads `domainConfig` and `publicConfigByDomain`. They send no query of their own and do not suspend.
+- Screens that are not admin pages read app config only from that atom through `useMyAppConfig(configName, subKey?)`, which reads all three names and writes only `userConfig`. It sends no query of its own and does not suspend.
 - Admin pages read and write one scope's [raw documents](#glossary) with `useScopedAppConfig(scope, configNames)`, which reads with `network-only` and does not write the atom. A write to PUBLIC or to the signed-in domain reloads the atom.
 - The design rests on the manager's default [allow-list](#glossary): `publicConfigByDomain` and `domainConfig` each come from one scope, and only `userConfig` merges two (DOMAIN and USER).
 - `loginConfigState` is a derived atom over the base config, the public `settings` document and the domain `settings` document.
@@ -33,8 +33,7 @@ flowchart LR
   end
   atom["myAppConfigState<br/>jotai atom"]
   merged -- "sign-in query, loadMyAppConfig" --> atom
-  atom -- "userConfig at subKey" --> my["useMyAppConfig"]
-  atom -- "domainConfig, publicConfigByDomain" --> value["useMyAppConfigValue"]
+  atom -- "configName at subKey, status" --> my["useMyAppConfig"]
   my -- "set, reset: whole userConfig" --> myUpsert
   myUpsert -- "written document" --> atom
   raw -- "raw documents, network-only" --> scoped["useScopedAppConfig<br/>admin pages"]
@@ -66,27 +65,26 @@ flowchart LR
 
 ### 1. `myAppConfigState` and `loadMyAppConfig`
 
-- **Atom**: `myAppConfigState` in `react/src/hooks/useAppConfig.ts` holds `{ status, configs }`. `configs` maps each of `publicConfigByDomain`, `domainConfig` and `userConfig` to its merged document; `status` is `idle`, `loaded` or `failed`. `useMyAppConfigStatus()` returns `status`.
+- **Atom**: `myAppConfigState` in `react/src/hooks/useAppConfig.ts` holds `{ status, configs }`. `configs` maps each of `publicConfigByDomain`, `domainConfig` and `userConfig` to its merged document; `status` is `idle`, `loaded` or `failed`. `useMyAppConfig` returns `status` as its fourth item.
 - **Sign-in read**: `loginSessionAuthMyUserQuery` selects `myAppConfigs` for the three names with `@catch(to: NULL)`, and `connectViaGQL` passes the answer to `setMyAppConfigs` before `applyConfigToClient` marks the client ready. No screen behind `useSuspendedBackendaiClient` renders before the atom holds the answer.
 - **Reload**: `loadMyAppConfig(store, environment?)` is a plain function. It reads the same three names with `fetchQuery` and `network-only` and stores the answer through `setMyAppConfigs`. Calls made while a read runs share one read that starts after it, so a burst of writes costs at most two reads.
 - **Failed read**: when the first read fails, `setMyAppConfigs` sets `status: 'failed'`. A failed later read keeps the earlier answer and its `loaded` status, because that answer is still a base the next write can build on.
-- **Failed-read readers**: a reader that treats a missing value as "the account has none" checks `useMyAppConfigStatus()` first. `DismissSplashOnMount` keeps the mirrored theme family, and `useSessionHistoryStore` does not move the local history, while `status` is not `loaded`.
+- **Failed-read readers**: a reader that treats a missing value as "the account has none" checks the `status` `useMyAppConfig` returns first. `DismissSplashOnMount` keeps the mirrored theme family, and `useSessionHistoryStore` does not move the local history, while `status` is not `loaded`.
 - **Server switch**: `loadConfigFromWebServer` calls `clearMyAppConfigs`, so the previous server's documents do not stay applied.
 - **Outside changes**: a change the CLI, another admin or another tab makes shows after the next read: a page reload, a `reset`, or this tab's write to PUBLIC or the signed-in domain (§3).
 
-### 2. `useMyAppConfig` and `useMyAppConfigValue`
+### 2. `useMyAppConfig`
 
-| Hook                                          | Returns               | Reads                                                    | Writes                                                         |
-| --------------------------------------------- | --------------------- | -------------------------------------------------------- | -------------------------------------------------------------- |
-| `useMyAppConfig<T>(subKey)`                   | `[value, set, reset]` | `configs.userConfig` at `subKey`                         | the USER scope, through `myAtomicBulkUpsertAppConfigFragments` |
-| `useMyAppConfigValue<T>(configName, subKey?)` | the value             | `configs.domainConfig` or `configs.publicConfigByDomain` | nothing                                                        |
-| `useMyAppConfigStatus()`                      | `status`              | `myAppConfigState.status`                                | nothing                                                        |
+| Call                                                                | Returns                                 | Reads                                     | Writes                                                         |
+| ------------------------------------------------------------------- | --------------------------------------- | ----------------------------------------- | -------------------------------------------------------------- |
+| `useMyAppConfig<T>('userConfig', subKey)`                           | `[value, set, reset, status]`           | `configs.userConfig` at `subKey`          | the USER scope, through `myAtomicBulkUpsertAppConfigFragments` |
+| `useMyAppConfig<T>('domainConfig' \| 'publicConfigByDomain', subKey?)` | `[value, undefined, undefined, status]` | `configs[configName]` at `subKey`, or all | nothing                                                        |
 
 - **Write base**: `set(update)` applies `update` (a value, or a function of the current value; `undefined` removes the key) to the merged `userConfig` in the atom and sends the whole result as the USER document. After the mutation succeeds, `set` stores that document in the atom; a failed mutation leaves the atom as it was.
 - **Reset**: `reset()` removes `subKey` from the USER document the same way, then calls `loadMyAppConfig`, so the DOMAIN-scope `userConfig` value at that key shows again.
 - **Refused write**: `set` and `reset` reject without sending anything while `status` is not `loaded`.
 - **Ordering**: one module-level queue, keyed `USER:me`, runs every `set`, every `reset`, and the reload after a scoped write. A task starts after the previous one settles and builds on the atom it left, so a reload cannot replace a `set` that lands while it reads. `reset` runs its write and its reload as one task, so a `set` made during a `reset` builds on the reloaded document.
-- **Domain slice**: `publicConfigByDomain` holds one slice per domain, so callers pass the domain name as the first path segment, `useMyAppConfigValue('publicConfigByDomain', [domainName, key])`.
+- **Domain slice**: `publicConfigByDomain` holds one slice per domain, so callers pass the domain name as the first path segment, `useMyAppConfig('publicConfigByDomain', [domainName, key])`.
 - **Optimistic display**: the hooks show a value only after the server accepted it. A caller that shows a pending value keeps it itself, as `useDashboardBoards`, `useSessionHistoryStore` and `UserSettingsGeneralPane` do.
 
 ### 3. `useScopedAppConfig`
@@ -136,7 +134,7 @@ flowchart LR
 - **Request count**: sign-in reads all three names in one query. A `userConfig` change costs one upsert; a `reset` costs one upsert and one read. System Settings reads its two scopes one after the other, one more round trip than a single query.
 - **Copied defaults**: the first `set` copies every DOMAIN-scope `userConfig` key into the USER document, because the merged view is the write base. Those keys no longer follow later changes of the DOMAIN default for that user; only a key passed to `reset` does.
 - **Object defaults**: a DOMAIN-scope default that is an object keeps its sub-keys under a user's object, because objects merge key by key. `reset` removes the key from the USER document and shows the default again; hiding a default needs `set(null)`.
-- **Allow-list dependency**: if the allow-list adds a scope to `publicConfigByDomain` or `domainConfig`, `useMyAppConfigValue` no longer returns the raw document; if it adds PUBLIC to `userConfig`, `set` also copies PUBLIC values into the USER document.
+- **Allow-list dependency**: if the allow-list adds a scope to `publicConfigByDomain` or `domainConfig`, `useMyAppConfig` no longer returns the raw document for it; if it adds PUBLIC to `userConfig`, `set` also copies PUBLIC values into the USER document.
 - **Lost concurrent edits**: a `set` overwrites a change another tab or the CLI made to the USER document after the atom was last read.
 - **Act-as**: an act-as tab reads and writes the target account's `userConfig`.
 
