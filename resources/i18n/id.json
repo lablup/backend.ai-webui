@@ -4435,6 +4435,8 @@
     "ConnectTitle": "Hubungkan Asisten WebUI",
     "Connected": "Asisten WebUI terhubung.",
     "ConnectionRejected": "Endpoint menolak token atau kunci API.",
+    "CustomEndpoint": "Endpoint kustom",
+    "Deployment": "Deployment",
     "EmptyState": "Tanyakan cara melakukan sesuatu di WebUI. Jawaban berasal dari panduan pengguna.",
     "Endpoint": "Endpoint model",
     "EndpointUnreachable": "Tidak dapat menjangkau {{url}}.",

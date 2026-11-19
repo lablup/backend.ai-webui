@@ -4433,6 +4433,8 @@
     "ConnectTitle": "Kết nối trợ lý WebUI",
     "Connected": "Đã kết nối trợ lý WebUI.",
     "ConnectionRejected": "Endpoint đã từ chối token hoặc khóa API.",
+    "CustomEndpoint": "Endpoint tùy chỉnh",
+    "Deployment": "Bản triển khai",
     "EmptyState": "Hãy hỏi cách thực hiện một việc trong WebUI. Câu trả lời dựa trên hướng dẫn sử dụng.",
     "Endpoint": "Endpoint của mô hình",
     "EndpointUnreachable": "Không thể kết nối tới {{url}}.",

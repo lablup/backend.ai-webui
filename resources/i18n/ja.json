@@ -4433,6 +4433,8 @@
     "ConnectTitle": "WebUI アシスタントを接続",
     "Connected": "WebUI アシスタントを接続しました。",
     "ConnectionRejected": "エンドポイントがトークンまたは API キーを拒否しました。",
+    "CustomEndpoint": "カスタムエンドポイント",
+    "Deployment": "デプロイメント",
     "EmptyState": "WebUI でやりたいことを質問してください。回答はユーザーマニュアルに基づきます。",
     "Endpoint": "モデルエンドポイント",
     "EndpointUnreachable": "{{url}} に接続できません。",

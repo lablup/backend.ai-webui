@@ -29,12 +29,13 @@ import {
 import { Banner } from '@lablup/ui-common/Banner';
 import { ButtonGroup } from '@lablup/ui-common/ButtonGroup';
 import { IconButton } from '@lablup/ui-common/IconButton';
-import { Spinner } from '@lablup/ui-common/Spinner';
 import { Text } from '@lablup/ui-common/Text';
 import {
   BAIFlex,
   BAIModal,
-  BAISkeleton,
+  BAISegmentedControl,
+  BAISegmentedControlItem,
+  BAISelect,
   toGlobalId,
   useErrorMessageResolver,
   type BAIModalProps,
@@ -156,6 +157,13 @@ const WebUIAssistantConnectModal: React.FC<WebUIAssistantConnectModalProps> = ({
       ? probed.result
       : 'probing';
   const needsToken = tokenProbe === 'needsToken';
+  // Resolving the endpoint and trying it without a token both show on the select, not as a placeholder below it.
+  const isDeploymentLoading =
+    !isCustom &&
+    !!deploymentId &&
+    (isDeploymentPending ||
+      endpointURL === undefined ||
+      tokenProbe === 'probing');
 
   // BAIModal does not await onOk, so the pending state and failures stay in here.
   const connectDeployment = async () => {
@@ -193,8 +201,7 @@ const WebUIAssistantConnectModal: React.FC<WebUIAssistantConnectModalProps> = ({
           isCustom ||
           !deploymentId ||
           !endpointURL ||
-          isDeploymentPending ||
-          tokenProbe === 'probing' ||
+          isDeploymentLoading ||
           (needsToken && !token),
       }}
       footer={isCustom ? null : undefined}
@@ -205,65 +212,82 @@ const WebUIAssistantConnectModal: React.FC<WebUIAssistantConnectModalProps> = ({
     >
       <BAIFlex direction="column" align="stretch" gap="md">
         <Text>{t('webuiAssistant.ConnectDescription')}</Text>
-        <Form layout="vertical">
-          <Form.Item label={t('webuiAssistant.Endpoint')} required>
-            <BAIFlex gap="xs" align="center">
-              <BAIFlex direction="column" align="stretch" style={{ flex: 1 }}>
-                <DeploymentSelect
-                  value={isCustom ? undefined : deploymentId}
-                  onChange={(id) => {
-                    // A transition keeps the modal on screen while DeploymentSelect's value query loads.
-                    startDeploymentTransition(() => {
-                      setIsCustom(false);
-                      setDeploymentId(id);
-                      setToken(undefined);
-                      setEndpointURL(undefined);
-                      setFailure(undefined);
-                    });
-                  }}
-                  customEndpointURL={
-                    isCustom ? (savedCustomURL ?? ' ') : undefined
-                  }
-                  onSelectCustomEndpoint={() => {
-                    setIsCustom(true);
-                    setFailure(undefined);
-                  }}
-                />
-              </BAIFlex>
-              {!isCustom && deploymentId && (
-                <ButtonGroup label={t('webuiAssistant.ViewModelInfo')}>
-                  <IconButton
-                    icon={<InfoIcon />}
-                    label={t('webuiAssistant.ViewModelInfo')}
-                    tooltip={t('webuiAssistant.ViewModelInfo')}
-                    onClick={() =>
-                      webuiNavigate(
-                        buildProjectPath(`deployments/${deploymentId}`),
-                      )
-                    }
+        <BAISegmentedControl
+          value={isCustom ? 'custom' : 'deployment'}
+          onChange={(value) => {
+            setIsCustom(value === 'custom');
+            setFailure(undefined);
+          }}
+          layout="fill"
+          aria-label={t('webuiAssistant.Endpoint')}
+        >
+          <BAISegmentedControlItem
+            value="deployment"
+            label={t('webuiAssistant.Deployment')}
+          />
+          <BAISegmentedControlItem
+            value="custom"
+            label={t('webuiAssistant.CustomEndpoint')}
+          />
+        </BAISegmentedControl>
+        {!isCustom && (
+          <Form layout="vertical">
+            <Form.Item label={t('webuiAssistant.Endpoint')} required>
+              <BAIFlex gap="xs" align="center">
+                <BAIFlex direction="column" align="stretch" style={{ flex: 1 }}>
+                  <DeploymentSelect
+                    value={deploymentId}
+                    isLoading={isDeploymentLoading}
+                    onChange={(id) => {
+                      // A transition keeps the modal on screen while DeploymentSelect's value query loads.
+                      startDeploymentTransition(() => {
+                        setDeploymentId(id);
+                        setToken(undefined);
+                        setEndpointURL(undefined);
+                        setFailure(undefined);
+                      });
+                    }}
                   />
-                </ButtonGroup>
-              )}
-            </BAIFlex>
-          </Form.Item>
-          {!isCustom && deploymentId && (
-            <Suspense fallback={<BAISkeleton rows={2} />}>
-              <DeploymentEndpoint
-                deploymentId={deploymentId}
-                onResolved={setEndpointURL}
-              />
-              {tokenProbe === 'probing' && (
-                <BAIFlex gap="xs" align="center">
-                  <Spinner size="sm" />
-                  <Text color="secondary">
-                    {t('webuiAssistant.ModelLoading')}
-                  </Text>
                 </BAIFlex>
-              )}
-              {needsToken && (
-                <Form.Item
-                  label={t('webuiAssistant.Token')}
-                  extra={t('webuiAssistant.TokenHint')}
+                {deploymentId && (
+                  <ButtonGroup label={t('webuiAssistant.ViewModelInfo')}>
+                    <IconButton
+                      icon={<InfoIcon />}
+                      label={t('webuiAssistant.ViewModelInfo')}
+                      tooltip={t('webuiAssistant.ViewModelInfo')}
+                      onClick={() =>
+                        webuiNavigate(
+                          buildProjectPath(`deployments/${deploymentId}`),
+                        )
+                      }
+                    />
+                  </ButtonGroup>
+                )}
+              </BAIFlex>
+            </Form.Item>
+            {deploymentId && (
+              <Suspense fallback={null}>
+                <DeploymentEndpoint
+                  deploymentId={deploymentId}
+                  onResolved={setEndpointURL}
+                />
+              </Suspense>
+            )}
+            {deploymentId && needsToken && (
+              <Form.Item
+                label={t('webuiAssistant.Token')}
+                extra={t('webuiAssistant.TokenHint')}
+              >
+                <Suspense
+                  fallback={
+                    <BAISelect
+                      aria-label={t('webuiAssistant.Token')}
+                      placeholder={t('chatui.SelectToken')}
+                      loading
+                      disabled
+                      style={{ width: '100%' }}
+                    />
+                  }
                 >
                   <DeploymentTokenSelect
                     deploymentId={deploymentId}
@@ -271,12 +295,12 @@ const WebUIAssistantConnectModal: React.FC<WebUIAssistantConnectModalProps> = ({
                     onChange={setToken}
                     style={{ width: '100%' }}
                   />
-                </Form.Item>
-              )}
-            </Suspense>
-          )}
-        </Form>
-        {(failure || tokenProbe === 'failed') && (
+                </Suspense>
+              </Form.Item>
+            )}
+          </Form>
+        )}
+        {!isCustom && (failure || tokenProbe === 'failed') && (
           <Banner
             status="error"
             role="alert"

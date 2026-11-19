@@ -18,7 +18,9 @@ test(
     await agent.act(
       'In the "Connect WebUI Assistant" dialog, choose a running deployment in the "Model endpoint" field',
     );
-    await agent.act('Choose a token in the "Token" field');
+    await agent.act(
+      'If a "Token" field appears for a private deployment, choose one of its tokens',
+    );
     await agent.act('Press "Connect"');
     await agent.act('Ask "How do I mount a folder to a session?" and send it');
   },
@@ -37,7 +39,7 @@ test(
       'Press the round "Open WebUI Assistant" button at the bottom right',
     );
     await agent.act(
-      'In the "Model endpoint" field, choose "Connect a custom endpoint…"',
+      'In the "Connect WebUI Assistant" dialog, switch to "Custom endpoint"',
     );
     await agent.act('Enter the endpoint in "Base URL" and its "API key"');
     await agent.act('Press "Connect"');

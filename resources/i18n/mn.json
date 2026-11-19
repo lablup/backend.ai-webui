@@ -4433,6 +4433,8 @@
     "ConnectTitle": "WebUI туслахыг холбох",
     "Connected": "WebUI туслах холбогдлоо.",
     "ConnectionRejected": "Endpoint токен эсвэл API түлхүүрийг татгалзлаа.",
+    "CustomEndpoint": "Захиалгат төгсгөлийн цэг",
+    "Deployment": "Байршуулалт",
     "EmptyState": "WebUI дээр ямар нэг зүйлийг хэрхэн хийхийг асуугаарай. Хариулт нь хэрэглэгчийн гарын авлагад үндэслэнэ.",
     "Endpoint": "Загварын endpoint",
     "EndpointUnreachable": "{{url}}-д холбогдож чадсангүй.",

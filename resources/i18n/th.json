@@ -4417,6 +4417,8 @@
     "ConnectTitle": "เชื่อมต่อผู้ช่วย WebUI",
     "Connected": "เชื่อมต่อผู้ช่วย WebUI แล้ว",
     "ConnectionRejected": "เอนด์พอยต์ปฏิเสธโทเค็นหรือ API key",
+    "CustomEndpoint": "ปลายทางที่กำหนดเอง",
+    "Deployment": "การปรับใช้",
     "EmptyState": "ถามวิธีทำสิ่งต่าง ๆ ใน WebUI คำตอบอ้างอิงจากคู่มือผู้ใช้",
     "Endpoint": "เอนด์พอยต์ของโมเดล",
     "EndpointUnreachable": "ไม่สามารถเชื่อมต่อ {{url}} ได้",

@@ -4434,6 +4434,8 @@
     "ConnectTitle": "Połącz asystenta WebUI",
     "Connected": "Asystent WebUI jest połączony.",
     "ConnectionRejected": "Punkt końcowy odrzucił token lub klucz API.",
+    "CustomEndpoint": "Niestandardowy punkt końcowy",
+    "Deployment": "Wdrożenie",
     "EmptyState": "Zapytaj, jak coś zrobić w WebUI. Odpowiedzi pochodzą z podręcznika użytkownika.",
     "Endpoint": "Punkt końcowy modelu",
     "EndpointUnreachable": "Nie można połączyć się z {{url}}.",

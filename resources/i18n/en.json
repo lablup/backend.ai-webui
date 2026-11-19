@@ -4416,6 +4416,8 @@
     "ConnectTitle": "Connect WebUI Assistant",
     "Connected": "The WebUI Assistant is connected.",
     "ConnectionRejected": "The endpoint rejected the token or API key.",
+    "CustomEndpoint": "Custom endpoint",
+    "Deployment": "Deployment",
     "EmptyState": "Ask how to do something in WebUI. Answers come from the user manual.",
     "Endpoint": "Model endpoint",
     "EndpointUnreachable": "Cannot reach {{url}}.",

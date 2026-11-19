@@ -4433,6 +4433,8 @@
     "ConnectTitle": "连接 WebUI 助手",
     "Connected": "WebUI 助手已连接。",
     "ConnectionRejected": "端点拒绝了令牌或 API 密钥。",
+    "CustomEndpoint": "自定义端点",
+    "Deployment": "部署",
     "EmptyState": "询问如何在 WebUI 中完成操作。回答基于用户手册。",
     "Endpoint": "模型端点",
     "EndpointUnreachable": "无法连接到 {{url}}。",

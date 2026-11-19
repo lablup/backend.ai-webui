@@ -4431,6 +4431,8 @@
     "ConnectTitle": "Conectar el asistente de WebUI",
     "Connected": "El asistente de WebUI está conectado.",
     "ConnectionRejected": "El endpoint rechazó el token o la clave de API.",
+    "CustomEndpoint": "Endpoint personalizado",
+    "Deployment": "Despliegue",
     "EmptyState": "Pregunte cómo hacer algo en WebUI. Las respuestas provienen del manual de usuario.",
     "Endpoint": "Endpoint del modelo",
     "EndpointUnreachable": "No se puede acceder a {{url}}.",
