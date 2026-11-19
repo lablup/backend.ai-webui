@@ -51,6 +51,10 @@ export interface DashboardAssistantBridge {
   /** Cards on the board first, in board order, then the ones the user can add. */
   cards: Array<DashboardAssistantCard>;
   apply: (actions: ReadonlyArray<DashboardAssistantAction>) => void;
+  /** Outlines a card on the board, or clears the outline with `null`. */
+  highlight: (id: string | null) => void;
+  /** Scrolls to a card once the board has rendered it, and flashes it. */
+  reveal: (id: string) => void;
 }
 
 /** Set while a dashboard page is mounted. */
@@ -192,6 +196,35 @@ export const extractDashboardActions = (
   return { text: visible, actions: sanitizeAssistantActions(parsed, cards) };
 };
 
+/** The action changes nothing on the board as `cards` describe it. */
+export const isNoopAction = (
+  action: DashboardAssistantAction,
+  cards: ReadonlyArray<DashboardAssistantCard>,
+): boolean => {
+  if (action.type === 'reset') return false;
+  const card = cards.find((item) => item.id === action.id);
+  if (!card) return true;
+  const shown = cards.filter((item) => item.shown);
+  switch (action.type) {
+    case 'show':
+      return card.shown;
+    case 'hide':
+      return !card.shown;
+    case 'moveToTop':
+      return !card.shown || shown[0]?.id === card.id;
+    case 'moveToBottom':
+      return !card.shown || shown[shown.length - 1]?.id === card.id;
+    case 'resize':
+      return (
+        !card.shown ||
+        ((action.columnSpan ?? card.columnSpan) === card.columnSpan &&
+          (action.rowSpan ?? card.rowSpan) === card.rowSpan)
+      );
+    case 'setRange':
+      return card.range === action.range;
+  }
+};
+
 const moveTo = (
   board: DashboardBoard,
   id: string,
@@ -306,6 +339,6 @@ export const buildDashboardPromptSection = (
       'Action types: show {id}, hide {id}, moveToTop {id}, moveToBottom {id}, ' +
         `resize {id, columnSpan 1-${BOARD_COLUMNS}, rowSpan 1-${MAX_ROW_SPAN}}, ` +
         `setRange {id, range: ${RANGE_PRESETS.join(' | ')}} (only cards with a range), reset {} (the default layout).`,
-      'Copy the id exactly as it appears before the first | in the list; never make one up. Match the card the user names by its title, in any language. The user applies the change with a button, so never say it is already done. Do not add the block when the user only asks a question.',
+      'Copy the id exactly as it appears before the first | in the list; never make one up. Match the card the user names by its title, in any language. Check the state column first: never show a card that is already on board or hide one that is not; say so instead. The user applies the change with a button, so never say it is already done. Do not add the block when the user only asks a question.',
     ].join('\n'),
   ].join('\n\n');

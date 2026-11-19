@@ -271,12 +271,20 @@ const WebUIAssistantChat: React.FC<WebUIAssistantChatProps> = ({
                     actions={actions}
                     cards={dashboard.cards}
                     isApplied={appliedMessageIds.has(message.id)}
-                    onApply={() => {
-                      dashboard.apply(actions);
+                    onApply={(effective) => {
+                      dashboard.apply(effective);
                       setAppliedMessageIds(
                         (prev) => new Set([...prev, message.id]),
                       );
+                      const shownId = effective.flatMap((action) =>
+                        action.type === 'reset' || action.type === 'hide'
+                          ? []
+                          : [action.id],
+                      )[0];
+                      if (shownId) dashboard.reveal(shownId);
                     }}
+                    onHighlight={dashboard.highlight}
+                    onReveal={dashboard.reveal}
                   />
                 )}
               </>
