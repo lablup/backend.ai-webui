@@ -4425,7 +4425,7 @@
     }
   },
   "webuiAssistant": {
-    "ApiKeyHint": "Được lưu trong trình duyệt này và bị xóa khi bạn đăng xuất.",
+    "ApiKeyHint": "Chỉ được giữ trong bộ nhớ; hãy nhập lại sau khi tải lại trang.",
     "ChangeConnection": "Đổi kết nối",
     "ClearConversation": "Xóa cuộc trò chuyện",
     "ClearConversationConfirm": "Xóa cuộc trò chuyện này?",

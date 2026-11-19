@@ -4425,7 +4425,7 @@
     }
   },
   "webuiAssistant": {
-    "ApiKeyHint": "保存在此浏览器中，退出登录时删除。",
+    "ApiKeyHint": "仅保存在内存中；刷新页面后需重新输入。",
     "ChangeConnection": "更改连接",
     "ClearConversation": "清空对话",
     "ClearConversationConfirm": "清空此对话？",

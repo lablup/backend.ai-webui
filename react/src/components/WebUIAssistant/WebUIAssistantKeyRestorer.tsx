@@ -5,7 +5,6 @@
 import { WebUIAssistantKeyRestorerQuery } from '../../__generated__/WebUIAssistantKeyRestorerQuery.graphql';
 import { CATALOG_FETCH_LIMIT } from '../../helper/const-vars';
 import { setCustomEndpointApiKey } from '../Chat/customEndpointKeyStore';
-import { loadStoredApiKey } from './storedApiKey';
 import {
   WEBUI_ASSISTANT_KEY_ID,
   type WebUIAssistantConnection,
@@ -17,22 +16,16 @@ import { Suspense, useEffect } from 'react';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
 /**
- * Puts a saved connection's key back in memory after a reload: a custom
- * endpoint's from this browser's storage, a private deployment's as its
- * latest valid access token. Renders nothing; without a key the button asks
- * to connect again.
+ * Puts a private deployment's latest valid access token back in memory after
+ * a reload. A custom endpoint's key is not kept anywhere, so it is entered
+ * again. Renders nothing.
  */
 const WebUIAssistantKeyRestorer: React.FC<{
   connection: WebUIAssistantConnection;
 }> = ({ connection }) => {
   'use memo';
 
-  const { baseURL, deploymentId } = connection;
-  useEffect(() => {
-    if (deploymentId) return;
-    setCustomEndpointApiKey(WEBUI_ASSISTANT_KEY_ID, loadStoredApiKey(baseURL));
-  }, [baseURL, deploymentId]);
-
+  const { deploymentId } = connection;
   return deploymentId ? (
     <Suspense fallback={null}>
       <DeploymentTokenRestorer deploymentId={deploymentId} />

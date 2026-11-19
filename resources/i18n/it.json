@@ -4423,7 +4423,7 @@
     }
   },
   "webuiAssistant": {
-    "ApiKeyHint": "Salvata in questo browser e rimossa alla disconnessione.",
+    "ApiKeyHint": "Conservata solo in memoria; reinseriscila dopo aver ricaricato la pagina.",
     "ChangeConnection": "Modifica connessione",
     "ClearConversation": "Cancella conversazione",
     "ClearConversationConfirm": "Cancellare questa conversazione?",

@@ -22,7 +22,7 @@ import { fetchOpenAIModels } from '../Chat/openAIModels';
 import WebUIAssistantEndpointForm, {
   type WebUIAssistantEndpointFormHandle,
 } from './WebUIAssistantEndpointForm';
-import { storeApiKey } from './storedApiKey';
+import { setCustomConnectionThisLoad } from './customConnectionThisLoad';
 import {
   WEBUI_ASSISTANT_CONFIG_KEY,
   WEBUI_ASSISTANT_KEY_ID,
@@ -200,8 +200,6 @@ const WebUIAssistantConnectModal: React.FC<WebUIAssistantConnectModalProps> = ({
         return;
       }
       await save({ baseURL, apiKey, deploymentId });
-      // A deployment's token is read again from the deployment after a reload, so no custom key is kept.
-      storeApiKey();
     } catch (error) {
       message.error(getErrorMessage(error));
     } finally {
@@ -333,8 +331,13 @@ const WebUIAssistantConnectModal: React.FC<WebUIAssistantConnectModalProps> = ({
             baseURL={savedCustomURL}
             apiKey={savedCustomURL ? savedApiKey : undefined}
             onSubmit={async (values) => {
-              await save({ baseURL: values.baseURL, apiKey: values.apiKey });
-              storeApiKey(values.baseURL, values.apiKey);
+              setCustomConnectionThisLoad(values.baseURL);
+              try {
+                await save({ baseURL: values.baseURL, apiKey: values.apiKey });
+              } catch (error) {
+                setCustomConnectionThisLoad(undefined);
+                throw error;
+              }
             }}
           />
         )}

@@ -11,6 +11,7 @@ import './WebUIAssistant.css';
 import WebUIAssistantChat from './WebUIAssistantChat';
 import WebUIAssistantConnectModal from './WebUIAssistantConnectModal';
 import WebUIAssistantKeyRestorer from './WebUIAssistantKeyRestorer';
+import { useCustomConnectionThisLoad } from './customConnectionThisLoad';
 import { WEBUI_ASSISTANT_PROFILE } from './webUIAssistantProfile';
 import {
   WEBUI_ASSISTANT_CONFIG_KEY,
@@ -54,8 +55,13 @@ const WebUIAssistantFloating: React.FC = () => {
   }
 
   const apiKey = useCustomEndpointApiKey(WEBUI_ASSISTANT_KEY_ID);
+  const customBaseURLThisLoad = useCustomConnectionThisLoad();
+  // A deployment reconnects after a reload; a custom endpoint is connected again each time.
   const isConnected =
-    !!connection?.baseURL && (!connection.hasApiKey || !!apiKey);
+    !!connection?.baseURL &&
+    (connection.deploymentId
+      ? !connection.hasApiKey || !!apiKey
+      : customBaseURLThisLoad === connection.baseURL);
   const isPanelShown = isOpen && isConnected;
   const title =
     WEBUI_ASSISTANT_PROFILE.translations[lang] || WEBUI_ASSISTANT_PROFILE.name;
@@ -172,7 +178,7 @@ const WebUIAssistantFloating: React.FC = () => {
           setIsOpen((open) => !open);
         }}
       />
-      {connection?.hasApiKey && !apiKey && (
+      {connection?.deploymentId && connection.hasApiKey && !apiKey && (
         <WebUIAssistantKeyRestorer connection={connection} />
       )}
       <Suspense fallback={null}>

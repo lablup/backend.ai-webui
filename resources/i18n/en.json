@@ -4408,7 +4408,7 @@
     }
   },
   "webuiAssistant": {
-    "ApiKeyHint": "Saved in this browser and removed when you log out.",
+    "ApiKeyHint": "Kept in memory only; enter it again after reloading the page.",
     "ChangeConnection": "Change connection",
     "ClearConversation": "Clear conversation",
     "ClearConversationConfirm": "Clear this conversation?",

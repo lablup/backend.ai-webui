@@ -4425,7 +4425,7 @@
     }
   },
   "webuiAssistant": {
-    "ApiKeyHint": "Guardada neste navegador e removida ao terminar sessão.",
+    "ApiKeyHint": "Mantida apenas na memória; introduza-a novamente após recarregar a página.",
     "ChangeConnection": "Alterar ligação",
     "ClearConversation": "Limpar conversa",
     "ClearConversationConfirm": "Limpar esta conversa?",

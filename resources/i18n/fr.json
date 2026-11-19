@@ -4426,7 +4426,7 @@
     }
   },
   "webuiAssistant": {
-    "ApiKeyHint": "Enregistrée dans ce navigateur et supprimée à la déconnexion.",
+    "ApiKeyHint": "Conservée en mémoire uniquement ; saisissez-la à nouveau après avoir rechargé la page.",
     "ChangeConnection": "Modifier la connexion",
     "ClearConversation": "Effacer la conversation",
     "ClearConversationConfirm": "Effacer cette conversation ?",

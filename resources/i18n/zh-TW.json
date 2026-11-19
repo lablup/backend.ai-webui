@@ -4427,7 +4427,7 @@
     }
   },
   "webuiAssistant": {
-    "ApiKeyHint": "儲存在此瀏覽器中，登出時刪除。",
+    "ApiKeyHint": "僅保存在記憶體中；重新整理頁面後需重新輸入。",
     "ChangeConnection": "變更連線",
     "ClearConversation": "清除對話",
     "ClearConversationConfirm": "清除此對話？",

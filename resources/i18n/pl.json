@@ -4426,7 +4426,7 @@
     }
   },
   "webuiAssistant": {
-    "ApiKeyHint": "Zapisywany w tej przeglądarce i usuwany po wylogowaniu.",
+    "ApiKeyHint": "Przechowywany tylko w pamięci; po przeładowaniu strony wprowadź go ponownie.",
     "ChangeConnection": "Zmień połączenie",
     "ClearConversation": "Wyczyść rozmowę",
     "ClearConversationConfirm": "Wyczyścić tę rozmowę?",
