@@ -112,6 +112,14 @@ describe('filterOfConditions', () => {
     ).toEqual({ usageMode: { equals: 'MODEL' } });
   });
 
+  it('escapes backslashes and quotes in a minilang value', () => {
+    expect(
+      filterOfConditions(session, [
+        { property: 'name', operator: '==', value: String.raw`a\"b\\` },
+      ]),
+    ).toBe(String.raw`name == "a\\\"b\\\\"`);
+  });
+
   it('is undefined without conditions', () => {
     expect(filterOfConditions(session, [])).toBeUndefined();
   });
