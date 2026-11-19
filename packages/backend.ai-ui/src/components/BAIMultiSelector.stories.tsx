@@ -77,14 +77,16 @@ export const SelectionTooltip: Story = {
     },
   },
   render: () => (
-    <BAIFlex direction="column" gap="md" style={{ maxWidth: 300 }}>
+    <BAIFlex direction="column" gap="md">
       <BAIMultiSelector
         aria-label="With tooltip"
+        width={300}
         options={manyOptions}
         defaultValue={manyOptions.map((option) => option.value)}
       />
       <BAIMultiSelector
         aria-label="Without tooltip"
+        width={300}
         showTooltip={false}
         options={manyOptions}
         defaultValue={manyOptions.map((option) => option.value)}
