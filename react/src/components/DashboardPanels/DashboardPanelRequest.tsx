@@ -83,15 +83,18 @@ const DashboardPanelRequest: React.FC<DashboardPanelRequestProps> = ({
         <Text weight="semibold">{t('webuiAssistant.PanelAskTitle')}</Text>
       </BAIFlex>
       <BAIFlex gap="xs" align="center">
-        <BAITextInput
-          value={request}
-          onChange={(value) => setRequest(value)}
-          placeholder={t('webuiAssistant.PanelAskPlaceholder')}
-          aria-label={t('webuiAssistant.PanelAskTitle')}
-          onEnter={() => void ask()}
-          width="100%"
-        />
+        <BAIFlex style={{ flex: 1, minWidth: 0 }}>
+          <BAITextInput
+            value={request}
+            onChange={(value) => setRequest(value)}
+            placeholder={t('webuiAssistant.PanelAskPlaceholder')}
+            aria-label={t('webuiAssistant.PanelAskTitle')}
+            onEnter={() => void ask()}
+            width="100%"
+          />
+        </BAIFlex>
         <Button
+          style={{ flexShrink: 0 }}
           label={t('webuiAssistant.PanelAsk')}
           isDisabled={!request.trim()}
           isLoading={isAsking}

@@ -73,6 +73,12 @@ export interface DashboardPanelBoardProps {
 const ASSISTANT_HIGHLIGHT_CLASS = 'dashboard-panel-board__assistant-target';
 const ASSISTANT_REVEAL_MS = 2000;
 
+/** The first card an assistant change leaves on the board, to scroll to. */
+const firstShownCardOf = (actions: ReadonlyArray<DashboardAssistantAction>) =>
+  actions.flatMap((action) =>
+    action.type === 'reset' || action.type === 'hide' ? [] : [action.id],
+  )[0];
+
 /** The page's allowed resource groups under a boundary of its own. */
 const WithResourceGroups: React.FC<{
   scope: DashboardScope;
@@ -273,15 +279,15 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
               <DashboardAssistantSection
                 page={page}
                 cards={assistantCards}
-                onPreview={setDraftActions}
+                onPreview={(actions) => {
+                  setDraftActions(actions);
+                  const changedId = actions && firstShownCardOf(actions);
+                  if (changedId) revealCard(changedId);
+                }}
                 onApply={(actions) => {
                   applyAssistantActions(actions);
                   setDraftActions(null);
-                  const changedId = actions.flatMap((action) =>
-                    action.type === 'reset' || action.type === 'hide'
-                      ? []
-                      : [action.id],
-                  )[0];
+                  const changedId = firstShownCardOf(actions);
                   if (changedId) revealCard(changedId);
                 }}
                 onHighlight={highlightCard}
