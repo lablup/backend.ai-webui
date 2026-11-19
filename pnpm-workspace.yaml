@@ -223,6 +223,10 @@ overrides:
   "brace-expansion@^5": ^5.0.12 # same (#417, #515, #518 high, #521)
   "browserslist@^4": ^4.28.7 # prototype write via custom stats (#473 high)
   "compression@^1": ^1.8.2 # memory leak on premature close (#524 high); serve pins 1.8.1
+  # #11307. An optional peer of vitest that nothing here uses. A fresh
+  # resolution leaves it out, but a branch carrying an older lockfile keeps
+  # 20.x (it did in #11170). Keep while vitest ranges the peer as `*`.
+  happy-dom: ">=21.0.4" # host code execution, SSRF (#539, #544 high), cookie scope (#543)
   # The e2e agent runner pins both exactly; e2e 0.23.0 itself moved to these.
   # Remove both when e2e is bumped to >= 0.23.0.
   "e2e>@modelcontextprotocol/server": ^2.3.0 # cross-client message delivery (#531 high), bearer audience (#529)
