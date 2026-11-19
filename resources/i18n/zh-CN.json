@@ -942,7 +942,7 @@
       "Terminating": "终止中",
       "ThisRange": "本时段",
       "TopFailureCauses": "审计日志: 主要失败原因",
-      "TopFailureCausesTooltip": "卡片时间范围内当前项目或域中以错误结束或被拒绝的审计日志条目,按操作和消息分组,按频率从高到低排列。消息中的 ID 和长数字会被屏蔽,以便同一原因归为一组。",
+      "TopFailureCausesTooltip": "卡片时间范围内当前域、其所有项目及其用户的所有操作中以错误结束或被拒绝的审计日志条目,按操作和消息分组,按频率从高到低排列。消息中的 ID 和长数字会被屏蔽,以便同一原因归为一组。",
       "Unhealthy": "异常",
       "Unlimited": "无限制",
       "ViewAll": "查看全部",

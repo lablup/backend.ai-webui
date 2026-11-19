@@ -942,7 +942,7 @@
       "Terminating": "Đang kết thúc",
       "ThisRange": "Khoảng này",
       "TopFailureCauses": "Nhật ký kiểm tra: Nguyên nhân lỗi hàng đầu",
-      "TopFailureCausesTooltip": "Các mục nhật ký kiểm tra của dự án hoặc miền hiện tại kết thúc bằng lỗi hoặc bị từ chối trong khoảng thời gian của thẻ, được nhóm theo thao tác và thông báo, thường gặp nhất trước. ID và số dài trong thông báo được ẩn để cùng một nguyên nhân được nhóm thành một.",
+      "TopFailureCausesTooltip": "Các mục nhật ký kiểm tra của miền hiện tại, mọi dự án trong miền và mọi thao tác của người dùng trong miền kết thúc bằng lỗi hoặc bị từ chối trong khoảng thời gian của thẻ, được nhóm theo thao tác và thông báo, thường gặp nhất trước. ID và số dài trong thông báo được ẩn để cùng một nguyên nhân được nhóm thành một.",
       "Unhealthy": "Có lỗi",
       "Unlimited": "Không giới hạn",
       "ViewAll": "Xem tất cả",

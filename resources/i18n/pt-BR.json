@@ -942,7 +942,7 @@
       "Terminating": "Encerrando",
       "ThisRange": "Este período",
       "TopFailureCauses": "Registro de auditoria: Principais causas de falha",
-      "TopFailureCausesTooltip": "Entradas do log de auditoria do projeto ou domínio atual que terminaram em erro ou foram negadas no intervalo do cartão, agrupadas por ação e mensagem, das mais frequentes para as menos. IDs e números longos em uma mensagem são mascarados para que uma mesma causa seja agrupada como uma.",
+      "TopFailureCausesTooltip": "Entradas do log de auditoria do domínio atual, de todos os seus projetos e de todas as ações dos seus usuários que terminaram em erro ou foram negadas no intervalo do cartão, agrupadas por ação e mensagem, das mais frequentes para as menos. IDs e números longos em uma mensagem são mascarados para que uma mesma causa seja agrupada como uma.",
       "Unhealthy": "Com problemas",
       "Unlimited": "Ilimitado",
       "ViewAll": "Ver tudo",

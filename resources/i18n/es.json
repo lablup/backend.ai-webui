@@ -942,7 +942,7 @@
       "Terminating": "Terminando",
       "ThisRange": "Este periodo",
       "TopFailureCauses": "Registro de auditoría: Principales causas de fallo",
-      "TopFailureCausesTooltip": "Entradas del registro de auditoría del proyecto o dominio actual que terminaron con error o fueron denegadas en el rango de la tarjeta, agrupadas por acción y mensaje, de más a menos frecuentes. Los ID y números largos de un mensaje se ocultan para que una misma causa se agrupe como una.",
+      "TopFailureCausesTooltip": "Entradas del registro de auditoría del dominio actual, de todos sus proyectos y de todas las acciones de sus usuarios que terminaron con error o fueron denegadas en el rango de la tarjeta, agrupadas por acción y mensaje, de más a menos frecuentes. Los ID y números largos de un mensaje se ocultan para que una misma causa se agrupe como una.",
       "Unhealthy": "Con problemas",
       "Unlimited": "Ilimitado",
       "ViewAll": "Ver todo",

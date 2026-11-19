@@ -942,7 +942,7 @@
       "Terminating": "Sonlandırılıyor",
       "ThisRange": "Bu dönem",
       "TopFailureCauses": "Denetim Günlüğü: Başlıca Hata Nedenleri",
-      "TopFailureCausesTooltip": "Kartın zaman aralığında geçerli proje veya etki alanında hatayla biten ya da reddedilen denetim günlüğü girdileri, işlem ve mesaja göre gruplanmış, en sık olan önce. Bir nedenin tek grup olması için mesajdaki kimlikler ve uzun sayılar maskelenir.",
+      "TopFailureCausesTooltip": "Kartın zaman aralığında geçerli etki alanında, tüm projelerinde ve kullanıcılarının tüm işlemlerinde hatayla biten ya da reddedilen denetim günlüğü girdileri, işlem ve mesaja göre gruplanmış, en sık olan önce. Bir nedenin tek grup olması için mesajdaki kimlikler ve uzun sayılar maskelenir.",
       "Unhealthy": "Sağlıksız",
       "Unlimited": "Sınırsız",
       "ViewAll": "Tümünü görüntüle",
