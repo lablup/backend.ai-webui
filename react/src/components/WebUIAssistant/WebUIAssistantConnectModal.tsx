@@ -12,17 +12,18 @@ import {
   useUpdateMyUserAppConfig,
 } from '../../hooks/useAppConfig';
 import { useProjectPath } from '../../hooks/useRouteScope';
-import CustomEndpointForm from '../Chat/CustomEndpointForm';
 import DeploymentSelect from '../Chat/DeploymentSelect';
 import DeploymentTokenSelect from '../Chat/DeploymentTokenSelect';
 import {
   setCustomEndpointApiKey,
   useCustomEndpointApiKey,
 } from '../Chat/customEndpointKeyStore';
-import { fetchOpenAIModels, isAuthRejected } from '../Chat/openAIModels';
+import { fetchOpenAIModels } from '../Chat/openAIModels';
+import WebUIAssistantEndpointForm from './WebUIAssistantEndpointForm';
 import {
   WEBUI_ASSISTANT_CONFIG_KEY,
   WEBUI_ASSISTANT_KEY_ID,
+  isAuthRejected,
   type WebUIAssistantConnection,
 } from './webUIAssistantPrompt';
 import { Banner } from '@lablup/ui-common/Banner';
@@ -286,8 +287,7 @@ const WebUIAssistantConnectModal: React.FC<WebUIAssistantConnectModalProps> = ({
           />
         )}
         {isCustom && (
-          <CustomEndpointForm
-            isPlain
+          <WebUIAssistantEndpointForm
             baseURL={savedCustomURL}
             apiKey={savedCustomURL ? savedApiKey : undefined}
             onSubmit={(values) =>

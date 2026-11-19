@@ -17,7 +17,6 @@ interface ChatAgentSelectProps {
 
 function makeAgentOptions(agents: AIAgent[], filter?: string) {
   return agents
-    .filter((agent) => !agent.hidden)
     .map((agent) => ({
       label: agent.name,
       value: agent.id,

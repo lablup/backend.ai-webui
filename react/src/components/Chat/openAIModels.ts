@@ -11,10 +11,6 @@ export type ModelsFetchError =
   | { kind: 'timeout' }
   | { kind: 'invalid-response' };
 
-/** The endpoint refused the key, as opposed to not being reachable or ready yet. */
-export const isAuthRejected = (error?: ModelsFetchError) =>
-  error?.kind === 'http' && (error.status === 401 || error.status === 403);
-
 export interface ModelsFetchResult {
   data: Array<ChatModel>;
   error?: ModelsFetchError;

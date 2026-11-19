@@ -14,6 +14,7 @@ import {
   ChatMessage,
   ChatModel,
   ChatProviderData,
+  getAIErrorMessage,
   getLatestUserMessage,
   isCustomEndpointProvider,
 } from './ChatModel';
@@ -24,12 +25,18 @@ import {
   useCustomEndpointApiKey,
 } from './customEndpointKeyStore';
 import { fetchOpenAIModels } from './openAIModels';
-import { streamChatCompletion } from './streamChatCompletion';
+import { createOpenAICompatible } from '@ai-sdk/openai-compatible';
 import { useChat } from '@ai-sdk/react';
 import { Banner } from '@lablup/ui-common/Banner';
 import { Card } from '@lablup/ui-common/Card';
 import { useTheme } from '@lablup/ui-common/theme';
-import { DefaultChatTransport } from 'ai';
+import {
+  DefaultChatTransport,
+  convertToModelMessages,
+  extractReasoningMiddleware,
+  streamText,
+  wrapLanguageModel,
+} from 'ai';
 import {
   BAIFlex,
   BAILogger,
@@ -298,17 +305,38 @@ const PureChatCard: React.FC<ChatCardProps> = ({
           agentEndpointUrl ||
           isCustomEndpoint
         ) {
+          const provider = createOpenAICompatible({
+            name: 'backend-ai',
+            baseURL: baseURL ?? '',
+            apiKey: effectiveApiKey || 'dummy',
+          });
+
           try {
             const body = JSON.parse(init?.body as string);
-            const response = streamChatCompletion({
-              baseURL: baseURL ?? '',
-              apiKey: effectiveApiKey,
-              modelId,
-              messages: body?.messages,
-              system: agent?.systemPrompt,
+            const result = streamText({
               abortSignal: init?.signal || undefined,
-              parameters: chat.usingParameters ? chat.parameters : undefined,
-              onFinish: (message) => onSaveMessage?.(message),
+              model: wrapLanguageModel({
+                model: provider.chatModel(modelId),
+                middleware: [
+                  extractReasoningMiddleware({
+                    tagName: 'think',
+                  }),
+                  // The openai-compatible provider does not advertise any
+                  // `supportedUrls`, so the AI SDK treats a `data:` image
+                  // attachment as a remote asset and tries to *download* it,
+                  // failing with "Failed to download data:image/...". Advertise
+                  // that the model accepts image URLs inline so the SDK passes
+                  // the data URL straight through as an `image_url` part.
+                  {
+                    overrideSupportedUrls: () => ({
+                      'image/*': [/^data:/, /^https?:\/\//],
+                    }),
+                  },
+                ],
+              }),
+              messages: convertToModelMessages(body?.messages),
+              system: agent?.systemPrompt || undefined,
+              ...(chat.usingParameters ? chat.parameters : {}),
             });
 
             const userMessage = getLatestUserMessage(body.messages);
@@ -316,7 +344,25 @@ const PureChatCard: React.FC<ChatCardProps> = ({
               onSaveMessage?.(userMessage);
             }
 
-            return response;
+            return result.toUIMessageStreamResponse({
+              // Surface the model-reported output token count on the final
+              // message so ChatTokenCounter can use the exact usage value for
+              // TPS instead of the gpt-tokenizer estimate. Only emitted on the
+              // 'finish' event (usage is not known mid-stream).
+              messageMetadata: ({ part }) => {
+                if (part.type === 'finish') {
+                  return { outputTokens: part.totalUsage.outputTokens };
+                }
+              },
+              onError: (error) => {
+                return getAIErrorMessage(error);
+              },
+              onFinish: (event) => {
+                if (!event.isAborted && event.responseMessage) {
+                  onSaveMessage?.(event.responseMessage);
+                }
+              },
+            });
           } catch (error) {
             logger.error('Client-side streaming error:', error);
             // Fallback to regular fetch

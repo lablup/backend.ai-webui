@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { ChatMessage, getAIErrorMessage } from './ChatModel';
+import { ChatMessage, getAIErrorMessage } from '../Chat/ChatModel';
 import { createOpenAICompatible } from '@ai-sdk/openai-compatible';
 import {
   convertToModelMessages,

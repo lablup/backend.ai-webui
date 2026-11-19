@@ -4,25 +4,22 @@
  */
 import { useWebUILocation } from '../../hooks';
 import { useTanQuery } from '../../hooks/reactQueryAlias';
-import type { AIAgent } from '../../hooks/useAIAgent';
 import { useHelpURL, useManualBaseURL } from '../../hooks/useHelpURL';
 import ChatMessageContent from '../Chat/ChatMessageContent';
 import type { ChatMessage as ChatUIMessage } from '../Chat/ChatModel';
-import {
-  fetchOpenAIModels,
-  isAuthRejected,
-  type ModelsFetchError,
-} from '../Chat/openAIModels';
-import { streamChatCompletion } from '../Chat/streamChatCompletion';
+import { fetchOpenAIModels, type ModelsFetchError } from '../Chat/openAIModels';
 import {
   createManualIndex,
   loadManual,
   searchManual,
   type ManualSection,
 } from './manualSearch';
+import { streamChatCompletion } from './streamChatCompletion';
+import { WEBUI_ASSISTANT_PROFILE } from './webUIAssistantProfile';
 import {
   MANUAL_RESOURCE_BASE,
   WEBUI_ASSISTANT_EXCERPT_COUNT,
+  isAuthRejected,
   buildAssistantSystemPrompt,
   parseManualTarget,
 } from './webUIAssistantPrompt';
@@ -54,7 +51,6 @@ class ModelsQueryError extends Error {
 }
 
 interface WebUIAssistantChatProps {
-  profile: AIAgent;
   /** OpenAI-compatible base URL (`…/v1`). */
   baseURL: string;
   apiKey?: string;
@@ -71,7 +67,6 @@ const messageText = (message: ChatUIMessage) =>
     .join('');
 
 const WebUIAssistantChat: React.FC<WebUIAssistantChatProps> = ({
-  profile,
   baseURL: apiBaseURL,
   apiKey: token,
   isVisible,
@@ -117,9 +112,7 @@ const WebUIAssistantChat: React.FC<WebUIAssistantChatProps> = ({
     modelsQuery.error instanceof ModelsQueryError
       ? modelsQuery.error.detail
       : undefined;
-  const preferredModelId = profile.modelPreferences?.preferredModelId;
-  const modelId =
-    models.find((model) => model.id === preferredModelId)?.id ?? models[0]?.id;
+  const modelId = models[0]?.id;
   const isTokenRejected = isAuthRejected(modelsError);
 
   // `null` = the manual is not loaded, which the prompt must not report as "nothing matched".
@@ -164,7 +157,7 @@ const WebUIAssistantChat: React.FC<WebUIAssistantChatProps> = ({
           messages: uiMessages,
           abortSignal: init?.signal || undefined,
           system: buildAssistantSystemPrompt({
-            basePrompt: profile.systemPrompt ?? '',
+            basePrompt: WEBUI_ASSISTANT_PROFILE.systemPrompt,
             page: { path: location.pathname, manualURL: helpURL },
             excerpts: pickExcerpts(lastUser ? messageText(lastUser) : ''),
             manualBaseURL,

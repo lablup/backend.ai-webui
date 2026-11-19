@@ -2,10 +2,9 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import type { ModelsFetchError } from '../Chat/openAIModels';
 import { manualSectionURL, type ManualSection } from './manualSearch';
 
-/** The built-in profile in `resources/ai-agents.json`; its system prompt is the assistant's. */
-export const WEBUI_ASSISTANT_AGENT_ID = 'webui-assistant';
 /** `userConfig` key holding each user's own connection. */
 export const WEBUI_ASSISTANT_CONFIG_KEY = 'webuiAssistant';
 /** `customEndpointKeyStore` id of the assistant's API key, which stays in memory. */
@@ -22,6 +21,10 @@ export interface WebUIAssistantConnection {
   /** The endpoint needs a key, so after a reload the user connects again. */
   hasApiKey?: boolean;
 }
+
+/** The endpoint refused the key, as opposed to not being reachable or ready yet. */
+export const isAuthRejected = (error?: ModelsFetchError) =>
+  error?.kind === 'http' && (error.status === 401 || error.status === 403);
 
 export const WEBUI_ASSISTANT_EXCERPT_COUNT = 5;
 // ~1,800 chars ≈ 450–900 tokens per excerpt keeps five excerpts inside an 8k window.

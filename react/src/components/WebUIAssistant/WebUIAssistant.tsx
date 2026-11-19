@@ -2,7 +2,6 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { useAIAgent } from '../../hooks/useAIAgent';
 import { useMyAppConfig } from '../../hooks/useAppConfig';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
 import { useCustomEndpointApiKey } from '../Chat/customEndpointKeyStore';
@@ -11,8 +10,8 @@ import ErrorBoundaryWithNullFallback from '../ErrorBoundaryWithNullFallback';
 import './WebUIAssistant.css';
 import WebUIAssistantChat from './WebUIAssistantChat';
 import WebUIAssistantConnectModal from './WebUIAssistantConnectModal';
+import { WEBUI_ASSISTANT_PROFILE } from './webUIAssistantProfile';
 import {
-  WEBUI_ASSISTANT_AGENT_ID,
   WEBUI_ASSISTANT_CONFIG_KEY,
   WEBUI_ASSISTANT_KEY_ID,
   type WebUIAssistantConnection,
@@ -39,7 +38,6 @@ const WebUIAssistantFloating: React.FC = () => {
 
   const { t } = useTranslation();
   const [lang] = useCurrentLanguage();
-  const { agents } = useAIAgent();
   const connection = useMyAppConfig<WebUIAssistantConnection>(
     WEBUI_ASSISTANT_CONFIG_KEY,
   );
@@ -54,12 +52,12 @@ const WebUIAssistantFloating: React.FC = () => {
     setIsConnectOpen(false);
   }
 
-  const profile = agents.find((agent) => agent.id === WEBUI_ASSISTANT_AGENT_ID);
   const apiKey = useCustomEndpointApiKey(WEBUI_ASSISTANT_KEY_ID);
   const isConnected =
     !!connection?.baseURL && (!connection.hasApiKey || !!apiKey);
   const isPanelShown = isOpen && isConnected;
-  const title = profile?.translations?.[lang]?.name || profile?.name;
+  const title =
+    WEBUI_ASSISTANT_PROFILE.translations[lang] || WEBUI_ASSISTANT_PROFILE.name;
   // The chat (manual download, /models probe) mounts on first open (ADR 0032) and then stays.
   const [hasBeenShown, setHasBeenShown] = useState(false);
   if (isPanelShown && !hasBeenShown) setHasBeenShown(true);
@@ -137,7 +135,7 @@ const WebUIAssistantFloating: React.FC = () => {
           </BAIFlex>
         </BAIFlex>
         {hasBeenShown &&
-          (!profile || !connection || !isConnected ? (
+          (!connection || !isConnected ? (
             <BAIFlex justify="center" align="center" style={{ flex: '1 1 0%' }}>
               <Spinner />
             </BAIFlex>
@@ -145,7 +143,6 @@ const WebUIAssistantFloating: React.FC = () => {
             <ErrorBoundaryWithNullFallback>
               <WebUIAssistantChat
                 key={`${conversationKey}-${connection.baseURL}-${apiKey ?? ''}`}
-                profile={profile}
                 baseURL={connection.baseURL}
                 apiKey={apiKey}
                 isVisible={isPanelShown}
