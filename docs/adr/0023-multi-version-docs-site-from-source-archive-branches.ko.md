@@ -1,6 +1,6 @@
 # 0023 — Multi-version docs site from source archive branches
 
-> Decision 2절의 **Branch content** 항목은 [ADR 0029](0029-user-manual-images-in-git-lfs.ko.md)가 넓힌다. archive는 각 이미지 blob을 source ref가 저장한 그대로 두며, 그것이 Git LFS pointer이면 archive 루트에 그 경로들을 `filter=lfs`로 표시하는 `.gitattributes`도 둔다. 나머지 결정은 그대로 유효하다.
+> Decision 2절의 **Branch content** 항목은 [ADR 0029](0029-user-manual-images-in-git-lfs.ko.md)가 넓힌다. archive는 각 이미지 blob을 source ref가 저장한 그대로 두며, 그것이 Git LFS pointer이면 archive 루트에 그 경로들을 `filter=lfs`로 표시하는 `.gitattributes`도 둔다. 나머지 결정은 그대로 유지된다.
 
 ## Summary
 

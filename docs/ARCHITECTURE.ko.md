@@ -1,7 +1,7 @@
 # Architecture overview
 
 이 문서는 현행 ADR(Architecture Decision Record)의 색인이다. 진본은 각 ADR 파일(`docs/adr/`)이며,
-이 표는 새 해석을 더하지 않는다. `main`에 병합된 ADR은 지금 유효한 결정이며, 코드는 그 결정을 따른다.
+이 표는 새 해석을 더하지 않는다. `main`에 병합된 ADR은 결정된 사항이며, 코드는 그 결정을 따른다.
 이 문서는 `ARCHITECTURE.md`의 한국어 번역이다. 두 문서가 다르면 영어 문서가 맞고, 이 문서를 고친다(ADR 0018).
 
 ## ADR 목록
