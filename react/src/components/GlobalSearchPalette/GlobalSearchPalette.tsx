@@ -52,13 +52,6 @@ const styles = stylex.create({
     width: textSizeVars['--font-size-xl'],
     height: textSizeVars['--font-size-xl'],
   },
-  // Placeholder bars sized off the same type scale the two row lines use.
-  placeholderColumn: { flexGrow: 1, minWidth: 0 },
-  placeholderLabel: { width: '40%', height: textSizeVars['--font-size-base'] },
-  placeholderSecondary: {
-    width: '24%',
-    height: textSizeVars['--font-size-sm'],
-  },
 });
 
 export interface GlobalSearchPaletteProps {
@@ -76,28 +69,13 @@ const PALETTE_WIDTH = 'min(640px, 92vw)';
 const BOOTSTRAP_PLACEHOLDER = (
   <VStack gap={2} width="100%">
     {[0, 1, 2].map((index) => (
-      <HStack key={index} gap={2} align="center" width="100%">
-        <BAISkeleton
-          variant="block"
-          startIndex={index}
-          radius={2}
-          xstyle={styles.iconSlot}
-        />
-        <VStack gap={0.5} xstyle={styles.placeholderColumn}>
-          <BAISkeleton
-            variant="block"
-            startIndex={index}
-            radius={1}
-            xstyle={styles.placeholderLabel}
-          />
-          <BAISkeleton
-            variant="block"
-            startIndex={index}
-            radius={1}
-            xstyle={styles.placeholderSecondary}
-          />
-        </VStack>
-      </HStack>
+      <BAISkeleton
+        key={index}
+        hasAvatar
+        hasTitle={false}
+        rows={2}
+        startIndex={index}
+      />
     ))}
   </VStack>
 );

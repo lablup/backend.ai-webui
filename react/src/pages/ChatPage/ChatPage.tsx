@@ -448,16 +448,7 @@ const PureChatPage = ({ id }: { id: string }) => {
                     flex: 1,
                   }}
                 >
-                  <Suspense
-                    fallback={
-                      <BAISkeleton
-                        variant="block"
-                        width="100%"
-                        height="100%"
-                        radius={3}
-                      />
-                    }
-                  >
+                  <Suspense fallback={<BAISkeleton rows={4} />}>
                     {_.map(chat.chats, (chatData) => (
                       <ChatCard
                         key={chatData.id}
