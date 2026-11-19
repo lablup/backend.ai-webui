@@ -281,7 +281,7 @@ Jongeun Lee, FR-3814 Not Planned)을 좁게 재검토한 것이다 — spec R3.1
 trigger하며, 화면에 보이고 review 가능한 변경에 국한된다, 상태 업데이트가
 아니다. 종료 시 notification에 대한 spec R3.9의 "not planned" ruling은
 그대로 유지된다: Walkthrough를 minting해도 Teams 메시지는 올라가지
-않는다. 이 reversal은 조용히 착지하는 대신
+않는다. 이 reversal은 조용히 병합되는 대신
 [FR-3947](https://lablup.atlassian.net/browse/FR-3947)을 통해 이전
 driver에게 알린다.
 

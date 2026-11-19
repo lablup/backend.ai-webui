@@ -147,7 +147,7 @@ flowchart TD
 
 - GitHub: #10345.
 - 결정일: 2026-10-14; `target`을 지우고 범위 규칙을 정한 두 번째 contract는 2026-10-15. contract는 board(`lablup/frontend-board`), webui, `fw` plugin(`webui-connection-info` skill)이 함께 정했다.
-- 관련: [ADR 0010](0010-component-level-manager-version-gates.ko.md)의 Decision 1절 **Floor location**을 이 ADR이 대신하고, 나머지 결정은 그대로 발효 중이다. [ADR 0006](0006-version-gated-field-pairs-across-manager-versions.ko.md)의 `@since`·`@deprecatedSince` pair는 `dev-env compat`이 세는 gate 형태 중 둘이다. 코드: `scripts/dev-env.mjs`, `scripts/dev-env-lib.mjs`, `scripts/verify.sh`. 문서: `DEV_ENVIRONMENT.md`의 "Manager compatibility policy".
+- 관련: [ADR 0010](0010-component-level-manager-version-gates.ko.md)의 Decision 1절 **Floor location**을 이 ADR이 대신하고, 나머지 결정은 그대로 유효하다. [ADR 0006](0006-version-gated-field-pairs-across-manager-versions.ko.md)의 `@since`·`@deprecatedSince` pair는 `dev-env compat`이 세는 gate 형태 중 둘이다. 코드: `scripts/dev-env.mjs`, `scripts/dev-env-lib.mjs`, `scripts/verify.sh`. 문서: `DEV_ENVIRONMENT.md`의 "Manager compatibility policy".
 
 ## 용어
 

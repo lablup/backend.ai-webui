@@ -1,7 +1,7 @@
 # Architecture overview
 
 이 문서는 현행 ADR(Architecture Decision Record)의 색인이다. 진본은 각 ADR 파일(`docs/adr/`)이며,
-이 표는 새 해석을 더하지 않는다. `main`에 착지한 ADR은 발효된 결정이고, 코드는 그 결정을 따른다.
+이 표는 새 해석을 더하지 않는다. `main`에 병합된 ADR은 지금 유효한 결정이며, 코드는 그 결정을 따른다.
 이 문서는 `ARCHITECTURE.md`의 한국어 번역이다. 두 문서가 다르면 영어 문서가 맞고, 이 문서를 고친다(ADR 0018).
 
 ## ADR 목록
@@ -41,5 +41,5 @@
 
 ## 새 ADR을 적는 방법
 
-언제 ADR이 필요한지는 `.claude/rules/adr.md`가, 파일 이름·제목·절 구성·문장 규칙·착지 전 검사는
+언제 ADR이 필요한지는 `.claude/rules/adr.md`가, 파일 이름·제목·절 구성·문장 규칙·병합 전 검사는
 `.claude/skills/adr-writing/` 스킬이 정한다. ADR 파일과 그 `.ko.md` 짝, 이 표와 `ARCHITECTURE.md`의 한 줄, 그 결정을 따르는 코드는 한 PR로 들어간다.

@@ -7,7 +7,7 @@
 - **Host seam**: review overlay client(`react/vite-plugins/review-overlay/client/`)가 dev server에서만 얻을 수 있는 것은 모두 [Host](#용어)가 답하는 option이 되었다. 시작점은 `client/boot.ts`의 `bootOverlay(options)` 하나이고, 이 module은 import될 때 아무 일도 하지 않는다. host가 넘기는 것은 항목이 전부 optional인 [`OverlayHostOptions`](#용어)다.
 - **Entry**: `client/main.ts`는 dev server가 `/__review/overlay.js`로 내보내고 static build가 번들하는 entry로 남는다. 이 파일은 module 평가 시점에 `location.hash`를 잡아 기본 host로 `bootOverlay`를 부르는 것이 전부다.
 - **Default host**: 기본값은 오늘의 동작 그대로다. `/__review/state`를 읽는 state source, page에서 가져가는 keyboard shortcut, link가 요구하는 page로의 자동 이동, page의 `--color-*` token 상속, 값이 빈 `data-bai-review-overlay` marker가 모두 기본값이다.
-- **One codec**: ADR 0002의 "읽는 쪽은 codec 하나"는 그대로 발효 중이다. Lablup Jira Helper chrome extension은 이 client를 다시 구현하지 않고 `client/*.ts`를 byte 단위로 그대로 vendoring하며, sync script와 CI의 `--check` gate와 함께 복사한 vitest suite가 그 동일성을 보증한다.
+- **One codec**: ADR 0002의 "읽는 쪽은 codec 하나"는 그대로 유효하다. Lablup Jira Helper chrome extension은 이 client를 다시 구현하지 않고 `client/*.ts`를 byte 단위로 그대로 vendoring하며, sync script와 CI의 `--check` gate와 함께 복사한 vitest suite가 그 동일성을 보증한다.
 - **Extension host**: extension은 `pageChords: false`, `autoNavigate: false`, `palette: 'own'`, `marker: 'extension'`, `expectReactGrab: false`로 boot한다. 임의의 site 위에서 Ctrl+C나 맨 글자 key를 가로채는 것과 fragment 하나가 독자를 다른 경로로 옮기는 것과 site의 `--color-*`를 그대로 믿는 것이 모두 받아들일 수 없기 때문이다.
 - **Storage**: overlay가 쓰는 storage key는 전부 page의 `sessionStorage`·`localStorage`에 그대로 남는다. content script가 page와 같은 storage를 보므로 방문한 site가 그 key를 읽고 지울 수 있다는 것이 감수한 대가다.
 
@@ -105,7 +105,7 @@ draft set, navigation guard, focus handover, dock 위치, walkthrough 진행률�
 
 - **Publish as an npm package**: `client/`를 package로 내고 extension이 dependency로 받는 방법이다. 복사본을 CI로 지키는 대신 version 번호로 지킬 수 있다. 소비자가 하나뿐인 package를 위해 registry와 release 절차를 새로 만들어야 하고, 그 절차를 거치는 동안 두 저장소의 pin 동작이 서로 다른 기간이 생긴다. 기각한다.
 - **Pin store on a backend**: pin을 server에 두고 extension이 id로 읽어 오는 방법이다. origin이 anchor에 없는 문제를 정면으로 풀 수 있다. FR-3813이 pin list를 일부러 없앤 결정을 되돌리는 일이고, link 하나가 pin 전부를 나른다는 ADR 0002의 전제를 깬다. 기각한다.
-- **Reimplement in the extension**: ADR 0002가 이미 Python 재구현(`pin_parser.py`)을 두고 기각한 안이다. multi-pin 변경이 두 번 착지해야 했고 두 구현의 주석이 이미 어긋나 있었다. 같은 이유로 기각한다.
+- **Reimplement in the extension**: ADR 0002가 이미 Python 재구현(`pin_parser.py`)을 두고 기각한 안이다. multi-pin 변경이 두 번 병합해야 했고 두 구현의 주석이 이미 어긋나 있었다. 같은 이유로 기각한다.
 - **Inject into the MAIN world**: `chrome.scripting`의 `world: 'MAIN'`으로 page와 같은 realm에 넣으면 react-grab도 보이고 `history` patch도 동작한다. page의 script와 같은 realm을 공유하므로 page가 overlay의 함수와 storage에 접근할 수 있고, CSP가 script를 막는 site에서 실패한다. v1에서는 기각한다.
 
 ## Consequences
