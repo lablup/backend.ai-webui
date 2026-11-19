@@ -375,7 +375,7 @@ overrides:
   brace-expansion@^5: ^5.0.12
   browserslist@^4: ^4.28.7
   compression@^1: ^1.8.2
-  happy-dom: ^21.0.4
+  happy-dom: '>=21.0.4'
   e2e>@modelcontextprotocol/server: ^2.3.0
   e2e>zod: ^4.6.6
 
@@ -10788,7 +10788,7 @@ packages:
       '@vitest/coverage-istanbul': 4.1.12
       '@vitest/coverage-v8': 4.1.12
       '@vitest/ui': 4.1.12
-      happy-dom: ^21.0.4
+      happy-dom: '>=21.0.4'
       jsdom: '*'
       vite: ^6.0.0 || ^7.0.0 || ^8.0.0
     peerDependenciesMeta:
