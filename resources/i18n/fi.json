@@ -1596,7 +1596,7 @@
     "AppConfigFixtureResetConfirmDesc": "Poistetaanko kaikki määritelmät ja sallittujen luettelon merkinnät nimille {{names}} ja rekisteröidäänkö fixture uudelleen? Määritelmän poistaminen poistaa myös kaiken sen alle tallennetun: kaikki tallennetut käyttäjä-, toimialue- ja julkiset asetukset sekä Branding-teema menetetään.",
     "AppConfigFixtureResetFix": "Napsauta Palauta sovelluksen määritys, niin nämä määritysnimet poistetaan ja fixture rekisteröidään uudelleen. Tallennetut asetukset ja Branding-teema poistetaan.",
     "AppConfigFixtureUnexpected": "Odottamattomat sovelluksen määrityksen merkinnät",
-    "AppConfigFixtureUnexpectedDesc": "Nämä määritelmät tai sallittujen luettelon merkinnät on rekisteröity WebUI:n määritysnimille, mutta fixture ei sisällä niitä (rank suluissa): {{items}}.",
+    "AppConfigFixtureUnexpectedDesc": "Nämä määritelmät tai sallittujen luettelon merkinnät on rekisteröity manageriin, mutta fixture ei sisällä niitä (rank suluissa): {{items}}.",
     "AppConfigFixtureValid": "Sovelluksen määrityksen fixture rekisteröity",
     "AppConfigFixtureValidDesc": "Kaikki {{definitionCount}} määritelmää ja {{allowListCount}} sallittujen luettelon merkintää ovat samat kuin fixture.",
     "AppConfigFixtureWrongRank": "Sovelluksen määrityksen rank ei täsmää",

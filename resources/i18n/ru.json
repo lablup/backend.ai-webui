@@ -1596,7 +1596,7 @@
     "AppConfigFixtureResetConfirmDesc": "Удалить все определения и записи списка разрешений для {{names}} и зарегистрировать fixture заново? Удаление определения также удаляет всё, что сохранено под ним: все сохранённые пользовательские, доменные и общие настройки и тема Branding будут потеряны.",
     "AppConfigFixtureResetFix": "Нажмите «Сбросить конфигурацию приложения», чтобы удалить эти имена конфигурации и зарегистрировать fixture заново. Сохранённые настройки и тема Branding будут удалены.",
     "AppConfigFixtureUnexpected": "Неожиданные записи конфигурации приложения",
-    "AppConfigFixtureUnexpectedDesc": "Эти определения или записи списка разрешений зарегистрированы для имён конфигурации WebUI, но не входят в fixture (rank в скобках): {{items}}.",
+    "AppConfigFixtureUnexpectedDesc": "Эти определения или записи списка разрешений зарегистрированы в менеджере, но не входят в fixture (rank в скобках): {{items}}.",
     "AppConfigFixtureValid": "Fixture конфигурации приложения зарегистрирован",
     "AppConfigFixtureValidDesc": "Все {{definitionCount}} определения и {{allowListCount}} записи списка разрешений соответствуют fixture.",
     "AppConfigFixtureWrongRank": "Несовпадение rank конфигурации приложения",

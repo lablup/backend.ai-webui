@@ -1597,7 +1597,7 @@
     "AppConfigFixtureResetConfirmDesc": "要刪除 {{names}} 的所有定義和允許清單項目,然後重新註冊 fixture 嗎?刪除定義也會刪除其下儲存的所有內容:所有已儲存的使用者、網域和公開設定以及品牌主題都將遺失。",
     "AppConfigFixtureResetFix": "點擊「重設應用程式設定」以刪除這些應用程式設定名稱並重新註冊 fixture。已儲存的設定和品牌主題將被刪除。",
     "AppConfigFixtureUnexpected": "非預期的應用程式設定項目",
-    "AppConfigFixtureUnexpectedDesc": "以下定義或允許清單項目以 WebUI 應用程式設定名稱註冊,但不屬於 fixture(括號內為 rank):{{items}}。",
+    "AppConfigFixtureUnexpectedDesc": "以下定義或允許清單項目已在管理器中註冊,但不屬於 fixture(括號內為 rank):{{items}}。",
     "AppConfigFixtureValid": "應用程式設定 fixture 已註冊",
     "AppConfigFixtureValidDesc": "全部 {{definitionCount}} 個定義和 {{allowListCount}} 個允許清單項目均與 fixture 一致。",
     "AppConfigFixtureWrongRank": "應用程式設定 rank 不符",

@@ -1596,7 +1596,7 @@
     "AppConfigFixtureResetConfirmDesc": "{{names}} için tüm tanımlar ve izin listesi girdileri silinip fixture yeniden kaydedilsin mi? Bir tanımı silmek, altında saklanan her şeyi de siler: kaydedilmiş tüm kullanıcı, alan ve genel ayarlar ile Branding teması kaybolur.",
     "AppConfigFixtureResetFix": "Bu yapılandırma adlarını silip fixture'ı yeniden kaydetmek için Uygulama Yapılandırmasını Sıfırla düğmesine tıklayın. Kaydedilmiş ayarlar ve Branding teması silinir.",
     "AppConfigFixtureUnexpected": "Beklenmeyen uygulama yapılandırma girdileri",
-    "AppConfigFixtureUnexpectedDesc": "Bu tanımlar veya izin listesi girdileri WebUI yapılandırma adlarıyla kayıtlı ancak fixture'ın parçası değil (rank parantez içinde): {{items}}.",
+    "AppConfigFixtureUnexpectedDesc": "Bu tanımlar veya izin listesi girdileri yöneticide kayıtlı ancak fixture'ın parçası değil (rank parantez içinde): {{items}}.",
     "AppConfigFixtureValid": "Uygulama yapılandırma fixture'ı kayıtlı",
     "AppConfigFixtureValidDesc": "{{definitionCount}} tanımın ve {{allowListCount}} izin listesi girdisinin tümü fixture ile eşleşiyor.",
     "AppConfigFixtureWrongRank": "Uygulama yapılandırma rank'i uyuşmuyor",

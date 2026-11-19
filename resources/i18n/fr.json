@@ -1596,7 +1596,7 @@
     "AppConfigFixtureResetConfirmDesc": "Supprimer toutes les définitions et entrées de la liste d'autorisation de {{names}}, puis réenregistrer la fixture ? La suppression d'une définition efface aussi tout ce qui est stocké dessous : tous les paramètres utilisateur, domaine et publics enregistrés et le thème Branding seront perdus.",
     "AppConfigFixtureResetFix": "Cliquez sur Réinitialiser la configuration de l'app pour supprimer ces noms de configuration et réenregistrer la fixture. Les paramètres enregistrés et le thème Branding seront supprimés.",
     "AppConfigFixtureUnexpected": "Entrées de configuration de l'app inattendues",
-    "AppConfigFixtureUnexpectedDesc": "Ces définitions ou entrées de la liste d'autorisation sont enregistrées sous les noms de configuration de la WebUI mais ne font pas partie de la fixture (rank entre parenthèses) : {{items}}.",
+    "AppConfigFixtureUnexpectedDesc": "Ces définitions ou entrées de la liste d'autorisation sont enregistrées sur le gestionnaire mais ne font pas partie de la fixture (rank entre parenthèses) : {{items}}.",
     "AppConfigFixtureValid": "Fixture de configuration de l'app enregistrée",
     "AppConfigFixtureValidDesc": "Les {{definitionCount}} définitions et les {{allowListCount}} entrées de la liste d'autorisation correspondent à la fixture.",
     "AppConfigFixtureWrongRank": "Rank de configuration de l'app incorrect",

@@ -1596,7 +1596,7 @@
     "AppConfigFixtureResetConfirmDesc": "Alle Definitionen und Zulassungslisteneinträge für {{names}} löschen und das fixture neu registrieren? Beim Löschen einer Definition wird auch alles darunter Gespeicherte gelöscht: Alle gespeicherten Benutzer-, Domänen- und öffentlichen Einstellungen sowie das Branding-Theme gehen verloren.",
     "AppConfigFixtureResetFix": "Klicken Sie auf „App-Konfiguration zurücksetzen“, um diese App-Konfigurationsnamen zu löschen und das fixture neu zu registrieren. Gespeicherte Einstellungen und das Branding-Theme werden gelöscht.",
     "AppConfigFixtureUnexpected": "Unerwartete App-Konfigurationseinträge",
-    "AppConfigFixtureUnexpectedDesc": "Diese Definitionen oder Zulassungslisteneinträge sind für die App-Konfigurationsnamen der WebUI registriert, gehören aber nicht zum fixture (rank in Klammern): {{items}}.",
+    "AppConfigFixtureUnexpectedDesc": "Diese Definitionen oder Zulassungslisteneinträge sind auf dem Manager registriert, gehören aber nicht zum fixture (rank in Klammern): {{items}}.",
     "AppConfigFixtureValid": "App-Konfigurations-Fixture registriert",
     "AppConfigFixtureValidDesc": "Alle {{definitionCount}} Definitionen und {{allowListCount}} Zulassungslisteneinträge stimmen mit dem fixture überein.",
     "AppConfigFixtureWrongRank": "Abweichender Rank der App-Konfiguration",

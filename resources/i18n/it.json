@@ -1596,7 +1596,7 @@
     "AppConfigFixtureResetConfirmDesc": "Eliminare tutte le definizioni e le voci della lista consentiti di {{names}} e registrare di nuovo la fixture? Eliminare una definizione cancella anche tutto ciò che vi è salvato: tutte le impostazioni utente, dominio e pubbliche salvate e il tema Branding andranno perse.",
     "AppConfigFixtureResetFix": "Fai clic su Reimposta configurazione dell'app per eliminare questi nomi di configurazione e registrare di nuovo la fixture. Le impostazioni salvate e il tema Branding verranno eliminati.",
     "AppConfigFixtureUnexpected": "Voci della configurazione dell'app inattese",
-    "AppConfigFixtureUnexpectedDesc": "Queste definizioni o voci della lista consentiti sono registrate con i nomi di configurazione della WebUI ma non fanno parte della fixture (rank tra parentesi): {{items}}.",
+    "AppConfigFixtureUnexpectedDesc": "Queste definizioni o voci della lista consentiti sono registrate sul manager ma non fanno parte della fixture (rank tra parentesi): {{items}}.",
     "AppConfigFixtureValid": "Fixture della configurazione dell'app registrata",
     "AppConfigFixtureValidDesc": "Tutte le {{definitionCount}} definizioni e le {{allowListCount}} voci della lista consentiti corrispondono alla fixture.",
     "AppConfigFixtureWrongRank": "Rank della configurazione dell'app non corrispondente",

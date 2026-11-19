@@ -57,15 +57,9 @@ const AppConfigFixtureDiagnosticsSection: React.FC<
   const { adminAppConfigDefinitions, adminAppConfigAllowLists } =
     useLazyLoadQuery<AppConfigFixtureDiagnosticsSectionQuery>(
       graphql`
-        query AppConfigFixtureDiagnosticsSectionQuery(
-          $definitionFilter: AppConfigDefinitionFilter
-          $allowListFilter: AppConfigAllowListFilter
-        ) {
-          adminAppConfigDefinitions(
-            filter: $definitionFilter
-            limit: 100
-            offset: 0
-          ) {
+        query AppConfigFixtureDiagnosticsSectionQuery {
+          adminAppConfigDefinitions(limit: 100, offset: 0) {
+            count
             edges {
               node {
                 id
@@ -74,11 +68,8 @@ const AppConfigFixtureDiagnosticsSection: React.FC<
               }
             }
           }
-          adminAppConfigAllowLists(
-            filter: $allowListFilter
-            limit: 100
-            offset: 0
-          ) {
+          adminAppConfigAllowLists(limit: 100, offset: 0) {
+            count
             edges {
               node {
                 id
@@ -91,10 +82,7 @@ const AppConfigFixtureDiagnosticsSection: React.FC<
           }
         }
       `,
-      {
-        definitionFilter: { configName: { in: configNames } },
-        allowListFilter: { configName: { in: configNames } },
-      },
+      {},
       {
         fetchPolicy: 'network-only',
         fetchKey: `${fetchKey}-${localFetchKey}`,
@@ -104,6 +92,13 @@ const AppConfigFixtureDiagnosticsSection: React.FC<
   // A field that errored resolves to null; analysing it as empty would report everything missing.
   if (!adminAppConfigDefinitions || !adminAppConfigAllowLists) {
     throw new Error('Failed to load the app config definitions or allow list.');
+  }
+  // A truncated page would make the check and the reset miss rows.
+  if (
+    adminAppConfigDefinitions.count > adminAppConfigDefinitions.edges.length ||
+    adminAppConfigAllowLists.count > adminAppConfigAllowLists.edges.length
+  ) {
+    throw new Error('Too many app config entries to check on one page.');
   }
   const definitions = _.map(adminAppConfigDefinitions.edges, (e) => ({
     entityId: String(e.node.entityId),

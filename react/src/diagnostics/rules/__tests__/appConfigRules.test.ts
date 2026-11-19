@@ -47,24 +47,35 @@ describe('app config fixture check', () => {
     expect(plan.mode).toBe('none');
   });
 
-  it('accepts lowercase scope types and ignores unrelated config names', () => {
+  it('accepts lowercase scope types', () => {
     const allowList = fullAllowList().map((e) => ({
       ...e,
       scopeType: e.scopeType.toLowerCase(),
     }));
-    const { results } = run(
+    const { results } = run(fullDefinitions(), allowList);
+    expect(results.map((r) => r.id)).toEqual(['app-config-fixture-passed']);
+  });
+
+  it('treats any other config name as unexpected and purges it on reset', () => {
+    const { results, plan } = run(
       [...fullDefinitions(), { entityId: 'other', configName: 'otherConfig' }],
       [
-        ...allowList,
+        ...fullAllowList(),
         {
           entityId: 'other-al',
           configName: 'otherConfig',
-          scopeType: 'PUBLIC',
-          rank: 1,
+          scopeType: 'domain',
+          rank: 200,
         },
       ],
     );
-    expect(results.map((r) => r.id)).toEqual(['app-config-fixture-passed']);
+    expect(results.map((r) => r.id)).toEqual(['app-config-fixture-unexpected']);
+    expect(results[0].interpolationValues?.items).toBe(
+      'otherConfig, otherConfig @ domain (200)',
+    );
+    expect(plan.mode).toBe('reset');
+    expect(plan.purgeDefinitionIds).toContain('other');
+    expect(plan.purgeDefinitionIds).toHaveLength(4);
   });
 
   it('reports everything missing on an empty manager and plans a create', () => {

@@ -1596,7 +1596,7 @@
     "AppConfigFixtureResetConfirmDesc": "Hapus semua definisi dan entri daftar izin untuk {{names}}, lalu daftarkan ulang fixture? Menghapus definisi juga menghapus semua yang tersimpan di bawahnya: semua pengaturan pengguna, domain, publik yang tersimpan dan tema Branding akan hilang.",
     "AppConfigFixtureResetFix": "Klik Atur Ulang Konfigurasi Aplikasi untuk menghapus nama konfigurasi ini dan mendaftarkan ulang fixture. Pengaturan tersimpan dan tema Branding akan dihapus.",
     "AppConfigFixtureUnexpected": "Entri konfigurasi aplikasi tak terduga",
-    "AppConfigFixtureUnexpectedDesc": "Definisi atau entri daftar izin berikut terdaftar untuk nama konfigurasi WebUI tetapi bukan bagian dari fixture (rank dalam kurung): {{items}}.",
+    "AppConfigFixtureUnexpectedDesc": "Definisi atau entri daftar izin berikut terdaftar di manager tetapi bukan bagian dari fixture (rank dalam kurung): {{items}}.",
     "AppConfigFixtureValid": "Fixture konfigurasi aplikasi terdaftar",
     "AppConfigFixtureValidDesc": "Semua {{definitionCount}} definisi dan {{allowListCount}} entri daftar izin sesuai dengan fixture.",
     "AppConfigFixtureWrongRank": "Rank konfigurasi aplikasi tidak cocok",

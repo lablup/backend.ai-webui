@@ -47,7 +47,7 @@ export interface AppConfigFixtureAnalysis {
   wrongRank: Array<
     RegisteredAppConfigAllowListEntry & { expectedRank: number }
   >;
-  /** Definitions and allow-list entries beyond the fixture: unknown pairs and duplicates. */
+  /** Definitions and allow-list entries beyond the fixture: other config names, unknown pairs and duplicates. */
   unexpectedDefinitions: RegisteredAppConfigDefinition[];
   unexpectedAllowList: RegisteredAppConfigAllowListEntry[];
 }
@@ -59,26 +59,20 @@ export function analyzeAppConfigFixture(
   definitions: RegisteredAppConfigDefinition[],
   allowList: RegisteredAppConfigAllowListEntry[],
 ): AppConfigFixtureAnalysis {
+  // The manager must hold exactly the fixture, so any other config name is unexpected too.
   const fixtureNames = new Set<string>(APP_CONFIG_FIXTURE.definitions);
-  const relevantDefinitions = definitions.filter((d) =>
-    fixtureNames.has(d.configName),
-  );
-  const relevantAllowList = allowList.filter((a) =>
-    fixtureNames.has(a.configName),
-  );
-
-  const definitionsByName = _.groupBy(relevantDefinitions, 'configName');
+  const definitionsByName = _.groupBy(definitions, 'configName');
   const missingDefinitions = APP_CONFIG_FIXTURE.definitions.filter(
     (name) => !definitionsByName[name],
   );
-  const unexpectedDefinitions = _.flatMap(definitionsByName, (group) =>
-    group.slice(1),
+  const unexpectedDefinitions = _.flatMap(definitionsByName, (group, name) =>
+    fixtureNames.has(name) ? group.slice(1) : group,
   );
 
   const fixtureByPair = _.keyBy(APP_CONFIG_FIXTURE.allowList, (e) =>
     pairKey(e.configName, e.scopeType),
   );
-  const allowListByPair = _.groupBy(relevantAllowList, (e) =>
+  const allowListByPair = _.groupBy(allowList, (e) =>
     pairKey(e.configName, e.scopeType),
   );
   const missingAllowList = APP_CONFIG_FIXTURE.allowList.filter(
@@ -223,12 +217,9 @@ export function planAppConfigFixtureRepair(
   definitions: RegisteredAppConfigDefinition[],
 ): AppConfigFixtureRepairPlan {
   if (isAppConfigFixtureMalformed(analysis)) {
-    const fixtureNames = new Set<string>(APP_CONFIG_FIXTURE.definitions);
     return {
       mode: 'reset',
-      purgeDefinitionIds: definitions
-        .filter((d) => fixtureNames.has(d.configName))
-        .map((d) => d.entityId),
+      purgeDefinitionIds: definitions.map((d) => d.entityId),
       createDefinitions: [...APP_CONFIG_FIXTURE.definitions],
       createAllowList: [...APP_CONFIG_FIXTURE.allowList],
     };

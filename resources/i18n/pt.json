@@ -1596,7 +1596,7 @@
     "AppConfigFixtureResetConfirmDesc": "Eliminar todas as definições e entradas da lista de permissões de {{names}} e registar a fixture novamente? Eliminar uma definição também apaga tudo o que está guardado nela: todas as definições de utilizador, domínio e públicas guardadas e o tema de Branding serão perdidos.",
     "AppConfigFixtureResetFix": "Clique em Repor configuração da app para eliminar estes nomes de configuração e registar a fixture novamente. As definições guardadas e o tema de Branding serão eliminados.",
     "AppConfigFixtureUnexpected": "Entradas de configuração da app inesperadas",
-    "AppConfigFixtureUnexpectedDesc": "Estas definições ou entradas da lista de permissões estão registadas com os nomes de configuração da WebUI, mas não fazem parte da fixture (rank entre parênteses): {{items}}.",
+    "AppConfigFixtureUnexpectedDesc": "Estas definições ou entradas da lista de permissões estão registadas no gestor, mas não fazem parte da fixture (rank entre parênteses): {{items}}.",
     "AppConfigFixtureValid": "Fixture de configuração da app registada",
     "AppConfigFixtureValidDesc": "Todas as {{definitionCount}} definições e {{allowListCount}} entradas da lista de permissões correspondem à fixture.",
     "AppConfigFixtureWrongRank": "Rank da configuração da app não corresponde",

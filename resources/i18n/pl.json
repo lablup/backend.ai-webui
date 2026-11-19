@@ -1596,7 +1596,7 @@
     "AppConfigFixtureResetConfirmDesc": "Usunąć wszystkie definicje i wpisy listy dozwolonych dla {{names}}, a następnie ponownie zarejestrować fixture? Usunięcie definicji usuwa też wszystko, co jest pod nią zapisane: wszystkie zapisane ustawienia użytkownika, domeny i publiczne oraz motyw Branding zostaną utracone.",
     "AppConfigFixtureResetFix": "Kliknij Zresetuj konfigurację aplikacji, aby usunąć te nazwy konfiguracji i ponownie zarejestrować fixture. Zapisane ustawienia i motyw Branding zostaną usunięte.",
     "AppConfigFixtureUnexpected": "Nieoczekiwane wpisy konfiguracji aplikacji",
-    "AppConfigFixtureUnexpectedDesc": "Te definicje lub wpisy listy dozwolonych są zarejestrowane dla nazw konfiguracji WebUI, ale nie należą do fixture (rank w nawiasach): {{items}}.",
+    "AppConfigFixtureUnexpectedDesc": "Te definicje lub wpisy listy dozwolonych są zarejestrowane w menedżerze, ale nie należą do fixture (rank w nawiasach): {{items}}.",
     "AppConfigFixtureValid": "Fixture konfiguracji aplikacji zarejestrowany",
     "AppConfigFixtureValidDesc": "Wszystkie {{definitionCount}} definicje i {{allowListCount}} wpisy listy dozwolonych są zgodne z fixture.",
     "AppConfigFixtureWrongRank": "Niezgodny rank konfiguracji aplikacji",

@@ -1592,7 +1592,7 @@
     "AppConfigFixtureResetConfirmDesc": "ลบคำจำกัดความและรายการที่อนุญาตทั้งหมดของ {{names}} แล้วลงทะเบียน fixture ใหม่หรือไม่? การลบคำจำกัดความจะลบทุกอย่างที่บันทึกไว้ภายใต้คำจำกัดความนั้นด้วย: การตั้งค่าผู้ใช้ โดเมน สาธารณะที่บันทึกไว้และธีม Branding จะหายไปทั้งหมด",
     "AppConfigFixtureResetFix": "คลิก รีเซ็ตการกำหนดค่าแอป เพื่อลบชื่อการกำหนดค่าเหล่านี้และลงทะเบียน fixture ใหม่ การตั้งค่าที่บันทึกไว้และธีม Branding จะถูกลบ",
     "AppConfigFixtureUnexpected": "รายการการกำหนดค่าแอปที่ไม่คาดคิด",
-    "AppConfigFixtureUnexpectedDesc": "คำจำกัดความหรือรายการที่อนุญาตต่อไปนี้ลงทะเบียนด้วยชื่อการกำหนดค่าของ WebUI แต่ไม่อยู่ใน fixture (rank อยู่ในวงเล็บ): {{items}}",
+    "AppConfigFixtureUnexpectedDesc": "คำจำกัดความหรือรายการที่อนุญาตต่อไปนี้ลงทะเบียนอยู่ใน manager แต่ไม่อยู่ใน fixture (rank อยู่ในวงเล็บ): {{items}}",
     "AppConfigFixtureValid": "ลงทะเบียน fixture การกำหนดค่าแอปแล้ว",
     "AppConfigFixtureValidDesc": "คำจำกัดความทั้ง {{definitionCount}} รายการและรายการที่อนุญาต {{allowListCount}} รายการตรงกับ fixture",
     "AppConfigFixtureWrongRank": "rank การกำหนดค่าแอปไม่ตรงกัน",
