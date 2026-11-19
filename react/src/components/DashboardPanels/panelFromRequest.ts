@@ -175,6 +175,10 @@ export const sanitizeConditions = (
       : _.compact([asString(rawValue)]);
     if (!values.length) return [];
     if (allowed && values.some((v) => !allowed.includes(v))) return [];
+    // A small model copies the prompt's `<placeholder>` or an id it cannot know.
+    const rule = source.filter.properties.find((p) => p.key === property)?.rule;
+    if (values.some((v) => /^<.*>$/.test(v) || (rule && !rule.validate(v))))
+      return [];
     const isList = operator === 'in' || operator === 'notIn';
     return [{ property, operator, value: isList ? values : values[0] }];
   });
