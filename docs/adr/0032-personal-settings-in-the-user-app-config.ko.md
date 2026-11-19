@@ -6,9 +6,9 @@
 
 - 계정에 속하는 개인 WebUI 설정은 manager app config `userConfig`의 평탄 키 `settings` 하나에 저장한다. 사용자가 다른 브라우저나 기기에서 로그인해도 같은 설정을 받는다.
 - `react/src/helper/userSettingsAppConfig.ts`의 `isAccountUserSetting`이 이 [account setting](#용어) 목록을 정한다. `UserSettings`의 나머지 키는 [device-local setting](#용어)으로 브라우저 localStorage에만 남는다.
-- 로그인 뒤 account setting은 메모리의 jotai atom(`react/src/hooks/useBAISetting.tsx`의 `accountUserSettingsAtom`)에 두고, localStorage에는 두지 않는다. `useBAISettingUserState`는 여전히 값을 동기적으로 돌려주고 API도 바뀌지 않는다.
-- 로그인 시 `startAccountUserSettingsSync`(`react/src/helper/accountUserSettingsSync.ts`)가 `userConfig.settings`로 atom을 채운다. 계정에 `settings` 문서가 아직 없으면, 이 결정 이전에 이 브라우저가 localStorage에 저장한 값을 한 번 복사해 넣고 localStorage에서 지운다.
-- account setting을 바꾸면 atom을 즉시 바꾸고, debounce된 write queue를 거쳐 서버로 보낸다. act-as 탭은 아무것도 보내지 않는다.
+- 로그인 뒤 account setting은 `myAppConfigState`의 `userConfig.settings`에서 바로 읽는다([ADR 0033](0033-scoped-and-merged-app-config-hooks.ko.md)). 로그인이 첫 render 전에 이 atom을 채우며, localStorage에서는 읽지 않는다. `useBAISettingUserState`는 여전히 값을 동기적으로 돌려주고 API도 바뀌지 않는다.
+- 로그인 시 `setMyAppConfigs` 바로 뒤에 `startAccountUserSettingsSync`(`react/src/helper/accountUserSettingsSync.ts`)가 write queue를 시작한다. 계정에 `settings` 문서가 아직 없으면, 이 결정 이전에 이 브라우저가 localStorage에 저장한 값을 한 번 복사해 넣고 localStorage에서 지운다.
+- account setting을 바꾸면 `myAppConfigState`에 즉시 보이고, debounce된 write queue를 거쳐 서버로 보낸다. 쓰기가 실패하면 되돌린다. act-as 탭은 아무것도 보내지 않는다.
 
 ## Context
 
@@ -25,20 +25,20 @@
 flowchart LR
   subgraph browser["브라우저"]
     hook["useBAISettingUserState<br/>SettingAtomFamily"]
-    memory["accountUserSettingsAtom<br/>jotai, 메모리"]
+    atom["myAppConfigState<br/>userConfig.settings"]
     legacy["localStorage<br/>ADR 0032 이전 값"]
     queue["userSettingsAppConfig<br/>write queue, 500ms debounce"]
-    sync["startAccountUserSettingsSync<br/>DismissSplashOnMount가 부름"]
+    sync["startAccountUserSettingsSync<br/>로그인 때 부름"]
   end
   user["userConfig USER fragment<br/>settings"]
-  hook -- "render 중 읽기" --> memory
-  hook -- "setter가 값을 바꿈" --> memory
+  user -- "로그인 읽기, setMyAppConfigs" --> atom
+  hook -- "render 중 읽기" --> atom
+  hook -- "setter: applyMyUserConfig" --> atom
   hook -- "account setting 변경" --> queue
-  queue -- "settings에 useMyAppConfig set<br/>atom의 문서 위에 변경 적용" --> user
-  user -- "DismissSplashOnMount의 userConfig 읽기" --> sync
-  sync -- "setAccountUserSettings" --> memory
+  queue -- "sendMyUserConfig: userConfig 전체" --> user
+  queue -. "실패한 쓰기: 그 경로를 되돌림" .-> atom
   legacy -- "settings가 없으면 한 번 읽기" --> sync
-  sync -- "한 번 복사한 뒤 로컬 값 삭제" --> user
+  sync -- "한 번 적용해 보낸 뒤 로컬 값 삭제" --> atom
 ```
 
 ## Decision
@@ -67,40 +67,39 @@ flowchart LR
 - **Single writer**: `react/src/helper/userSettingsAppConfig.ts`와 `react/src/helper/accountUserSettingsSync.ts`만 `userConfig.settings`를 쓰고, USER fragment에만 쓴다. 어떤 코드도 다른 scope의 `userConfig`에 `settings` 키를 쓰지 않으므로, 병합된 view는 USER fragment와 같고 서버의 deep merge가 scope 사이에서 배열을 섞지 않는다.
 - **Stored null**: 일부 설정은 `null`을 선택값으로 쓰므로(예: 자동 새로 고침 끔을 뜻하는 `fetchKeyAutoUpdateDelay.*`) `null` 값은 JSON `null`로 저장한다. `undefined` 값만 키를 지운다.
 
-### 3. The account settings are held in memory
+### 3. The account settings are read from `myAppConfigState`
 
-- **Atom**: `react/src/hooks/useBAISetting.tsx`의 `accountUserSettingsAtom`은 `userConfig.settings`와 같은 평탄 모양의 `Record<string, unknown>`을 담는다. `setAccountUserSettings`가 값을 통째로 바꾸고, `getAccountUserSettings`가 React 밖에서 읽는다.
-- **Read path**: account setting이면 `SettingAtomFamily`가 `accountUserSettingsAtom[name] ?? null`을 돌려준다. setter는 atom을 바꾼 뒤 `queueUserSettingWrite`를 부른다. 둘 다 localStorage와 `backendaiOptions`를 건드리지 않는다. device-local setting은 localStorage 경로를 그대로 쓴다.
-- **Stored or unset**: `useHasStoredUserSetting(name)`은 설정에 값이 있는지를 돌려주며, 명시적인 `null`도 값으로 본다. account setting이면 atom에 키가 있는지를 읽으므로, 로그인 시드나 사용자의 선택이 키를 넣으면 값이 `null`로 같아도 component가 다시 render된다.
-- **Sign-in seed**: `DismissSplashOnMount`(`MainLayout.tsx`)는 로그인이 `myAppConfigState`를 채운 뒤에야 렌더한다. 이 컴포넌트의 mount effect가 splash를 걷기 전에 `useMyAppConfig('userConfig', USER_SETTINGS_CONFIG_KEY)`의 값과 `set`으로 `startAccountUserSettingsSync`를 부르므로, splash가 걷힐 때 화면은 계정의 값을 보여 준다. 이 함수는 stop을 돌려주고 effect의 cleanup이 그것을 부른다. `useMyAppConfig('userConfig', 'themeFamily')`가 네 번째 원소로 돌려주는 읽기 상태가 `loaded`가 아니면 쓰기의 기준이 없으므로 effect는 sync를 시작하지 않는다.
-- **Before sign-in**: account setting은 기본값을 읽는다. 로그인 전 화면 중 account setting을 읽는 곳은 없다.
+- **Read path**: account setting이면 `SettingAtomFamily`가 `react/src/hooks/useBAISetting.tsx`의 파생 atom `accountUserSettingsAtom`을 거쳐 `myAppConfigState`의 `userConfig.settings[name] ?? null`을 돌려준다. setter는 `applyMyUserConfig(store, ['settings', name], value)`(ADR 0033)로 atom을 즉시 바꾼 뒤 `queueUserSettingWrite`를 부른다. 둘 다 localStorage와 `backendaiOptions`를 건드리지 않는다. device-local setting은 localStorage 경로를 그대로 쓴다.
+- **Stored or unset**: `useHasStoredUserSetting(name)`은 설정에 값이 있는지를 돌려주며, 명시적인 `null`도 값으로 본다. account setting이면 `userConfig.settings`에 키가 있는지를 읽으므로, 읽기나 사용자의 선택이 키를 넣으면 값이 `null`로 같아도 component가 다시 render된다.
+- **First render**: 로그인은 `applyConfigToClient`가 client를 준비 상태로 표시하기 전에 `myAppConfigState`를 채우므로, 첫 render부터 계정의 값이 보인다. 이 값을 다른 곳에 복사하는 component는 없다.
+- **Before sign-in, or after a failed read**: account setting은 기본값을 읽고, setter는 아무것도 바꾸지 않는다. 읽기 상태가 `loaded`가 아니면 `applyMyUserConfig`가 거절하기 때문이다. 로그인 전 화면 중 account setting을 쓰는 곳은 없다.
 
 ### 4. One-time copy
 
-- **Trigger**: 로그인 시 `userConfig.settings`가 없으면 `startAccountUserSettingsSync`가 `readLocalAccountUserSettings(localStorage)`, 즉 이 결정 이전에 이 브라우저가 저장한 account setting으로 atom을 채운다. 그 값이 비어 있지 않으면 문서로 쓴다.
-- **Cleanup**: 복사가 성공하면 `removeLocalAccountUserSettings`가 그 키를 localStorage에서 지운다. 복사가 실패하면 남겨 두므로, `settings`가 없는 계정으로 다음에 로그인할 때 다시 복사한다. 계정에 이미 `settings`가 있으면 act-as가 아닌 로그인이 그 키를 바로 지우므로, 공유 브라우저의 다음 계정이 이 값을 받지 않는다.
-- **Base of the copy**: 복사는 이 탭이 가진 문서 사본에 이미 있는 `settings`를 유지하고, 없으면 `getAccountUserSettings()`를 쓴다.
-- **Concurrent copy**: 복사는 가진 문서에 이미 있는 `settings`를 유지한다. 같은 때 복사하는 다른 탭이나 기기는 막지 못하며, 나중에 쓴 쪽이 먼저 쓴 복사를 덮어쓴다.
+- **Trigger**: 로그인 시 `userConfig.settings`가 없으면 `startAccountUserSettingsSync`가 `readLocalAccountUserSettings(localStorage)`, 즉 이 결정 이전에 이 브라우저가 저장한 account setting을 읽는다. 그 값이 비어 있지 않으면 `applyMyUserConfig`로 `settings`에 적용하고 문서를 보낸다.
+- **Cleanup**: 복사가 성공하면 `removeLocalAccountUserSettings`가 그 키를 localStorage에서 지운다. 복사가 실패하면 atom에서 되돌리고(ADR 0033) 로컬 키는 남겨 두므로, `settings`가 없는 계정으로 다음에 로그인할 때 다시 복사한다. 계정에 이미 `settings`가 있으면 act-as가 아닌 로그인이 그 키를 바로 지우므로, 공유 브라우저의 다음 계정이 이 값을 받지 않는다.
+- **Base of the copy**: 복사는 로그인이 읽은 `userConfig` 위에 `settings`를 적용하므로, 사용자의 다른 키는 그대로 함께 간다.
+- **Concurrent copy**: 같은 때 복사하는 다른 탭이나 기기는 막지 못하며, 나중에 쓴 쪽이 먼저 쓴 복사를 덮어쓴다.
 - **Shared browser**: 여러 계정이 브라우저 하나를 쓰면, 업그레이드 뒤 `settings` 없이 처음 로그인한 계정이 이 브라우저의 값을 받고 그 값은 지워진다. ADR 0026의 대시보드 보드와 달리 이 값은 작은 선호 설정이고, 어떤 계정도 자기가 가진 데이터를 잃지 않는다.
 
 ### 5. Writes are debounced and sent one at a time
 
 - **Queue**: `queueUserSettingWrite(name, value)`는 account setting 변경을 500ms debounce(`USER_SETTINGS_WRITE_DELAY_MS`)의 `createWriteQueue`(`react/src/components/DashboardPanels/writeQueue.ts`)에 넣는다. debounce 안의 변경은 batch 하나로 합치고, batch는 앞 batch가 끝난 뒤에야 시작한다.
 - **Callers**: `SettingAtomFamily` setter의 account 분기가 `queueUserSettingWrite`를 부른다. `backendaiwebui.settings:set`과 `backendaiwebui.settings:delete` listener는 이 setter를 거쳐 도달한다.
-- **Write the held settings**: `startUserSettingsSync`가 설치한 writer는 `useMyAppConfig('userConfig', USER_SETTINGS_CONFIG_KEY)`의 `set`을 `() => getAccountUserSettings()`로 부른다. atom은 실패한 batch의 변경까지 모든 변경을 이미 담고 있으므로, 쓰기마다 앞서 실패한 쓰기가 놓친 값을 함께 보낸다. 이 쓰기는 `myAppConfigState`가 가진 `userConfig`에서 `settings` 키만 바꾼다(ADR 0033). `set`은 이 쓰기를 이 탭의 다른 `userConfig` 쓰기(대시보드, 테마 family) 뒤에 줄 세운다. setter가 `undefined`를 받으면 atom에서 키를 지우므로, 쓰는 `settings`에도 그 키가 없다.
-- **One read**: 로그인이 페이지 로드마다 `userConfig`를 한 번 읽는다. `DismissSplashOnMount`가 `settings` 값과 그 `set`을 `startAccountUserSettingsSync`에 넘기고, 이 함수는 문서를 읽지 않는다.
-- **Lifetime**: `startAccountUserSettingsSync`가 queue를 시작하기 전에는 queue가 아무것도 보내지 않는다. 이 함수는 탭이 숨겨질 때와 `pagehide` 때 queue를 flush하고, 그 stop은 `DismissSplashOnMount`가 unmount될 때 flush하며, `useLogout`은 로그아웃과 Electron 창 닫기에서 client를 지우기 전에 최대 3초까지 기다리며 flush한다.
-- **Failure**: 실패한 쓰기는 `useBAILogger`로 기록한다. atom은 새 값을 유지하고, 다음 쓰기가 그 값을 보낸다.
+- **Write**: `startUserSettingsSync`가 설치한 writer는 `sendMyUserConfig`(ADR 0033)를 부른다. 이 함수는 settings 변경을 포함한 atom의 `userConfig` 전체를, 이 탭의 다른 `userConfig` 쓰기(대시보드, 테마 family) 뒤에 줄 세워 보낸다. setter가 `undefined`를 받으면 atom에서 키를 지우므로, 쓰는 `settings`에도 그 키가 없다.
+- **One read**: 로그인이 페이지 로드마다 `userConfig`를 한 번 읽는다. `startAccountUserSettingsSync`는 `myAppConfigState`에서 읽고 query를 보내지 않는다.
+- **Lifetime**: `startAccountUserSettingsSync`가 queue를 시작하기 전에는 queue가 아무것도 보내지 않는다. 로그인이 `setMyAppConfigs` 뒤에 이 함수를 부르고, 두 번째 로그인은 앞의 sync를 먼저 멈추며, 다른 서버에 접속하면 멈춘다(`stopAccountUserSettingsSync`). 탭이 숨겨질 때와 `pagehide` 때 queue를 flush하고, `useLogout`은 로그아웃과 Electron 창 닫기에서 client를 지우기 전에 최대 3초까지 기다리며 flush한다.
+- **Failure**: 실패한 쓰기는 `[user settings]` 접두어를 붙여 `console.error`로 기록한다. `sendMyUserConfig`는 그 쓰기가 실어 보낸 경로 중 그 뒤에 바뀌지 않은 경로를 되돌리므로, 설정은 이전 값을 다시 보여 준다.
 
 ### 6. An act-as tab saves nothing
 
-- **Read**: act-as 탭(`getActAsTarget()`이 대상을 돌려줌)에서는 대상 사용자의 `userConfig.settings`로 atom을 채우므로, 그 탭은 그 사용자의 선택을 보여 준다. localStorage에서는 아무것도 복사하지 않는다.
-- **Write**: `startAccountUserSettingsSync`가 writer를 시작하지 않으므로, 그 탭의 변경은 그 탭의 atom만 바꾸고 대상 계정에는 저장되지 않는다.
+- **Read**: act-as 탭(`getActAsTarget()`이 대상을 돌려줌)에서는 `myAppConfigState`가 대상 사용자의 `userConfig`를 담으므로, 그 탭은 그 사용자의 선택을 보여 준다. localStorage에서는 아무것도 복사하지 않는다.
+- **Write**: `startAccountUserSettingsSync`가 writer를 시작하지 않으므로, 그 탭의 변경은 그 탭에만 보인다. 그 탭의 다른 `userConfig` 쓰기(예: 대시보드 편집)는 그 변경을 대상 계정에 함께 싣는다. act-as 탭이 보낼 수 있는 쓰기는 #11293에서 정한다.
 
 ## 대안과 기각 사유
 
 - **localStorage mirror**: localStorage가 account setting의 사본을 두고, 로그인 읽기가 그 사본을 덮어쓴다. 로그인 전 새로 고침에도 값이 남는다. mirror 때문에 공유 계정의 문서가 e2e spec이 심은 값을 덮어쓰고, act-as 대상의 설정이 super admin의 다른 탭으로 옮겨 가고, 값이 바뀔 때마다 모든 setting atom을 다시 읽어야 하므로 기각한다.
-- **Read on each screen**: call site마다 `useMyAppConfig`로 `userConfig.settings`를 읽는다. 별도의 settings atom이 필요 없다. `set`은 서버가 쓰기를 받아들인 뒤에야 `myAppConfigState`를 갱신하므로, 변경이 debounce된 쓰기가 끝난 뒤에야 보여 기각한다.
+- **Settings atom of its own**: `set`이 서버가 쓰기를 받아들인 뒤에야 `myAppConfigState`를 갱신했으므로, account setting을 별도 atom에 두고 로그인 뒤 `userConfig.settings`로 채운다. 그 채우기가 첫 render 뒤에 돌아서 첫 값으로 결정하는 화면(`ai-agent` 라우트, mount 때 한 번 읽는 component)이 기본값을 쓰고, 한 문서의 사본 두 개가 어긋날 수 있으므로 기각한다. 이제 ADR 0033이 변경을 `myAppConfigState`에 즉시 보여 준다.
 - **Move every key**: `UserSettings` 전부를 `userConfig.settings`로 옮긴다. 규칙이 단순하다. 로그인 흐름이 문서를 읽기 전에 `endpoints`, `preserve_login`, `selected_language`가 필요하고 agent binding에 token이 들어갈 수 있으므로 기각한다.
 - **No migration**: ADR 0026 §5처럼 기본값에서 시작한다. 다른 계정으로 잘못 복사되는 일이 없다. 사용자가 몇 달에 걸쳐 정한 투어 플래그와 컬럼 선택을 잃고, 잘못된 계정으로의 복사는 선호 설정 하나의 비용이므로 기각한다.
 - **One app config key per setting**: 설정마다 `userConfig`의 최상위 키로 둔다. 설정을 이름으로 읽을 수 있다. 테이블별 이름은 끝이 열려 있고, 하위 키 하나가 사용자의 다른 키(`dashboard`, `themeFamily`)와 분리를 유지하므로 기각한다.
@@ -125,7 +124,7 @@ flowchart LR
 
 ## 용어
 
-| 용어                 | 뜻                                                                                                                                                                                                                                                                                           |
-| -------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| account setting      | `isAccountUserSetting`이 true를 돌려주는 사용자 설정이다. `userConfig.settings`에 저장하고 로그인 뒤 메모리에 둔다. |
-| device-local setting | 이 브라우저의 localStorage에만 저장하는 사용자 설정이다. 서버에 도달하지 않는다.                                                                                                                                                                                                             |
+| 용어                 | 뜻                                                                                                                                  |
+| -------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| account setting      | `isAccountUserSetting`이 true를 돌려주는 사용자 설정이다. `userConfig.settings`에 저장하고 로그인 뒤 `myAppConfigState`에서 읽는다. |
+| device-local setting | 이 브라우저의 localStorage에만 저장하는 사용자 설정이다. 서버에 도달하지 않는다.                                                    |

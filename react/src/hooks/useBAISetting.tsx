@@ -12,8 +12,10 @@ import {
   rawToSetting,
   settingToRaw,
   USER_SETTING_STORAGE_PREFIX,
+  USER_SETTINGS_CONFIG_KEY,
 } from '../helper/userSettingsAppConfig';
 import type { AgentEndpointBindings, AgentProfile } from './useAIAgent';
+import { applyMyUserConfig, myAppConfigState } from './useAppConfig';
 import { type BAIBoardItem, BAITableColumnOverrideRecord } from 'backend.ai-ui';
 import { atom, useAtom, useAtomValue } from 'jotai';
 import { atomFamily } from 'jotai-family';
@@ -113,15 +115,12 @@ const settingAtom = atom<{
   [key: string]: any;
 }>({});
 
-// Account settings (ADR 0032): seeded from `userConfig.settings` at sign-in.
-const accountUserSettingsAtom = atom<Record<string, unknown>>({});
-
-export const setAccountUserSettings = (settings: Record<string, unknown>) => {
-  jotaiStore.set(accountUserSettingsAtom, settings);
-};
-
-export const getAccountUserSettings = (): Record<string, unknown> =>
-  jotaiStore.get(accountUserSettingsAtom);
+// Account settings (ADR 0032): `userConfig.settings` in `myAppConfigState`.
+const accountUserSettingsAtom = atom((get): Record<string, unknown> => {
+  const settings =
+    get(myAppConfigState).configs.userConfig?.[USER_SETTINGS_CONFIG_KEY];
+  return _.isPlainObject(settings) ? settings : {};
+});
 
 // Split at the first dot only: a setting name may itself contain dots.
 const splitParam = (param: string) => {
@@ -140,7 +139,7 @@ const isAccountParam = (param: string) => {
 const accountSettingAtom = (name: string) =>
   atom(
     (get) => get(accountUserSettingsAtom)[name] ?? null,
-    (get, set, newValueOrUpdater: any) => {
+    (get, _set, newValueOrUpdater: any) => {
       const current = get(accountUserSettingsAtom);
       const newValue =
         typeof newValueOrUpdater === 'function'
@@ -152,9 +151,16 @@ const accountSettingAtom = (name: string) =>
         name in current === (newValue !== undefined)
       )
         return;
-      const next = { ...current, [name]: newValue };
-      if (newValue === undefined) delete next[name];
-      set(accountUserSettingsAtom, next);
+      try {
+        applyMyUserConfig(
+          jotaiStore,
+          [USER_SETTINGS_CONFIG_KEY, name],
+          newValue,
+        );
+      } catch {
+        // Before sign-in or after a failed read there is no document to change.
+        return;
+      }
       queueUserSettingWrite(name, newValue);
     },
   );

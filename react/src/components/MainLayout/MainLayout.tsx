@@ -7,8 +7,6 @@ import {
   AstryxReverseTheme,
   resolveRoleTheme,
 } from '../../astryx-theme';
-import { startAccountUserSettingsSync } from '../../helper/accountUserSettingsSync';
-import { USER_SETTINGS_CONFIG_KEY } from '../../helper/userSettingsAppConfig';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../../hooks';
 import { useResourceSlotsDetails } from '../../hooks/backendai';
 import { useMyAppConfig } from '../../hooks/useAppConfig';
@@ -51,7 +49,6 @@ import {
   BAIOverlayScrollbar,
   BAIResourceSlotsProvider,
   BAISkeleton,
-  useBAILogger,
   useLabelableEntityTypes,
 } from 'backend.ai-ui';
 import { atom, useSetAtom } from 'jotai';
@@ -525,8 +522,7 @@ export const CSSTokenVariables = () => {
  * Also copies the signed-in user's `userConfig.themeFamily`, which sign-in
  * loaded before the client became ready, into the localStorage mirror BEFORE
  * the splash goes (FR-3834). The mirror survives logout; the next login
- * overrides it here. The same `userConfig` seeds the account's personal
- * settings, before the splash goes too, and starts their sync (ADR 0032).
+ * overrides it here.
  */
 const DismissSplashOnMount = () => {
   'use memo';
@@ -535,33 +531,22 @@ const DismissSplashOnMount = () => {
     'userConfig',
     'themeFamily',
   );
-  const [serverSettings, setServerSettings] = useMyAppConfig(
-    'userConfig',
-    USER_SETTINGS_CONFIG_KEY,
-  );
-  // A failed sign-in read keeps the mirrored family and leaves no base to sync settings on.
+  // A failed sign-in read keeps the mirrored family.
   const isUserConfigLoaded = userConfigStatus === 'loaded';
   const { setActiveThemeFamily } = useCustomThemeConfig();
-  const { logger } = useBAILogger();
   const applyUserConfig = useEffectEvent(() => {
-    if (!isUserConfigLoaded) return () => {};
+    if (!isUserConfigLoaded) return;
     setActiveThemeFamily(
       typeof userConfigFamily === 'string' ? userConfigFamily : undefined,
     );
-    return startAccountUserSettingsSync({
-      serverSettings,
-      setServerSettings,
-      onError: (message, error) => logger.error(message, error),
-    });
   });
   useEffect(() => {
-    const stopSettingsSync = applyUserConfig();
+    applyUserConfig();
     (globalThis as any).__dismissSplash?.();
     (globalThis as any).__mainLayoutReady = true;
     document.dispatchEvent(new CustomEvent('main-layout-ready'));
     return () => {
       (globalThis as any).__mainLayoutReady = false;
-      stopSettingsSync();
     };
   }, []);
   return null;

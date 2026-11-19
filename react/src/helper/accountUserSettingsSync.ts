@@ -2,10 +2,12 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { jotaiStore } from '../components/DefaultProviders';
 import {
-  getAccountUserSettings,
-  setAccountUserSettings,
-} from '../hooks/useBAISetting';
+  applyMyUserConfig,
+  myAppConfigState,
+  sendMyUserConfig,
+} from '../hooks/useAppConfig';
 import { getActAsTarget } from './actAs';
 import {
   flushUserSettingsSync,
@@ -13,55 +15,52 @@ import {
   removeLocalAccountUserSettings,
   startUserSettingsSync,
   stopUserSettingsSync,
+  USER_SETTINGS_CONFIG_KEY,
 } from './userSettingsAppConfig';
 import * as _ from 'lodash-es';
 
-/** The `set` of `useMyAppConfig('userConfig', USER_SETTINGS_CONFIG_KEY)`. */
-type SetServerSettings = (
-  update: (current: unknown) => unknown,
-) => Promise<void>;
+type JotaiStore = typeof jotaiStore;
+
+let stopRunning: (() => void) | null = null;
 
 /**
- * Seeds the account settings from `userConfig.settings`, copies this browser's
- * pre-ADR 0032 localStorage values up once when the account has none, and
- * sends account setting changes to the server until the returned stop runs.
+ * Runs at sign-in, after `setMyAppConfigs` (ADR 0032): copies this browser's
+ * pre-ADR 0032 localStorage values up once when the account has no
+ * `settings`, and sends account setting changes until the returned stop runs.
  */
 export const startAccountUserSettingsSync = ({
-  serverSettings,
-  setServerSettings,
+  store = jotaiStore,
+  send = () => sendMyUserConfig(store),
   onError,
 }: {
-  serverSettings: unknown;
-  setServerSettings: SetServerSettings;
+  store?: JotaiStore;
+  send?: () => Promise<void>;
   onError: (message: string, error: unknown) => void;
 }): (() => void) => {
-  const hasServerSettings = _.isPlainObject(serverSettings);
-  const isActAs = !!getActAsTarget();
-  // An act-as tab must not show this browser's own pre-0032 values as the target's.
-  const local =
-    hasServerSettings || isActAs
-      ? {}
-      : readLocalAccountUserSettings(localStorage);
-  setAccountUserSettings(
-    hasServerSettings ? (serverSettings as Record<string, unknown>) : local,
-  );
+  stopRunning?.();
+  const { status, configs } = store.get(myAppConfigState);
+  // A failed sign-in read leaves no document to build on: defaults show and nothing is saved.
+  if (status !== 'loaded') return () => {};
   // An act-as tab shows the target's settings and saves nothing to that account.
-  if (isActAs) return () => {};
+  if (getActAsTarget()) return () => {};
 
+  const hasServerSettings = _.isPlainObject(
+    configs.userConfig?.[USER_SETTINGS_CONFIG_KEY],
+  );
   if (hasServerSettings) {
     // The account holds them already; on a shared browser they would reach the next account.
     removeLocalAccountUserSettings(localStorage);
   }
-  // The memory holds every change, a failed batch's included, so each write carries it.
-  startUserSettingsSync(
-    () => setServerSettings(() => getAccountUserSettings()),
-    (error) => onError('Failed to save user settings', error),
+  startUserSettingsSync(send, (error) =>
+    onError('Failed to save user settings', error),
   );
+  const local = hasServerSettings
+    ? {}
+    : readLocalAccountUserSettings(localStorage);
   if (!_.isEmpty(local)) {
+    applyMyUserConfig(store, [USER_SETTINGS_CONFIG_KEY], local);
     // The local copies stay until the write succeeds, so a failure retries at the next sign-in.
-    setServerSettings((current) =>
-      _.isPlainObject(current) ? current : getAccountUserSettings(),
-    )
+    send()
       .then(() => removeLocalAccountUserSettings(localStorage))
       .catch((error) =>
         onError('Failed to copy user settings to userConfig', error),
@@ -73,9 +72,15 @@ export const startAccountUserSettingsSync = ({
   };
   document.addEventListener('visibilitychange', flushWhenHidden);
   window.addEventListener('pagehide', flushUserSettingsSync);
-  return () => {
+  const stop = () => {
     document.removeEventListener('visibilitychange', flushWhenHidden);
     window.removeEventListener('pagehide', flushUserSettingsSync);
     stopUserSettingsSync();
+    if (stopRunning === stop) stopRunning = null;
   };
+  stopRunning = stop;
+  return stop;
 };
+
+/** Stops the running sync, if any (joining another server). */
+export const stopAccountUserSettingsSync = () => stopRunning?.();

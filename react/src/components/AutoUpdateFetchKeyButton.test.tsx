@@ -8,9 +8,10 @@
  * detour through another interval.
  */
 import {
-  getAccountUserSettings,
-  setAccountUserSettings,
-} from '../hooks/useBAISetting';
+  clearMyAppConfigs,
+  myAppConfigState,
+  setMyAppConfigs,
+} from '../hooks/useAppConfig';
 import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
 import { jotaiStore } from './DefaultProviders';
 import '@testing-library/jest-dom';
@@ -40,6 +41,14 @@ vi.mock('backend.ai-ui', async (importOriginal) => {
 
 const SETTING_NAME = 'fetchKeyAutoUpdateDelay.session-list';
 
+// The sign-in read of `userConfig`, whose `settings` hold the account settings.
+const signIn = (settings: Record<string, unknown>) =>
+  setMyAppConfigs(jotaiStore, [
+    { configName: 'userConfig', config: { settings } },
+  ]);
+const accountSettings = () =>
+  jotaiStore.get(myAppConfigState).configs.userConfig?.settings;
+
 const renderButton = () =>
   render(
     <Provider store={jotaiStore}>
@@ -54,7 +63,8 @@ const renderButton = () =>
 describe('AutoUpdateFetchKeyButton', () => {
   beforeEach(() => {
     localStorage.clear();
-    setAccountUserSettings({});
+    clearMyAppConfigs(jotaiStore);
+    signIn({});
     lastAutoUpdateDelay = undefined;
     lastOnChangeAutoUpdateDelay = undefined;
   });
@@ -70,7 +80,7 @@ describe('AutoUpdateFetchKeyButton', () => {
 
     act(() => lastOnChangeAutoUpdateDelay?.(null));
 
-    expect(getAccountUserSettings()).toEqual({ [SETTING_NAME]: null });
+    expect(accountSettings()).toEqual({ [SETTING_NAME]: null });
     expect(localStorage.length).toBe(0);
     expect(lastAutoUpdateDelay).toBeNull();
   });
@@ -86,15 +96,15 @@ describe('AutoUpdateFetchKeyButton', () => {
   });
 
   it('honours a persisted "Off" over the consumer default on remount', () => {
-    setAccountUserSettings({ [SETTING_NAME]: null });
+    signIn({ [SETTING_NAME]: null });
     renderButton();
     expect(lastAutoUpdateDelay).toBeNull();
   });
 
-  it('applies an "Off" seeded after mount, as the sign-in read does', () => {
+  it('applies an "Off" that a later read brings in', () => {
     renderButton();
     expect(lastAutoUpdateDelay).toBe(15_000);
-    act(() => setAccountUserSettings({ [SETTING_NAME]: null }));
+    act(() => signIn({ [SETTING_NAME]: null }));
     expect(lastAutoUpdateDelay).toBeNull();
   });
 });

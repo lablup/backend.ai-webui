@@ -2,10 +2,12 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { jotaiStore } from '../components/DefaultProviders';
 import {
-  getAccountUserSettings,
-  setAccountUserSettings,
-} from '../hooks/useBAISetting';
+  clearMyAppConfigs,
+  myAppConfigState,
+  setMyAppConfigs,
+} from '../hooks/useAppConfig';
 import { startAccountUserSettingsSync } from './accountUserSettingsSync';
 import {
   queueUserSettingWrite,
@@ -19,119 +21,129 @@ vi.mock('./actAs', () => ({ getActAsTarget: () => actAs.target }));
 
 const P = USER_SETTING_STORAGE_PREFIX;
 
-// Stands in for the `set` of useMyAppConfig on a held `settings` sub-key.
-const createUpsert = (initial: unknown) => {
-  const held = { settings: initial };
-  const upsert = vi.fn(async (update: (current: unknown) => unknown) => {
-    held.settings = update(held.settings);
-  });
-  return { held, upsert };
-};
+const signIn = (userConfig: Record<string, unknown> | null) =>
+  setMyAppConfigs(jotaiStore, [
+    { configName: 'userConfig', config: userConfig },
+  ]);
 
-const start = (serverSettings: unknown, upsert: unknown) =>
-  startAccountUserSettingsSync({
-    serverSettings,
-    setServerSettings: upsert as never,
-    onError: vi.fn(),
-  });
+const accountSettings = () =>
+  jotaiStore.get(myAppConfigState).configs.userConfig?.settings;
+
+const changeSetting = (name: string, value: unknown) =>
+  document.dispatchEvent(
+    new CustomEvent('backendaiwebui.settings:set', {
+      detail: { namespace: 'user', name, value },
+    }),
+  );
 
 describe('startAccountUserSettingsSync', () => {
+  let stop: () => void = () => {};
+  const start = (send: () => Promise<void>, onError = vi.fn()) => {
+    stop = startAccountUserSettingsSync({ send, onError });
+    return onError;
+  };
+
   beforeEach(() => {
     vi.useFakeTimers();
     localStorage.clear();
-    setAccountUserSettings({});
+    clearMyAppConfigs(jotaiStore);
     actAs.target = null;
   });
-  afterEach(() => vi.useRealTimers());
-
-  it('holds the account settings in memory and leaves localStorage alone', () => {
-    const { upsert } = createUpsert({ compact_sidebar: true });
-    const stop = start({ compact_sidebar: true }, upsert);
-    expect(getAccountUserSettings()).toEqual({ compact_sidebar: true });
-    expect(localStorage.length).toBe(0);
-    expect(upsert).not.toHaveBeenCalled();
+  afterEach(() => {
     stop();
+    vi.useRealTimers();
+  });
+
+  it('reads the account settings from the sign-in document and leaves localStorage alone', () => {
+    signIn({ settings: { compact_sidebar: true } });
+    const send = vi.fn().mockResolvedValue(undefined);
+    start(send);
+    expect(accountSettings()).toEqual({ compact_sidebar: true });
+    expect(localStorage.length).toBe(0);
+    expect(send).not.toHaveBeenCalled();
   });
 
   it('copies the pre-ADR 0032 local values once, then drops them', async () => {
     localStorage.setItem(P + 'compact_sidebar', 'true');
     localStorage.setItem(P + 'desktop_notification', 'true');
-    const { held, upsert } = createUpsert(undefined);
-    const stop = start(undefined, upsert);
-    expect(getAccountUserSettings()).toEqual({ compact_sidebar: true });
+    signIn({ themeFamily: 'default' });
+    const send = vi.fn().mockResolvedValue(undefined);
+    start(send);
+    expect(accountSettings()).toEqual({ compact_sidebar: true });
+    expect(send).toHaveBeenCalledTimes(1);
     await vi.advanceTimersByTimeAsync(0);
-    expect(held.settings).toEqual({ compact_sidebar: true });
     expect(localStorage.getItem(P + 'compact_sidebar')).toBeNull();
     // A device-local setting stays.
     expect(localStorage.getItem(P + 'desktop_notification')).toBe('true');
-    stop();
   });
 
-  it('rebuilds a batch on a document without settings from memory', async () => {
-    const { held, upsert } = createUpsert(undefined);
-    const stop = start({ session_monitor_rows: 5 }, upsert);
-    // A stale read put the document back to one without settings.
-    held.settings = undefined;
-    document.dispatchEvent(
-      new CustomEvent('backendaiwebui.settings:set', {
-        detail: { namespace: 'user', name: 'compact_sidebar', value: true },
-      }),
+  it('keeps the local copies when the copy fails, for the next sign-in', async () => {
+    localStorage.setItem(P + 'compact_sidebar', 'true');
+    signIn({});
+    const onError = start(vi.fn().mockRejectedValue(new Error('refused')));
+    await vi.advanceTimersByTimeAsync(0);
+    expect(localStorage.getItem(P + 'compact_sidebar')).toBe('true');
+    expect(onError).toHaveBeenCalledWith(
+      'Failed to copy user settings to userConfig',
+      expect.any(Error),
     );
-    await vi.advanceTimersByTimeAsync(USER_SETTINGS_WRITE_DELAY_MS);
-    expect(held.settings).toEqual({
-      session_monitor_rows: 5,
-      compact_sidebar: true,
-    });
-    expect(localStorage.length).toBe(0);
-    stop();
   });
 
   it("drops this browser's pre-0032 values when the account has settings", () => {
     localStorage.setItem(P + 'compact_sidebar', 'true');
     localStorage.setItem(P + 'desktop_notification', 'true');
-    const { upsert } = createUpsert({ session_monitor_rows: 5 });
-    const stop = start({ session_monitor_rows: 5 }, upsert);
-    expect(getAccountUserSettings()).toEqual({ session_monitor_rows: 5 });
+    signIn({ settings: { session_monitor_rows: 5 } });
+    const send = vi.fn().mockResolvedValue(undefined);
+    start(send);
+    expect(accountSettings()).toEqual({ session_monitor_rows: 5 });
     expect(localStorage.getItem(P + 'compact_sidebar')).toBeNull();
     expect(localStorage.getItem(P + 'desktop_notification')).toBe('true');
-    expect(upsert).not.toHaveBeenCalled();
-    stop();
+    expect(send).not.toHaveBeenCalled();
   });
 
-  it('carries a failed batch in the next write', async () => {
-    const { held, upsert } = createUpsert({});
-    upsert.mockRejectedValueOnce(new Error('refused'));
-    const stop = start({}, upsert);
-    document.dispatchEvent(
-      new CustomEvent('backendaiwebui.settings:set', {
-        detail: { namespace: 'user', name: 'compact_sidebar', value: true },
-      }),
-    );
+  it('shows a change at once and sends it after the debounce', async () => {
+    signIn({ settings: {} });
+    const send = vi.fn().mockResolvedValue(undefined);
+    start(send);
+    changeSetting('compact_sidebar', true);
+    expect(accountSettings()).toEqual({ compact_sidebar: true });
+    expect(send).not.toHaveBeenCalled();
     await vi.advanceTimersByTimeAsync(USER_SETTINGS_WRITE_DELAY_MS);
-    expect(held.settings).toEqual({});
-    document.dispatchEvent(
-      new CustomEvent('backendaiwebui.settings:set', {
-        detail: { namespace: 'user', name: 'session_monitor_rows', value: 7 },
-      }),
-    );
+    expect(send).toHaveBeenCalledTimes(1);
+  });
+
+  it('reports a failed write', async () => {
+    signIn({ settings: {} });
+    const onError = start(vi.fn().mockRejectedValue(new Error('refused')));
+    changeSetting('compact_sidebar', true);
     await vi.advanceTimersByTimeAsync(USER_SETTINGS_WRITE_DELAY_MS);
-    expect(held.settings).toEqual({
-      compact_sidebar: true,
-      session_monitor_rows: 7,
-    });
-    stop();
+    expect(onError).toHaveBeenCalledWith(
+      'Failed to save user settings',
+      expect.any(Error),
+    );
   });
 
   it('saves nothing to the account in an act-as tab', async () => {
     actAs.target = { userId: 'u', email: 'x@y', name: 'x' };
     localStorage.setItem(P + 'compact_sidebar', 'true');
-    const { upsert } = createUpsert(undefined);
-    const stop = start(undefined, upsert);
-    // This browser's own local values are not shown as the target's.
-    expect(getAccountUserSettings()).toEqual({});
+    signIn({ settings: { session_monitor_rows: 3 } });
+    const send = vi.fn().mockResolvedValue(undefined);
+    start(send);
+    // The target's settings show; this browser's own local values are not copied.
+    expect(accountSettings()).toEqual({ session_monitor_rows: 3 });
+    expect(localStorage.getItem(P + 'compact_sidebar')).toBe('true');
     queueUserSettingWrite('session_monitor_rows', 9);
     await vi.advanceTimersByTimeAsync(USER_SETTINGS_WRITE_DELAY_MS);
-    expect(upsert).not.toHaveBeenCalled();
-    stop();
+    expect(send).not.toHaveBeenCalled();
+  });
+
+  it('starts nothing after a failed sign-in read', async () => {
+    setMyAppConfigs(jotaiStore, null);
+    const send = vi.fn().mockResolvedValue(undefined);
+    start(send);
+    changeSetting('compact_sidebar', true);
+    await vi.advanceTimersByTimeAsync(USER_SETTINGS_WRITE_DELAY_MS);
+    expect(jotaiStore.get(myAppConfigState).status).toBe('failed');
+    expect(send).not.toHaveBeenCalled();
   });
 });

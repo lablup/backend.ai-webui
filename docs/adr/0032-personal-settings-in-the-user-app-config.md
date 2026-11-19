@@ -6,9 +6,9 @@
 
 - Personal WebUI preferences that belong to the account are stored in the manager app config `userConfig`, under one flat key, `settings`. A user who signs in on another browser or device gets the same preferences.
 - `isAccountUserSetting` in `react/src/helper/userSettingsAppConfig.ts` lists these [account settings](#glossary). Every other key of `UserSettings` stays in browser localStorage only, as a [device-local setting](#glossary).
-- After sign-in the account settings are held in memory, in a jotai atom (`accountUserSettingsAtom` in `react/src/hooks/useBAISetting.tsx`), and never in localStorage. `useBAISettingUserState` still returns a value synchronously and its API does not change.
-- At sign-in, `startAccountUserSettingsSync` (`react/src/helper/accountUserSettingsSync.ts`) seeds the atom from `userConfig.settings`. When the account has no `settings` document yet, it copies the values this browser stored in localStorage before this decision into it once, then removes them from localStorage.
-- A change to an account setting updates the atom at once and is sent to the server through a debounced write queue. An act-as tab sends nothing.
+- After sign-in the account settings are read straight from `userConfig.settings` in `myAppConfigState` ([ADR 0033](0033-scoped-and-merged-app-config-hooks.md)), which sign-in fills before the first render, and never from localStorage. `useBAISettingUserState` still returns a value synchronously and its API does not change.
+- At sign-in, right after `setMyAppConfigs`, `startAccountUserSettingsSync` (`react/src/helper/accountUserSettingsSync.ts`) starts the write queue. When the account has no `settings` document yet, it copies the values this browser stored in localStorage before this decision into it once, then removes them from localStorage.
+- A change to an account setting shows in `myAppConfigState` at once and is sent to the server through a debounced write queue; a failed write rolls it back. An act-as tab sends nothing.
 
 ## Context
 
@@ -25,20 +25,20 @@
 flowchart LR
   subgraph browser["Browser"]
     hook["useBAISettingUserState<br/>SettingAtomFamily"]
-    memory["accountUserSettingsAtom<br/>jotai, in memory"]
+    atom["myAppConfigState<br/>userConfig.settings"]
     legacy["localStorage<br/>values from before ADR 0032"]
     queue["userSettingsAppConfig<br/>write queue, 500ms debounce"]
-    sync["startAccountUserSettingsSync<br/>called by DismissSplashOnMount"]
+    sync["startAccountUserSettingsSync<br/>called at sign-in"]
   end
   user["userConfig USER fragment<br/>settings"]
-  hook -- "read during render" --> memory
-  hook -- "setter updates the value" --> memory
+  user -- "sign-in read, setMyAppConfigs" --> atom
+  hook -- "read during render" --> atom
+  hook -- "setter: applyMyUserConfig" --> atom
   hook -- "account setting changed" --> queue
-  queue -- "useMyAppConfig set on settings<br/>changes applied on the atom's document" --> user
-  user -- "DismissSplashOnMount's userConfig read" --> sync
-  sync -- "setAccountUserSettings" --> memory
+  queue -- "sendMyUserConfig: whole userConfig" --> user
+  queue -. "failed write: its paths rolled back" .-> atom
   legacy -- "read once when settings is absent" --> sync
-  sync -- "copy once, then remove the local values" --> user
+  sync -- "applied once, then sent; local values removed" --> atom
 ```
 
 ## Decision
@@ -67,40 +67,39 @@ flowchart LR
 - **Single writer**: Only `react/src/helper/userSettingsAppConfig.ts` and `react/src/helper/accountUserSettingsSync.ts` write `userConfig.settings`, and they write only the USER fragment. No code writes a `settings` key into the `userConfig` of another scope, so the merged view equals the USER fragment and the server's deep merge does not mix arrays across scopes.
 - **Stored null**: A `null` value is stored as JSON `null`, because some settings use it as a choice, such as `fetchKeyAutoUpdateDelay.*` for auto-refresh off. Only an `undefined` value removes a key.
 
-### 3. The account settings are held in memory
+### 3. The account settings are read from `myAppConfigState`
 
-- **Atom**: `accountUserSettingsAtom` in `react/src/hooks/useBAISetting.tsx` holds `Record<string, unknown>`, the same flat shape as `userConfig.settings`. `setAccountUserSettings` replaces it and `getAccountUserSettings` reads it outside React.
-- **Read path**: For an account setting, `SettingAtomFamily` returns `accountUserSettingsAtom[name] ?? null`. The setter updates the atom, then calls `queueUserSettingWrite`. Neither touches localStorage or `backendaiOptions`. A device-local setting keeps the localStorage path.
-- **Stored or unset**: `useHasStoredUserSetting(name)` returns whether the setting holds a value, an explicit `null` included. For an account setting it reads whether the atom has the key, so a component re-renders when the sign-in seed or a pick adds the key even while the value stays `null`.
-- **Sign-in seed**: `DismissSplashOnMount` (`MainLayout.tsx`) renders only after sign-in has filled `myAppConfigState`. Its mount effect calls `startAccountUserSettingsSync` with the value and the `set` of `useMyAppConfig('userConfig', USER_SETTINGS_CONFIG_KEY)` before it dismisses the splash, so the page shows the account's values when the splash goes. The function returns a stop that the effect's cleanup calls. When the read status that `useMyAppConfig('userConfig', 'themeFamily')` returns as its fourth element is not `loaded`, the effect starts no sync, because a write would have no base.
-- **Before sign-in**: An account setting reads its default. No pre-sign-in surface reads one.
+- **Read path**: For an account setting, `SettingAtomFamily` returns `userConfig.settings[name] ?? null` from `myAppConfigState`, through the derived `accountUserSettingsAtom` in `react/src/hooks/useBAISetting.tsx`. The setter calls `applyMyUserConfig(store, ['settings', name], value)` (ADR 0033), which changes the atom at once, then `queueUserSettingWrite`. Neither touches localStorage or `backendaiOptions`. A device-local setting keeps the localStorage path.
+- **Stored or unset**: `useHasStoredUserSetting(name)` returns whether the setting holds a value, an explicit `null` included. For an account setting it reads whether `userConfig.settings` has the key, so a component re-renders when a read or a pick adds the key even while the value stays `null`.
+- **First render**: sign-in fills `myAppConfigState` before `applyConfigToClient` marks the client ready, so the first render already shows the account's values. No component copies them anywhere.
+- **Before sign-in, or after a failed read**: an account setting reads its default, and its setter changes nothing, because `applyMyUserConfig` refuses while the read status is not `loaded`. No pre-sign-in surface writes one.
 
 ### 4. One-time copy
 
-- **Trigger**: At sign-in, when `userConfig.settings` is absent, `startAccountUserSettingsSync` seeds the atom with `readLocalAccountUserSettings(localStorage)`, the account settings this browser stored before this decision. When that is not empty, it writes them as the document.
-- **Cleanup**: After the copy succeeds, `removeLocalAccountUserSettings` removes those keys from localStorage. A failed copy leaves them, so the next sign-in to an account without `settings` copies them again. When the account already has `settings`, a sign-in outside act-as removes them at once, so a later account on a shared browser does not receive them.
-- **Base of the copy**: The copy keeps a `settings` that this tab's copy of the document already has, and otherwise writes `getAccountUserSettings()`.
-- **Concurrent copy**: The copy keeps a `settings` the held document already has. It is no guard against another tab or device that copies at the same time: the later write replaces the earlier copy.
+- **Trigger**: At sign-in, when `userConfig.settings` is absent, `startAccountUserSettingsSync` reads `readLocalAccountUserSettings(localStorage)`, the account settings this browser stored before this decision. When that is not empty, it applies them as `settings` with `applyMyUserConfig` and sends the document.
+- **Cleanup**: After the copy succeeds, `removeLocalAccountUserSettings` removes those keys from localStorage. A failed copy is rolled back from the atom (ADR 0033) and leaves them, so the next sign-in to an account without `settings` copies them again. When the account already has `settings`, a sign-in outside act-as removes them at once, so a later account on a shared browser does not receive them.
+- **Base of the copy**: The copy applies `settings` on the `userConfig` the sign-in read, so the user's other keys go with it unchanged.
+- **Concurrent copy**: It is no guard against another tab or device that copies at the same time: the later write replaces the earlier copy.
 - **Shared browser**: When several accounts share one browser, the first account without `settings` to sign in after the upgrade receives this browser's values, which are then removed. Unlike the dashboard boards of ADR 0026, these values are small preferences, and no account loses data it holds.
 
 ### 5. Writes are debounced and sent one at a time
 
 - **Queue**: `queueUserSettingWrite(name, value)` puts a change of an account setting into a `createWriteQueue` (`react/src/components/DashboardPanels/writeQueue.ts`) with a 500ms debounce (`USER_SETTINGS_WRITE_DELAY_MS`). Changes within the debounce are joined into one batch, and a batch starts only after the previous one finished.
 - **Callers**: The account branch of the `SettingAtomFamily` setter calls `queueUserSettingWrite`. The `backendaiwebui.settings:set` and `backendaiwebui.settings:delete` listeners reach it through that setter.
-- **Write the held settings**: `startUserSettingsSync` installs a writer that calls the `set` of `useMyAppConfig('userConfig', USER_SETTINGS_CONFIG_KEY)` with `() => getAccountUserSettings()`. The atom already holds every change, a failed batch's included, so each write carries what an earlier failed write lost. The write replaces only the `settings` key of the `userConfig` that `myAppConfigState` holds (ADR 0033), and `set` queues it behind this tab's other `userConfig` writes (the dashboard, the theme family). A setter given `undefined` deletes the key from the atom, so the written `settings` no longer has it.
-- **One read**: sign-in reads `userConfig` once per page load. `DismissSplashOnMount` passes the `settings` value and its `set` to `startAccountUserSettingsSync`, which does not read the document.
-- **Lifetime**: The queue sends nothing before `startAccountUserSettingsSync` started it. The function flushes the queue when the tab is hidden and on `pagehide`, its stop flushes it when `DismissSplashOnMount` unmounts, and `useLogout` flushes it before it clears the client, on logout and on an Electron window close, waiting at most 3 seconds.
-- **Failure**: A failed write is logged with `useBAILogger`. The atom keeps the new value, and the next write sends it.
+- **Write**: `startUserSettingsSync` installs a writer that calls `sendMyUserConfig` (ADR 0033), which sends the atom's whole `userConfig`, the settings changes included, behind this tab's other `userConfig` writes (the dashboard, the theme family). A setter given `undefined` removes the key from the atom, so the written `settings` no longer has it.
+- **One read**: sign-in reads `userConfig` once per page load. `startAccountUserSettingsSync` reads it from `myAppConfigState` and sends no query.
+- **Lifetime**: The queue sends nothing before `startAccountUserSettingsSync` started it. Sign-in starts it after `setMyAppConfigs`, a second sign-in stops the previous one first, and joining another server stops it (`stopAccountUserSettingsSync`). It flushes the queue when the tab is hidden and on `pagehide`, and `useLogout` flushes it before it clears the client, on logout and on an Electron window close, waiting at most 3 seconds.
+- **Failure**: A failed write is logged with `console.error` under a `[user settings]` prefix, and `sendMyUserConfig` rolls back the paths it carried that nothing changed since, so the setting shows its previous value again.
 
 ### 6. An act-as tab saves nothing
 
-- **Read**: In an act-as tab (`getActAsTarget()` returns a target), the atom is seeded from the target user's `userConfig.settings`, so the tab shows that user's choices. Nothing is copied from localStorage.
-- **Write**: `startAccountUserSettingsSync` does not start the writer, so a change in that tab updates only the atom of that tab and is not saved to the target's account.
+- **Read**: In an act-as tab (`getActAsTarget()` returns a target), `myAppConfigState` holds the target user's `userConfig`, so the tab shows that user's choices. Nothing is copied from localStorage.
+- **Write**: `startAccountUserSettingsSync` does not start the writer, so a change in that tab shows only in that tab. Another `userConfig` write from that tab, such as a dashboard edit, carries it to the target's account; which writes an act-as tab may send is #11293.
 
 ## Rejected alternatives
 
 - **localStorage mirror**: localStorage keeps a copy of the account settings, which the sign-in read overwrites. A value survives a reload before sign-in. This is rejected because the mirror lets a shared account's document overwrite what e2e specs seed, carries an act-as target's settings into the super admin's other tabs, and needs every setting atom re-read after it changes.
-- **Read on each screen**: Each call site reads `userConfig.settings` through `useMyAppConfig`. No settings atom is needed. This is rejected because `set` updates `myAppConfigState` only after the server accepts the write, so a change would show only after the debounced write lands.
+- **Settings atom of its own**: The account settings live in a separate atom, seeded from `userConfig.settings` after sign-in, because `set` used to update `myAppConfigState` only after the server accepted a write. This is rejected because the seed ran after the first render, so a screen that decides on its first value (the `ai-agent` route, a component that reads once at mount) used the default, and two copies of one document can drift. ADR 0033 now shows a change in `myAppConfigState` at once.
 - **Move every key**: All of `UserSettings` goes to `userConfig.settings`. The rule is simple. This is rejected because the login flow needs `endpoints`, `preserve_login`, and `selected_language` before any document can be read, and an agent binding can carry a token.
 - **No migration**: Follow ADR 0026 §5 and start from defaults. Nothing is copied into the wrong account. This is rejected because users would lose tour flags and column choices they set over months, and a wrong-account copy costs only a preference.
 - **One app config key per setting**: Each setting becomes a top-level key of `userConfig`. A setting can be read by name. This is rejected because the per-table names are open-ended, and a flat sub-key keeps the user's other keys (`dashboard`, `themeFamily`) apart.
@@ -125,7 +124,7 @@ Related: [ADR 0026](0026-dashboard-boards-in-manager-app-config.md), [ADR 0028](
 
 ## Glossary
 
-| term                 | meaning                                                                                                                                                                                                                                                                                                        |
-| -------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| account setting      | A user setting for which `isAccountUserSetting` returns true. It is stored in `userConfig.settings` and held in memory after sign-in. |
-| device-local setting | A user setting stored only in this browser's localStorage. It does not reach the server.                                                                                                                                                                                                                       |
+| term                 | meaning                                                                                                                                             |
+| -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| account setting      | A user setting for which `isAccountUserSetting` returns true. It is stored in `userConfig.settings` and read from `myAppConfigState` after sign-in. |
+| device-local setting | A user setting stored only in this browser's localStorage. It does not reach the server.                                                            |
