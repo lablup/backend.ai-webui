@@ -209,6 +209,15 @@ export const toPresetRows = (
 /** `AuditLogStatus` has no FAILURE: a failed action is recorded as ERROR or DENIED. */
 export const AUDIT_FAILURE_STATUSES = ['ERROR', 'DENIED'] as const;
 
+/** Every audit log status with its label key, in the order lists and charts show them. */
+export const AUDIT_LOG_STATUSES = [
+  ['SUCCESS', 'auditLog.ResultSuccess'],
+  ['ERROR', 'auditLog.ResultFailed'],
+  ['DENIED', 'auditLog.ResultDenied'],
+  ['RUNNING', 'auditLog.ResultRunning'],
+  ['UNKNOWN', 'auditLog.ResultUnknown'],
+] as const;
+
 /** The activity card's saved filter while "failures only" is on. */
 export const FAILURES_ONLY_FILTER = {
   status: { in: [...AUDIT_FAILURE_STATUSES] },

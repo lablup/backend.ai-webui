@@ -141,6 +141,7 @@ vi.mock('../../../components/ImageEnvironmentSelectFormItems', () => ({
 }));
 vi.mock('../../../components/RuntimeParameterFormSection', () => ({
   default: () => null,
+  RUNTIME_PARAMS_NAMESPACE: 'runtimeParams',
 }));
 vi.mock('../../../components/EnvVarFormList', () => ({ default: () => null }));
 vi.mock('../../../hooks/useMountableStorageHosts', () => ({

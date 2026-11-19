@@ -4,11 +4,14 @@
  */
 import {
   CHART_GROUPINGS,
+  auditEntityTypeGroups,
+  auditEntityTypeLabels,
   chartCounts,
   chartTableFilter,
   chartTypesFor,
   chartWindow,
   combineFilters,
+  entityTypesByFrequency,
   resolveChart,
 } from './chartSources';
 import { settingsFromInput } from './defaults';
@@ -242,5 +245,104 @@ describe('panel range setting', () => {
     expect(
       settingsFromInput(undefined, { ...input, range: 'now-30d' })?.range,
     ).toBe('now-24h');
+  });
+});
+
+describe('audit log chart groupings', () => {
+  const byKey = (key: string) =>
+    CHART_GROUPINGS.auditLog.find((grouping) => grouping.key === key)!;
+
+  it('counts every audit status once', () => {
+    expect(byKey('status').groups.map((group) => group.filter)).toEqual([
+      { status: { equals: 'SUCCESS' } },
+      { status: { equals: 'ERROR' } },
+      { status: { equals: 'DENIED' } },
+      { status: { equals: 'RUNNING' } },
+      { status: { equals: 'UNKNOWN' } },
+    ]);
+  });
+
+  it('counts each listed entity type and every other type as one more bucket', () => {
+    const groups = byKey('entityType').groups;
+    expect(groups).toHaveLength(MAX_BUCKETS);
+    expect(groups.at(-1)?.filter).toEqual({
+      entityType: {
+        notIn: groups.slice(0, -1).map((group) => group.key),
+      },
+    });
+  });
+
+  it('narrows a time chart to createdAt windows', () => {
+    const counts = chartCounts(
+      'auditLog',
+      resolveChart('auditLog', { type: 'line' }),
+      'now-24h',
+      NOW,
+    );
+    expect(counts[0].filter).toHaveProperty('AND');
+  });
+});
+
+describe('audit log entity type groups from the data', () => {
+  it('orders the types by how often they appear, skipping missing ones', () => {
+    expect(
+      entityTypesByFrequency([
+        { entityType: 'user' },
+        { entityType: 'app_config_fragment' },
+        { entityType: 'app_config_fragment' },
+        { entityType: null },
+        { entityType: 'project' },
+        { entityType: 'project' },
+      ]),
+    ).toEqual(['app_config_fragment', 'project', 'user']);
+  });
+
+  it('gives the seven most frequent types a slice and the rest to "Other types"', () => {
+    const types = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i'];
+    const groups = auditEntityTypeGroups(types)!;
+    expect(groups).toHaveLength(MAX_BUCKETS);
+    expect(groups.map((group) => group.key)).toEqual([
+      ...types.slice(0, 7),
+      'other',
+    ]);
+    expect(groups.at(-1)?.filter).toEqual({
+      entityType: { notIn: types.slice(0, 7) },
+    });
+  });
+
+  it('keeps the fixed list when fewer than two types were found, so a radar keeps three axes', () => {
+    expect(auditEntityTypeGroups([])).toBeUndefined();
+    expect(auditEntityTypeGroups(['session'])).toBeUndefined();
+  });
+
+  it('adds the type name where two types share a label', () => {
+    const t = ((key: string) =>
+      ({
+        'rbac.types.DEPLOYMENT': 'Deployment',
+        'rbac.types.MODEL_DEPLOYMENT': 'Deployment',
+        'rbac.types.SESSION': 'Session',
+      })[key] ?? key) as unknown as Parameters<typeof auditEntityTypeLabels>[0];
+    expect(
+      auditEntityTypeLabels(t, ['deployment', 'model_deployment', 'session']),
+    ).toEqual({
+      deployment: 'Deployment (deployment)',
+      model_deployment: 'Deployment (model_deployment)',
+      session: 'Session',
+    });
+  });
+
+  it("replaces the grouping's groups in the chart counts", () => {
+    const counts = chartCounts(
+      'auditLog',
+      resolveChart('auditLog', { type: 'donut', groupBy: 'entityType' }),
+      'now-24h',
+      NOW,
+      auditEntityTypeGroups(['app_config_fragment', 'project']),
+    );
+    expect(counts.map((count) => count.key)).toEqual([
+      'app_config_fragment',
+      'project',
+      'other',
+    ]);
   });
 });

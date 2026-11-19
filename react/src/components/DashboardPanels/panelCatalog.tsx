@@ -37,6 +37,8 @@ import FailedLoginsPanel from './superadminCards/FailedLoginsPanel';
 import FailuresByEntityTypePanel from './superadminCards/FailuresByEntityTypePanel';
 import ResourcePoliciesPanel from './superadminCards/ResourcePoliciesPanel';
 import SchedulingFailuresPanel from './superadminCards/SchedulingFailuresPanel';
+import SessionLaunchesPanel from './superadminCards/SessionLaunchesPanel';
+import TopFailureCausesPanel from './superadminCards/TopFailureCausesPanel';
 import type {
   PanelComponentProps,
   PanelDefinition,
@@ -387,8 +389,9 @@ const PROJECT_ADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
       admin: 'webui.menu.Deployments',
     }),
     defaultSize: size(2, 3),
+    // A full-width list on the superadmin board, where no 4-column card pairs with it.
+    defaultSizeByPage: { admin: size(6, 3) },
     minSize: size(2, 2),
-    defaultHidden: ['admin'],
     columnSettings: true,
   },
   {
@@ -533,6 +536,18 @@ const SUPERADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     defaultHidden: true,
   },
   {
+    key: 'sessionLaunches',
+    page: ['admin'],
+    group: 'session',
+    titleKey: 'dashboard.card.SessionLaunches',
+    requires: SUPERADMIN_ONLY,
+    kind: 'custom',
+    Component: SessionLaunchesPanel,
+    defaultSize: size(2, 3),
+    minSize: size(2, 3),
+    settings: ['range'],
+  },
+  {
     key: 'activeAgents',
     page: ['admin'],
     group: 'resource',
@@ -569,6 +584,18 @@ const SUPERADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     kind: 'custom',
     Component: FailuresByEntityTypePanel,
     defaultSize: size(2, 3),
+    minSize: size(2, 3),
+    settings: ['range'],
+  },
+  {
+    key: 'topFailureCauses',
+    page: ['admin'],
+    group: 'activity',
+    titleKey: 'dashboard.card.TopFailureCauses',
+    requires: SUPERADMIN_ONLY,
+    kind: 'custom',
+    Component: TopFailureCausesPanel,
+    defaultSize: size(4, 3),
     minSize: size(2, 3),
     settings: ['range'],
   },
@@ -721,11 +748,15 @@ const PAGE_ORDER: Record<PanelPage, ReadonlyArray<string>> = {
     'projectSessionStatus',
     'agentStats',
     'pendingSessions',
-    'failuresByEntityType',
+    'sessionLaunches',
     'activeAgents',
     'totalResourceWithinResourceGroup',
     'sessionsCreated',
     'foldersByUsageMode',
+    'projectDeployments',
+    // The audit log cards stay together, failures first.
+    'topFailureCauses',
+    'failuresByEntityType',
     'projectAuditLog',
   ],
 };

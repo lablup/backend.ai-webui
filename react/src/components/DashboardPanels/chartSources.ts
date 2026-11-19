@@ -2,8 +2,11 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { rbacTypeLabel } from '../../helper/rbacElementTypes';
 import { getSessionTypeLabel } from '../../helper/sessionTypeLabel';
+import { AUDIT_LOG_STATUSES } from './memberCards/memberCardData';
 import { DEFAULT_RANGE, isStoredRange } from './panelSettings';
+import { AUDIT_ENTITY_TYPES } from './superadminCards/superadminCardData';
 import {
   MAX_BUCKETS,
   planBuckets,
@@ -182,6 +185,33 @@ export const CHART_GROUPINGS: Record<
       })),
     },
   ],
+  auditLog: [
+    {
+      key: 'status',
+      labelKey: 'auditLog.Result',
+      groups: AUDIT_LOG_STATUSES.map(([status, labelKey]) => ({
+        key: status,
+        label: labelOf(labelKey),
+        filter: { status: { equals: status } },
+      })),
+    },
+    {
+      key: 'entityType',
+      labelKey: 'dashboard.card.EntityType',
+      groups: [
+        ...AUDIT_ENTITY_TYPES.map((type) => ({
+          key: type,
+          label: (t: TFunction) => rbacTypeLabel(t, type),
+          filter: { entityType: { equals: type } },
+        })),
+        {
+          key: 'other',
+          label: labelOf('dashboard.card.OtherTypes'),
+          filter: { entityType: { notIn: [...AUDIT_ENTITY_TYPES] } },
+        },
+      ],
+    },
+  ],
 };
 
 /** `filter` narrowed by `extra`: ANDed minilang for sessions, an `AND` list for V2 sources. */
@@ -273,6 +303,8 @@ export const chartCounts = (
   chart: PanelChart,
   range: string | null | undefined,
   now: number,
+  /** Groups decided from the data, replacing the grouping's fixed ones. */
+  groupsOverride?: ReadonlyArray<ChartCount>,
 ): Array<ChartCount> => {
   const effectiveRange = isStoredRange(range) ? range : DEFAULT_RANGE;
   if (isTimeChartType(chart.type)) {
@@ -289,12 +321,66 @@ export const chartCounts = (
     CHART_GROUPINGS[source].find(({ key }) => key === chart.groupBy) ??
     CHART_GROUPINGS[source][0];
   const window = chartWindow(chart, effectiveRange, now);
-  return grouping.groups.slice(0, MAX_BUCKETS).map((group) =>
-    window
-      ? {
-          ...group,
-          filter: combineFilters(group.filter, createdWithin(source, window)),
-        }
-      : group,
+  return (groupsOverride ?? grouping.groups)
+    .slice(0, MAX_BUCKETS)
+    .map((group) =>
+      window
+        ? {
+            ...group,
+            filter: combineFilters(group.filter, createdWithin(source, window)),
+          }
+        : group,
+    );
+};
+
+/** Entity types by how often they appear, most frequent first. */
+export const entityTypesByFrequency = (
+  rows: ReadonlyArray<{ readonly entityType?: string | null }>,
+): Array<string> => {
+  const counts = _.countBy(_.compact(rows.map((row) => row.entityType)));
+  return _.orderBy(
+    Object.keys(counts),
+    [(type) => counts[type], (type) => type],
+    ['desc', 'asc'],
+  );
+};
+
+/**
+ * The audit log entity type groups for the types that actually appear: one
+ * slice per frequent type, every other type in "Other types". Without any,
+ * the fixed list stands.
+ */
+export const auditEntityTypeGroups = (
+  frequentTypes: ReadonlyArray<string>,
+): ReadonlyArray<ChartCount> | undefined => {
+  const shown = frequentTypes.slice(0, MAX_BUCKETS - 1);
+  // Two types plus "Other types" is the fewest a radar can draw.
+  if (shown.length < 2) return undefined;
+  return [
+    ...shown.map((type) => ({
+      key: type,
+      label: (t: TFunction) => auditEntityTypeLabels(t, shown)[type],
+      filter: { entityType: { equals: type } },
+    })),
+    {
+      key: 'other',
+      label: labelOf('dashboard.card.OtherTypes'),
+      filter: { entityType: { notIn: [...shown] } },
+    },
+  ];
+};
+
+/** Each type's label, with the type name added where two types share one (`deployment`, `model_deployment`). */
+export const auditEntityTypeLabels = (
+  t: TFunction,
+  types: ReadonlyArray<string>,
+): Record<string, string> => {
+  const labels = types.map((type) => rbacTypeLabel(t, type));
+  const counts = _.countBy(labels);
+  return Object.fromEntries(
+    types.map((type, index) => [
+      type,
+      counts[labels[index]] > 1 ? `${labels[index]} (${type})` : labels[index],
+    ]),
   );
 };

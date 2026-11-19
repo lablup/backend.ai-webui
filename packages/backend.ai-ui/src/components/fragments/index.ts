@@ -261,7 +261,10 @@ export type {
   BAISchedulingHistoryNodesProps,
   SchedulingHistoryNodeInList,
 } from './BAISchedulingHistoryNodes';
-export { default as BAIAuditLogNodes } from './BAIAuditLogNodes';
+export {
+  default as BAIAuditLogNodes,
+  useAuditLogActionLabel,
+} from './BAIAuditLogNodes';
 export type {
   BAIAuditLogNodesProps,
   AuditLogNodeInList,

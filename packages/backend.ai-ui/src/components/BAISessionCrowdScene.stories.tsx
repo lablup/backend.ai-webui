@@ -11,7 +11,7 @@ import { useState } from 'react';
 const meta: Meta<typeof BAISessionCrowdScene> = {
   title: 'Lab/BAISessionCrowdScene',
   component: BAISessionCrowdScene,
-  tags: ['autodocs'],
+  tags: ['autodocs', 'no-vrt'],
   parameters: {
     layout: 'padded',
     docs: {
