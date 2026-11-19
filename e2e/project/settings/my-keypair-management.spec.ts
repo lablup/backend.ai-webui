@@ -1149,6 +1149,8 @@ test.describe(
         settingsDialog.getByRole('checkbox', { name: 'Modified At' }),
       ).not.toBeChecked();
 
+      // TODO(e2e): table columns are an account setting (ADR 0032), kept on the shared
+      // e2e account: restore 'Modified At' to hidden at the end, or the next run starts with it shown.
       // Check the Modified At checkbox
       await settingsDialog
         .getByRole('checkbox', { name: 'Modified At' })
