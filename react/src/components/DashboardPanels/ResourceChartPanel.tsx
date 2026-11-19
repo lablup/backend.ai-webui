@@ -27,13 +27,11 @@ import { toDonutRows } from './memberCards/memberCardData';
 import { resolvePanelTitle, resourceRegistry } from './resourceRegistry';
 import {
   isTimeChartType,
-  type ChartType,
   type PanelChart,
   type PanelDescriptor,
   type ResourceKey,
 } from './types';
 import { useDashboardQueryScope } from './useDashboardFilters';
-import { SkeletonChart } from '@lablup/ui-common';
 import { Text } from '@lablup/ui-common/Text';
 import { VStack } from '@lablup/ui-common/VStack';
 import {
@@ -51,7 +49,7 @@ import {
 } from '@lablup/ui-common/lab';
 import useResizeObserver from '@react-hook/resize-observer';
 import * as stylex from '@stylexjs/stylex';
-import { BAIFlex } from 'backend.ai-ui';
+import { BAIFlex, BAISkeleton } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import React, { Suspense, useDeferredValue, useRef, useState } from 'react';
@@ -276,20 +274,6 @@ const CHART_QUERIES: Record<ResourceKey, GraphQLTaggedNode> = {
 const ALIAS_KEYS = _.range(8).map((index) => `c${index}`);
 const DAY_MS = 24 * 60 * 60 * 1000;
 
-/** The skeleton shape of each chart type while its counts load. */
-export const SKELETON_VARIANTS: Record<
-  ChartType,
-  'bar' | 'line' | 'pie' | 'area'
-> = {
-  donut: 'pie',
-  pie: 'pie',
-  radar: 'pie',
-  bar: 'bar',
-  column: 'bar',
-  line: 'line',
-  area: 'area',
-};
-
 // The bar and line charts keep their axes readable down to this height.
 const CHART_MIN_HEIGHT = 120;
 // The chart's share of the panel when the table is listed under it.
@@ -365,14 +349,7 @@ const ResourceChartPanel: React.FC<ResourceTablePanelProps> = ({
       onEdit={onEdit}
       onRemove={onRemove}
     >
-      <Suspense
-        fallback={
-          <SkeletonChart
-            variant={SKELETON_VARIANTS[chart.type]}
-            height={`${CHART_HEIGHT_WITH_TABLE}px`}
-          />
-        }
-      >
+      <Suspense fallback={<BAISkeleton />}>
         <ResourceChartContent
           key={`${descriptor.resourceType}:${JSON.stringify(descriptor.filter ?? null)}`}
           descriptor={descriptor}
@@ -502,10 +479,7 @@ export const ResourceChartContent: React.FC<{
     >
       {isSwitching ? (
         <ChartBox fixedHeight={fixedHeight}>
-          <SkeletonChart
-            variant={SKELETON_VARIANTS[nextChart.type]}
-            height="100%"
-          />
+          <BAISkeleton />
         </ChartBox>
       ) : (
         chartBody

@@ -9,7 +9,7 @@ import {
 } from '../../helper/sessionResourceGridData';
 import { DeploymentNodesPanelContent } from './DeploymentNodesPanel';
 import PanelRangeSelect, { NO_PERIOD } from './PanelRangeSelect';
-import { ResourceChartContent, SKELETON_VARIANTS } from './ResourceChartPanel';
+import { ResourceChartContent } from './ResourceChartPanel';
 import { ResourceCountContent } from './ResourceCountPanel';
 import { ResourceTableContent } from './ResourceTablePanel';
 import { SessionNodesPanelContent } from './SessionNodesPanel';
@@ -36,7 +36,6 @@ import {
   type PersistedPanel,
   type ResourceKey,
 } from './types';
-import { SkeletonChart } from '@lablup/ui-common';
 import { Text } from '@lablup/ui-common/Text';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
@@ -513,14 +512,7 @@ const DashboardPanelModal: React.FC<DashboardPanelModalProps> = ({
                         align="stretch"
                         style={chart.showTable ? undefined : { height: 240 }}
                       >
-                        <Suspense
-                          fallback={
-                            <SkeletonChart
-                              variant={SKELETON_VARIANTS[chart.type]}
-                              height="100%"
-                            />
-                          }
-                        >
+                        <Suspense fallback={<BAISkeleton />}>
                           <ResourceChartContent
                             key={`${resourceType}:${JSON.stringify(filter ?? null)}`}
                             descriptor={{
