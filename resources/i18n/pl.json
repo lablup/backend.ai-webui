@@ -4428,6 +4428,7 @@
   "webuiAssistant": {
     "ChangeConnection": "Zmień połączenie",
     "ClearConversation": "Wyczyść rozmowę",
+    "ClearConversationConfirm": "Wyczyścić tę rozmowę?",
     "Connect": "Połącz",
     "ConnectDescription": "Asystent WebUI odpowiada na pytania o WebUI na podstawie podręcznika użytkownika. Połącz go z wdrożeniem lub punktem końcowym zgodnym z OpenAI, który udostępnia model czatu. Połączenie jest zapisywane na Twoim koncie.",
     "ConnectTitle": "Połącz asystenta WebUI",

@@ -4427,6 +4427,7 @@
   "webuiAssistant": {
     "ChangeConnection": "Холболтыг өөрчлөх",
     "ClearConversation": "Ярианы түүхийг арилгах",
+    "ClearConversationConfirm": "Энэ ярианы түүхийг арилгах уу?",
     "Connect": "Холбох",
     "ConnectDescription": "WebUI туслах нь хэрэглэгчийн гарын авлагад үндэслэн WebUI-н хэрэглээний асуултад хариулдаг. Чатын загвар үйлчилдэг байршуулалт эсвэл OpenAI-тай нийцтэй endpoint-д холбоно уу. Холболтын мэдээлэл таны бүртгэлд хадгалагдана.",
     "ConnectTitle": "WebUI туслахыг холбох",

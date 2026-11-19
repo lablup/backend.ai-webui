@@ -4410,6 +4410,7 @@
   "webuiAssistant": {
     "ChangeConnection": "Change connection",
     "ClearConversation": "Clear conversation",
+    "ClearConversationConfirm": "Clear this conversation?",
     "Connect": "Connect",
     "ConnectDescription": "The WebUI Assistant answers questions about WebUI from the user manual. Connect it to a deployment, or to any OpenAI-compatible endpoint, that serves a chat model. The connection is saved to your account.",
     "ConnectTitle": "Connect WebUI Assistant",

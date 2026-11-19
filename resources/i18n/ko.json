@@ -4428,6 +4428,7 @@
   "webuiAssistant": {
     "ChangeConnection": "연결 변경",
     "ClearConversation": "대화 지우기",
+    "ClearConversationConfirm": "이 대화를 지울까요?",
     "Connect": "연결",
     "ConnectDescription": "WebUI 도우미는 사용자 매뉴얼을 근거로 WebUI 사용법에 답합니다. 채팅 모델을 서비스하는 배포나 OpenAI 호환 엔드포인트에 연결하세요. 연결 정보는 내 계정에 저장됩니다.",
     "ConnectTitle": "WebUI 도우미 연결",

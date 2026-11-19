@@ -4427,6 +4427,7 @@
   "webuiAssistant": {
     "ChangeConnection": "更改连接",
     "ClearConversation": "清空对话",
+    "ClearConversationConfirm": "清空此对话？",
     "Connect": "连接",
     "ConnectDescription": "WebUI 助手根据用户手册回答 WebUI 使用问题。请将其连接到提供聊天模型的部署或任意 OpenAI 兼容端点。连接信息保存在你的账户中。",
     "ConnectTitle": "连接 WebUI 助手",

@@ -4425,6 +4425,7 @@
   "webuiAssistant": {
     "ChangeConnection": "Tukar sambungan",
     "ClearConversation": "Kosongkan perbualan",
+    "ClearConversationConfirm": "Kosongkan perbualan ini?",
     "Connect": "Sambung",
     "ConnectDescription": "Pembantu WebUI menjawab soalan tentang WebUI berdasarkan manual pengguna. Sambungkannya ke penggunaan atau endpoint serasi OpenAI yang menyediakan model sembang. Sambungan disimpan dalam akaun anda.",
     "ConnectTitle": "Sambung Pembantu WebUI",

@@ -4427,6 +4427,7 @@
   "webuiAssistant": {
     "ChangeConnection": "接続を変更",
     "ClearConversation": "会話をクリア",
+    "ClearConversationConfirm": "この会話をクリアしますか？",
     "Connect": "接続",
     "ConnectDescription": "WebUI アシスタントはユーザーマニュアルに基づいて WebUI の使い方に答えます。チャットモデルを提供するデプロイ、または OpenAI 互換エンドポイントに接続してください。接続情報はアカウントに保存されます。",
     "ConnectTitle": "WebUI アシスタントを接続",

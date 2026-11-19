@@ -4427,6 +4427,7 @@
   "webuiAssistant": {
     "ChangeConnection": "Đổi kết nối",
     "ClearConversation": "Xóa cuộc trò chuyện",
+    "ClearConversationConfirm": "Xóa cuộc trò chuyện này?",
     "Connect": "Kết nối",
     "ConnectDescription": "Trợ lý WebUI trả lời câu hỏi về WebUI dựa trên hướng dẫn sử dụng. Hãy kết nối trợ lý với một triển khai hoặc một endpoint tương thích OpenAI phục vụ mô hình trò chuyện. Kết nối được lưu vào tài khoản của bạn.",
     "ConnectTitle": "Kết nối trợ lý WebUI",

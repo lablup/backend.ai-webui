@@ -20,8 +20,8 @@ import {
 import { IconButton } from '@lablup/ui-common/IconButton';
 import { Spinner } from '@lablup/ui-common/Spinner';
 import { Text } from '@lablup/ui-common/Text';
-import { BAIFlex, BAIUnmountAfterClose } from 'backend.ai-ui';
-import { MessageCircle, PlugZap, RotateCcw, X } from 'lucide-react';
+import { BAIFlex, BAIPopconfirm, BAIUnmountAfterClose } from 'backend.ai-ui';
+import { EraserIcon, MessageCircle, PlugZap, X } from 'lucide-react';
 import { Suspense, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -112,14 +112,20 @@ const WebUIAssistantFloating: React.FC = () => {
               tooltip={t('webuiAssistant.ChangeConnection')}
               onClick={() => setIsConnectOpen(true)}
             />
-            <IconButton
-              variant="ghost"
-              size="sm"
-              icon={<RotateCcw size="1em" />}
-              label={t('webuiAssistant.ClearConversation')}
-              tooltip={t('webuiAssistant.ClearConversation')}
-              onClick={() => setConversationKey((key) => key + 1)}
-            />
+            <BAIPopconfirm
+              title={t('webuiAssistant.ClearConversationConfirm')}
+              okText={t('webuiAssistant.ClearConversation')}
+              isDanger
+              onConfirm={() => setConversationKey((key) => key + 1)}
+            >
+              <IconButton
+                variant="ghost"
+                size="sm"
+                icon={<EraserIcon size="1em" />}
+                label={t('webuiAssistant.ClearConversation')}
+                tooltip={t('webuiAssistant.ClearConversation')}
+              />
+            </BAIPopconfirm>
           </BAIFlex>
         </BAIFlex>
         {hasBeenShown &&

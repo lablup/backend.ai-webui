@@ -4411,6 +4411,7 @@
   "webuiAssistant": {
     "ChangeConnection": "เปลี่ยนการเชื่อมต่อ",
     "ClearConversation": "ล้างการสนทนา",
+    "ClearConversationConfirm": "ล้างการสนทนานี้หรือไม่",
     "Connect": "เชื่อมต่อ",
     "ConnectDescription": "ผู้ช่วย WebUI ตอบคำถามการใช้งาน WebUI จากคู่มือผู้ใช้ เชื่อมต่อกับการปรับใช้หรือเอนด์พอยต์ที่เข้ากันได้กับ OpenAI ซึ่งให้บริการโมเดลแชท ข้อมูลการเชื่อมต่อจะบันทึกไว้ในบัญชีของคุณ",
     "ConnectTitle": "เชื่อมต่อผู้ช่วย WebUI",

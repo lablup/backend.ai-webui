@@ -4429,6 +4429,7 @@
   "webuiAssistant": {
     "ChangeConnection": "Ubah koneksi",
     "ClearConversation": "Hapus percakapan",
+    "ClearConversationConfirm": "Hapus percakapan ini?",
     "Connect": "Hubungkan",
     "ConnectDescription": "Asisten WebUI menjawab pertanyaan tentang WebUI berdasarkan panduan pengguna. Hubungkan ke penerapan atau endpoint yang kompatibel dengan OpenAI yang menyajikan model obrolan. Koneksi disimpan di akun Anda.",
     "ConnectTitle": "Hubungkan Asisten WebUI",

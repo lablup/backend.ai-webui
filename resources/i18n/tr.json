@@ -4425,6 +4425,7 @@
   "webuiAssistant": {
     "ChangeConnection": "Bağlantıyı değiştir",
     "ClearConversation": "Sohbeti temizle",
+    "ClearConversationConfirm": "Bu sohbet temizlensin mi?",
     "Connect": "Bağlan",
     "ConnectDescription": "WebUI Asistanı, kullanıcı kılavuzuna dayanarak WebUI hakkındaki soruları yanıtlar. Sohbet modeli sunan bir dağıtıma veya OpenAI uyumlu bir uç noktaya bağlayın. Bağlantı hesabınıza kaydedilir.",
     "ConnectTitle": "WebUI Asistanını bağla",

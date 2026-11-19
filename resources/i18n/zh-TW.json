@@ -4429,6 +4429,7 @@
   "webuiAssistant": {
     "ChangeConnection": "變更連線",
     "ClearConversation": "清除對話",
+    "ClearConversationConfirm": "清除此對話？",
     "Connect": "連線",
     "ConnectDescription": "WebUI 助理根據使用者手冊回答 WebUI 使用問題。請將它連線到提供聊天模型的部署或任何 OpenAI 相容端點。連線資訊會儲存在你的帳號中。",
     "ConnectTitle": "連線 WebUI 助理",

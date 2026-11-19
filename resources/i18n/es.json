@@ -4425,6 +4425,7 @@
   "webuiAssistant": {
     "ChangeConnection": "Cambiar conexión",
     "ClearConversation": "Borrar conversación",
+    "ClearConversationConfirm": "¿Borrar esta conversación?",
     "Connect": "Conectar",
     "ConnectDescription": "El asistente de WebUI responde preguntas sobre WebUI a partir del manual de usuario. Conéctelo a un despliegue o a un endpoint compatible con OpenAI que sirva un modelo de chat. La conexión se guarda en su cuenta.",
     "ConnectTitle": "Conectar el asistente de WebUI",

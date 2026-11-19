@@ -4426,6 +4426,7 @@
   "webuiAssistant": {
     "ChangeConnection": "Vaihda yhteys",
     "ClearConversation": "Tyhjennä keskustelu",
+    "ClearConversationConfirm": "Tyhjennetäänkö tämä keskustelu?",
     "Connect": "Yhdistä",
     "ConnectDescription": "WebUI-avustaja vastaa WebUI:ta koskeviin kysymyksiin käyttöoppaan perusteella. Yhdistä se käyttöönottoon tai OpenAI-yhteensopivaan päätepisteeseen, joka tarjoaa keskustelumallin. Yhteys tallennetaan tilillesi.",
     "ConnectTitle": "Yhdistä WebUI-avustaja",

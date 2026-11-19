@@ -4425,6 +4425,7 @@
   "webuiAssistant": {
     "ChangeConnection": "Αλλαγή σύνδεσης",
     "ClearConversation": "Εκκαθάριση συνομιλίας",
+    "ClearConversationConfirm": "Εκκαθάριση αυτής της συνομιλίας;",
     "Connect": "Σύνδεση",
     "ConnectDescription": "Ο βοηθός WebUI απαντά σε ερωτήσεις για το WebUI με βάση το εγχειρίδιο χρήστη. Συνδέστε τον σε μια ανάπτυξη ή σε ένα endpoint συμβατό με OpenAI που εξυπηρετεί μοντέλο συνομιλίας. Η σύνδεση αποθηκεύεται στον λογαριασμό σας.",
     "ConnectTitle": "Σύνδεση βοηθού WebUI",
