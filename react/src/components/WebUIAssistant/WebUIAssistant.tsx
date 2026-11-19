@@ -24,6 +24,7 @@ import { BAIFlex, BAIPopconfirm, BAIUnmountAfterClose } from 'backend.ai-ui';
 import { EraserIcon, MessageCircle, PlugZap, X } from 'lucide-react';
 import { Suspense, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useLocation } from 'react-router-dom';
 
 /** The floating WebUI Assistant; renders nothing until the user turns it on. */
 const WebUIAssistant: React.FC = () => {
@@ -45,6 +46,13 @@ const WebUIAssistantFloating: React.FC = () => {
   const [isConnectOpen, setIsConnectOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [conversationKey, setConversationKey] = useState(0);
+  // A link inside the modal (the token settings shortcut) leaves the page; the modal must not cover the new one.
+  const { pathname } = useLocation();
+  const [connectPathname, setConnectPathname] = useState(pathname);
+  if (pathname !== connectPathname) {
+    setConnectPathname(pathname);
+    setIsConnectOpen(false);
+  }
 
   const profile = agents.find((agent) => agent.id === WEBUI_ASSISTANT_AGENT_ID);
   const apiKey = useCustomEndpointApiKey(WEBUI_ASSISTANT_KEY_ID);
