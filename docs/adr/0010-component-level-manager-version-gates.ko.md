@@ -1,6 +1,6 @@
 # 0010 — Component-level manager version gates
 
-> Decision 1절의 **Floor location**(기준 line을 이 ADR의 본문이 정한다는 것)은 [ADR 0011](0011-manager-compatibility-policy-in-the-team-dev-catalog.ko.md)이 대신한다. 기준 line은 branch마다 팀 dev catalog의 policy가 선언하고, 지원 범위는 그 line부터 branch 자신의 line까지이며, `pnpm run dev-env compat`이 읽는다. 이 문서가 적은 `26.4`는 결정 당시의 값이다. gate를 지우는 규칙과 나머지 결정은 그대로 유지된다.
+> Decision 1절의 **Floor location**(기준 line을 이 ADR의 본문이 정한다는 것)은 [ADR 0011](0011-manager-compatibility-policy-in-the-team-dev-catalog.ko.md)이 대신한다. 기준 line은 branch마다 팀 dev catalog의 policy가 선언하고, 지원 범위는 그 line부터 branch 자신의 line까지이며, `pnpm run dev-env compat`이 읽는다. 이 문서가 적은 `26.4`는 결정 당시의 값이다. gate를 지우는 규칙과 나머지 결정은 그대로 발효 중이다.
 >
 > [ADR 0012](0012-scoped-search-fields-in-place-of-admin-fields.ko.md)가 `scoped*` field로 바꾼 화면은 그 floor와 상관없이 26.9.0a4 이상 매니저를 요구한다.
 
@@ -123,7 +123,7 @@ flowchart TD
 
 - Jira: FR-3980. GitHub: #9738, PR #9739.
 - 결정일: 2026-09-17.
-- 관련: [ADR 0006](0006-version-gated-field-pairs-across-manager-versions.ko.md)의 field pair는 그대로 유지되고, 그 4절의 feature flag 규칙을 이 ADR이 대신한다. [ADR 0003](0003-committed-search-index-artifact.ko.md)은 `TAB_GATES`를 쓰는 전역 검색 palette의 인덱스를 정한다. 코드: `packages/backend.ai-client/src/client.ts`, `packages/backend.ai-client/src/pep440.ts`, `react/src/helper/graphql-transformer.ts`, `e2e/utils/feature-gate-util.ts`.
+- 관련: [ADR 0006](0006-version-gated-field-pairs-across-manager-versions.ko.md)의 field pair는 그대로 발효 중이고, 그 4절의 feature flag 규칙을 이 ADR이 대신한다. [ADR 0003](0003-committed-search-index-artifact.ko.md)은 `TAB_GATES`를 쓰는 전역 검색 palette의 인덱스를 정한다. 코드: `packages/backend.ai-client/src/client.ts`, `packages/backend.ai-client/src/pep440.ts`, `react/src/helper/graphql-transformer.ts`, `e2e/utils/feature-gate-util.ts`.
 
 ## 용어
 

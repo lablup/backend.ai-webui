@@ -9,7 +9,7 @@
 - 어떤 모듈을 몇 페이지가 쓰는지는 전체 import 그래프로 센다. 페이지 파일만이 아니라 hook·helper·다른 component의 import도 센다.
 - 3곳 이하의 페이지가 쓰는 모듈은 페이지 밖 공용 코드가 import하지 않는 한 페이지 폴더에 둔다. 4곳 이상이 쓰거나 공용 코드가 import하는 모듈은 host app에 의존하면 `react/src/components`·`hooks`·`helper`에, 아니면 `.claude/rules/bui-component-home.md`대로 `backend.ai-ui`나 `@lablup/ui-common`에 둔다.
 - 페이지 폴더마다 `CLAUDE.md`를 두어 그 페이지의 성격(route, 사용자, 다루는 데이터, 지켜야 할 제약)을 적는다.
-- 이 결정을 병합한 PR은 모든 페이지를 폴더로 나누고 페이지 전용 component를 그 폴더로 옮겼다. 무엇을 옮기고 무엇을 남겼는지는 4절에 있다.
+- 이 결정이 착지한 PR은 모든 페이지를 폴더로 나누고 페이지 전용 component를 그 폴더로 옮겼다. 무엇을 옮기고 무엇을 남겼는지는 4절에 있다.
 
 ## Context
 
@@ -88,7 +88,7 @@ component·hook·helper 모두 같은 규칙을 따른다. 페이지 폴더 안�
 
 ### 4. 옮기는 시점
 
-새 코드는 처음부터 이 규칙대로 둔다. 이 결정을 병합한 PR은 다음만 했다.
+새 코드는 처음부터 이 규칙대로 둔다. 이 결정이 착지한 PR은 다음만 했다.
 
 - 모든 페이지를 1절의 폴더로 나눴다.
 - 2절 기준(전체 import 그래프)으로 사용 페이지가 1곳인 손으로 쓴 component를 그 페이지의 `components/`로 옮겼다. 폴더 일부만 페이지 전용인 `DashboardPanels/`는 나누지 않았다. `StartPage`만 닿는 `HuggingFaceModelPreview`는 `react/src/components`에 남았다.
