@@ -242,9 +242,12 @@ test.describe(
                   if (error.name !== 'TimeoutError') throw error;
                 })
               : undefined;
-          if (wasShown !== shown) await checkbox.click();
-          await dashboardBar.getByRole('button', { name: 'Close' }).click();
-          await saved;
+          try {
+            if (wasShown !== shown) await checkbox.click();
+            await dashboardBar.getByRole('button', { name: 'Close' }).click();
+          } finally {
+            await saved;
+          }
           return wasShown;
         };
         const failureCausesWidget = (page: Page) =>
