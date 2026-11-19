@@ -564,7 +564,7 @@ test.describe(
       expect(publicDoc?.[api.domainName]?.settings?.ssoRealmName).toBe(
         'e2e-realm',
       );
-      if (fileVendors.includes('openid')) {
+      if (defaultVendors.includes('openid')) {
         await expect(
           page.getByRole('button', { name: 'Login with e2e-realm' }),
         ).toBeVisible();
