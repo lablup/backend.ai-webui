@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import type { AuditLogScope } from '../../__generated__/AuditLogPanelScopedListQuery.graphql';
 import type { SessionGridViewParams } from '../../helper/sessionResourceGridData';
 import type { UserRole } from '../../helper/userRole';
 import type { MenuKeys } from '../../hooks/useWebUIMenuItems';
@@ -18,7 +19,12 @@ import type React from 'react';
 import type { GraphQLTaggedNode, OperationType } from 'relay-runtime';
 
 /** Data sources a custom panel can list. */
-export const RESOURCE_KEYS = ['session', 'deployment', 'vfolder'] as const;
+export const RESOURCE_KEYS = [
+  'session',
+  'deployment',
+  'vfolder',
+  'auditLog',
+] as const;
 export type ResourceKey = (typeof RESOURCE_KEYS)[number];
 
 /** Panel kinds the panel registry renders (table rows, a count, the session grid, a chart). */
@@ -347,6 +353,8 @@ export interface ResourceQueryArgs {
   domainId: string;
   /** The viewer, when the page reads only the viewer's own rows (the member page). */
   ownerId: string | null;
+  /** The audit log scope of the page, resolved by `useAuditLogQueryScope`; audit log sources only. */
+  auditScope?: AuditLogScope | null;
 }
 
 /** Normalized connection slice the executor renders. */
@@ -374,9 +382,11 @@ export interface ResourceConfig<
   /** The source can be narrowed to resource groups (the panel's setting). */
   supportsResourceGroup?: boolean;
   /** Render the list page's own table instead of the generic one. */
-  kind?: 'sessionNodes' | 'deploymentNodes';
+  kind?: 'sessionNodes' | 'deploymentNodes' | 'auditLogNodes';
   getFilterProperties?: (
     t: TFunction,
+    /** The entity types the manager lists, for an audit log source's picker. */
+    context?: { entityTypes?: ReadonlyArray<string> },
   ) => ReadonlyArray<BAIGraphQLFilterProperty>;
   /** Properties for `BAIPropertyFilter` (string filter), `kind: 'sessionNodes'`. */
   getStringFilterProperties?: (t: TFunction) => Array<FilterProperty>;

@@ -2,13 +2,17 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import type { resourceRegistryAuditLogQuery } from '../../__generated__/resourceRegistryAuditLogQuery.graphql';
 import type { resourceRegistryDeploymentQuery } from '../../__generated__/resourceRegistryDeploymentQuery.graphql';
 import type { resourceRegistrySessionQuery } from '../../__generated__/resourceRegistrySessionQuery.graphql';
 import type { resourceRegistryVfolderQuery } from '../../__generated__/resourceRegistryVfolderQuery.graphql';
 import { convertToOrderBy } from '../../helper';
 import FolderLink from '../FolderLink';
+import { auditEntityTypeLabels } from './chartSources';
+import { AUDIT_LOG_STATUSES } from './memberCards/memberCardData';
 import { readPrimary, type CaughtValue } from './panelPermission';
 import { getSessionFilterProperties } from './sessionFilterProperties';
+import { AUDIT_ENTITY_TYPES } from './superadminCards/superadminCardData';
 import type {
   PanelDescriptor,
   ResourceConfig,
@@ -23,6 +27,7 @@ import {
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import type { TFunction } from 'i18next';
+import * as _ from 'lodash-es';
 import { graphql } from 'react-relay';
 import type { OperationType } from 'relay-runtime';
 
@@ -360,12 +365,125 @@ const vfolderConfig: ResourceConfig<resourceRegistryVfolderQuery, VfolderNode> =
       selectOffsetConnection(readPrimary(data.scopedVFoldersV2)),
   };
 
+/** The audit log source's query on the superadmin page, which reads every record (`isClusterAuditScope`). */
+export const auditLogClusterQuery = graphql`
+  query resourceRegistryAuditLogClusterQuery(
+    $filter: AuditLogFilter
+    $orderBy: [AuditLogOrderBy!]
+    $limit: Int
+    $offset: Int
+  ) {
+    scopedAuditLogsV2: adminAuditLogsV2(
+      filter: $filter
+      orderBy: $orderBy
+      limit: $limit
+      offset: $offset
+    ) @catch(to: RESULT) {
+      count
+      edges {
+        node {
+          id
+          ...BAIAuditLogNodesFragment
+        }
+      }
+    }
+  }
+`;
+
+// Rows render through BAIAuditLogNodes (`kind: 'auditLogNodes'`), so no columns here.
+const auditLogConfig: ResourceConfig<resourceRegistryAuditLogQuery, unknown> = {
+  key: 'auditLog',
+  labelKey: 'auditLog.AuditLog',
+  defaultOrder: '-createdAt',
+  kind: 'auditLogNodes',
+  query: graphql`
+    query resourceRegistryAuditLogQuery(
+      $scope: AuditLogScope!
+      $filter: AuditLogFilter
+      $orderBy: [AuditLogOrderBy!]
+      $limit: Int
+      $offset: Int
+    ) {
+      scopedAuditLogsV2(
+        scope: $scope
+        filter: $filter
+        orderBy: $orderBy
+        limit: $limit
+        offset: $offset
+      ) @catch(to: RESULT) {
+        count
+        edges {
+          node {
+            id
+            ...BAIAuditLogNodesFragment
+          }
+        }
+      }
+    }
+  `,
+  getFilterProperties: (t, context) => [
+    {
+      key: 'entityType',
+      propertyLabel: t('dashboard.card.EntityType'),
+      type: 'enum',
+      // Picked, never typed: the table shows translated labels, and a typed
+      // label would be sent as the value.
+      strictSelection: true,
+      options: (() => {
+        const types = _.uniq([
+          ...(context?.entityTypes ?? []),
+          ...AUDIT_ENTITY_TYPES,
+        ]);
+        const labels = auditEntityTypeLabels(t, types);
+        return _.sortBy(
+          types.map((type) => ({ value: type, label: labels[type] })),
+          (option) => option.label,
+        );
+      })(),
+    },
+    {
+      key: 'status',
+      propertyLabel: t('auditLog.Result'),
+      type: 'enum',
+      strictSelection: true,
+      options: AUDIT_LOG_STATUSES.map(([status, labelKey]) => ({
+        value: status,
+        label: t(labelKey),
+      })),
+    },
+    {
+      key: 'actionName',
+      propertyLabel: t('auditLog.Action'),
+      type: 'string',
+    },
+    {
+      key: 'operation',
+      propertyLabel: t('auditLog.Operation'),
+      type: 'string',
+    },
+  ],
+  // The scope comes from `useAuditLogQueryScope` only, so no caller can fall back to a narrower one.
+  buildVariables: ({ filter, order, limit, offset, auditScope }) => {
+    if (!auditScope) throw new Error('This page has no audit log scope yet');
+    return {
+      scope: auditScope,
+      filter: typeof filter === 'string' ? undefined : (filter ?? undefined),
+      orderBy: convertToOrderBy(order ?? '-createdAt'),
+      limit,
+      offset,
+    };
+  },
+  selectConnection: (data) =>
+    selectOffsetConnection(readPrimary(data.scopedAuditLogsV2)),
+};
+
 export const resourceRegistry: {
   [K in ResourceKey]: ResourceConfig<any, any>;
 } = {
   session: sessionConfig,
   deployment: deploymentConfig,
   vfolder: vfolderConfig,
+  auditLog: auditLogConfig,
 };
 
 export const resourceKeys = Object.keys(resourceRegistry) as ResourceKey[];

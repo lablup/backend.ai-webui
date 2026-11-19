@@ -2,11 +2,13 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import type { DashboardPanelModalEntityTypesQuery } from '../../__generated__/DashboardPanelModalEntityTypesQuery.graphql';
 import { Form } from '../../form-engine';
 import {
   DEFAULT_SESSION_GRID_VIEW,
   type SessionGridViewParams,
 } from '../../helper/sessionResourceGridData';
+import { AuditLogNodesPanelContent } from './AuditLogNodesPanel';
 import { DeploymentNodesPanelContent } from './DeploymentNodesPanel';
 import PanelRangeSelect, { NO_PERIOD } from './PanelRangeSelect';
 import { ResourceChartContent } from './ResourceChartPanel';
@@ -47,6 +49,7 @@ import {
   BAIBoardItemErrorBoundary,
   BAIFlex,
   BAIGraphQLPropertyFilter,
+  type BAIGraphQLPropertyFilterProps,
   BAIModal,
   BAIPropertyFilter,
   BAISkeleton,
@@ -63,6 +66,7 @@ import {
 } from 'lucide-react';
 import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { graphql, useLazyLoadQuery } from 'react-relay';
 
 export interface DashboardPanelModalProps {
   open: boolean;
@@ -103,6 +107,65 @@ const CHART_TYPE_LABELS: Record<
     labelKey: 'dashboard.panelModal.Column',
     icon: <ChartNoAxesColumn />,
   },
+};
+
+type ConditionFilterProps = Omit<
+  BAIGraphQLPropertyFilterProps,
+  'filterProperties'
+> & { source: ResourceKey };
+
+/** An audit log condition picks entity types from the manager's list. */
+const AuditLogConditionFilter: React.FC<ConditionFilterProps> = ({
+  source,
+  ...filterProps
+}) => {
+  'use memo';
+  const { t } = useTranslation();
+  const data = useLazyLoadQuery<DashboardPanelModalEntityTypesQuery>(
+    graphql`
+      query DashboardPanelModalEntityTypesQuery {
+        entityTypes @catch(to: NULL) {
+          name
+        }
+      }
+    `,
+    {},
+    { fetchPolicy: 'store-or-network' },
+  );
+  return (
+    <BAIGraphQLPropertyFilter
+      style={{ width: '100%' }}
+      {...filterProps}
+      filterProperties={[
+        ...(resourceRegistry[source].getFilterProperties?.(t, {
+          // Without the manager's list the fixed one still offers the common types.
+          entityTypes: data.entityTypes?.map((type) => type.name) ?? [],
+        }) ?? []),
+      ]}
+    />
+  );
+};
+
+/** The condition filter of a V2 source. */
+const ConditionFilter: React.FC<ConditionFilterProps> = ({
+  source,
+  ...filterProps
+}) => {
+  'use memo';
+  const { t } = useTranslation();
+  return source === 'auditLog' ? (
+    <Suspense fallback={<BAISkeleton />}>
+      <AuditLogConditionFilter source={source} {...filterProps} />
+    </Suspense>
+  ) : (
+    <BAIGraphQLPropertyFilter
+      style={{ width: '100%' }}
+      {...filterProps}
+      filterProperties={[
+        ...(resourceRegistry[source].getFilterProperties?.(t) ?? []),
+      ]}
+    />
+  );
 };
 
 /**
@@ -240,6 +303,18 @@ const DashboardPanelModal: React.FC<DashboardPanelModalProps> = ({
         onChangeOrder={(next) => setOrder(next ?? null)}
         disableNavigation
       />
+    ) : config.kind === 'auditLogNodes' ? (
+      <AuditLogNodesPanelContent
+        key={`${resourceType}:${JSON.stringify(previewFilter ?? null)}`}
+        descriptor={{
+          resourceType,
+          filter: previewFilter ?? null,
+          order,
+          range,
+          tableWindow,
+        }}
+        onChangeOrder={(next) => setOrder(next ?? null)}
+      />
     ) : config.kind === 'sessionNodes' ? (
       <SessionNodesPanelContent
         key={`${resourceType}:${JSON.stringify(previewFilter ?? null)}`}
@@ -271,7 +346,7 @@ const DashboardPanelModal: React.FC<DashboardPanelModalProps> = ({
   return (
     <BAIModal
       open={open}
-      width="min(960px, 95vw)"
+      width="min(1280px, 95vw)"
       title={
         initialPanel
           ? t('dashboard.panelModal.EditPanel')
@@ -463,10 +538,7 @@ const DashboardPanelModal: React.FC<DashboardPanelModalProps> = ({
               filterProperties={config.getStringFilterProperties?.(t) ?? []}
             />
           ) : (
-            <BAIGraphQLPropertyFilter
-              style={{ width: '100%' }}
-              filterProperties={[...(config.getFilterProperties?.(t) ?? [])]}
-            />
+            <ConditionFilter source={resourceType} />
           )}
         </Form.Item>
       </Form>
@@ -487,8 +559,12 @@ const DashboardPanelModal: React.FC<DashboardPanelModalProps> = ({
             border: `1px solid ${token('--color-border')}`,
             borderRadius: token('--radius-inner'),
             padding: token('--spacing-3'),
-            maxHeight: 360,
-            overflow: 'auto',
+            // A table sits flush under the border; its header row is its top edge.
+            ...(panelType === 'resourceTable' ? { paddingTop: 0 } : {}),
+            // The modal body scrolls and the table scrolls sideways on its own;
+            // this only clips the table's full-bleed edges to the box.
+            minWidth: 0,
+            overflow: 'hidden',
           }}
         >
           {open ? (

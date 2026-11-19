@@ -6,7 +6,7 @@ import type {
   AuditLogScope,
   TopFailureCausesPanelQuery,
 } from '../../../__generated__/TopFailureCausesPanelQuery.graphql';
-import { DomainAuditScope } from '../cards/AuditLogPanel';
+import { DomainAuditScope, isClusterAuditScope } from '../cards/AuditLogPanel';
 import ScopedCard from '../cards/ScopedCard';
 import { readPrimary } from '../panelPermission';
 import { projectAuditScope } from '../projectAdminCards/projectCardData';
@@ -53,28 +53,49 @@ const FailureCauses: React.FC<{
   const [listed, setListed] = useState<FailureCause | null>(null);
   const [isListOpen, setIsListOpen] = useState(false);
   const data = useLazyLoadQuery<TopFailureCausesPanelQuery>(
-    graphql`
-      query TopFailureCausesPanelQuery(
-        $scope: AuditLogScope!
-        $filter: AuditLogFilter!
-        $limit: Int!
-      ) {
-        failures: scopedAuditLogsV2(
-          scope: $scope
-          filter: $filter
-          orderBy: [{ field: CREATED_AT, direction: DESC }]
-          limit: $limit
-        ) @catch(to: RESULT) {
-          count
-          edges {
-            node {
-              actionName
-              description
+    isClusterAuditScope(scope)
+      ? graphql`
+          query TopFailureCausesPanelClusterQuery(
+            $filter: AuditLogFilter!
+            $limit: Int!
+          ) {
+            failures: adminAuditLogsV2(
+              filter: $filter
+              orderBy: [{ field: CREATED_AT, direction: DESC }]
+              limit: $limit
+            ) @catch(to: RESULT) {
+              count
+              edges {
+                node {
+                  actionName
+                  description
+                }
+              }
             }
           }
-        }
-      }
-    `,
+        `
+      : graphql`
+          query TopFailureCausesPanelQuery(
+            $scope: AuditLogScope!
+            $filter: AuditLogFilter!
+            $limit: Int!
+          ) {
+            failures: scopedAuditLogsV2(
+              scope: $scope
+              filter: $filter
+              orderBy: [{ field: CREATED_AT, direction: DESC }]
+              limit: $limit
+            ) @catch(to: RESULT) {
+              count
+              edges {
+                node {
+                  actionName
+                  description
+                }
+              }
+            }
+          }
+        `,
     deferredVariables,
     { fetchPolicy: 'store-and-network', fetchKey },
   );
