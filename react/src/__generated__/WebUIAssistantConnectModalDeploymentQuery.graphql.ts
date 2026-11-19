@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<f87c2a58c35359a07182ba56fd1bf78c>>
+ * @generated SignedSource<<62c0f73a08407c6c79678be43d92e44a>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,19 +10,13 @@
 
 import { ConcreteRequest } from 'relay-runtime';
 import { Result } from "relay-runtime";
-export type DeploymentStatus = "DEPLOYING" | "PENDING" | "READY" | "SCALING" | "STOPPED" | "STOPPING" | "%future added value";
 export type WebUIAssistantConnectModalDeploymentQuery$variables = {
   id: string;
 };
 export type WebUIAssistantConnectModalDeploymentQuery$data = {
   readonly deployment: Result<{
-    readonly metadata: {
-      readonly name: string;
-      readonly status: DeploymentStatus;
-    };
     readonly networkAccess: {
       readonly endpointUrl: string | null | undefined;
-      readonly openToPublic: boolean;
     };
   } | null | undefined, unknown>;
 };
@@ -49,31 +43,6 @@ v1 = [
 v2 = {
   "alias": null,
   "args": null,
-  "concreteType": "ModelDeploymentMetadata",
-  "kind": "LinkedField",
-  "name": "metadata",
-  "plural": false,
-  "selections": [
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "name",
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "status",
-      "storageKey": null
-    }
-  ],
-  "storageKey": null
-},
-v3 = {
-  "alias": null,
-  "args": null,
   "concreteType": "ModelDeploymentNetworkAccess",
   "kind": "LinkedField",
   "name": "networkAccess",
@@ -84,13 +53,6 @@ v3 = {
       "args": null,
       "kind": "ScalarField",
       "name": "endpointUrl",
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "openToPublic",
       "storageKey": null
     }
   ],
@@ -113,8 +75,7 @@ return {
           "name": "deployment",
           "plural": false,
           "selections": [
-            (v2/*: any*/),
-            (v3/*: any*/)
+            (v2/*: any*/)
           ],
           "storageKey": null
         },
@@ -139,7 +100,6 @@ return {
         "plural": false,
         "selections": [
           (v2/*: any*/),
-          (v3/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -153,16 +113,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "ead5e9908395e04f98fda9b91d804d5b",
+    "cacheID": "2b646462a0168045df889a8d9265bc73",
     "id": null,
     "metadata": {},
     "name": "WebUIAssistantConnectModalDeploymentQuery",
     "operationKind": "query",
-    "text": "query WebUIAssistantConnectModalDeploymentQuery(\n  $id: ID!\n) {\n  deployment(id: $id) {\n    metadata {\n      name\n      status\n    }\n    networkAccess {\n      endpointUrl\n      openToPublic\n    }\n    id\n  }\n}\n"
+    "text": "query WebUIAssistantConnectModalDeploymentQuery(\n  $id: ID!\n) {\n  deployment(id: $id) {\n    networkAccess {\n      endpointUrl\n    }\n    id\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "42d1de6e214c4300013093ed366552b9";
+(node as any).hash = "ef062b9b7948a0f98c946b8c961b3857";
 
 export default node;

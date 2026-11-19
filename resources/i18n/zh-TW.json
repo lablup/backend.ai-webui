@@ -4442,11 +4442,10 @@
     "ModelLoading": "正在連線模型…",
     "NoEndpointURL": "此部署尚無端點 URL。請等待它就緒，或選擇其他部署。",
     "Open": "開啟 WebUI 助理",
-    "OpenDeploymentDetail": "開啟部署詳細資料",
     "Placeholder": "詢問關於 WebUI 的問題",
-    "ServedModels": "模型",
     "Token": "權杖",
-    "TokenHint": "此部署未公開。請選擇其中一個存取權杖。"
+    "TokenHint": "此部署未公開。請選擇其中一個存取權杖。",
+    "ViewModelInfo": "檢視模型資訊"
   },
   "webuiSettings": {
     "AllowAnonymousChangePassword": "允許重設密碼",

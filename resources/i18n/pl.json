@@ -4441,11 +4441,10 @@
     "ModelLoading": "Łączenie z modelem…",
     "NoEndpointURL": "To wdrożenie nie ma jeszcze adresu URL punktu końcowego. Poczekaj, aż będzie gotowe, lub wybierz inne.",
     "Open": "Otwórz asystenta WebUI",
-    "OpenDeploymentDetail": "Otwórz szczegóły wdrożenia",
     "Placeholder": "Zadaj pytanie o WebUI",
-    "ServedModels": "Modele",
     "Token": "Token",
-    "TokenHint": "To wdrożenie nie jest publiczne. Wybierz jeden z jego tokenów dostępu."
+    "TokenHint": "To wdrożenie nie jest publiczne. Wybierz jeden z jego tokenów dostępu.",
+    "ViewModelInfo": "Wyświetl informacje o modelu"
   },
   "webuiSettings": {
     "AllowAnonymousChangePassword": "Zezwalaj na resetowanie hasła",

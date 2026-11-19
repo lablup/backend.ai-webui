@@ -4438,11 +4438,10 @@
     "ModelLoading": "Modele bağlanılıyor…",
     "NoEndpointURL": "Bu dağıtımın henüz bir uç nokta URL'si yok. Hazır olmasını bekleyin veya başka birini seçin.",
     "Open": "WebUI Asistanını aç",
-    "OpenDeploymentDetail": "Dağıtım ayrıntılarını aç",
     "Placeholder": "WebUI hakkında bir soru sorun",
-    "ServedModels": "Modeller",
     "Token": "Belirteç",
-    "TokenHint": "Bu dağıtım herkese açık değil. Erişim belirteçlerinden birini seçin."
+    "TokenHint": "Bu dağıtım herkese açık değil. Erişim belirteçlerinden birini seçin.",
+    "ViewModelInfo": "Model bilgilerini görüntüle"
   },
   "webuiSettings": {
     "AllowAnonymousChangePassword": "Parola sıfırlamaya izin ver",

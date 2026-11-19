@@ -4423,11 +4423,10 @@
     "ModelLoading": "Connecting to the model…",
     "NoEndpointURL": "This deployment has no endpoint URL yet. Wait until it is ready, or pick another one.",
     "Open": "Open WebUI Assistant",
-    "OpenDeploymentDetail": "Open deployment details",
     "Placeholder": "Ask a question about WebUI",
-    "ServedModels": "Models",
     "Token": "Token",
-    "TokenHint": "This deployment is not public. Pick one of its access tokens."
+    "TokenHint": "This deployment is not public. Pick one of its access tokens.",
+    "ViewModelInfo": "View model info"
   },
   "webuiSettings": {
     "AllowAnonymousChangePassword": "Password reset",

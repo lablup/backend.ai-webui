@@ -4438,11 +4438,10 @@
     "ModelLoading": "Connessione al modello…",
     "NoEndpointURL": "Questa distribuzione non ha ancora un URL dell'endpoint. Attendi che sia pronta o scegline un'altra.",
     "Open": "Apri l'assistente WebUI",
-    "OpenDeploymentDetail": "Apri i dettagli del deployment",
     "Placeholder": "Fai una domanda sulla WebUI",
-    "ServedModels": "Modelli",
     "Token": "Token",
-    "TokenHint": "Questo deployment non è pubblico. Scegli uno dei suoi token di accesso."
+    "TokenHint": "Questo deployment non è pubblico. Scegli uno dei suoi token di accesso.",
+    "ViewModelInfo": "Visualizza informazioni sul modello"
   },
   "webuiSettings": {
     "AllowAnonymousChangePassword": "Consenti la reimpostazione della password",

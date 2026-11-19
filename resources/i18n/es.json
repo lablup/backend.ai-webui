@@ -4438,11 +4438,10 @@
     "ModelLoading": "Conectando con el modelo…",
     "NoEndpointURL": "Este despliegue aún no tiene URL de endpoint. Espere a que esté listo o elija otro.",
     "Open": "Abrir el asistente de WebUI",
-    "OpenDeploymentDetail": "Abrir detalles del despliegue",
     "Placeholder": "Haga una pregunta sobre WebUI",
-    "ServedModels": "Modelos",
     "Token": "Token",
-    "TokenHint": "Este despliegue no es público. Elija uno de sus tokens de acceso."
+    "TokenHint": "Este despliegue no es público. Elija uno de sus tokens de acceso.",
+    "ViewModelInfo": "Ver información del modelo"
   },
   "webuiSettings": {
     "AllowAnonymousChangePassword": "Permitir el restablecimiento de contraseña",

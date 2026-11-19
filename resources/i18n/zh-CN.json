@@ -4440,11 +4440,10 @@
     "ModelLoading": "正在连接模型…",
     "NoEndpointURL": "此部署还没有端点 URL。请等待其就绪，或选择其他部署。",
     "Open": "打开 WebUI 助手",
-    "OpenDeploymentDetail": "打开部署详情",
     "Placeholder": "询问关于 WebUI 的问题",
-    "ServedModels": "模型",
     "Token": "令牌",
-    "TokenHint": "此部署未公开。请选择其中一个访问令牌。"
+    "TokenHint": "此部署未公开。请选择其中一个访问令牌。",
+    "ViewModelInfo": "查看模型信息"
   },
   "webuiSettings": {
     "AllowAnonymousChangePassword": "允许重置密码",

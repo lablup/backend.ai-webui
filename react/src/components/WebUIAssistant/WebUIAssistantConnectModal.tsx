@@ -30,7 +30,6 @@ import { ButtonGroup } from '@lablup/ui-common/ButtonGroup';
 import { IconButton } from '@lablup/ui-common/IconButton';
 import { Spinner } from '@lablup/ui-common/Spinner';
 import { Text } from '@lablup/ui-common/Text';
-import { Tooltip } from '@lablup/ui-common/Tooltip';
 import {
   BAIFlex,
   BAIModal,
@@ -81,6 +80,8 @@ const WebUIAssistantConnectModal: React.FC<WebUIAssistantConnectModalProps> = ({
   const { t } = useTranslation();
   const { message } = App.useApp();
   const { getErrorMessage } = useErrorMessageResolver();
+  const webuiNavigate = useWebUINavigate();
+  const buildProjectPath = useProjectPath();
   const saved = useMyAppConfig<WebUIAssistantConnection>(
     WEBUI_ASSISTANT_CONFIG_KEY,
   );
@@ -100,7 +101,6 @@ const WebUIAssistantConnectModal: React.FC<WebUIAssistantConnectModalProps> = ({
   const [probed, setProbed] = useState<{
     url: string;
     result: 'open' | 'needsToken' | 'failed';
-    modelIds: string[];
   }>();
   const [failure, setFailure] = useState<string>();
   const [isConnecting, setIsConnecting] = useState(false);
@@ -143,7 +143,6 @@ const WebUIAssistantConnectModal: React.FC<WebUIAssistantConnectModalProps> = ({
           : probe.error || probe.data.length === 0
             ? 'failed'
             : 'open',
-        modelIds: probe.data.map((model) => model.id),
       });
     });
     return () => {
@@ -156,8 +155,6 @@ const WebUIAssistantConnectModal: React.FC<WebUIAssistantConnectModalProps> = ({
       ? probed.result
       : 'probing';
   const needsToken = tokenProbe === 'needsToken';
-  const servedModelIds =
-    probed?.url === deploymentURL ? probed?.modelIds : undefined;
 
   // BAIModal does not await onOk, so the pending state and failures stay in here.
   const connectDeployment = async () => {
@@ -233,24 +230,27 @@ const WebUIAssistantConnectModal: React.FC<WebUIAssistantConnectModalProps> = ({
                 />
               </BAIFlex>
               {!isCustom && deploymentId && (
-                <Suspense fallback={<DeploymentInfoButtonFallback />}>
-                  <DeploymentInfoButton
-                    deploymentId={deploymentId}
-                    servedModelIds={servedModelIds}
-                    onResolved={setEndpointURL}
+                <ButtonGroup label={t('webuiAssistant.ViewModelInfo')}>
+                  <IconButton
+                    icon={<InfoIcon />}
+                    label={t('webuiAssistant.ViewModelInfo')}
+                    tooltip={t('webuiAssistant.ViewModelInfo')}
+                    onClick={() =>
+                      webuiNavigate(
+                        buildProjectPath(`deployments/${deploymentId}`),
+                      )
+                    }
                   />
-                </Suspense>
+                </ButtonGroup>
               )}
             </BAIFlex>
           </Form.Item>
-          {!isCustom && deploymentId && endpointURL === null && (
-            <Banner
-              status="warning"
-              title={t('webuiAssistant.NoEndpointURL')}
-            />
-          )}
           {!isCustom && deploymentId && (
             <Suspense fallback={<BAISkeleton rows={2} />}>
+              <DeploymentEndpoint
+                deploymentId={deploymentId}
+                onResolved={setEndpointURL}
+              />
               {tokenProbe === 'probing' && (
                 <BAIFlex gap="xs" align="center">
                   <Spinner size="sm" />
@@ -303,46 +303,21 @@ const WebUIAssistantConnectModal: React.FC<WebUIAssistantConnectModalProps> = ({
   );
 };
 
-const DeploymentInfoButtonFallback: React.FC = () => {
-  'use memo';
-  const { t } = useTranslation();
-  return (
-    <ButtonGroup label={t('webuiAssistant.OpenDeploymentDetail')}>
-      <IconButton
-        icon={<InfoIcon />}
-        label={t('webuiAssistant.OpenDeploymentDetail')}
-        isDisabled
-      />
-    </ButtonGroup>
-  );
-};
-
-/**
- * Reads the picked deployment, reports its endpoint URL, and offers its
- * details on hover and its detail page on click.
- */
-const DeploymentInfoButton: React.FC<{
+/** Reads the deployment's endpoint URL; a deployment without one cannot be connected yet. */
+const DeploymentEndpoint: React.FC<{
   deploymentId: string;
-  servedModelIds?: string[];
   onResolved: (endpointURL: string | null) => void;
-}> = ({ deploymentId, servedModelIds, onResolved }) => {
+}> = ({ deploymentId, onResolved }) => {
   'use memo';
 
   const { t } = useTranslation();
-  const webuiNavigate = useWebUINavigate();
-  const buildProjectPath = useProjectPath();
   const { deployment } =
     useLazyLoadQuery<WebUIAssistantConnectModalDeploymentQuery>(
       graphql`
         query WebUIAssistantConnectModalDeploymentQuery($id: ID!) {
           deployment(id: $id) @catch {
-            metadata {
-              name
-              status
-            }
             networkAccess {
               endpointUrl
-              openToPublic
             }
           }
         }
@@ -350,60 +325,15 @@ const DeploymentInfoButton: React.FC<{
       { id: toGlobalId('ModelDeployment', deploymentId) },
       { fetchPolicy: 'network-only' },
     );
-  const value = deployment.ok ? deployment.value : null;
-  const endpointURL = value?.networkAccess.endpointUrl ?? null;
+  const endpointURL = deployment.ok
+    ? (deployment.value?.networkAccess.endpointUrl ?? null)
+    : null;
   const report = useEffectEvent(() => onResolved(endpointURL));
   useEffect(() => {
     report();
   }, [endpointURL]);
-
-  const rows: Array<[string, string]> = value
-    ? [
-        [t('deployment.DeploymentName'), value.metadata.name],
-        [t('general.Status'), value.metadata.status],
-        [t('deployment.EndpointUrl'), endpointURL ?? '-'],
-        [
-          t('deployment.OpenToPublic'),
-          value.networkAccess.openToPublic
-            ? t('deployment.Public')
-            : t('deployment.Private'),
-        ],
-        ...(servedModelIds?.length
-          ? [
-              [t('webuiAssistant.ServedModels'), servedModelIds.join(', ')] as [
-                string,
-                string,
-              ],
-            ]
-          : []),
-      ]
-    : [];
-
-  return (
-    <ButtonGroup label={t('webuiAssistant.OpenDeploymentDetail')}>
-      <Tooltip
-        content={
-          <BAIFlex direction="column" align="stretch" gap="xxs">
-            {rows.map(([label, text]) => (
-              <Text key={label} color="inherit" size="sm">
-                {label}: {text}
-              </Text>
-            ))}
-            <Text color="inherit" size="sm" weight="semibold">
-              {t('webuiAssistant.OpenDeploymentDetail')}
-            </Text>
-          </BAIFlex>
-        }
-      >
-        <IconButton
-          icon={<InfoIcon />}
-          label={t('webuiAssistant.OpenDeploymentDetail')}
-          onClick={() =>
-            webuiNavigate(buildProjectPath(`deployments/${deploymentId}`))
-          }
-        />
-      </Tooltip>
-    </ButtonGroup>
+  return endpointURL ? null : (
+    <Banner status="warning" title={t('webuiAssistant.NoEndpointURL')} />
   );
 };
 

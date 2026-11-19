@@ -4441,11 +4441,10 @@
     "ModelLoading": "모델에 연결하는 중…",
     "NoEndpointURL": "이 배포에는 아직 엔드포인트 URL이 없습니다. 준비될 때까지 기다리거나 다른 배포를 고르세요.",
     "Open": "WebUI 도우미 열기",
-    "OpenDeploymentDetail": "배포 세부 정보 열기",
     "Placeholder": "WebUI에 대해 질문하세요",
-    "ServedModels": "모델",
     "Token": "토큰",
-    "TokenHint": "공개 배포가 아닙니다. 이 배포의 액세스 토큰을 선택하세요."
+    "TokenHint": "공개 배포가 아닙니다. 이 배포의 액세스 토큰을 선택하세요.",
+    "ViewModelInfo": "모델 정보 확인"
   },
   "webuiSettings": {
     "AllowAnonymousChangePassword": "비밀번호 재설정",
