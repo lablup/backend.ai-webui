@@ -4442,7 +4442,9 @@
     "ModelLoading": "Menghubungkan ke model…",
     "NoEndpointURL": "Penerapan ini belum memiliki URL endpoint. Tunggu hingga siap atau pilih yang lain.",
     "Open": "Buka Asisten WebUI",
+    "OpenDeploymentDetail": "Buka detail deployment",
     "Placeholder": "Ajukan pertanyaan tentang WebUI",
+    "ServedModels": "Model",
     "Token": "Token",
     "TokenHint": "Deployment ini tidak publik. Pilih salah satu token aksesnya."
   },

@@ -4441,7 +4441,9 @@
     "ModelLoading": "Connexion au modèle…",
     "NoEndpointURL": "Ce déploiement n'a pas encore d'URL de point de terminaison. Attendez qu'il soit prêt ou choisissez-en un autre.",
     "Open": "Ouvrir l'assistant WebUI",
+    "OpenDeploymentDetail": "Ouvrir les détails du déploiement",
     "Placeholder": "Posez une question sur la WebUI",
+    "ServedModels": "Modèles",
     "Token": "Jeton",
     "TokenHint": "Ce déploiement n'est pas public. Choisissez l'un de ses jetons d'accès."
   },

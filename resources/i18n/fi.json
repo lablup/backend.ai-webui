@@ -4439,7 +4439,9 @@
     "ModelLoading": "Yhdistetään malliin…",
     "NoEndpointURL": "Tällä käyttöönotolla ei ole vielä päätepisteen URL-osoitetta. Odota, kunnes se on valmis, tai valitse toinen.",
     "Open": "Avaa WebUI-avustaja",
+    "OpenDeploymentDetail": "Avaa käyttöönoton tiedot",
     "Placeholder": "Kysy WebUI:sta",
+    "ServedModels": "Mallit",
     "Token": "Tunnus",
     "TokenHint": "Tämä käyttöönotto ei ole julkinen. Valitse jokin sen käyttötunnuksista."
   },

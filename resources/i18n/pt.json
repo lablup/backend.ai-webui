@@ -4440,7 +4440,9 @@
     "ModelLoading": "A ligar ao modelo…",
     "NoEndpointURL": "Esta implementação ainda não tem URL de endpoint. Aguarde até estar pronta ou escolha outra.",
     "Open": "Abrir o assistente da WebUI",
+    "OpenDeploymentDetail": "Abrir detalhes da implementação",
     "Placeholder": "Faça uma pergunta sobre a WebUI",
+    "ServedModels": "Modelos",
     "Token": "Token",
     "TokenHint": "Esta implementação não é pública. Escolha um dos seus tokens de acesso."
   },

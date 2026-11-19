@@ -4440,7 +4440,9 @@
     "ModelLoading": "モデルに接続しています…",
     "NoEndpointURL": "このデプロイにはまだエンドポイント URL がありません。準備ができるまで待つか、別のデプロイを選んでください。",
     "Open": "WebUI アシスタントを開く",
+    "OpenDeploymentDetail": "デプロイメントの詳細を開く",
     "Placeholder": "WebUI について質問する",
+    "ServedModels": "モデル",
     "Token": "トークン",
     "TokenHint": "このデプロイメントは公開されていません。アクセストークンを選択してください。"
   },

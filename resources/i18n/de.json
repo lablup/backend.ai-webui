@@ -4440,7 +4440,9 @@
     "ModelLoading": "Verbindung zum Modell wird hergestellt…",
     "NoEndpointURL": "Diese Bereitstellung hat noch keine Endpunkt-URL. Warten Sie, bis sie bereit ist, oder wählen Sie eine andere.",
     "Open": "WebUI-Assistent öffnen",
+    "OpenDeploymentDetail": "Bereitstellungsdetails öffnen",
     "Placeholder": "Stellen Sie eine Frage zur WebUI",
+    "ServedModels": "Modelle",
     "Token": "Token",
     "TokenHint": "Diese Bereitstellung ist nicht öffentlich. Wählen Sie eines ihrer Zugriffstoken."
   },

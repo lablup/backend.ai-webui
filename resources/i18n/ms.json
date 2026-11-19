@@ -4438,7 +4438,9 @@
     "ModelLoading": "Menyambung ke model…",
     "NoEndpointURL": "Penggunaan ini belum mempunyai URL endpoint. Tunggu sehingga ia sedia atau pilih yang lain.",
     "Open": "Buka Pembantu WebUI",
+    "OpenDeploymentDetail": "Buka butiran penggunaan",
     "Placeholder": "Tanya soalan tentang WebUI",
+    "ServedModels": "Model",
     "Token": "Token",
     "TokenHint": "Penggunaan ini bukan awam. Pilih salah satu token aksesnya."
   },

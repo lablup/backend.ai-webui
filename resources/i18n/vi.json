@@ -4440,7 +4440,9 @@
     "ModelLoading": "Đang kết nối tới mô hình…",
     "NoEndpointURL": "Triển khai này chưa có URL endpoint. Hãy chờ đến khi sẵn sàng hoặc chọn triển khai khác.",
     "Open": "Mở trợ lý WebUI",
+    "OpenDeploymentDetail": "Mở chi tiết bản triển khai",
     "Placeholder": "Đặt câu hỏi về WebUI",
+    "ServedModels": "Mô hình",
     "Token": "Token",
     "TokenHint": "Bản triển khai này không công khai. Hãy chọn một trong các token truy cập của nó."
   },
