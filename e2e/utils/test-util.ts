@@ -934,8 +934,9 @@ export async function createVFolderAndVerify(
   page: Page,
   folderName: string,
   usageMode: 'general' | 'model' = 'general',
+  dataPath: string = 'data',
 ) {
-  await navigateTo(page, 'data');
+  await navigateTo(page, dataPath);
   // VFolderNodeListPage's BAICard extra renders a single "Create Folder" button.
   // The previous `.nth(1)` assumed an older layout with a second header CTA and
   // breaks against the current React build, so use the first match.
@@ -958,7 +959,7 @@ export async function createVFolderAndVerify(
   // shared users (#10647); the default is changed from the share modal.
   await modal.submit();
   await modal.waitForClosed();
-  await verifyVFolder(page, folderName);
+  await verifyVFolder(page, folderName, 'Active', dataPath);
 }
 
 export async function moveToTrashAndVerify(
@@ -1149,40 +1150,55 @@ export async function shareVFolderAndVerify(
   page: Page,
   folderName: string,
   invitedUser: string,
+  dataPath: string = 'data',
 ) {
-  await navigateTo(page, 'data');
+  await navigateTo(page, dataPath);
   await selectPropertyFilter(page, 'Name', folderName);
 
-  // Click the share button inside the BAINameActionCell of the folder row.
-  // Action buttons (share/trash) are embedded in the Name cell; locate the
-  // button by its accessible name "Share" rather than by td index.
+  // Only the folder's owner or an admin of its project gets the Share Folder
+  // modal; everyone else gets the read-only Shared Folder Permission modal.
   const folderRow = getVFolderRow(page, folderName);
   await expect(folderRow).toBeVisible({ timeout: 10000 });
   await folderRow.getByRole('button', { name: 'Share' }).first().click();
 
-  // Fill in invited user's email in the share modal
   const shareModal = page.getByRole('dialog', { name: 'Share Folder' });
   await expect(shareModal).toBeVisible();
-  await shareModal.getByRole('textbox', { name: 'Email' }).fill(invitedUser);
 
-  // Set up the response promise before clicking Add to avoid a race condition
-  // where the response fires before we start listening.
-  // URL pattern: POST /folders/{id}/invite → 200 or 201
-  const inviteResponsePromise = page.waitForResponse(
+  // The recipient is a BAIScopedUserSelect (ComplexSelector); a typed e-mail
+  // is offered as an option even when the user is not listed.
+  await shareModal.getByRole('combobox', { name: /^E-Mail/ }).click();
+  const picker = page.getByRole('dialog', { name: 'E-Mail', exact: true });
+  await picker
+    .getByRole('combobox', { name: 'Search options' })
+    .fill(invitedUser);
+  await picker
+    .getByRole('listbox')
+    .getByRole('option', {
+      name: new RegExp(
+        `^${invitedUser.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`,
+      ),
+    })
+    .first()
+    .click({ timeout: 30000 });
+
+  const createShareResponsePromise = page.waitForResponse(
     (response) =>
-      response.url().includes('/invite') &&
-      response.request().method() === 'POST',
-    { timeout: 15000 },
+      response.request().method() === 'POST' &&
+      (response.request().postData() ?? '').includes('createEntityShare'),
+    { timeout: 30000 },
   );
-  await shareModal.getByRole('button', { name: 'Add' }).click();
-  const inviteResponse = await inviteResponsePromise;
-  if (!inviteResponse.ok()) {
+  await shareModal.getByRole('button', { name: 'Invite', exact: true }).click();
+  const createShareResponse = await createShareResponsePromise;
+  const createShareBody = await createShareResponse.json().catch(() => null);
+  if (!createShareResponse.ok() || createShareBody?.errors?.length) {
     throw new Error(
-      `POST /folders/.../invite returned ${inviteResponse.status()}: ${await inviteResponse.text()}`,
+      `createEntityShare failed (HTTP ${createShareResponse.status()}): ${JSON.stringify(createShareBody?.errors ?? createShareBody)}`,
     );
   }
+  await expect(page.getByText('Successfully invited').first()).toBeVisible();
 
   await shareModal.getByRole('button', { name: 'Close', exact: true }).click();
+  await expect(shareModal).toBeHidden();
 
   await removeSearchButton(page, folderName);
 }

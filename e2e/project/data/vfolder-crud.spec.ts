@@ -337,20 +337,49 @@ test.describe(
   },
 );
 
-// Not serial: single test — no ordering dependency; the folder is created in
-// beforeEach and cleaned up in afterEach.
+// Picks the personal project in the header selector and returns its slug.
+async function switchToPersonalProject(page: Page): Promise<string> {
+  await page.getByRole('link', { name: 'Data' }).click();
+  const projectSelector = page.getByRole('button', { name: 'Select Project' });
+  await expect(projectSelector).toBeVisible({ timeout: 15000 });
+  const previousSlug = new URL(page.url()).pathname.split('/')[2];
+  await projectSelector.click();
+  await page
+    .getByRole('listbox', { name: 'Select Project' })
+    .getByRole('group', { name: 'Personal' })
+    .getByRole('option')
+    .first()
+    .click({ timeout: 15000 });
+  await expect(page).toHaveURL((url) => {
+    const [, segment, slug, subPath] = url.pathname.split('/');
+    return segment === 'project' && subPath === 'data' && slug !== previousSlug;
+  });
+  return new URL(page.url()).pathname.split('/')[2];
+}
+
+// Not serial: each test creates the folder in beforeEach and cleans it up in
+// afterEach. Since #10521 a Data page folder belongs to the selected project,
+// and a member of a shared project cannot share it, so it is made in the
+// personal project, where the user manages its shares.
 test.describe(
   'VFolder Sharing',
   { tag: ['@critical', '@vfolder', '@functional'] },
   () => {
     const sharingFolderName = 'e2e-test-folder-sharing' + new Date().getTime();
+    let personalDataPath = 'data';
     test.setTimeout(180_000);
     test.beforeEach(async ({ page, request }) => {
       await loginAsUser(page, request);
-      await createVFolderAndVerify(page, sharingFolderName);
+      personalDataPath = `project/${await switchToPersonalProject(page)}/data`;
+      await createVFolderAndVerify(
+        page,
+        sharingFolderName,
+        'general',
+        personalDataPath,
+      );
     });
     test.afterEach(async ({ page }) => {
-      await cleanupVFolderSafely(page, sharingFolderName);
+      await cleanupVFolderSafely(page, sharingFolderName, personalDataPath);
     });
 
     test('User can share vFolder', async ({ page, browser, request }) => {
@@ -358,6 +387,7 @@ test.describe(
         page,
         sharingFolderName,
         userInfo.user2.email,
+        personalDataPath,
       );
       const user2_page = await browser.newPage();
       await loginAsUser2(user2_page, request);
@@ -377,6 +407,7 @@ test.describe(
         page,
         sharingFolderName,
         userInfo.user2.email,
+        personalDataPath,
       );
       const user2_page = await browser.newPage();
       await loginAsUser2(user2_page, request);
