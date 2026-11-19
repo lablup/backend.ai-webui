@@ -1,1 +1,0 @@
-import{n as e}from"./rolldown-runtime-sJBDdmOt.js";import{i as t,r as n}from"./isObject-Cu5W6UBH.js";import{b as r,y as i}from"./_getTag-BSxz9CZB.js";function a(e){return t(e)&&r(e)}function o(){return(o=e((()=>{i(),n()})))()}export{a as n,o as t};

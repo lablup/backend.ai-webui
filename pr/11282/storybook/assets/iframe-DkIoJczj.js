@@ -1,1 +1,0 @@
-import{t as e}from"./iframe-DYn35TYY.js";e();
