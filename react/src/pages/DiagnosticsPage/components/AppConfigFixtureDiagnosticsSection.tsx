@@ -212,21 +212,28 @@ const AppConfigFixtureDiagnosticsSection: React.FC<
         definitionIds: plan.purgeDefinitionIds,
       });
       const failed = res.partialBulkPurgeAppConfigDefinitions.failed ?? [];
+      const errors = failed.map((f) => f.message);
       // Re-register what was purged even when some purges failed, so the fixture is never left absent.
-      await register(
-        planAppConfigFixtureReRegistration(
-          definitions,
-          failed.map((f) => String(f.id)),
-        ),
-      );
-      if (failed.length > 0) {
-        throw new Error(failed.map((f) => f.message).join('\n'));
+      try {
+        await register(
+          planAppConfigFixtureReRegistration(
+            definitions,
+            failed.map((f) => String(f.id)),
+          ),
+        );
+      } catch (error) {
+        errors.push(getErrorMessage(error));
       }
-      message.success(t('diagnostics.AppConfigFixtureRegistered'));
-      setIsResetModalOpen(false);
+      if (errors.length > 0) {
+        message.error(errors.join('\n'));
+      } else {
+        message.success(t('diagnostics.AppConfigFixtureRegistered'));
+      }
     } catch (error) {
       message.error(getErrorMessage(error));
     } finally {
+      // Close even on failure: the refetched plan may no longer be a reset.
+      setIsResetModalOpen(false);
       setIsResetting(false);
       refetch();
     }

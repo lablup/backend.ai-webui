@@ -2,10 +2,11 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import type { AppConfigScopeType } from '../../__generated__/AppConfigFixtureDiagnosticsSectionAllowListMutation.graphql';
 import type { AppConfigName } from '../../hooks/useAppConfig';
 import type { DiagnosticResult } from '../../types/diagnostics';
 import * as _ from 'lodash-es';
+
+export type AppConfigScopeType = 'PUBLIC' | 'DOMAIN' | 'USER';
 
 export interface AppConfigFixtureAllowListEntry {
   configName: AppConfigName;

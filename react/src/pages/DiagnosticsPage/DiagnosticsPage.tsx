@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { message } from '../../app-shim';
+import BAIErrorBoundary from '../../components/BAIErrorBoundary';
 import ErrorBoundaryWithNullFallback from '../../components/ErrorBoundaryWithNullFallback';
 import { diagnosticText } from '../../diagnostics/diagnosticText';
 import { downloadCSV, escapeCsvValue } from '../../helper/csv-util';
@@ -217,7 +218,7 @@ const DiagnosticsPage = () => {
       key: 'appConfig' as SectionKey,
       label: t('diagnostics.AppConfig'),
       children: (
-        <ErrorBoundaryWithNullFallback>
+        <BAIErrorBoundary>
           <Suspense fallback={<BAISkeleton />}>
             <AppConfigFixtureDiagnosticsSection
               hidePassed={showOnlyFailed}
@@ -226,7 +227,7 @@ const DiagnosticsPage = () => {
               onResultsChange={onAppConfigResultsChange}
             />
           </Suspense>
-        </ErrorBoundaryWithNullFallback>
+        </BAIErrorBoundary>
       ),
     },
   ];
