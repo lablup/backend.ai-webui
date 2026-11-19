@@ -30,6 +30,8 @@ interface CustomEndpointFormProps {
   /** Called only after `/models` answered with at least one model. */
   onSubmit: (values: CustomEndpointFormValues, models: ChatModel[]) => void;
   onCancel?: () => void;
+  /** Drops the panel padding, fill and border, for a host that lays the form out itself (a modal body). */
+  isPlain?: boolean;
 }
 
 type ProbeFailure = ModelsFetchError | { kind: 'no-models' };
@@ -47,6 +49,7 @@ const CustomEndpointForm: React.FC<CustomEndpointFormProps> = ({
   loading,
   onSubmit,
   onCancel,
+  isPlain,
 }) => {
   'use memo';
   const { t } = useTranslation();
@@ -152,12 +155,15 @@ const CustomEndpointForm: React.FC<CustomEndpointFormProps> = ({
     <BAIFlex
       direction="column"
       align="stretch"
-      style={{
-        padding: token('--spacing-4'),
-        paddingInline: token('--spacing-4'),
-        backgroundColor: token('--color-background-surface'),
-        borderBottom: `1px solid ${token('--color-border')}`,
-      }}
+      style={
+        isPlain
+          ? undefined
+          : {
+              padding: token('--spacing-4'),
+              backgroundColor: token('--color-background-surface'),
+              borderBottom: `1px solid ${token('--color-border')}`,
+            }
+      }
     >
       <Form
         form={form}

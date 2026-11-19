@@ -200,19 +200,20 @@ const WebUIAssistantConnectModal: React.FC<WebUIAssistantConnectModalProps> = ({
           )}
         </Form>
         {failure && <Banner status="error" role="alert" title={failure} />}
+        {isCustom && (
+          <CustomEndpointForm
+            isPlain
+            baseURL={savedCustomURL}
+            apiKey={savedCustomURL ? savedApiKey : undefined}
+            onSubmit={(values) =>
+              save({ baseURL: values.baseURL, apiKey: values.apiKey }).catch(
+                (error) => message.error(getErrorMessage(error)),
+              )
+            }
+            onCancel={close}
+          />
+        )}
       </BAIFlex>
-      {isCustom && (
-        <CustomEndpointForm
-          baseURL={savedCustomURL}
-          apiKey={savedCustomURL ? savedApiKey : undefined}
-          onSubmit={(values) =>
-            save({ baseURL: values.baseURL, apiKey: values.apiKey }).catch(
-              (error) => message.error(getErrorMessage(error)),
-            )
-          }
-          onCancel={close}
-        />
-      )}
     </BAIModal>
   );
 };
