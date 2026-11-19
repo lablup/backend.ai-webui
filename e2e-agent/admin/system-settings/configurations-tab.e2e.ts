@@ -28,3 +28,19 @@ test(
     );
   },
 );
+
+test(
+  "the superadmin opens the OpenID Connect settings",
+  {
+    ...draft,
+    skip: "draft: act-only flow from #9774, awaiting completion by automation",
+  },
+  async ({ app, agent }) => {
+    await app.open("/admin/system-settings");
+    await agent.act('Open the "Configurations" tab');
+    await agent.act(
+      'Press "Config" on the "OpenID Connect" row in "SSO Providers"',
+    );
+    await agent.act("Read which secrets are set, then close the dialog");
+  },
+);
