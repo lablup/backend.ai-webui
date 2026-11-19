@@ -86,3 +86,65 @@ export const entityTypeFailureFilters = (
     other: failures({ notIn: [...AUDIT_ENTITY_TYPES] }),
   };
 };
+
+/** Legacy session statuses by launch outcome; every status is in exactly one. */
+export const LAUNCH_OUTCOME_STATUSES = {
+  started: [
+    'SCHEDULED',
+    'PREPARING',
+    'PULLING',
+    'PREPARED',
+    'CREATING',
+    'RUNNING',
+    'RESTARTING',
+    'RUNNING_DEGRADED',
+    'DEPRIORITIZING',
+    'TERMINATING',
+    'TERMINATED',
+  ],
+  cancelled: ['CANCELLED'],
+  // The manager does not say whether an error came before or after start.
+  error: ['ERROR'],
+  pending: ['PENDING', 'PREEMPTED', 'RESCHEDULING', 'RESERVED'],
+} as const;
+export type LaunchOutcome = keyof typeof LAUNCH_OUTCOME_STATUSES;
+export const LAUNCH_OUTCOMES: ReadonlyArray<LaunchOutcome> = [
+  'started',
+  'cancelled',
+  'error',
+  'pending',
+];
+
+/** Minilang for the sessions created within `window` whose status is one of `outcome`'s. */
+export const launchOutcomeFilter = (
+  window: DateTimeWindow,
+  outcome: LaunchOutcome,
+): string =>
+  `created_at >= ${JSON.stringify(window.after)} & created_at < ${JSON.stringify(window.before)} & status in [${LAUNCH_OUTCOME_STATUSES[outcome].map((status) => JSON.stringify(status)).join(',')}]`;
+
+/** Mean and median of the time from creation to scheduling, over the sessions that have both. */
+export const queueWaitStats = (
+  sessions: ReadonlyArray<{
+    readonly created_at?: string | null;
+    readonly scheduled_at?: string | null;
+  }>,
+): { sampled: number; meanMs: number; medianMs: number } | null => {
+  const waits = sessions
+    .flatMap(({ created_at, scheduled_at }) =>
+      created_at && scheduled_at
+        ? [new Date(scheduled_at).getTime() - new Date(created_at).getTime()]
+        : [],
+    )
+    .filter((wait) => Number.isFinite(wait) && wait >= 0)
+    .sort((a, b) => a - b);
+  if (waits.length === 0) return null;
+  const middle = Math.floor(waits.length / 2);
+  return {
+    sampled: waits.length,
+    meanMs: waits.reduce((sum, wait) => sum + wait, 0) / waits.length,
+    medianMs:
+      waits.length % 2 === 1
+        ? waits[middle]
+        : (waits[middle - 1] + waits[middle]) / 2,
+  };
+};

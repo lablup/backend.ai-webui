@@ -113,6 +113,7 @@ describe('PANEL_CATALOG', () => {
         'projectSessionStatus',
         'agentStats',
         'pendingSessions',
+        'sessionLaunches',
         'failuresByEntityType',
         'activeAgents',
         'totalResourceWithinResourceGroup',
