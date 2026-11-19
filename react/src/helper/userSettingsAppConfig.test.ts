@@ -23,6 +23,9 @@ describe('isAccountUserSetting', () => {
       true,
     );
     expect(isAccountUserSetting('hiddenColumnKeys.AgentList')).toBe(true);
+    expect(isAccountUserSetting('has_opened_tour_back_to_user_view')).toBe(
+      true,
+    );
   });
 
   it('keeps device-bound keys local', () => {
@@ -36,9 +39,6 @@ describe('isAccountUserSetting', () => {
       'agent_endpoints',
       'projectGroup.abc',
       'custom_theme_config',
-      // e2e and walkthrough runs seed the tour flags before sign-in.
-      'has_opened_tour_back_to_user_view',
-      'has_opened_tour_neo_session_validation',
       // Stored at the top level of userConfig by useRecentSessionHistory.
       'recentSessionHistory',
       'pinnedSessionHistory',
@@ -79,14 +79,12 @@ describe('pre-ADR 0032 localStorage copies', () => {
   it('removes the account keys and keeps device-local ones', () => {
     localStorage.setItem(P + 'compact_sidebar', 'true');
     localStorage.setItem(P + 'hiddenColumnKeys.AgentList', '["status"]');
-    localStorage.setItem(P + 'has_opened_tour_back_to_user_view', 'true');
+    localStorage.setItem(P + 'desktop_notification', 'true');
     localStorage.setItem(P + 'preserve_login', 'true');
     removeLocalAccountUserSettings(localStorage);
     expect(localStorage.getItem(P + 'compact_sidebar')).toBeNull();
     expect(localStorage.getItem(P + 'hiddenColumnKeys.AgentList')).toBeNull();
-    expect(localStorage.getItem(P + 'has_opened_tour_back_to_user_view')).toBe(
-      'true',
-    );
+    expect(localStorage.getItem(P + 'desktop_notification')).toBe('true');
     expect(localStorage.getItem(P + 'preserve_login')).toBe('true');
   });
 });

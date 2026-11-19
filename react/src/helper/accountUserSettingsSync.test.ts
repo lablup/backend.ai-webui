@@ -55,17 +55,15 @@ describe('startAccountUserSettingsSync', () => {
 
   it('copies the pre-ADR 0032 local values once, then drops them', async () => {
     localStorage.setItem(P + 'compact_sidebar', 'true');
-    localStorage.setItem(P + 'has_opened_tour_back_to_user_view', 'true');
+    localStorage.setItem(P + 'desktop_notification', 'true');
     const { held, upsert } = createUpsert(undefined);
     const stop = start(undefined, upsert);
     expect(getAccountUserSettings()).toEqual({ compact_sidebar: true });
     await vi.advanceTimersByTimeAsync(0);
     expect(held.settings).toEqual({ compact_sidebar: true });
     expect(localStorage.getItem(P + 'compact_sidebar')).toBeNull();
-    // A tour flag is device-local, so it stays.
-    expect(localStorage.getItem(P + 'has_opened_tour_back_to_user_view')).toBe(
-      'true',
-    );
+    // A device-local setting stays.
+    expect(localStorage.getItem(P + 'desktop_notification')).toBe('true');
     stop();
   });
 
@@ -90,14 +88,12 @@ describe('startAccountUserSettingsSync', () => {
 
   it("drops this browser's pre-0032 values when the account has settings", () => {
     localStorage.setItem(P + 'compact_sidebar', 'true');
-    localStorage.setItem(P + 'has_opened_tour_back_to_user_view', 'true');
+    localStorage.setItem(P + 'desktop_notification', 'true');
     const { upsert } = createUpsert({ session_monitor_rows: 5 });
     const stop = start({ session_monitor_rows: 5 }, upsert);
     expect(getAccountUserSettings()).toEqual({ session_monitor_rows: 5 });
     expect(localStorage.getItem(P + 'compact_sidebar')).toBeNull();
-    expect(localStorage.getItem(P + 'has_opened_tour_back_to_user_view')).toBe(
-      'true',
-    );
+    expect(localStorage.getItem(P + 'desktop_notification')).toBe('true');
     expect(upsert).not.toHaveBeenCalled();
     stop();
   });

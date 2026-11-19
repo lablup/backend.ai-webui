@@ -32,6 +32,10 @@ const ACCOUNT_USER_SETTING_KEYS: ReadonlySet<string> = new Set([
   'schedulingHistoryExpandMode',
   'chat_intro_alert_dismissed',
   'show_accelerator_dedicated_images_first',
+  'has_opened_tour_neo_session_validation',
+  'has_opened_tour_deployment_preset_validation',
+  'has_opened_tour_back_to_user_view',
+  'has_opened_tour_back_to_admin_settings',
 ]);
 
 const ACCOUNT_USER_SETTING_PREFIXES: ReadonlyArray<string> = [
