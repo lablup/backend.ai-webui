@@ -17,11 +17,8 @@ import {
   type RangePreset,
 } from './panelSettings';
 import type { DashboardBoard, PanelDefinition, PanelPage } from './types';
-import { atom } from 'jotai';
 import * as _ from 'lodash-es';
 
-/** The fence the WebUI Assistant wraps a dashboard change in. */
-export const DASHBOARD_ACTIONS_FENCE = 'dashboard-actions';
 /** The board grid's column count (BAIBoard). */
 const BOARD_COLUMNS = 4;
 const MAX_ROW_SPAN = 12;
@@ -44,24 +41,6 @@ export interface DashboardAssistantCard {
   /** Set when the card takes a range setting; the saved range, or `default`. */
   range?: string;
 }
-
-/** What the mounted dashboard hands the WebUI Assistant. */
-export interface DashboardAssistantBridge {
-  page: PanelPage;
-  /** Cards on the board first, in board order, then the ones the user can add. */
-  cards: Array<DashboardAssistantCard>;
-  apply: (actions: ReadonlyArray<DashboardAssistantAction>) => void;
-  /** Outlines a card on the board, or clears the outline with `null`. */
-  highlight: (id: string | null) => void;
-  /** Scrolls to a card once the board has rendered it, and flashes it. */
-  reveal: (id: string) => void;
-}
-
-/** Set while a dashboard page is mounted. */
-export const dashboardAssistantBridgeAtom =
-  atom<DashboardAssistantBridge | null>(null);
-
-const OPEN_FENCE = '```' + DASHBOARD_ACTIONS_FENCE;
 
 const toInt = (value: unknown): number | undefined =>
   typeof value === 'number' && Number.isFinite(value)
@@ -171,30 +150,25 @@ export const sanitizeAssistantActions = (
   });
 };
 
-/**
- * Splits an assistant reply into the text to show and the dashboard actions it
- * carries. An unclosed fence (still streaming) is hidden and yields no actions.
- */
-export const extractDashboardActions = (
+/** The JSON a reply carries: a `dashboard-actions` (or any) fence, else its outermost braces. */
+const jsonOfReply = (text: string): unknown => {
+  const fenced = /```(?:[\w-]+)?\s*([\s\S]*?)```/.exec(text);
+  const body = fenced
+    ? fenced[1]
+    : text.slice(text.indexOf('{'), text.lastIndexOf('}') + 1);
+  try {
+    return body ? JSON.parse(body) : undefined;
+  } catch {
+    return undefined;
+  }
+};
+
+/** The dashboard actions in a model reply, sanitized against `cards`. */
+export const parseDashboardActions = (
   text: string,
   cards: ReadonlyArray<AssistantCardRef>,
-): { text: string; actions: Array<DashboardAssistantAction> } => {
-  const start = text.indexOf(OPEN_FENCE);
-  if (start < 0) return { text, actions: [] };
-  const bodyStart = start + OPEN_FENCE.length;
-  const end = text.indexOf('```', bodyStart);
-  const visible = (
-    text.slice(0, start) + (end < 0 ? '' : text.slice(end + 3))
-  ).trim();
-  if (end < 0) return { text: visible, actions: [] };
-  let parsed: unknown;
-  try {
-    parsed = JSON.parse(text.slice(bodyStart, end));
-  } catch {
-    return { text: visible, actions: [] };
-  }
-  return { text: visible, actions: sanitizeAssistantActions(parsed, cards) };
-};
+): Array<DashboardAssistantAction> =>
+  sanitizeAssistantActions(jsonOfReply(text), cards);
 
 /** The action changes nothing on the board as `cards` describe it. */
 export const isNoopAction = (
@@ -325,20 +299,20 @@ const cardLine = (card: DashboardAssistantCard) =>
     .filter(Boolean)
     .join(' | ');
 
-/** The system prompt section that lets the assistant propose dashboard changes. */
-export const buildDashboardPromptSection = (
-  bridge: Pick<DashboardAssistantBridge, 'page' | 'cards'>,
-): string =>
+/** The system prompt that turns one request into dashboard actions. */
+export const buildDashboardEditPrompt = ({
+  page,
+  cards,
+}: {
+  page: PanelPage;
+  cards: ReadonlyArray<DashboardAssistantCard>;
+}): string =>
   [
-    '## Dashboard editing',
-    `The user is on a dashboard page (${bridge.page}). You can change this dashboard for them. Its cards, on-board ones in board order (id | title | state | size in columns x rows | range):`,
-    bridge.cards.map((card) => `- ${cardLine(card)}`).join('\n'),
-    [
-      'When the user asks to change the dashboard, reply with one short sentence and end the reply with exactly one block:',
-      `${OPEN_FENCE}\n{"actions":[{"type":"show","id":"<card id>"}]}\n\`\`\``,
-      'Action types: show {id}, hide {id}, moveToTop {id}, moveToBottom {id}, ' +
-        `resize {id, columnSpan 1-${BOARD_COLUMNS}, rowSpan 1-${MAX_ROW_SPAN}}, ` +
-        `setRange {id, range: ${RANGE_PRESETS.join(' | ')}} (only cards with a range), reset {} (the default layout).`,
-      'Copy the id exactly as it appears before the first | in the list; never make one up. Match the card the user names by its title, in any language. Check the state column first: never show a card that is already on board or hide one that is not; say so instead. The user applies the change with a button, so never say it is already done. Do not add the block when the user only asks a question.',
-    ].join('\n'),
+    `You edit a Backend.AI WebUI dashboard (${page} page). Turn the user's request into changes to this dashboard.`,
+    'Cards, on-board ones in board order (id | title | state | size in columns x rows | range):',
+    cards.map((card) => `- ${cardLine(card)}`).join('\n'),
+    'Reply with only a JSON object, no other text:',
+    '{"actions":[{"type":"show","id":"<card id>"}]}',
+    `Action types: show {id}, hide {id}, moveToTop {id}, moveToBottom {id}, resize {id, columnSpan 1-${BOARD_COLUMNS}, rowSpan 1-${MAX_ROW_SPAN}}, setRange {id, range: ${RANGE_PRESETS.join(' | ')}} (only cards with a range), reset {} (the default layout).`,
+    'Copy the id exactly from the list. Match the card the user names by its title, in any language. Check the state first: never show a card that is already on board or hide one that is not. If nothing in the list fits, reply {"actions":[]}.',
   ].join('\n\n');

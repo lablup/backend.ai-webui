@@ -59,6 +59,8 @@ export interface DashboardEditSiderProps {
   onRequestSettings: (id: string) => void;
   /** The board block above the cards, on the pages that keep several boards. */
   boardSection?: React.ReactNode;
+  /** The WebUI Assistant's natural-language editing, above everything else. */
+  assistantSection?: React.ReactNode;
 }
 
 const GROUP_LABEL_KEYS: Record<PanelGroup, string> = {
@@ -90,6 +92,7 @@ const DashboardEditSider: React.FC<DashboardEditSiderProps> = ({
   settingsTargetOf,
   onRequestSettings,
   boardSection,
+  assistantSection,
 }) => {
   'use memo';
   const { t } = useTranslation();
@@ -190,6 +193,7 @@ const DashboardEditSider: React.FC<DashboardEditSiderProps> = ({
         borderLeft: `1px solid ${token('--color-border-emphasized')}`,
       }}
     >
+      {assistantSection}
       {boardSection}
       <BAIText
         strong

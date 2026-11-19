@@ -9,12 +9,6 @@ import ChatMessageContent from '../Chat/ChatMessageContent';
 import type { ChatMessage as ChatUIMessage } from '../Chat/ChatModel';
 import { fetchOpenAIModels, type ModelsFetchError } from '../Chat/openAIModels';
 import {
-  buildDashboardPromptSection,
-  dashboardAssistantBridgeAtom,
-  extractDashboardActions,
-} from '../DashboardPanels/assistantActions';
-import WebUIAssistantDashboardProposal from './WebUIAssistantDashboardProposal';
-import {
   createManualIndex,
   loadManual,
   searchManual,
@@ -43,9 +37,8 @@ import { Spinner } from '@lablup/ui-common/Spinner';
 import { Text } from '@lablup/ui-common/Text';
 import { DefaultChatTransport } from 'ai';
 import { BAIFlex, useEventNotStable } from 'backend.ai-ui';
-import { useAtomValue } from 'jotai';
 import { MessageCircleQuestion } from 'lucide-react';
-import { useEffect, useEffectEvent, useState } from 'react';
+import { useEffect, useEffectEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 
 const MODEL_POLL_INTERVAL_MS = 5000;
@@ -85,10 +78,6 @@ const WebUIAssistantChat: React.FC<WebUIAssistantChatProps> = ({
   const location = useWebUILocation();
   const helpURL = useHelpURL();
   const { baseURL: manualBaseURL, docsLang } = useManualBaseURL();
-  const dashboard = useAtomValue(dashboardAssistantBridgeAtom);
-  const [appliedMessageIds, setAppliedMessageIds] = useState<
-    ReadonlySet<string>
-  >(() => new Set());
 
   const manualQuery = useTanQuery({
     queryKey: ['webui-assistant-manual', docsLang],
@@ -172,9 +161,6 @@ const WebUIAssistantChat: React.FC<WebUIAssistantChatProps> = ({
             page: { path: location.pathname, manualURL: helpURL ?? undefined },
             excerpts: pickExcerpts(lastUser ? messageText(lastUser) : ''),
             manualBaseURL,
-            dashboard: dashboard
-              ? buildDashboardPromptSection(dashboard)
-              : undefined,
           }),
         });
       }),
@@ -250,44 +236,19 @@ const WebUIAssistantChat: React.FC<WebUIAssistantChatProps> = ({
     ...messages.map((message, index) => {
       const isUser = message.role === 'user';
       const isMessageStreaming = isStreaming && index === messages.length - 1;
-      const { text, actions } = isUser
-        ? { text: messageText(message), actions: [] }
-        : extractDashboardActions(messageText(message), dashboard?.cards ?? []);
+      const text = messageText(message);
       return (
         <ChatMessage key={message.id} sender={isUser ? 'user' : 'assistant'}>
           <ChatMessageBubble>
             {isUser ? (
               text
             ) : isMessageStreaming && !text.trim() ? (
-              // Reasoning or an action block still streaming leaves nothing to show yet.
+              // A reasoning model streams its reasoning first, which has nothing to show.
               thinking
             ) : (
-              <>
-                <ChatMessageContent isStreaming={isMessageStreaming}>
-                  {text}
-                </ChatMessageContent>
-                {dashboard && actions.length > 0 && !isMessageStreaming && (
-                  <WebUIAssistantDashboardProposal
-                    actions={actions}
-                    cards={dashboard.cards}
-                    isApplied={appliedMessageIds.has(message.id)}
-                    onApply={(effective) => {
-                      dashboard.apply(effective);
-                      setAppliedMessageIds(
-                        (prev) => new Set([...prev, message.id]),
-                      );
-                      const shownId = effective.flatMap((action) =>
-                        action.type === 'reset' || action.type === 'hide'
-                          ? []
-                          : [action.id],
-                      )[0];
-                      if (shownId) dashboard.reveal(shownId);
-                    }}
-                    onHighlight={dashboard.highlight}
-                    onReveal={dashboard.reveal}
-                  />
-                )}
-              </>
+              <ChatMessageContent isStreaming={isMessageStreaming}>
+                {text}
+              </ChatMessageContent>
             )}
           </ChatMessageBubble>
         </ChatMessage>
@@ -337,11 +298,7 @@ const WebUIAssistantChat: React.FC<WebUIAssistantChatProps> = ({
               color="var(--color-text-secondary)"
               aria-hidden
             />
-            <Text color="secondary">
-              {dashboard
-                ? t('webuiAssistant.EmptyStateDashboard')
-                : t('webuiAssistant.EmptyState')}
-            </Text>
+            <Text color="secondary">{t('webuiAssistant.EmptyState')}</Text>
           </BAIFlex>
         ) : (
           <ChatMessageList density="compact" isStreaming={isStreaming}>
