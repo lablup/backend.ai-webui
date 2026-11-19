@@ -1772,6 +1772,7 @@
         heads: [],
         highlight: null,
         query: "",
+        shown: null,
       };
       const els = {
         shell: $(".shell"),
@@ -1860,17 +1861,15 @@
         });
         return { m, slugger, diagrams };
       }
+      DOMPurify.addHook("afterSanitizeAttributes", (node) => {
+        if (node.nodeName !== "INPUT") return;
+        if (node.getAttribute("type") === "checkbox") node.disabled = true;
+        else node.remove();
+      });
       const sanitize = (html) =>
         DOMPurify.sanitize(html, {
           ADD_ATTR: ["target"],
-          FORBID_TAGS: [
-            "form",
-            "input",
-            "button",
-            "textarea",
-            "select",
-            "style",
-          ],
+          FORBID_TAGS: ["form", "button", "textarea", "select", "style"],
         });
       const sanitizeSvg = (svg) =>
         DOMPurify.sanitize(svg, {
@@ -2169,17 +2168,20 @@
           .join("")}</div>`;
         els.toc.innerHTML = "";
         S.heads = [];
+        S.shown = null;
       }
 
       function showState(title, body, glyph = ICON.warn) {
         els.doc.innerHTML = `<div class="state"><span class="glyph">${icon(glyph)}</span><h2>${esc(title)}</h2><p>${body}</p><p><a class="chip" href="${href(null)}">${icon(ICON.home)}${T[S.lang].overview}</a></p></div>`;
         els.toc.innerHTML = "";
         S.heads = [];
+        S.shown = null;
       }
 
       async function showLanding(opts = {}) {
         const t = T[S.lang];
         const seq = S.view;
+        renderSeq++;
         els.shell.classList.add("landing");
         const { tokens, ti, entries } = await loadIndex(S.lang);
         if (seq !== S.view) return;
@@ -2209,6 +2211,7 @@
         const html = `<header class="hero"><div class="eyebrow"><span class="chip">Backend.AI WebUI</span>${ref ? `<span class="chip">${icon(ICON.branch)}${esc(ref)}</span>` : ""}</div><h1>${esc(title)}</h1><div class="lead">${part(lead)}</div><div class="stats"><span class="stat">${t.inForce(entries.length)}</span><span class="stat">${t.languages(2)}</span></div></header><div class="prose">${part(mid)}<div class="cards">${cards}</div>${part(rest)}</div>`;
         els.doc.innerHTML = sanitize(html);
         els.doc.lang = S.lang;
+        S.shown = { id: null, lang: S.lang };
         enhance(
           els.doc,
           S.lang === "ko" ? "docs/ARCHITECTURE.ko.md" : "docs/ARCHITECTURE.md",
@@ -2278,6 +2281,7 @@
           <footer class="doc-foot"><span>${t.source}: <a href="${blobUrl(repoPath)}" target="_blank" rel="noopener">${esc(repoPath)}</a> @ ${esc(viewRef || t.localCopy)}</span><a href="#" data-top>${t.top} ↑</a></footer>`;
         els.doc.innerHTML = sanitize(html);
         els.doc.lang = S.lang;
+        S.shown = { id, lang: S.lang };
         const prose = $(".prose", els.doc);
         enhance(prose, repoPath, id, diagrams, t);
         highlightCode(prose);
@@ -2295,8 +2299,11 @@
         if (opts.keep) restorePosition(opts.keep);
         else if (anchor) scrollToAnchor(anchor, false);
         else if (!S.pendingFirst) scrollTo(0, 0);
+        const kept = pinned.el;
         renderDiagrams(prose).then(() => {
-          if (opts.keep && pinned.el?.isConnected) restorePosition(opts.keep);
+          if (seq !== S.view) return;
+          if (opts.keep && kept && pinned.el === kept && kept.isConnected)
+            restorePosition(opts.keep);
           spy();
         });
         spy();
@@ -2369,16 +2376,17 @@
       function capturePosition() {
         if (!S.heads.length) return { ratio: scrollY / docHeight() };
         const all = sections();
+        const pad = anchorPad();
         let i = -1;
         all.forEach((h, k) => {
-          if (h.getBoundingClientRect().top <= 100) i = k;
+          if (h.getBoundingClientRect().top <= pad) i = k;
         });
         if (i < 0) return { head: -1, frac: 0, y: scrollY };
         const top = all[i].getBoundingClientRect().top;
         const nextTop =
           all[i + 1]?.getBoundingClientRect().top ??
           els.doc.getBoundingClientRect().bottom;
-        return { head: i, frac: (100 - top) / Math.max(1, nextTop - top) };
+        return { head: i, frac: (pad - top) / Math.max(1, nextTop - top) };
       }
       function restorePosition(p) {
         if (p.ratio != null) return scrollTo(0, p.ratio * docHeight());
@@ -2390,7 +2398,7 @@
         const nextTop =
           (all[p.head + 1]?.getBoundingClientRect().top ??
             els.doc.getBoundingClientRect().bottom) + scrollY;
-        scrollTo(0, top - 100 + p.frac * (nextTop - top));
+        scrollTo(0, top - anchorPad() + p.frac * (nextTop - top));
         pin(h);
       }
 
@@ -2603,24 +2611,16 @@
 
       async function route(opts = {}) {
         const r = parseHash();
-        const nextLang = r.lang || S.lang;
-        const langChanged = nextLang !== S.lang;
-        S.lang = nextLang;
+        S.lang = r.lang || S.lang;
         store.set("lang", S.lang);
-        const prev = S.route;
         const highlight = S.highlight;
         S.highlight = null;
         S.route = r;
         document.body.classList.remove("nav-open");
         applyChrome();
         renderNav();
-        if (
-          !langChanged &&
-          prev &&
-          prev.id === r.id &&
-          r.id &&
-          els.doc.querySelector(".prose")
-        ) {
+        if (r.id && S.shown?.id === r.id && S.shown.lang === S.lang) {
+          ++S.view;
           if (opts.keep) restorePosition(opts.keep);
           else if (r.anchor) scrollToAnchor(r.anchor);
           return;
@@ -2750,13 +2750,17 @@
 
       function highlightCurrent(q) {
         const prose = $(".prose", els.doc);
-        const first = prose && markHits(prose, q);
+        if (!prose) return;
+        $$("mark.hit", prose).forEach((mk) => mk.replaceWith(mk.textContent));
+        prose.normalize();
+        const first = markHits(prose, q);
         if (!first) return;
         pin(null);
         first.scrollIntoView({ block: "center" });
       }
 
       document.addEventListener("click", async (e) => {
+        if (e.target.closest('a[href^="#"]')) savePos();
         const plain = !(e.metaKey || e.ctrlKey || e.shiftKey || e.altKey);
         const top = plain && e.target.closest("[data-top]");
         if (top) {
@@ -2787,11 +2791,14 @@
         const a = plain && e.target.closest("a[data-anchor]");
         if (a) {
           e.preventDefault();
-          if (scrollToAnchor(a.dataset.anchor) && S.route?.id)
+          const cur = S.shown;
+          if (cur && (cur.id !== S.route?.id || cur.lang !== S.lang))
+            location.hash = href(cur.id, a.dataset.anchor, cur.lang);
+          else if (scrollToAnchor(a.dataset.anchor) && cur?.id)
             history.replaceState(
               history.state,
               "",
-              href(S.route.id, a.dataset.anchor),
+              href(cur.id, a.dataset.anchor),
             );
           return;
         }
@@ -2894,13 +2901,6 @@
         },
         { passive: true },
       );
-      document.addEventListener(
-        "click",
-        (e) => {
-          if (e.target.closest('a[href^="#"]')) savePos();
-        },
-        true,
-      );
       addEventListener("hashchange", () => {
         clearTimeout(saveTimer);
         const keep = history.state?.pos;
@@ -2916,10 +2916,14 @@
         )
           ? "ko"
           : "en");
-      if (!initial.lang)
-        history.replaceState(null, "", href(initial.id, initial.anchor));
-      S.pendingFirst = true;
       const initialPos = history.state?.pos;
+      if (!initial.lang)
+        history.replaceState(
+          history.state,
+          "",
+          href(initial.id, initial.anchor),
+        );
+      S.pendingFirst = true;
       route(initialPos ? { keep: initialPos } : {});
     </script>
   </body>
