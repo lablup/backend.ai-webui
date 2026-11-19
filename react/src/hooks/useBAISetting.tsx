@@ -11,6 +11,7 @@ import {
   queueUserSettingWrite,
   rawToSetting,
   settingToRaw,
+  USER_SETTING_STORAGE_PREFIX,
 } from '../helper/userSettingsAppConfig';
 import type { AgentEndpointBindings, AgentProfile } from './useAIAgent';
 import { type BAIBoardItem, BAITableColumnOverrideRecord } from 'backend.ai-ui';
@@ -207,9 +208,7 @@ const HasStoredSettingAtomFamily = atomFamily((name: string) =>
       return name in get(accountUserSettingsAtom);
     }
     get(settingAtom); // only for the reactivity
-    return (
-      localStorage.getItem('backendaiwebui.settings.user.' + name) !== null
-    );
+    return localStorage.getItem(USER_SETTING_STORAGE_PREFIX + name) !== null;
   }),
 );
 

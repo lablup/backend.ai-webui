@@ -405,6 +405,8 @@ test.describe(
   'Session Monitor - Header chip and popover',
   { tag: ['@regression', '@session', '@functional'] },
   () => {
+    // The flag is one value per shared account, so these tests cannot run in parallel.
+    test.describe.configure({ mode: 'serial' });
     // The shared account keeps the flag, so a test that fails midway turns it back off.
     test.afterEach(async ({ page }) => {
       if (await page.getByTestId('user-dropdown-button').isVisible()) {

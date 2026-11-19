@@ -192,8 +192,19 @@ test.describe(
       await settingsModal
         .getByRole('checkbox', { name: 'Updated At' })
         .uncheck();
+      // The last uncheck is the restore: wait for it to reach the account (ADR 0032).
+      const restored = waitForAccountSettingsWrite(page, (settings) => {
+        const overrides = settings[
+          'table_column_overrides.AdminPrometheusPreset'
+        ] as Record<string, { hidden?: boolean }> | undefined;
+        return (
+          overrides?.createdAt?.hidden !== false &&
+          overrides?.updatedAt?.hidden !== false
+        );
+      });
       await settingsModal.getByRole('button', { name: 'Apply' }).click();
       await expect(settingsModal).toBeHidden({ timeout: 30000 });
+      await restored;
 
       // Verify "Updated At" header is no longer visible
       await expect(presetColumnHeader(page, 'Updated At')).toBeHidden();

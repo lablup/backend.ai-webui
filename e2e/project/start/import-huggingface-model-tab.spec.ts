@@ -68,6 +68,8 @@ test.describe(
   'Start From URL Modal - Hugging Face Import Tab',
   { tag: ['@regression', '@start', '@functional'] },
   () => {
+    // The flag is one value per shared account, so these tests cannot run in parallel.
+    test.describe.configure({ mode: 'serial' });
     // The shared account keeps the flag, so every test starts from it unset.
     test.afterEach(async ({ page }) => {
       // Before sign-in nothing syncs, so there is nothing to restore.
