@@ -8,6 +8,7 @@ import DashboardBoardSection from './DashboardBoardSection';
 import DashboardBoardTabs from './DashboardBoardTabs';
 import DashboardEditSider from './DashboardEditSider';
 import DashboardFilterBar from './DashboardFilterBar';
+import './DashboardPanelBoard.css';
 import DashboardPanelModal from './DashboardPanelModal';
 import { useBoardItemVisibility } from './DashboardRefreshContext';
 import { DashboardResourceGroupsProvider } from './DashboardResourceGroups';
@@ -68,6 +69,9 @@ export interface DashboardPanelBoardProps {
   isRefetching: boolean;
   queryRefs: DashboardPageQueryRefs;
 }
+
+const ASSISTANT_HIGHLIGHT_CLASS = 'dashboard-panel-board__assistant-target';
+const ASSISTANT_REVEAL_MS = 2000;
 
 /** The page's allowed resource groups under a boundary of its own. */
 const WithResourceGroups: React.FC<{
@@ -158,14 +162,48 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
   // Hands the WebUI Assistant this board's cards while the page is mounted.
   const setAssistantBridge = useSetAtom(dashboardAssistantBridgeAtom);
   const applyFromAssistant = useEventNotStable(applyAssistantActions);
+  const highlightedCardRef = useRef<Element | null>(null);
+  const cardElementOf = (id: string) =>
+    boardContainerRef.current?.querySelector(
+      `[data-board-item-id="${CSS.escape(id)}"]`,
+    ) ?? null;
+  const highlightCard = useEventNotStable((id: string | null) => {
+    highlightedCardRef.current?.classList.remove(ASSISTANT_HIGHLIGHT_CLASS);
+    highlightedCardRef.current = id ? cardElementOf(id) : null;
+    highlightedCardRef.current?.classList.add(ASSISTANT_HIGHLIGHT_CLASS);
+  });
+  const revealCard = useEventNotStable((id: string) => {
+    // Two frames: the save re-renders the board before the card exists.
+    requestAnimationFrame(() =>
+      requestAnimationFrame(() => {
+        const element = cardElementOf(id);
+        if (!element) return;
+        element.scrollIntoView({ block: 'center', behavior: 'smooth' });
+        element.classList.add(ASSISTANT_HIGHLIGHT_CLASS);
+        window.setTimeout(
+          () => element.classList.remove(ASSISTANT_HIGHLIGHT_CLASS),
+          ASSISTANT_REVEAL_MS,
+        );
+      }),
+    );
+  });
   const assistantCardsKey = JSON.stringify(assistantCards);
   useEffect(() => {
     setAssistantBridge({
       page,
       cards: JSON.parse(assistantCardsKey),
       apply: applyFromAssistant,
+      highlight: highlightCard,
+      reveal: revealCard,
     });
-  }, [page, assistantCardsKey, applyFromAssistant, setAssistantBridge]);
+  }, [
+    page,
+    assistantCardsKey,
+    applyFromAssistant,
+    highlightCard,
+    revealCard,
+    setAssistantBridge,
+  ]);
   useEffect(() => () => setAssistantBridge(null), [setAssistantBridge]);
 
   const filters = useDashboardFilters(page, boards, project);

@@ -6,6 +6,7 @@ import {
   applyAssistantActions,
   buildDashboardPromptSection,
   extractDashboardActions,
+  isNoopAction,
   sanitizeAssistantActions,
   settingsTouchedBy,
 } from './assistantActions';
@@ -263,5 +264,46 @@ describe('buildDashboardPromptSection', () => {
     expect(section).toContain('- a | My sessions | on board | size 2x2');
     expect(section).toContain('- c | Activity | not on board | range default');
     expect(section).toContain('```dashboard-actions');
+  });
+});
+
+describe('isNoopAction', () => {
+  const cards = [
+    { id: 'a', title: 'A', shown: true, columnSpan: 2, rowSpan: 2 },
+    {
+      id: 'b',
+      title: 'B',
+      shown: true,
+      columnSpan: 4,
+      rowSpan: 3,
+      range: 'now-1h',
+    },
+    { id: 'c', title: 'C', shown: false },
+  ];
+
+  it('flags changes the board already reflects', () => {
+    expect(isNoopAction({ type: 'show', id: 'a' }, cards)).toBe(true);
+    expect(isNoopAction({ type: 'hide', id: 'c' }, cards)).toBe(true);
+    expect(isNoopAction({ type: 'moveToTop', id: 'a' }, cards)).toBe(true);
+    expect(isNoopAction({ type: 'moveToBottom', id: 'b' }, cards)).toBe(true);
+    expect(
+      isNoopAction({ type: 'resize', id: 'a', columnSpan: 2 }, cards),
+    ).toBe(true);
+    expect(
+      isNoopAction({ type: 'setRange', id: 'b', range: 'now-1h' }, cards),
+    ).toBe(true);
+  });
+
+  it('keeps changes that would alter the board', () => {
+    expect(isNoopAction({ type: 'show', id: 'c' }, cards)).toBe(false);
+    expect(isNoopAction({ type: 'hide', id: 'a' }, cards)).toBe(false);
+    expect(isNoopAction({ type: 'moveToTop', id: 'b' }, cards)).toBe(false);
+    expect(isNoopAction({ type: 'resize', id: 'a', rowSpan: 4 }, cards)).toBe(
+      false,
+    );
+    expect(
+      isNoopAction({ type: 'setRange', id: 'b', range: 'now-7d' }, cards),
+    ).toBe(false);
+    expect(isNoopAction({ type: 'reset' }, cards)).toBe(false);
   });
 });
