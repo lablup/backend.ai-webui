@@ -277,7 +277,7 @@ const DAY_MS = 24 * 60 * 60 * 1000;
 // The bar and line charts keep their axes readable down to this height.
 const CHART_MIN_HEIGHT = 120;
 // The chart's share of the panel when the table is listed under it.
-export const CHART_HEIGHT_WITH_TABLE = 200;
+const CHART_HEIGHT_WITH_TABLE = 200;
 
 const styles = stylex.create({
   // Takes the panel's remaining height; the chart inside reads it back.
@@ -349,16 +349,7 @@ const ResourceChartPanel: React.FC<ResourceTablePanelProps> = ({
       onEdit={onEdit}
       onRemove={onRemove}
     >
-      <Suspense
-        fallback={
-          // The chart's own box, so the skeleton fills the same height the chart will.
-          <ChartBox
-            fixedHeight={chart.showTable ? CHART_HEIGHT_WITH_TABLE : undefined}
-          >
-            {(height) => <BAISkeleton variant="block" height={height} />}
-          </ChartBox>
-        }
-      >
+      <Suspense fallback={<BAISkeleton />}>
         <ResourceChartContent
           key={`${descriptor.resourceType}:${JSON.stringify(descriptor.filter ?? null)}`}
           descriptor={descriptor}
@@ -488,7 +479,7 @@ export const ResourceChartContent: React.FC<{
     >
       {isSwitching ? (
         <ChartBox fixedHeight={fixedHeight}>
-          <BAISkeleton variant="block" height="100%" />
+          <BAISkeleton />
         </ChartBox>
       ) : (
         chartBody

@@ -9,10 +9,7 @@ import {
 } from '../../helper/sessionResourceGridData';
 import { DeploymentNodesPanelContent } from './DeploymentNodesPanel';
 import PanelRangeSelect, { NO_PERIOD } from './PanelRangeSelect';
-import {
-  CHART_HEIGHT_WITH_TABLE,
-  ResourceChartContent,
-} from './ResourceChartPanel';
+import { ResourceChartContent } from './ResourceChartPanel';
 import { ResourceCountContent } from './ResourceCountPanel';
 import { ResourceTableContent } from './ResourceTablePanel';
 import { SessionNodesPanelContent } from './SessionNodesPanel';
@@ -515,20 +512,7 @@ const DashboardPanelModal: React.FC<DashboardPanelModalProps> = ({
                         align="stretch"
                         style={chart.showTable ? undefined : { height: 240 }}
                       >
-                        <Suspense
-                          fallback={
-                            // 100% collapses to 0 inside the height-less wrapper when the
-                            // table is on — the chart's fixed height covers that case.
-                            <BAISkeleton
-                              variant="block"
-                              height={
-                                chart.showTable
-                                  ? CHART_HEIGHT_WITH_TABLE
-                                  : '100%'
-                              }
-                            />
-                          }
-                        >
+                        <Suspense fallback={<BAISkeleton />}>
                           <ResourceChartContent
                             key={`${resourceType}:${JSON.stringify(filter ?? null)}`}
                             descriptor={{
