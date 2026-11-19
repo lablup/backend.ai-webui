@@ -52,7 +52,7 @@ const WebUIAssistantFloating: React.FC = () => {
     !!connection?.baseURL && (!connection.hasApiKey || !!apiKey);
   const isPanelShown = isOpen && isConnected;
   const title = profile?.translations?.[lang]?.name || profile?.name;
-  // The chat (manual download, /models probe) mounts on first open (ADR 0031) and then stays.
+  // The chat (manual download, /models probe) mounts on first open (ADR 0032) and then stays.
   const [hasBeenShown, setHasBeenShown] = useState(false);
   if (isPanelShown && !hasBeenShown) setHasBeenShown(true);
 

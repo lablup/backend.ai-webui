@@ -3,7 +3,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
- Serves the user manual's Markdown source as static files (ADR 0031): every
+ Serves the user manual's Markdown source as static files (ADR 0032): every
  page `book.config.yaml` publishes is copied to resources/manual/<lang>/<slug>.md,
  with resources/manual/<lang>/index.json listing them. A build artifact
  (gitignored); `pnpm run build` and `pnpm run dev` run this.
