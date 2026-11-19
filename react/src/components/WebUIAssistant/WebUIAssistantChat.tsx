@@ -239,6 +239,13 @@ const WebUIAssistantChat: React.FC<WebUIAssistantChatProps> = ({
   const isWaitingForFirstToken =
     isStreaming && (lastMessage?.role === 'user' || !lastMessage);
 
+  const thinking = (
+    <BAIFlex gap="xs">
+      <Spinner size="sm" />
+      <Text color="secondary">{t('chatui.Thinking')}</Text>
+    </BAIFlex>
+  );
+
   const messageItems = [
     ...messages.map((message, index) => {
       const isUser = message.role === 'user';
@@ -251,6 +258,9 @@ const WebUIAssistantChat: React.FC<WebUIAssistantChatProps> = ({
           <ChatMessageBubble>
             {isUser ? (
               text
+            ) : isMessageStreaming && !text.trim() ? (
+              // Reasoning or an action block still streaming leaves nothing to show yet.
+              thinking
             ) : (
               <>
                 <ChatMessageContent isStreaming={isMessageStreaming}>
@@ -278,12 +288,7 @@ const WebUIAssistantChat: React.FC<WebUIAssistantChatProps> = ({
     ...(isWaitingForFirstToken
       ? [
           <ChatMessage key="thinking" sender="assistant">
-            <ChatMessageBubble>
-              <BAIFlex gap="xs">
-                <Spinner size="sm" />
-                <Text color="secondary">{t('chatui.Thinking')}</Text>
-              </BAIFlex>
-            </ChatMessageBubble>
+            <ChatMessageBubble>{thinking}</ChatMessageBubble>
           </ChatMessage>,
         ]
       : []),
