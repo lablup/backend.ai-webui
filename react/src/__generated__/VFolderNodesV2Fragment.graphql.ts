@@ -9,9 +9,7 @@
 // @ts-nocheck
 
 import { ReaderFragment } from 'relay-runtime';
-export type MountPermission = "READ_ONLY" | "READ_WRITE" | "RW_DELETE" | "%future added value";
 export type PermissionBit = "CREATE" | "HARD_DELETE" | "READ" | "SOFT_DELETE" | "UPDATE" | "%future added value";
-export type VFolderAutoMountScopeType = "PROJECT" | "USER" | "%future added value";
 export type VFolderMountPermission = "NONE" | "READ_ONLY" | "READ_WRITE" | "RW_DELETE" | "%future added value";
 export type VFolderOperationStatus = "CLONING" | "CREATING" | "DELETE_COMPLETE" | "DELETE_ERROR" | "DELETE_ONGOING" | "DELETE_PENDING" | "READY" | "%future added value";
 export type VFolderOwnershipType = "GROUP" | "USER" | "%future added value";
@@ -67,16 +65,6 @@ export type VFolderNodesV2Fragment$data = ReadonlyArray<{
     readonly usedBytes: {
       readonly expr: string;
     };
-  } | null | undefined;
-  readonly vfolderAutoMounts: {
-    readonly edges: ReadonlyArray<{
-      readonly node: {
-        readonly mountDestination: string;
-        readonly mountPermission: MountPermission;
-        readonly scopeType: VFolderAutoMountScopeType;
-        readonly subpath: string;
-      };
-    }>;
   } | null | undefined;
   readonly vfolderStatus: VFolderOperationStatus;
   readonly " $fragmentSpreads": FragmentRefs<"DeleteForeverVFolderModalV2Fragment" | "InviteFolderSettingModalFragment" | "SharedFolderPermissionInfoModalV2Fragment" | "VFolderNodeIdenticonV2Fragment" | "VFolderNodesV2AutoMountCellFragment">;
@@ -396,67 +384,6 @@ return {
         }
       ],
       "storageKey": "entityLabels(limit:100)"
-    },
-    {
-      "alias": null,
-      "args": null,
-      "concreteType": "VFolderAutoMountConnection",
-      "kind": "LinkedField",
-      "name": "vfolderAutoMounts",
-      "plural": false,
-      "selections": [
-        {
-          "alias": null,
-          "args": null,
-          "concreteType": "VFolderAutoMountEdge",
-          "kind": "LinkedField",
-          "name": "edges",
-          "plural": true,
-          "selections": [
-            {
-              "alias": null,
-              "args": null,
-              "concreteType": "VFolderAutoMount",
-              "kind": "LinkedField",
-              "name": "node",
-              "plural": false,
-              "selections": [
-                {
-                  "alias": null,
-                  "args": null,
-                  "kind": "ScalarField",
-                  "name": "scopeType",
-                  "storageKey": null
-                },
-                {
-                  "alias": null,
-                  "args": null,
-                  "kind": "ScalarField",
-                  "name": "mountDestination",
-                  "storageKey": null
-                },
-                {
-                  "alias": null,
-                  "args": null,
-                  "kind": "ScalarField",
-                  "name": "subpath",
-                  "storageKey": null
-                },
-                {
-                  "alias": null,
-                  "args": null,
-                  "kind": "ScalarField",
-                  "name": "mountPermission",
-                  "storageKey": null
-                }
-              ],
-              "storageKey": null
-            }
-          ],
-          "storageKey": null
-        }
-      ],
-      "storageKey": null
     },
     {
       "args": null,

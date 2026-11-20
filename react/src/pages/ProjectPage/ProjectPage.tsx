@@ -21,7 +21,6 @@ import ProjectAdminSettingModal, {
   buildProjectAdminRoleFilter,
   selectProjectAdminRoles,
 } from './components/ProjectAdminSettingModal';
-import ProjectAutoMountSettingModal from './components/ProjectAutoMountSettingModal';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIButton,
@@ -53,7 +52,6 @@ import * as _ from 'lodash-es';
 import {
   Trash2,
   BanIcon,
-  FolderSync,
   PlusIcon,
   ShieldUserIcon,
   SquarePenIcon,
@@ -93,11 +91,6 @@ const ProjectPage = () => {
   const relayEnvironment = useRelayEnvironment();
   const baiClient = useSuspendedBackendaiClient();
   const supportsTypeFilter = baiClient.isManagerVersionCompatibleWith('26.9.0');
-  // The project outlives `open` so the closing modal does not re-query with an empty id.
-  const [autoMount, setAutoMount] = useState<{
-    open: boolean;
-    project: ProjectInList | null;
-  }>({ open: false, project: null });
   const [openSettingModal, { toggle: toggleSettingModal }] = useToggle(false);
   const [openBulkEditModal, { toggle: toggleBulkEditModal }] = useToggle(false);
   const [selectedProjectList, setSelectedProjectList] = useState<ProjectNode[]>(
@@ -569,17 +562,6 @@ const ProjectPage = () => {
                                 openProjectAdminSettingModal(record),
                             },
                             {
-                              key: 'auto-mount',
-                              title: t('autoMount.AutoMountFolders'),
-                              icon: <FolderSync />,
-                              disabled: isModelStore || !record.row_id,
-                              onClick: () =>
-                                setAutoMount({
-                                  open: true,
-                                  project: record,
-                                }),
-                            },
-                            {
                               key: 'edit',
                               title: t('project.EditProject'),
                               icon: <SquarePenIcon />,
@@ -713,16 +695,6 @@ const ProjectPage = () => {
             />
           </BAIUnmountAfterClose>
         )}
-        <BAIUnmountAfterClose>
-          <ProjectAutoMountSettingModal
-            open={autoMount.open}
-            projectId={autoMount.project?.row_id ?? ''}
-            projectName={autoMount.project?.name}
-            onCancel={() =>
-              setAutoMount({ open: false, project: autoMount.project })
-            }
-          />
-        </BAIUnmountAfterClose>
         <BAIDeleteConfirmModal
           open={!!purgingProject}
           title={t('project.PurgeProject')}

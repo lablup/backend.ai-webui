@@ -273,19 +273,6 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
       }
     `);
 
-  const commitCreateAutoMountMutation =
-    useMutationWithPromise<FolderCreateModalAutoMountMutation>(graphql`
-      mutation FolderCreateModalAutoMountMutation(
-        $input: CreateVFolderAutoMountInput!
-      ) {
-        createVfolderAutoMount(input: $input) {
-          vfolderAutoMount {
-            id
-          }
-        }
-      }
-    `);
-
   const handleOk = async () => {
     let values: FolderCreateFormItemsType | undefined;
     try {
