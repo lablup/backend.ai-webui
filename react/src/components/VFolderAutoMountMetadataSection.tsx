@@ -86,7 +86,7 @@ const VFolderAutoMountMetadataSection: React.FC<
     );
   const autoMount = vfolderAutoMounts?.edges[0]?.node ?? null;
 
-  // ADR 0032: a personal project's folder auto-mounts for its user, any other
+  // ADR 0040: a personal project's folder auto-mounts for its user, any other
   // project folder for its project; null when the project cannot be read.
   const { userId, projectId, creatorId, project } = vfolder.ownership ?? {};
   const addScope = ((): AutoMountScope | null => {

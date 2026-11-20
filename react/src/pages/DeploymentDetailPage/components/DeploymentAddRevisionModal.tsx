@@ -2753,7 +2753,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
         // would write back a folder this revision cannot mount.
         open={isModelFolderCreateModalOpen && !!deploymentProject}
         project={deploymentProject}
-        // ADR 0032: a personal project's deployment auto-mounts on its owner.
+        // ADR 0040: a personal project's deployment auto-mounts on its owner.
         autoMountScopeType={
           deployment?.metadata?.projectV2?.basicInfo?.type === 'PERSONAL'
             ? 'USER'

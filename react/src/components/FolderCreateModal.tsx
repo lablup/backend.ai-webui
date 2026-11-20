@@ -101,7 +101,7 @@ export interface FolderCreateModalProps extends Omit<
    * rendered as an Astryx `Banner status="warning"`.
    */
   alertMessage?: React.ReactNode;
-  /** Scope the folder's auto-mount is set on; the caller decides (ADR 0032). */
+  /** Scope the folder's auto-mount is set on; the caller decides (ADR 0040). */
   autoMountScopeType?: VFolderAutoMountScopeType;
   /** The `USER` scope's user when it is not the caller, with an email for the notice. */
   autoMountUser?: { id: string; email?: string | null };
