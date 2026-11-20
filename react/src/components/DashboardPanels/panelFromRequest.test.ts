@@ -3,7 +3,8 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import {
-  buildPanelPrompt,
+  describePanelSources,
+  inputOfDraft,
   filterOfConditions,
   parsePanelReply,
   sanitizeConditions,
@@ -166,13 +167,28 @@ describe('parsePanelReply', () => {
   });
 });
 
-describe('buildPanelPrompt', () => {
+describe('describePanelSources', () => {
   it('lists properties with their operators and values', () => {
-    const prompt = buildPanelPrompt([session, vfolder]);
-    expect(prompt).toContain(
+    const text = describePanelSources([session, vfolder]);
+    expect(text).toContain(
       '- status (Status, string); operators: == !=; values: RUNNING PENDING',
     );
-    expect(prompt).toContain('- session (Sessions); panel types:');
-    expect(prompt).toContain('Reply with only a JSON object');
+    expect(text).toContain('- session (Sessions); panel types:');
+  });
+});
+
+describe('inputOfDraft', () => {
+  it('keeps chart settings on a chart only', () => {
+    expect(
+      inputOfDraft({ resourceType: 'session', panelType: 'resourceTable' }),
+    ).toMatchObject({ panelType: 'resourceTable', chart: null, filter: null });
+    expect(
+      inputOfDraft({
+        resourceType: 'session',
+        panelType: 'resourceChart',
+        chartType: 'line',
+        range: 'now-7d',
+      }),
+    ).toMatchObject({ chart: { type: 'line' }, range: 'now-7d' });
   });
 });

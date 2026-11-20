@@ -10,13 +10,20 @@ import {
   sizeOf,
   updatePanel,
 } from './boardModel';
+import { panelConfigFromInput, settingsFromInput } from './defaults';
 import {
   RANGE_PRESETS,
   isRangePreset,
   mergeSettings,
   type RangePreset,
 } from './panelSettings';
-import type { DashboardBoard, PanelDefinition, PanelPage } from './types';
+import type {
+  DashboardBoard,
+  PanelDefinition,
+  PanelInput,
+  PanelPage,
+  PersistedPanelV2,
+} from './types';
 import * as _ from 'lodash-es';
 
 /** The board grid's column count (BAIBoard). */
@@ -28,7 +35,23 @@ export type DashboardAssistantAction =
   | { type: 'show' | 'hide' | 'moveToTop' | 'moveToBottom'; id: string }
   | { type: 'resize'; id: string; columnSpan?: number; rowSpan?: number }
   | { type: 'setRange'; id: string; range: RangePreset }
-  | { type: 'reset' };
+  | { type: 'reset' }
+  /** A new custom panel; its id is fixed when the reply is read, so a preview keeps it. */
+  | { type: 'addPanel'; panel: PersistedPanelV2 }
+  /** A custom panel's full new configuration. */
+  | { type: 'editPanel'; id: string; input: PanelInput }
+  /** A new board; the actions after it apply to that board. */
+  | { type: 'createBoard'; title: string };
+
+/** The id of the card an action changes, if it changes one. */
+export const actionTargetId = (
+  action: DashboardAssistantAction,
+): string | undefined =>
+  action.type === 'reset' || action.type === 'createBoard'
+    ? undefined
+    : action.type === 'addPanel'
+      ? action.panel.id
+      : action.id;
 
 /** A card the viewer can place on the current board, as the assistant sees it. */
 export interface DashboardAssistantCard {
@@ -151,7 +174,7 @@ export const sanitizeAssistantActions = (
 };
 
 /** The JSON a reply carries: a `dashboard-actions` (or any) fence, else its outermost braces. */
-const jsonOfReply = (text: string): unknown => {
+export const jsonOfReply = (text: string): unknown => {
   const fenced = /```(?:[\w-]+)?\s*([\s\S]*?)```/.exec(text);
   const body = fenced
     ? fenced[1]
@@ -175,7 +198,13 @@ export const isNoopAction = (
   action: DashboardAssistantAction,
   cards: ReadonlyArray<DashboardAssistantCard>,
 ): boolean => {
-  if (action.type === 'reset') return false;
+  if (
+    action.type === 'reset' ||
+    action.type === 'createBoard' ||
+    action.type === 'addPanel' ||
+    action.type === 'editPanel'
+  )
+    return false;
   const card = cards.find((item) => item.id === action.id);
   if (!card) return true;
   const shown = cards.filter((item) => item.shown);
@@ -221,17 +250,49 @@ export interface ApplyAssistantActionsContext {
   page: PanelPage;
   /** What "Reset layout" restores. */
   template?: DashboardBoard;
+  /** The board a `createBoard` action starts from; without it the action is skipped. */
+  emptyBoard?: DashboardBoard;
 }
 
 /** `actions` applied to `board` in order; an action that does not fit the board is skipped. */
 export const applyAssistantActions = (
   board: DashboardBoard,
   actions: ReadonlyArray<DashboardAssistantAction>,
-  { definitionByKey, catalog, page, template }: ApplyAssistantActionsContext,
+  {
+    definitionByKey,
+    catalog,
+    page,
+    template,
+    emptyBoard,
+  }: ApplyAssistantActionsContext,
 ): DashboardBoard =>
   actions.reduce((current, action) => {
     if (action.type === 'reset')
       return resetBoard(current, catalog, page, template);
+    if (action.type === 'createBoard') return emptyBoard ?? current;
+    if (action.type === 'addPanel') {
+      const definition = definitionByKey.get(action.panel.key);
+      return definition ? addPanel(current, definition, action.panel) : current;
+    }
+    if (action.type === 'editPanel') {
+      const panel = current.panels.find((item) => item.id === action.id);
+      const next = panelConfigFromInput(action.input);
+      const definition = definitionByKey.get(next.key);
+      if (!panel || !definition) return current;
+      // A kind switch rewrites the size, as the panel modal's edit does.
+      const resized =
+        panel.viz !== next.viz
+          ? {
+              ...sizeOf(definition, next.viz).defaultSize,
+              columnOffset: undefined,
+            }
+          : {};
+      return updatePanel(current, action.id, {
+        ...next,
+        ...resized,
+        settings: settingsFromInput(panel.settings, action.input),
+      });
+    }
     const panel = current.panels.find((item) => item.id === action.id);
     const definition = definitionByKey.get(panel?.key ?? action.id);
     if (!definition) return current;
@@ -283,7 +344,11 @@ export const settingsTouchedBy = (
   actions.some((action) => action.type === 'reset')
     ? 'all'
     : actions.flatMap((action) =>
-        action.type === 'setRange' || action.type === 'hide' ? [action.id] : [],
+        action.type === 'setRange' ||
+        action.type === 'hide' ||
+        action.type === 'editPanel'
+          ? [action.id]
+          : [],
       );
 
 const cardLine = (card: DashboardAssistantCard) =>

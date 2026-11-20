@@ -32,6 +32,8 @@ export interface DashboardBoardSectionProps {
   page: Extract<PanelPage, 'projectAdmin' | 'admin'>;
   boards: DashboardBoardsState;
   catalog: ReadonlyArray<PanelDefinition>;
+  /** Shown before the New board button. */
+  extra?: React.ReactNode;
 }
 
 /**
@@ -42,6 +44,7 @@ const DashboardBoardSection: React.FC<DashboardBoardSectionProps> = ({
   page,
   boards,
   catalog,
+  extra,
 }) => {
   'use memo';
   const { t } = useTranslation();
@@ -98,14 +101,17 @@ const DashboardBoardSection: React.FC<DashboardBoardSectionProps> = ({
     >
       <BAIFlex direction="row" justify="between" align="center" gap="sm">
         <BAIText strong>{t('dashboard.boards.Boards')}</BAIText>
-        <Button
-          variant="secondary"
-          size="sm"
-          icon={<Plus size="1em" />}
-          label={t('dashboard.boards.NewBoard')}
-          onClick={addNewBoard}
-          data-testid="dashboard-board-add"
-        />
+        <BAIFlex gap="xs" align="center">
+          {extra}
+          <Button
+            variant="secondary"
+            size="sm"
+            icon={<Plus size="1em" />}
+            label={t('dashboard.boards.NewBoard')}
+            onClick={addNewBoard}
+            data-testid="dashboard-board-add"
+          />
+        </BAIFlex>
       </BAIFlex>
       <BAISelect
         size="small"

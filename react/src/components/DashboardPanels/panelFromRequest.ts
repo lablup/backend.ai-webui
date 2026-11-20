@@ -2,6 +2,8 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { jsonOfReply } from './assistantActions';
+import { resolveChart } from './chartSources';
 import {
   RANGE_PRESETS,
   isRangePreset,
@@ -11,6 +13,7 @@ import {
   CHART_TYPES,
   PANEL_TYPES,
   type ChartType,
+  type PanelInput,
   type PanelType,
   type ResourceKey,
 } from './types';
@@ -111,42 +114,25 @@ const propertyLine = (
     .join('; ');
 };
 
-/** The system prompt that turns one description into a panel. */
-export const buildPanelPrompt = (
+/** The data sources a new panel can use, as the chat prompt lists them. */
+export const describePanelSources = (
   sources: ReadonlyArray<PanelSourceSpec>,
 ): string =>
-  [
-    "You configure one Backend.AI WebUI dashboard panel from the user's description.",
-    'Data sources (key, label, panel types, filter properties, chart groupings):',
-    sources
-      .map((source) =>
-        [
-          `- ${source.key} (${source.label}); panel types: ${source.panelTypes.join(' ')}`,
-          '  filter properties:',
-          ...source.filter.properties.map((property) =>
-            propertyLine(source, property),
-          ),
-          `  chart groupings: ${source.groupings.map((g) => `${g.key} (${g.label})`).join(', ')}`,
-        ].join('\n'),
-      )
-      .join('\n'),
-    'Reply with only a JSON object, no other text:',
-    '{"resourceType":"<source key>","panelType":"resourceTable","title":"<short title>","conditions":[{"property":"<key>","operator":"<operator>","value":"<value>"}],"chartType":"donut","groupBy":"<grouping key>","range":"now-24h"}',
-    `panelType: resourceTable (rows), resourceCount (a number), resourceChart (a chart), sessionResourceGrid (session cards). chartType (charts only): ${CHART_TYPES.join(' ')}. range (charts over time only): ${RANGE_PRESETS.join(' ')}.`,
-    'Use only listed keys, operators and values. Leave out what the user did not ask for. Write the title in the language the user writes in.',
-  ].join('\n\n');
+  sources
+    .map((source) =>
+      [
+        `- ${source.key} (${source.label}); panel types: ${source.panelTypes.join(' ')}`,
+        '  filter properties:',
+        ...source.filter.properties.map((property) =>
+          propertyLine(source, property),
+        ),
+        `  chart groupings: ${source.groupings.map((g) => `${g.key} (${g.label})`).join(', ')}`,
+      ].join('\n'),
+    )
+    .join('\n');
 
-const jsonOfReply = (text: string): unknown => {
-  const fenced = /```(?:[\w-]+)?\s*([\s\S]*?)```/.exec(text);
-  const body = fenced
-    ? fenced[1]
-    : text.slice(text.indexOf('{'), text.lastIndexOf('}') + 1);
-  try {
-    return body ? JSON.parse(body) : undefined;
-  } catch {
-    return undefined;
-  }
-};
+/** Field rules for a panel in an `addPanel` or `editPanel` action. */
+export const PANEL_FIELDS_HELP = `panelType: resourceTable (rows), resourceCount (a number), resourceChart (a chart), sessionResourceGrid (session cards). chartType (charts only): ${CHART_TYPES.join(' ')}. range (charts over time only): ${RANGE_PRESETS.join(' ')}. conditions: [{"property":"<key>","operator":"<operator>","value":"<value>"}] with listed keys, operators and values only.`;
 
 const asString = (value: unknown) =>
   typeof value === 'string' ||
@@ -210,14 +196,13 @@ export const filterOfConditions = (
     .join(' & ');
 };
 
-/** The panel a model reply describes, or null when it names no usable source. */
-export const parsePanelReply = (
-  text: string,
+/** The panel one reply object describes, or null when it names no usable source. */
+export const panelDraftOf = (
+  value: unknown,
   sources: ReadonlyArray<PanelSourceSpec>,
 ): PanelDraft | null => {
-  const json = jsonOfReply(text);
-  if (!_.isPlainObject(json)) return null;
-  const reply = json as Record<string, unknown>;
+  if (!_.isPlainObject(value)) return null;
+  const reply = value as Record<string, unknown>;
   const source = sources.find((s) => s.key === reply.resourceType);
   if (!source) return null;
   const panelType =
@@ -248,5 +233,33 @@ export const parsePanelReply = (
           range: isRangePreset(reply.range) ? reply.range : undefined,
         }
       : {}),
+  };
+};
+
+/** The panel a model reply describes, or null when it names no usable source. */
+export const parsePanelReply = (
+  text: string,
+  sources: ReadonlyArray<PanelSourceSpec>,
+): PanelDraft | null => panelDraftOf(jsonOfReply(text), sources);
+
+/** The panel modal's input for a draft; a chart over time counts within its range. */
+export const inputOfDraft = (draft: PanelDraft): PanelInput => {
+  const chart =
+    draft.panelType === 'resourceChart'
+      ? resolveChart(draft.resourceType, {
+          type: draft.chartType,
+          groupBy: draft.groupBy,
+          period: draft.range ? true : undefined,
+        })
+      : null;
+  return {
+    panelType: draft.panelType,
+    resourceType: draft.resourceType,
+    title: draft.title,
+    filter: draft.filter ?? null,
+    order: null,
+    gridView: null,
+    chart,
+    range: draft.range,
   };
 };

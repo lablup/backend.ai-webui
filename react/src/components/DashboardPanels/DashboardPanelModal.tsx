@@ -9,7 +9,6 @@ import {
   type SessionGridViewParams,
 } from '../../helper/sessionResourceGridData';
 import { AuditLogNodesPanelContent } from './AuditLogNodesPanel';
-import DashboardPanelRequest from './DashboardPanelRequest';
 import { DeploymentNodesPanelContent } from './DeploymentNodesPanel';
 import PanelRangeSelect, { NO_PERIOD } from './PanelRangeSelect';
 import { ResourceChartContent } from './ResourceChartPanel';
@@ -23,7 +22,6 @@ import {
   chartWindow,
   resolveChart,
 } from './chartSources';
-import type { PanelDraft, PanelSourceSpec } from './panelFromRequest';
 import { PanelPermissionBoundary } from './panelPermission';
 import { availablePanelTypes, panelTypeLabelKeys } from './panelRegistry';
 import { DEFAULT_RANGE } from './panelSettings';
@@ -252,53 +250,6 @@ const DashboardPanelModal: React.FC<DashboardPanelModalProps> = ({
     forcePanelType: initialPanel?.panelType,
   });
 
-  const requestSources: Array<PanelSourceSpec> = resourceOptions.map((key) => {
-    const source = resourceRegistry[key];
-    return {
-      key,
-      label: t(source.labelKey),
-      panelTypes: availablePanelTypes(key, {
-        gridEnabled,
-        forcePanelType: initialPanel?.panelType,
-      }),
-      filter:
-        source.kind === 'sessionNodes'
-          ? {
-              kind: 'minilang',
-              properties: source.getStringFilterProperties?.(t) ?? [],
-            }
-          : {
-              kind: 'graphql',
-              properties: source.getFilterProperties?.(t) ?? [],
-            },
-      groupings: CHART_GROUPINGS[key].map((grouping) => ({
-        key: grouping.key,
-        label: t(grouping.labelKey),
-      })),
-    };
-  });
-
-  // Programmatic values skip onValuesChange, so this sets every dependent field itself.
-  const applyDraft = (draft: PanelDraft) => {
-    const chart = resolveChart(draft.resourceType, {
-      type: draft.chartType,
-      groupBy: draft.groupBy,
-    });
-    form.setFieldsValue({
-      resourceType: draft.resourceType,
-      panelType: draft.panelType,
-      title: draft.title,
-      filter: draft.filter,
-      chartType: chart.type,
-      groupBy: chart.groupBy,
-      range: isTimeChartType(chart.type)
-        ? (draft.range ?? DEFAULT_RANGE)
-        : (draft.range ?? NO_PERIOD),
-    });
-    setOrder(null);
-    setGridView(DEFAULT_SESSION_GRID_VIEW);
-  };
-
   // Panel kind and data source are required: they decide which query runs, so
   // a panel without them cannot render at all. Validation gates the submit,
   // and the modal stays open with the offending field marked.
@@ -406,7 +357,6 @@ const DashboardPanelModal: React.FC<DashboardPanelModalProps> = ({
       onCancel={onRequestClose}
       afterClose={afterClose}
     >
-      <DashboardPanelRequest sources={requestSources} onDraft={applyDraft} />
       <Form
         form={form}
         layout="vertical"

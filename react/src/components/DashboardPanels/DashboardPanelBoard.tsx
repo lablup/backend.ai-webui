@@ -3,8 +3,9 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import type { ProjectContextOrNull } from '../../types/projectContext';
+import { useWebUIAssistantModel } from '../WebUIAssistant/useWebUIAssistantModel';
 import { dashboardEditModeAtom } from '../dashboardEditModeAtom';
-import DashboardAssistantSection from './DashboardAssistantSection';
+import DashboardAssistantChat from './DashboardAssistantChat';
 import DashboardBoardSection from './DashboardBoardSection';
 import DashboardBoardTabs from './DashboardBoardTabs';
 import DashboardEditSider from './DashboardEditSider';
@@ -15,10 +16,14 @@ import { useBoardItemVisibility } from './DashboardRefreshContext';
 import { DashboardResourceGroupsProvider } from './DashboardResourceGroups';
 import PanelSettingsModal from './PanelSettingsModal';
 import { boardSortsAtom } from './ResourceTablePanel';
-import type { DashboardAssistantAction } from './assistantActions';
+import {
+  actionTargetId,
+  type DashboardAssistantAction,
+} from './assistantActions';
 import { dashboardScopeKey } from './dashboardScope';
 import { DeniedPanelsContext, useDeniedPanels } from './panelPermission';
 import { panelSettingOverridesAtom } from './panelSettingOverrides';
+import { panelSourceSpecs } from './panelSourceSpecs';
 import type {
   DashboardPageQueryRefs,
   DashboardScope,
@@ -32,6 +37,7 @@ import {
   useDashboardFilters,
 } from './useDashboardFilters';
 import { useResetOnLeavingPath } from './useResetOnLeavingPath';
+import { IconButton } from '@lablup/ui-common/IconButton';
 import {
   BAIBoard,
   BAIFlex,
@@ -41,8 +47,10 @@ import {
 } from 'backend.ai-ui';
 import { useAtom, useSetAtom } from 'jotai';
 import * as _ from 'lodash-es';
+import { Sparkles } from 'lucide-react';
 import React, { Suspense, useRef, useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
+import { useTranslation } from 'react-i18next';
 
 /**
  * Narrower than ui-common's: six columns from 1100px (not 2100px) so a laptop
@@ -75,9 +83,10 @@ const ASSISTANT_REVEAL_MS = 2000;
 
 /** The first card an assistant change leaves on the board, to scroll to. */
 const firstShownCardOf = (actions: ReadonlyArray<DashboardAssistantAction>) =>
-  actions.flatMap((action) =>
-    action.type === 'reset' || action.type === 'hide' ? [] : [action.id],
-  )[0];
+  actions
+    .filter((action) => action.type !== 'hide')
+    .map(actionTargetId)
+    .find(Boolean);
 
 /** The page's allowed resource groups under a boundary of its own. */
 const WithResourceGroups: React.FC<{
@@ -126,6 +135,10 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
   // A WebUI Assistant proposal the board previews until Apply or Discard.
   const [draftActions, setDraftActions] =
     useState<ReadonlyArray<DashboardAssistantAction> | null>(null);
+  const [isAssistantOpen, setIsAssistantOpen] = useState(false);
+  if (!editMode && isAssistantOpen) setIsAssistantOpen(false);
+  const assistantModel = useWebUIAssistantModel();
+  const { t } = useTranslation();
 
   // These atoms are global: clear them when leaving the page, but not when a
   // suspending query remounts the board on the same path (that would drop an early click).
@@ -154,6 +167,7 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
     updatePanelSettings,
     boards,
     assistantCards,
+    assistantPanels,
     applyAssistantActions,
   } = useDashboardBoard({
     page,
@@ -195,6 +209,17 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
       }),
     );
   };
+
+  const assistantButton = (
+    <IconButton
+      variant="secondary"
+      size="sm"
+      icon={<Sparkles size="1em" />}
+      label={t('webuiAssistant.DashboardAskTitle')}
+      tooltip={t('webuiAssistant.DashboardAskTitle')}
+      onClick={() => setIsAssistantOpen(true)}
+    />
+  );
 
   const filters = useDashboardFilters(page, boards, project);
   const scopeKey = dashboardScopeKey(page, filters.scope);
@@ -276,23 +301,34 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
           <DashboardEditSider
             page={page}
             assistantSection={
-              <DashboardAssistantSection
-                page={page}
-                cards={assistantCards}
-                onPreview={(actions) => {
-                  setDraftActions(actions);
-                  const changedId = actions && firstShownCardOf(actions);
-                  if (changedId) revealCard(changedId);
-                }}
-                onApply={(actions) => {
-                  applyAssistantActions(actions);
-                  setDraftActions(null);
-                  const changedId = firstShownCardOf(actions);
-                  if (changedId) revealCard(changedId);
-                }}
-                onHighlight={highlightCard}
-                onReveal={revealCard}
-              />
+              page === 'project' && assistantModel.isAvailable ? (
+                <BAIFlex justify="end">{assistantButton}</BAIFlex>
+              ) : undefined
+            }
+            takeover={
+              isAssistantOpen ? (
+                <DashboardAssistantChat
+                  page={page}
+                  cards={assistantCards}
+                  panels={assistantPanels}
+                  sources={panelSourceSpecs(availableResources, {
+                    gridEnabled,
+                    t,
+                  })}
+                  canCreateBoard={page !== 'project'}
+                  draft={draftActions ?? []}
+                  onDraftChange={setDraftActions}
+                  onApply={(actions) => {
+                    applyAssistantActions(actions);
+                    setDraftActions(null);
+                    const changedId = firstShownCardOf(actions);
+                    if (changedId) revealCard(changedId);
+                  }}
+                  onHighlight={highlightCard}
+                  onReveal={revealCard}
+                  onClose={() => setIsAssistantOpen(false)}
+                />
+              ) : undefined
             }
             catalogEntries={catalogEntries}
             activeKeys={activeKeys}
@@ -317,6 +353,7 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
                   page={page}
                   boards={boards}
                   catalog={catalog}
+                  extra={assistantModel.isAvailable ? assistantButton : null}
                 />
               ) : undefined
             }

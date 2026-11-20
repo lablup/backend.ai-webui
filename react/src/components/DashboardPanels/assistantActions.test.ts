@@ -302,3 +302,60 @@ describe('isNoopAction', () => {
     expect(isNoopAction({ type: 'reset' }, cards)).toBe(false);
   });
 });
+
+describe('applyAssistantActions with panels and boards', () => {
+  const newPanel = {
+    id: 'session-new',
+    key: 'resource.session',
+    viz: 'table' as const,
+    title: 'New',
+    columnSpan: 4,
+    rowSpan: 3,
+  };
+
+  it('adds a custom panel with its fixed id', () => {
+    const next = applyAssistantActions(
+      board,
+      [{ type: 'addPanel', panel: newPanel }],
+      context,
+    );
+    expect(next.panels.at(-1)).toMatchObject({
+      id: 'session-new',
+      title: 'New',
+    });
+  });
+
+  it('edits a custom panel and resizes it when its kind changes', () => {
+    const next = applyAssistantActions(
+      board,
+      [
+        {
+          type: 'editPanel',
+          id: 'mine',
+          input: {
+            panelType: 'resourceCount',
+            resourceType: 'session',
+            title: 'Count',
+            filter: null,
+          },
+        },
+      ],
+      context,
+    );
+    const mine = next.panels.find((panel) => panel.id === 'mine');
+    expect(mine).toMatchObject({ title: 'Count', viz: 'stat' });
+  });
+
+  it('fills a new board with the actions after createBoard', () => {
+    const empty = { panels: [], knownKeys: ['a', 'b', 'c'] };
+    const next = applyAssistantActions(
+      board,
+      [
+        { type: 'createBoard', title: 'Incidents' },
+        { type: 'show', id: 'b' },
+      ],
+      { ...context, emptyBoard: empty },
+    );
+    expect(next.panels.map((panel) => panel.id)).toEqual(['b']);
+  });
+});
