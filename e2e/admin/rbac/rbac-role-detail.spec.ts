@@ -137,10 +137,14 @@ async function pickAssignUser(page: Page, assignModal: Locator, email: string) {
   ).toContainText(email);
 }
 
-// The app-shim's `message.*` renders an Astryx toast (role="status") and a
-// live-region copy of it, so the text matches twice.
+// The app-shim's `message.*` renders an Astryx toast in the "Notifications"
+// region. Since Astryx 0.7.11 the card has no role outside a native modal, and
+// the body-level live-region copy clears after 2s, so match the card's text.
 function toast(page: Page, text: RegExp) {
-  return page.getByRole('status').filter({ hasText: text }).first();
+  return page
+    .getByRole('region', { name: 'Notifications' })
+    .getByText(text)
+    .first();
 }
 
 // The role table (900+ roles in the shared nightly env) can take a while to
@@ -529,13 +533,13 @@ test.describe(
       // 9. Click "Revoke User" to confirm (the modal okText is t('rbac.RevokeUser'))
       await deleteModal.getByRole('button', { name: 'Revoke User' }).click();
 
-      // 10. Verify the user row disappears from the assignments table
-      await expect(userRow).toBeHidden({ timeout: 10000 });
-
-      // 11. Verify a success notification "User removed from role successfully." appears
+      // 10. Verify a success notification "User removed from role successfully." appears
       await expect(
         toast(page, /User removed from role successfully/i),
       ).toBeVisible({ timeout: 10000 });
+
+      // 11. Verify the user row disappears from the assignments table
+      await expect(userRow).toBeHidden({ timeout: 10000 });
     });
 
     test('Superadmin sees the refused user listed when a revoke partially fails', async ({
