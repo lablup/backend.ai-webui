@@ -4539,6 +4539,7 @@
     "MenuGroupProjectAdmin": "プロジェクト管理者",
     "MenuGroupUser": "ユーザー",
     "MenuInactivelist": "メニューを無効化",
+    "MenuLabelWithTier": "{{menu}}（{{tier}}）",
     "NotApplied": "システム設定は適用されませんでした",
     "NotAppliedItems": "次の設定は保存されませんでした。もう一度適用してください:",
     "OpenPortToPublic": "アプリの外部公開を許可",

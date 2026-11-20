@@ -4539,6 +4539,7 @@
     "MenuGroupProjectAdmin": "项目管理员",
     "MenuGroupUser": "用户",
     "MenuInactivelist": "禁用菜单",
+    "MenuLabelWithTier": "{{menu}}（{{tier}}）",
     "NotApplied": "系统设置未应用",
     "NotAppliedItems": "以下设置未保存。请重新应用：",
     "OpenPortToPublic": "允许公开访问应用",

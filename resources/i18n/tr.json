@@ -4537,6 +4537,7 @@
     "MenuGroupProjectAdmin": "Proje yöneticisi",
     "MenuGroupUser": "Kullanıcı",
     "MenuInactivelist": "Menüleri devre dışı bırak",
+    "MenuLabelWithTier": "{{menu}} ({{tier}})",
     "NotApplied": "Sistem ayarları uygulanmadı",
     "NotAppliedItems": "Bu ayarlar kaydedilmedi. Yeniden uygulayın:",
     "OpenPortToPublic": "Uygulamalara herkese açık erişime izin ver",

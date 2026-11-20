@@ -4537,6 +4537,7 @@
     "MenuGroupProjectAdmin": "Администратор проекта",
     "MenuGroupUser": "Пользователь",
     "MenuInactivelist": "Отключить меню",
+    "MenuLabelWithTier": "{{menu}} ({{tier}})",
     "NotApplied": "Системные настройки не применены",
     "NotAppliedItems": "Эти настройки не сохранены. Примените их снова:",
     "OpenPortToPublic": "Разрешить публичный доступ к приложениям",

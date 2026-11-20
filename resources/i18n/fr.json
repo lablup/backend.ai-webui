@@ -4540,6 +4540,7 @@
     "MenuGroupProjectAdmin": "Administrateur de projet",
     "MenuGroupUser": "Utilisateur",
     "MenuInactivelist": "Désactiver des menus",
+    "MenuLabelWithTier": "{{menu}} ({{tier}})",
     "NotApplied": "Les paramètres système n'ont pas été appliqués",
     "NotAppliedItems": "Ces paramètres n'ont pas été enregistrés. Appliquez-les à nouveau :",
     "OpenPortToPublic": "Autoriser l'accès public aux applications",

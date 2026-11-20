@@ -4540,6 +4540,7 @@
     "MenuGroupProjectAdmin": "Administrator projektu",
     "MenuGroupUser": "Użytkownik",
     "MenuInactivelist": "Wyłącz menu",
+    "MenuLabelWithTier": "{{menu}} ({{tier}})",
     "NotApplied": "Ustawienia systemowe nie zostały zastosowane",
     "NotAppliedItems": "Te ustawienia nie zostały zapisane. Zastosuj je ponownie:",
     "OpenPortToPublic": "Zezwalaj na publiczny dostęp do aplikacji",

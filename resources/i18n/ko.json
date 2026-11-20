@@ -4540,6 +4540,7 @@
     "MenuGroupProjectAdmin": "프로젝트 관리자",
     "MenuGroupUser": "사용자",
     "MenuInactivelist": "메뉴 비활성화",
+    "MenuLabelWithTier": "{{menu}} ({{tier}})",
     "NotApplied": "시스템 설정이 적용되지 않았습니다",
     "NotAppliedItems": "다음 설정은 저장되지 않았습니다. 다시 적용해 주세요:",
     "OpenPortToPublic": "앱 외부 공개",

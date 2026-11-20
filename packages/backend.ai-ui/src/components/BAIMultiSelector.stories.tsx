@@ -1,8 +1,6 @@
+import BAIFlex from './BAIFlex';
 import BAIMultiSelector from './BAIMultiSelector';
-import {
-  formControlDocsDescription,
-  formControlStories,
-} from './formControlStory';
+import { formControlStories } from './formControlStory';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const sampleOptions = [
@@ -12,8 +10,8 @@ const sampleOptions = [
 ];
 
 /**
- * BAIMultiSelector is ui-common's `MultiSelector` under its BAI name: several
- * choices from a static option list, named in the trigger.
+ * BAIMultiSelector is ui-common's `MultiSelector` under its BAI name, with
+ * `showTooltip` on by default.
  *
  * @see ADR 0014 (docs/adr/0014-bai-names-for-ui-common-form-controls.md)
  */
@@ -25,13 +23,25 @@ const meta: Meta<typeof BAIMultiSelector> = {
     layout: 'padded',
     docs: {
       description: {
-        component: formControlDocsDescription(
-          'BAIMultiSelector',
-          'MultiSelector',
-          `<Form.Item name="sessionTypes" label="Allowed session types">
+        component: `
+**BAIMultiSelector** is ui-common's \`MultiSelector\` under its BAI name (ADR 0014): several choices from a static option list, named in the trigger.
+
+## Features
+- Form.Item-aware: value, onChange, disabled, validation status and the accessible name come from the item
+- Fills the Form.Item row by default
+- \`showTooltip\` defaults to \`true\`: the trigger names three labels, then "+N", and its tooltip lists every selected label
+- Import from \`backend.ai-ui\`; ESLint blocks \`MultiSelector\` from the ui-common subpath in \`react/\`
+
+## Usage
+\`\`\`tsx
+<Form.Item name="sessionTypes" label="Allowed session types">
   <BAIMultiSelector options={sessionTypeOptions} />
-</Form.Item>`,
-        ),
+</Form.Item>
+\`\`\`
+
+## Props
+ui-common's \`MultiSelectorProps\`, with \`showTooltip\` defaulting to \`true\`. Run \`ui-common component MultiSelector\` for the full list.
+`,
       },
     },
   },
@@ -49,3 +59,38 @@ const stories = formControlStories(
 export const Default: Story = stories.Default;
 export const ErrorState: Story = stories.ErrorState;
 export const DisabledState: Story = stories.DisabledState;
+
+const manyOptions = [
+  ...sampleOptions,
+  { value: 'system', label: 'System' },
+  { value: 'training', label: 'Training' },
+];
+
+export const SelectionTooltip: Story = {
+  name: 'SelectionTooltip',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Hover or focus the trigger: the tooltip lists every selected label, including the ones "+N" hides. `showTooltip={false}` turns it off.',
+      },
+    },
+  },
+  render: () => (
+    <BAIFlex direction="column" gap="md">
+      <BAIMultiSelector
+        aria-label="With tooltip"
+        width={300}
+        options={manyOptions}
+        defaultValue={manyOptions.map((option) => option.value)}
+      />
+      <BAIMultiSelector
+        aria-label="Without tooltip"
+        width={300}
+        showTooltip={false}
+        options={manyOptions}
+        defaultValue={manyOptions.map((option) => option.value)}
+      />
+    </BAIFlex>
+  ),
+};
