@@ -91,10 +91,18 @@ const AllocationCell: React.FC<{
       <CellError />
     );
   }
-  // A slot with neither a limit nor usage has no row; it reads as nothing allocated.
-  const row = toLimitUsageRows(result?.value?.project).find(
+  const usage = result?.value?.project;
+  if (!usage) return <Text type="supporting">-</Text>;
+  // `toLimitUsageRows` drops an idle zero limit; a slot with no limit entry is unlimited.
+  const zeroLimit = usage.limits.some(
+    (entry) =>
+      entry.resourceType === resourceType &&
+      !entry.unlimited &&
+      entry.quantity != null,
+  );
+  const row = toLimitUsageRows(usage).find(
     (entry) => entry.resourceType === resourceType,
-  ) ?? { resourceType, used: 0, limit: 0 };
+  ) ?? { resourceType, used: 0, limit: zeroLimit ? 0 : null };
   const name =
     mergedResourceSlots[resourceType]?.human_readable_name ?? resourceType;
   const limitText =
