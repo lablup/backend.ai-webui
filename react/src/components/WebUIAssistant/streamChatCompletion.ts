@@ -21,6 +21,8 @@ export interface StreamChatCompletionOptions {
   /** Sampling parameters forwarded to `streamText` as-is. */
   parameters?: object;
   onFinish?: (message: ChatMessage) => void;
+  /** Metadata the answer message carries from its first chunk. */
+  startMetadata?: object;
 }
 
 /**
@@ -36,6 +38,7 @@ export function streamChatCompletion({
   abortSignal,
   parameters,
   onFinish,
+  startMetadata,
 }: StreamChatCompletionOptions): Response {
   const provider = createOpenAICompatible({
     name: 'backend-ai',
@@ -66,6 +69,7 @@ export function streamChatCompletion({
     // The model-reported output token count lets ChatTokenCounter compute TPS
     // exactly; usage is only known on 'finish'.
     messageMetadata: ({ part }) => {
+      if (part.type === 'start') return startMetadata;
       if (part.type === 'finish') {
         return { outputTokens: part.totalUsage.outputTokens };
       }

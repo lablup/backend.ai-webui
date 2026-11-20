@@ -270,6 +270,10 @@ const ChatMessageContentBlock = memo<{ block?: string; isStreaming?: boolean }>(
           tr: renderTableRow,
           th: renderTableHeader,
           td: renderTableCell,
+          // A model's link opens beside the app, so the conversation stays.
+          a: ({ node: _node, ...props }) => (
+            <a {...props} target="_blank" rel="noopener noreferrer" />
+          ),
         }}
       >
         {block}
