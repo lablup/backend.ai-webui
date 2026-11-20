@@ -5546,6 +5546,7 @@
         "resourcePreset.ResourcePreset",
         "resourcePreset.ResourcePresets",
         "resourcePreset.SHMEMShouldBeSmallerThanMemory",
+        "resourcePreset.SharedMemory",
         "session.GoToUploadSessionList",
         "session.ResourceGroup",
         "session.SessionType",

@@ -30,6 +30,18 @@ export const isMatchingMaxPerContainer = (configName: string, key: string) => {
   }
   return false;
 };
+/**
+ * The shmem cap in `g` from `maxShmPerContainer` (GiB); 0 or less, or a
+ * non-number, sets no cap. The memory bound is the current `mem`, applied by
+ * the shmem input and its validator, so a group's `mem.max` never moves the cap.
+ */
+export const getShmemMaxLimit = (
+  maxShmPerContainer: unknown,
+): string | undefined =>
+  _.isFinite(maxShmPerContainer) && (maxShmPerContainer as number) > 0
+    ? `${maxShmPerContainer}g`
+    : undefined;
+
 export interface MergedResourceLimits {
   accelerators: {
     [key: string]:
@@ -376,6 +388,16 @@ export const useResourceLimitAndRemaining = ({
       },
       {} as MergedResourceLimits['accelerators'],
     ),
+    shmem:
+      resourceSlots?.mem === undefined
+        ? undefined
+        : {
+            max: getShmemMaxLimit(
+              ignorePerContainerConfig
+                ? undefined
+                : baiClient._config.maxShmPerContainer,
+            ),
+          },
   });
 
   const resourceLimits = createResourceLimits(true);

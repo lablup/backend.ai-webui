@@ -7,6 +7,7 @@
 // documents around each test, and restores whatever the deployment held
 // before the run. Other specs that sign in while one of these tests holds an
 // override see that override; keep the write→assert→clear window short.
+import { resolveE2EParts } from '../../e2e-parts';
 import { SessionAPIHelper } from '../../utils/classes/session/SessionAPIHelper';
 import {
   forbiddenPageHeading,
@@ -671,6 +672,42 @@ test.describe(
       const cpuSlider = page.getByRole('slider', { name: 'Value' }).first();
       await expect(cpuSlider).toBeVisible();
       await expect(cpuSlider).toHaveAttribute('aria-valuemax', '1');
+      await page.context().close();
+    });
+
+    test('maxShmPerContainer from the domain document caps the launcher shared memory', async ({
+      browser,
+      request,
+    }) => {
+      test.skip(
+        !resolveE2EParts(process.env.E2E_PART).includes('admin'),
+        'changes server-global settings; runs only with E2E_PART=admin',
+      );
+      await api.writeSettings('domain', {
+        maxShmPerContainer: 1,
+        allowCustomResourceAllocation: true,
+      });
+
+      const page = await signInAsAdminInNewContext(browser, request);
+      expect(await readClientConfig(page, 'maxShmPerContainer')).toBe(1);
+      // Manual shmem on a 4 GiB allocation, so the 1 GiB cap is the smaller bound.
+      const formValues = {
+        allocationPreset: 'custom',
+        resource: { cpu: 1, mem: '4g', shmem: '1g', accelerator: 0 },
+        enabledAutomaticShmem: false,
+      };
+      await navigateTo(
+        page,
+        `session/start?step=1&formValues=${encodeURIComponent(JSON.stringify(formValues))}`,
+      );
+      await expect(
+        page.getByRole('button', { name: 'Resource Presets' }),
+      ).toBeVisible({ timeout: 30_000 });
+      const shmemInput = page.getByRole('spinbutton', {
+        name: /Shared Memory/,
+      });
+      await expect(shmemInput).toBeVisible();
+      await expect(shmemInput).toHaveAttribute('aria-valuemax', '1');
       await page.context().close();
     });
 
