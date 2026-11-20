@@ -209,7 +209,12 @@ const DashboardEditSider: React.FC<DashboardEditSiderProps> = ({
     <BAIFlex
       direction="column"
       align="stretch"
-      style={{ width: 320, flexShrink: 0 }}
+      style={{
+        width: 320,
+        flexShrink: 0,
+        // Flush with the screen's right edge: cancels `.main-layout-content-scroll`'s right padding.
+        marginRight: 'calc(-1 * var(--spacing-6))',
+      }}
     >
       <BAIFlex
         ref={siderRef}
