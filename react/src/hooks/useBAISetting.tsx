@@ -115,7 +115,7 @@ const settingAtom = atom<{
   [key: string]: any;
 }>({});
 
-// Account settings (ADR 0032): `userConfig.settings` in `myAppConfigState`.
+// Account settings (ADR 0035): `userConfig.settings` in `myAppConfigState`.
 const accountUserSettingsAtom = atom((get): Record<string, unknown> => {
   const settings =
     get(myAppConfigState).configs.userConfig?.[USER_SETTINGS_CONFIG_KEY];

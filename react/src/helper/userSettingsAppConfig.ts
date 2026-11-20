@@ -9,7 +9,7 @@ import {
 import * as _ from 'lodash-es';
 
 /**
- * Personal settings that follow the account (ADR 0032): stored flat under
+ * Personal settings that follow the account (ADR 0035): stored flat under
  * `userConfig.settings` and held in memory after sign-in, never in
  * localStorage. Every other user setting stays device-local.
  */
@@ -88,7 +88,7 @@ const accountStorageKeys = (storage: Storage): Array<string> =>
         isAccountUserSetting(key.slice(USER_SETTING_STORAGE_PREFIX.length)),
     );
 
-/** The account settings this browser stored before ADR 0032, for the one-time copy. */
+/** The account settings this browser stored before ADR 0035, for the one-time copy. */
 export const readLocalAccountUserSettings = (
   storage: Storage,
 ): Record<string, unknown> => {
@@ -105,7 +105,7 @@ export const readLocalAccountUserSettings = (
   return settings;
 };
 
-/** Drops the pre-ADR 0032 localStorage copies once the account holds them. */
+/** Drops the pre-ADR 0035 localStorage copies once the account holds them. */
 export const removeLocalAccountUserSettings = (storage: Storage): void => {
   accountStorageKeys(storage).forEach((key) => storage.removeItem(key));
 };

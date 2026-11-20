@@ -37,7 +37,7 @@ const getTabs = (page: Page) =>
     .filter({ hasText: 'Start From URL' })
     .getByRole('navigation', { name: 'Tabs' });
 
-// The flag is an account setting (ADR 0032) held in memory after sign-in, so
+// The flag is an account setting (ADR 0035) held in memory after sign-in, so
 // set it in the page and wait until userConfig stored it; `undefined` removes it.
 const setHuggingFaceImportSetting = async (
   page: Page,

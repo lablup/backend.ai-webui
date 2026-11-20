@@ -3,7 +3,7 @@ import type { Page } from '@playwright/test';
 
 type AccountSettings = Record<string, unknown>;
 
-// The `userConfig.settings` an upsert writes (ADR 0032), or undefined.
+// The `userConfig.settings` an upsert writes (ADR 0035), or undefined.
 const writtenSettings = (variables: any): AccountSettings | undefined => {
   const item = variables?.input?.items?.find(
     (entry: any) => entry?.configName === 'userConfig',

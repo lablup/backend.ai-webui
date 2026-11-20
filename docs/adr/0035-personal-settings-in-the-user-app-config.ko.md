@@ -1,4 +1,4 @@
-# 0032 — Personal settings in the user app config
+# 0035 — Personal settings in the user app config
 
 ## Summary
 
@@ -26,7 +26,7 @@ flowchart LR
   subgraph browser["브라우저"]
     hook["useBAISettingUserState<br/>SettingAtomFamily"]
     atom["myAppConfigState<br/>userConfig.settings"]
-    legacy["localStorage<br/>ADR 0032 이전 값"]
+    legacy["localStorage<br/>ADR 0035 이전 값"]
     queue["userSettingsAppConfig<br/>write queue, 500ms debounce"]
     sync["startAccountUserSettingsSync<br/>로그인 때 부름"]
   end

@@ -728,7 +728,7 @@ async function main() {
   });
   // A fresh origin shows a superadmin AdminViewSwitchTour: the intro modal on
   // admin pages, the spotlight on project pages. `--keep-tours` is for a PR on the tour.
-  // TODO: the tour flags are account settings (ADR 0032), so this seed reaches only an
+  // TODO: the tour flags are account settings (ADR 0035), so this seed reaches only an
   // account without `settings`; write them through the API after sign-in.
   if (!flags.keepTours)
     await context.addInitScript((origin) => {

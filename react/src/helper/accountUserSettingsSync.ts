@@ -24,8 +24,8 @@ type JotaiStore = typeof jotaiStore;
 let stopRunning: (() => void) | null = null;
 
 /**
- * Runs at sign-in, after `setMyAppConfigs` (ADR 0032): copies this browser's
- * pre-ADR 0032 localStorage values up once when the account has no
+ * Runs at sign-in, after `setMyAppConfigs` (ADR 0035): copies this browser's
+ * pre-ADR 0035 localStorage values up once when the account has no
  * `settings`, and sends account setting changes until the returned stop runs.
  */
 export const startAccountUserSettingsSync = ({

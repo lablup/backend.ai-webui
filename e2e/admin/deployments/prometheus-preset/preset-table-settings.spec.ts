@@ -124,7 +124,7 @@ test.describe(
       await settingsModal
         .getByRole('checkbox', { name: 'Updated At' })
         .uncheck();
-      // The columns are an account setting (ADR 0032): wait for the restore to land.
+      // The columns are an account setting (ADR 0035): wait for the restore to land.
       const restored = waitForAccountSettingsWrite(page, (settings) => {
         const overrides = settings[
           'table_column_overrides.AdminPrometheusPreset'
@@ -192,7 +192,7 @@ test.describe(
       await settingsModal
         .getByRole('checkbox', { name: 'Updated At' })
         .uncheck();
-      // The last uncheck is the restore: wait for it to reach the account (ADR 0032).
+      // The last uncheck is the restore: wait for it to reach the account (ADR 0035).
       const restored = waitForAccountSettingsWrite(page, (settings) => {
         const overrides = settings[
           'table_column_overrides.AdminPrometheusPreset'

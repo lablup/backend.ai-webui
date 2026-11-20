@@ -48,7 +48,7 @@ describe('isAccountUserSetting', () => {
   });
 });
 
-describe('pre-ADR 0032 localStorage copies', () => {
+describe('pre-ADR 0035 localStorage copies', () => {
   beforeEach(() => localStorage.clear());
 
   it('reads only account keys with a value, an explicit null included', () => {

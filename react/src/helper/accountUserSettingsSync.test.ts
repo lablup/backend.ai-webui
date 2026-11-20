@@ -63,7 +63,7 @@ describe('startAccountUserSettingsSync', () => {
     expect(send).not.toHaveBeenCalled();
   });
 
-  it('copies the pre-ADR 0032 local values once, then drops them', async () => {
+  it('copies the pre-ADR 0035 local values once, then drops them', async () => {
     localStorage.setItem(P + 'compact_sidebar', 'true');
     localStorage.setItem(P + 'desktop_notification', 'true');
     signIn({ themeFamily: 'default' });
@@ -89,7 +89,7 @@ describe('startAccountUserSettingsSync', () => {
     );
   });
 
-  it("drops this browser's pre-0032 values when the account has settings", () => {
+  it("drops this browser's pre-0035 values when the account has settings", () => {
     localStorage.setItem(P + 'compact_sidebar', 'true');
     localStorage.setItem(P + 'desktop_notification', 'true');
     signIn({ settings: { session_monitor_rows: 5 } });

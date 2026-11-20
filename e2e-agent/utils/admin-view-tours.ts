@@ -7,7 +7,7 @@ export const TOUR_SETTINGS = [
 ];
 
 // The first-use tours cover the header for a superadmin in a fresh context.
-// TODO(e2e): the tour flags are account settings (ADR 0032), so this seed reaches
+// TODO(e2e): the tour flags are account settings (ADR 0035), so this seed reaches
 // only an account without `settings`; write them through the API after sign-in.
 export const skipAdminViewSwitchTours = (browser: Browser) =>
   browser.addInitScript((names: string[]) => {

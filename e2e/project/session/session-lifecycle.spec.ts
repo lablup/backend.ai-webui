@@ -357,7 +357,7 @@ const setSessionMonitorEnabled = async (page: Page, enabled: boolean) => {
   const checkbox = settingsDialog
     .getByTestId('items-experimental-session-monitor')
     .getByRole('checkbox', { name: 'Session monitor' });
-  // It is an account setting (ADR 0032): wait until userConfig stored a change.
+  // It is an account setting (ADR 0035): wait until userConfig stored a change.
   const saved =
     (await checkbox.isChecked()) === enabled
       ? Promise.resolve()

@@ -158,7 +158,7 @@ export async function seedStoredApiEndpoint(
  * their intro modal does not cover the page in a fresh context. Keys already
  * set (e.g. `'false'` by a spec that walks the tour) are left alone.
  */
-// TODO(e2e): the tour flags are account settings (ADR 0032), so this seed reaches
+// TODO(e2e): the tour flags are account settings (ADR 0035), so this seed reaches
 // only an account without `settings`; write them through the API after sign-in.
 export async function skipAdminViewSwitchTours(page: Page) {
   await page.addInitScript(() => {
