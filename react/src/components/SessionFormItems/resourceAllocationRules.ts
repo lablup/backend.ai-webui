@@ -133,11 +133,8 @@ export type RuleEvent =
   /** A preset id, `'custom'` or `'minimum-required'`. */
   | { type: 'user.selectPreset'; id: string }
   | { type: 'user.toggleAutoShmem'; on: boolean }
-  /**
-   * The image, resource group, presets or slots arrived or changed.
-   * `shmemCapChanged`: `resourceLimits.shmem.max` differs from the previous run.
-   */
-  | { type: 'data.changed'; shmemCapChanged?: boolean };
+  /** The image, resource group, presets or slots arrived or changed. */
+  | { type: 'data.changed' };
 
 /** Only the keys that must change; `{}` means write nothing. */
 export type RulePatch = {
@@ -593,20 +590,6 @@ export const applyRule = (
     case 'data.changed':
       if (_.isUndefined(ctx.slotsInRG)) return {};
       applyDataChanged(draft, values, ctx, supportedTypes);
-      // A cap that moved (a group change) re-sizes automatic shmem, so a value
-      // lowered under a smaller cap comes back when the cap grows again.
-      if (
-        event.shmemCapChanged &&
-        draft.enabledAutomaticShmem &&
-        (ctx.image || ctx.manualImage) &&
-        compareNumberWithUnits(draft.resource.mem || '0g', '0g') > 0
-      ) {
-        draft.resource.shmem = getAutomaticShmem(
-          draft.resource.mem as string,
-          ctx.imageMinMem,
-          ctx.resourceLimits.shmem?.max,
-        );
-      }
       break;
   }
 
