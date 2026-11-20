@@ -256,7 +256,12 @@ const DashboardAssistantChat: React.FC<DashboardAssistantChatProps> = ({
         </Text>
       ) : null}
       {turns.length === 0 ? (
-        <BAIFlex direction="column" align="stretch" gap="xs">
+        <BAIFlex
+          direction="column"
+          align="stretch"
+          gap="xs"
+          style={{ flex: 1, minHeight: 0, overflowY: 'auto' }}
+        >
           <Text color="secondary" size="sm">
             {t('webuiAssistant.DashboardChatEmpty')}
           </Text>

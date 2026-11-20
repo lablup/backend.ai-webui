@@ -6,9 +6,8 @@
    scrolls its own checklist while the board scrolls underneath. */
 .dashboard-edit-sider {
   top: var(--spacing-4);
-  /* Fills the frame's width; the frame stretches with the board. */
+  /* Fills the frame's width; its height is measured to the scroll area's bottom. */
   align-self: stretch;
-  max-height: calc(100dvh - var(--webui-header-height) - var(--spacing-8));
   overflow-y: auto;
   /* Keeps the checklist clear of its own scrollbar. */
   scrollbar-gutter: stable;
