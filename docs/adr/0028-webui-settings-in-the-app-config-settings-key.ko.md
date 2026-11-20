@@ -88,7 +88,7 @@ flowchart LR
 
 ### 4. 정의표
 
-- **Entry shape**: 정의표의 항목(`WebUISettingDefinition`)은 `key`, `scope`, `type`(`boolean`, `number`, `string`, `stringList`), `group`, `field`(`keyof LoginConfigState`), 그리고 선택 필드 `options`, `unit`, `min` / `max`(`number`의 포함 범위. 범위 밖 값은 읽을 때 무시하고 저장하지 않는다), `isInteger`(정수만 받는 `number`. 소수도 같은 방식으로 다루고, 페이지 입력칸은 반올림한다), `size`(크기를 나타내는 `number`. 저장 단위와 무제한일 때 저장하는 값을 정하며, 페이지는 단위 선택 입력과 무제한 체크박스로 편집한다)를 가진다.
+- **Entry shape**: 정의표의 항목(`WebUISettingDefinition`)은 `key`, `scope`, `type`(`boolean`, `number`, `string`, `stringList`), `group`, `field`(`keyof LoginConfigState`), 그리고 선택 필드 `options`, `unit`, `min` / `max`(`number`의 포함 범위. 범위 밖 값은 읽을 때 무시하고 저장하지 않는다), `isInteger`(정수만 받는 `number`. 소수도 같은 방식으로 다루고, 페이지 입력칸은 반올림한다), `size`(크기를 나타내는 `number`. 값을 읽는 쪽이 받는 단위를 저장 단위로 정하고, 필요하면 토글과 그때 저장하는 값(서버 자체 상한 사용 등)을 정한다. 페이지는 단위 선택 입력으로 편집하고, 토글이 있으면 체크박스를 함께 보여준다)를 가진다.
 - **Single source**: 화면(`WebUISettingList`), 병합(`applyWebUISettings`), 저장(`buildWebUISettingsDocument`)은 이 표만 읽는다.
 - **Keys outside the table**: `settings`에는 정의표에 없는 키도 산다. 지금은 시스템 공지(`settings.announcement`, #10713) 하나다. 화면은 이 키로 변경 여부를 판정하지 않는다(`ownedWebUISettings`). Apply와 Reset은 저장 시점의 원본에서 이 키를 그대로 옮겨 쓴다(`withForeignWebUISettings`). 쓰기 hook은 `(current) => next` 함수를 받아 원본 값에 적용한다.
 - **Adding a setting**: 새 설정은 `getDefaultLoginConfig`에 기본값을 둔 `LoginConfigState` 필드, 정의표 한 줄, `WebUISettingLabels.ts`의 문구를 함께 더한다. `config.toml`에서는 읽지 않는다.
