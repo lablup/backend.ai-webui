@@ -129,7 +129,7 @@ flowchart LR
 - **Relay store as the shared copy**: each hook reads its documents with `store-or-network` and relies on the Relay store to share one copy per page load. Rejected because every reading screen sends or waits for a query of its own and suspends, while one sign-in read already answers all three names.
 - **One request for every scope**: `useScopedAppConfig` takes several scopes and reads them in one query of aliased fields. Rejected because a denied DOMAIN field makes the manager answer the whole request with `data: null`, so one unreadable scope hides the readable ones.
 - **Changed keys on a merged atom**: after a scoped write, the page sets the changed keys on `myAppConfigState` or on the derived `loginConfigState`. Rejected because it repeats the manager's merge in the client, and a key the written document no longer carries would keep its old value. §4 instead replaces a whole layer document.
-- **Atom written after the server accepts**: `set` stores the document in the atom only after the mutation succeeds. Rejected because a change then shows only after the round trip, so every caller that needs it at once keeps a pending copy of the same value, and the account settings' debounced writes would need a second atom of their own (ADR 0032).
+- **Atom written after the server accepts**: `set` stores the document in the atom only after the mutation succeeds. Rejected because a change then shows only after the round trip, so every caller that needs it at once keeps a pending copy of the same value, and the account settings' debounced writes would need a second atom of their own (#10435).
 
 ## Consequences
 

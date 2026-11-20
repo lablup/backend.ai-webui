@@ -129,7 +129,7 @@ flowchart LR
 - **Relay store as the shared copy**: 각 hook이 `store-or-network`로 문서를 읽고, 페이지 로드마다 사본 하나를 Relay store가 공유하게 한다. 로그인 읽기 한 번이 이미 세 이름을 모두 답하는데도 읽는 화면마다 자기 query를 보내거나 기다리며 suspend하므로 기각했다.
 - **One request for every scope**: `useScopedAppConfig`가 scope 여러 개를 받아 alias field들로 된 query 하나로 읽는다. 거부되는 DOMAIN field가 있으면 manager가 요청 전체를 `data: null`로 응답해 읽을 수 없는 scope 하나가 읽을 수 있는 scope까지 가리므로 기각했다.
 - **Changed keys on a merged atom**: scoped 쓰기 뒤 페이지가 바뀐 키를 `myAppConfigState`나 derived `loginConfigState`에 set한다. manager의 merge를 클라이언트에서 반복하고, 쓴 문서에 더는 없는 키가 옛 값을 유지하므로 기각했다. §4는 대신 층 문서 전체를 바꾼다.
-- **Atom written after the server accepts**: `set`이 mutation이 성공한 뒤에만 문서를 atom에 저장한다. 그러면 변경이 왕복이 끝난 뒤에야 보여서, 즉시 보여야 하는 호출부마다 같은 값의 대기 사본을 들고 있어야 하고, 계정 설정의 debounce 쓰기는 따로 atom을 하나 더 둬야 해서(ADR 0032) 기각했다.
+- **Atom written after the server accepts**: `set`이 mutation이 성공한 뒤에만 문서를 atom에 저장한다. 그러면 변경이 왕복이 끝난 뒤에야 보여서, 즉시 보여야 하는 호출부마다 같은 값의 대기 사본을 들고 있어야 하고, 계정 설정의 debounce 쓰기는 따로 atom을 하나 더 둬야 해서(#10435) 기각했다.
 
 ## Consequences
 
