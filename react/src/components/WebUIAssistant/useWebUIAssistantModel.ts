@@ -22,8 +22,6 @@ import {
 } from 'ai';
 
 export interface WebUIAssistantModel {
-  /** The assistant is on, connected, and its endpoint lists a model. */
-  isAvailable: boolean;
   /** One non-streaming completion; rejects with the SDK's error. */
   complete: (
     request: {
@@ -65,7 +63,6 @@ export const useWebUIAssistantModel = (): WebUIAssistantModel => {
   const modelId = modelsQuery.data?.[0]?.id;
 
   return {
-    isAvailable: isConnected && !!modelId,
     complete: async ({ system, abortSignal, ...input }) => {
       if (!baseURL || !modelId) throw new Error('WebUI Assistant is offline');
       const provider = createOpenAICompatible({

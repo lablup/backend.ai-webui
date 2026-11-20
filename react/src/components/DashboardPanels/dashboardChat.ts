@@ -17,8 +17,9 @@ import {
   panelDraftOf,
   type PanelSourceSpec,
 } from './panelFromRequest';
-import { RANGE_PRESETS } from './panelSettings';
+import { RANGE_LABEL_KEYS, RANGE_PRESETS } from './panelSettings';
 import type { PanelInput, PanelPage } from './types';
+import type { TFunction } from 'i18next';
 import * as _ from 'lodash-es';
 
 /** A custom panel on the (draft) board, with the input the panel modal would show. */
@@ -82,6 +83,7 @@ const examplesOf = (ctx: DashboardChatContext): string => {
   const source = ctx.sources.find((item) => exampleConditionOf(item));
   const condition = source && exampleConditionOf(source);
   const lines = [
+    `User: How do I start a session?\n${JSON.stringify({ question: true })}`,
     card &&
       `User: Hide the ${card.title} card\n${JSON.stringify({
         reply: `Hid the ${card.title} card.`,
@@ -117,6 +119,7 @@ const examplesOf = (ctx: DashboardChatContext): string => {
 export const buildDashboardChatPrompt = (ctx: DashboardChatContext): string =>
   [
     `You edit a Backend.AI WebUI dashboard (${ctx.page} page) in a chat. Turn each request into changes. Reply with only a JSON object, no other text:`,
+    'When the message asks how to use the WebUI, or anything else that is not a change to this dashboard, reply with only {"question":true}.',
     '{"reply":"<one short sentence in the user\'s language>","actions":[{"type":"show","id":"<card id>"}]}',
     'Cards, on-board ones in board order (id | title | state | size in columns x rows | range):',
     ctx.cards.map((card) => `- ${cardLine(card)}`).join('\n'),
@@ -200,7 +203,12 @@ const editedInputOf = (
 export const parseDashboardChatReply = (
   text: string,
   ctx: DashboardChatContext,
-): { reply: string; actions: Array<DashboardAssistantAction> } => {
+): {
+  reply: string;
+  actions: Array<DashboardAssistantAction>;
+  /** Not a dashboard change: the manual-based assistant answers it instead. */
+  isQuestion: boolean;
+} => {
   const values = jsonValuesOfReply(text);
   const objects = values.filter(_.isPlainObject) as Array<
     Record<string, unknown>
@@ -252,5 +260,99 @@ export const parseDashboardChatReply = (
       ?.trim() ??
     // Unreadable JSON is not shown as the reply.
     (values.length || text.includes('{') ? '' : text.trim());
-  return { reply, actions: unique };
+  // Prose without JSON is an answer, not a change, so the manual answers it.
+  const isQuestion =
+    objects.some((object) => object.question === true) ||
+    (!values.length && !text.includes('{'));
+  return { reply, actions: unique, isQuestion: isQuestion && !unique.length };
+};
+
+/** A request phrased as a question; with no effective change it goes to the manual. */
+export const looksLikeQuestion = (request: string): boolean =>
+  /[?？]\s*$/.test(request) ||
+  /^\s*(how|what|where|why|when|which|can i|is there)\b/i.test(request) ||
+  /^\s*(어떻게|무엇|뭐|어디|왜|언제)/.test(request);
+
+/** One line in the chat for a proposed change. */
+export const describeDashboardAction = (
+  action: DashboardAssistantAction,
+  ctx: Pick<DashboardChatContext, 'cards' | 'panels'>,
+  t: TFunction,
+): string => {
+  const titleOf = (id: string) =>
+    ctx.cards.find((card) => card.id === id)?.title ??
+    ctx.panels.find((panel) => panel.id === id)?.title ??
+    id;
+  switch (action.type) {
+    case 'reset':
+      return t('webuiAssistant.DashboardReset');
+    case 'createBoard':
+      return t('webuiAssistant.DashboardCreateBoard', { title: action.title });
+    case 'addPanel':
+      return t('webuiAssistant.DashboardAddPanel', {
+        title: action.panel.title || t('webuiAssistant.DashboardNewPanel'),
+      });
+    case 'editPanel':
+      return t('webuiAssistant.DashboardEditPanel', {
+        title: action.input.title || titleOf(action.id),
+      });
+    case 'show':
+      return t('webuiAssistant.DashboardShowCard', {
+        title: titleOf(action.id),
+      });
+    case 'hide':
+      return t('webuiAssistant.DashboardHideCard', {
+        title: titleOf(action.id),
+      });
+    case 'moveToTop':
+      return t('webuiAssistant.DashboardMoveCardToTop', {
+        title: titleOf(action.id),
+      });
+    case 'moveToBottom':
+      return t('webuiAssistant.DashboardMoveCardToBottom', {
+        title: titleOf(action.id),
+      });
+    case 'resize': {
+      const card = ctx.cards.find((item) => item.id === action.id);
+      return t('webuiAssistant.DashboardResizeCard', {
+        title: titleOf(action.id),
+        columns: action.columnSpan ?? card?.columnSpan,
+        rows: action.rowSpan ?? card?.rowSpan,
+      });
+    }
+    case 'setRange':
+      return t('webuiAssistant.DashboardSetCardRange', {
+        title: titleOf(action.id),
+        range: t(RANGE_LABEL_KEYS[action.range]),
+      });
+  }
+};
+
+/** Example requests built from this board, so each names something that exists here. */
+export const dashboardExamplesOf = (
+  ctx: DashboardChatContext,
+  t: TFunction,
+): Array<string> => {
+  const shownCards = ctx.cards.filter((card) => card.shown);
+  const otherCards = ctx.cards.filter((card) => !card.shown);
+  const boardCards = [...otherCards, ...shownCards].slice(0, 2);
+  return _.compact([
+    // An empty board has nothing to hide, so it suggests showing a card instead.
+    shownCards[0]
+      ? t('webuiAssistant.DashboardChatExampleLayout', {
+          title: shownCards[0].title,
+        })
+      : otherCards[0] &&
+        t('webuiAssistant.DashboardChatExampleShow', {
+          title: otherCards[0].title,
+        }),
+    ctx.sources.some((source) => source.key === 'session') &&
+      t('webuiAssistant.DashboardChatExamplePanel'),
+    ctx.canCreateBoard &&
+      boardCards.length === 2 &&
+      t('webuiAssistant.DashboardChatExampleBoard', {
+        first: boardCards[0].title,
+        second: boardCards[1].title,
+      }),
+  ]);
 };
