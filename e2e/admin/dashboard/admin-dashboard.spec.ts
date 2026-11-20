@@ -1,7 +1,7 @@
 // spec: e2e/.agent-output/test-plan-start-dashboard.md
 // scenarios: 10 (Agent Stats Widget), 11 (Recently Created Sessions Widget), and the
 // admin dashboard entry. Split from e2e/project/dashboard/dashboard.spec.ts.
-import { WIDGET_TIMEOUT } from '../../utils/dashboard-util';
+import { WIDGET_TIMEOUT, waitForGraphQL } from '../../utils/dashboard-util';
 import { loginAsAdmin, navigateTo } from '../../utils/test-util';
 import { test, expect, type Page } from '@playwright/test';
 
@@ -142,6 +142,77 @@ test.describe(
         });
       },
     );
+
+    // -----------------------------------------------------------------------
+    // Session Launches Widget (superadmin only)
+    // -----------------------------------------------------------------------
+    test.describe('Session Launches Widget', () => {
+      // A superadmin board shows the card by default, so show it if this
+      // account's board hides it and leave it shown: hiding it again would race
+      // with a concurrent copy of this test on the same personal board.
+      const showCard = async (page: Page) => {
+        const dashboardBar = page.getByTestId('dashboard-filter-bar');
+        await dashboardBar.getByRole('button', { name: 'Edit' }).click();
+        const checkbox = page.getByRole('checkbox', {
+          name: 'Session Launches',
+          exact: true,
+        });
+        await expect(checkbox).toBeVisible({ timeout: WIDGET_TIMEOUT });
+        if (!(await checkbox.isChecked())) {
+          // The board write is debounced; wait for the one that adds the card.
+          const saved = waitForGraphQL(
+            page,
+            'useAppConfigMyUpsertMutation',
+            (variables) =>
+              /\\?"key\\?":\\?"sessionLaunches\\?"/.test(
+                JSON.stringify(variables),
+              ),
+            10_000,
+          );
+          try {
+            await checkbox.click();
+            await dashboardBar.getByRole('button', { name: 'Close' }).click();
+          } catch (error) {
+            await saved.catch(() => {});
+            throw error;
+          }
+          await saved;
+        } else {
+          await dashboardBar.getByRole('button', { name: 'Close' }).click();
+        }
+      };
+
+      test.beforeEach(async ({ page, request }) => {
+        await loginAsAdmin(page, request);
+        await navigateTo(page, 'admin/dashboard');
+        await showCard(page);
+      });
+
+      test('Admin can view the Session Launches card on the superadmin dashboard', async ({
+        page,
+      }) => {
+        // 1. Locate the "Session Launches" card (scroll: a saved board puts it last)
+        const widget = page.locator('.uic-board-item').filter({
+          has: page.getByText('Session Launches', { exact: true }),
+        });
+        await widget.scrollIntoViewIfNeeded({ timeout: WIDGET_TIMEOUT });
+        await expect(widget).toBeVisible({ timeout: WIDGET_TIMEOUT });
+
+        // 2. Verify the launch outcome counts and the queue wait stats
+        for (const label of [
+          'Started',
+          'Cancelled',
+          'Error',
+          'Pending',
+          'Mean queue wait (scheduled)',
+          'Median queue wait (scheduled)',
+        ]) {
+          await expect(widget.getByText(label, { exact: true })).toBeVisible({
+            timeout: WIDGET_TIMEOUT,
+          });
+        }
+      });
+    });
 
     // -----------------------------------------------------------------------
     // 11. Recently Created Sessions Widget
