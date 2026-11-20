@@ -10,26 +10,27 @@ import type {
 import { useBAIPaginationOptionState } from '../../../hooks/reactPaginationQueryOptions';
 import { useDashboardResourceGroups } from '../DashboardResourceGroups';
 import ScopedCard from '../cards/ScopedCard';
-import { toStatistic } from '../memberCards/ResourceUsageStatistics';
+import { useFormatSlotAmount } from '../memberCards/ResourceUsageBars';
 import { toLimitUsageRows } from '../memberCards/memberCardData';
 import {
+  isPermissionDenied,
   readPrimary,
-  readSecondary,
   type CaughtValue,
 } from '../panelPermission';
 import type { PanelComponentProps } from '../types';
+import { useResetPageOn } from '../useResetPageOn';
+import { ProgressBar } from '@lablup/ui-common/ProgressBar';
 import { Text } from '@lablup/ui-common/Text';
 import {
   BAIFlex,
-  BAIProgressWithLabel,
   BAISkeleton,
   BAITable,
   filterOutNullAndUndefined,
-  toFixedFloorWithoutTrailingZeros,
   useBAIResourceSlots,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { Suspense, useDeferredValue } from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
@@ -43,8 +44,12 @@ type ProjectRow = NonNullable<
 
 const SLOT_ORDER = ['cpu', 'mem'];
 
-const formatAmount = (value: number) =>
-  toFixedFloorWithoutTrailingZeros(value, 2);
+/** A cell whose read failed; "-" stays for a read the viewer may not make. */
+const CellError: React.FC = () => {
+  'use memo';
+  const { t } = useTranslation();
+  return <Text type="supporting">{t('dashboard.card.Error')}</Text>;
+};
 
 /** One slot of one project: used against the limit, and what is left. */
 const AllocationCell: React.FC<{
@@ -55,6 +60,7 @@ const AllocationCell: React.FC<{
   'use memo';
   const { t } = useTranslation();
   const { mergedResourceSlots } = useBAIResourceSlots();
+  const formatAmount = useFormatSlotAmount();
   // Every cell of a row shares this request: same query, variables and fetchKey.
   const data = useLazyLoadQuery<ProjectAllocationsPanelAllocationQuery>(
     graphql`
@@ -77,40 +83,62 @@ const AllocationCell: React.FC<{
     { projectId },
     { fetchPolicy: 'store-and-network', fetchKey },
   );
-  const usage = readSecondary(data.projectResourceAllocationV2).value?.project;
-  const row = toLimitUsageRows(usage).find(
+  const result = data.projectResourceAllocationV2;
+  if (result && !result.ok) {
+    return isPermissionDenied(result.errors) ? (
+      <Text type="supporting">-</Text>
+    ) : (
+      <CellError />
+    );
+  }
+  // A slot with neither a limit nor usage has no row; it reads as nothing allocated.
+  const row = toLimitUsageRows(result?.value?.project).find(
     (entry) => entry.resourceType === resourceType,
-  );
-  if (!row) return <Text type="supporting">-</Text>;
-  const { used, free, metadata } = toStatistic(
-    row,
-    mergedResourceSlots[resourceType],
-  );
-  const total = used.total ?? Number.POSITIVE_INFINITY;
-  const unit = metadata.displayUnit ? ` ${metadata.displayUnit}` : '';
-  const isUnlimited = !Number.isFinite(total);
+  ) ?? { resourceType, used: 0, limit: 0 };
+  const name =
+    mergedResourceSlots[resourceType]?.human_readable_name ?? resourceType;
+  const limitText =
+    row.limit === null
+      ? t('dashboard.card.Unlimited')
+      : formatAmount(resourceType, row.limit);
+  const isOverLimit =
+    row.limit !== null && row.used > 0 && row.used >= row.limit;
   return (
     <BAIFlex direction="column" align="stretch" gap="xxs">
-      <BAIProgressWithLabel
-        width={140}
-        percent={isUnlimited || total === 0 ? 0 : (used.current / total) * 100}
-        valueLabel={`${formatAmount(used.current)} / ${
-          isUnlimited ? '∞' : formatAmount(total)
-        }${unit}`}
-      />
       <Text type="supporting">
-        {isUnlimited
-          ? t('dashboard.card.Unlimited')
-          : t('dashboard.card.RemainingAmount', {
-              amount: `${formatAmount(free.current)}${unit}`,
-            })}
+        {`${formatAmount(resourceType, row.used)} / ${limitText}`}
       </Text>
+      {row.limit === null ? null : (
+        <>
+          <ProgressBar
+            label={name}
+            isLabelHidden
+            value={
+              row.limit > 0
+                ? Math.min(row.used, row.limit)
+                : isOverLimit
+                  ? 1
+                  : 0
+            }
+            max={row.limit > 0 ? row.limit : 1}
+            variant={isOverLimit ? 'warning' : 'accent'}
+          />
+          <Text type="supporting">
+            {t('dashboard.card.RemainingAmount', {
+              amount: formatAmount(
+                resourceType,
+                Math.max(0, row.limit - row.used),
+              ),
+            })}
+          </Text>
+        </>
+      )}
     </BAIFlex>
   );
 };
 
-const ProjectList: React.FC<{ domainName: string; fetchKey: string }> = ({
-  domainName,
+const ProjectList: React.FC<{ domainId: string; fetchKey: string }> = ({
+  domainId,
   fetchKey,
 }) => {
   'use memo';
@@ -130,8 +158,9 @@ const ProjectList: React.FC<{ domainName: string; fetchKey: string }> = ({
     tablePaginationOption,
     setTablePaginationOption,
   } = useBAIPaginationOptionState({ current: 1, pageSize: 5 });
+  useResetPageOn([domainId], setTablePaginationOption);
   const variables = {
-    domainName,
+    domainId,
     limit: baiPaginationOption.limit,
     offset: baiPaginationOption.offset,
   };
@@ -139,12 +168,12 @@ const ProjectList: React.FC<{ domainName: string; fetchKey: string }> = ({
   const data = useLazyLoadQuery<ProjectAllocationsPanelQuery>(
     graphql`
       query ProjectAllocationsPanelQuery(
-        $domainName: String!
+        $domainId: UUID!
         $limit: Int!
         $offset: Int!
       ) {
-        projects: domainProjectsV2(
-          scope: { domainName: $domainName }
+        projects: scopedProjectsV2(
+          scope: { domain: [{ value: $domainId }] }
           filter: { isActive: true }
           orderBy: [{ field: NAME, direction: ASC }]
           limit: $limit
@@ -185,14 +214,17 @@ const ProjectList: React.FC<{ domainName: string; fetchKey: string }> = ({
         ...slots.map((slot) => ({
           key: slot,
           title: mergedResourceSlots[slot]?.human_readable_name ?? slot,
+          width: 180,
           render: (_value: unknown, row: ProjectRow) => (
-            <Suspense fallback={<BAISkeleton rows={1} hasTitle={false} />}>
-              <AllocationCell
-                projectId={row.entityId}
-                resourceType={slot}
-                fetchKey={fetchKey}
-              />
-            </Suspense>
+            <ErrorBoundary fallback={<CellError />} resetKeys={[fetchKey]}>
+              <Suspense fallback={<BAISkeleton rows={1} hasTitle={false} />}>
+                <AllocationCell
+                  projectId={row.entityId}
+                  resourceType={slot}
+                  fetchKey={fetchKey}
+                />
+              </Suspense>
+            </ErrorBoundary>
           ),
         })),
       ]}
@@ -226,7 +258,7 @@ const ProjectAllocationsPanel: React.FC<PanelComponentProps> = ({
     >
       {(cardScope, key) =>
         cardScope.kind === 'domain' ? (
-          <ProjectList domainName={cardScope.domainName} fetchKey={key} />
+          <ProjectList domainId={cardScope.domainId} fetchKey={key} />
         ) : null
       }
     </ScopedCard>

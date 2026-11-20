@@ -917,7 +917,7 @@
       "RemainingAmount": "{{amount}} jäljellä",
       "ReplicaHealth": "Replikoiden kunto",
       "ResourceAllocation": "Resurssien varaus",
-      "ResourceAllocationByProject": "Resurssien jako projekteittain",
+      "ResourceAllocationByProject": "Resurssien varaus projekteittain",
       "ResourceAllocationByProjectTooltip": "Mitä kukin toimialueen aktiivinen projekti käyttää suhteessa omaan rajaansa ja mitä on jäljellä.",
       "ResourceAllocationTooltip": "Mitä projektin istunnot käyttävät suhteessa projektin rajaan.",
       "ResourceGroupCapacity": "Resurssiryhmät ja kapasiteetti",

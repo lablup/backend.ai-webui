@@ -917,7 +917,7 @@
       "RemainingAmount": "{{amount}} übrig",
       "ReplicaHealth": "Replikat-Zustand",
       "ResourceAllocation": "Ressourcenzuweisung",
-      "ResourceAllocationByProject": "Ressourcenzuteilung nach Projekt",
+      "ResourceAllocationByProject": "Ressourcenzuweisung nach Projekt",
       "ResourceAllocationByProjectTooltip": "Was jedes aktive Projekt der Domäne gemessen am eigenen Projektlimit nutzt und was übrig bleibt.",
       "ResourceAllocationTooltip": "Was die Sitzungen des Projekts gegenüber dem Projektlimit belegen.",
       "ResourceGroupCapacity": "Ressourcengruppen und Kapazität",

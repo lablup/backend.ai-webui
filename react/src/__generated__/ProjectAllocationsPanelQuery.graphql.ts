@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<3a0788f0f74fb71f83951705d8ae64cf>>
+ * @generated SignedSource<<e3e5dfa47a551345e817ca2d65028613>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,7 +11,7 @@
 import { ConcreteRequest } from 'relay-runtime';
 import { Result } from "relay-runtime";
 export type ProjectAllocationsPanelQuery$variables = {
-  domainName: string;
+  domainId: string;
   limit: number;
   offset: number;
 };
@@ -39,7 +39,7 @@ var v0 = [
   {
     "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "domainName"
+    "name": "domainId"
   },
   {
     "defaultValue": null,
@@ -85,9 +85,21 @@ v1 = {
     {
       "fields": [
         {
-          "kind": "Variable",
-          "name": "domainName",
-          "variableName": "domainName"
+          "items": [
+            {
+              "fields": [
+                {
+                  "kind": "Variable",
+                  "name": "value",
+                  "variableName": "domainId"
+                }
+              ],
+              "kind": "ObjectValue",
+              "name": "domain.0"
+            }
+          ],
+          "kind": "ListValue",
+          "name": "domain"
         }
       ],
       "kind": "ObjectValue",
@@ -96,7 +108,7 @@ v1 = {
   ],
   "concreteType": "ProjectV2Connection",
   "kind": "LinkedField",
-  "name": "domainProjectsV2",
+  "name": "scopedProjectsV2",
   "plural": false,
   "selections": [
     {
@@ -189,16 +201,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "3ae4c64dbc5d3b440d8aafce169f26f1",
+    "cacheID": "cc94aa369c7c923693b3e96d7d66c995",
     "id": null,
     "metadata": {},
     "name": "ProjectAllocationsPanelQuery",
     "operationKind": "query",
-    "text": "query ProjectAllocationsPanelQuery(\n  $domainName: String!\n  $limit: Int!\n  $offset: Int!\n) {\n  projects: domainProjectsV2(scope: {domainName: $domainName}, filter: {isActive: true}, orderBy: [{field: NAME, direction: ASC}], limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        entityId\n        basicInfo {\n          name\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query ProjectAllocationsPanelQuery(\n  $domainId: UUID!\n  $limit: Int!\n  $offset: Int!\n) {\n  projects: scopedProjectsV2(scope: {domain: [{value: $domainId}]}, filter: {isActive: true}, orderBy: [{field: NAME, direction: ASC}], limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        entityId\n        basicInfo {\n          name\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "a8ac966c2846687715f13fea813a6ac7";
+(node as any).hash = "bf32ee61e17e7c9328ed9ba78d7009fe";
 
 export default node;
