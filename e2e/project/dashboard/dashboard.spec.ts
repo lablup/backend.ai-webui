@@ -52,6 +52,50 @@ async function mockUserConfig(
   });
 }
 
+/**
+ * Deletes a custom panel from the account's saved board, if it is on it, and
+ * waits for the debounced write that drops it. A no-op when it is not there.
+ */
+async function deletePanelIfPresent(page: Page, panelTitle: string) {
+  const boardItem = page
+    .locator('.uic-board-item')
+    .filter({ hasText: panelTitle });
+  if ((await boardItem.count()) === 0) return;
+  // A failed step can leave the panel modal open over the board.
+  const modal = page.getByRole('dialog').filter({ hasText: 'Add panel' });
+  if (await modal.isVisible()) await page.keyboard.press('Escape');
+  const addButton = page.getByRole('button', { name: 'Add', exact: true });
+  if (!(await addButton.isVisible())) {
+    await page
+      .getByTestId('dashboard-filter-bar')
+      .getByRole('button', { name: 'Edit' })
+      .click();
+  }
+  await page
+    .getByText(panelTitle, { exact: true })
+    // The board item renders the title first; the sider row comes last.
+    .last()
+    .locator('xpath=ancestor::*[.//button[@aria-label="Delete"]][1]')
+    .getByRole('button', { name: 'Delete' })
+    .click();
+  // The board hides the panel before the debounced write: wait for the
+  // upsert that no longer carries it, so the context does not close first.
+  const deletePersisted = page.waitForResponse(
+    (response) => {
+      const body = response.request().postData() ?? '';
+      return (
+        body.includes('useAppConfigMyUpsertMutation') &&
+        !body.includes(panelTitle) &&
+        response.ok()
+      );
+    },
+    { timeout: WIDGET_TIMEOUT },
+  );
+  await page.getByRole('button', { name: 'Confirm', exact: true }).click();
+  await expect(boardItem).toHaveCount(0);
+  await deletePersisted;
+}
+
 test.describe(
   'Dashboard Page',
   { tag: ['@regression', '@dashboard', '@functional'] },
@@ -523,6 +567,17 @@ test.describe(
     // 12. Board Layout (always rearrangeable; the edit sider manages panels)
     // -----------------------------------------------------------------------
     test.describe('Board Layout', () => {
+      // The panel tests write the shared admin account's board; one worker, in order.
+      test.describe.configure({ mode: 'default' });
+      let addedPanelTitle: string | undefined;
+      test.beforeEach(() => {
+        addedPanelTitle = undefined;
+      });
+      // Removes a panel left on the board when a test fails before its own cleanup.
+      test.afterEach(async ({ page }) => {
+        if (addedPanelTitle) await deletePanelIfPresent(page, addedPanelTitle);
+      });
+
       test('Admin sees drag and resize handles on the dashboard board', async ({
         page,
         request,
@@ -611,6 +666,7 @@ test.describe(
         // 4. Title the panel with a unique name — the title is how the panel's
         //    condition is expressed on the board.
         const panelTitle = `e2e-panel-${Date.now()}`;
+        addedPanelTitle = panelTitle;
         await modal
           .getByRole('textbox', { name: 'Title', exact: true })
           .fill(panelTitle);
@@ -626,33 +682,7 @@ test.describe(
 
         // 7. Clean up: the board is saved in the account's app config, so the
         //    panel would otherwise follow the admin account into later runs.
-        await page
-          .getByText(panelTitle, { exact: true })
-          // The board item renders the title first; the sider row comes last.
-          .last()
-          .locator('xpath=ancestor::*[.//button[@aria-label="Delete"]][1]')
-          .getByRole('button', { name: 'Delete' })
-          .click();
-        // The board hides the panel before the debounced write: wait for the
-        // upsert that no longer carries it, so the context does not close first.
-        const deletePersisted = page.waitForResponse(
-          (response) => {
-            const body = response.request().postData() ?? '';
-            return (
-              body.includes('useAppConfigMyUpsertMutation') &&
-              !body.includes(panelTitle) &&
-              response.ok()
-            );
-          },
-          { timeout: WIDGET_TIMEOUT },
-        );
-        await page
-          .getByRole('button', { name: 'Confirm', exact: true })
-          .click();
-        await expect(
-          page.locator('.uic-board-item').filter({ hasText: panelTitle }),
-        ).toHaveCount(0);
-        await deletePersisted;
+        await deletePanelIfPresent(page, panelTitle);
       });
 
       test('Admin can add a custom Audit Log table panel from the dashboard edit sider', async ({
@@ -684,6 +714,7 @@ test.describe(
 
         // 3. Title the panel with a unique name and add it
         const panelTitle = `e2e-audit-panel-${Date.now()}`;
+        addedPanelTitle = panelTitle;
         await modal
           .getByRole('textbox', { name: 'Title', exact: true })
           .fill(panelTitle);
@@ -702,31 +733,7 @@ test.describe(
         }
 
         // 5. Clean up: the board is saved in the account's app config
-        await page
-          .getByText(panelTitle, { exact: true })
-          // The board item renders the title first; the sider row comes last.
-          .last()
-          .locator('xpath=ancestor::*[.//button[@aria-label="Delete"]][1]')
-          .getByRole('button', { name: 'Delete' })
-          .click();
-        const deletePersisted = page.waitForResponse(
-          (response) => {
-            const body = response.request().postData() ?? '';
-            return (
-              body.includes('useAppConfigMyUpsertMutation') &&
-              !body.includes(panelTitle) &&
-              response.ok()
-            );
-          },
-          { timeout: WIDGET_TIMEOUT },
-        );
-        await page
-          .getByRole('button', { name: 'Confirm', exact: true })
-          .click();
-        await expect(
-          page.locator('.uic-board-item').filter({ hasText: panelTitle }),
-        ).toHaveCount(0);
-        await deletePersisted;
+        await deletePanelIfPresent(page, panelTitle);
       });
 
       test('Admin sees Entity type and Result as list conditions for the Audit Log source', async ({
