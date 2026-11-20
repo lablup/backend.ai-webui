@@ -2,8 +2,12 @@
 // scenarios: 10 (Agent Stats Widget), 11 (Recently Created Sessions Widget), and the
 // admin dashboard entry. Split from e2e/project/dashboard/dashboard.spec.ts.
 import { WIDGET_TIMEOUT, waitForGraphQL } from '../../utils/dashboard-util';
-import { loginAsAdmin, navigateTo } from '../../utils/test-util';
-import { test, expect, type Page } from '@playwright/test';
+import {
+  loginAsAdmin,
+  navigateTo,
+  webServerEndpoint,
+} from '../../utils/test-util';
+import { test, expect, request, type Page } from '@playwright/test';
 
 test.describe(
   'Dashboard Page',
@@ -17,6 +21,7 @@ test.describe(
       { tag: ['@requires-manager-v25.15'] },
       () => {
         test.beforeEach(async ({ page, request }) => {
+          await recordFailedLogin();
           await loginAsAdmin(page, request);
           await navigateTo(page, 'admin/dashboard');
         });
@@ -282,5 +287,158 @@ test.describe(
         });
       });
     });
+
+    // -----------------------------------------------------------------------
+    // Audit Log: Top Failure Causes Widget
+    // -----------------------------------------------------------------------
+    // The card reads adminAuditLogsV2 (manager 26.3.0).
+    test.describe(
+      'Audit Log Top Failure Causes Widget',
+      { tag: ['@requires-manager-v26.3'] },
+      () => {
+        // Both tests toggle the same card on the shared admin board.
+        test.describe.configure({ mode: 'serial' });
+        const CARD_TITLE = 'Audit Log: Top Failure Causes';
+        const CARD_KEY = 'topFailureCauses';
+        // Whether a board write puts the card on the admin page's active board.
+        const writeShowsCard = (value: unknown): boolean | undefined => {
+          if (typeof value === 'string') {
+            try {
+              return writeShowsCard(JSON.parse(value));
+            } catch {
+              return undefined;
+            }
+          }
+          if (!value || typeof value !== 'object') return undefined;
+          const page = (value as any).dashboard?.admin;
+          if (page && Array.isArray(page.boards)) {
+            const board =
+              page.boards.find((b: any) => b.id === page.active) ??
+              page.boards[0];
+            return (board?.panels ?? []).some((p: any) => p.key === CARD_KEY);
+          }
+          for (const child of Object.values(value)) {
+            const shows = writeShowsCard(child);
+            if (shows !== undefined) return shows;
+          }
+          return undefined;
+        };
+        // A stored board may hide the card, so each test shows it from the
+        // edit sider (personal userConfig) and hides it again afterwards.
+        let addedCard = false;
+        const setCardShown = async (page: Page, shown: boolean) => {
+          const dashboardBar = page.getByTestId('dashboard-filter-bar');
+          await dashboardBar.getByRole('button', { name: 'Edit' }).click();
+          const checkbox = page.getByRole('checkbox', {
+            name: CARD_TITLE,
+            exact: true,
+          });
+          await expect(checkbox).toBeVisible({ timeout: WIDGET_TIMEOUT });
+          const wasShown = await checkbox.isChecked();
+          // Wait for the board write so the afterEach restore is not lost.
+          const saved =
+            wasShown !== shown
+              ? waitForGraphQL(
+                  page,
+                  'useAppConfigMyUpsertMutation',
+                  (variables) => writeShowsCard(variables) === shown,
+                  10_000,
+                ).catch((error: Error) => {
+                  if (error.name !== 'TimeoutError') throw error;
+                })
+              : undefined;
+          try {
+            if (wasShown !== shown) await checkbox.click();
+            await dashboardBar.getByRole('button', { name: 'Close' }).click();
+          } finally {
+            await saved;
+          }
+          return wasShown;
+        };
+        const failureCausesWidget = (page: Page) =>
+          page.locator('.uic-board-item').filter({
+            has: page.getByRole('heading', { name: CARD_TITLE, exact: true }),
+          });
+        // A login with an unknown account is recorded as a failed `authorize`
+        // ("Log in") entry, so the card always has a cause to show.
+        const FAILED_LOGIN_REASON =
+          'Credential/signature mismatch. (User credential mismatch.)';
+        const recordFailedLogin = async () => {
+          const api = await request.newContext({ baseURL: webServerEndpoint });
+          try {
+            const res = await api.post('/server/login', {
+              data: {
+                username: `e2e-no-such-user-${Date.now()}@lablup.com`,
+                password: 'e2e-wrong-password',
+              },
+            });
+            expect(res.status()).toBe(401);
+          } finally {
+            await api.dispose();
+          }
+        };
+        const failedLoginRow = (page: Page) =>
+          failureCausesWidget(page)
+            .getByRole('row')
+            .filter({ has: page.getByRole('button', { name: 'Log in' }) })
+            .filter({ hasText: FAILED_LOGIN_REASON });
+
+        test.beforeEach(async ({ page, request }) => {
+          await recordFailedLogin();
+          await loginAsAdmin(page, request);
+          await navigateTo(page, 'admin/dashboard');
+          addedCard = !(await setCardShown(page, true));
+        });
+
+        test.afterEach(async ({ page }) => {
+          if (addedCard) await setCardShown(page, false);
+        });
+
+        test('Admin can view the Audit Log Top Failure Causes card on the superadmin dashboard', async ({
+          page,
+        }) => {
+          // 1. Locate the card and its table
+          const widget = failureCausesWidget(page);
+          await expect(widget).toBeVisible({ timeout: WIDGET_TIMEOUT });
+          const table = widget.getByRole('table');
+          await expect(table).toBeVisible({ timeout: WIDGET_TIMEOUT });
+
+          // 2. Verify the Action / Reason / Count / Share columns
+          for (const column of ['Action', 'Reason', 'Count', 'Share']) {
+            await expect(
+              table.getByRole('columnheader', { name: column, exact: true }),
+            ).toBeVisible();
+          }
+
+          // 3. Verify the failed login recorded before the test is listed
+          await expect(failedLoginRow(page)).toBeVisible({
+            timeout: WIDGET_TIMEOUT,
+          });
+        });
+
+        test('Admin can open and close the failed entries of an action from the Top Failure Causes card', async ({
+          page,
+        }) => {
+          // 1. Click the failed login cause and verify its failed entries modal
+          const row = failedLoginRow(page);
+          await expect(row).toBeVisible({ timeout: WIDGET_TIMEOUT });
+          await row.getByRole('button', { name: 'Log in' }).click();
+          const modal = page.getByRole('dialog', {
+            name: 'Failed entries: Log in',
+          });
+          await expect(modal).toBeVisible();
+          await expect(
+            modal
+              .getByRole('row')
+              .filter({ hasText: FAILED_LOGIN_REASON })
+              .first(),
+          ).toBeVisible({ timeout: WIDGET_TIMEOUT });
+
+          // 2. Close the modal and verify it disappears
+          await modal.getByRole('button', { name: 'Close' }).click();
+          await expect(modal).toBeHidden();
+        });
+      },
+    );
   },
 );
