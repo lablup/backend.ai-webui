@@ -609,7 +609,7 @@ export const applyRule = (
   ) {
     draft.resource.accelerator = undefined;
   }
-  // Automatic shmem stays under the cap, which can shrink with the group's limits.
+  // A restored automatic shmem above the cap is lowered to it.
   const maxShmem = ctx.resourceLimits.shmem?.max;
   if (
     draft.enabledAutomaticShmem &&

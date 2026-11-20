@@ -59,17 +59,15 @@ describe('getConfigName', () => {
 });
 
 describe('getShmemMaxLimit', () => {
-  test('is the smaller of maxShmPerContainer (GiB) and the memory maximum', () => {
-    expect(getShmemMaxLimit(2, '16g')).toBe('2g');
-    expect(getShmemMaxLimit(32, '16g')).toBe('16g');
-    expect(getShmemMaxLimit(0.5, '1024m')).toBe('0.5g');
+  test('is maxShmPerContainer in GiB', () => {
+    expect(getShmemMaxLimit(2)).toBe('2g');
+    expect(getShmemMaxLimit(0.5)).toBe('0.5g');
   });
 
-  test('a missing, zero or non-numeric cap leaves only the memory maximum', () => {
-    expect(getShmemMaxLimit(undefined, '16g')).toBe('16g');
-    expect(getShmemMaxLimit(0, '16g')).toBe('16g');
-    expect(getShmemMaxLimit('4', '16g')).toBe('16g');
-    expect(getShmemMaxLimit(2, undefined)).toBe('2g');
-    expect(getShmemMaxLimit(undefined, undefined)).toBeUndefined();
+  test('a missing, zero or non-numeric value sets no cap', () => {
+    expect(getShmemMaxLimit(undefined)).toBeUndefined();
+    expect(getShmemMaxLimit(0)).toBeUndefined();
+    expect(getShmemMaxLimit(-1)).toBeUndefined();
+    expect(getShmemMaxLimit('4')).toBeUndefined();
   });
 });

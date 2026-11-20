@@ -589,7 +589,7 @@ describe('applyRule — shared-memory cap', () => {
     ).toBe('0.5g');
   });
 
-  it('automatic shmem above a cap that shrank is lowered, and settles', () => {
+  it('a restored automatic shmem above the cap is lowered, and settles', () => {
     const values = makeValues({
       resource: { ...makeValues().resource, mem: '8g', shmem: '1g' },
     });
