@@ -4465,6 +4465,7 @@
     "DashboardChatExampleBoard": "Crea una board chiamata Incidenti con {{first}} e {{second}}",
     "DashboardChatExampleLayout": "Nascondi la scheda {{title}}",
     "DashboardChatExamplePanel": "Aggiungi una tabella delle sessioni interattive in esecuzione",
+    "DashboardChatExampleShow": "Mostra la scheda {{title}}",
     "DashboardChatOffline": "Collega l'assistente WebUI dal pulsante rotondo in basso a destra per usarlo.",
     "DashboardCreateBoard": "Crea la board {{title}}",
     "DashboardEditPanel": "Aggiorna il pannello {{title}}",

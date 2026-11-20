@@ -4451,6 +4451,7 @@
     "DashboardChatExampleBoard": "สร้างบอร์ดชื่อ เหตุขัดข้อง ที่มี {{first}} และ {{second}}",
     "DashboardChatExampleLayout": "ซ่อนการ์ด {{title}}",
     "DashboardChatExamplePanel": "เพิ่มตารางเซสชันอินเทอร์แอกทีฟที่กำลังทำงาน",
+    "DashboardChatExampleShow": "แสดงการ์ด {{title}}",
     "DashboardChatOffline": "เชื่อมต่อผู้ช่วย WebUI จากปุ่มกลมด้านล่างขวาเพื่อใช้งาน",
     "DashboardCreateBoard": "สร้างบอร์ด {{title}}",
     "DashboardEditPanel": "อัปเดตแผง {{title}}",

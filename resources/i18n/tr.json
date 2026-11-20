@@ -4465,6 +4465,7 @@
     "DashboardChatExampleBoard": "{{first}} ve {{second}} ile Olaylar adlı bir pano oluştur",
     "DashboardChatExampleLayout": "{{title}} kartını gizle",
     "DashboardChatExamplePanel": "Çalışan etkileşimli oturumların tablosunu ekle",
+    "DashboardChatExampleShow": "{{title}} kartını göster",
     "DashboardChatOffline": "Bunu kullanmak için sağ alttaki yuvarlak düğmeden WebUI Asistanını bağlayın.",
     "DashboardCreateBoard": "{{title}} panosunu oluştur",
     "DashboardEditPanel": "{{title}} panelini güncelle",

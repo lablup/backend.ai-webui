@@ -4467,6 +4467,7 @@
     "DashboardChatExampleBoard": "Tạo bảng tên Sự cố với {{first}} và {{second}}",
     "DashboardChatExampleLayout": "Ẩn thẻ {{title}}",
     "DashboardChatExamplePanel": "Thêm bảng các phiên tương tác đang chạy",
+    "DashboardChatExampleShow": "Hiển thị thẻ {{title}}",
     "DashboardChatOffline": "Kết nối trợ lý WebUI từ nút tròn ở góc dưới bên phải để sử dụng.",
     "DashboardCreateBoard": "Tạo bảng {{title}}",
     "DashboardEditPanel": "Cập nhật bảng {{title}}",

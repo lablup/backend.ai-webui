@@ -4469,6 +4469,7 @@
     "DashboardChatExampleBoard": "用 {{first}} 和 {{second}} 建立一個故障處理面板",
     "DashboardChatExampleLayout": "隱藏 {{title}} 卡片",
     "DashboardChatExamplePanel": "新增執行中的互動式工作階段表格",
+    "DashboardChatExampleShow": "顯示 {{title}} 卡片",
     "DashboardChatOffline": "從右下角的圓形按鈕連接 WebUI 助理後即可使用。",
     "DashboardCreateBoard": "建立面板 {{title}}",
     "DashboardEditPanel": "更新面板 {{title}}",

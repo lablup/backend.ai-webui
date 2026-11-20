@@ -4469,6 +4469,7 @@
     "DashboardChatExampleBoard": "Buat papan bernama Insiden dengan {{first}} dan {{second}}",
     "DashboardChatExampleLayout": "Sembunyikan kartu {{title}}",
     "DashboardChatExamplePanel": "Tambahkan tabel sesi interaktif yang berjalan",
+    "DashboardChatExampleShow": "Tampilkan kartu {{title}}",
     "DashboardChatOffline": "Hubungkan Asisten WebUI dari tombol bulat di kanan bawah untuk menggunakan ini.",
     "DashboardCreateBoard": "Buat papan {{title}}",
     "DashboardEditPanel": "Perbarui panel {{title}}",

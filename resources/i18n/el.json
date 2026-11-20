@@ -4465,6 +4465,7 @@
     "DashboardChatExampleBoard": "Φτιάξε πίνακα Συμβάντα με {{first}} και {{second}}",
     "DashboardChatExampleLayout": "Κρύψε την κάρτα {{title}}",
     "DashboardChatExamplePanel": "Πρόσθεσε πίνακα με τις ενεργές διαδραστικές συνεδρίες",
+    "DashboardChatExampleShow": "Δείξε την κάρτα {{title}}",
     "DashboardChatOffline": "Συνδέστε τον βοηθό WebUI από το στρογγυλό κουμπί κάτω δεξιά για να το χρησιμοποιήσετε.",
     "DashboardCreateBoard": "Δημιουργία πίνακα {{title}}",
     "DashboardEditPanel": "Ενημέρωση πλαισίου {{title}}",

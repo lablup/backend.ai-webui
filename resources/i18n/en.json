@@ -4450,6 +4450,7 @@
     "DashboardChatExampleBoard": "Create a board named Incidents with {{first}} and {{second}}",
     "DashboardChatExampleLayout": "Hide the {{title}} card",
     "DashboardChatExamplePanel": "Add a table of running interactive sessions",
+    "DashboardChatExampleShow": "Show the {{title}} card",
     "DashboardChatOffline": "Connect the WebUI Assistant from the round button at the bottom right to use this.",
     "DashboardCreateBoard": "Create the board {{title}}",
     "DashboardEditPanel": "Update the panel {{title}}",

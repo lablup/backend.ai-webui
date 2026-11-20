@@ -205,10 +205,15 @@ const DashboardAssistantChat: React.FC<DashboardAssistantChatProps> = ({
   const otherCards = ctx.cards.filter((card) => !card.shown);
   const boardCards = [...otherCards, ...shownCards].slice(0, 2);
   const examples = _.compact([
-    shownCards[0] &&
-      t('webuiAssistant.DashboardChatExampleLayout', {
-        title: shownCards[0].title,
-      }),
+    // An empty board has nothing to hide, so it suggests showing a card instead.
+    shownCards[0]
+      ? t('webuiAssistant.DashboardChatExampleLayout', {
+          title: shownCards[0].title,
+        })
+      : otherCards[0] &&
+        t('webuiAssistant.DashboardChatExampleShow', {
+          title: otherCards[0].title,
+        }),
     ctx.sources.some((source) => source.key === 'session') &&
       t('webuiAssistant.DashboardChatExamplePanel'),
     ctx.canCreateBoard &&

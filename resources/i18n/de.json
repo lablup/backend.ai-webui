@@ -4467,6 +4467,7 @@
     "DashboardChatExampleBoard": "Erstelle ein Board namens Störungen mit {{first}} und {{second}}",
     "DashboardChatExampleLayout": "Blende die Karte {{title}} aus",
     "DashboardChatExamplePanel": "Füge eine Tabelle laufender interaktiver Sitzungen hinzu",
+    "DashboardChatExampleShow": "Zeige die Karte {{title}}",
     "DashboardChatOffline": "Verbinden Sie den WebUI-Assistenten über die runde Schaltfläche unten rechts, um dies zu nutzen.",
     "DashboardCreateBoard": "Board {{title}} erstellen",
     "DashboardEditPanel": "Panel {{title}} aktualisieren",
