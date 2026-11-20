@@ -328,7 +328,7 @@ export const describeDashboardAction = (
   }
 };
 
-/** Example requests built from this board, so each names something that exists here. */
+/** Two example requests built from this board, so each names something that exists here. */
 export const dashboardExamplesOf = (
   ctx: DashboardChatContext,
   t: TFunction,
@@ -346,13 +346,14 @@ export const dashboardExamplesOf = (
         t('webuiAssistant.DashboardChatExampleShow', {
           title: otherCards[0].title,
         }),
-    ctx.sources.some((source) => source.key === 'session') &&
-      t('webuiAssistant.DashboardChatExamplePanel'),
+    // Pages with boards show off a new board; the member page a new panel.
     ctx.canCreateBoard &&
       boardCards.length === 2 &&
       t('webuiAssistant.DashboardChatExampleBoard', {
         first: boardCards[0].title,
         second: boardCards[1].title,
       }),
-  ]);
+    ctx.sources.some((source) => source.key === 'session') &&
+      t('webuiAssistant.DashboardChatExamplePanel'),
+  ]).slice(0, 2);
 };
