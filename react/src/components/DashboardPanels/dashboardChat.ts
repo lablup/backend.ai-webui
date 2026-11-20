@@ -204,6 +204,8 @@ const editedInputOf = (
   if (!draft) return null;
   const sameSource = draft.resourceType === base.resourceType;
   const input = inputOfDraft(draft);
+  // On another source the old filter does not apply, so rejected conditions would leave none.
+  if (!sameSource && hasConditions(raw) && !input.filter) return null;
   return {
     ...input,
     // An omitted condition keeps the panel's own, which only fits its own source.
