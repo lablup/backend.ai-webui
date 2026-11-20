@@ -7,6 +7,7 @@
 // documents around each test, and restores whatever the deployment held
 // before the run. Other specs that sign in while one of these tests holds an
 // override see that override; keep the write→assert→clear window short.
+import { resolveE2EParts } from '../../e2e-parts';
 import { SessionAPIHelper } from '../../utils/classes/session/SessionAPIHelper';
 import {
   forbiddenPageHeading,
@@ -678,6 +679,10 @@ test.describe(
       browser,
       request,
     }) => {
+      test.skip(
+        !resolveE2EParts(process.env.E2E_PART).includes('admin'),
+        'changes server-global settings; runs only with E2E_PART=admin',
+      );
       await api.writeSettings('domain', {
         maxShmPerContainer: 1,
         allowCustomResourceAllocation: true,
