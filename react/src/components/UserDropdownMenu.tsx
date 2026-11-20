@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { UserDropdownMenuQuery } from '../__generated__/UserDropdownMenuQuery.graphql';
+import { maskUserIdentity } from '../helper';
 import { useWebUINavigate } from '../hooks';
 import {
   useCurrentUserInfo,
@@ -133,10 +134,13 @@ const UserDropdownMenu: React.FC<{
 
   const currentClientIp = myClientIp?.clientIp;
 
-  const displayName =
+  const shown = (value: string) =>
+    loginConfig.maskUserInfo ? maskUserIdentity(value) : value;
+  const displayName = shown(
     _.trim(user?.basicInfo?.fullName ?? '').length > 0
       ? (user?.basicInfo?.fullName ?? '')
-      : userInfo.email;
+      : userInfo.email,
+  );
 
   // The three leading rows (name / email / role) are read-only identity
   // display; antd expressed that with `disabled` + a `cursor: default` style
@@ -149,7 +153,7 @@ const UserDropdownMenu: React.FC<{
       isDisabled: true,
     },
     {
-      label: userInfo.email,
+      label: shown(userInfo.email),
       icon: <Mail size="1em" />,
       isDisabled: true,
     },

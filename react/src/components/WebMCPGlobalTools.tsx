@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { maskString } from '../helper';
+import { maskUserIdentity } from '../helper';
 import {
   routeErrorScreenAtom,
   type RouteErrorKind,
@@ -44,10 +44,7 @@ export const displayedEmail = (
   maskUserInfo: boolean | undefined,
 ): string | null => {
   if (!email) return null;
-  if (!maskUserInfo) return email;
-  const at = email.indexOf('@');
-  const localLength = at < 0 ? email.length : at;
-  return maskString(email, '*', 2, Math.max(localLength - 2, 0));
+  return maskUserInfo ? maskUserIdentity(email) : email;
 };
 
 const NO_INPUT: WebMCPInputSchema = {
