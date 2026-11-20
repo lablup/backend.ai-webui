@@ -26,6 +26,7 @@ import {
   backendaiTasker,
   backendaiUtils,
 } from './global-stores';
+import { parse } from 'smol-toml';
 
 // ---------------------------------------------------------------------------
 // BackendAISettingsStore
@@ -507,6 +508,21 @@ describe('BackendAICommonUtils', () => {
       expect(obj.a.b).not.toHaveProperty('c');
     });
 
+    it('deletes from null-prototype tables (smol-toml >= 1.9)', () => {
+      const obj = parse('[general]\napiEndpoint = "x"\nkeep = 1\n[wsproxy]\n');
+      backendaiUtils.deleteNestedKeyFromObject(obj, 'general.apiEndpoint');
+      backendaiUtils.deleteNestedKeyFromObject(obj, 'wsproxy');
+      expect(obj).toEqual({ general: { keep: 1 } });
+    });
+
+    it('leaves the object alone when an intermediate key is missing', () => {
+      const obj = { other: 1 };
+      expect(() =>
+        backendaiUtils.deleteNestedKeyFromObject(obj, 'general.apiEndpoint'),
+      ).not.toThrow();
+      expect(obj).toEqual({ other: 1 });
+    });
+
     it('returns the original object for invalid input', () => {
       expect(backendaiUtils.deleteNestedKeyFromObject(null as any, 'a')).toBe(
         null,
@@ -539,6 +555,45 @@ describe('BackendAICommonUtils', () => {
         a: 1,
       });
       expect(backendaiUtils.mergeNestedObjects(null, null)).toEqual({});
+    });
+
+    it('deep-merges null-prototype tables (smol-toml >= 1.9)', () => {
+      const result = backendaiUtils.mergeNestedObjects(
+        parse('[general]\na = 1\n[general.sub]\nx = 1\n'),
+        parse('[general]\nb = 2\n[general.sub]\ny = 2\n'),
+      );
+      expect(result).toEqual({ general: { a: 1, b: 2, sub: { x: 1, y: 2 } } });
+    });
+
+    it('replaces arrays, class instances and scalars instead of merging', () => {
+      const date = new Date(0);
+      const result = backendaiUtils.mergeNestedObjects(
+        { list: [1, 2], when: { x: 1 }, s: 'text' },
+        { list: [3], when: date, s: { nested: true } },
+      );
+      expect(result.list).toEqual([3]);
+      expect(result.when).toBe(date);
+      expect(result.s).toEqual({ nested: true });
+    });
+
+    it('does not write through __proto__ or constructor keys', () => {
+      const result = backendaiUtils.mergeNestedObjects(
+        {},
+        parse(
+          '[__proto__]\npolluted = true\n[constructor.prototype]\npolluted = true\n',
+        ),
+      );
+      expect(({} as any).polluted).toBeUndefined();
+      expect(Object.prototype).not.toHaveProperty('polluted');
+      expect(Object.keys(result)).toEqual([]);
+    });
+
+    it('does not mutate its inputs', () => {
+      const a = parse('[general]\na = 1\n');
+      const b = parse('[general]\nb = 2\n');
+      backendaiUtils.mergeNestedObjects(a, b);
+      expect(a).toEqual({ general: { a: 1 } });
+      expect(b).toEqual({ general: { b: 2 } });
     });
 
     it('overwrites scalar values with newer object values', () => {
