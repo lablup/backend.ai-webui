@@ -4578,6 +4578,7 @@
     "MaxRNGDDevicesPerContainer": "Peranti RNGD maksimum bagi setiap sesi",
     "MaxROCMDevicesPerContainer": "GPU ROCm maksimum bagi setiap sesi",
     "MaxShmPerContainer": "Memori kongsi maksimum bagi setiap sesi",
+    "MaxSizeHint": "(maks. {{size}})",
     "MaxTPUDevicesPerContainer": "TPU maksimum bagi setiap sesi",
     "MaxWarboyDevicesPerContainer": "Peranti Warboy maksimum bagi setiap sesi",
     "MenuBlocklist": "Sembunyikan menu",

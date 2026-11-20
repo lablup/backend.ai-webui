@@ -4578,6 +4578,7 @@
     "MaxRNGDDevicesPerContainer": "Μέγιστες συσκευές RNGD ανά συνεδρία",
     "MaxROCMDevicesPerContainer": "Μέγιστες GPU ROCm ανά συνεδρία",
     "MaxShmPerContainer": "Μέγιστη κοινόχρηστη μνήμη ανά συνεδρία",
+    "MaxSizeHint": "(μέγ. {{size}})",
     "MaxTPUDevicesPerContainer": "Μέγιστες TPU ανά συνεδρία",
     "MaxWarboyDevicesPerContainer": "Μέγιστες συσκευές Warboy ανά συνεδρία",
     "MenuBlocklist": "Απόκρυψη μενού",

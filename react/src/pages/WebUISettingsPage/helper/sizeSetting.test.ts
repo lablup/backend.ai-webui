@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { WEBUI_SETTING_DEFINITIONS } from '../../../helper/webuiSettings';
-import { toSizeString, toStoredSize } from './sizeSetting';
+import { toMaxSizeLabel, toSizeString, toStoredSize } from './sizeSetting';
 import { describe, expect, it } from 'vitest';
 
 const sizeOf = (key: string) => {
@@ -47,5 +47,12 @@ describe('toSizeString', () => {
   it('shows the stored number in the largest unit it fills', () => {
     expect(toSizeString(1024, chunkSize)).toBe('1g');
     expect(toSizeString(512, chunkSize)).toBe('512m');
+  });
+});
+
+describe('toMaxSizeLabel', () => {
+  it('shows the largest accepted size in its largest unit', () => {
+    expect(toMaxSizeLabel(chunkSize)).toBe('1 GiB');
+    expect(toMaxSizeLabel(maxFileUploadSize)).toBe('100 GiB');
   });
 });

@@ -3166,6 +3166,7 @@
         "webuiSettings.MaxRNGDDevicesPerContainer",
         "webuiSettings.MaxROCMDevicesPerContainer",
         "webuiSettings.MaxShmPerContainer",
+        "webuiSettings.MaxSizeHint",
         "webuiSettings.MaxTPUDevicesPerContainer",
         "webuiSettings.MaxWarboyDevicesPerContainer",
         "webuiSettings.MenuBlocklist",

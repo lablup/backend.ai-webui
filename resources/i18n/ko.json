@@ -4581,6 +4581,7 @@
     "MaxRNGDDevicesPerContainer": "세션당 최대 RNGD 수",
     "MaxROCMDevicesPerContainer": "세션당 최대 ROCm GPU 수",
     "MaxShmPerContainer": "세션당 최대 공유 메모리",
+    "MaxSizeHint": "(최대 {{size}})",
     "MaxTPUDevicesPerContainer": "세션당 최대 TPU 수",
     "MaxWarboyDevicesPerContainer": "세션당 최대 Warboy 수",
     "MenuBlocklist": "메뉴 숨기기",

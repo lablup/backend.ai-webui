@@ -43,3 +43,7 @@ export const toSizeString = (
     unit as (typeof size.units)[number],
   )?.value;
 };
+
+/** The largest value the setting accepts, for display (`"1 GiB"`). */
+export const toMaxSizeLabel = (size: WebUISizeSetting): string | undefined =>
+  convertToBinaryUnit(size.max, 'auto', 0)?.displayValue;

@@ -4578,6 +4578,7 @@
     "MaxRNGDDevicesPerContainer": "Oturum başına en fazla RNGD cihazı",
     "MaxROCMDevicesPerContainer": "Oturum başına en fazla ROCm GPU",
     "MaxShmPerContainer": "Oturum başına en fazla paylaşılan bellek",
+    "MaxSizeHint": "(en fazla {{size}})",
     "MaxTPUDevicesPerContainer": "Oturum başına en fazla TPU",
     "MaxWarboyDevicesPerContainer": "Oturum başına en fazla Warboy cihazı",
     "MenuBlocklist": "Menüleri gizle",

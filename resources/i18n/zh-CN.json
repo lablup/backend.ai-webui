@@ -4580,6 +4580,7 @@
     "MaxRNGDDevicesPerContainer": "每个会话的最大 RNGD 数",
     "MaxROCMDevicesPerContainer": "每个会话的最大 ROCm GPU 数",
     "MaxShmPerContainer": "每个会话的最大共享内存",
+    "MaxSizeHint": "(最大 {{size}})",
     "MaxTPUDevicesPerContainer": "每个会话的最大 TPU 数",
     "MaxWarboyDevicesPerContainer": "每个会话的最大 Warboy 数",
     "MenuBlocklist": "隐藏菜单",

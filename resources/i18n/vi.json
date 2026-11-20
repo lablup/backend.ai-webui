@@ -4580,6 +4580,7 @@
     "MaxRNGDDevicesPerContainer": "Số thiết bị RNGD tối đa mỗi phiên",
     "MaxROCMDevicesPerContainer": "Số GPU ROCm tối đa mỗi phiên",
     "MaxShmPerContainer": "Bộ nhớ dùng chung tối đa mỗi phiên",
+    "MaxSizeHint": "(tối đa {{size}})",
     "MaxTPUDevicesPerContainer": "Số TPU tối đa mỗi phiên",
     "MaxWarboyDevicesPerContainer": "Số thiết bị Warboy tối đa mỗi phiên",
     "MenuBlocklist": "Ẩn menu",

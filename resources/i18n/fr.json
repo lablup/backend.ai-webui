@@ -4581,6 +4581,7 @@
     "MaxRNGDDevicesPerContainer": "Nombre maximal de périphériques RNGD par session",
     "MaxROCMDevicesPerContainer": "Nombre maximal de GPU ROCm par session",
     "MaxShmPerContainer": "Mémoire partagée maximale par session",
+    "MaxSizeHint": "(max. {{size}})",
     "MaxTPUDevicesPerContainer": "Nombre maximal de TPU par session",
     "MaxWarboyDevicesPerContainer": "Nombre maximal de périphériques Warboy par session",
     "MenuBlocklist": "Masquer des menus",
