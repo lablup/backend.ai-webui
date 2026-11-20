@@ -106,6 +106,8 @@ export interface LoginConfigState {
   blockList: string[];
   inactiveList: string[];
   fasttrackEndpoint: string;
+  /** Page the help button opens: `null` = the hosted manual page, `''` hides help. */
+  manualUrl: string | null;
   pluginPages: string[];
   loginPlugin: string;
   domain_name: string;
@@ -174,6 +176,7 @@ export function getDefaultLoginConfig(): LoginConfigState {
     blockList: [],
     inactiveList: [],
     fasttrackEndpoint: '',
+    manualUrl: null,
     pluginPages: [],
     loginPlugin: '',
     domain_name: '',

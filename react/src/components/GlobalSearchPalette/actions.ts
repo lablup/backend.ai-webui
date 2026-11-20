@@ -167,6 +167,7 @@ export const PALETTE_ACTIONS: ReadonlyArray<PaletteAction> = [
     icon: BookOpen,
     group: 'panels',
     keywords: ['manual', 'help', 'docs', 'documentation'],
+    gate: (ctx) => !ctx.config.isHelpHidden,
     run: (ctx) => ctx.openHelp(),
   },
   {

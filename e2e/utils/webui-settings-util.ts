@@ -61,8 +61,8 @@ export interface WebUISettingRow {
   scope: WebUISettingScope;
   type: WebUISettingType;
   group: WebUISettingGroup;
-  /** `[section, key]` the setting had in `config.toml`; the app no longer reads it there. */
-  toml: [string, string];
+  /** `[section, key]` the setting had in `config.toml` (the app no longer reads it there); `null` for a setting that never had one. */
+  toml: [string, string] | null;
 }
 
 const row = (
@@ -70,7 +70,7 @@ const row = (
   scope: WebUISettingScope,
   type: WebUISettingType,
   group: WebUISettingGroup,
-  toml: [string, string] = ['general', key],
+  toml: [string, string] | null = ['general', key],
 ): WebUISettingRow => ({ key, scope, type, group, toml });
 
 const resources = (key: string): [string, string] => ['resources', key];
@@ -176,6 +176,7 @@ export const WEBUI_SETTING_ROWS: ReadonlyArray<WebUISettingRow> = [
     'pipeline',
     'frontendEndpoint',
   ]),
+  row('manualUrl', 'domain', 'string', 'menu', null),
 
   // Downloads.
   row('allowAppDownloadPanel', 'domain', 'boolean', 'downloads'),

@@ -109,7 +109,7 @@ const GlobalSearchPalette: React.FC<GlobalSearchPaletteProps> = ({
     setThemeMode,
     openNotifications: () => setNotificationDrawerOpen(true),
     toggleSider: () => setSiderCollapsed((collapsed) => !collapsed),
-    openHelp,
+    openHelp: () => openHelp?.(),
   };
 
   const translate = toTranslator(t);
