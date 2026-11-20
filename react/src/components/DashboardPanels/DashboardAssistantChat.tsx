@@ -23,6 +23,7 @@ import {
   ChatMessage,
   ChatMessageBubble,
   ChatMessageList,
+  ChatSystemMessage,
 } from '@lablup/ui-common/Chat';
 import { IconButton } from '@lablup/ui-common/IconButton';
 import { List, ListItem } from '@lablup/ui-common/List';
@@ -41,6 +42,8 @@ const HISTORY_MESSAGES = 6;
 interface ChatTurn {
   id: number;
   request: string;
+  /** A note in the conversation (what Apply saved) instead of a request. */
+  notice?: string;
   reply?: string;
   /** Every action the reply proposed, with the ones that changed nothing marked. */
   items?: Array<{ action: DashboardAssistantAction; isNoop: boolean }>;
@@ -77,7 +80,6 @@ const DashboardAssistantChat: React.FC<DashboardAssistantChatProps> = ({
   const model = useWebUIAssistantModel();
   const [turns, setTurns] = useState<Array<ChatTurn>>([]);
   const [isAsking, setIsAsking] = useState(false);
-  const [appliedCount, setAppliedCount] = useState(0);
 
   // Leaving edit mode or the chat unmounts it; the board must not keep the preview.
   const endPreview = useEffectEvent(() => {
@@ -141,6 +143,7 @@ const DashboardAssistantChat: React.FC<DashboardAssistantChatProps> = ({
 
   const historyOf = (previous: ReadonlyArray<ChatTurn>): Array<ModelMessage> =>
     previous
+      .filter((turn) => !turn.notice)
       .flatMap((turn): Array<ModelMessage> => [
         { role: 'user', content: turn.request },
         {
@@ -259,12 +262,28 @@ const DashboardAssistantChat: React.FC<DashboardAssistantChatProps> = ({
         <BAIFlex
           direction="column"
           align="stretch"
-          gap="xs"
+          justify="center"
+          gap="sm"
           style={{ flex: 1, minHeight: 0, overflowY: 'auto' }}
         >
-          <Text color="secondary" size="sm">
-            {t('webuiAssistant.DashboardChatEmpty')}
-          </Text>
+          {/* The same empty state as the floating assistant's chat. */}
+          <BAIFlex
+            direction="column"
+            align="center"
+            gap="sm"
+            style={{ textAlign: 'center' }}
+          >
+            <Sparkles
+              size={32}
+              // A global rule sizes SVGs to 1em, so `size` alone stays at text size.
+              style={{ fontSize: 32 }}
+              color="var(--color-text-secondary)"
+              aria-hidden
+            />
+            <Text color="secondary">
+              {t('webuiAssistant.DashboardChatEmpty')}
+            </Text>
+          </BAIFlex>
           {/* A ReactNode label wraps; a Button would cut a sentence to one line. */}
           <List density="compact" hasDividers>
             {examples.map((example) => (
@@ -287,82 +306,95 @@ const DashboardAssistantChat: React.FC<DashboardAssistantChatProps> = ({
           style={{ flex: '1 1 auto', minHeight: 0, overflowY: 'auto' }}
         >
           <ChatMessageList density="compact" isStreaming={isAsking}>
-            {turns.flatMap((turn) => [
-              <ChatMessage key={`${turn.id}-q`} sender="user">
-                <ChatMessageBubble>{turn.request}</ChatMessageBubble>
-              </ChatMessage>,
-              <ChatMessage key={`${turn.id}-a`} sender="assistant">
-                <ChatMessageBubble>
-                  {turn.error ? (
-                    <Banner status="error" title={turn.error} role="alert" />
-                  ) : !turn.items ? (
-                    <BAIFlex gap="xs">
-                      <Spinner size="sm" />
-                      <Text color="secondary">{t('chatui.Thinking')}</Text>
-                    </BAIFlex>
-                  ) : (
-                    <BAIFlex direction="column" align="stretch" gap="xxs">
-                      {turn.reply ? <Text size="sm">{turn.reply}</Text> : null}
-                      {turn.items.length === 0 ? (
-                        <Text size="sm" color="secondary">
-                          {t('webuiAssistant.DashboardNoProposal')}
-                        </Text>
-                      ) : (
-                        turn.items.map(({ action, isNoop }, index) => {
-                          const target =
-                            action.type === 'hide'
-                              ? undefined
-                              : actionTargetId(action);
-                          return (
-                            <BAIFlex
-                              key={index}
-                              gap="xs"
-                              align="center"
-                              justify="between"
-                              onMouseEnter={() => onHighlight(target ?? null)}
-                              onMouseLeave={() => onHighlight(null)}
-                            >
-                              <Text
-                                size="sm"
-                                color={isNoop ? 'secondary' : undefined}
-                              >
-                                {`· ${describe(action)}${
-                                  isNoop
-                                    ? ` (${t('webuiAssistant.DashboardAlreadyDone')})`
-                                    : ''
-                                }`}
+            {turns.flatMap((turn) =>
+              turn.notice
+                ? [
+                    <ChatSystemMessage key={`${turn.id}-n`}>
+                      {turn.notice}
+                    </ChatSystemMessage>,
+                  ]
+                : [
+                    <ChatMessage key={`${turn.id}-q`} sender="user">
+                      <ChatMessageBubble>{turn.request}</ChatMessageBubble>
+                    </ChatMessage>,
+                    <ChatMessage key={`${turn.id}-a`} sender="assistant">
+                      <ChatMessageBubble>
+                        {turn.error ? (
+                          <Banner
+                            status="error"
+                            title={turn.error}
+                            role="alert"
+                          />
+                        ) : !turn.items ? (
+                          <BAIFlex gap="xs">
+                            <Spinner size="sm" />
+                            <Text color="secondary">
+                              {t('chatui.Thinking')}
+                            </Text>
+                          </BAIFlex>
+                        ) : (
+                          <BAIFlex direction="column" align="stretch" gap="xxs">
+                            {turn.reply ? (
+                              <Text size="sm">{turn.reply}</Text>
+                            ) : null}
+                            {turn.items.length === 0 ? (
+                              <Text size="sm" color="secondary">
+                                {t('webuiAssistant.DashboardNoProposal')}
                               </Text>
-                              {target ? (
-                                <IconButton
-                                  variant="ghost"
-                                  size="sm"
-                                  icon={<LocateFixed size="1em" />}
-                                  label={t(
-                                    'webuiAssistant.DashboardLocateCard',
-                                  )}
-                                  tooltip={t(
-                                    'webuiAssistant.DashboardLocateCard',
-                                  )}
-                                  onClick={() => onReveal(target)}
-                                />
-                              ) : null}
-                            </BAIFlex>
-                          );
-                        })
-                      )}
-                    </BAIFlex>
-                  )}
-                </ChatMessageBubble>
-              </ChatMessage>,
-            ])}
+                            ) : (
+                              turn.items.map(({ action, isNoop }, index) => {
+                                const target =
+                                  action.type === 'hide'
+                                    ? undefined
+                                    : actionTargetId(action);
+                                return (
+                                  <BAIFlex
+                                    key={index}
+                                    gap="xs"
+                                    align="center"
+                                    justify="between"
+                                    onMouseEnter={() =>
+                                      onHighlight(target ?? null)
+                                    }
+                                    onMouseLeave={() => onHighlight(null)}
+                                  >
+                                    <Text
+                                      size="sm"
+                                      color={isNoop ? 'secondary' : undefined}
+                                    >
+                                      {`· ${describe(action)}${
+                                        isNoop
+                                          ? ` (${t('webuiAssistant.DashboardAlreadyDone')})`
+                                          : ''
+                                      }`}
+                                    </Text>
+                                    {target ? (
+                                      <IconButton
+                                        variant="ghost"
+                                        size="sm"
+                                        icon={<LocateFixed size="1em" />}
+                                        label={t(
+                                          'webuiAssistant.DashboardLocateCard',
+                                        )}
+                                        tooltip={t(
+                                          'webuiAssistant.DashboardLocateCard',
+                                        )}
+                                        onClick={() => onReveal(target)}
+                                      />
+                                    ) : null}
+                                  </BAIFlex>
+                                );
+                              })
+                            )}
+                          </BAIFlex>
+                        )}
+                      </ChatMessageBubble>
+                    </ChatMessage>,
+                  ],
+            )}
           </ChatMessageList>
         </BAIFlex>
       )}
-      {appliedCount > 0 && draft.length === 0 ? (
-        <Text size="sm" color="secondary">
-          {t('webuiAssistant.DashboardChangesSaved', { count: appliedCount })}
-        </Text>
-      ) : null}
       {draft.length > 0 ? (
         <BAIFlex
           direction="column"
@@ -396,7 +428,16 @@ const DashboardAssistantChat: React.FC<DashboardAssistantChatProps> = ({
               label={t('webuiAssistant.ApplyDashboardChanges')}
               onClick={() => {
                 onHighlight(null);
-                setAppliedCount(draft.length);
+                setTurns((current) => [
+                  ...current,
+                  {
+                    id: (current[current.length - 1]?.id ?? 0) + 1,
+                    request: '',
+                    notice: t('webuiAssistant.DashboardChangesSaved', {
+                      count: draft.length,
+                    }),
+                  },
+                ]);
                 onApply(draft);
               }}
             />
@@ -408,6 +449,11 @@ const DashboardAssistantChat: React.FC<DashboardAssistantChatProps> = ({
         <ChatComposer
           density="compact"
           elevation="none"
+          style={
+            {
+              '--radius-chat': 'var(--radius-container)',
+            } as React.CSSProperties
+          }
           placeholder={t('webuiAssistant.DashboardAskPlaceholder')}
           isStopShown={false}
           onSubmit={(value) => void send(value)}

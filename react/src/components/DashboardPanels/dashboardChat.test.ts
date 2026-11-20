@@ -194,3 +194,15 @@ describe('parseDashboardChatReply with repeated actions', () => {
     expect(actions.map((action) => action.type)).toEqual(['addPanel', 'show']);
   });
 });
+
+describe('buildDashboardChatPrompt examples', () => {
+  it('shows a worked addPanel example built from a real source', () => {
+    const prompt = buildDashboardChatPrompt(ctx);
+    expect(prompt).toContain('Examples:');
+    expect(prompt).toContain('User: Hide the Agents card');
+    expect(prompt).toContain('"type":"addPanel","resourceType":"session"');
+    expect(prompt).toContain(
+      '"conditions":[{"property":"type","operator":"==","value":"interactive"}]',
+    );
+  });
+});

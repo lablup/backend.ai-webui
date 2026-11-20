@@ -131,6 +131,28 @@ export const describePanelSources = (
     )
     .join('\n');
 
+/** A condition on the source's first enum property, for the prompt's worked example. */
+export const exampleConditionOf = (
+  source: PanelSourceSpec,
+):
+  | { property: string; label: string; operator: string; value: string }
+  | undefined => {
+  for (const property of source.filter.properties) {
+    const values = optionValuesOf(source.filter.properties, property.key);
+    const operator = operatorsOf(source, property.key)[0];
+    if (values?.length && operator && property.type !== 'boolean') {
+      const value = values.includes('RUNNING') ? 'RUNNING' : values[0];
+      return {
+        property: property.key,
+        label: property.propertyLabel,
+        operator,
+        value,
+      };
+    }
+  }
+  return undefined;
+};
+
 /** Field rules for a panel in an `addPanel` or `editPanel` action. */
 export const PANEL_FIELDS_HELP = `panelType: resourceTable (rows), resourceCount (a number), resourceChart (a chart), sessionResourceGrid (session cards). chartType (charts only): ${CHART_TYPES.join(' ')}. range (charts over time only): ${RANGE_PRESETS.join(' ')}. conditions: [{"property":"<key>","operator":"<operator>","value":"<value>"}] with listed keys, operators and values only.`;
 
