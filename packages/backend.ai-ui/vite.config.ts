@@ -43,22 +43,27 @@ const umdWithoutAmd = (): Plugin => ({
   },
 });
 
-// Vitest's mock hoisting rewrites any module whose text contains these calls,
+// Vitest's mock hoisting rewrites any module whose text matches its trigger,
 // comments included, and breaks re-exported imports in the dist (#11337).
-const VITEST_MOCK_CALL = /\bvi\.(?:mock|hoisted|doMock)\(/;
+// Same pattern as @vitest/mocker's hoistMocks check.
+const VITEST_MOCK_CALL =
+  /\b(?:vi|vitest)\s*\.\s*(?:mock|unmock|hoisted|doMock|doUnmock)\s*\(/;
 const noVitestMockTextInDist = (): Plugin => ({
   name: 'bai-no-vitest-mock-text-in-dist',
   apply: 'build',
   generateBundle(_options, bundle) {
-    const offenders = Object.values(bundle)
-      .filter(
-        (output) =>
-          output.type === 'chunk' && VITEST_MOCK_CALL.test(output.code),
-      )
-      .map((output) => output.fileName);
+    const offenders = Object.values(bundle).flatMap((output) => {
+      if (output.type !== 'chunk' || !VITEST_MOCK_CALL.test(output.code)) {
+        return [];
+      }
+      const modules = Object.entries(output.modules)
+        .filter(([, mod]) => mod.code && VITEST_MOCK_CALL.test(mod.code))
+        .map(([id]) => id);
+      return [`${output.fileName} (${modules.join(', ') || 'unknown module'})`];
+    });
     if (offenders.length > 0) {
       this.error(
-        `dist contains vi.mock/vi.hoisted/vi.doMock text (reword the comment): ${offenders.join(', ')}`,
+        `dist contains text that triggers Vitest's mock hoisting (vi./vitest. mock, unmock, hoisted, doMock, doUnmock calls); reword it in the source module: ${offenders.join('; ')}`,
       );
     }
   },
