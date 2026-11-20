@@ -74,6 +74,7 @@ import React, {
   useDeferredValue,
   useEffect,
   useEffectEvent,
+  useRef,
   useTransition,
 } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
@@ -392,8 +393,13 @@ const ResourceAllocationFormItems: React.FC<
   // Values written past the rules (a template restore) still get the
   // invariants; the settled patch is empty, so the effect's own write stops it.
   const resourceKey = JSON.stringify(currentResourceValue ?? null);
+  const shmemMax = resourceLimits.shmem?.max;
+  // Starts at the first cap, so a restored automatic shmem is kept on mount.
+  const prevShmemMaxRef = useRef(shmemMax);
   const syncWithData = useEffectEvent(() => {
-    if (runRule({ type: 'data.changed' })) validateResource();
+    const shmemCapChanged = prevShmemMaxRef.current !== shmemMax;
+    prevShmemMaxRef.current = shmemMax;
+    if (runRule({ type: 'data.changed', shmemCapChanged })) validateResource();
     // A group or image change can invalidate the preset or the accelerator type
     // without writing anything, and `dependencies` see only form fields.
     const names: NamePath[] = [];
@@ -418,6 +424,7 @@ const ResourceAllocationFormItems: React.FC<
     allocatablePresetIdsKey,
     currentAllocationPreset,
     resourceKey,
+    shmemMax,
     enableResourcePresets,
     mode,
   ]);

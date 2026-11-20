@@ -600,6 +600,35 @@ describe('applyRule — shared-memory cap', () => {
     ).toEqual({});
   });
 
+  it('a cap that grows again re-sizes automatic shmem back up', () => {
+    const lowered = makeValues({
+      resource: { ...makeValues().resource, mem: '8g', shmem: '0.5g' },
+    });
+    expect(
+      applyRule(
+        lowered,
+        { type: 'data.changed', shmemCapChanged: true },
+        capped('2g'),
+      ).resource?.shmem,
+    ).toBe('1g');
+    // Without a cap change the value stays, as a restored one should.
+    expect(applyRule(lowered, dataChanged, capped('2g'))).toEqual({});
+  });
+
+  it('a cap change leaves a manual shmem alone', () => {
+    const values = makeValues({
+      resource: { ...makeValues().resource, mem: '8g', shmem: '0.5g' },
+      enabledAutomaticShmem: false,
+    });
+    expect(
+      applyRule(
+        values,
+        { type: 'data.changed', shmemCapChanged: true },
+        capped('2g'),
+      ),
+    ).toEqual({});
+  });
+
   it('a manual shmem is left to the input and its validator', () => {
     const values = makeValues({
       resource: { ...makeValues().resource, mem: '8g', shmem: '2g' },
