@@ -133,6 +133,19 @@ describe('applyWebUISettings', () => {
     ).toEqual({ singleSignOnVendors: ['openid'] });
   });
 
+  it('shows the agent network stats unless a domain turns them off', () => {
+    expect(state.showAgentNetworkStats).toBe(true);
+    expect(
+      applyWebUISettings(state, { showAgentNetworkStats: false }, 'domain')
+        .showAgentNetworkStats,
+    ).toBe(false);
+    // A domain-scope key saved under the public document is ignored.
+    expect(
+      applyWebUISettings(state, { showAgentNetworkStats: false }, 'public')
+        .showAgentNetworkStats,
+    ).toBe(true);
+  });
+
   it('does not mutate the input state', () => {
     const before = { ...state };
     applyWebUISettings(state, { hideAgents: false }, 'domain');

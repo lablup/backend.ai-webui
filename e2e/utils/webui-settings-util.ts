@@ -182,6 +182,7 @@ export const WEBUI_SETTING_ROWS: ReadonlyArray<WebUISettingRow> = [
     'inactivelist',
   ]),
   row('hideAgents', 'domain', 'boolean', 'menu'),
+  row('showAgentNetworkStats', 'domain', 'boolean', 'menu', null),
   row('enableReservoir', 'domain', 'boolean', 'menu'),
   row('fasttrackEndpoint', 'domain', 'string', 'menu', [
     'pipeline',

@@ -76,6 +76,12 @@ export const docs = {
       description:
         'Transforms the built-in column list before it reaches the table. Left unset, the base columns are used as-is.',
     },
+    {
+      name: 'hiddenLiveStatKeys',
+      type: 'ReadonlyArray<string>',
+      description:
+        '`live_stat.node` keys the utilization cell leaves out, such as `net_rx` and `net_tx`, on top of the CPU, memory and disk stats it never lists. Left unset, it hides nothing more.',
+    },
   ],
   examples: [
     {

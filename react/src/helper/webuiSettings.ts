@@ -68,6 +68,12 @@ export interface WebUISizeSetting {
   max: string;
 }
 
+/** The agent `live_stat.node` keys `showAgentNetworkStats` turns off. */
+export const AGENT_NETWORK_STAT_KEYS: ReadonlyArray<string> = [
+  'net_rx',
+  'net_tx',
+];
+
 /** The SSO vendors the login form renders a button for. */
 export const SSO_VENDOR_OPTIONS: ReadonlyArray<{
   value: string;
@@ -301,6 +307,7 @@ export const WEBUI_SETTING_DEFINITIONS: ReadonlyArray<WebUISettingDefinition> =
     def('menuBlocklist', 'domain', 'stringList', 'menu', 'blockList'),
     def('menuInactivelist', 'domain', 'stringList', 'menu', 'inactiveList'),
     def('hideAgents', 'domain', 'boolean', 'menu'),
+    def('showAgentNetworkStats', 'domain', 'boolean', 'menu'),
     def('enableReservoir', 'domain', 'boolean', 'menu'),
     def('fasttrackEndpoint', 'domain', 'string', 'menu'),
     def('manualUrl', 'domain', 'string', 'menu'),
