@@ -252,6 +252,7 @@ describe('catalogFor on the real catalog', () => {
     const catalogOnly = [
       'longRunningSessions',
       'projectResourceAllocation',
+      'projectAllocations',
       'projectFolders',
       'projectUsers',
       'resourceGroupCapacity',
