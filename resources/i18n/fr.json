@@ -4474,6 +4474,7 @@
     "DashboardChatExampleBoard": "Crée un tableau nommé Incidents avec {{first}} et {{second}}",
     "DashboardChatExampleLayout": "Masque la carte {{title}}",
     "DashboardChatExamplePanel": "Ajoute un tableau des sessions interactives en cours",
+    "DashboardChatExampleShow": "Affiche la carte {{title}}",
     "DashboardChatOffline": "Connectez l'assistant WebUI depuis le bouton rond en bas à droite pour l'utiliser.",
     "DashboardCreateBoard": "Créer le tableau {{title}}",
     "DashboardEditPanel": "Mettre à jour le panneau {{title}}",

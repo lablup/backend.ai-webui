@@ -4474,6 +4474,7 @@
     "DashboardChatExampleBoard": "{{first}}, {{second}}로 장애 대응 보드 만들어 줘",
     "DashboardChatExampleLayout": "{{title}} 카드 숨겨 줘",
     "DashboardChatExamplePanel": "실행 중인 인터랙티브 세션 표 추가해 줘",
+    "DashboardChatExampleShow": "{{title}} 카드 보여 줘",
     "DashboardChatOffline": "오른쪽 아래 동그란 버튼에서 WebUI 도우미를 연결하면 쓸 수 있습니다.",
     "DashboardCreateBoard": "{{title}} 보드 만들기",
     "DashboardEditPanel": "{{title}} 패널 수정",

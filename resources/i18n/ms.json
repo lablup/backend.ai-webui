@@ -4471,6 +4471,7 @@
     "DashboardChatExampleBoard": "Cipta papan bernama Insiden dengan {{first}} dan {{second}}",
     "DashboardChatExampleLayout": "Sembunyikan kad {{title}}",
     "DashboardChatExamplePanel": "Tambah jadual sesi interaktif yang sedang berjalan",
+    "DashboardChatExampleShow": "Tunjukkan kad {{title}}",
     "DashboardChatOffline": "Sambungkan Pembantu WebUI dari butang bulat di kanan bawah untuk menggunakan ini.",
     "DashboardCreateBoard": "Cipta papan {{title}}",
     "DashboardEditPanel": "Kemas kini panel {{title}}",

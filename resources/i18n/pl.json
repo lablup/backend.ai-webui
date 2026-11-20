@@ -4474,6 +4474,7 @@
     "DashboardChatExampleBoard": "Utwórz tablicę Incydenty z {{first}} i {{second}}",
     "DashboardChatExampleLayout": "Ukryj kartę {{title}}",
     "DashboardChatExamplePanel": "Dodaj tabelę uruchomionych sesji interaktywnych",
+    "DashboardChatExampleShow": "Pokaż kartę {{title}}",
     "DashboardChatOffline": "Połącz asystenta WebUI okrągłym przyciskiem w prawym dolnym rogu, aby z tego korzystać.",
     "DashboardCreateBoard": "Utwórz tablicę {{title}}",
     "DashboardEditPanel": "Zaktualizuj panel {{title}}",

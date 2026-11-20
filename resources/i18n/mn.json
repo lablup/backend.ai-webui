@@ -4473,6 +4473,7 @@
     "DashboardChatExampleBoard": "{{first}}, {{second}}-тэй Осол нэртэй самбар үүсгэ",
     "DashboardChatExampleLayout": "{{title}} картыг нуу",
     "DashboardChatExamplePanel": "Ажиллаж буй интерактив сешнүүдийн хүснэгт нэм",
+    "DashboardChatExampleShow": "{{title}} картыг харуул",
     "DashboardChatOffline": "Баруун доод талын дугуй товчоор WebUI туслахыг холбосны дараа ашиглах боломжтой.",
     "DashboardCreateBoard": "{{title}} самбар үүсгэх",
     "DashboardEditPanel": "{{title}} самбарыг шинэчлэх",
