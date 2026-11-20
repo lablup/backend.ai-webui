@@ -55,12 +55,12 @@ export interface WebUISettingDefinition {
 }
 
 export interface WebUISizeSetting {
-  /** The unit the stored number is in: `''` bytes, `'m'` MiB. */
-  storedUnit: '' | 'm';
-  /** The value stored when the toggle is on. */
-  unlimitedValue: number;
-  /** What the toggle means for this setting: no limit, or a size the WebUI picks. */
-  toggleLabel: 'Unlimited' | 'Automatic';
+  /** The unit the stored number is in: `''` bytes, `'m'` MiB, `'g'` GiB. */
+  storedUnit: '' | 'm' | 'g';
+  /** The value stored when the toggle is on; no toggle without it. */
+  unlimitedValue?: number;
+  /** What the toggle means: the server's limit applies, or the WebUI picks a size. */
+  toggleLabel?: 'ServerLimit' | 'Automatic';
   units: Array<'m' | 'g' | 't'>;
   defaultUnit: 'm' | 'g' | 't';
   /** The input's bounds in size notation (`"100g"`). */
@@ -149,12 +149,26 @@ export const WEBUI_SETTING_DEFINITIONS: ReadonlyArray<WebUISettingDefinition> =
       min: 1,
       max: 16384,
       unit: 'GiB',
+      size: {
+        storedUnit: 'g',
+        units: ['g', 't'],
+        defaultUnit: 'g',
+        min: '1g',
+        max: '16t',
+      },
     },
     {
       ...def('maxShmPerContainer', 'domain', 'number', 'session'),
       min: 0,
       max: 16384,
       unit: 'GiB',
+      size: {
+        storedUnit: 'g',
+        units: ['m', 'g', 't'],
+        defaultUnit: 'g',
+        min: '1m',
+        max: '16t',
+      },
     },
     {
       ...def('maxCUDADevicesPerContainer', 'domain', 'number', 'session'),
@@ -256,7 +270,7 @@ export const WEBUI_SETTING_DEFINITIONS: ReadonlyArray<WebUISettingDefinition> =
       size: {
         storedUnit: '',
         unlimitedValue: -1,
-        toggleLabel: 'Unlimited',
+        toggleLabel: 'ServerLimit',
         units: ['m', 'g', 't'],
         defaultUnit: 'g',
         min: '1m',

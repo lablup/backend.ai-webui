@@ -6,9 +6,12 @@ import { convertToBinaryUnit } from '../../../helper';
 import type { WebUISizeSetting } from '../../../helper/webuiSettings';
 import * as _ from 'lodash-es';
 
-/** A size string (`"512m"`) as the setting's stored number, rounded. */
+/** A size string (`"512m"`) as the setting's stored number; bytes and MiB are whole. */
 const toStoredNumber = (sizeString: string, size: WebUISizeSetting) =>
-  Math.round(convertToBinaryUnit(sizeString, size.storedUnit, 6)?.number ?? 0);
+  _.round(
+    convertToBinaryUnit(sizeString, size.storedUnit, 6)?.number ?? 0,
+    size.storedUnit === 'g' ? 6 : 0,
+  );
 
 /**
  * A size string as the setting's stored number, clamped to the size bounds.

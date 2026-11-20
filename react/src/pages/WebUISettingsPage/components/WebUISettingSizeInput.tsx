@@ -21,7 +21,7 @@ interface WebUISettingSizeInputProps {
   onChange: (value: number) => void;
 }
 
-/** A stored size number edited as `"<n><unit>"`, with an Unlimited or Automatic toggle. */
+/** A stored size number edited as `"<n><unit>"`, with an optional server-limit or Automatic toggle. */
 const WebUISettingSizeInput: React.FC<WebUISettingSizeInputProps> = ({
   label,
   value,
@@ -38,20 +38,24 @@ const WebUISettingSizeInput: React.FC<WebUISettingSizeInputProps> = ({
     setPrevValue(value);
     setIsEnteringLimit(false);
   }
-  const isUnlimited = value === size.unlimitedValue && !isEnteringLimit;
+  const hasToggle = size.unlimitedValue !== undefined && !!size.toggleLabel;
+  const isUnlimited =
+    hasToggle && value === size.unlimitedValue && !isEnteringLimit;
 
   return (
     <BAIFlex direction="column" align="start" gap="xs">
-      <BAICheckboxInput
-        size="sm"
-        value={isUnlimited}
-        onChange={(checked) => {
-          setIsEnteringLimit(!checked);
-          if (checked) onChange(size.unlimitedValue);
-        }}
-      >
-        {t(`webuiSettings.${size.toggleLabel}`)}
-      </BAICheckboxInput>
+      {hasToggle && (
+        <BAICheckboxInput
+          size="sm"
+          value={isUnlimited}
+          onChange={(checked) => {
+            setIsEnteringLimit(!checked);
+            if (checked) onChange(size.unlimitedValue as number);
+          }}
+        >
+          {t(`webuiSettings.${size.toggleLabel}`)}
+        </BAICheckboxInput>
+      )}
       <BAIDynamicUnitInputNumber
         label={label}
         isLabelHidden
@@ -62,7 +66,7 @@ const WebUISettingSizeInput: React.FC<WebUISettingSizeInputProps> = ({
         max={size.max}
         disabled={isUnlimited}
         value={
-          isUnlimited || value === size.unlimitedValue
+          isUnlimited || (hasToggle && value === size.unlimitedValue)
             ? null
             : toSizeString(value, size)
         }

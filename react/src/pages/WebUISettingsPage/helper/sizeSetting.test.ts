@@ -56,3 +56,11 @@ describe('toMaxSizeLabel', () => {
     expect(toMaxSizeLabel(maxFileUploadSize)).toBe('100 GiB');
   });
 });
+
+describe('memory sizes', () => {
+  it('stores the session memory caps in GiB, a fraction included', () => {
+    expect(toStoredSize('2t', sizeOf('maxMemoryPerContainer'))).toBe(2048);
+    expect(toStoredSize('512m', sizeOf('maxShmPerContainer'))).toBe(0.5);
+    expect(toSizeString(0.5, sizeOf('maxShmPerContainer'))).toBe('512m');
+  });
+});

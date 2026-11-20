@@ -147,7 +147,7 @@ describe('WebUISettingList', () => {
   it('shows a size row at its toggle default with the size disabled', () => {
     renderList();
     for (const [key, toggle] of [
-      ['maxFileUploadSize', 'webuiSettings.Unlimited'],
+      ['maxFileUploadSize', 'webuiSettings.ServerLimit'],
       ['fileUploadChunkSize', 'webuiSettings.Automatic'],
     ]) {
       const row = within(screen.getByTestId(`webui-setting-${key}`));
@@ -187,7 +187,7 @@ describe('WebUISettingList', () => {
     const row = within(screen.getByTestId('webui-setting-maxFileUploadSize'));
 
     fireEvent.click(
-      row.getByRole('checkbox', { name: 'webuiSettings.Unlimited' }),
+      row.getByRole('checkbox', { name: 'webuiSettings.ServerLimit' }),
     );
     const input = row.getByRole('spinbutton');
     fireEvent.change(input, { target: { value: '2' } });
