@@ -2,8 +2,12 @@
 // scenarios: 10 (Agent Stats Widget), 11 (Recently Created Sessions Widget), and the
 // admin dashboard entry. Split from e2e/project/dashboard/dashboard.spec.ts.
 import { WIDGET_TIMEOUT, waitForGraphQL } from '../../utils/dashboard-util';
-import { loginAsAdmin, navigateTo } from '../../utils/test-util';
-import { test, expect, type Page } from '@playwright/test';
+import {
+  loginAsAdmin,
+  navigateTo,
+  webServerEndpoint,
+} from '../../utils/test-util';
+import { test, expect, request, type Page } from '@playwright/test';
 
 test.describe(
   'Dashboard Page',
@@ -17,6 +21,7 @@ test.describe(
       { tag: ['@requires-manager-v25.15'] },
       () => {
         test.beforeEach(async ({ page, request }) => {
+          await recordFailedLogin();
           await loginAsAdmin(page, request);
           await navigateTo(page, 'admin/dashboard');
         });
@@ -278,8 +283,32 @@ test.describe(
           page.locator('.uic-board-item').filter({
             has: page.getByRole('heading', { name: CARD_TITLE, exact: true }),
           });
+        // A login with an unknown account is recorded as a failed `authorize`
+        // ("Log in") entry, so the card always has a cause to show.
+        const FAILED_LOGIN_REASON =
+          'Credential/signature mismatch. (User credential mismatch.)';
+        const recordFailedLogin = async () => {
+          const api = await request.newContext({ baseURL: webServerEndpoint });
+          try {
+            const res = await api.post('/server/login', {
+              data: {
+                username: `e2e-no-such-user-${Date.now()}@lablup.com`,
+                password: 'e2e-wrong-password',
+              },
+            });
+            expect(res.status()).toBe(401);
+          } finally {
+            await api.dispose();
+          }
+        };
+        const failedLoginRow = (page: Page) =>
+          failureCausesWidget(page)
+            .getByRole('row')
+            .filter({ has: page.getByRole('button', { name: 'Log in' }) })
+            .filter({ hasText: FAILED_LOGIN_REASON });
 
         test.beforeEach(async ({ page, request }) => {
+          await recordFailedLogin();
           await loginAsAdmin(page, request);
           await navigateTo(page, 'admin/dashboard');
           addedCard = !(await setCardShown(page, true));
@@ -305,47 +334,29 @@ test.describe(
             ).toBeVisible();
           }
 
-          // 3. Verify either failure cause rows or the empty state
-          await expect(
-            table
-              .locator('tbody tr td:first-child')
-              .getByRole('button')
-              .first()
-              .or(table.getByText('No failures', { exact: true })),
-          ).toBeVisible({ timeout: WIDGET_TIMEOUT });
+          // 3. Verify the failed login recorded before the test is listed
+          await expect(failedLoginRow(page)).toBeVisible({
+            timeout: WIDGET_TIMEOUT,
+          });
         });
 
         test('Admin can open and close the failed entries of an action from the Top Failure Causes card', async ({
           page,
         }) => {
-          const widget = failureCausesWidget(page);
-          const table = widget.getByRole('table');
-          await expect(table).toBeVisible({ timeout: WIDGET_TIMEOUT });
-          // The Action cell is a BAILink without href, so it has the button role.
-          const actionLinks = table
-            .locator('tbody tr td:first-child')
-            .getByRole('button');
-          await expect(
-            actionLinks
-              .first()
-              .or(table.getByText('No failures', { exact: true })),
-          ).toBeVisible({ timeout: WIDGET_TIMEOUT });
-          test.skip(
-            (await actionLinks.count()) === 0,
-            'No failed audit log entries in the selected time range',
-          );
-
-          // 1. Click the first action and verify its failed entries modal
-          const actionLink = actionLinks.first();
-          const actionLabel = (await actionLink.innerText()).trim();
-          await actionLink.click();
+          // 1. Click the failed login cause and verify its failed entries modal
+          const row = failedLoginRow(page);
+          await expect(row).toBeVisible({ timeout: WIDGET_TIMEOUT });
+          await row.getByRole('button', { name: 'Log in' }).click();
           const modal = page.getByRole('dialog', {
-            name: `Failed entries: ${actionLabel}`,
+            name: 'Failed entries: Log in',
           });
           await expect(modal).toBeVisible();
-          await expect(modal.getByRole('table')).toBeVisible({
-            timeout: WIDGET_TIMEOUT,
-          });
+          await expect(
+            modal
+              .getByRole('row')
+              .filter({ hasText: FAILED_LOGIN_REASON })
+              .first(),
+          ).toBeVisible({ timeout: WIDGET_TIMEOUT });
 
           // 2. Close the modal and verify it disappears
           await modal.getByRole('button', { name: 'Close' }).click();
