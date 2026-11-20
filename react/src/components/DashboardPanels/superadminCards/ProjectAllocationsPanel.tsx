@@ -239,6 +239,8 @@ const ProjectList: React.FC<{ domainId: string; fetchKey: string }> = ({
       pagination={{
         pageSize: tablePaginationOption.pageSize,
         current: tablePaginationOption.current,
+        // Each row is one allocation request per refresh, so pages stay small.
+        pageSizeOptions: [5, 10],
         total: projects?.count ?? 0,
         onChange: (current, pageSize) =>
           setTablePaginationOption({ current, pageSize }),
