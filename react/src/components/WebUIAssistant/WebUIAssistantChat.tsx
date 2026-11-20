@@ -41,6 +41,9 @@ import {
   WEBUI_ASSISTANT_EXCERPT_COUNT,
   isAuthRejected,
   buildAssistantSystemPrompt,
+  linkManualReferences,
+  manualReferencesOf,
+  type ManualReference,
   parseManualTarget,
 } from './webUIAssistantPrompt';
 import { useChat } from '@ai-sdk/react';
@@ -98,6 +101,8 @@ interface AssistantMessageMetadata {
   dashboard?: DashboardTurn;
   /** A note in the conversation (what Apply saved), never sent to the model. */
   notice?: boolean;
+  /** The manual excerpts the answer's `[n]` references point at. */
+  references?: Array<ManualReference>;
 }
 
 const metadataOf = (message: ChatUIMessage) =>
@@ -306,6 +311,7 @@ const WebUIAssistantChat: React.FC<WebUIAssistantChatProps> = ({
           );
           if (response) return response;
         }
+        const excerpts = pickExcerpts(lastUser ? messageText(lastUser) : '');
         return streamChatCompletion({
           baseURL: apiBaseURL ?? '',
           apiKey: token,
@@ -315,9 +321,12 @@ const WebUIAssistantChat: React.FC<WebUIAssistantChatProps> = ({
           system: buildAssistantSystemPrompt({
             basePrompt: WEBUI_ASSISTANT_PROFILE.systemPrompt,
             page: { path: location.pathname, manualURL: helpURL ?? undefined },
-            excerpts: pickExcerpts(lastUser ? messageText(lastUser) : ''),
+            excerpts,
             manualBaseURL,
           }),
+          startMetadata: {
+            references: manualReferencesOf(excerpts ?? [], manualBaseURL),
+          } satisfies AssistantMessageMetadata,
         });
       }),
     }),
@@ -438,7 +447,7 @@ const WebUIAssistantChat: React.FC<WebUIAssistantChatProps> = ({
       const isUser = message.role === 'user';
       const isMessageStreaming = isStreaming && index === messages.length - 1;
       const text = messageText(message);
-      const { dashboard, notice } = metadataOf(message);
+      const { dashboard, notice, references } = metadataOf(message);
       if (notice) {
         return <ChatSystemMessage key={message.id}>{text}</ChatSystemMessage>;
       }
@@ -454,7 +463,7 @@ const WebUIAssistantChat: React.FC<WebUIAssistantChatProps> = ({
               thinking
             ) : (
               <ChatMessageContent isStreaming={isMessageStreaming}>
-                {text}
+                {linkManualReferences(text, references ?? [])}
               </ChatMessageContent>
             )}
           </ChatMessageBubble>
@@ -470,9 +479,10 @@ const WebUIAssistantChat: React.FC<WebUIAssistantChatProps> = ({
       : []),
   ];
 
+  // The same order as the empty state's text: a question first, then changes.
   const examples = [
-    ...(dashboardAgent ? dashboardExamplesOf(dashboardAgent.context, t) : []),
     t('webuiAssistant.ExampleStartSession'),
+    ...(dashboardAgent ? dashboardExamplesOf(dashboardAgent.context, t) : []),
   ];
   const draft = dashboardAgent?.draft ?? [];
   const newBoard = draft.find((action) => action.type === 'createBoard');
