@@ -1,4 +1,4 @@
-# 0032 — One auto-mount per folder
+# 0036 — One auto-mount per folder
 
 ## Summary
 

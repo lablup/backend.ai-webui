@@ -270,7 +270,7 @@ const VFolderAutoMountCell: React.FC<{
   const { vfolderAutoMounts } = useFragment(
     graphql`
       fragment VFolderNodesV2AutoMountCellFragment on VFolder {
-        # Duplicate mounts are blocked, so a folder has at most one auto-mount (ADR 0032).
+        # Duplicate mounts are blocked, so a folder has at most one auto-mount (ADR 0036).
         vfolderAutoMounts(limit: 1) {
           edges {
             node {
