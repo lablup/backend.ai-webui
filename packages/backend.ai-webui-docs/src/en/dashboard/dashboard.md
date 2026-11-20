@@ -129,7 +129,7 @@ contains the following fields. **Panel type** and **Data source** are
 required — the dialog will not submit until both are chosen.
 
 - **Data source**: The data source the panel lists. Choose **Sessions**,
-  **Deployments**, or **Data & Storage**.
+  **Deployments**, **Data & Storage**, or **Audit Log**.
 - **Panel type**: How the panel displays the data source. Choose **Table**,
   **Count**, or **Chart**. For the **Sessions** data source, **Grid** is also
   offered.
@@ -180,8 +180,11 @@ the trash (**Delete**) icon and confirm in the popup.
 :::note
 **Sessions** and **Deployments** panels list data for the current project and
 are available to every project member. **Data & Storage** panels are
-available to superadmins only. A panel whose data source your role cannot
-query remains listed in the sidebar but is not shown on the board.
+available to superadmins only. **Audit Log** panels are available to every
+role and list your own actions on your dashboard, the project's on the
+project admin dashboard, and every record in the cluster on the superadmin
+dashboard. A panel whose data source your role cannot query remains listed in
+the sidebar but is not shown on the board.
 :::
 
 ## Automatic Refresh
