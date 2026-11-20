@@ -200,6 +200,12 @@ export const parseDashboardChatReply = (
       return [];
     },
   );
+  // A model that writes two objects often repeats an action in the second.
+  const unique = _.uniqBy(actions, (action) =>
+    action.type === 'addPanel'
+      ? JSON.stringify({ ..._.omit(action.panel, 'id') })
+      : JSON.stringify(action),
+  );
   const reply =
     objects
       .map((object) => object.reply)
@@ -207,5 +213,5 @@ export const parseDashboardChatReply = (
       ?.trim() ??
     // Unreadable JSON is not shown as the reply.
     (values.length || text.includes('{') ? '' : text.trim());
-  return { reply, actions };
+  return { reply, actions: unique };
 };
