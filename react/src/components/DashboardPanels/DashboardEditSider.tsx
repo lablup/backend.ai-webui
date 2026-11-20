@@ -33,7 +33,7 @@ import {
   SquarePenIcon,
   Trash2,
 } from 'lucide-react';
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 export interface DashboardEditSiderProps {
@@ -102,6 +102,31 @@ const DashboardEditSider: React.FC<DashboardEditSiderProps> = ({
   const { token } = useTheme();
   const role = useCurrentUserRole();
   const [search, setSearch] = useState('');
+  // Reaches the bottom of the scroll area from wherever the sider sits, so its
+  // border runs to the bottom of the screen however short the board is.
+  const siderRef = useRef<HTMLDivElement>(null);
+  const [siderHeight, setSiderHeight] = useState<number>();
+  useEffect(() => {
+    const sider = siderRef.current;
+    const scroller = sider?.closest<HTMLElement>('.main-layout-content-scroll');
+    if (!sider || !scroller) return;
+    const measure = () => {
+      const bottom =
+        scroller.getBoundingClientRect().bottom -
+        (parseFloat(getComputedStyle(scroller).paddingBottom) || 0);
+      setSiderHeight(
+        Math.max(240, Math.floor(bottom - sider.getBoundingClientRect().top)),
+      );
+    };
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(scroller);
+    scroller.addEventListener('scroll', measure, { passive: true });
+    return () => {
+      observer.disconnect();
+      scroller.removeEventListener('scroll', measure);
+    };
+  }, []);
 
   const normalizedSearch = search.trim().toLowerCase();
   const labeledEntries = catalogEntries.map((entry) => ({
@@ -181,26 +206,25 @@ const DashboardEditSider: React.FC<DashboardEditSiderProps> = ({
   })).filter(({ entries }) => entries.length > 0);
 
   return (
-    // The frame stretches with the board, so its border runs the full height;
-    // the content inside sticks while the board scrolls.
     <BAIFlex
       direction="column"
       align="stretch"
-      style={{
-        width: 320,
-        flexShrink: 0,
-        paddingLeft: token('--spacing-6'),
-        paddingRight: token('--spacing-4'),
-        borderLeft: `1px solid ${token('--color-border-emphasized')}`,
-      }}
+      style={{ width: 320, flexShrink: 0 }}
     >
       <BAIFlex
+        ref={siderRef}
         direction="column"
         align="stretch"
         gap="md"
         className="dashboard-edit-sider"
-        // Inline, because BAIFlex sets `position: relative` inline.
-        style={{ position: 'sticky' }}
+        style={{
+          // Inline, because BAIFlex sets `position: relative` inline.
+          position: 'sticky',
+          height: siderHeight,
+          paddingLeft: token('--spacing-6'),
+          paddingRight: token('--spacing-4'),
+          borderLeft: `1px solid ${token('--color-border-emphasized')}`,
+        }}
       >
         {takeover ?? (
           <>
