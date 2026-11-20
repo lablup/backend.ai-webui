@@ -24,6 +24,7 @@ import { Token } from '@lablup/ui-common/Token';
 import { useTheme } from '@lablup/ui-common/theme';
 import type { OnMount } from '@monaco-editor/react';
 import {
+  BAIAlert,
   BAIFlex,
   BAIModal,
   BAIModalProps,
@@ -119,7 +120,8 @@ const AnnouncementEditModalContent: React.FC<AnnouncementEditModalProps> = ({
   const announcement = readDomainAnnouncement(
     scopedAppConfig?.domainConfig?.settings,
   );
-  // Keeps the System Settings keys beside the announcement.
+  // Keeps the System Settings keys beside the announcement; the write reloads
+  // this user's banner (ADR 0033), other users see it after a reload.
   const writeAnnouncement = (next: DomainAnnouncement | undefined) =>
     upsertScopedAppConfig({
       configName: 'domainConfig',
@@ -266,6 +268,12 @@ const AnnouncementEditModalContent: React.FC<AnnouncementEditModalProps> = ({
       {...modalProps}
     >
       <BAIFlex direction="column" align="stretch" gap="sm">
+        <BAIAlert
+          data-testid="announcement-reload-notice"
+          type="info"
+          showIcon
+          title={t('summary.AnnouncementReloadNotice')}
+        />
         <Form
           ref={formRef}
           layout="vertical"

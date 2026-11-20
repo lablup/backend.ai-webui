@@ -8,6 +8,7 @@ import { Form, type FormInstance } from '../../../form-engine';
 import { useSuspendedBackendaiClient } from '../../../hooks';
 import { useIsPersonalProject } from '../../../hooks/useAccessibleProjects';
 import { useMountableStorageHosts } from '../../../hooks/useMountableStorageHosts';
+import { useEffectiveLoginConfig } from '../../../hooks/useWebUIConfig';
 import type { ProjectContext } from '../../../types/projectContext';
 import type { SessionLauncherFormValue } from '../SessionLauncherPage';
 import {
@@ -30,6 +31,7 @@ const SessionLauncherStorageStep: React.FC<{
   const mountConfigInputRef = useRef<BAIVFolderMountConfigInputRef>(null);
 
   const baiClient = useSuspendedBackendaiClient();
+  const { isDirectorySizeVisible } = useEffectiveLoginConfig();
   const scope = mountableVFolderScope(baiClient.user_uuid, project.id);
   const mountableHosts = useMountableStorageHosts(project.id);
   // Shares the query the input reads, so the input's refetch reaches this rule.
@@ -54,6 +56,7 @@ const SessionLauncherStorageStep: React.FC<{
         >
           <BAIVFolderMountConfigInput
             ref={mountConfigInputRef}
+            isDirectorySizeVisible={isDirectorySizeVisible}
             scope={scope}
             mountableHosts={mountableHosts}
             folderExplorerPath={generateFolderPath}

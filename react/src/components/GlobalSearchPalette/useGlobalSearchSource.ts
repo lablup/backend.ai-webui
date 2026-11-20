@@ -5,6 +5,7 @@
 import { useSuspendedBackendaiClient } from '../../hooks';
 import { useCurrentUserRole } from '../../hooks/backendai';
 import { useActiveProjectName } from '../../hooks/useRouteScope';
+import { useEffectiveLoginConfig } from '../../hooks/useWebUIConfig';
 import { useWebUIMenuItems } from '../../hooks/useWebUIMenuItems';
 import { toMenuIcons, toMenuSources } from './buildHits';
 import type { GroupedMenuNode } from './buildHits';
@@ -26,10 +27,10 @@ import { useTranslation } from 'react-i18next';
 export { toTranslator } from './searchArtifacts';
 
 /** The one place the palette reads deployment config off the client. */
-export const toSearchConfigFlags = (baiClient: {
-  _config?: { fasttrackEndpoint?: string | null };
+export const toSearchConfigFlags = (config: {
+  fasttrackEndpoint?: string | null;
 }): SearchConfigFlags => ({
-  fasttrackEndpoint: baiClient?._config?.fasttrackEndpoint ?? null,
+  fasttrackEndpoint: config.fasttrackEndpoint || null,
 });
 
 export interface GlobalSearchSource extends SearchSource<SearchHit> {
@@ -50,6 +51,7 @@ export const useGlobalSearchSource = (): GlobalSearchSource => {
 
   const { i18n } = useTranslation();
   const baiClient = useSuspendedBackendaiClient();
+  const loginConfig = useEffectiveLoginConfig();
   const currentUserRole = useCurrentUserRole();
   const projectName = useActiveProjectName();
   const {
@@ -82,7 +84,7 @@ export const useGlobalSearchSource = (): GlobalSearchSource => {
     isSuperAdmin: currentUserRole === 'superadmin',
     isManagerVersionCompatibleWith: (version: string) =>
       !!baiClient?.isManagerVersionCompatibleWith?.(version),
-    config: toSearchConfigFlags(baiClient),
+    config: toSearchConfigFlags(loginConfig),
     visibleMenuKeys: new Set(
       _.map([...generalMenu, ...adminMenu], (item) => item.key as string),
     ),

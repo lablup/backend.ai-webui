@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { maskString } from '../helper';
+import { maskUserIdentity } from '../helper';
 import {
   routeErrorScreenAtom,
   type RouteErrorKind,
@@ -24,6 +24,7 @@ import {
   useCurrentMenuKey,
   useRouteScope,
 } from '../hooks/useRouteScope';
+import { useEffectiveLoginConfig } from '../hooks/useWebUIConfig';
 import { useWebUIMenuItems } from '../hooks/useWebUIMenuItems';
 import {
   useBAIWebMCPActive,
@@ -43,10 +44,7 @@ export const displayedEmail = (
   maskUserInfo: boolean | undefined,
 ): string | null => {
   if (!email) return null;
-  if (!maskUserInfo) return email;
-  const at = email.indexOf('@');
-  const localLength = at < 0 ? email.length : at;
-  return maskString(email, '*', 2, Math.max(localLength - 2, 0));
+  return maskUserInfo ? maskUserIdentity(email) : email;
 };
 
 const NO_INPUT: WebMCPInputSchema = {
@@ -207,6 +205,7 @@ export const createNavigateTool = ({
 const WebMCPGlobalToolsRegistrar: React.FC = () => {
   'use memo';
   const baiClient = useSuspendedBackendaiClient();
+  const loginConfig = useEffectiveLoginConfig();
   const role = useCurrentUserRole();
   // Sanctioned global reader (ADR 0001): bai_whoami reports the ambient project.
   const currentProject = useCurrentProjectValue();
@@ -239,7 +238,7 @@ const WebMCPGlobalToolsRegistrar: React.FC = () => {
 
   useWebMCPTool(
     createWhoamiTool({
-      email: displayedEmail(baiClient.email, baiClient._config?.maskUserInfo),
+      email: displayedEmail(baiClient.email, loginConfig.maskUserInfo),
       role: role ?? null,
       project: currentProject?.id
         ? { id: currentProject.id, name: currentProject.name ?? null }

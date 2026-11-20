@@ -7,13 +7,12 @@ import {
 } from "../../utils/session-image";
 import { overrideWebUISettings } from "../../utils/webui-settings";
 
-const clientConfig = (browser: Browser, key: string) =>
+// Sign-in applies the domain System Settings before it marks the client ready;
+// the settings themselves live in loginConfigState, not on the client (#10941).
+const isClientReady = (browser: Browser) =>
   browser
-    .evaluate(
-      (name: string) => (globalThis as any).backendaiclient?._config?.[name],
-      key,
-    )
-    .catch(() => undefined);
+    .evaluate(() => (globalThis as any).backendaiclient?.ready === true)
+    .catch(() => false);
 
 // ported from: e2e/config/config.spec.ts › block list
 test(
@@ -92,9 +91,7 @@ test(
     const { environment, image } = await findNotInstalledEnvironment(browser);
     const params = { environment };
     await expect.poll(() => isImageInstalled(browser, image)).toBe(false);
-    await expect
-      .poll(() => clientConfig(browser, "showNonInstalledImages"))
-      .toBe(true);
+    await expect.poll(() => isClientReady(browser)).toBe(true);
 
     await agent.act(
       'Go to the Start page and press "Start Session" on "Start Interactive Session"',
@@ -129,10 +126,8 @@ test(
     });
     await app.open("/start");
     await expect
-      .poll(() => clientConfig(browser, "showNonInstalledImages"), {
-        timeout: 30_000,
-      })
-      .toBe(false);
+      .poll(() => isClientReady(browser), { timeout: 30_000 })
+      .toBe(true);
     await expect(
       screen.getByRole("button", "Start Session").first(),
     ).toBeVisible({ timeout: 30_000 });

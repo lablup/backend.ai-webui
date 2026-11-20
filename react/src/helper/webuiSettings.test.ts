@@ -11,6 +11,8 @@ import {
   WEBUI_SETTING_DEFINITIONS,
   withForeignWebUISettings,
   ownedWebUISettings,
+  pickWebUISettingsOfScope,
+  withWebUISettings,
 } from './webuiSettings';
 import { describe, expect, it } from 'vitest';
 
@@ -115,6 +117,20 @@ describe('applyWebUISettings', () => {
         singleSignOnVendors: ['not-a-vendor'],
       }),
     ).toEqual({ singleSignOnVendors: [] });
+  });
+
+  it('keeps each SSO vendor once', () => {
+    const next = applyWebUISettings(
+      state,
+      { singleSignOnVendors: ['saml', 'openid', 'saml'] },
+      'public',
+    );
+    expect(next.singleSignOnVendors).toEqual(['saml', 'openid']);
+    expect(
+      buildWebUISettingsDocument('public', {
+        singleSignOnVendors: ['openid', 'openid'],
+      }),
+    ).toEqual({ singleSignOnVendors: ['openid'] });
   });
 
   it('does not mutate the input state', () => {
@@ -243,5 +259,62 @@ describe('ownedWebUISettings', () => {
         announcement: { enabled: true, title: 'hi' },
       }),
     ).toEqual({ hideAgents: true });
+  });
+});
+
+describe('withWebUISettings', () => {
+  const defaults = getDefaultLoginConfig();
+
+  it('applies the public document, then the domain one', () => {
+    const next = withWebUISettings(
+      defaults,
+      { allowAnonymousChangePassword: true, autoLogout: true },
+      { hideAgents: false, allowSignout: true },
+    );
+    expect(next.allowAnonymousChangePassword).toBe(true);
+    expect(next.autoLogout).toBe(true);
+    expect(next.hideAgents).toBe(false);
+    expect(next.allow_signout).toBe(true);
+  });
+
+  it('puts a key no document carries back to its code default', () => {
+    const changed = withWebUISettings(defaults, undefined, {
+      maxCPUCoresPerContainer: 4,
+      menuBlocklist: ['data'],
+    });
+    const reset = withWebUISettings(changed, undefined, {});
+    expect(reset.maxCPUCoresPerContainer).toBe(
+      defaults.maxCPUCoresPerContainer,
+    );
+    expect(reset.blockList).toEqual(defaults.blockList);
+  });
+
+  it('keeps the fields no definition owns', () => {
+    const state = {
+      ...defaults,
+      api_endpoint: 'https://manager.example',
+      connection_mode: 'API' as const,
+      domain_name: 'default',
+    };
+    const next = withWebUISettings(state, {}, {});
+    expect(next.api_endpoint).toBe('https://manager.example');
+    expect(next.connection_mode).toBe('API');
+    expect(next.domain_name).toBe('default');
+  });
+});
+
+describe('pickWebUISettingsOfScope', () => {
+  it('splits a merged document by scope', () => {
+    const doc = {
+      allowAnonymousChangePassword: true,
+      hideAgents: false,
+      notASetting: 1,
+    };
+    expect(pickWebUISettingsOfScope(doc, 'public')).toEqual({
+      allowAnonymousChangePassword: true,
+    });
+    expect(pickWebUISettingsOfScope(doc, 'domain')).toEqual({
+      hideAgents: false,
+    });
   });
 });

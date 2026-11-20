@@ -2,10 +2,10 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { useSuspendedBackendaiClient } from '../../hooks';
 import { useCurrentUserRole } from '../../hooks/backendai';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
 import { useIsCurrentProjectAdmin } from '../../hooks/useCurrentUserProjectRoles';
+import { useEffectiveLoginConfig } from '../../hooks/useWebUIConfig';
 import DashboardPanelContent from './DashboardPanelContent';
 import PanelFrame from './PanelFrame';
 import { PanelHeaderSettingsContext } from './PanelSettingsHeaderControls';
@@ -160,7 +160,7 @@ export const useDashboardBoard = ({
   const { t } = useTranslation();
   const role = useCurrentUserRole();
   const isProjectAdmin = useIsCurrentProjectAdmin();
-  const baiClient = useSuspendedBackendaiClient();
+  const loginConfig = useEffectiveLoginConfig();
   const [gridEnabled] = useBAISettingUserState(
     'experimental_session_resource_grid',
   );
@@ -186,10 +186,10 @@ export const useDashboardBoard = ({
     );
 
   const config: PanelCatalogConfig = {
-    blockList: baiClient?._config?.blockList ?? [],
-    inactiveList: baiClient?._config?.inactiveList ?? [],
-    hideAgents: !!baiClient?._config?.hideAgents,
-    enableModelFolders: !!baiClient?._config?.enableModelFolders,
+    blockList: loginConfig.blockList ?? [],
+    inactiveList: loginConfig.inactiveList ?? [],
+    hideAgents: !!loginConfig.hideAgents,
+    enableModelFolders: !!loginConfig.enableModelFolders,
   };
   const visibleEntries = catalogFor(catalog, {
     page,

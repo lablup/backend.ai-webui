@@ -25,7 +25,7 @@ export interface SettingsJsonModalProps {
   open: boolean;
   /** The value the page shows now for a setting (saved, else the default). */
   currentValueOf: (definition: WebUISettingDefinition) => unknown;
-  /** Loads the values into the page draft; saving stays with the page's Apply. */
+  /** Saves the values, one write per scope. */
   onLoad: (
     values: Array<{ definition: WebUISettingDefinition; value: unknown }>,
   ) => void;

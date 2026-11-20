@@ -2,6 +2,8 @@
 
 > The write hooks this ADR names (**Write scope**) are replaced by [ADR 0033](0033-scoped-and-merged-app-config-hooks.md): a save changes `settings` on the raw document the page read, without reading it again.
 
+> ADR 0034 replaces the `applyConfigToClient` edge of the first diagram, the "Saving" diagram, the `_config` copy and the "Apply and Reset" wording of section 4, and the "Reload to apply" consequence.
+
 ## Summary
 
 > Unfamiliar terms are collected in the [Glossary](#glossary) at the end.
@@ -89,7 +91,7 @@ flowchart LR
 - **Entry shape**: an entry (`WebUISettingDefinition`) has `key`, `scope`, `type` (`boolean`, `number`, `string`, `stringList`), `group`, `field` (`keyof LoginConfigState`), and the optional `options`, `unit` and `min` / `max` (the inclusive range of a `number`; a value outside it is ignored when read and not saved).
 - **Single source**: the page (`WebUISettingList`), the merge (`applyWebUISettings`) and the save (`buildWebUISettingsDocument`) read only this table.
 - **Keys outside the table**: `settings` also holds keys the table does not define; today that is the system announcement alone (`settings.announcement`, #10713). The page does not count such a key when deciding whether anything changed (`ownedWebUISettings`). Apply and Reset carry it over unchanged from the raw document at save time (`withForeignWebUISettings`), and the write hooks take a `(current) => next` function applied to that raw value.
-- **Adding a setting**: a new setting adds a `LoginConfigState` field with its default in `getDefaultLoginConfig`, its `_config` copy in `applyConfigToClient`, one table entry, and its copy in `WebUISettingLabels.ts`, together. It is not read from `config.toml`.
+- **Adding a setting**: a new setting adds a `LoginConfigState` field with its default in `getDefaultLoginConfig`, one table entry, and its copy in `WebUISettingLabels.ts`, together. It is not read from `config.toml`.
 
 ### 5. Who may edit, and safeguards
 

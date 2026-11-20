@@ -2,6 +2,8 @@
 
 > 이 ADR이 이름으로 부르는 쓰기 hook(**Write scope**)은 [ADR 0033](0033-scoped-and-merged-app-config-hooks.ko.md)이 대체한다. 이제 저장은 page가 읽은 원본 문서에서 다시 읽지 않고 `settings`를 바꾼다.
 
+> ADR 0034이 첫 설계도의 `applyConfigToClient` 간선, "저장" 설계도, 4절의 `_config` 복사와 "Apply and Reset" 문구, "Reload to apply" consequence를 대체한다.
+
 ## Summary
 
 > 낯선 용어는 문서 맨 아래 [용어](#용어)에 모아 두었다.
@@ -89,7 +91,7 @@ flowchart LR
 - **Entry shape**: 정의표의 항목(`WebUISettingDefinition`)은 `key`, `scope`, `type`(`boolean`, `number`, `string`, `stringList`), `group`, `field`(`keyof LoginConfigState`), 그리고 선택 필드 `options`, `unit`, `min` / `max`(`number`의 포함 범위. 범위 밖 값은 읽을 때 무시하고 저장하지 않는다)를 가진다.
 - **Single source**: 화면(`WebUISettingList`), 병합(`applyWebUISettings`), 저장(`buildWebUISettingsDocument`)은 이 표만 읽는다.
 - **Keys outside the table**: `settings`에는 정의표에 없는 키도 산다. 지금은 시스템 공지(`settings.announcement`, #10713) 하나다. 화면은 이 키로 변경 여부를 판정하지 않는다(`ownedWebUISettings`). Apply와 Reset은 저장 시점의 원본에서 이 키를 그대로 옮겨 쓴다(`withForeignWebUISettings`). 쓰기 hook은 `(current) => next` 함수를 받아 원본 값에 적용한다.
-- **Adding a setting**: 새 설정은 `getDefaultLoginConfig`에 기본값을 둔 `LoginConfigState` 필드, `applyConfigToClient`의 `_config` 복사, 정의표 한 줄, `WebUISettingLabels.ts`의 문구를 함께 더한다. `config.toml`에서는 읽지 않는다.
+- **Adding a setting**: 새 설정은 `getDefaultLoginConfig`에 기본값을 둔 `LoginConfigState` 필드, 정의표 한 줄, `WebUISettingLabels.ts`의 문구를 함께 더한다. `config.toml`에서는 읽지 않는다.
 
 ### 5. 편집 권한과 안전장치
 

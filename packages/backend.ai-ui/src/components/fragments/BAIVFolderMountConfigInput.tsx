@@ -90,6 +90,8 @@ export interface BAIVFolderMountConfigInputProps {
    * when this is given, because the modal lives in the host app.
    */
   onClickCreateFolder?: () => void;
+  /** Shows each directory's size in the explorer; the host passes its setting. */
+  isDirectorySizeVisible?: boolean;
   ref?: React.Ref<BAIVFolderMountConfigInputRef>;
 }
 
@@ -321,6 +323,7 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
   aliasBasePath = DEFAULT_ALIAS_BASE_PATH,
   folderExplorerPath,
   onClickCreateFolder,
+  isDirectorySizeVisible = false,
   ref,
   ...props
 }) => {
@@ -544,6 +547,7 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
                         allowClear
                         disabled={disabled}
                         vfolderUuid={entry.vfolderId}
+                        isDirectorySizeVisible={isDirectorySizeVisible}
                         value={entry.subpath}
                         onChange={(next) =>
                           updateEntry({ subpath: next ?? '' })

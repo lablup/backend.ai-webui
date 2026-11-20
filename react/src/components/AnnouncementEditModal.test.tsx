@@ -7,6 +7,8 @@ import AnnouncementEditModal from './AnnouncementEditModal';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import '@testing-library/jest-dom';
 import { act, render, screen } from '@testing-library/react';
+import { RelayEnvironmentProvider } from 'react-relay';
+import { createMockEnvironment } from 'relay-test-utils';
 
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
@@ -65,9 +67,11 @@ const renderModal = () => {
     defaultOptions: { queries: { retry: false } },
   });
   render(
-    <QueryClientProvider client={queryClient}>
-      <AnnouncementEditModal open onRequestClose={vi.fn()} />
-    </QueryClientProvider>,
+    <RelayEnvironmentProvider environment={createMockEnvironment()}>
+      <QueryClientProvider client={queryClient}>
+        <AnnouncementEditModal open onRequestClose={vi.fn()} />
+      </QueryClientProvider>
+    </RelayEnvironmentProvider>,
   );
 };
 

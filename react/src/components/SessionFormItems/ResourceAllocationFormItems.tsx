@@ -10,7 +10,6 @@ import {
   isUnifiedAcceleratorSlot,
   UNIFIED_SLOT_TAG_PREFIX,
 } from '../../helper/unifiedAcceleratorSlot';
-import { useSuspendedBackendaiClient } from '../../hooks';
 import {
   useResourceSlots,
   useResourceSlotsDetails,
@@ -22,6 +21,7 @@ import {
   useResourceLimitAndRemaining,
 } from '../../hooks/useResourceLimitAndRemaining';
 import { useSessionResourcePresets } from '../../hooks/useSessionResourcePresets';
+import { useEffectiveLoginConfig } from '../../hooks/useWebUIConfig';
 import { ProjectContext } from '../../types/projectContext';
 import AgentSelect from '../AgentSelect';
 import {
@@ -244,7 +244,7 @@ const ResourceAllocationFormItems: React.FC<
   const { t } = useTranslation();
   const { token } = useTheme();
 
-  const baiClient = useSuspendedBackendaiClient();
+  const loginConfig = useEffectiveLoginConfig();
 
   const [{ keypairResourcePolicy }] =
     useCurrentKeyPairResourcePolicyLazyLoadQuery();
@@ -358,7 +358,7 @@ const ResourceAllocationFormItems: React.FC<
   );
   const allocatablePresetIds: string[] = JSON.parse(allocatablePresetIdsKey);
 
-  const mode: AllocationMode = baiClient._config.allowCustomResourceAllocation
+  const mode: AllocationMode = loginConfig.allowCustomResourceAllocation
     ? 'free'
     : 'preset-only';
   // Same item choice as `acceleratorTypeErrorTarget` (ADR 0016).
@@ -548,10 +548,8 @@ const ResourceAllocationFormItems: React.FC<
           ]}
         >
           <ResourcePresetSelect
-            showCustom={baiClient._config.allowCustomResourceAllocation}
-            showMinimumRequired={
-              baiClient._config.allowCustomResourceAllocation
-            }
+            showCustom={loginConfig.allowCustomResourceAllocation}
+            showMinimumRequired={loginConfig.allowCustomResourceAllocation}
             onChange={(value) => {
               runRule({ type: 'user.selectPreset', id: value });
               if (value !== 'custom') validateResource();
@@ -583,7 +581,7 @@ const ResourceAllocationFormItems: React.FC<
                 {resourceSlotsInRG?.cpu && (
                   <Form.Item
                     name={['resource', 'cpu']}
-                    hidden={!baiClient._config.allowCustomResourceAllocation}
+                    hidden={!loginConfig.allowCustomResourceAllocation}
                     // initialValue={0}
                     label={
                       mergedResourceSlots?.cpu?.human_readable_name || 'CPU'
@@ -712,7 +710,7 @@ const ResourceAllocationFormItems: React.FC<
                       shouldUpdate={(prev, next) =>
                         prev.resource?.shmem !== next.resource?.shmem
                       }
-                      hidden={!baiClient._config.allowCustomResourceAllocation}
+                      hidden={!loginConfig.allowCustomResourceAllocation}
                     >
                       {() => {
                         return (
@@ -882,7 +880,7 @@ const ResourceAllocationFormItems: React.FC<
                       prev.cluster_size !== next.cluster_size
                     );
                   }}
-                  hidden={!baiClient._config.allowCustomResourceAllocation}
+                  hidden={!loginConfig.allowCustomResourceAllocation}
                 >
                   {({ getFieldValue }) => {
                     const currentAcceleratorType = getFieldValue([

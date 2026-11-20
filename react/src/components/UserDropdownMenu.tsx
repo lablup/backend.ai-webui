@@ -3,7 +3,8 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { UserDropdownMenuQuery } from '../__generated__/UserDropdownMenuQuery.graphql';
-import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
+import { maskUserIdentity } from '../helper';
+import { useWebUINavigate } from '../hooks';
 import {
   useCurrentUserInfo,
   useCurrentUserRole,
@@ -14,6 +15,7 @@ import { useEffectiveAdminRole } from '../hooks/useCurrentUserProjectRoles';
 import { useOpenHelp } from '../hooks/useHelpURL';
 import { useActiveProjectName, useRouteScope } from '../hooks/useRouteScope';
 import { useThemeMode } from '../hooks/useThemeMode';
+import { useEffectiveLoginConfig } from '../hooks/useWebUIConfig';
 import {
   getPathFromMenuKey,
   useWebUIMenuItems,
@@ -78,7 +80,7 @@ const UserDropdownMenu: React.FC<{
   const screens = useBAIBreakpoint();
   const { isDarkMode, setThemeMode } = useThemeMode();
   const openHelp = useOpenHelp();
-  const baiClient = useSuspendedBackendaiClient();
+  const loginConfig = useEffectiveLoginConfig();
 
   const [isOpenUserSettingModal, { set: setIsOpenUserSettingModal }] =
     useToggle(false);
@@ -132,10 +134,13 @@ const UserDropdownMenu: React.FC<{
 
   const currentClientIp = myClientIp?.clientIp;
 
-  const displayName =
+  const shown = (value: string) =>
+    loginConfig.maskUserInfo ? maskUserIdentity(value) : value;
+  const displayName = shown(
     _.trim(user?.basicInfo?.fullName ?? '').length > 0
       ? (user?.basicInfo?.fullName ?? '')
-      : userInfo.email;
+      : userInfo.email,
+  );
 
   // The three leading rows (name / email / role) are read-only identity
   // display; antd expressed that with `disabled` + a `cursor: default` style
@@ -148,7 +153,7 @@ const UserDropdownMenu: React.FC<{
       isDisabled: true,
     },
     {
-      label: userInfo.email,
+      label: shown(userInfo.email),
       icon: <Mail size="1em" />,
       isDisabled: true,
     },
@@ -212,8 +217,8 @@ const UserDropdownMenu: React.FC<{
       icon: <CircleHelp size="1em" />,
       onClick: openHelp,
     },
-    (baiClient._config.allowAppDownloadPanel ||
-      baiClient._config.allowCLIDownloadPanel) && {
+    (loginConfig.allowAppDownloadPanel ||
+      loginConfig.allowCLIDownloadPanel) && {
       label: t('summary.Downloads'),
       icon: <Download size="1em" />,
       onClick: () => toggleDownloadModal(),
