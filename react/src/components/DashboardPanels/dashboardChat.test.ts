@@ -177,3 +177,20 @@ describe('parseDashboardChatReply with a small model reply', () => {
     expect(parseDashboardChatReply('{"reply": broken', ctx).reply).toBe('');
   });
 });
+
+describe('parseDashboardChatReply with repeated actions', () => {
+  it('keeps one of the same action written twice', () => {
+    const add = {
+      type: 'addPanel',
+      resourceType: 'session',
+      panelType: 'resourceTable',
+      title: 'Batch',
+      conditions: [{ property: 'type', operator: '==', value: 'batch' }],
+    };
+    const { actions } = parseDashboardChatReply(
+      `${JSON.stringify({ reply: 'a', actions: [add, { type: 'show', id: 'pendingSessions' }] })} ${JSON.stringify({ reply: 'b', actions: [add, { type: 'show', id: 'pendingSessions' }] })}`,
+      ctx,
+    );
+    expect(actions.map((action) => action.type)).toEqual(['addPanel', 'show']);
+  });
+});
