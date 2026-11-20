@@ -4539,6 +4539,7 @@
     "MenuGroupProjectAdmin": "Quản trị viên dự án",
     "MenuGroupUser": "Người dùng",
     "MenuInactivelist": "Vô hiệu hóa menu",
+    "MenuLabelWithTier": "{{menu}} ({{tier}})",
     "NotApplied": "Cài đặt hệ thống chưa được áp dụng",
     "NotAppliedItems": "Các cài đặt sau chưa được lưu. Hãy áp dụng lại:",
     "OpenPortToPublic": "Cho phép truy cập ứng dụng công khai",

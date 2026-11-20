@@ -4538,6 +4538,7 @@
     "MenuGroupProjectAdmin": "Projektin ylläpitäjä",
     "MenuGroupUser": "Käyttäjä",
     "MenuInactivelist": "Poista valikot käytöstä",
+    "MenuLabelWithTier": "{{menu}} ({{tier}})",
     "NotApplied": "Järjestelmäasetuksia ei otettu käyttöön",
     "NotAppliedItems": "Näitä asetuksia ei tallennettu. Ota ne käyttöön uudelleen:",
     "OpenPortToPublic": "Salli sovellusten julkinen käyttö",

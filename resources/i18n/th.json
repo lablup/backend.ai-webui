@@ -4523,6 +4523,7 @@
     "MenuGroupProjectAdmin": "ผู้ดูแลโปรเจกต์",
     "MenuGroupUser": "ผู้ใช้",
     "MenuInactivelist": "ปิดใช้งานเมนู",
+    "MenuLabelWithTier": "{{menu}} ({{tier}})",
     "NotApplied": "ไม่ได้นำการตั้งค่าระบบไปใช้",
     "NotAppliedItems": "การตั้งค่าต่อไปนี้ไม่ได้บันทึก กรุณานำไปใช้อีกครั้ง:",
     "OpenPortToPublic": "อนุญาตการเข้าถึงแอปแบบสาธารณะ",

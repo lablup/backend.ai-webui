@@ -69,7 +69,10 @@ const MenuKeySelector: React.FC<MenuKeySelectorProps> = ({
           value: entry.key,
           label:
             sharedLabels.has(entry.labelText) && entry.tier !== 'user'
-              ? `${entry.labelText} (${tierLabels[entry.tier]})`
+              ? t('webuiSettings.MenuLabelWithTier', {
+                  menu: entry.labelText,
+                  tier: tierLabels[entry.tier],
+                })
               : entry.labelText,
           icon: entry.icon,
         })),

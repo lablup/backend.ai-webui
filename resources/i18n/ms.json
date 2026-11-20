@@ -4537,6 +4537,7 @@
     "MenuGroupProjectAdmin": "Pentadbir projek",
     "MenuGroupUser": "Pengguna",
     "MenuInactivelist": "Nyahaktifkan menu",
+    "MenuLabelWithTier": "{{menu}} ({{tier}})",
     "NotApplied": "Tetapan Sistem tidak digunakan",
     "NotAppliedItems": "Tetapan berikut tidak disimpan. Gunakan sekali lagi:",
     "OpenPortToPublic": "Benarkan akses awam kepada aplikasi",

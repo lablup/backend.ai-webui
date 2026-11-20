@@ -4537,6 +4537,7 @@
     "MenuGroupProjectAdmin": "Διαχειριστής έργου",
     "MenuGroupUser": "Χρήστης",
     "MenuInactivelist": "Απενεργοποίηση μενού",
+    "MenuLabelWithTier": "{{menu}} ({{tier}})",
     "NotApplied": "Οι ρυθμίσεις συστήματος δεν εφαρμόστηκαν",
     "NotAppliedItems": "Αυτές οι ρυθμίσεις δεν αποθηκεύτηκαν. Εφαρμόστε ξανά:",
     "OpenPortToPublic": "Να επιτρέπεται η δημόσια πρόσβαση σε εφαρμογές",

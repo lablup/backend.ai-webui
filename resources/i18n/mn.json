@@ -4539,6 +4539,7 @@
     "MenuGroupProjectAdmin": "Төслийн админ",
     "MenuGroupUser": "Хэрэглэгч",
     "MenuInactivelist": "Цэс идэвхгүй болгох",
+    "MenuLabelWithTier": "{{menu}} ({{tier}})",
     "NotApplied": "Системийн тохиргоог хэрэгжүүлээгүй",
     "NotAppliedItems": "Дараах тохиргоог хадгалаагүй. Дахин хэрэгжүүлнэ үү:",
     "OpenPortToPublic": "Аппад нийтийн хандалтыг зөвшөөрөх",

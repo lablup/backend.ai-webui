@@ -4522,6 +4522,7 @@
     "MenuGroupProjectAdmin": "Project admin",
     "MenuGroupUser": "User",
     "MenuInactivelist": "Disable menus",
+    "MenuLabelWithTier": "{{menu}} ({{tier}})",
     "NotApplied": "System Settings were not applied",
     "NotAppliedItems": "These settings were not saved. Apply again to retry:",
     "OpenPortToPublic": "Public app access",

@@ -4539,6 +4539,7 @@
     "MenuGroupProjectAdmin": "Projektadmin",
     "MenuGroupUser": "Benutzer",
     "MenuInactivelist": "Menüs deaktivieren",
+    "MenuLabelWithTier": "{{menu}} ({{tier}})",
     "NotApplied": "Die Systemeinstellungen wurden nicht übernommen",
     "NotAppliedItems": "Diese Einstellungen wurden nicht gespeichert. Bitte erneut übernehmen:",
     "OpenPortToPublic": "Öffentlichen App-Zugriff erlauben",

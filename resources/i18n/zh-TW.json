@@ -4541,6 +4541,7 @@
     "MenuGroupProjectAdmin": "專案管理員",
     "MenuGroupUser": "使用者",
     "MenuInactivelist": "停用選單",
+    "MenuLabelWithTier": "{{menu}}（{{tier}}）",
     "NotApplied": "系統設定未套用",
     "NotAppliedItems": "以下設定未儲存。請重新套用：",
     "OpenPortToPublic": "允許公開存取應用程式",
