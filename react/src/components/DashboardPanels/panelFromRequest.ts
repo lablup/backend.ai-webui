@@ -196,6 +196,39 @@ export const filterOfConditions = (
     .join(' & ');
 };
 
+/**
+ * The source a reply that names none most likely means: the only one whose
+ * filter has every condition's property, else the only one its title names.
+ */
+const inferSource = (
+  reply: Record<string, unknown>,
+  sources: ReadonlyArray<PanelSourceSpec>,
+): PanelSourceSpec | undefined => {
+  const keys = (Array.isArray(reply.conditions) ? reply.conditions : [])
+    .map((condition) =>
+      _.isPlainObject(condition)
+        ? (condition as Record<string, unknown>).property
+        : undefined,
+    )
+    .filter((key): key is string => typeof key === 'string');
+  const byProperties = keys.length
+    ? sources.filter((source) =>
+        keys.every((key) =>
+          source.filter.properties.some((property) => property.key === key),
+        ),
+      )
+    : [];
+  if (byProperties.length === 1) return byProperties[0];
+  const title =
+    typeof reply.title === 'string' ? reply.title.toLowerCase() : '';
+  const byTitle = (byProperties.length ? byProperties : sources).filter(
+    (source) =>
+      title.includes(source.key.toLowerCase()) ||
+      title.includes(source.label.toLowerCase()),
+  );
+  return byTitle.length === 1 ? byTitle[0] : undefined;
+};
+
 /** The panel one reply object describes, or null when it names no usable source. */
 export const panelDraftOf = (
   value: unknown,
@@ -203,7 +236,11 @@ export const panelDraftOf = (
 ): PanelDraft | null => {
   if (!_.isPlainObject(value)) return null;
   const reply = value as Record<string, unknown>;
-  const source = sources.find((s) => s.key === reply.resourceType);
+  const source =
+    sources.find((s) => s.key === reply.resourceType) ??
+    (reply.resourceType === undefined
+      ? inferSource(reply, sources)
+      : undefined);
   if (!source) return null;
   const panelType =
     (PANEL_TYPES as ReadonlyArray<unknown>).includes(reply.panelType) &&

@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import {
-  jsonOfReply,
+  jsonValuesOfReply,
   sanitizeAssistantActions,
   type DashboardAssistantAction,
   type DashboardAssistantCard,
@@ -162,13 +162,17 @@ export const parseDashboardChatReply = (
   text: string,
   ctx: DashboardChatContext,
 ): { reply: string; actions: Array<DashboardAssistantAction> } => {
-  const json = jsonOfReply(text);
-  const body = _.isPlainObject(json) ? (json as Record<string, unknown>) : {};
-  const rawActions = Array.isArray(body.actions)
-    ? body.actions
-    : Array.isArray(json)
-      ? json
-      : [];
+  const values = jsonValuesOfReply(text);
+  const objects = values.filter(_.isPlainObject) as Array<
+    Record<string, unknown>
+  >;
+  // Several objects in one reply each carry part of the answer.
+  const rawActions = [
+    ...objects.flatMap((object) =>
+      Array.isArray(object.actions) ? object.actions : [],
+    ),
+    ...values.filter(Array.isArray).flat(),
+  ];
   const actions = rawActions.flatMap(
     (value): Array<DashboardAssistantAction> => {
       if (!_.isPlainObject(value)) return [];
@@ -197,10 +201,11 @@ export const parseDashboardChatReply = (
     },
   );
   const reply =
-    typeof body.reply === 'string'
-      ? body.reply.trim()
-      : json === undefined
-        ? text.trim()
-        : '';
+    objects
+      .map((object) => object.reply)
+      .find((value): value is string => typeof value === 'string')
+      ?.trim() ??
+    // Unreadable JSON is not shown as the reply.
+    (values.length || text.includes('{') ? '' : text.trim());
   return { reply, actions };
 };

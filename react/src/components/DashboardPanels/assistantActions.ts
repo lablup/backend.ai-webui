@@ -173,18 +173,49 @@ export const sanitizeAssistantActions = (
   });
 };
 
-/** The JSON a reply carries: a `dashboard-actions` (or any) fence, else its outermost braces. */
-export const jsonOfReply = (text: string): unknown => {
-  const fenced = /```(?:[\w-]+)?\s*([\s\S]*?)```/.exec(text);
-  const body = fenced
-    ? fenced[1]
-    : text.slice(text.indexOf('{'), text.lastIndexOf('}') + 1);
-  try {
-    return body ? JSON.parse(body) : undefined;
-  } catch {
-    return undefined;
+/** Repairs a typo small models make: a stray quote after an object, `}"]`. */
+const repairJson = (text: string) => text.replace(/\}"\s*\]/g, '}]');
+
+/**
+ * Every top-level JSON object or array in a reply, in order. Small models
+ * wrap them in fences, write two in a row, or add text around them.
+ */
+export const jsonValuesOfReply = (reply: string): Array<unknown> => {
+  // Repaired first: the stray quote would otherwise open a string while scanning.
+  const text = repairJson(reply);
+  const values: Array<unknown> = [];
+  let depth = 0;
+  let start = -1;
+  let inString = false;
+  for (let i = 0; i < text.length; i++) {
+    const char = text[i];
+    if (inString) {
+      if (char === '\\') i++;
+      else if (char === '"') inString = false;
+      continue;
+    }
+    if (char === '"' && depth > 0) inString = true;
+    else if (char === '{' || char === '[') {
+      if (depth === 0) start = i;
+      depth++;
+    } else if ((char === '}' || char === ']') && depth > 0) {
+      depth--;
+      if (depth === 0) {
+        const body = text.slice(start, i + 1);
+        try {
+          values.push(JSON.parse(body));
+        } catch {
+          // Not JSON after all; keep scanning.
+        }
+      }
+    }
   }
+  return values;
 };
+
+/** The first JSON value a reply carries. */
+export const jsonOfReply = (text: string): unknown =>
+  jsonValuesOfReply(text)[0];
 
 /** The dashboard actions in a model reply, sanitized against `cards`. */
 export const parseDashboardActions = (

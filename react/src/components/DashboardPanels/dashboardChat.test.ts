@@ -137,3 +137,43 @@ describe('buildDashboardChatPrompt', () => {
     ).not.toContain('createBoard');
   });
 });
+
+describe('parseDashboardChatReply with a small model reply', () => {
+  // Qwen3-0.6B, verbatim: two objects in a row, a stray quote, no resourceType.
+  const reply = String.raw`{"reply":"Add a table of running interactive sessions","actions":[{"type":"addPanel","id":"sessionLaunches","title":"Running Interactive Sessions","conditions":[{"property":"status","operator":"==","value":"RUNNING"}"],"chartType":"resourceChart","groupBy":"status","range":{"now-1h":true,"now-24h":true,"now-7d":true}}]} {"reply":"Added a new resourceTable panel for running interactive sessions","actions":[{"type":"show","id":"sessionLaunches"}]}`;
+  const withStatus: DashboardChatContext = {
+    ...ctx,
+    sources: [
+      {
+        ...ctx.sources[0],
+        filter: {
+          kind: 'minilang',
+          properties: [
+            {
+              key: 'status',
+              propertyLabel: 'Status',
+              type: 'string',
+              strictSelection: true,
+              options: [{ label: 'RUNNING', value: 'RUNNING' }],
+            },
+          ],
+        },
+      },
+    ],
+  };
+
+  it('repairs the JSON, infers the source and keeps the panel', () => {
+    const { reply: text, actions } = parseDashboardChatReply(reply, withStatus);
+    expect(text).toBe('Add a table of running interactive sessions');
+    expect(actions).toHaveLength(1);
+    expect(actions[0].type === 'addPanel' && actions[0].panel).toMatchObject({
+      title: 'Running Interactive Sessions',
+      filter: 'status == "RUNNING"',
+      viz: 'table',
+    });
+  });
+
+  it('never shows unreadable JSON as the reply', () => {
+    expect(parseDashboardChatReply('{"reply": broken', ctx).reply).toBe('');
+  });
+});
