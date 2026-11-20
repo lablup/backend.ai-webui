@@ -128,7 +128,7 @@ const WebUIAssistantChat: React.FC<WebUIAssistantChatProps> = ({
       WEBUI_ASSISTANT_EXCERPT_COUNT,
     ).map((hit) => hit.section);
     // The page the user is on is the likeliest subject of "here" / "this".
-    const target = parseManualTarget(helpURL);
+    const target = helpURL ? parseManualTarget(helpURL) : null;
     const pageSection = target
       ? (manualIndex.sections.find(
           (s) => s.page === target.page && s.anchor === target.anchor,
@@ -158,7 +158,7 @@ const WebUIAssistantChat: React.FC<WebUIAssistantChatProps> = ({
           abortSignal: init?.signal || undefined,
           system: buildAssistantSystemPrompt({
             basePrompt: WEBUI_ASSISTANT_PROFILE.systemPrompt,
-            page: { path: location.pathname, manualURL: helpURL },
+            page: { path: location.pathname, manualURL: helpURL ?? undefined },
             excerpts: pickExcerpts(lastUser ? messageText(lastUser) : ''),
             manualBaseURL,
           }),

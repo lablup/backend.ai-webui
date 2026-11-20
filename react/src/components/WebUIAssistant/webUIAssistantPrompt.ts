@@ -33,8 +33,8 @@ const MAX_EXCERPT_CHARS = 1800;
 export interface AssistantPageContext {
   /** WebUI route path, e.g. `/project/default/session`. */
   path: string;
-  /** Manual page the help button opens for this route. */
-  manualURL: string;
+  /** Manual page the help button opens for this route; absent when help is hidden. */
+  manualURL?: string;
 }
 
 export function buildAssistantSystemPrompt({
@@ -52,7 +52,8 @@ export function buildAssistantSystemPrompt({
   const parts = [basePrompt.trim()];
   if (page) {
     parts.push(
-      `## Current page\nWebUI path: ${page.path}\nManual page: ${page.manualURL}`,
+      `## Current page\nWebUI path: ${page.path}` +
+        (page.manualURL ? `\nManual page: ${page.manualURL}` : ''),
     );
   }
   parts.push(

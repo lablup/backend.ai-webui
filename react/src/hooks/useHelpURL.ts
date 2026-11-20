@@ -35,6 +35,16 @@ export const buildHostedManualBaseURL = (
   return `${HOSTED_MANUAL_ROOT}/${docsVersion}/${docsLang}/`;
 };
 
+/** The hosted manual's root for this build and language (the WebUI Assistant links into it). */
+export const useManualBaseURL = (): { baseURL: string; docsLang: string } => {
+  'use memo';
+  const [lang] = useCurrentLanguage();
+  return {
+    baseURL: buildHostedManualBaseURL(globalThis.packageVersion ?? '', lang),
+    docsLang: DOCS_LANGUAGES.includes(lang) ? lang : 'en',
+  };
+};
+
 /**
  * The page the help button opens, `null` when help is hidden. An unset
  * `manualUrl` (System Settings) opens the hosted page for the route, an empty
