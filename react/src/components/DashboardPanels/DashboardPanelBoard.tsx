@@ -218,10 +218,15 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
     propose: (actions) => {
       setDraftActions((current) => {
         // One new board per preview: a second would drop what the first collected.
-        const hasNewBoard = current?.some((a) => a.type === 'createBoard');
+        let hasNewBoard = !!current?.some((a) => a.type === 'createBoard');
         return [
           ...(current ?? []),
-          ...actions.filter((a) => !(hasNewBoard && a.type === 'createBoard')),
+          ...actions.filter((a) => {
+            if (a.type !== 'createBoard') return true;
+            if (hasNewBoard) return false;
+            hasNewBoard = true;
+            return true;
+          }),
         ];
       });
       const target = actions.map(actionTargetId).find(Boolean);
@@ -251,6 +256,13 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
   const filters = useDashboardFilters(page, boards, project);
   const scopeKey = dashboardScopeKey(page, filters.scope);
   denied.setScope(scopeKey);
+  // A preview belongs to the board and scope it was asked on.
+  const draftTarget = `${boards.activeBoard.id}|${scopeKey}`;
+  const [draftTargetSeen, setDraftTargetSeen] = useState(draftTarget);
+  if (draftTarget !== draftTargetSeen) {
+    setDraftTargetSeen(draftTarget);
+    setDraftActions(null);
+  }
   useBoardItemVisibility(boardContainerRef);
 
   const scrollBoardEndIntoView = () => {

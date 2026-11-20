@@ -4,9 +4,8 @@
  */
 import {
   applyAssistantActions,
-  buildDashboardEditPrompt,
   isNoopAction,
-  parseDashboardActions,
+  jsonValuesOfReply,
   sanitizeAssistantActions,
   settingsTouchedBy,
 } from './assistantActions';
@@ -135,7 +134,10 @@ describe('sanitizeAssistantActions', () => {
   });
 });
 
-describe('parseDashboardActions', () => {
+const parseDashboardActions = (text: string, cards: typeof ids) =>
+  sanitizeAssistantActions(jsonValuesOfReply(text)[0], cards);
+
+describe('reading actions from a reply', () => {
   it('reads a fenced block', () => {
     expect(
       parseDashboardActions(
@@ -241,27 +243,6 @@ describe('settingsTouchedBy', () => {
   });
 });
 
-describe('buildDashboardEditPrompt', () => {
-  it('lists the cards and asks for JSON only', () => {
-    const prompt = buildDashboardEditPrompt({
-      page: 'project',
-      cards: [
-        {
-          id: 'a',
-          title: 'My sessions',
-          shown: true,
-          columnSpan: 2,
-          rowSpan: 2,
-        },
-        { id: 'c', title: 'Activity', shown: false, range: 'default' },
-      ],
-    });
-    expect(prompt).toContain('- a | My sessions | on board | size 2x2');
-    expect(prompt).toContain('- c | Activity | not on board | range default');
-    expect(prompt).toContain('Reply with only a JSON object');
-  });
-});
-
 describe('isNoopAction', () => {
   const cards = [
     { id: 'a', title: 'A', shown: true, columnSpan: 2, rowSpan: 2 },
@@ -357,5 +338,17 @@ describe('applyAssistantActions with panels and boards', () => {
       { ...context, emptyBoard: empty },
     );
     expect(next.panels.map((panel) => panel.id)).toEqual(['b']);
+  });
+});
+
+describe('fuzzy card ids', () => {
+  it('never maps an id onto a card that starts differently', () => {
+    const cards = [{ id: 'cpuUsage', title: 'CPU usage' }];
+    expect(
+      sanitizeAssistantActions([{ type: 'hide', id: 'gpuUsage' }], cards),
+    ).toEqual([]);
+    expect(
+      sanitizeAssistantActions([{ type: 'hide', id: 'cpu-usages' }], cards),
+    ).toEqual([{ type: 'hide', id: 'cpuUsage' }]);
   });
 });

@@ -27,6 +27,7 @@ import {
   answersFromManual,
   parseDashboardChatReply,
 } from '../DashboardPanels/dashboardChat';
+import { generateAssistantText } from './generateAssistantText';
 import {
   createManualIndex,
   loadManual,
@@ -34,7 +35,6 @@ import {
   type ManualSection,
 } from './manualSearch';
 import { streamChatCompletion } from './streamChatCompletion';
-import { useWebUIAssistantModel } from './useWebUIAssistantModel';
 import { WEBUI_ASSISTANT_PROFILE } from './webUIAssistantProfile';
 import {
   MANUAL_RESOURCE_BASE,
@@ -188,7 +188,6 @@ const WebUIAssistantChat: React.FC<WebUIAssistantChatProps> = ({
   const location = useWebUILocation();
   // Set while a dashboard page is open: requests that change the board go to its agent.
   const dashboardAgent = useAtomValue(dashboardAgentAtom);
-  const assistantModel = useWebUIAssistantModel();
   const helpURL = useHelpURL();
   const { baseURL: manualBaseURL, docsLang } = useManualBaseURL();
 
@@ -261,7 +260,10 @@ const WebUIAssistantChat: React.FC<WebUIAssistantChatProps> = ({
   ): Promise<Response | null> => {
     let answer: string;
     try {
-      answer = await assistantModel.complete({
+      answer = await generateAssistantText({
+        baseURL: apiBaseURL,
+        apiKey: token,
+        modelId: modelId ?? '',
         system: buildDashboardChatPrompt(agent.context),
         messages: [
           ...dashboardHistoryOf(history),

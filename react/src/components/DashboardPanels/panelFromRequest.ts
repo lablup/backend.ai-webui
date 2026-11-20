@@ -2,7 +2,6 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { jsonOfReply } from './assistantActions';
 import { resolveChart } from './chartSources';
 import {
   RANGE_PRESETS,
@@ -294,12 +293,6 @@ export const panelDraftOf = (
       : {}),
   };
 };
-
-/** The panel a model reply describes, or null when it names no usable source. */
-export const parsePanelReply = (
-  text: string,
-  sources: ReadonlyArray<PanelSourceSpec>,
-): PanelDraft | null => panelDraftOf(jsonOfReply(text), sources);
 
 /** The panel modal's input for a draft; a chart over time counts within its range. */
 export const inputOfDraft = (draft: PanelDraft): PanelInput => {
