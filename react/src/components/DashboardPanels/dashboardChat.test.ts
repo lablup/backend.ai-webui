@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import {
+  answersFromManual,
   buildDashboardChatPrompt,
   dashboardExamplesOf,
   looksLikeQuestion,
@@ -252,5 +253,38 @@ describe('dashboardExamplesOf', () => {
       'webuiAssistant.DashboardChatExampleLayout',
       'webuiAssistant.DashboardChatExamplePanel',
     ]);
+  });
+});
+
+describe('answersFromManual', () => {
+  const route = (request: string, isQuestion: boolean, hasChange = false) =>
+    answersFromManual({ request, isQuestion, hasChange });
+
+  it('sends questions to the manual and keeps instructions on the dashboard', () => {
+    expect(route('세션은 어떻게 시작하나요?', false)).toBe(true);
+    expect(route('세션 시작하는 법 알려 줘', false)).toBe(true);
+    // A small model prefixes {"question":true} to an instruction.
+    expect(route('자원 할당 카드로 장애 대응 보드 만들어 줘', true)).toBe(
+      false,
+    );
+    expect(route('Create a board named Incidents', true)).toBe(false);
+    expect(route('session quota', true)).toBe(true);
+    expect(route('session quota', false)).toBe(false);
+    expect(route('How do I start a session?', true, true)).toBe(false);
+  });
+});
+
+describe('buildDashboardChatPrompt board example', () => {
+  it('fills a new board in its example and puts the question example last', () => {
+    const prompt = buildDashboardChatPrompt(ctx);
+    expect(prompt).toContain(
+      '{"type":"createBoard","title":"Incidents"},{"type":"show","id":"agents"},{"type":"show","id":"pendingSessions"}',
+    );
+    expect(prompt.indexOf('{"question":true}\n')).toBeGreaterThan(
+      prompt.indexOf('createBoard","title":"Incidents"'),
+    );
+    expect(
+      buildDashboardChatPrompt({ ...ctx, canCreateBoard: false }),
+    ).not.toContain('Incidents');
   });
 });

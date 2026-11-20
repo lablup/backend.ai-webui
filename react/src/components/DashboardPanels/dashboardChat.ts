@@ -83,8 +83,8 @@ const examplesOf = (ctx: DashboardChatContext): string => {
   const card = ctx.cards.find((item) => item.shown);
   const source = ctx.sources.find((item) => exampleConditionOf(item));
   const condition = source && exampleConditionOf(source);
+  const [first, second] = ctx.cards;
   const lines = [
-    `User: How do I start a session?\n${JSON.stringify({ question: true })}`,
     card &&
       `User: Hide the ${card.title} card\n${JSON.stringify({
         reply: `Hid the ${card.title} card.`,
@@ -112,6 +112,21 @@ const examplesOf = (ctx: DashboardChatContext): string => {
           ],
         },
       )}`,
+    ctx.canCreateBoard &&
+      first &&
+      second &&
+      `User: Create a board named Incidents with ${first.title} and ${second.title}\n${JSON.stringify(
+        {
+          reply: 'Created the Incidents board.',
+          actions: [
+            { type: 'createBoard', title: 'Incidents' },
+            { type: 'show', id: first.id },
+            { type: 'show', id: second.id },
+          ],
+        },
+      )}`,
+    // Last: a small model repeats the first example's answer before its own.
+    `User: How do I start a session?\n${JSON.stringify({ question: true })}`,
   ].filter(Boolean);
   return lines.length ? ['Examples:', ...lines].join('\n') : '';
 };
@@ -270,8 +285,40 @@ export const parseDashboardChatReply = (
 /** A request phrased as a question; with no effective change it goes to the manual. */
 export const looksLikeQuestion = (request: string): boolean =>
   /[?？]\s*$/.test(request) ||
-  /^\s*(how|what|where|why|when|which|can i|is there)\b/i.test(request) ||
-  /^\s*(어떻게|무엇|뭐|어디|왜|언제)/.test(request);
+  /^\s*(how|what|where|why|when|which|can i|is there|tell me|explain)\b/i.test(
+    request,
+  ) ||
+  /^\s*(어떻게|무엇|뭐|어디|왜|언제)/.test(request) ||
+  /(알려\s*(줘|주세요)|설명해\s*(줘|주세요)?|인가요|나요|까요|니까)\s*[.!]?\s*$/.test(
+    request,
+  );
+
+/** A request phrased as an instruction, which the dashboard answers even without a change. */
+const looksLikeCommand = (request: string): boolean =>
+  /^\s*(please\s+)?(show|hide|add|create|make|move|remove|delete|resize|set|reset|put|change|update|turn)\b/i.test(
+    request,
+  ) || /(줘|주세요|해|하자)\s*[.!]?\s*$/.test(request);
+
+/**
+ * Whether the manual answers a request instead of the dashboard: only when
+ * nothing changes, and the request reads as a question. The model's
+ * {"question":true} decides only a request that reads as neither, because a
+ * small model repeats it before answering an instruction.
+ */
+export const answersFromManual = ({
+  request,
+  isQuestion,
+  hasChange,
+}: {
+  request: string;
+  isQuestion: boolean;
+  hasChange: boolean;
+}): boolean => {
+  if (hasChange) return false;
+  if (looksLikeQuestion(request)) return true;
+  if (looksLikeCommand(request)) return false;
+  return isQuestion;
+};
 
 /** One line in the chat for a proposed change. */
 export const describeDashboardAction = (
