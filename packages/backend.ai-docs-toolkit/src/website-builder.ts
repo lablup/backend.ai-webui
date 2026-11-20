@@ -2610,3 +2610,95 @@ ${redirectPageSeoBlock(title, opts.seo)}  <meta name="robots" content="noindex" 
 </body>
 </html>`;
 }
+
+/**
+ * Build the site-root `dist/web/404.html` fallback page (FR-3280).
+ *
+ * The hosting layer serves this page for any path that matched no
+ * rule and no file — most visibly an unsupported locale such as
+ * `/latest/fr/`, which previously returned a zero-byte 404 body.
+ *
+ * Two constraints follow from "served at an arbitrary URL": every href
+ * must be site-root-absolute (a relative one would resolve against the
+ * bogus path), and the page must not redirect — an unmatched path has
+ * no correct destination to send the reader to, so it states what
+ * happened and lets them choose.
+ */
+export interface NotFoundPageOptions {
+  title: string;
+  productName: string;
+  languages: Array<{ lang: string; label: string }>;
+  /**
+   * Single path segment the language links are mounted under, e.g.
+   * `latest` for `/latest/<lang>/` (the version-agnostic alias). Leave
+   * undefined for flat-mode builds, where `/<lang>/` is the real
+   * content.
+   */
+  basePath?: string;
+}
+
+export function buildNotFoundPage(opts: NotFoundPageOptions): string {
+  const { title, productName, languages, basePath } = opts;
+  if (languages.length === 0) {
+    throw new Error(
+      `buildNotFoundPage: \`languages\` must contain at least one entry`,
+    );
+  }
+  if (
+    basePath !== undefined &&
+    !/^[A-Za-z0-9][A-Za-z0-9._-]*$/.test(basePath)
+  ) {
+    throw new Error(
+      `buildNotFoundPage: invalid basePath ${JSON.stringify(basePath)}`,
+    );
+  }
+  const hrefBase = basePath ? `/${basePath}/` : "/";
+  const safeTitle = escapeHtml(title);
+  const safeProduct = escapeHtml(productName);
+  const langItems = languages
+    .map((l) => {
+      if (!/^[A-Za-z0-9][A-Za-z0-9_-]*$/.test(l.lang)) {
+        throw new Error(
+          `buildNotFoundPage: invalid lang ${JSON.stringify(l.lang)}`,
+        );
+      }
+      return `      <li><a class="nf__lang" hreflang="${escapeHtml(l.lang)}" lang="${escapeHtml(l.lang)}" href="${hrefBase}${escapeHtml(l.lang)}/">${escapeHtml(l.label)}</a></li>`;
+    })
+    .join("\n");
+
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Page not found &mdash; ${safeTitle}</title>
+  <meta name="robots" content="noindex" />
+  <style>
+    :root { color-scheme: light dark; --nf-fg: #1c1e21; --nf-muted: #606770; --nf-bg: #ffffff; --nf-border: #ebedf0; --nf-link: #1868db; }
+    @media (prefers-color-scheme: dark) {
+      :root { --nf-fg: #e3e3e3; --nf-muted: #a8a8a8; --nf-bg: #1b1b1d; --nf-border: #333338; --nf-link: #7ab0ff; }
+    }
+    body { margin: 0; background: var(--nf-bg); color: var(--nf-fg); font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; }
+    .nf { max-width: 34rem; margin: 4rem auto; padding: 2rem; border: 1px solid var(--nf-border); border-radius: .5rem; }
+    .nf__code { margin: 0; font-size: .875rem; font-weight: 700; letter-spacing: .08em; color: var(--nf-muted); }
+    .nf__title { margin: .25rem 0 .5rem 0; font-size: 1.5rem; }
+    .nf__body { margin: 0 0 1.5rem 0; color: var(--nf-muted); font-size: .9375rem; line-height: 1.6; }
+    .nf__heading { margin: 0 0 .5rem 0; font-size: .8125rem; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: var(--nf-muted); }
+    .nf__list { list-style: none; padding: 0; margin: 0 0 1.5rem 0; display: flex; flex-direction: column; gap: .5rem; }
+    a { color: var(--nf-link); }
+  </style>
+</head>
+<body>
+  <main class="nf">
+    <p class="nf__code">404</p>
+    <h1 class="nf__title">Page not found</h1>
+    <p class="nf__body">The page you requested does not exist in ${safeProduct}. If you followed a link with a language code we do not publish, pick a language below instead.</p>
+    <h2 class="nf__heading">Available languages</h2>
+    <ul class="nf__list">
+${langItems}
+    </ul>
+    <p class="nf__body"><a href="${hrefBase}">Go to ${safeTitle}</a></p>
+  </main>
+</body>
+</html>`;
+}

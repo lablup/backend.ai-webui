@@ -32,6 +32,14 @@
     "    wildcards. Slug-level mapping is impossible (the Sphinx manual",
     "    and this site have entirely different page slugs), so they land",
     "    on the per-language index. Supersedes FR-2742's per-slug idea.",
+    "  - The trailing /<*> → /404.html rule (FR-3280) is AWS's documented",
+    "    custom-404 pattern: `status: 404` makes it fire only when the",
+    "    request matched no earlier rule AND no file in the artifact, so",
+    "    it cannot shadow real pages or assets. It MUST stay last —",
+    "    Amplify evaluates rules in order. The target page is emitted by",
+    "    the docs build (`404.html`), lists the supported languages and",
+    "    does not redirect, because an unmatched path (e.g. an",
+    "    unsupported locale like /latest/fr/) has no correct destination.",
     "  - Bare language paths (/ko, /ko/) get EXPLICIT rules per language:",
     "    Amplify matches sources literally (no trailing-slash",
     "    normalization) and /<lang>/<*> is not guaranteed to match the",
@@ -115,6 +123,11 @@
       "source": "/th/<*>",
       "target": "/latest/th/",
       "status": "302"
+    },
+    {
+      "source": "/<*>",
+      "target": "/404.html",
+      "status": "404"
     }
   ]
 }
