@@ -520,9 +520,9 @@ export const CSSTokenVariables = () => {
  * splash was torn down before login had even finished.
  *
  * Also copies the signed-in user's `userConfig.themeFamily`, which sign-in
- * loaded before the client became ready, into the localStorage mirror BEFORE the splash goes, so the account's
- * family is what the page reveals (FR-3834). The mirror survives logout; the
- * next login overrides it here.
+ * loaded before the client became ready, into the localStorage mirror BEFORE
+ * the splash goes (FR-3834). The mirror survives logout; the next login
+ * overrides it here.
  */
 const DismissSplashOnMount = () => {
   'use memo';
@@ -531,17 +531,17 @@ const DismissSplashOnMount = () => {
     'userConfig',
     'themeFamily',
   );
-  // A failed sign-in read keeps the mirrored family instead of clearing it.
+  // A failed sign-in read keeps the mirrored family.
   const isUserConfigLoaded = userConfigStatus === 'loaded';
   const { setActiveThemeFamily } = useCustomThemeConfig();
-  const syncThemeFamilyMirror = useEffectEvent(() => {
+  const applyUserConfig = useEffectEvent(() => {
     if (!isUserConfigLoaded) return;
     setActiveThemeFamily(
       typeof userConfigFamily === 'string' ? userConfigFamily : undefined,
     );
   });
   useEffect(() => {
-    syncThemeFamilyMirror();
+    applyUserConfig();
     (globalThis as any).__dismissSplash?.();
     (globalThis as any).__mainLayoutReady = true;
     document.dispatchEvent(new CustomEvent('main-layout-ready'));

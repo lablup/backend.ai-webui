@@ -7,9 +7,16 @@
  * in effect must turn auto-refresh off on the first try, not only after a
  * detour through another interval.
  */
+import {
+  clearMyAppConfigs,
+  myAppConfigState,
+  setMyAppConfigs,
+} from '../hooks/useAppConfig';
 import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
+import { jotaiStore } from './DefaultProviders';
 import '@testing-library/jest-dom';
 import { act, render } from '@testing-library/react';
+import { Provider } from 'jotai';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Capture what the host wrapper actually hands the presentational button; the
@@ -32,21 +39,32 @@ vi.mock('backend.ai-ui', async (importOriginal) => {
   };
 });
 
-const SETTING_KEY =
-  'backendaiwebui.settings.user.fetchKeyAutoUpdateDelay.session-list';
+const SETTING_NAME = 'fetchKeyAutoUpdateDelay.session-list';
+
+// The sign-in read of `userConfig`, whose `settings` hold the account settings.
+const signIn = (settings: Record<string, unknown>) =>
+  setMyAppConfigs(jotaiStore, [
+    { configName: 'userConfig', config: { settings } },
+  ]);
+const accountSettings = () =>
+  jotaiStore.get(myAppConfigState).configs.userConfig?.settings;
 
 const renderButton = () =>
   render(
-    <AutoUpdateFetchKeyButton
-      settingId="session-list"
-      defaultAutoUpdateDelay={15_000}
-      onChange={() => {}}
-    />,
+    <Provider store={jotaiStore}>
+      <AutoUpdateFetchKeyButton
+        settingId="session-list"
+        defaultAutoUpdateDelay={15_000}
+        onChange={() => {}}
+      />
+    </Provider>,
   );
 
 describe('AutoUpdateFetchKeyButton', () => {
   beforeEach(() => {
     localStorage.clear();
+    clearMyAppConfigs(jotaiStore);
+    signIn({});
     lastAutoUpdateDelay = undefined;
     lastOnChangeAutoUpdateDelay = undefined;
   });
@@ -62,7 +80,8 @@ describe('AutoUpdateFetchKeyButton', () => {
 
     act(() => lastOnChangeAutoUpdateDelay?.(null));
 
-    expect(localStorage.getItem(SETTING_KEY)).toBe('null');
+    expect(accountSettings()).toEqual({ [SETTING_NAME]: null });
+    expect(localStorage.length).toBe(0);
     expect(lastAutoUpdateDelay).toBeNull();
   });
 
@@ -77,8 +96,15 @@ describe('AutoUpdateFetchKeyButton', () => {
   });
 
   it('honours a persisted "Off" over the consumer default on remount', () => {
-    localStorage.setItem(SETTING_KEY, 'null');
+    signIn({ [SETTING_NAME]: null });
     renderButton();
+    expect(lastAutoUpdateDelay).toBeNull();
+  });
+
+  it('applies an "Off" that a later read brings in', () => {
+    renderButton();
+    expect(lastAutoUpdateDelay).toBe(15_000);
+    act(() => signIn({ [SETTING_NAME]: null }));
     expect(lastAutoUpdateDelay).toBeNull();
   });
 });

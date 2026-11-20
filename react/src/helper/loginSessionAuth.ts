@@ -386,6 +386,13 @@ export async function connectViaGQL(
   // Before `applyConfigToClient` marks the client ready, so no screen renders without it.
   const { setMyAppConfigs } = await import('../hooks/useAppConfig');
   setMyAppConfigs(jotaiStore, response?.myAppConfigs);
+  const { startAccountUserSettingsSync } =
+    await import('./accountUserSettingsSync');
+  startAccountUserSettingsSync({
+    onError: (message, error) =>
+      // eslint-disable-next-line no-console -- module-scope diagnostics; no logger exists outside React here
+      console.error(`[user settings] ${message}`, error),
+  });
   const effectiveCfg = jotaiStore.get(loginConfigState) ?? cfg;
 
   applyConfigToClient({
@@ -628,6 +635,9 @@ export async function loadConfigFromWebServer(
   );
   // The previous server's domain settings stop applying until this one's sign-in.
   jotaiStore.set(domainWebUISettingsState, undefined);
+  const { stopAccountUserSettingsSync } =
+    await import('./accountUserSettingsSync');
+  stopAccountUserSettingsSync();
   const { clearMyAppConfigs } = await import('../hooks/useAppConfig');
   clearMyAppConfigs(jotaiStore);
   const effectiveLoginConfig = jotaiStore.get(loginConfigState)!;
