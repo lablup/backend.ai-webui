@@ -5,12 +5,15 @@
 import BAIErrorBoundary from '../../components/BAIErrorBoundary';
 import { useTabQuerySnapshot } from '../../hooks';
 import NotificationChannelList from './components/NotificationChannelList';
+import NotificationRuleList from './components/NotificationRuleList';
 import { BAICard, BAISkeleton } from 'backend.ai-ui';
 import { parseAsStringLiteral } from 'nuqs';
 import { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 
-const tabParser = parseAsStringLiteral(['channels']).withDefault('channels');
+const tabParser = parseAsStringLiteral(['rules', 'channels']).withDefault(
+  'rules',
+);
 
 const AdminNotificationPage: React.FC = () => {
   'use memo';
@@ -22,6 +25,7 @@ const AdminNotificationPage: React.FC = () => {
       activeTabKey={currentTab}
       onTabChange={onTabChange}
       tabList={[
+        { key: 'rules', label: t('externalNotification.Rules') },
         {
           key: 'channels',
           label: t('externalNotification.NotificationChannels'),
@@ -30,6 +34,11 @@ const AdminNotificationPage: React.FC = () => {
       ]}
     >
       <Suspense fallback={<BAISkeleton />}>
+        {currentTab === 'rules' && (
+          <BAIErrorBoundary>
+            <NotificationRuleList />
+          </BAIErrorBoundary>
+        )}
         {currentTab === 'channels' && (
           <BAIErrorBoundary>
             <NotificationChannelList />
