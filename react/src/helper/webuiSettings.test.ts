@@ -199,6 +199,40 @@ describe('isValidWebUISetting', () => {
     );
   });
 
+  it('rejects a fraction for a whole-number setting only', () => {
+    expect(isValidWebUISetting(byKey('fileUploadChunkSize'), 32)).toBe(true);
+    expect(isValidWebUISetting(byKey('fileUploadChunkSize'), 0)).toBe(true);
+    expect(isValidWebUISetting(byKey('fileUploadChunkSize'), 0.5)).toBe(false);
+    expect(isValidWebUISetting(byKey('maxCUDADevicesPerContainer'), 1.5)).toBe(
+      false,
+    );
+    // fGPU shares, memory and a percentage stay fractional.
+    expect(isValidWebUISetting(byKey('maxCUDASharesPerContainer'), 0.5)).toBe(
+      true,
+    );
+    expect(isValidWebUISetting(byKey('maxMemoryPerContainer'), 1.5)).toBe(true);
+    expect(isValidWebUISetting(byKey('storageWarningThreshold'), 85.5)).toBe(
+      true,
+    );
+  });
+
+  it('marks only number settings as whole-number', () => {
+    for (const d of WEBUI_SETTING_DEFINITIONS.filter((d) => d.isInteger)) {
+      expect([d.key, d.type]).toEqual([d.key, 'number']);
+    }
+  });
+
+  it('keeps a fraction out of the state and the document of a whole-number setting', () => {
+    const state = getDefaultLoginConfig();
+    expect(
+      applyWebUISettings(state, { fileUploadChunkSize: 2.5 }, 'domain')
+        .fileUploadChunkSize,
+    ).toBe(state.fileUploadChunkSize);
+    expect(
+      buildWebUISettingsDocument('domain', { fileUploadChunkSize: 2.5 }),
+    ).toBeUndefined();
+  });
+
   it('keeps an out-of-range number out of the state and the document', () => {
     const state = getDefaultLoginConfig();
     expect(

@@ -164,6 +164,7 @@ export const WEBUI_SETTING_ROWS: ReadonlyArray<WebUISettingRow> = [
     'storage',
     resources('maxFileUploadSize'),
   ),
+  row('fileUploadChunkSize', 'domain', 'number', 'storage', null),
 
   // Deployments.
   row(

@@ -127,6 +127,77 @@ describe('WebUISettingList', () => {
     expect(modalError).not.toHaveBeenCalled();
   });
 
+  it('rounds a fraction typed into a whole-number row to the nearest whole number', async () => {
+    domainWrite.mockResolvedValue();
+    renderList();
+    const input = within(
+      screen.getByTestId('webui-setting-maxCountForPreopenPorts'),
+    ).getByRole('spinbutton');
+
+    fireEvent.change(input, { target: { value: '2.5' } });
+    fireEvent.blur(input);
+
+    expect(domainWrite).toHaveBeenCalledTimes(1);
+    const saved = (
+      writtenDoc(domainWrite, 0) as { maxCountForPreopenPorts: number }
+    ).maxCountForPreopenPorts;
+    expect(saved).toBe(3);
+  });
+
+  it('shows a size row at its toggle default with the size disabled', () => {
+    renderList();
+    for (const [key, toggle] of [
+      ['maxFileUploadSize', 'webuiSettings.ServerLimit'],
+      ['fileUploadChunkSize', 'webuiSettings.Automatic'],
+    ]) {
+      const row = within(screen.getByTestId(`webui-setting-${key}`));
+      expect(row.getByRole('checkbox', { name: toggle })).toBeChecked();
+      expect(row.getByRole('spinbutton')).toHaveAttribute(
+        'aria-disabled',
+        'true',
+      );
+    }
+  });
+
+  it('stores nothing on unticking Automatic until a size is entered', async () => {
+    domainWrite.mockResolvedValue();
+    renderList();
+    const row = within(screen.getByTestId('webui-setting-fileUploadChunkSize'));
+
+    fireEvent.click(
+      row.getByRole('checkbox', { name: 'webuiSettings.Automatic' }),
+    );
+    expect(domainWrite).not.toHaveBeenCalled();
+    const input = row.getByRole('spinbutton');
+    expect(input).not.toHaveAttribute('aria-disabled');
+
+    fireEvent.change(input, { target: { value: '64' } });
+    fireEvent.blur(input);
+
+    expect(domainWrite).toHaveBeenCalledTimes(1);
+    expect(writtenDoc(domainWrite, 0)).toEqual({ fileUploadChunkSize: 64 });
+    expect(
+      row.getByRole('checkbox', { name: 'webuiSettings.Automatic' }),
+    ).not.toBeChecked();
+  });
+
+  it('stores the file size limit in bytes', async () => {
+    domainWrite.mockResolvedValue();
+    renderList();
+    const row = within(screen.getByTestId('webui-setting-maxFileUploadSize'));
+
+    fireEvent.click(
+      row.getByRole('checkbox', { name: 'webuiSettings.ServerLimit' }),
+    );
+    const input = row.getByRole('spinbutton');
+    fireEvent.change(input, { target: { value: '2' } });
+    fireEvent.blur(input);
+
+    expect(writtenDoc(domainWrite, 0)).toEqual({
+      maxFileUploadSize: 2 * 1024 ** 3,
+    });
+  });
+
   it('rolls the row and the atom back when the write fails', async () => {
     domainWrite.mockRejectedValue(new Error('denied'));
     const store = renderList();

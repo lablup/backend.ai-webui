@@ -48,6 +48,24 @@ export interface WebUISettingDefinition {
   /** For a `number`: the valid range, inclusive; a value outside it is ignored. */
   min?: number;
   max?: number;
+  /** For a `number`: only whole numbers are valid (counts, cores, bytes, MiB). */
+  isInteger?: boolean;
+  /** For a size `number`: edited with a unit picker and an Unlimited toggle. */
+  size?: WebUISizeSetting;
+}
+
+export interface WebUISizeSetting {
+  /** The unit the stored number is in: `''` bytes, `'m'` MiB, `'g'` GiB. */
+  storedUnit: '' | 'm' | 'g';
+  /** The value stored when the toggle is on; no toggle without it. */
+  unlimitedValue?: number;
+  /** What the toggle means: the server's limit applies, or the WebUI picks a size. */
+  toggleLabel?: 'ServerLimit' | 'Automatic';
+  units: Array<'m' | 'g' | 't'>;
+  defaultUnit: 'm' | 'g' | 't';
+  /** The input's bounds in size notation (`"100g"`). */
+  min: string;
+  max: string;
 }
 
 /** The SSO vendors the login form renders a button for. */
@@ -118,28 +136,45 @@ export const WEBUI_SETTING_DEFINITIONS: ReadonlyArray<WebUISettingDefinition> =
       ...def('maxCountForPreopenPorts', 'domain', 'number', 'session'),
       min: 0,
       max: 100,
+      isInteger: true,
     },
     {
       ...def('maxCPUCoresPerContainer', 'domain', 'number', 'session'),
       min: 1,
       max: 8192,
+      isInteger: true,
     },
     {
       ...def('maxMemoryPerContainer', 'domain', 'number', 'session'),
       min: 1,
       max: 16384,
       unit: 'GiB',
+      size: {
+        storedUnit: 'g',
+        units: ['g', 't'],
+        defaultUnit: 'g',
+        min: '1g',
+        max: '16t',
+      },
     },
     {
       ...def('maxShmPerContainer', 'domain', 'number', 'session'),
       min: 0,
       max: 16384,
       unit: 'GiB',
+      size: {
+        storedUnit: 'g',
+        units: ['m', 'g', 't'],
+        defaultUnit: 'g',
+        min: '1m',
+        max: '16t',
+      },
     },
     {
       ...def('maxCUDADevicesPerContainer', 'domain', 'number', 'session'),
       min: 0,
       max: 64,
+      isInteger: true,
     },
     {
       ...def('maxCUDASharesPerContainer', 'domain', 'number', 'session'),
@@ -150,41 +185,49 @@ export const WEBUI_SETTING_DEFINITIONS: ReadonlyArray<WebUISettingDefinition> =
       ...def('maxROCMDevicesPerContainer', 'domain', 'number', 'session'),
       min: 0,
       max: 64,
+      isInteger: true,
     },
     {
       ...def('maxTPUDevicesPerContainer', 'domain', 'number', 'session'),
       min: 0,
       max: 64,
+      isInteger: true,
     },
     {
       ...def('maxIPUDevicesPerContainer', 'domain', 'number', 'session'),
       min: 0,
       max: 64,
+      isInteger: true,
     },
     {
       ...def('maxATOMDevicesPerContainer', 'domain', 'number', 'session'),
       min: 0,
       max: 64,
+      isInteger: true,
     },
     {
       ...def('maxATOMPLUSDevicesPerContainer', 'domain', 'number', 'session'),
       min: 0,
       max: 64,
+      isInteger: true,
     },
     {
       ...def('maxGaudi2DevicesPerContainer', 'domain', 'number', 'session'),
       min: 0,
       max: 64,
+      isInteger: true,
     },
     {
       ...def('maxWarboyDevicesPerContainer', 'domain', 'number', 'session'),
       min: 0,
       max: 64,
+      isInteger: true,
     },
     {
       ...def('maxRNGDDevicesPerContainer', 'domain', 'number', 'session'),
       min: 0,
       max: 64,
+      isInteger: true,
     },
     {
       ...def(
@@ -195,6 +238,7 @@ export const WEBUI_SETTING_DEFINITIONS: ReadonlyArray<WebUISettingDefinition> =
       ),
       min: 0,
       max: 64,
+      isInteger: true,
     },
     def('showNonInstalledImages', 'domain', 'boolean', 'session'),
 
@@ -222,6 +266,32 @@ export const WEBUI_SETTING_DEFINITIONS: ReadonlyArray<WebUISettingDefinition> =
       min: -1,
       max: 107374182400,
       unit: 'Bytes',
+      isInteger: true,
+      size: {
+        storedUnit: '',
+        unlimitedValue: -1,
+        toggleLabel: 'ServerLimit',
+        units: ['m', 'g', 't'],
+        defaultUnit: 'g',
+        min: '1m',
+        max: '100g',
+      },
+    },
+    {
+      ...def('fileUploadChunkSize', 'domain', 'number', 'storage'),
+      min: 0,
+      max: 1024,
+      unit: 'MiB',
+      isInteger: true,
+      size: {
+        storedUnit: 'm',
+        unlimitedValue: 0,
+        toggleLabel: 'Automatic',
+        units: ['m', 'g'],
+        defaultUnit: 'm',
+        min: '1m',
+        max: '1g',
+      },
     },
 
     // Deployments.
@@ -275,7 +345,7 @@ export const restrictToOptions = (
       )
     : value;
 
-/** The value has the definition's type and, for a number, lies in its range. */
+/** The value has the definition's type and, for a number, lies in its range (whole when `isInteger`). */
 export const isValidWebUISetting = (
   definition: WebUISettingDefinition,
   value: unknown,
@@ -283,7 +353,8 @@ export const isValidWebUISetting = (
   isValidWebUISettingValue(definition.type, value) &&
   (definition.type !== 'number' ||
     ((definition.min === undefined || (value as number) >= definition.min) &&
-      (definition.max === undefined || (value as number) <= definition.max)));
+      (definition.max === undefined || (value as number) <= definition.max) &&
+      (!definition.isInteger || Number.isInteger(value))));
 
 export const isValidWebUISettingValue = (
   type: WebUISettingType,

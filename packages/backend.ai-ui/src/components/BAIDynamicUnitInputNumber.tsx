@@ -71,6 +71,8 @@ export interface BAIDynamicUnitInputNumberProps extends Omit<
   /** Accessible name. Hidden when absent (the field usually sits under one). */
   label?: string;
   isLabelHidden?: boolean;
+  /** Width of the input group, as `NumberInput`'s `width` takes it. */
+  width?: number | string;
   style?: CSSProperties;
   className?: string;
   [key: `data-${string}`]: string | undefined;
@@ -92,6 +94,7 @@ const BAIDynamicUnitInputNumber: React.FC<BAIDynamicUnitInputNumberProps> = ({
   size,
   label,
   isLabelHidden,
+  width,
   style,
   className,
   ...restProps
@@ -249,7 +252,7 @@ const BAIDynamicUnitInputNumber: React.FC<BAIDynamicUnitInputNumberProps> = ({
       isLabelHidden={isLabelHidden ?? label === undefined}
       isDisabled={disabled}
       size={size ? ASTRYX_SIZE[size] : undefined}
-      style={style}
+      style={width === undefined ? style : { ...style, width }}
     >
       {addonPrefix ? <InputGroupText>{addonPrefix}</InputGroupText> : null}
       <BAINumberInput

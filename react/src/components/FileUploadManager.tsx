@@ -2,16 +2,21 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { getDefaultLoginConfig } from '../helper/loginConfig';
+import { resolveUploadChunkSize } from '../helper/uploadChunkSize';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
-import { useEffectiveLoginConfig } from '../hooks/useWebUIConfig';
+import {
+  loginConfigState,
+  useEffectiveLoginConfig,
+} from '../hooks/useWebUIConfig';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import { VStack } from '@lablup/ui-common/Stack';
 import { Text } from '@lablup/ui-common/Text';
 import { BAILink, useConnectedBAIClient } from 'backend.ai-ui';
 import dayjs from 'dayjs';
-import { atom, useAtom, useSetAtom } from 'jotai';
+import { atom, useAtom, useSetAtom, useStore } from 'jotai';
 import { atomFamily } from 'jotai-family';
 import * as _ from 'lodash-es';
 import PQueue from 'p-queue';
@@ -389,11 +394,14 @@ const FileUploadManager: React.FC = () => {
 
 export default FileUploadManager;
 
+const DEFAULT_CHUNK_SIZE_MIB = getDefaultLoginConfig().fileUploadChunkSize;
+
 export const useFileUploadManager = (id?: string, folderName?: string) => {
   'use memo';
 
   const baiClient = useConnectedBAIClient();
   const loginConfig = useEffectiveLoginConfig();
+  const store = useStore();
   const { t } = useTranslation();
   const { upsertNotification } = useSetBAINotification();
 
@@ -470,7 +478,12 @@ export const useFileUploadManager = (id?: string, folderName?: string) => {
                   endpoint: uploadUrl,
                   uploadUrl: uploadUrl,
                   retryDelays: [0, 3000, 5000, 10000, 20000],
-                  chunkSize: getOptimalChunkSize(file.size),
+                  // Read when the queued upload starts, not when it was requested.
+                  chunkSize: resolveUploadChunkSize(
+                    store.get(loginConfigState)?.fileUploadChunkSize ??
+                      DEFAULT_CHUNK_SIZE_MIB,
+                    file.size,
+                  ),
                   storeFingerprintForResuming: false, // Disable localStorage storage
                   metadata: {
                     filename: file.name,
@@ -531,18 +544,4 @@ export const useFileUploadManager = (id?: string, folderName?: string) => {
     setUploadStatus,
     uploadFiles,
   };
-};
-
-const getOptimalChunkSize = (fileSize: number): number => {
-  const MB = 1024 * 1024;
-
-  if (fileSize >= 5 * 1024 * MB) {
-    return 200 * MB;
-  } else if (fileSize >= 1 * 1024 * MB) {
-    return 100 * MB;
-  } else if (fileSize >= 100 * MB) {
-    return 50 * MB;
-  } else {
-    return 15 * MB;
-  }
 };

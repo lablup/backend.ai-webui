@@ -305,7 +305,7 @@ test(
   async ({ app, agent }) => {
     await app.open("/admin/system-settings");
     await agent.act(
-      'Turn on "Show file sizes in the folder explorer" and set "Single upload file size limit"',
+      'Turn on "Show file sizes in the folder explorer" and set "Single upload file size"',
     );
     await agent.act("Open a folder in the folder explorer and read its rows");
   },
