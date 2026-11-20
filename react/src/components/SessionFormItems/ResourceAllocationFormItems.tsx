@@ -1518,6 +1518,20 @@ export const getAllocatablePresetIds = (
     //   return !!preset.allocatable;
     // }
 
+    const shmemMax = resourceLimits.shmem?.max;
+    // Same reading as `getPresetResourceFields`: a byte count, 0 meaning automatic.
+    const presetShmem =
+      Number(preset.shared_memory) > 0
+        ? convertToBinaryUnit(preset.shared_memory || 0, 'g', 2)?.value
+        : undefined;
+    if (
+      shmemMax &&
+      presetShmem &&
+      compareNumberWithUnits(presetShmem, shmemMax) > 0
+    ) {
+      return false;
+    }
+
     // Check if all resource slots in the preset are less than or equal to resourceLimits
     // Be careful with the type of values in resourceLimits, they are string or number
     return _.every(preset.resource_slots, (_value, key) => {
@@ -1533,7 +1547,7 @@ export const getAllocatablePresetIds = (
                 resourceLimits[key]?.max,
               ) <= 0;
       } else if (key === 'shmem') {
-        // no need to check shmem
+        // checked from `shared_memory` above
         return true;
       } else if (key === 'cpu') {
         // if cpu resource limit is not defined, it is UNLIMITED
