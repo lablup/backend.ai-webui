@@ -4,6 +4,7 @@
  */
 import {
   buildDashboardChatPrompt,
+  dashboardExamplesOf,
   looksLikeQuestion,
   parseDashboardChatReply,
   type DashboardChatContext,
@@ -234,5 +235,22 @@ describe('looksLikeQuestion', () => {
     expect(looksLikeQuestion('어떻게 폴더를 공유해')).toBe(true);
     expect(looksLikeQuestion('Hide the Agents card')).toBe(false);
     expect(looksLikeQuestion('실행 중인 세션 표 추가해 줘')).toBe(false);
+  });
+});
+
+describe('dashboardExamplesOf', () => {
+  const t = ((key: string) => key) as unknown as Parameters<
+    typeof dashboardExamplesOf
+  >[1];
+
+  it('gives two examples: a board on pages with boards, else a panel', () => {
+    expect(dashboardExamplesOf(ctx, t)).toEqual([
+      'webuiAssistant.DashboardChatExampleLayout',
+      'webuiAssistant.DashboardChatExampleBoard',
+    ]);
+    expect(dashboardExamplesOf({ ...ctx, canCreateBoard: false }, t)).toEqual([
+      'webuiAssistant.DashboardChatExampleLayout',
+      'webuiAssistant.DashboardChatExamplePanel',
+    ]);
   });
 });

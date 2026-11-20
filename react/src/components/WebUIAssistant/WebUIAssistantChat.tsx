@@ -482,6 +482,7 @@ const WebUIAssistantChat: React.FC<WebUIAssistantChatProps> = ({
   // The same order as the empty state's text: a question first, then changes.
   const examples = [
     t('webuiAssistant.ExampleStartSession'),
+    t('webuiAssistant.ExampleShareFolder'),
     ...(dashboardAgent ? dashboardExamplesOf(dashboardAgent.context, t) : []),
   ];
   const draft = dashboardAgent?.draft ?? [];
