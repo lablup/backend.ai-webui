@@ -24,7 +24,7 @@ import {
   buildDashboardChatPrompt,
   dashboardExamplesOf,
   describeDashboardAction,
-  looksLikeQuestion,
+  answersFromManual,
   parseDashboardChatReply,
 } from '../DashboardPanels/dashboardChat';
 import {
@@ -276,15 +276,24 @@ const WebUIAssistantChat: React.FC<WebUIAssistantChatProps> = ({
       answer,
       agent.context,
     );
-    if (isQuestion) return null;
-    const items = actions.map((action) => ({
+    // Changes after a new board land on that board, so the current one cannot make them no-ops.
+    const newBoardIndex = actions.findIndex((a) => a.type === 'createBoard');
+    const items = actions.map((action, index) => ({
       action,
       text: describeDashboardAction(action, agent.context, t),
-      isNoop: isNoopAction(action, agent.context.cards),
+      isNoop:
+        (newBoardIndex < 0 || index < newBoardIndex) &&
+        isNoopAction(action, agent.context.cards),
     }));
     const effective = items.filter((item) => !item.isNoop);
-    // A small model often answers a question with a change that is already done.
-    if (!effective.length && looksLikeQuestion(request)) return null;
+    if (
+      answersFromManual({
+        request,
+        isQuestion,
+        hasChange: effective.length > 0,
+      })
+    )
+      return null;
     if (effective.length) agent.propose(effective.map((item) => item.action));
     return dashboardResponse(reply, { items });
   };
