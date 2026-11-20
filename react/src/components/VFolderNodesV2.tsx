@@ -339,57 +339,6 @@ const VFolderAutoMountCell: React.FC<{
 // plain-text fallback rendered identically on the loaded-without-usage path,
 // so rows would get stuck in the fallback branch and never pick up the badge
 // after the query resolved.
-type VFolderAutoMountConnection = NonNullable<
-  NonNullable<VFolderNodesV2Fragment$data[number]>['vfolderAutoMounts']
->;
-
-const VFolderAutoMountCell: React.FC<{
-  autoMounts?: VFolderAutoMountConnection | null;
-}> = ({ autoMounts }) => {
-  'use memo';
-  const { t } = useTranslation();
-  const autoMountNodes = autoMounts?.edges.map(({ node }) => node) ?? [];
-  if (_.isEmpty(autoMountNodes)) return <Text color="secondary">-</Text>;
-  const permissionLabel = (permission: string) =>
-    permission === 'READ_ONLY'
-      ? t('data.ReadOnly')
-      : permission === 'READ_WRITE'
-        ? t('data.ReadWrite')
-        : t('autoMount.ReadWriteDelete');
-  return (
-    <BAIIconWithTooltip
-      icon={<FolderSyncIcon size="1em" />}
-      aria-label={t('autoMount.AutoMount')}
-      content={
-        <VStack gap={2}>
-          {_.map(autoMountNodes, (autoMount) => (
-            <VStack
-              key={`${autoMount.scopeType}-${autoMount.mountDestination}`}
-            >
-              {/* Inherit the tooltip's own colour; the default is page text. */}
-              <Text color="inherit" weight="semibold">
-                {autoMount.scopeType === 'USER'
-                  ? t('autoMount.ScopeUser')
-                  : t('autoMount.ScopeProject')}
-              </Text>
-              <Text color="inherit">
-                {t('autoMount.MountDestination')}: {autoMount.mountDestination}
-              </Text>
-              <Text color="inherit">
-                {t('autoMount.Subpath')}: {autoMount.subpath}
-              </Text>
-              <Text color="inherit">
-                {t('autoMount.MountPermission')}:{' '}
-                {permissionLabel(autoMount.mountPermission)}
-              </Text>
-            </VStack>
-          ))}
-        </VStack>
-      }
-    />
-  );
-};
-
 const VFolderHostCell: React.FC<VFolderHostCellProps> = ({ host }) => {
   'use memo';
   const { t } = useTranslation();
@@ -912,13 +861,6 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
               vfolder.accessControl?.ownershipType === 'USER'
                 ? vfolder?.ownership?.user?.basicInfo?.email
                 : vfolder?.ownership?.project?.basicInfo?.name,
-          },
-          {
-            key: 'auto_mount',
-            title: t('autoMount.AutoMount'),
-            render: (__, vfolder) => (
-              <VFolderAutoMountCell autoMounts={vfolder.vfolderAutoMounts} />
-            ),
           },
           {
             key: 'auto_mount',

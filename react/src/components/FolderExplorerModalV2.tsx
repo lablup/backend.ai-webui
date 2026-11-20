@@ -282,7 +282,6 @@ const FolderExplorerBody: React.FC<{
   const [fetchKey, updateFetchKey] = useFetchKey();
   const baiClient = useSuspendedBackendaiClient();
   const loginConfig = useEffectiveLoginConfig();
-  const { personalProject } = useAccessibleProjects();
   const currentDomain = useCurrentDomainValue();
   const { pageProject } = usePageProject();
   const currentUserAccessKey = baiClient?._config?.accessKey;
@@ -357,22 +356,6 @@ const FolderExplorerBody: React.FC<{
   const [activeTab, setActiveTab] = useState<'metadata' | 'auditLog'>(
     'metadata',
   );
-  // A personal project's folder auto-mounts for the user, as FolderCreateModal sets it.
-  const autoMountScope = !vfolderNode
-    ? null
-    : vfolderNode.accessControl?.ownershipType === 'USER'
-      ? vfolderNode.ownership?.userId
-        ? { scopeType: 'USER' as const, scopeId: vfolderNode.ownership.userId }
-        : null
-      : vfolderNode.ownership?.projectId &&
-          vfolderNode.ownership.projectId === personalProject?.id
-        ? { scopeType: 'USER' as const, scopeId: baiClient.user_uuid }
-        : vfolderNode.ownership?.projectId
-          ? {
-              scopeType: 'PROJECT' as const,
-              scopeId: vfolderNode.ownership.projectId,
-            }
-          : null;
   const [auditLogQueryRef, loadAuditLogQuery] =
     useQueryLoader<ScopedAuditLogQueryType>(ScopedAuditLogQuery);
 

@@ -194,9 +194,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
     };
   }, [queryParams, tablePaginationOption]);
 
-  // Auto-mount is a setting on any folder there, shown as a column, not a mode.
-  const mode = queryParams.mode === 'automount' ? 'all' : queryParams.mode;
-  const usageModeFilter = USAGE_MODE_FILTERS[mode];
+  const usageModeFilter = USAGE_MODE_FILTERS[queryParams.mode];
 
   const [fetchKey, updateFetchKey] = useFetchKey();
 
@@ -371,7 +369,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
           <HStack justify="between" wrap="wrap" gap={3}>
             <HStack gap={3} align="start" style={{ flexShrink: 1 }} wrap="wrap">
               <BAISegmentedControl
-                value={mode}
+                value={queryParams.mode}
                 onChange={(value) => {
                   setQuery({ mode: value as typeof queryParams.mode });
                   setTablePaginationOption({ current: 1 });
