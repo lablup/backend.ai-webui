@@ -33,7 +33,7 @@ import {
   SquarePenIcon,
   Trash2,
 } from 'lucide-react';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 export interface DashboardEditSiderProps {
@@ -59,10 +59,6 @@ export interface DashboardEditSiderProps {
   onRequestSettings: (id: string) => void;
   /** The board block above the cards, on the pages that keep several boards. */
   boardSection?: React.ReactNode;
-  /** Above everything else, e.g. the WebUI Assistant button on the member page. */
-  assistantSection?: React.ReactNode;
-  /** Replaces the sider's content while set (the WebUI Assistant's chat). */
-  takeover?: React.ReactNode;
 }
 
 const GROUP_LABEL_KEYS: Record<PanelGroup, string> = {
@@ -94,39 +90,12 @@ const DashboardEditSider: React.FC<DashboardEditSiderProps> = ({
   settingsTargetOf,
   onRequestSettings,
   boardSection,
-  assistantSection,
-  takeover,
 }) => {
   'use memo';
   const { t } = useTranslation();
   const { token } = useTheme();
   const role = useCurrentUserRole();
   const [search, setSearch] = useState('');
-  // Reaches the bottom of the scroll area from wherever the sider sits, so its
-  // border runs to the bottom of the screen however short the board is.
-  const siderRef = useRef<HTMLDivElement>(null);
-  const [siderHeight, setSiderHeight] = useState<number>();
-  useEffect(() => {
-    const sider = siderRef.current;
-    const scroller = sider?.closest<HTMLElement>('.main-layout-content-scroll');
-    if (!sider || !scroller) return;
-    const measure = () => {
-      const bottom =
-        scroller.getBoundingClientRect().bottom -
-        (parseFloat(getComputedStyle(scroller).paddingBottom) || 0);
-      setSiderHeight(
-        Math.max(240, Math.floor(bottom - sider.getBoundingClientRect().top)),
-      );
-    };
-    measure();
-    const observer = new ResizeObserver(measure);
-    observer.observe(scroller);
-    scroller.addEventListener('scroll', measure, { passive: true });
-    return () => {
-      observer.disconnect();
-      scroller.removeEventListener('scroll', measure);
-    };
-  }, []);
 
   const normalizedSearch = search.trim().toLowerCase();
   const labeledEntries = catalogEntries.map((entry) => ({
@@ -209,233 +178,197 @@ const DashboardEditSider: React.FC<DashboardEditSiderProps> = ({
     <BAIFlex
       direction="column"
       align="stretch"
+      gap="md"
+      className="dashboard-edit-sider"
       style={{
+        // Inline, because BAIFlex sets `position: relative` inline.
+        position: 'sticky',
         width: 320,
         flexShrink: 0,
-        // Flush with the screen's right edge: cancels `.main-layout-content-scroll`'s right padding.
-        marginRight: 'calc(-1 * var(--spacing-6))',
+        paddingLeft: token('--spacing-6'),
+        paddingRight: token('--spacing-4'),
+        borderLeft: `1px solid ${token('--color-border-emphasized')}`,
       }}
     >
-      <BAIFlex
-        ref={siderRef}
-        direction="column"
-        align="stretch"
-        gap="md"
-        className="dashboard-edit-sider"
-        style={{
-          // Inline, because BAIFlex sets `position: relative` inline.
-          position: 'sticky',
-          height: siderHeight,
-          paddingLeft: token('--spacing-6'),
-          paddingRight: token('--spacing-4'),
-          paddingBottom: 'var(--dashboard-edit-sider-inset-bottom, 0px)',
-          borderLeft: `1px solid ${token('--color-border-emphasized')}`,
-        }}
+      {boardSection}
+      <BAIText
+        strong
+        style={boardSection ? { paddingTop: token('--spacing-3') } : undefined}
       >
-        {takeover ?? (
-          <>
-            {assistantSection}
-            {boardSection}
+        {t('dashboard.editSider.Cards')}
+      </BAIText>
+      <BAITextInput
+        size="sm"
+        hasClear
+        value={search}
+        onChange={(value) => setSearch(value)}
+        placeholder={t('dashboard.editSider.SearchCards')}
+        aria-label={t('dashboard.editSider.SearchCards')}
+        data-testid="dashboard-card-search"
+      />
+      {selectableKeys.length > 0 ? (
+        <BAICheckboxInput
+          size="sm"
+          value={selectAllValue}
+          onChange={(checked) =>
+            onTogglePanels(
+              selectableKeys.filter((key) => activeKeys.has(key) !== checked),
+              checked,
+            )
+          }
+          data-testid="dashboard-card-select-all"
+        >
+          {t('dashboard.editSider.SelectAll')}
+        </BAICheckboxInput>
+      ) : null}
+      {normalizedSearch && matchingPanels.length === 0 ? null : (
+        <BAIFlex
+          direction="column"
+          align="stretch"
+          gap="xxs"
+          data-testid="dashboard-custom-panels"
+        >
+          <BAIFlex direction="row" justify="between" align="center" gap="sm">
             <BAIText
-              strong
-              style={
-                boardSection ? { paddingTop: token('--spacing-3') } : undefined
+              type="secondary"
+              style={{ fontSize: token('--font-size-sm') }}
+            >
+              {t('dashboard.editSider.Title')}
+            </BAIText>
+            <Button
+              variant="secondary"
+              size="sm"
+              icon={<Plus size="1em" />}
+              label={t('button.Add')}
+              onClick={onRequestAdd}
+            />
+          </BAIFlex>
+          {matchingPanels.length === 0 ? (
+            <BAIText type="secondary">{t('dashboard.editSider.Empty')}</BAIText>
+          ) : (
+            <BAICheckboxList
+              aria-label={t('dashboard.editSider.Title')}
+              density="compact"
+              width="100%"
+              value={matchingPanels
+                .filter(({ panel }) => activeKeys.has(panel.id))
+                .map(({ panel }) => panel.id)}
+              onChange={(values) =>
+                toggleChanged(
+                  matchingPanels.map(({ panel }) => panel.id),
+                  values,
+                )
               }
             >
-              {t('dashboard.editSider.Cards')}
-            </BAIText>
-            <BAITextInput
-              size="sm"
-              hasClear
-              value={search}
-              onChange={(value) => setSearch(value)}
-              placeholder={t('dashboard.editSider.SearchCards')}
-              aria-label={t('dashboard.editSider.SearchCards')}
-              data-testid="dashboard-card-search"
-            />
-            {selectableKeys.length > 0 ? (
-              <BAICheckboxInput
-                size="sm"
-                value={selectAllValue}
-                onChange={(checked) =>
-                  onTogglePanels(
-                    selectableKeys.filter(
-                      (key) => activeKeys.has(key) !== checked,
-                    ),
-                    checked,
-                  )
-                }
-                data-testid="dashboard-card-select-all"
-              >
-                {t('dashboard.editSider.SelectAll')}
-              </BAICheckboxInput>
-            ) : null}
-            {normalizedSearch && matchingPanels.length === 0 ? null : (
-              <BAIFlex
-                direction="column"
-                align="stretch"
-                gap="xxs"
-                data-testid="dashboard-custom-panels"
-              >
-                <BAIFlex
-                  direction="row"
-                  justify="between"
-                  align="center"
-                  gap="sm"
-                >
-                  <BAIText
-                    type="secondary"
-                    style={{ fontSize: token('--font-size-sm') }}
-                  >
-                    {t('dashboard.editSider.Title')}
-                  </BAIText>
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    icon={<Plus size="1em" />}
-                    label={t('button.Add')}
-                    onClick={onRequestAdd}
-                  />
-                </BAIFlex>
-                {matchingPanels.length === 0 ? (
-                  <BAIText type="secondary">
-                    {t('dashboard.editSider.Empty')}
-                  </BAIText>
-                ) : (
-                  <BAICheckboxList
-                    aria-label={t('dashboard.editSider.Title')}
-                    density="compact"
-                    width="100%"
-                    value={matchingPanels
-                      .filter(({ panel }) => activeKeys.has(panel.id))
-                      .map(({ panel }) => panel.id)}
-                    onChange={(values) =>
-                      toggleChanged(
-                        matchingPanels.map(({ panel }) => panel.id),
-                        values,
-                      )
-                    }
-                  >
-                    {matchingPanels.map(({ panel, label }) => (
-                      <BAICheckboxListItem
-                        key={panel.id}
-                        value={panel.id}
-                        label={label}
-                        description={
-                          activeKeys.has(panel.id)
-                            ? settingsSummaryOf(panel.id)
-                            : undefined
-                        }
-                        endContent={
-                          <BAIFlex direction="row" align="center" gap="xxs">
-                            {settingsButton(panel.id, label)}
-                            <IconButton
-                              variant="ghost"
-                              size="sm"
-                              label={t('button.Edit')}
-                              tooltip={t('button.Edit')}
-                              icon={<SquarePenIcon size="1em" />}
-                              onClick={() => onRequestEdit(panel)}
-                            />
-                            <BAIPopconfirm
-                              title={t(
-                                'dialog.ask.DoYouWantToDeleteSomething',
-                                {
-                                  name: label,
-                                },
-                              )}
-                              isDanger
-                              onConfirm={() => onRemove(panel.id)}
-                            >
-                              <IconButton
-                                variant="ghost"
-                                size="sm"
-                                label={t('button.Delete')}
-                                tooltip={t('button.Delete')}
-                                icon={<Trash2 size="1em" />}
-                              />
-                            </BAIPopconfirm>
-                          </BAIFlex>
-                        }
+              {matchingPanels.map(({ panel, label }) => (
+                <BAICheckboxListItem
+                  key={panel.id}
+                  value={panel.id}
+                  label={label}
+                  description={
+                    activeKeys.has(panel.id)
+                      ? settingsSummaryOf(panel.id)
+                      : undefined
+                  }
+                  endContent={
+                    <BAIFlex direction="row" align="center" gap="xxs">
+                      {settingsButton(panel.id, label)}
+                      <IconButton
+                        variant="ghost"
+                        size="sm"
+                        label={t('button.Edit')}
+                        tooltip={t('button.Edit')}
+                        icon={<SquarePenIcon size="1em" />}
+                        onClick={() => onRequestEdit(panel)}
                       />
-                    ))}
-                  </BAICheckboxList>
-                )}
-              </BAIFlex>
-            )}
-            {groups.length === 0 && matchingPanels.length === 0 ? (
-              <BAIText type="secondary">
-                {t('dashboard.editSider.NoMatchingCards')}
-              </BAIText>
-            ) : (
-              groups.map(({ group, entries }) => (
-                <BAIFlex
-                  key={group}
-                  direction="column"
-                  align="stretch"
-                  gap="xxs"
-                >
-                  <BAIText
-                    type="secondary"
-                    style={{ fontSize: token('--font-size-sm') }}
-                  >
-                    {t(GROUP_LABEL_KEYS[group])}
-                  </BAIText>
-                  <BAICheckboxList
-                    aria-label={t(GROUP_LABEL_KEYS[group])}
-                    density="compact"
-                    width="100%"
-                    value={entries
-                      .filter((entry) => activeKeys.has(entry.definition.key))
-                      .map((entry) => entry.definition.key)}
-                    onChange={(values) =>
-                      toggleChanged(
-                        entries.map(({ definition }) => definition.key),
-                        values,
-                      )
-                    }
-                  >
-                    {entries.map((entry) => (
-                      <BAICheckboxListItem
-                        key={entry.definition.key}
-                        value={entry.definition.key}
-                        label={entry.label}
-                        description={
-                          deniedKeys?.has(entry.definition.key)
-                            ? t('dashboard.permission.NoPermissionToView')
-                            : activeKeys.has(entry.definition.key)
-                              ? settingsSummaryOf(entry.definition.key)
-                              : undefined
-                        }
-                        endContent={
-                          activeKeys.has(entry.definition.key)
-                            ? settingsButton(entry.definition.key, entry.label)
-                            : undefined
-                        }
-                      />
-                    ))}
-                  </BAICheckboxList>
-                </BAIFlex>
-              ))
-            )}
-
-            <BAIPopconfirm
-              title={t('dashboard.editSider.ResetLayout')}
-              description={t('dashboard.editSider.ResetLayoutDescription')}
-              isDanger
-              onConfirm={onResetLayout}
+                      <BAIPopconfirm
+                        title={t('dialog.ask.DoYouWantToDeleteSomething', {
+                          name: label,
+                        })}
+                        isDanger
+                        onConfirm={() => onRemove(panel.id)}
+                      >
+                        <IconButton
+                          variant="ghost"
+                          size="sm"
+                          label={t('button.Delete')}
+                          tooltip={t('button.Delete')}
+                          icon={<Trash2 size="1em" />}
+                        />
+                      </BAIPopconfirm>
+                    </BAIFlex>
+                  }
+                />
+              ))}
+            </BAICheckboxList>
+          )}
+        </BAIFlex>
+      )}
+      {groups.length === 0 && matchingPanels.length === 0 ? (
+        <BAIText type="secondary">
+          {t('dashboard.editSider.NoMatchingCards')}
+        </BAIText>
+      ) : (
+        groups.map(({ group, entries }) => (
+          <BAIFlex key={group} direction="column" align="stretch" gap="xxs">
+            <BAIText
+              type="secondary"
+              style={{ fontSize: token('--font-size-sm') }}
             >
-              <Button
-                variant="secondary"
-                size="sm"
-                icon={<RotateCcw size="1em" />}
-                label={t('dashboard.editSider.ResetLayout')}
-                data-testid="dashboard-reset-layout"
-              />
-            </BAIPopconfirm>
-          </>
-        )}
-      </BAIFlex>
+              {t(GROUP_LABEL_KEYS[group])}
+            </BAIText>
+            <BAICheckboxList
+              aria-label={t(GROUP_LABEL_KEYS[group])}
+              density="compact"
+              width="100%"
+              value={entries
+                .filter((entry) => activeKeys.has(entry.definition.key))
+                .map((entry) => entry.definition.key)}
+              onChange={(values) =>
+                toggleChanged(
+                  entries.map(({ definition }) => definition.key),
+                  values,
+                )
+              }
+            >
+              {entries.map((entry) => (
+                <BAICheckboxListItem
+                  key={entry.definition.key}
+                  value={entry.definition.key}
+                  label={entry.label}
+                  description={
+                    deniedKeys?.has(entry.definition.key)
+                      ? t('dashboard.permission.NoPermissionToView')
+                      : activeKeys.has(entry.definition.key)
+                        ? settingsSummaryOf(entry.definition.key)
+                        : undefined
+                  }
+                  endContent={
+                    activeKeys.has(entry.definition.key)
+                      ? settingsButton(entry.definition.key, entry.label)
+                      : undefined
+                  }
+                />
+              ))}
+            </BAICheckboxList>
+          </BAIFlex>
+        ))
+      )}
+
+      <BAIPopconfirm
+        title={t('dashboard.editSider.ResetLayout')}
+        description={t('dashboard.editSider.ResetLayoutDescription')}
+        isDanger
+        onConfirm={onResetLayout}
+      >
+        <Button
+          variant="secondary"
+          size="sm"
+          icon={<RotateCcw size="1em" />}
+          label={t('dashboard.editSider.ResetLayout')}
+          data-testid="dashboard-reset-layout"
+        />
+      </BAIPopconfirm>
     </BAIFlex>
   );
 };

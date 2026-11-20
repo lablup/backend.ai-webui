@@ -4,6 +4,7 @@
  */
 import {
   buildDashboardChatPrompt,
+  looksLikeQuestion,
   parseDashboardChatReply,
   type DashboardChatContext,
 } from './dashboardChat';
@@ -116,11 +117,28 @@ describe('parseDashboardChatReply', () => {
     expect(actions).toEqual([]);
   });
 
-  it('keeps plain text as the reply when there is no JSON', () => {
+  it('treats prose without JSON as a question for the manual', () => {
     expect(parseDashboardChatReply('I cannot do that.', ctx)).toEqual({
       reply: 'I cannot do that.',
       actions: [],
+      isQuestion: true,
     });
+  });
+
+  it('reads the question flag, unless the reply also changes the board', () => {
+    expect(parseDashboardChatReply('{"question":true}', ctx).isQuestion).toBe(
+      true,
+    );
+    expect(
+      parseDashboardChatReply(
+        '{"question":true,"actions":[{"type":"show","id":"pendingSessions"}]}',
+        ctx,
+      ).isQuestion,
+    ).toBe(false);
+    expect(
+      parseDashboardChatReply('{"reply":"Nothing to do.","actions":[]}', ctx)
+        .isQuestion,
+    ).toBe(false);
   });
 });
 
@@ -132,6 +150,7 @@ describe('buildDashboardChatPrompt', () => {
       '- session-1 | Running | session | resourceTable | status == "RUNNING"',
     );
     expect(prompt).toContain('createBoard {title}');
+    expect(prompt).toContain('{"question":true}');
     expect(
       buildDashboardChatPrompt({ ...ctx, canCreateBoard: false }),
     ).not.toContain('createBoard');
@@ -204,5 +223,16 @@ describe('buildDashboardChatPrompt examples', () => {
     expect(prompt).toContain(
       '"conditions":[{"property":"type","operator":"==","value":"interactive"}]',
     );
+  });
+});
+
+describe('looksLikeQuestion', () => {
+  it('recognises questions in English and Korean', () => {
+    expect(looksLikeQuestion('How do I start a session?')).toBe(true);
+    expect(looksLikeQuestion('what is a resource group')).toBe(true);
+    expect(looksLikeQuestion('세션은 어떻게 시작하나요?')).toBe(true);
+    expect(looksLikeQuestion('어떻게 폴더를 공유해')).toBe(true);
+    expect(looksLikeQuestion('Hide the Agents card')).toBe(false);
+    expect(looksLikeQuestion('실행 중인 세션 표 추가해 줘')).toBe(false);
   });
 });
