@@ -12,3 +12,12 @@
   /* Keeps the checklist clear of its own scrollbar. */
   scrollbar-gutter: stable;
 }
+
+/* The WebUI Assistant's button sits over the sider's bottom; keep the chat's
+   composer clear of it, as the notification stack does. The sider reads this
+   variable inline, where nothing outranks it. */
+:root:has(.webui-assistant-fab) {
+  --dashboard-edit-sider-inset-bottom: calc(
+    var(--webui-assistant-fab-size) + var(--spacing-4)
+  );
+}

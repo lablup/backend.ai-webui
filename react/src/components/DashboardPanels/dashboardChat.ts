@@ -12,6 +12,7 @@ import { createPanel } from './defaults';
 import {
   PANEL_FIELDS_HELP,
   describePanelSources,
+  exampleConditionOf,
   inputOfDraft,
   panelDraftOf,
   type PanelSourceSpec,
@@ -75,6 +76,43 @@ const panelLine = (panel: DashboardChatPanel) =>
       : 'no condition',
   ].join(' | ');
 
+/** Worked examples from this board and its sources; a small model follows an example better than a rule. */
+const examplesOf = (ctx: DashboardChatContext): string => {
+  const card = ctx.cards.find((item) => item.shown);
+  const source = ctx.sources.find((item) => exampleConditionOf(item));
+  const condition = source && exampleConditionOf(source);
+  const lines = [
+    card &&
+      `User: Hide the ${card.title} card\n${JSON.stringify({
+        reply: `Hid the ${card.title} card.`,
+        actions: [{ type: 'hide', id: card.id }],
+      })}`,
+    source &&
+      condition &&
+      `User: Add a table of ${source.label.toLowerCase()} whose ${condition.label.toLowerCase()} is ${condition.value}\n${JSON.stringify(
+        {
+          reply: `Added a table of ${source.label.toLowerCase()}.`,
+          actions: [
+            {
+              type: 'addPanel',
+              resourceType: source.key,
+              panelType: 'resourceTable',
+              title: `${condition.value} ${source.label}`,
+              conditions: [
+                {
+                  property: condition.property,
+                  operator: condition.operator,
+                  value: condition.value,
+                },
+              ],
+            },
+          ],
+        },
+      )}`,
+  ].filter(Boolean);
+  return lines.length ? ['Examples:', ...lines].join('\n') : '';
+};
+
 /** The system prompt of the dashboard chat, built from the draft board. */
 export const buildDashboardChatPrompt = (ctx: DashboardChatContext): string =>
   [
@@ -105,6 +143,7 @@ export const buildDashboardChatPrompt = (ctx: DashboardChatContext): string =>
         : []),
       PANEL_FIELDS_HELP,
     ].join('\n'),
+    examplesOf(ctx),
     'Copy ids exactly from the lists. Match what the user names by its title, in any language; "it" or "that" means the panel or card changed last. Check the state first: never show a card that is already on board or hide one that is not. If nothing fits, return "actions":[] and say why in "reply".',
   ].join('\n\n');
 

@@ -223,6 +223,7 @@ const DashboardEditSider: React.FC<DashboardEditSiderProps> = ({
           height: siderHeight,
           paddingLeft: token('--spacing-6'),
           paddingRight: token('--spacing-4'),
+          paddingBottom: 'var(--dashboard-edit-sider-inset-bottom, 0px)',
           borderLeft: `1px solid ${token('--color-border-emphasized')}`,
         }}
       >
