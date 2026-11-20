@@ -12,7 +12,6 @@ import {
 } from './boardModel';
 import { panelConfigFromInput, settingsFromInput } from './defaults';
 import {
-  RANGE_PRESETS,
   isRangePreset,
   mergeSettings,
   type RangePreset,
@@ -27,8 +26,8 @@ import type {
 import * as _ from 'lodash-es';
 
 /** The board grid's column count (BAIBoard). */
-const BOARD_COLUMNS = 4;
-const MAX_ROW_SPAN = 12;
+export const BOARD_COLUMNS = 4;
+export const MAX_ROW_SPAN = 12;
 
 /** One change the WebUI Assistant proposes to the dashboard the user is on. */
 export type DashboardAssistantAction =
@@ -81,7 +80,11 @@ const bigrams = (value: string) =>
   );
 
 /** Sørensen-Dice similarity of two strings' character bigrams, 0 to 1. */
+// A different start is a different card (`gpuUsage` is not `cpuUsage`), however close the rest.
+const SHARED_PREFIX = 3;
+
 const similarity = (a: string, b: string) => {
+  if (a.slice(0, SHARED_PREFIX) !== b.slice(0, SHARED_PREFIX)) return 0;
   const left = bigrams(a);
   const right = bigrams(b);
   if (!left.length || !right.length) return a === b ? 1 : 0;
@@ -213,17 +216,6 @@ export const jsonValuesOfReply = (reply: string): Array<unknown> => {
   return values;
 };
 
-/** The first JSON value a reply carries. */
-export const jsonOfReply = (text: string): unknown =>
-  jsonValuesOfReply(text)[0];
-
-/** The dashboard actions in a model reply, sanitized against `cards`. */
-export const parseDashboardActions = (
-  text: string,
-  cards: ReadonlyArray<AssistantCardRef>,
-): Array<DashboardAssistantAction> =>
-  sanitizeAssistantActions(jsonOfReply(text), cards);
-
 /** The action changes nothing on the board as `cards` describe it. */
 export const isNoopAction = (
   action: DashboardAssistantAction,
@@ -333,7 +325,7 @@ export const applyAssistantActions = (
       case 'show':
         return isUserPanel
           ? setPanelsHidden(current, [action.id], false)
-          : addPanel(current, definition);
+          : addPanel(current, definition, {}, page);
       case 'hide':
         return isUserPanel
           ? setPanelsHidden(current, [action.id], true)
@@ -381,34 +373,3 @@ export const settingsTouchedBy = (
           ? [action.id]
           : [],
       );
-
-const cardLine = (card: DashboardAssistantCard) =>
-  [
-    card.id,
-    card.title,
-    card.shown ? 'on board' : 'not on board',
-    card.shown && card.columnSpan
-      ? `size ${card.columnSpan}x${card.rowSpan}`
-      : undefined,
-    card.range !== undefined ? `range ${card.range}` : undefined,
-  ]
-    .filter(Boolean)
-    .join(' | ');
-
-/** The system prompt that turns one request into dashboard actions. */
-export const buildDashboardEditPrompt = ({
-  page,
-  cards,
-}: {
-  page: PanelPage;
-  cards: ReadonlyArray<DashboardAssistantCard>;
-}): string =>
-  [
-    `You edit a Backend.AI WebUI dashboard (${page} page). Turn the user's request into changes to this dashboard.`,
-    'Cards, on-board ones in board order (id | title | state | size in columns x rows | range):',
-    cards.map((card) => `- ${cardLine(card)}`).join('\n'),
-    'Reply with only a JSON object, no other text:',
-    '{"actions":[{"type":"show","id":"<card id>"}]}',
-    `Action types: show {id}, hide {id}, moveToTop {id}, moveToBottom {id}, resize {id, columnSpan 1-${BOARD_COLUMNS}, rowSpan 1-${MAX_ROW_SPAN}}, setRange {id, range: ${RANGE_PRESETS.join(' | ')}} (only cards with a range), reset {} (the default layout).`,
-    'Copy the id exactly from the list. Match the card the user names by its title, in any language. Check the state first: never show a card that is already on board or hide one that is not. If nothing in the list fits, reply {"actions":[]}.',
-  ].join('\n\n');

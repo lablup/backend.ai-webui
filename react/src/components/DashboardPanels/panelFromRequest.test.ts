@@ -2,11 +2,12 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { jsonValuesOfReply } from './assistantActions';
 import {
   describePanelSources,
   inputOfDraft,
   filterOfConditions,
-  parsePanelReply,
+  panelDraftOf,
   sanitizeConditions,
   type PanelSourceSpec,
 } from './panelFromRequest';
@@ -126,7 +127,12 @@ describe('filterOfConditions', () => {
   });
 });
 
-describe('parsePanelReply', () => {
+const parsePanelReply = (
+  text: string,
+  sources: ReadonlyArray<PanelSourceSpec>,
+) => panelDraftOf(jsonValuesOfReply(text)[0], sources);
+
+describe('reading a panel from a reply', () => {
   it('reads the panel a reply describes', () => {
     expect(
       parsePanelReply(

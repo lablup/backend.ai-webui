@@ -4,6 +4,8 @@
  */
 import { DASHBOARD_AGENT_PROFILE } from '../WebUIAssistant/webUIAssistantProfile';
 import {
+  BOARD_COLUMNS,
+  MAX_ROW_SPAN,
   jsonValuesOfReply,
   sanitizeAssistantActions,
   type DashboardAssistantAction,
@@ -40,8 +42,6 @@ export interface DashboardChatContext {
   canCreateBoard: boolean;
 }
 
-const BOARD_COLUMNS = 4;
-const MAX_ROW_SPAN = 12;
 const LAYOUT_TYPES = [
   'show',
   'hide',
@@ -178,6 +178,10 @@ const resolvePanelId = (
   return panels.find((panel) => panel.id === id);
 };
 
+/** The object names at least one condition; all of them may still be rejected. */
+const hasConditions = (raw: Record<string, unknown>) =>
+  Array.isArray(raw.conditions) && raw.conditions.length > 0;
+
 /** The input an `editPanel` object asks for: the panel's own, with the named fields changed. */
 const editedInputOf = (
   raw: Record<string, unknown>,
@@ -204,7 +208,7 @@ const editedInputOf = (
     ...input,
     // An omitted condition keeps the panel's own, which only fits its own source.
     filter:
-      'conditions' in raw
+      'conditions' in raw && !(hasConditions(raw) && !input.filter)
         ? input.filter
         : sameSource
           ? (base.filter ?? null)
@@ -244,7 +248,8 @@ export const parseDashboardChatReply = (
       }
       if (raw.type === 'addPanel') {
         const draft = panelDraftOf(raw, ctx.sources);
-        return draft
+        // Named conditions that were all rejected would add an unfiltered panel.
+        return draft && !(hasConditions(raw) && !draft.filter)
           ? [{ type: 'addPanel', panel: createPanel(inputOfDraft(draft)) }]
           : [];
       }
@@ -262,8 +267,13 @@ export const parseDashboardChatReply = (
       return [];
     },
   );
+  // A second createBoard would start another empty board and drop what the first collected.
+  const firstNewBoard = actions.find((action) => action.type === 'createBoard');
+  const oneBoard = actions.filter(
+    (action) => action.type !== 'createBoard' || action === firstNewBoard,
+  );
   // A model that writes two objects often repeats an action in the second.
-  const unique = _.uniqBy(actions, (action) =>
+  const unique = _.uniqBy(oneBoard, (action) =>
     action.type === 'addPanel'
       ? JSON.stringify({ ..._.omit(action.panel, 'id') })
       : JSON.stringify(action),

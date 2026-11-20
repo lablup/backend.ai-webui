@@ -288,3 +288,36 @@ describe('buildDashboardChatPrompt board example', () => {
     ).not.toContain('Incidents');
   });
 });
+
+describe('parseDashboardChatReply guards', () => {
+  it('keeps the panel condition when every new one is rejected', () => {
+    const { actions } = parseDashboardChatReply(
+      '{"actions":[{"type":"editPanel","id":"session-1","conditions":[{"property":"gpu","operator":"==","value":"yes"}]}]}',
+      ctx,
+    );
+    expect(actions[0]).toMatchObject({
+      type: 'editPanel',
+      input: { filter: 'status == "RUNNING"' },
+    });
+  });
+
+  it('drops an added panel whose named conditions were all rejected', () => {
+    expect(
+      parseDashboardChatReply(
+        '{"actions":[{"type":"addPanel","resourceType":"session","conditions":[{"property":"gpu","operator":"==","value":"yes"}]}]}',
+        ctx,
+      ).actions,
+    ).toEqual([]);
+  });
+
+  it('keeps only the first createBoard of a reply', () => {
+    const { actions } = parseDashboardChatReply(
+      '{"actions":[{"type":"createBoard","title":"A"},{"type":"show","id":"pendingSessions"},{"type":"createBoard","title":"B"}]}',
+      ctx,
+    );
+    expect(actions.map((action) => action.type)).toEqual([
+      'createBoard',
+      'show',
+    ]);
+  });
+});
