@@ -1,7 +1,7 @@
 // spec: e2e/.agent-output/test-plan-start-dashboard.md
 // scenarios: 10 (Agent Stats Widget), 11 (Recently Created Sessions Widget), and the
 // admin dashboard entry. Split from e2e/project/dashboard/dashboard.spec.ts.
-import { WIDGET_TIMEOUT } from '../../utils/dashboard-util';
+import { WIDGET_TIMEOUT, waitForGraphQL } from '../../utils/dashboard-util';
 import { loginAsAdmin, navigateTo } from '../../utils/test-util';
 import { test, expect, type Page } from '@playwright/test';
 
@@ -147,11 +147,10 @@ test.describe(
     // Session Launches Widget (superadmin only)
     // -----------------------------------------------------------------------
     test.describe('Session Launches Widget', () => {
-      // A new superadmin board shows the card; a board saved before it existed
-      // appends it at the bottom. Show it from the edit sider in case this
-      // account hid it, and hide it again afterwards when it was hidden.
-      let addedCard = false;
-      const setCardShown = async (page: Page, shown: boolean) => {
+      // A superadmin board shows the card by default, so show it if this
+      // account's board hides it and leave it shown: hiding it again would race
+      // with a concurrent copy of this test on the same personal board.
+      const showCard = async (page: Page) => {
         const dashboardBar = page.getByTestId('dashboard-filter-bar');
         await dashboardBar.getByRole('button', { name: 'Edit' }).click();
         const checkbox = page.getByRole('checkbox', {
@@ -159,20 +158,34 @@ test.describe(
           exact: true,
         });
         await expect(checkbox).toBeVisible({ timeout: WIDGET_TIMEOUT });
-        const wasShown = await checkbox.isChecked();
-        if (wasShown !== shown) await checkbox.click();
-        await dashboardBar.getByRole('button', { name: 'Close' }).click();
-        return wasShown;
+        if (!(await checkbox.isChecked())) {
+          // The board write is debounced; wait for the one that adds the card.
+          const saved = waitForGraphQL(
+            page,
+            'useAppConfigMyUpsertMutation',
+            (variables) =>
+              /\\?"key\\?":\\?"sessionLaunches\\?"/.test(
+                JSON.stringify(variables),
+              ),
+            10_000,
+          );
+          try {
+            await checkbox.click();
+            await dashboardBar.getByRole('button', { name: 'Close' }).click();
+          } catch (error) {
+            await saved.catch(() => {});
+            throw error;
+          }
+          await saved;
+        } else {
+          await dashboardBar.getByRole('button', { name: 'Close' }).click();
+        }
       };
 
       test.beforeEach(async ({ page, request }) => {
         await loginAsAdmin(page, request);
         await navigateTo(page, 'admin/dashboard');
-        addedCard = !(await setCardShown(page, true));
-      });
-
-      test.afterEach(async ({ page }) => {
-        if (addedCard) await setCardShown(page, false);
+        await showCard(page);
       });
 
       test('Admin can view the Session Launches card on the superadmin dashboard', async ({
