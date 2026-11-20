@@ -5,6 +5,8 @@
 import '../../../../__test__/matchMedia.mock.js';
 import type { DeploymentAddRevisionModalTestQuery } from '../../../__generated__/DeploymentAddRevisionModalTestQuery.graphql';
 import DeploymentAddRevisionModal, {
+  definitionPathToSubmit,
+  prefillDefinitionPath,
   toImageFullName,
 } from './DeploymentAddRevisionModal';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -357,6 +359,47 @@ describe('toImageFullName', () => {
   it('resolves to undefined when the preset carries no image', () => {
     expect(toImageFullName(null)).toBeUndefined();
     expect(toImageFullName(undefined)).toBeUndefined();
+  });
+});
+
+describe('model definition path with allowCustomModelDefinitionPath', () => {
+  it('sends no path for a copied revision with a custom path while disallowed', () => {
+    const prefilled = prefillDefinitionPath('configs/llm.yaml', true);
+    expect(prefilled).toBeUndefined();
+    expect(
+      definitionPathToSubmit(prefilled, {
+        readsVfolderConfigFiles: true,
+        isHidden: true,
+      }),
+    ).toBeNull();
+    // Even a value left in the form store is not sent.
+    expect(
+      definitionPathToSubmit('configs/llm.yaml', {
+        readsVfolderConfigFiles: true,
+        isHidden: true,
+      }),
+    ).toBeNull();
+  });
+
+  it('keeps and sends a copied path when a custom path is allowed', () => {
+    const prefilled = prefillDefinitionPath('configs/llm.yaml', false);
+    expect(prefilled).toBe('configs/llm.yaml');
+    expect(
+      definitionPathToSubmit(` ${prefilled} `, {
+        readsVfolderConfigFiles: true,
+        isHidden: false,
+      }),
+    ).toBe('configs/llm.yaml');
+    expect(prefillDefinitionPath('', false)).toBeUndefined();
+  });
+
+  it('sends no path for a variant that does not read the folder config files', () => {
+    expect(
+      definitionPathToSubmit('configs/llm.yaml', {
+        readsVfolderConfigFiles: false,
+        isHidden: false,
+      }),
+    ).toBeNull();
   });
 });
 

@@ -4473,6 +4473,7 @@
     "AllowAppDownloadPanel": "Tunjukkan muat turun aplikasi desktop",
     "AllowCLIDownloadPanel": "Tunjukkan muat turun CLI",
     "AllowChangeSigninMode": "Log masuk dengan kunci API",
+    "AllowCustomModelDefinitionPath": "Laluan fail definisi model tersuai",
     "AllowCustomResourceAllocation": "Benarkan peruntukan sumber tersuai",
     "AllowManualImageNameForSession": "Benarkan imej tersuai",
     "AllowNonAuthTCP": "Tunjukkan aplikasi TCP",
@@ -4490,6 +4491,7 @@
     "DescAllowAppDownloadPanel": "Tunjukkan bahagian aplikasi desktop dalam dialog Muat Turun.",
     "DescAllowCLIDownloadPanel": "Tunjukkan bahagian CLI dalam dialog Muat Turun.",
     "DescAllowChangeSigninMode": "Pengguna boleh log masuk dengan kunci API.",
+    "DescAllowCustomModelDefinitionPath": "Membenarkan pengguna memasukkan laluan fail definisi model secara terus.",
     "DescAllowCustomResourceAllocation": "Benarkan peruntukan sumber tersuai pada halaman mula sesi. Apabila dimatikan, hanya tetapan berasaskan praset sumber ditawarkan.",
     "DescAllowManualImageNameForSession": "Benarkan nama imej ditaip terus semasa mencipta sesi.",
     "DescAllowNonAuthTCP": "Senaraikan aplikasi berasaskan TCP seperti SSH dan SFTP dalam dialog aplikasi sesi.",
@@ -4600,6 +4602,7 @@
     "group": {
       "Account": "Akaun",
       "AppLauncher": "Pelancar aplikasi",
+      "Deployments": "Penggunaan",
       "Diagnostics": "Diagnostik",
       "Downloads": "Muat Turun",
       "Environments": "Imej",

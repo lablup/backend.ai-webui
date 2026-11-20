@@ -4473,6 +4473,7 @@
     "AllowAppDownloadPanel": "Masaüstü uygulaması indirmelerini göster",
     "AllowCLIDownloadPanel": "CLI indirmelerini göster",
     "AllowChangeSigninMode": "API anahtarıyla oturum açma",
+    "AllowCustomModelDefinitionPath": "Özel model tanım dosyası yolu",
     "AllowCustomResourceAllocation": "Özel kaynak ayırmaya izin ver",
     "AllowManualImageNameForSession": "Özel imaja izin ver",
     "AllowNonAuthTCP": "TCP uygulamalarını göster",
@@ -4490,6 +4491,7 @@
     "DescAllowAppDownloadPanel": "İndirmeler iletişim kutusunda masaüstü uygulaması bölümünü gösterir.",
     "DescAllowCLIDownloadPanel": "İndirmeler iletişim kutusunda CLI bölümünü gösterir.",
     "DescAllowChangeSigninMode": "API anahtarıyla oturum açılabilir.",
+    "DescAllowCustomModelDefinitionPath": "Kullanıcıların model tanım dosyası yolunu doğrudan girmesine izin verir.",
     "DescAllowCustomResourceAllocation": "Oturum başlatma sayfasında özel kaynak ayırmaya izin verir. Kapalıyken yalnızca kaynak ön ayarlarına dayalı ayarlar sunulur.",
     "DescAllowManualImageNameForSession": "Oturum oluştururken imaj adının doğrudan yazılmasına izin verir.",
     "DescAllowNonAuthTCP": "Oturum uygulama iletişim kutusunda SSH ve SFTP gibi TCP tabanlı uygulamaları listeler.",
@@ -4600,6 +4602,7 @@
     "group": {
       "Account": "Hesap",
       "AppLauncher": "Uygulama başlatıcı",
+      "Deployments": "Dağıtımlar",
       "Diagnostics": "Tanılama",
       "Downloads": "İndirmeler",
       "Environments": "İmajlar",

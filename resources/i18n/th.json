@@ -4459,6 +4459,7 @@
     "AllowAppDownloadPanel": "แสดงการดาวน์โหลดแอปเดสก์ท็อป",
     "AllowCLIDownloadPanel": "แสดงการดาวน์โหลด CLI",
     "AllowChangeSigninMode": "เข้าสู่ระบบด้วยคีย์ API",
+    "AllowCustomModelDefinitionPath": "เส้นทางไฟล์นิยามโมเดลแบบกำหนดเอง",
     "AllowCustomResourceAllocation": "อนุญาตการจัดสรรทรัพยากรแบบกำหนดเอง",
     "AllowManualImageNameForSession": "อนุญาตอิมเมจแบบกำหนดเอง",
     "AllowNonAuthTCP": "แสดงแอป TCP",
@@ -4476,6 +4477,7 @@
     "DescAllowAppDownloadPanel": "แสดงส่วนแอปเดสก์ท็อปในกล่องโต้ตอบดาวน์โหลด",
     "DescAllowCLIDownloadPanel": "แสดงส่วน CLI ในกล่องโต้ตอบดาวน์โหลด",
     "DescAllowChangeSigninMode": "สามารถเข้าสู่ระบบด้วยคีย์ API ได้",
+    "DescAllowCustomModelDefinitionPath": "อนุญาตให้ผู้ใช้ป้อนเส้นทางไฟล์นิยามโมเดลได้โดยตรง",
     "DescAllowCustomResourceAllocation": "อนุญาตการจัดสรรทรัพยากรแบบกำหนดเองในหน้าเริ่มเซสชัน เมื่อปิด จะมีให้เฉพาะการตั้งค่าตามพรีเซ็ตทรัพยากรเท่านั้น",
     "DescAllowManualImageNameForSession": "อนุญาตให้พิมพ์ชื่ออิมเมจโดยตรงเมื่อสร้างเซสชัน",
     "DescAllowNonAuthTCP": "แสดงแอปที่ใช้ TCP เช่น SSH และ SFTP ในกล่องโต้ตอบแอปของเซสชัน",
@@ -4586,6 +4588,7 @@
     "group": {
       "Account": "บัญชี",
       "AppLauncher": "ตัวเปิดแอป",
+      "Deployments": "การปรับใช้",
       "Diagnostics": "การวินิจฉัย",
       "Downloads": "ดาวน์โหลด",
       "Environments": "อิมเมจ",

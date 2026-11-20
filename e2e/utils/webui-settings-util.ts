@@ -49,6 +49,7 @@ export type WebUISettingGroup =
   | 'appLauncher'
   | 'environments'
   | 'storage'
+  | 'deployments'
   | 'menu'
   | 'downloads'
   | 'account'
@@ -164,6 +165,15 @@ export const WEBUI_SETTING_ROWS: ReadonlyArray<WebUISettingRow> = [
     resources('maxFileUploadSize'),
   ),
 
+  // Deployments.
+  row(
+    'allowCustomModelDefinitionPath',
+    'domain',
+    'boolean',
+    'deployments',
+    null,
+  ),
+
   // Sidebar.
   row('menuBlocklist', 'domain', 'stringList', 'menu', ['menu', 'blocklist']),
   row('menuInactivelist', 'domain', 'stringList', 'menu', [
@@ -199,6 +209,7 @@ export const WEBUI_SETTING_GROUPS: ReadonlyArray<WebUISettingGroup> = [
   'appLauncher',
   'environments',
   'storage',
+  'deployments',
   'menu',
   'downloads',
   'account',

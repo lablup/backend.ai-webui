@@ -4475,6 +4475,7 @@
     "AllowAppDownloadPanel": "Десктоп аппын татан авалтыг харуулах",
     "AllowCLIDownloadPanel": "CLI татан авалтыг харуулах",
     "AllowChangeSigninMode": "API түлхүүрээр нэвтрэх",
+    "AllowCustomModelDefinitionPath": "Загварын тодорхойлолтын файлын захиалгат зам",
     "AllowCustomResourceAllocation": "Нөөцийг өөрөө хуваарилахыг зөвшөөрөх",
     "AllowManualImageNameForSession": "Өөрийн имаж зөвшөөрөх",
     "AllowNonAuthTCP": "TCP аппуудыг харуулах",
@@ -4492,6 +4493,7 @@
     "DescAllowAppDownloadPanel": "Татан авалтын цонхонд десктоп аппын хэсгийг харуулна.",
     "DescAllowCLIDownloadPanel": "Татан авалтын цонхонд CLI хэсгийг харуулна.",
     "DescAllowChangeSigninMode": "API түлхүүрээр нэвтрэх боломжтой.",
+    "DescAllowCustomModelDefinitionPath": "Хэрэглэгчдэд загварын тодорхойлолтын файлын замыг шууд оруулахыг зөвшөөрнө.",
     "DescAllowCustomResourceAllocation": "Session эхлүүлэх хуудсан дээр нөөцийг өөрөө хуваарилахыг зөвшөөрнө. Унтраасан үед зөвхөн нөөцийн урьдчилсан тохиргоонд суурилсан тохиргоо санал болгогдоно.",
     "DescAllowManualImageNameForSession": "Session үүсгэхдээ имажийн нэрийг шууд бичих боломжийг олгоно.",
     "DescAllowNonAuthTCP": "Session-ийн аппын харилцах цонхонд SSH, SFTP зэрэг TCP-д суурилсан аппуудыг жагсаана.",
@@ -4602,6 +4604,7 @@
     "group": {
       "Account": "Бүртгэл",
       "AppLauncher": "Апп эхлүүлэгч",
+      "Deployments": "Байршуулалтууд",
       "Diagnostics": "Оношилгоо",
       "Downloads": "Татан авалт",
       "Environments": "Имажууд",

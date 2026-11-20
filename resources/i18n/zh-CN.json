@@ -4475,6 +4475,7 @@
     "AllowAppDownloadPanel": "显示桌面应用下载",
     "AllowCLIDownloadPanel": "显示 CLI 下载",
     "AllowChangeSigninMode": "API 密钥登录",
+    "AllowCustomModelDefinitionPath": "自定义模型定义文件路径",
     "AllowCustomResourceAllocation": "允许自定义资源分配",
     "AllowManualImageNameForSession": "允许自定义镜像",
     "AllowNonAuthTCP": "显示 TCP 应用",
@@ -4492,6 +4493,7 @@
     "DescAllowAppDownloadPanel": "在下载对话框中显示桌面应用部分。",
     "DescAllowCLIDownloadPanel": "在下载对话框中显示 CLI 部分。",
     "DescAllowChangeSigninMode": "可以使用 API 密钥登录。",
+    "DescAllowCustomModelDefinitionPath": "允许用户直接输入模型定义文件路径。",
     "DescAllowCustomResourceAllocation": "允许在会话启动页面上自定义资源分配。关闭时仅提供基于资源预设的设置。",
     "DescAllowManualImageNameForSession": "允许在创建会话时直接输入镜像名称。",
     "DescAllowNonAuthTCP": "在会话应用对话框中列出 SSH、SFTP 等基于 TCP 的应用。",
@@ -4602,6 +4604,7 @@
     "group": {
       "Account": "账户",
       "AppLauncher": "应用启动器",
+      "Deployments": "部署",
       "Diagnostics": "诊断",
       "Downloads": "下载",
       "Environments": "镜像",

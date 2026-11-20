@@ -4475,6 +4475,7 @@
     "AllowAppDownloadPanel": "デスクトップアプリのダウンロードを表示",
     "AllowCLIDownloadPanel": "CLI のダウンロードを表示",
     "AllowChangeSigninMode": "API キーでのログイン",
+    "AllowCustomModelDefinitionPath": "カスタムモデル定義ファイルパス",
     "AllowCustomResourceAllocation": "カスタムリソース割り当てを許可",
     "AllowManualImageNameForSession": "カスタムイメージを許可",
     "AllowNonAuthTCP": "TCP アプリを表示",
@@ -4492,6 +4493,7 @@
     "DescAllowAppDownloadPanel": "ダウンロードダイアログにデスクトップアプリのセクションを表示します。",
     "DescAllowCLIDownloadPanel": "ダウンロードダイアログに CLI のセクションを表示します。",
     "DescAllowChangeSigninMode": "API キーでログインできます。",
+    "DescAllowCustomModelDefinitionPath": "ユーザーがモデル定義ファイルのパスを直接入力できるようにします。",
     "DescAllowCustomResourceAllocation": "セッション開始ページでカスタムリソース割り当てを許可します。オフの場合はリソースプリセットに基づく設定のみ提供されます。",
     "DescAllowManualImageNameForSession": "セッション作成時にイメージ名を直接入力できるようにします。",
     "DescAllowNonAuthTCP": "セッションアプリダイアログに SSH や SFTP などの TCP ベースのアプリを表示します。",
@@ -4602,6 +4604,7 @@
     "group": {
       "Account": "アカウント",
       "AppLauncher": "アプリランチャー",
+      "Deployments": "デプロイ",
       "Diagnostics": "診断",
       "Downloads": "ダウンロード",
       "Environments": "イメージ",

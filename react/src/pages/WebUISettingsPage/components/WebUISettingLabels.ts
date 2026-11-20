@@ -171,6 +171,10 @@ export const useWebUISettingLabels = (): {
         title: t('webuiSettings.MaxFileUploadSize'),
         description: t('webuiSettings.DescMaxFileUploadSize'),
       },
+      allowCustomModelDefinitionPath: {
+        title: t('webuiSettings.AllowCustomModelDefinitionPath'),
+        description: t('webuiSettings.DescAllowCustomModelDefinitionPath'),
+      },
       storageWarningThreshold: {
         title: t('webuiSettings.StorageWarningThreshold'),
         description: t('webuiSettings.DescStorageWarningThreshold'),
@@ -238,6 +242,7 @@ export const useWebUISettingLabels = (): {
       appLauncher: t('webuiSettings.group.AppLauncher'),
       environments: t('webuiSettings.group.Environments'),
       storage: t('webuiSettings.group.Storage'),
+      deployments: t('webuiSettings.group.Deployments'),
       menu: t('webuiSettings.group.Menu'),
       downloads: t('webuiSettings.group.Downloads'),
       account: t('webuiSettings.group.Account'),

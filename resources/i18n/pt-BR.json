@@ -4473,6 +4473,7 @@
     "AllowAppDownloadPanel": "Mostrar downloads do aplicativo desktop",
     "AllowCLIDownloadPanel": "Mostrar downloads da CLI",
     "AllowChangeSigninMode": "Login com chave de API",
+    "AllowCustomModelDefinitionPath": "Caminho personalizado do arquivo de definição do modelo",
     "AllowCustomResourceAllocation": "Permitir alocação personalizada de recursos",
     "AllowManualImageNameForSession": "Permitir imagem personalizada",
     "AllowNonAuthTCP": "Mostrar aplicativos TCP",
@@ -4490,6 +4491,7 @@
     "DescAllowAppDownloadPanel": "Mostra a seção do aplicativo desktop na caixa de diálogo Downloads.",
     "DescAllowCLIDownloadPanel": "Mostra a seção da CLI na caixa de diálogo Downloads.",
     "DescAllowChangeSigninMode": "É possível entrar com uma chave de API.",
+    "DescAllowCustomModelDefinitionPath": "Permite que os usuários insiram diretamente o caminho do arquivo de definição do modelo.",
     "DescAllowCustomResourceAllocation": "Permite a alocação personalizada de recursos na página de início de sessões. Se desativado, apenas configurações baseadas em predefinições de recursos são oferecidas.",
     "DescAllowManualImageNameForSession": "Permite digitar o nome da imagem diretamente ao criar uma sessão.",
     "DescAllowNonAuthTCP": "Lista aplicativos baseados em TCP, como SSH e SFTP, na caixa de diálogo de aplicativos da sessão.",
@@ -4600,6 +4602,7 @@
     "group": {
       "Account": "Conta",
       "AppLauncher": "Lançador de aplicativos",
+      "Deployments": "Implantações",
       "Diagnostics": "Diagnóstico",
       "Downloads": "Downloads",
       "Environments": "Imagens",

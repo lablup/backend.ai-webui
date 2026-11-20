@@ -4476,6 +4476,7 @@
     "AllowAppDownloadPanel": "Pokazuj pobieranie aplikacji desktopowej",
     "AllowCLIDownloadPanel": "Pokazuj pobieranie CLI",
     "AllowChangeSigninMode": "Logowanie kluczem API",
+    "AllowCustomModelDefinitionPath": "Niestandardowa ścieżka pliku definicji modelu",
     "AllowCustomResourceAllocation": "Zezwalaj na własny przydział zasobów",
     "AllowManualImageNameForSession": "Zezwalaj na własny obraz",
     "AllowNonAuthTCP": "Pokazuj aplikacje TCP",
@@ -4493,6 +4494,7 @@
     "DescAllowAppDownloadPanel": "Pokazuje sekcję aplikacji desktopowej w oknie pobierania.",
     "DescAllowCLIDownloadPanel": "Pokazuje sekcję CLI w oknie pobierania.",
     "DescAllowChangeSigninMode": "Można zalogować się kluczem API.",
+    "DescAllowCustomModelDefinitionPath": "Pozwala użytkownikom bezpośrednio wpisać ścieżkę pliku definicji modelu.",
     "DescAllowCustomResourceAllocation": "Pozwala na własny przydział zasobów na stronie uruchamiania sesji. Gdy wyłączone, oferowane są tylko ustawienia oparte na presetach zasobów.",
     "DescAllowManualImageNameForSession": "Pozwala wpisać nazwę obrazu bezpośrednio podczas tworzenia sesji.",
     "DescAllowNonAuthTCP": "Wyświetla w oknie aplikacji sesji aplikacje oparte na TCP, takie jak SSH i SFTP.",
@@ -4603,6 +4605,7 @@
     "group": {
       "Account": "Konto",
       "AppLauncher": "Program uruchamiający aplikacje",
+      "Deployments": "Wdrożenia",
       "Diagnostics": "Diagnostyka",
       "Downloads": "Pobieranie",
       "Environments": "Obrazy",

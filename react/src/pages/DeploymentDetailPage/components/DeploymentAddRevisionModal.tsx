@@ -238,6 +238,21 @@ export const toImageFullName = (
       : identity.canonicalName
     : undefined;
 
+/** The path a copied revision brings into the form; none while the setting hides it. */
+export const prefillDefinitionPath = (
+  path: string | null | undefined,
+  isHidden: boolean,
+): string | undefined => (isHidden ? undefined : path || undefined);
+
+/** The path a revision sends; `null` lets the server use model-definition.yaml. */
+export const definitionPathToSubmit = (
+  value: string | undefined,
+  options: { readsVfolderConfigFiles: boolean; isHidden: boolean },
+): string | null =>
+  options.readsVfolderConfigFiles && !options.isHidden
+    ? value?.trim() || null
+    : null;
+
 // Suspense-wrapped side query that resolves the selected runtime variant's DB
 // `defaultModelDefinition` baseline (FR-3205/FR-3342) and pushes the parsed
 // result up via `onLoaded`. Runs only when the variant reads the vfolder
@@ -454,7 +469,9 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
   const { token } = useTheme();
   const { message } = App.useApp();
   const relayEnvironment = useRelayEnvironment();
-  const { isDirectorySizeVisible } = useEffectiveLoginConfig();
+  const { isDirectorySizeVisible, allowCustomModelDefinitionPath } =
+    useEffectiveLoginConfig();
+  const hideModelDefinitionPath = !allowCustomModelDefinitionPath;
 
   // Deployment-scoped data (resourceGroupName for resource defaults,
   // currentRevision for the optional "Load current" affordance). Fragment-
@@ -1165,7 +1182,10 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
       modelMountDestination:
         rev.modelMountConfig?.mountDestination ?? undefined,
       modelSubpath: rev.modelMountConfig?.subpath ?? undefined,
-      definitionPath: rev.modelMountConfig?.definitionPath || undefined,
+      definitionPath: prefillDefinitionPath(
+        rev.modelMountConfig?.definitionPath,
+        hideModelDefinitionPath,
+      ),
       // `ImageEnvironmentSelectFormItems` matches the form's
       // `environments.version` against its image catalog by full name
       // (`registry/namespace:tag@architecture`); the architecture suffix is
@@ -1711,9 +1731,10 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
             // Only variants that read the vfolder config files expose this
             // field; anything left in the form store for the others is not
             // theirs to send.
-            definitionPath: readsVfolderConfigFiles
-              ? values.definitionPath?.trim() || null
-              : null,
+            definitionPath: definitionPathToSubmit(values.definitionPath, {
+              readsVfolderConfigFiles,
+              isHidden: hideModelDefinitionPath,
+            }),
             // `subpath` mounts a subfolder inside the model vfolder.
             subpath: modelMountSubpath,
           },
@@ -2642,8 +2663,9 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
             <Suspense fallback={<BAISkeleton />}>
               {/* The path points at the model-definition.yaml the server
                   will read, so the field means nothing for a variant that
-                  does not read the vfolder config files. */}
-              {readsVfolderConfigFiles && (
+                  does not read the vfolder config files. With
+                  `allowCustomModelDefinitionPath` off, the server default applies. */}
+              {readsVfolderConfigFiles && !hideModelDefinitionPath && (
                 <BAIFormItem
                   name="definitionPath"
                   label={t('deployment.ModelDefinitionPath')}

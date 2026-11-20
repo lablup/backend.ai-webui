@@ -4473,6 +4473,7 @@
     "AllowAppDownloadPanel": "Εμφάνιση λήψεων εφαρμογής επιφάνειας εργασίας",
     "AllowCLIDownloadPanel": "Εμφάνιση λήψεων CLI",
     "AllowChangeSigninMode": "Σύνδεση με κλειδί API",
+    "AllowCustomModelDefinitionPath": "Προσαρμοσμένη διαδρομή αρχείου ορισμού μοντέλου",
     "AllowCustomResourceAllocation": "Να επιτρέπεται προσαρμοσμένη κατανομή πόρων",
     "AllowManualImageNameForSession": "Να επιτρέπεται προσαρμοσμένη εικόνα",
     "AllowNonAuthTCP": "Εμφάνιση εφαρμογών TCP",
@@ -4490,6 +4491,7 @@
     "DescAllowAppDownloadPanel": "Εμφανίζει την ενότητα της εφαρμογής επιφάνειας εργασίας στο παράθυρο Λήψεις.",
     "DescAllowCLIDownloadPanel": "Εμφανίζει την ενότητα CLI στο παράθυρο Λήψεις.",
     "DescAllowChangeSigninMode": "Η σύνδεση είναι δυνατή με κλειδί API.",
+    "DescAllowCustomModelDefinitionPath": "Επιτρέπει στους χρήστες να εισάγουν απευθείας τη διαδρομή του αρχείου ορισμού μοντέλου.",
     "DescAllowCustomResourceAllocation": "Επιτρέπει την προσαρμοσμένη κατανομή πόρων στη σελίδα εκκίνησης συνεδρίας. Όταν είναι απενεργοποιημένο, προσφέρονται μόνο ρυθμίσεις βάσει προρρυθμίσεων πόρων.",
     "DescAllowManualImageNameForSession": "Επιτρέπει την απευθείας πληκτρολόγηση του ονόματος εικόνας κατά τη δημιουργία συνεδρίας.",
     "DescAllowNonAuthTCP": "Εμφανίζει στο παράθυρο εφαρμογών της συνεδρίας εφαρμογές βασισμένες σε TCP, όπως SSH και SFTP.",
@@ -4600,6 +4602,7 @@
     "group": {
       "Account": "Λογαριασμός",
       "AppLauncher": "Εκκινητής εφαρμογών",
+      "Deployments": "Αναπτύξεις",
       "Diagnostics": "Διάγνωση",
       "Downloads": "Λήψεις",
       "Environments": "Εικόνες",

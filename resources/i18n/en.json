@@ -4458,6 +4458,7 @@
     "AllowAppDownloadPanel": "Show desktop app downloads",
     "AllowCLIDownloadPanel": "Show CLI downloads",
     "AllowChangeSigninMode": "API key sign-in",
+    "AllowCustomModelDefinitionPath": "Custom model definition file path",
     "AllowCustomResourceAllocation": "Custom resource allocation",
     "AllowManualImageNameForSession": "Custom image",
     "AllowNonAuthTCP": "Show TCP apps",
@@ -4475,6 +4476,7 @@
     "DescAllowAppDownloadPanel": "Show the desktop app section in the Downloads dialog.",
     "DescAllowCLIDownloadPanel": "Show the CLI section in the Downloads dialog.",
     "DescAllowChangeSigninMode": "Users can sign in with an API key.",
+    "DescAllowCustomModelDefinitionPath": "Allow users to enter the model definition file path directly.",
     "DescAllowCustomResourceAllocation": "Resources can be set by hand on the session start page.",
     "DescAllowManualImageNameForSession": "The image name can be typed in when creating a session.",
     "DescAllowNonAuthTCP": "List TCP-based apps such as SSH and SFTP in the session app dialog.",
@@ -4585,6 +4587,7 @@
     "group": {
       "Account": "Account",
       "AppLauncher": "App launcher",
+      "Deployments": "Deployments",
       "Diagnostics": "Diagnostics",
       "Downloads": "Downloads",
       "Environments": "Images",

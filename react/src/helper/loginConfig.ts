@@ -108,6 +108,7 @@ export interface LoginConfigState {
   fasttrackEndpoint: string;
   /** Page the help button opens: `null` = the hosted manual page, `''` hides help. */
   manualUrl: string | null;
+  allowCustomModelDefinitionPath: boolean;
   pluginPages: string[];
   loginPlugin: string;
   domain_name: string;
@@ -177,6 +178,7 @@ export function getDefaultLoginConfig(): LoginConfigState {
     inactiveList: [],
     fasttrackEndpoint: '',
     manualUrl: null,
+    allowCustomModelDefinitionPath: true,
     pluginPages: [],
     loginPlugin: '',
     domain_name: '',

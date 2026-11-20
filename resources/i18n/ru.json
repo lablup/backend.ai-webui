@@ -4473,6 +4473,7 @@
     "AllowAppDownloadPanel": "Показывать загрузки настольного приложения",
     "AllowCLIDownloadPanel": "Показывать загрузки CLI",
     "AllowChangeSigninMode": "Вход по ключу API",
+    "AllowCustomModelDefinitionPath": "Пользовательский путь к файлу определения модели",
     "AllowCustomResourceAllocation": "Разрешить пользовательское выделение ресурсов",
     "AllowManualImageNameForSession": "Разрешить пользовательский образ",
     "AllowNonAuthTCP": "Показывать TCP-приложения",
@@ -4490,6 +4491,7 @@
     "DescAllowAppDownloadPanel": "Показывает раздел настольного приложения в диалоге загрузок.",
     "DescAllowCLIDownloadPanel": "Показывает раздел CLI в диалоге загрузок.",
     "DescAllowChangeSigninMode": "Можно войти с помощью ключа API.",
+    "DescAllowCustomModelDefinitionPath": "Позволяет пользователям напрямую вводить путь к файлу определения модели.",
     "DescAllowCustomResourceAllocation": "Разрешает пользовательское выделение ресурсов на странице запуска сессии. Если выключено, предлагаются только настройки на основе пресетов ресурсов.",
     "DescAllowManualImageNameForSession": "Разрешает вводить имя образа вручную при создании сессии.",
     "DescAllowNonAuthTCP": "Показывает в диалоге приложений сессии приложения на основе TCP, такие как SSH и SFTP.",
@@ -4600,6 +4602,7 @@
     "group": {
       "Account": "Учётная запись",
       "AppLauncher": "Средство запуска приложений",
+      "Deployments": "Развёртывания",
       "Diagnostics": "Диагностика",
       "Downloads": "Загрузки",
       "Environments": "Образы",
