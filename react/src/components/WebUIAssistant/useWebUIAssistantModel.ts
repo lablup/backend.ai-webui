@@ -18,17 +18,19 @@ import {
   extractReasoningMiddleware,
   generateText,
   wrapLanguageModel,
+  type ModelMessage,
 } from 'ai';
 
 export interface WebUIAssistantModel {
   /** The assistant is on, connected, and its endpoint lists a model. */
   isAvailable: boolean;
   /** One non-streaming completion; rejects with the SDK's error. */
-  complete: (request: {
-    system: string;
-    prompt: string;
-    abortSignal?: AbortSignal;
-  }) => Promise<string>;
+  complete: (
+    request: {
+      system: string;
+      abortSignal?: AbortSignal;
+    } & ({ prompt: string } | { messages: Array<ModelMessage> }),
+  ) => Promise<string>;
 }
 
 /** The WebUI Assistant's connection, for features that ask its model one question. */
@@ -63,7 +65,7 @@ export const useWebUIAssistantModel = (): WebUIAssistantModel => {
 
   return {
     isAvailable: isConnected && !!modelId,
-    complete: async ({ system, prompt, abortSignal }) => {
+    complete: async ({ system, abortSignal, ...input }) => {
       if (!baseURL || !modelId) throw new Error('WebUI Assistant is offline');
       const provider = createOpenAICompatible({
         name: 'backend-ai',
@@ -76,7 +78,7 @@ export const useWebUIAssistantModel = (): WebUIAssistantModel => {
           middleware: extractReasoningMiddleware({ tagName: 'think' }),
         }),
         system,
-        prompt,
+        ...input,
         abortSignal,
       });
       return text;
