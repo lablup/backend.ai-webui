@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { DASHBOARD_AGENT_PROFILE } from '../WebUIAssistant/webUIAssistantProfile';
 import {
   jsonValuesOfReply,
   sanitizeAssistantActions,
@@ -118,9 +119,8 @@ const examplesOf = (ctx: DashboardChatContext): string => {
 /** The system prompt of the dashboard chat, built from the draft board. */
 export const buildDashboardChatPrompt = (ctx: DashboardChatContext): string =>
   [
-    `You edit a Backend.AI WebUI dashboard (${ctx.page} page) in a chat. Turn each request into changes. Reply with only a JSON object, no other text:`,
-    'When the message asks how to use the WebUI, or anything else that is not a change to this dashboard, reply with only {"question":true}.',
-    '{"reply":"<one short sentence in the user\'s language>","actions":[{"type":"show","id":"<card id>"}]}',
+    DASHBOARD_AGENT_PROFILE.systemPrompt,
+    `Page: ${ctx.page} dashboard`,
     'Cards, on-board ones in board order (id | title | state | size in columns x rows | range):',
     ctx.cards.map((card) => `- ${cardLine(card)}`).join('\n'),
     ctx.panels.length
@@ -147,7 +147,7 @@ export const buildDashboardChatPrompt = (ctx: DashboardChatContext): string =>
       PANEL_FIELDS_HELP,
     ].join('\n'),
     examplesOf(ctx),
-    'Copy ids exactly from the lists. Match what the user names by its title, in any language; "it" or "that" means the panel or card changed last. Check the state first: never show a card that is already on board or hide one that is not. If nothing fits, return "actions":[] and say why in "reply".',
+    DASHBOARD_AGENT_PROFILE.rules,
   ].join('\n\n');
 
 /** A custom panel's id as the model wrote it, matched loosely like a card id. */
