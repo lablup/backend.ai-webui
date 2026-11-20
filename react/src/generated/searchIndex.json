@@ -1697,6 +1697,11 @@
       "keys": [
         "button.More",
         "data.ModelStore",
+        "diagnostics.AppConfig",
+        "diagnostics.AppConfigFixturePurgeConfirmDesc",
+        "diagnostics.AppConfigFixturePurgeFragmentCount",
+        "diagnostics.AppConfigFixtureRepair",
+        "diagnostics.AppConfigFixtureRepaired",
         "diagnostics.ContentSecurityPolicy",
         "diagnostics.EndpointConnectivity",
         "diagnostics.ExportCSV",
