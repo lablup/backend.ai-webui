@@ -40,7 +40,8 @@ const WebUIAssistantFloating: React.FC = () => {
 
   const { t } = useTranslation();
   const [lang] = useCurrentLanguage();
-  const connection = useMyAppConfig<WebUIAssistantConnection>(
+  const [connection] = useMyAppConfig<WebUIAssistantConnection>(
+    'userConfig',
     WEBUI_ASSISTANT_CONFIG_KEY,
   );
   const [isConnectOpen, setIsConnectOpen] = useState(false);
