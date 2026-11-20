@@ -231,6 +231,22 @@ const SharedMemoryFormItems: React.FC<SharedMemoryFormItemsProps> = ({
                         }
                       },
                     },
+                    {
+                      validator: async (_rule, value: string) => {
+                        if (
+                          getFieldValue('enabledAutomaticShmem') ||
+                          !max ||
+                          _.isEmpty(value) ||
+                          compareNumberWithUnits(value, max) <= 0
+                        ) {
+                          return Promise.resolve();
+                        }
+                        throw t('general.MaxValueNotification', {
+                          name: t('resourcePreset.SharedMemory'),
+                          max: _.toUpper(max) + 'iB',
+                        });
+                      },
+                    },
                   ]}
                 >
                   <BAIDynamicUnitInputNumber
