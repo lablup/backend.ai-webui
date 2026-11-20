@@ -218,6 +218,30 @@ test.describe(
         // Both tests toggle the same card on the shared admin board.
         test.describe.configure({ mode: 'serial' });
         const CARD_TITLE = 'Audit Log: Top Failure Causes';
+        const CARD_KEY = 'topFailureCauses';
+        // Whether a board write puts the card on the admin page's active board.
+        const writeShowsCard = (value: unknown): boolean | undefined => {
+          if (typeof value === 'string') {
+            try {
+              return writeShowsCard(JSON.parse(value));
+            } catch {
+              return undefined;
+            }
+          }
+          if (!value || typeof value !== 'object') return undefined;
+          const page = (value as any).dashboard?.admin;
+          if (page && Array.isArray(page.boards)) {
+            const board =
+              page.boards.find((b: any) => b.id === page.active) ??
+              page.boards[0];
+            return (board?.panels ?? []).some((p: any) => p.key === CARD_KEY);
+          }
+          for (const child of Object.values(value)) {
+            const shows = writeShowsCard(child);
+            if (shows !== undefined) return shows;
+          }
+          return undefined;
+        };
         // A stored board may hide the card, so each test shows it from the
         // edit sider (personal userConfig) and hides it again afterwards.
         let addedCard = false;
@@ -236,7 +260,7 @@ test.describe(
               ? waitForGraphQL(
                   page,
                   'useAppConfigMyUpsertMutation',
-                  undefined,
+                  (variables) => writeShowsCard(variables) === shown,
                   10_000,
                 ).catch((error: Error) => {
                   if (error.name !== 'TimeoutError') throw error;
