@@ -301,6 +301,22 @@ describe('parseDashboardChatReply guards', () => {
     });
   });
 
+  it('drops a source change whose named conditions were all rejected', () => {
+    const vfolder = {
+      key: 'vfolder' as const,
+      label: 'Folders',
+      panelTypes: ['resourceTable' as const],
+      filter: { kind: 'graphql' as const, properties: [] },
+      groupings: [],
+    };
+    expect(
+      parseDashboardChatReply(
+        '{"actions":[{"type":"editPanel","id":"session-1","resourceType":"vfolder","conditions":[{"property":"gpu","operator":"==","value":"yes"}]}]}',
+        { ...ctx, sources: [...ctx.sources, vfolder] },
+      ).actions,
+    ).toEqual([]);
+  });
+
   it('drops an added panel whose named conditions were all rejected', () => {
     expect(
       parseDashboardChatReply(
