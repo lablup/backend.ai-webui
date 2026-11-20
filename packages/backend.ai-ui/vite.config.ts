@@ -43,6 +43,27 @@ const umdWithoutAmd = (): Plugin => ({
   },
 });
 
+// Vitest's mock hoisting rewrites any module whose text contains these calls,
+// comments included, and breaks re-exported imports in the dist (#11337).
+const VITEST_MOCK_CALL = /\bvi\.(?:mock|hoisted|doMock)\(/;
+const noVitestMockTextInDist = (): Plugin => ({
+  name: 'bai-no-vitest-mock-text-in-dist',
+  apply: 'build',
+  generateBundle(_options, bundle) {
+    const offenders = Object.values(bundle)
+      .filter(
+        (output) =>
+          output.type === 'chunk' && VITEST_MOCK_CALL.test(output.code),
+      )
+      .map((output) => output.fileName);
+    if (offenders.length > 0) {
+      this.error(
+        `dist contains vi.mock/vi.hoisted/vi.doMock text (reword the comment): ${offenders.join(', ')}`,
+      );
+    }
+  },
+});
+
 export default defineConfig(({ mode }) => {
   const isDevMode = mode === 'development';
   // One entry per language module on top of the main entry: `ko_KR.ts` →
@@ -88,6 +109,7 @@ export default defineConfig(({ mode }) => {
     },
     plugins: [
       umdWithoutAmd(),
+      noVitestMockTextInDist(),
       react({ compiler: { compilationMode: 'annotation' } }),
       relay({
         module: 'esmodule',
