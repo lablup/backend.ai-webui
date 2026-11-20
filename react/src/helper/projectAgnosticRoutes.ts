@@ -57,6 +57,7 @@ export const PROJECT_AGNOSTIC_MENU_KEYS = [
   'diagnostics',
   'rbac',
   'branding',
+  'notifications',
   'system-settings',
   'information',
 ] as const;
@@ -168,6 +169,10 @@ export const PROJECT_AGNOSTIC_ROUTE_PATHS: Record<
   branding: {
     canonicalPath: '/admin/branding',
     legacyPaths: ['/branding'],
+  },
+  notifications: {
+    canonicalPath: '/admin/notifications',
+    legacyPaths: [],
   },
   'system-settings': {
     canonicalPath: '/admin/system-settings',

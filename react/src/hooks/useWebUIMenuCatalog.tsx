@@ -17,6 +17,7 @@ import {
   BotMessageSquare,
   ChartColumn,
   CirclePlay,
+  BellRing,
   ClipboardClock,
   CloudUpload,
   FileCheck,
@@ -246,6 +247,12 @@ export const useWebUIMenuCatalog = (): ReadonlyArray<WebUIMenuCatalogEntry> => {
       'branding',
       t('webui.menu.Branding'),
       <Palette style={admin} />,
+      'admin',
+    ),
+    entry(
+      'notifications',
+      t('webui.menu.ExternalNotifications'),
+      <BellRing style={admin} size="1em" />,
       'admin',
     ),
     entry(

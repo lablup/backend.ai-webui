@@ -158,6 +158,9 @@ const SchedulerPage = React.lazy(
 const BrandingPage = React.lazy(
   () => import('./pages/BrandingPage/BrandingPage'),
 );
+const AdminNotificationPage = React.lazy(
+  () => import('./pages/AdminNotificationPage/AdminNotificationPage'),
+);
 const WebUISettingsPage = React.lazy(
   () => import('./pages/WebUISettingsPage/WebUISettingsPage'),
 );
@@ -1003,6 +1006,20 @@ export const mainLayoutChildRoutes: RouteObject[] = [
           menuKey: 'branding',
           access: 'superadmin',
           labelKey: 'webui.menu.Branding',
+        },
+      },
+      {
+        path: 'notifications',
+        element: (
+          <Suspense fallback={<BAISkeleton rows={4} />}>
+            <AdminNotificationPage />
+          </Suspense>
+        ),
+        handle: {
+          scope: 'admin',
+          menuKey: 'notifications',
+          access: 'superadmin',
+          labelKey: 'webui.menu.ExternalNotifications',
         },
       },
       {

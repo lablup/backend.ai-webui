@@ -46,6 +46,7 @@ describe('useIsProjectAgnosticPage (FR-3413, widened in FR-3414 and FR-3415)', (
       'diagnostics',
       'rbac',
       'branding',
+      'notifications',
       'system-settings',
       'information',
     ]);
