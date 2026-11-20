@@ -5895,6 +5895,16 @@
           "groupId": "group-preferences",
           "testId": "items-use-compact-sidebar",
           "descriptionKeys": []
+        },
+        {
+          "key": "userSettings.WebUIAssistant",
+          "tab": "general",
+          "groupKey": "userSettings.ExperimentalFeatures",
+          "groupId": "group-experimental-features",
+          "testId": "items-experimental-webui-assistant",
+          "descriptionKeys": [
+            "userSettings.DescWebUIAssistant"
+          ]
         }
       ],
       "keys": [

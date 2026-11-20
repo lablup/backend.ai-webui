@@ -101,6 +101,8 @@ const UserSettingsGeneralPane = () => {
     useBAISettingUserState('experimental_session_resource_grid');
   const [experimentalSessionMonitor, setExperimentalSessionMonitor] =
     useBAISettingUserState('experimental_session_monitor');
+  const [experimentalWebUIAssistant, setExperimentalWebUIAssistant] =
+    useBAISettingUserState('experimental_webui_assistant');
   const [shellInfo, setShellInfo] = useState<ShellScriptType>('bootstrap');
   const [isOpenShellScriptEditModal, { toggle: toggleShellScriptEditModal }] =
     useToggle(false);
@@ -444,6 +446,15 @@ const UserSettingsGeneralPane = () => {
           defaultValue: false,
           value: experimentalSessionMonitor,
           onChange: setExperimentalSessionMonitor,
+        },
+        {
+          'data-testid': 'items-experimental-webui-assistant',
+          type: 'checkbox',
+          title: t('userSettings.WebUIAssistant'),
+          description: t('userSettings.DescWebUIAssistant'),
+          defaultValue: false,
+          value: experimentalWebUIAssistant,
+          onChange: setExperimentalWebUIAssistant,
         },
       ],
     },

@@ -13,6 +13,7 @@ import { createHash } from 'node:crypto';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { resolveAppName } from './portless-app-name.mjs';
 
 const env = { ...process.env };
@@ -233,6 +234,11 @@ if (!existsSync(new URL('../config.toml', import.meta.url))) {
       'Run `pnpm run dev-env use <server>` (writes it from the server\'s probed switches) or copy config.toml.sample.',
   );
 }
+
+// The user manual's Markdown is served from /resources/manual/.
+spawnSync(process.execPath, [fileURLToPath(new URL('./copy-manual.mjs', import.meta.url))], {
+  stdio: 'inherit',
+});
 
 const portlessSpec = appName
   ? `portless ${appName} --force ${portFlag}`

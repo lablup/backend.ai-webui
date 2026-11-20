@@ -4155,6 +4155,7 @@
     "DescThemeFamily": "Atur tema.",
     "DescThemeMode": "Atur mode tampilan.",
     "DescUseCompactSidebar": "Sidebar kompak menyediakan ruang kerja lebih banyak. <br />Ketika diaktifkan, sidebar kompak akan menjadi UI default saat startup.",
+    "DescWebUIAssistant": "Menampilkan tombol obrolan di kanan bawah yang menjawab pertanyaan tentang WebUI berdasarkan panduan pengguna. Saat pertama kali dibuka, Anda menghubungkannya ke penerapan atau endpoint yang kompatibel dengan OpenAI.",
     "DesktopNotification": "Aktifkan Notifikasi Desktop",
     "DetailLogo": "Detail Logo CI",
     "DialogDiscardOrSave": "File dan skrip saat ini akan diubah tanpa disimpan, Apakah Anda ingin melanjutkan?",
@@ -4205,6 +4206,7 @@
     "UseCompactSidebar": "Atur Sidebar Kompak sebagai Default",
     "UseSystemSetting": "Gunakan Pengaturan Sistem",
     "UserConfigScript": "Skrip konfigurasi pengguna",
+    "WebUIAssistant": "Asisten WebUI",
     "font": {
       "FontCustomizationDesc": "Atur font yang akan digunakan di WebUI. Font harus terpasang di sistem lokal Anda agar dapat ditampilkan dalam pratinjau.",
       "FontFamily": "Jenis huruf",
@@ -4438,6 +4440,30 @@
         "ProjectAdministration": "Administrasi proyek"
       }
     }
+  },
+  "webuiAssistant": {
+    "ApiKeyHint": "Hanya disimpan di memori; masukkan lagi setelah memuat ulang halaman.",
+    "ChangeConnection": "Ubah koneksi",
+    "ClearConversation": "Hapus percakapan",
+    "ClearConversationConfirm": "Hapus percakapan ini?",
+    "Connect": "Hubungkan",
+    "ConnectDescription": "Asisten WebUI menjawab pertanyaan tentang WebUI berdasarkan panduan pengguna. Hubungkan ke penerapan atau endpoint yang kompatibel dengan OpenAI yang menyajikan model obrolan. Koneksi disimpan di akun Anda.",
+    "ConnectTitle": "Hubungkan Asisten WebUI",
+    "Connected": "Asisten WebUI terhubung.",
+    "ConnectionRejected": "Endpoint menolak token atau kunci API.",
+    "CustomEndpoint": "Endpoint kustom",
+    "Deployment": "Deployment",
+    "EmptyState": "Tanyakan cara melakukan sesuatu di WebUI. Jawaban berasal dari panduan pengguna.",
+    "Endpoint": "Endpoint model",
+    "EndpointUnreachable": "Tidak dapat menjangkau {{url}}.",
+    "ManualUnavailable": "Panduan pengguna tidak dapat dimuat sehingga jawaban mungkin kurang akurat.",
+    "ModelLoading": "Menghubungkan ke model…",
+    "NoEndpointURL": "Penerapan ini belum memiliki URL endpoint. Tunggu hingga siap atau pilih yang lain.",
+    "Open": "Buka Asisten WebUI",
+    "Placeholder": "Ajukan pertanyaan tentang WebUI",
+    "Token": "Token",
+    "TokenHint": "Deployment ini tidak publik. Pilih salah satu token aksesnya.",
+    "ViewModelInfo": "Lihat info model"
   },
   "webuiSettings": {
     "AllowAnonymousChangePassword": "Izinkan pengaturan ulang kata sandi",

@@ -4153,6 +4153,7 @@
     "DescThemeFamily": "Đặt chủ đề.",
     "DescThemeMode": "Đặt chế độ hiển thị.",
     "DescUseCompactSidebar": "Thanh bên gọn gàng cung cấp nhiều không gian làm việc hơn. <br />Khi được kích hoạt, thanh bên gọn gàng sẽ là giao diện mặc định khi khởi động.",
+    "DescWebUIAssistant": "Hiển thị nút trò chuyện ở góc dưới bên phải để trả lời câu hỏi về WebUI dựa trên hướng dẫn sử dụng. Lần đầu mở, bạn kết nối nó với một triển khai hoặc endpoint tương thích OpenAI.",
     "DesktopNotification": "Kích hoạt Thông báo Desktop",
     "DetailLogo": "Logo CI chi tiết",
     "DialogDiscardOrSave": "Tệp và tập lệnh hiện tại sẽ được thay đổi mà không cần lưu, Bạn có muốn tiếp tục không?",
@@ -4203,6 +4204,7 @@
     "UseCompactSidebar": "Đặt Thanh bên Gọn gàng làm Mặc định",
     "UseSystemSetting": "Sử dụng cài đặt hệ thống",
     "UserConfigScript": "Tập lệnh cấu hình người dùng",
+    "WebUIAssistant": "Trợ lý WebUI",
     "font": {
       "FontCustomizationDesc": "Đặt phông chữ cho WebUI. Phông chữ phải được cài đặt trên hệ thống cục bộ của bạn để có thể hiển thị trong bản xem trước.",
       "FontFamily": "Phông chữ",
@@ -4436,6 +4438,30 @@
         "ProjectAdministration": "Quản trị dự án"
       }
     }
+  },
+  "webuiAssistant": {
+    "ApiKeyHint": "Chỉ được giữ trong bộ nhớ; hãy nhập lại sau khi tải lại trang.",
+    "ChangeConnection": "Đổi kết nối",
+    "ClearConversation": "Xóa cuộc trò chuyện",
+    "ClearConversationConfirm": "Xóa cuộc trò chuyện này?",
+    "Connect": "Kết nối",
+    "ConnectDescription": "Trợ lý WebUI trả lời câu hỏi về WebUI dựa trên hướng dẫn sử dụng. Hãy kết nối trợ lý với một triển khai hoặc một endpoint tương thích OpenAI phục vụ mô hình trò chuyện. Kết nối được lưu vào tài khoản của bạn.",
+    "ConnectTitle": "Kết nối trợ lý WebUI",
+    "Connected": "Đã kết nối trợ lý WebUI.",
+    "ConnectionRejected": "Endpoint đã từ chối token hoặc khóa API.",
+    "CustomEndpoint": "Endpoint tùy chỉnh",
+    "Deployment": "Bản triển khai",
+    "EmptyState": "Hãy hỏi cách thực hiện một việc trong WebUI. Câu trả lời dựa trên hướng dẫn sử dụng.",
+    "Endpoint": "Endpoint của mô hình",
+    "EndpointUnreachable": "Không thể kết nối tới {{url}}.",
+    "ManualUnavailable": "Không thể tải hướng dẫn sử dụng nên câu trả lời có thể kém chính xác hơn.",
+    "ModelLoading": "Đang kết nối tới mô hình…",
+    "NoEndpointURL": "Triển khai này chưa có URL endpoint. Hãy chờ đến khi sẵn sàng hoặc chọn triển khai khác.",
+    "Open": "Mở trợ lý WebUI",
+    "Placeholder": "Đặt câu hỏi về WebUI",
+    "Token": "Token",
+    "TokenHint": "Bản triển khai này không công khai. Hãy chọn một trong các token truy cập của nó.",
+    "ViewModelInfo": "Xem thông tin mô hình"
   },
   "webuiSettings": {
     "AllowAnonymousChangePassword": "Cho phép đặt lại mật khẩu",

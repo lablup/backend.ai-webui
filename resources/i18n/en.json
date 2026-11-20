@@ -4138,6 +4138,7 @@
     "DescThemeFamily": "Set the theme.",
     "DescThemeMode": "Set the display mode.",
     "DescUseCompactSidebar": "Compact sidebar provides more workspace. <br />When enabled, the compact sidebar will be the default UI at startup.",
+    "DescWebUIAssistant": "Shows a chat button at the bottom right that answers questions about WebUI from the user manual. The first time you open it, you connect it to a deployment or an OpenAI-compatible endpoint.",
     "DesktopNotification": "Enables Desktop Notifications",
     "DetailLogo": "Detail Logo CI",
     "DialogDiscardOrSave": "Current file and script will be changed without saving, Would you like to proceed?",
@@ -4188,6 +4189,7 @@
     "UseCompactSidebar": "Set Compact Sidebar as Default",
     "UseSystemSetting": "Use System Setting",
     "UserConfigScript": "User Config Script",
+    "WebUIAssistant": "WebUI Assistant",
     "font": {
       "FontCustomizationDesc": "Set the font to be used in the WebUI. The fonts must be installed on your local system to be displayed in the preview.",
       "FontFamily": "Font Family",
@@ -4419,6 +4421,30 @@
         "ProjectAdministration": "Project administration"
       }
     }
+  },
+  "webuiAssistant": {
+    "ApiKeyHint": "Kept in memory only; enter it again after reloading the page.",
+    "ChangeConnection": "Change connection",
+    "ClearConversation": "Clear conversation",
+    "ClearConversationConfirm": "Clear this conversation?",
+    "Connect": "Connect",
+    "ConnectDescription": "The WebUI Assistant answers questions about WebUI from the user manual. Connect it to a deployment, or to any OpenAI-compatible endpoint, that serves a chat model. The connection is saved to your account.",
+    "ConnectTitle": "Connect WebUI Assistant",
+    "Connected": "The WebUI Assistant is connected.",
+    "ConnectionRejected": "The endpoint rejected the token or API key.",
+    "CustomEndpoint": "Custom endpoint",
+    "Deployment": "Deployment",
+    "EmptyState": "Ask how to do something in WebUI. Answers come from the user manual.",
+    "Endpoint": "Model endpoint",
+    "EndpointUnreachable": "Cannot reach {{url}}.",
+    "ManualUnavailable": "The user manual could not be loaded, so answers may be less accurate.",
+    "ModelLoading": "Connecting to the model…",
+    "NoEndpointURL": "This deployment has no endpoint URL yet. Wait until it is ready, or pick another one.",
+    "Open": "Open WebUI Assistant",
+    "Placeholder": "Ask a question about WebUI",
+    "Token": "Token",
+    "TokenHint": "This deployment is not public. Pick one of its access tokens.",
+    "ViewModelInfo": "View model info"
   },
   "webuiSettings": {
     "AllowAnonymousChangePassword": "Password reset",

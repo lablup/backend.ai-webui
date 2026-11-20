@@ -4153,6 +4153,7 @@
     "DescThemeFamily": "设置主题。",
     "DescThemeMode": "设置显示模式。",
     "DescUseCompactSidebar": "紧凑侧边栏提供更多工作空间。<br />启用后，紧凑侧边栏将成为启动时的默认界面。",
+    "DescWebUIAssistant": "在右下角显示聊天按钮，根据用户手册回答 WebUI 使用问题。首次打开时，将其连接到部署或 OpenAI 兼容端点。",
     "DesktopNotification": "启用桌面通知",
     "DetailLogo": "详细徽标（CI）",
     "DialogDiscardOrSave": "当前文件和脚本将被更改而不保存，要继续吗？",
@@ -4203,6 +4204,7 @@
     "UseCompactSidebar": "将紧凑侧边栏设为默认",
     "UseSystemSetting": "使用系统设置",
     "UserConfigScript": "用户配置脚本",
+    "WebUIAssistant": "WebUI 助手",
     "font": {
       "FontCustomizationDesc": "设置用于 WebUI 的字体。字体必须安装在本地系统上才能在预览中显示。",
       "FontFamily": "字体系列",
@@ -4436,6 +4438,30 @@
         "ProjectAdministration": "项目管理"
       }
     }
+  },
+  "webuiAssistant": {
+    "ApiKeyHint": "仅保存在内存中；刷新页面后需重新输入。",
+    "ChangeConnection": "更改连接",
+    "ClearConversation": "清空对话",
+    "ClearConversationConfirm": "清空此对话？",
+    "Connect": "连接",
+    "ConnectDescription": "WebUI 助手根据用户手册回答 WebUI 使用问题。请将其连接到提供聊天模型的部署或任意 OpenAI 兼容端点。连接信息保存在你的账户中。",
+    "ConnectTitle": "连接 WebUI 助手",
+    "Connected": "WebUI 助手已连接。",
+    "ConnectionRejected": "端点拒绝了令牌或 API 密钥。",
+    "CustomEndpoint": "自定义端点",
+    "Deployment": "部署",
+    "EmptyState": "询问如何在 WebUI 中完成操作。回答基于用户手册。",
+    "Endpoint": "模型端点",
+    "EndpointUnreachable": "无法连接到 {{url}}。",
+    "ManualUnavailable": "无法加载用户手册，回答可能不够准确。",
+    "ModelLoading": "正在连接模型…",
+    "NoEndpointURL": "此部署还没有端点 URL。请等待其就绪，或选择其他部署。",
+    "Open": "打开 WebUI 助手",
+    "Placeholder": "询问关于 WebUI 的问题",
+    "Token": "令牌",
+    "TokenHint": "此部署未公开。请选择其中一个访问令牌。",
+    "ViewModelInfo": "查看模型信息"
   },
   "webuiSettings": {
     "AllowAnonymousChangePassword": "允许重置密码",

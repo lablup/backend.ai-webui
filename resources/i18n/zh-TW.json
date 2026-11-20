@@ -4155,6 +4155,7 @@
     "DescThemeFamily": "設定主題。",
     "DescThemeMode": "設定顯示模式。",
     "DescUseCompactSidebar": "緊湊側邊欄提供更多工作空間。<br />啟用後，緊湊側邊欄將成為啟動時的預設介面。",
+    "DescWebUIAssistant": "在右下角顯示聊天按鈕，根據使用者手冊回答 WebUI 使用問題。第一次開啟時，將它連線到部署或 OpenAI 相容端點。",
     "DesktopNotification": "啟用桌面通知",
     "DetailLogo": "詳細標誌（CI）",
     "DialogDiscardOrSave": "當前文件和腳本將被更改而不保存，要繼續嗎？",
@@ -4205,6 +4206,7 @@
     "UseCompactSidebar": "將緊湊側邊欄設為預設",
     "UseSystemSetting": "使用系統設定",
     "UserConfigScript": "用戶配置腳本",
+    "WebUIAssistant": "WebUI 助理",
     "font": {
       "FontCustomizationDesc": "設定 WebUI 使用的字型。字型必須先安裝在您的本機系統，才能在預覽中顯示。",
       "FontFamily": "字型",
@@ -4438,6 +4440,30 @@
         "ProjectAdministration": "項目管理"
       }
     }
+  },
+  "webuiAssistant": {
+    "ApiKeyHint": "僅保存在記憶體中；重新整理頁面後需重新輸入。",
+    "ChangeConnection": "變更連線",
+    "ClearConversation": "清除對話",
+    "ClearConversationConfirm": "清除此對話？",
+    "Connect": "連線",
+    "ConnectDescription": "WebUI 助理根據使用者手冊回答 WebUI 使用問題。請將它連線到提供聊天模型的部署或任何 OpenAI 相容端點。連線資訊會儲存在你的帳號中。",
+    "ConnectTitle": "連線 WebUI 助理",
+    "Connected": "WebUI 助理已連線。",
+    "ConnectionRejected": "端點拒絕了權杖或 API 金鑰。",
+    "CustomEndpoint": "自訂端點",
+    "Deployment": "部署",
+    "EmptyState": "詢問如何在 WebUI 中完成操作。回答以使用者手冊為依據。",
+    "Endpoint": "模型端點",
+    "EndpointUnreachable": "無法連線到 {{url}}。",
+    "ManualUnavailable": "無法載入使用者手冊，回答可能不夠準確。",
+    "ModelLoading": "正在連線模型…",
+    "NoEndpointURL": "此部署尚無端點 URL。請等待它就緒，或選擇其他部署。",
+    "Open": "開啟 WebUI 助理",
+    "Placeholder": "詢問關於 WebUI 的問題",
+    "Token": "權杖",
+    "TokenHint": "此部署未公開。請選擇其中一個存取權杖。",
+    "ViewModelInfo": "檢視模型資訊"
   },
   "webuiSettings": {
     "AllowAnonymousChangePassword": "允許重設密碼",

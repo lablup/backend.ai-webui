@@ -4151,6 +4151,7 @@
     "DescThemeFamily": "Establecer el tema.",
     "DescThemeMode": "Establecer el modo de visualización.",
     "DescUseCompactSidebar": "La barra lateral compacta le permite utilizar más espacio de trabajo. <br />Si esta opción está activada, la barra lateral compacta se convierte en la interfaz de usuario inicial al arrancar.",
+    "DescWebUIAssistant": "Muestra abajo a la derecha un botón de chat que responde preguntas sobre WebUI a partir del manual de usuario. La primera vez que lo abra, lo conectará a un despliegue o a un endpoint compatible con OpenAI.",
     "DesktopNotification": "Notificación de escritorio",
     "DetailLogo": "Logo CI de detalle",
     "DialogDiscardOrSave": "El archivo actual y el script se modificarán sin guardar, ¿Desea continuar?",
@@ -4201,6 +4202,7 @@
     "UseCompactSidebar": "Utilizar la barra lateral compacta por defecto",
     "UseSystemSetting": "Usar configuración del sistema",
     "UserConfigScript": "Script de configuración de usuario",
+    "WebUIAssistant": "Asistente de WebUI",
     "font": {
       "FontCustomizationDesc": "Establezca la fuente que se usará en la WebUI. Las fuentes deben estar instaladas en su sistema local para que se muestren en la vista previa.",
       "FontFamily": "Familia de fuentes",
@@ -4434,6 +4436,30 @@
         "ProjectAdministration": "Administración del proyecto"
       }
     }
+  },
+  "webuiAssistant": {
+    "ApiKeyHint": "Solo se guarda en memoria; vuelva a introducirla tras recargar la página.",
+    "ChangeConnection": "Cambiar conexión",
+    "ClearConversation": "Borrar conversación",
+    "ClearConversationConfirm": "¿Borrar esta conversación?",
+    "Connect": "Conectar",
+    "ConnectDescription": "El asistente de WebUI responde preguntas sobre WebUI a partir del manual de usuario. Conéctelo a un despliegue o a un endpoint compatible con OpenAI que sirva un modelo de chat. La conexión se guarda en su cuenta.",
+    "ConnectTitle": "Conectar el asistente de WebUI",
+    "Connected": "El asistente de WebUI está conectado.",
+    "ConnectionRejected": "El endpoint rechazó el token o la clave de API.",
+    "CustomEndpoint": "Endpoint personalizado",
+    "Deployment": "Despliegue",
+    "EmptyState": "Pregunte cómo hacer algo en WebUI. Las respuestas provienen del manual de usuario.",
+    "Endpoint": "Endpoint del modelo",
+    "EndpointUnreachable": "No se puede acceder a {{url}}.",
+    "ManualUnavailable": "No se pudo cargar el manual de usuario, por lo que las respuestas pueden ser menos precisas.",
+    "ModelLoading": "Conectando con el modelo…",
+    "NoEndpointURL": "Este despliegue aún no tiene URL de endpoint. Espere a que esté listo o elija otro.",
+    "Open": "Abrir el asistente de WebUI",
+    "Placeholder": "Haga una pregunta sobre WebUI",
+    "Token": "Token",
+    "TokenHint": "Este despliegue no es público. Elija uno de sus tokens de acceso.",
+    "ViewModelInfo": "Ver información del modelo"
   },
   "webuiSettings": {
     "AllowAnonymousChangePassword": "Permitir el restablecimiento de contraseña",

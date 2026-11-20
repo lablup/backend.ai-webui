@@ -33,6 +33,7 @@ import ProjectAdminScopeAlert from '../ProjectAdminScopeAlert';
 import SessionMonitorWatcher from '../SessionMonitor/SessionMonitorWatcher';
 import ThemePreviewModeAlert from '../ThemePreviewModeAlert';
 import { DRAWER_WIDTH } from '../WEBUINotificationDrawer';
+import WebUIAssistant from '../WebUIAssistant/WebUIAssistant';
 import WebUIBreadcrumb from '../WebUIBreadcrumb';
 import './MainLayout.css';
 import WebUIHeader from './WebUIHeader';
@@ -345,6 +346,11 @@ function MainLayout() {
                   </BAIFlex>
                   <BAIOverlayScrollbar targetRef={contentScrollFlexRef} />
                 </div>
+                <ErrorBoundaryWithNullFallback>
+                  <Suspense fallback={null}>
+                    <WebUIAssistant />
+                  </Suspense>
+                </ErrorBoundaryWithNullFallback>
               </BAIErrorBoundary>
             </BAIContentWithDrawerArea>
           </BAIAppShell>

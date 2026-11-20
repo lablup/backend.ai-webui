@@ -4151,6 +4151,7 @@
     "DescThemeFamily": "Imposta il tema.",
     "DescThemeMode": "Imposta la modalità di visualizzazione.",
     "DescUseCompactSidebar": "La barra laterale compatta fornisce più spazio di lavoro. <br />Quando abilitata, la barra laterale compatta sarà l'interfaccia predefinita all'avvio.",
+    "DescWebUIAssistant": "Mostra in basso a destra un pulsante di chat che risponde alle domande sulla WebUI in base al manuale utente. La prima volta che lo apri, lo colleghi a una distribuzione o a un endpoint compatibile con OpenAI.",
     "DesktopNotification": "Abilita Notifiche Desktop",
     "DetailLogo": "Logo CI di dettaglio",
     "DialogDiscardOrSave": "Il file e lo script correnti verranno modificati senza salvare. Vuoi procedere?",
@@ -4201,6 +4202,7 @@
     "UseCompactSidebar": "Imposta Barra Laterale Compatta come Predefinita",
     "UseSystemSetting": "Utilizza Impostazioni di sistema",
     "UserConfigScript": "Script di configurazione utente",
+    "WebUIAssistant": "Assistente WebUI",
     "font": {
       "FontCustomizationDesc": "Imposta il font da utilizzare nella WebUI. I font devono essere installati sul tuo sistema locale per essere visualizzati nell'anteprima.",
       "FontFamily": "Famiglia di caratteri",
@@ -4434,6 +4436,30 @@
         "ProjectAdministration": "Amministrazione progetto"
       }
     }
+  },
+  "webuiAssistant": {
+    "ApiKeyHint": "Conservata solo in memoria; reinseriscila dopo aver ricaricato la pagina.",
+    "ChangeConnection": "Modifica connessione",
+    "ClearConversation": "Cancella conversazione",
+    "ClearConversationConfirm": "Cancellare questa conversazione?",
+    "Connect": "Connetti",
+    "ConnectDescription": "L'assistente WebUI risponde alle domande sulla WebUI in base al manuale utente. Collegalo a una distribuzione o a un endpoint compatibile con OpenAI che serve un modello di chat. La connessione viene salvata nel tuo account.",
+    "ConnectTitle": "Connetti l'assistente WebUI",
+    "Connected": "L'assistente WebUI è connesso.",
+    "ConnectionRejected": "L'endpoint ha rifiutato il token o la chiave API.",
+    "CustomEndpoint": "Endpoint personalizzato",
+    "Deployment": "Deployment",
+    "EmptyState": "Chiedi come fare qualcosa nella WebUI. Le risposte provengono dal manuale utente.",
+    "Endpoint": "Endpoint del modello",
+    "EndpointUnreachable": "Impossibile raggiungere {{url}}.",
+    "ManualUnavailable": "Impossibile caricare il manuale utente: le risposte potrebbero essere meno accurate.",
+    "ModelLoading": "Connessione al modello…",
+    "NoEndpointURL": "Questa distribuzione non ha ancora un URL dell'endpoint. Attendi che sia pronta o scegline un'altra.",
+    "Open": "Apri l'assistente WebUI",
+    "Placeholder": "Fai una domanda sulla WebUI",
+    "Token": "Token",
+    "TokenHint": "Questo deployment non è pubblico. Scegli uno dei suoi token di accesso.",
+    "ViewModelInfo": "Visualizza informazioni sul modello"
   },
   "webuiSettings": {
     "AllowAnonymousChangePassword": "Consenti la reimpostazione della password",

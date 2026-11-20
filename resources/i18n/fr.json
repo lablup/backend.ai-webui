@@ -4154,6 +4154,7 @@
     "DescThemeFamily": "Définir le thème.",
     "DescThemeMode": "Définir le mode d'affichage.",
     "DescUseCompactSidebar": "La barre latérale compacte fournit plus d'espace de travail. <br />Quand activée, la barre latérale compacte sera l'interface par défaut au démarrage.",
+    "DescWebUIAssistant": "Affiche en bas à droite un bouton de discussion qui répond aux questions sur la WebUI à partir du manuel utilisateur. À la première ouverture, vous le connectez à un déploiement ou à un point de terminaison compatible OpenAI.",
     "DesktopNotification": "Activer les Notifications de Bureau",
     "DetailLogo": "Logo CI détaillé",
     "DialogDiscardOrSave": "Le fichier et le script actuels seront modifiés sans enregistrer. Voulez-vous continuer ?",
@@ -4204,6 +4205,7 @@
     "UseCompactSidebar": "Utiliser la barre latérale compacte",
     "UseSystemSetting": "Utiliser les paramètres du système",
     "UserConfigScript": "Script de configuration utilisateur",
+    "WebUIAssistant": "Assistant WebUI",
     "font": {
       "FontCustomizationDesc": "Définissez la police à utiliser dans le WebUI. Les polices doivent être installées sur votre système local pour être affichées dans l'aperçu.",
       "FontFamily": "Famille de polices",
@@ -4437,6 +4439,30 @@
         "ProjectAdministration": "Administration du projet"
       }
     }
+  },
+  "webuiAssistant": {
+    "ApiKeyHint": "Conservée en mémoire uniquement ; saisissez-la à nouveau après avoir rechargé la page.",
+    "ChangeConnection": "Modifier la connexion",
+    "ClearConversation": "Effacer la conversation",
+    "ClearConversationConfirm": "Effacer cette conversation ?",
+    "Connect": "Connecter",
+    "ConnectDescription": "L'assistant WebUI répond aux questions sur la WebUI à partir du manuel utilisateur. Connectez-le à un déploiement ou à un point de terminaison compatible OpenAI qui sert un modèle de discussion. La connexion est enregistrée dans votre compte.",
+    "ConnectTitle": "Connecter l'assistant WebUI",
+    "Connected": "L'assistant WebUI est connecté.",
+    "ConnectionRejected": "Le point de terminaison a refusé le jeton ou la clé API.",
+    "CustomEndpoint": "Point de terminaison personnalisé",
+    "Deployment": "Déploiement",
+    "EmptyState": "Demandez comment faire quelque chose dans la WebUI. Les réponses proviennent du manuel utilisateur.",
+    "Endpoint": "Point de terminaison du modèle",
+    "EndpointUnreachable": "Impossible de joindre {{url}}.",
+    "ManualUnavailable": "Le manuel utilisateur n'a pas pu être chargé ; les réponses peuvent être moins précises.",
+    "ModelLoading": "Connexion au modèle…",
+    "NoEndpointURL": "Ce déploiement n'a pas encore d'URL de point de terminaison. Attendez qu'il soit prêt ou choisissez-en un autre.",
+    "Open": "Ouvrir l'assistant WebUI",
+    "Placeholder": "Posez une question sur la WebUI",
+    "Token": "Jeton",
+    "TokenHint": "Ce déploiement n'est pas public. Choisissez l'un de ses jetons d'accès.",
+    "ViewModelInfo": "Voir les informations du modèle"
   },
   "webuiSettings": {
     "AllowAnonymousChangePassword": "Autoriser la réinitialisation du mot de passe",

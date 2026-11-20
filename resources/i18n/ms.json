@@ -4151,6 +4151,7 @@
     "DescThemeFamily": "Tetapkan tema.",
     "DescThemeMode": "Tetapkan mod paparan.",
     "DescUseCompactSidebar": "Bar sisi padat menyediakan lebih banyak ruang kerja. <br />Apabila dibolehkan, bar sisi padat akan menjadi UI lalai semasa permulaan.",
+    "DescWebUIAssistant": "Memaparkan butang sembang di bahagian bawah kanan yang menjawab soalan tentang WebUI berdasarkan manual pengguna. Kali pertama anda membukanya, anda menyambungkannya ke penggunaan atau endpoint serasi OpenAI.",
     "DesktopNotification": "Bolehkan Pemberitahuan Desktop",
     "DetailLogo": "Logo CI Terperinci",
     "DialogDiscardOrSave": "Fail dan skrip semasa akan diubah tanpa menyimpan, Adakah anda mahu meneruskan?",
@@ -4201,6 +4202,7 @@
     "UseCompactSidebar": "Tetapkan Bar Sisi Padat sebagai Lalai",
     "UseSystemSetting": "Gunakan Tetapan Sistem",
     "UserConfigScript": "Skrip konfigurasi pengguna",
+    "WebUIAssistant": "Pembantu WebUI",
     "font": {
       "FontCustomizationDesc": "Tetapkan fon yang akan digunakan dalam WebUI. Fon mesti dipasang pada sistem tempatan anda untuk dipaparkan dalam pratonton.",
       "FontFamily": "Keluarga Fon",
@@ -4434,6 +4436,30 @@
         "ProjectAdministration": "Pentadbiran projek"
       }
     }
+  },
+  "webuiAssistant": {
+    "ApiKeyHint": "Disimpan dalam memori sahaja; masukkan semula selepas memuat semula halaman.",
+    "ChangeConnection": "Tukar sambungan",
+    "ClearConversation": "Kosongkan perbualan",
+    "ClearConversationConfirm": "Kosongkan perbualan ini?",
+    "Connect": "Sambung",
+    "ConnectDescription": "Pembantu WebUI menjawab soalan tentang WebUI berdasarkan manual pengguna. Sambungkannya ke penggunaan atau endpoint serasi OpenAI yang menyediakan model sembang. Sambungan disimpan dalam akaun anda.",
+    "ConnectTitle": "Sambung Pembantu WebUI",
+    "Connected": "Pembantu WebUI telah disambungkan.",
+    "ConnectionRejected": "Endpoint menolak token atau kunci API.",
+    "CustomEndpoint": "Titik akhir tersuai",
+    "Deployment": "Penggunaan",
+    "EmptyState": "Tanya cara melakukan sesuatu dalam WebUI. Jawapan diambil daripada manual pengguna.",
+    "Endpoint": "Endpoint model",
+    "EndpointUnreachable": "Tidak dapat mencapai {{url}}.",
+    "ManualUnavailable": "Manual pengguna tidak dapat dimuatkan, jadi jawapan mungkin kurang tepat.",
+    "ModelLoading": "Menyambung ke model…",
+    "NoEndpointURL": "Penggunaan ini belum mempunyai URL endpoint. Tunggu sehingga ia sedia atau pilih yang lain.",
+    "Open": "Buka Pembantu WebUI",
+    "Placeholder": "Tanya soalan tentang WebUI",
+    "Token": "Token",
+    "TokenHint": "Penggunaan ini bukan awam. Pilih salah satu token aksesnya.",
+    "ViewModelInfo": "Lihat maklumat model"
   },
   "webuiSettings": {
     "AllowAnonymousChangePassword": "Benarkan tetapan semula kata laluan",

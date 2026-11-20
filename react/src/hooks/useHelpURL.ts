@@ -15,13 +15,11 @@ import { useCurrentMenuKey } from './useRouteScope';
 // published in. Any other WebUI locale falls back to English.
 const DOCS_LANGUAGES = ['en', 'ko', 'ja', 'th'];
 
-/** The hosted manual page for the current route (and `?tab=` when it has one). */
-export const useHelpURL = (): string => {
+/** The hosted manual's root for this WebUI version and language, ending with `/`. */
+export const useManualBaseURL = (): { baseURL: string; docsLang: string } => {
   'use memo';
 
   const [lang] = useCurrentLanguage();
-  const location = useWebUILocation();
-
   const docsLang = DOCS_LANGUAGES.includes(lang) ? lang : 'en';
   // The manual is a versioned static site (FR-2729): a prerelease build has no
   // numbered docs site yet, so it tracks the `next` channel that every commit
@@ -30,7 +28,18 @@ export const useHelpURL = (): string => {
   const docsVersion = rawVersion.includes('-')
     ? 'next'
     : rawVersion.split('.').slice(0, 2).filter(Boolean).join('.') || 'next';
-  const manualURL = `https://webui.docs.backend.ai/${docsVersion}/${docsLang}/`;
+  return {
+    baseURL: `https://webui.docs.backend.ai/${docsVersion}/${docsLang}/`,
+    docsLang,
+  };
+};
+
+/** The hosted manual page for the current route (and `?tab=` when it has one). */
+export const useHelpURL = (): string => {
+  'use memo';
+
+  const location = useWebUILocation();
+  const { baseURL: manualURL } = useManualBaseURL();
 
   // Scope-aware menu key (route handle): under `/admin/<feature>` and
   // `/project/:name/<feature>` the first pathname segment is the scope prefix,

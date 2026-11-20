@@ -4151,6 +4151,7 @@
     "DescThemeFamily": "Aseta teema.",
     "DescThemeMode": "Aseta näyttötila.",
     "DescUseCompactSidebar": "Kompakti sivupalkki tarjoaa enemmän työtilaa. <br />Kun käytössä, kompakti sivupalkki on oletuskäyttöliittymä käynnistyksen yhteydessä.",
+    "DescWebUIAssistant": "Näyttää oikeassa alakulmassa keskustelupainikkeen, joka vastaa WebUI:ta koskeviin kysymyksiin käyttöoppaan perusteella. Kun avaat sen ensimmäisen kerran, yhdistät sen käyttöönottoon tai OpenAI-yhteensopivaan päätepisteeseen.",
     "DesktopNotification": "Ota Käyttöön Työpöytäilmoitukset",
     "DetailLogo": "Yksityiskohtainen CI-logo",
     "DialogDiscardOrSave": "Nykyinen tiedosto ja skripti muutetaan tallentamatta, Haluatko jatkaa?",
@@ -4201,6 +4202,7 @@
     "UseCompactSidebar": "Aseta Kompakti Sivupalkki Oletukseksi",
     "UseSystemSetting": "Käytä järjestelmäasetuksia",
     "UserConfigScript": "Käyttäjän määrityskomentosarja",
+    "WebUIAssistant": "WebUI-avustaja",
     "font": {
       "FontCustomizationDesc": "Aseta WebUI:ssä käytettävä fontti. Fontin on oltava asennettuna paikalliselle järjestelmällesi, jotta se näkyy esikatselussa.",
       "FontFamily": "Kirjasinperhe",
@@ -4435,6 +4437,30 @@
         "ProjectAdministration": "Projektin hallinta"
       }
     }
+  },
+  "webuiAssistant": {
+    "ApiKeyHint": "Säilytetään vain muistissa; anna se uudelleen sivun uudelleenlatauksen jälkeen.",
+    "ChangeConnection": "Vaihda yhteys",
+    "ClearConversation": "Tyhjennä keskustelu",
+    "ClearConversationConfirm": "Tyhjennetäänkö tämä keskustelu?",
+    "Connect": "Yhdistä",
+    "ConnectDescription": "WebUI-avustaja vastaa WebUI:ta koskeviin kysymyksiin käyttöoppaan perusteella. Yhdistä se käyttöönottoon tai OpenAI-yhteensopivaan päätepisteeseen, joka tarjoaa keskustelumallin. Yhteys tallennetaan tilillesi.",
+    "ConnectTitle": "Yhdistä WebUI-avustaja",
+    "Connected": "WebUI-avustaja on yhdistetty.",
+    "ConnectionRejected": "Päätepiste hylkäsi tunnuksen tai API-avaimen.",
+    "CustomEndpoint": "Mukautettu päätepiste",
+    "Deployment": "Käyttöönotto",
+    "EmptyState": "Kysy, miten jotain tehdään WebUI:ssa. Vastaukset perustuvat käyttöoppaaseen.",
+    "Endpoint": "Mallin päätepiste",
+    "EndpointUnreachable": "Kohteeseen {{url}} ei saada yhteyttä.",
+    "ManualUnavailable": "Käyttöopasta ei voitu ladata, joten vastaukset voivat olla epätarkempia.",
+    "ModelLoading": "Yhdistetään malliin…",
+    "NoEndpointURL": "Tällä käyttöönotolla ei ole vielä päätepisteen URL-osoitetta. Odota, kunnes se on valmis, tai valitse toinen.",
+    "Open": "Avaa WebUI-avustaja",
+    "Placeholder": "Kysy WebUI:sta",
+    "Token": "Tunnus",
+    "TokenHint": "Tämä käyttöönotto ei ole julkinen. Valitse jokin sen käyttötunnuksista.",
+    "ViewModelInfo": "Näytä mallin tiedot"
   },
   "webuiSettings": {
     "AllowAnonymousChangePassword": "Salli salasanan nollaus",

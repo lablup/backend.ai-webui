@@ -4153,6 +4153,7 @@
     "DescThemeFamily": "テーマを設定します。",
     "DescThemeMode": "表示モードを設定します。",
     "DescUseCompactSidebar": "コンパクトサイドバーはより多くのワークスペースを提供します。<br />有効にすると、起動時にコンパクトサイドバーがデフォルトUIになります。",
+    "DescWebUIAssistant": "画面右下に、ユーザーマニュアルに基づいて WebUI の使い方に答えるチャットボタンを表示します。初めて開くときに、デプロイまたは OpenAI 互換エンドポイントに接続します。",
     "DesktopNotification": "デスクトップ通知を有効にする",
     "DetailLogo": "詳細ロゴ CI",
     "DialogDiscardOrSave": "現在のファイルとスクリプトは保存せずに変更されます。続行しますか？",
@@ -4203,6 +4204,7 @@
     "UseCompactSidebar": "コンパクトサイドバーをデフォルトに設定",
     "UseSystemSetting": "システム設定を使用する",
     "UserConfigScript": "ユーザー構成スクリプト",
+    "WebUIAssistant": "WebUI アシスタント",
     "font": {
       "FontCustomizationDesc": "WebUIで使用するフォントを設定します。プレビューに表示するには、フォントがローカルシステムにインストールされている必要があります。",
       "FontFamily": "フォントファミリー",
@@ -4436,6 +4438,30 @@
         "ProjectAdministration": "プロジェクト管理者"
       }
     }
+  },
+  "webuiAssistant": {
+    "ApiKeyHint": "メモリにのみ保持されます。ページを再読み込みしたら再度入力してください。",
+    "ChangeConnection": "接続を変更",
+    "ClearConversation": "会話をクリア",
+    "ClearConversationConfirm": "この会話をクリアしますか？",
+    "Connect": "接続",
+    "ConnectDescription": "WebUI アシスタントはユーザーマニュアルに基づいて WebUI の使い方に答えます。チャットモデルを提供するデプロイ、または OpenAI 互換エンドポイントに接続してください。接続情報はアカウントに保存されます。",
+    "ConnectTitle": "WebUI アシスタントを接続",
+    "Connected": "WebUI アシスタントを接続しました。",
+    "ConnectionRejected": "エンドポイントがトークンまたは API キーを拒否しました。",
+    "CustomEndpoint": "カスタムエンドポイント",
+    "Deployment": "デプロイメント",
+    "EmptyState": "WebUI でやりたいことを質問してください。回答はユーザーマニュアルに基づきます。",
+    "Endpoint": "モデルエンドポイント",
+    "EndpointUnreachable": "{{url}} に接続できません。",
+    "ManualUnavailable": "ユーザーマニュアルを読み込めなかったため、回答の精度が下がる可能性があります。",
+    "ModelLoading": "モデルに接続しています…",
+    "NoEndpointURL": "このデプロイにはまだエンドポイント URL がありません。準備ができるまで待つか、別のデプロイを選んでください。",
+    "Open": "WebUI アシスタントを開く",
+    "Placeholder": "WebUI について質問する",
+    "Token": "トークン",
+    "TokenHint": "このデプロイメントは公開されていません。アクセストークンを選択してください。",
+    "ViewModelInfo": "モデル情報を確認"
   },
   "webuiSettings": {
     "AllowAnonymousChangePassword": "パスワードの再設定を許可",

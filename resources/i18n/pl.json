@@ -4154,6 +4154,7 @@
     "DescThemeFamily": "Ustaw temat.",
     "DescThemeMode": "Ustaw tryb wyświetlania.",
     "DescUseCompactSidebar": "Kompaktowy pasek boczny zapewnia więcej przestrzeni roboczej. <br />Po włączeniu kompaktowy pasek boczny będzie domyślnym interfejsem użytkownika przy uruchomieniu.",
+    "DescWebUIAssistant": "Wyświetla w prawym dolnym rogu przycisk czatu, który odpowiada na pytania o WebUI na podstawie podręcznika użytkownika. Przy pierwszym otwarciu łączysz go z wdrożeniem lub punktem końcowym zgodnym z OpenAI.",
     "DesktopNotification": "Włącz Powiadomienia Pulpitu",
     "DetailLogo": "Szczegółowe logo CI",
     "DialogDiscardOrSave": "Bieżący plik i skrypt zostaną zmienione bez zapisywania. Czy chcesz kontynuować?",
@@ -4204,6 +4205,7 @@
     "UseCompactSidebar": "Ustaw Kompaktowy Pasek Boczny jako Domyślny",
     "UseSystemSetting": "Użyj ustawień systemowych",
     "UserConfigScript": "Skrypt konfiguracji użytkownika",
+    "WebUIAssistant": "Asystent WebUI",
     "font": {
       "FontCustomizationDesc": "Ustaw czcionkę używaną w WebUI. Czcionki muszą być zainstalowane w systemie lokalnym, aby wyświetlały się w podglądzie.",
       "FontFamily": "Rodzina czcionek",
@@ -4437,6 +4439,30 @@
         "ProjectAdministration": "Administracja projektu"
       }
     }
+  },
+  "webuiAssistant": {
+    "ApiKeyHint": "Przechowywany tylko w pamięci; po przeładowaniu strony wprowadź go ponownie.",
+    "ChangeConnection": "Zmień połączenie",
+    "ClearConversation": "Wyczyść rozmowę",
+    "ClearConversationConfirm": "Wyczyścić tę rozmowę?",
+    "Connect": "Połącz",
+    "ConnectDescription": "Asystent WebUI odpowiada na pytania o WebUI na podstawie podręcznika użytkownika. Połącz go z wdrożeniem lub punktem końcowym zgodnym z OpenAI, który udostępnia model czatu. Połączenie jest zapisywane na Twoim koncie.",
+    "ConnectTitle": "Połącz asystenta WebUI",
+    "Connected": "Asystent WebUI jest połączony.",
+    "ConnectionRejected": "Punkt końcowy odrzucił token lub klucz API.",
+    "CustomEndpoint": "Niestandardowy punkt końcowy",
+    "Deployment": "Wdrożenie",
+    "EmptyState": "Zapytaj, jak coś zrobić w WebUI. Odpowiedzi pochodzą z podręcznika użytkownika.",
+    "Endpoint": "Punkt końcowy modelu",
+    "EndpointUnreachable": "Nie można połączyć się z {{url}}.",
+    "ManualUnavailable": "Nie udało się wczytać podręcznika użytkownika, więc odpowiedzi mogą być mniej dokładne.",
+    "ModelLoading": "Łączenie z modelem…",
+    "NoEndpointURL": "To wdrożenie nie ma jeszcze adresu URL punktu końcowego. Poczekaj, aż będzie gotowe, lub wybierz inne.",
+    "Open": "Otwórz asystenta WebUI",
+    "Placeholder": "Zadaj pytanie o WebUI",
+    "Token": "Token",
+    "TokenHint": "To wdrożenie nie jest publiczne. Wybierz jeden z jego tokenów dostępu.",
+    "ViewModelInfo": "Wyświetl informacje o modelu"
   },
   "webuiSettings": {
     "AllowAnonymousChangePassword": "Zezwalaj na resetowanie hasła",
