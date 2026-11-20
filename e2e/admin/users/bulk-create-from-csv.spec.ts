@@ -307,13 +307,13 @@ test.describe(
     }) => {
       await openBulkCreateCSVModal(page);
       await uploadCSV(page, '12-error-missing-required-columns.csv');
-      // `message.error` renders an Astryx `Toast` with `role="alert"`. Scope to
-      // the toast viewport: a bare role('alert') also matches ToastViewport's
-      // visually-hidden `announce()` live region, which mirrors the same text.
+      // `message.error` renders an Astryx `Toast` in the viewport; outside a
+      // native modal the card carries no role (Astryx 0.7.11), so match its
+      // text. Scoping to the viewport skips the hidden `announce()` copy.
       await expect(
-        toastViewport(page)
-          .getByRole('alert')
-          .filter({ hasText: 'The CSV file is missing required columns' }),
+        toastViewport(page).getByText(
+          'The CSV file is missing required columns',
+        ),
       ).toBeVisible({
         timeout: 5000,
       });
@@ -333,11 +333,9 @@ test.describe(
       await openBulkCreateCSVModal(page);
       await uploadCSV(page, '15-error-empty-file.csv');
       // `message.warning` maps onto Astryx Toast's `info` variant
-      // (PILOT-DECISION in message.tsx), which carries `role="status"`.
+      // (PILOT-DECISION in message.tsx); its card carries no role either.
       await expect(
-        toastViewport(page)
-          .getByRole('status')
-          .filter({ hasText: 'The CSV file contains no user rows.' }),
+        toastViewport(page).getByText('The CSV file contains no user rows.'),
       ).toBeVisible({
         timeout: 5000,
       });

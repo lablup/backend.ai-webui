@@ -5,7 +5,8 @@
 
 export type DiagnosticSeverity = 'critical' | 'warning' | 'info' | 'passed';
 
-export type DiagnosticCategory = 'config' | 'csp' | 'endpoint' | 'storage';
+export type DiagnosticCategory =
+  'appConfig' | 'config' | 'csp' | 'endpoint' | 'storage';
 
 export interface DiagnosticResult {
   id: string;

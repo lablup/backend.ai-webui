@@ -145,10 +145,9 @@ test.describe(
       // an Astryx `Toast` inside the shared `ToastViewport` — scope to it
       // since a bare `getByText` would also match the viewport's
       // visually-hidden screen-reader announcer node (same text, twice).
+      // The card has no role outside a native modal (Astryx 0.7.11).
       await expect(
-        toastViewport(page)
-          .getByRole('status')
-          .filter({ hasText: /Successfully created/ }),
+        toastViewport(page).getByText(/Successfully created/),
       ).toBeVisible({ timeout: 30000 });
 
       // A successful bulk create reveals the generated keypairs in a
