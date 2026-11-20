@@ -136,9 +136,20 @@ const isAccountParam = (param: string) => {
   return namespace === 'user' && isAccountUserSetting(name);
 };
 
+const TOUR_FLAG_PREFIX = 'has_opened_tour_';
+
 const accountSettingAtom = (name: string) =>
   atom(
-    (get) => get(accountUserSettingsAtom)[name] ?? null,
+    (get) => {
+      // Without the account document a dismissal cannot be stored, so a tour
+      // reads as already opened and never shows.
+      if (
+        name.startsWith(TOUR_FLAG_PREFIX) &&
+        get(myAppConfigState).status !== 'loaded'
+      )
+        return true;
+      return get(accountUserSettingsAtom)[name] ?? null;
+    },
     (get, _set, newValueOrUpdater: any) => {
       const current = get(accountUserSettingsAtom);
       const newValue =
