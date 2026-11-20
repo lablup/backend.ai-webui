@@ -37,7 +37,8 @@ export interface WebUIAssistantModel {
 export const useWebUIAssistantModel = (): WebUIAssistantModel => {
   'use memo';
   const [enabled] = useBAISettingUserState('experimental_webui_assistant');
-  const connection = useMyAppConfig<WebUIAssistantConnection>(
+  const [connection] = useMyAppConfig<WebUIAssistantConnection>(
+    'userConfig',
     WEBUI_ASSISTANT_CONFIG_KEY,
   );
   const apiKey = useCustomEndpointApiKey(WEBUI_ASSISTANT_KEY_ID);
