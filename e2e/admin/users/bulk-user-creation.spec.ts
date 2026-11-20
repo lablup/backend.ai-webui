@@ -21,7 +21,7 @@ function toastRegion(page: Page) {
 function bulkPurgeButton(page: Page) {
   return page
     .getByRole('button', { name: 'Action', exact: true })
-    .filter({ has: page.locator('svg.lucide-trash2') });
+    .filter({ has: page.locator('svg.lucide-trash-2') });
 }
 
 // Generate unique identifiers for this test run to avoid conflicts
