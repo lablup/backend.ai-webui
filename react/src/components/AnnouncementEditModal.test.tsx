@@ -22,11 +22,21 @@ vi.mock('react-i18next', () => ({
 // suspends on that Relay read. Stubbing the hooks puts the test past that phase:
 // what it guards is the SECOND one, where the data is in hand and Monaco's lazy
 // chunk is still loading.
+vi.mock('../hooks', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('../hooks')>()),
+  useCurrentDomain: () => ({ id: 'domain-1', name: 'default' }),
+}));
 vi.mock('../hooks/useAppConfig', () => ({
-  useDomainAppConfig: () => ({
-    announcement: { enabled: true, title: 'hello', body: 'world' },
+  useScopedAppConfig: () => ({
+    scopedAppConfig: {
+      domainConfig: {
+        settings: {
+          announcement: { enabled: true, title: 'hello', body: 'world' },
+        },
+      },
+    },
+    upsertScopedAppConfig: async () => ({}),
   }),
-  useUpdateDomainAppConfig: () => async () => undefined,
 }));
 
 // Stand-in for the lazily-imported Monaco editor: `onMount` fires only when the

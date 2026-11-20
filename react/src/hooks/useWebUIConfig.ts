@@ -13,6 +13,7 @@
  * non-React code (e.g. globalThis.packageEdition, globalThis.packageValidUntil).
  */
 import {
+  applySettingsToClient,
   getDefaultLoginConfig,
   refreshConfigFromToml,
   type LoginConfigState,
@@ -63,10 +64,40 @@ export interface RawTomlConfig {
  */
 export const rawConfigState = atom<RawTomlConfig | null>(null);
 
+/** config.toml processed into LoginConfigState (or the defaults), before any `settings` document. */
+export const baseLoginConfigState = atom<LoginConfigState | null>(null);
+
+/** The public `settings` slice read for the login page's domain (#10436). */
+export const publicWebUISettingsState = atom<unknown>(undefined);
+
+/** The signed-in domain's `domainConfig.settings` document (#10436). */
+export const domainWebUISettingsState = atom<unknown>(undefined);
+
+/** The effective config: base, then the public settings, then the domain's. */
+export const loginConfigState = atom<LoginConfigState | null>((get) => {
+  const base = get(baseLoginConfigState);
+  if (!base) return null;
+  return applyWebUISettings(
+    applyWebUISettings(base, get(publicWebUISettingsState), 'public'),
+    get(domainWebUISettingsState),
+    'domain',
+  );
+});
+
 /**
- * Holds the processed LoginConfigState derived from the raw TOML config.
+ * Mirrors every later change of `loginConfigState` into the connected
+ * client's `_config`, which most screens still read; the sign-in itself
+ * writes it through `applyConfigToClient`. Returns the unsubscribe.
  */
-export const loginConfigState = atom<LoginConfigState | null>(null);
+export function syncLoginConfigToClient(store: JotaiStore): () => void {
+  return store.sub(loginConfigState, () => {
+    const client = (globalThis as Record<string, any>).backendaiclient;
+    const cfg = store.get(loginConfigState);
+    if (cfg && client?.ready && client._config) {
+      applySettingsToClient(client, cfg);
+    }
+  });
+}
 
 /**
  * Indicates whether config.toml has been fetched and processed.
@@ -261,7 +292,7 @@ export function initializeConfigOnce(
         // app remains functional (login page renders with empty API endpoint
         // field).
         const defaultConfig = getDefaultLoginConfig();
-        store.set(loginConfigState, defaultConfig);
+        store.set(baseLoginConfigState, defaultConfig);
         store.set(proxyUrlState, defaultConfig.proxy_url);
         store.set(autoLogoutState, false);
         store.set(configLoadedState, true);
@@ -298,12 +329,12 @@ export function initializeConfigOnce(
       const publicSlice = await fetchPublicDomainConfigOnce(
         resolvePublicConfigTarget(result.config),
       );
-      const effectiveLoginConfig = applyWebUISettings(
-        loginConfig,
+      store.set(baseLoginConfigState, loginConfig);
+      store.set(
+        publicWebUISettingsState,
         publicSlice?.[WEBUI_SETTINGS_CONFIG_KEY],
-        'public',
       );
-      store.set(loginConfigState, effectiveLoginConfig);
+      const effectiveLoginConfig = store.get(loginConfigState)!;
       store.set(autoLogoutState, effectiveLoginConfig.autoLogout);
       store.set(proxyUrlState, proxyUrl);
       store.set(loginPluginState, effectiveLoginConfig.loginPlugin);

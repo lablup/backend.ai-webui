@@ -517,17 +517,23 @@ export const CSSTokenVariables = () => {
  * (its own `Suspense`), so nothing else in this boundary suspends and the
  * splash was torn down before login had even finished.
  *
- * Also suspends on the signed-in user's `userConfig.themeFamily` and copies
- * it into the localStorage mirror BEFORE the splash goes, so the account's
+ * Also copies the signed-in user's `userConfig.themeFamily`, which sign-in
+ * loaded before the client became ready, into the localStorage mirror BEFORE the splash goes, so the account's
  * family is what the page reveals (FR-3834). The mirror survives logout; the
  * next login overrides it here.
  */
 const DismissSplashOnMount = () => {
   'use memo';
   useSuspendedBackendaiClient();
-  const userConfigFamily = useMyAppConfig<string>('themeFamily');
+  const [userConfigFamily, , , userConfigStatus] = useMyAppConfig(
+    'userConfig',
+    'themeFamily',
+  );
+  // A failed sign-in read keeps the mirrored family instead of clearing it.
+  const isUserConfigLoaded = userConfigStatus === 'loaded';
   const { setActiveThemeFamily } = useCustomThemeConfig();
   const syncThemeFamilyMirror = useEffectEvent(() => {
+    if (!isUserConfigLoaded) return;
     setActiveThemeFamily(
       typeof userConfigFamily === 'string' ? userConfigFamily : undefined,
     );

@@ -16,13 +16,17 @@ import { getDefaultLoginConfig } from '../helper/loginConfig';
 import {
   fetchAndParseConfig,
   rawConfigState,
+  baseLoginConfigState,
+  domainWebUISettingsState,
   loginConfigState,
+  publicWebUISettingsState,
   configLoadedState,
   autoLogoutState,
   proxyUrlState,
   loginPluginState,
   type RawTomlConfig,
 } from './useWebUIConfig';
+import { createStore } from 'jotai';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -227,8 +231,25 @@ describe('Atom initial values', () => {
     expect((rawConfigState as any).init).toBeNull();
   });
 
-  it('loginConfigState has null as initial value', () => {
-    expect((loginConfigState as any).init).toBeNull();
+  it('baseLoginConfigState has null as initial value', () => {
+    expect((baseLoginConfigState as any).init).toBeNull();
+  });
+
+  it('loginConfigState layers the public, then the domain settings over the base', () => {
+    const store = createStore();
+    expect(store.get(loginConfigState)).toBeNull();
+    const base = getDefaultLoginConfig();
+    store.set(baseLoginConfigState, base);
+    store.set(publicWebUISettingsState, {
+      allowAnonymousChangePassword: !base.allowAnonymousChangePassword,
+    });
+    store.set(domainWebUISettingsState, { hideAgents: !base.hideAgents });
+    expect(store.get(loginConfigState)).toMatchObject({
+      allowAnonymousChangePassword: !base.allowAnonymousChangePassword,
+      hideAgents: !base.hideAgents,
+    });
+    store.set(domainWebUISettingsState, undefined);
+    expect(store.get(loginConfigState)?.hideAgents).toBe(base.hideAgents);
   });
 
   it('configLoadedState has false as initial value', () => {

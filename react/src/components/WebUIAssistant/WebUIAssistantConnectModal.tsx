@@ -6,11 +6,7 @@ import { WebUIAssistantConnectModalDeploymentQuery } from '../../__generated__/W
 import { App } from '../../app-shim';
 import { Form } from '../../form-engine';
 import { useWebUINavigate } from '../../hooks';
-import {
-  useMyAppConfig,
-  useRefetchMyAppConfig,
-  useUpdateMyUserAppConfig,
-} from '../../hooks/useAppConfig';
+import { useMyAppConfig } from '../../hooks/useAppConfig';
 import { useProjectPath } from '../../hooks/useRouteScope';
 import DeploymentSelect from '../Chat/DeploymentSelect';
 import DeploymentTokenSelect from '../Chat/DeploymentTokenSelect';
@@ -87,12 +83,11 @@ const WebUIAssistantConnectModal: React.FC<WebUIAssistantConnectModalProps> = ({
   const { getErrorMessage } = useErrorMessageResolver();
   const webuiNavigate = useWebUINavigate();
   const buildProjectPath = useProjectPath();
-  const saved = useMyAppConfig<WebUIAssistantConnection>(
+  const [saved, setSaved] = useMyAppConfig<WebUIAssistantConnection>(
+    'userConfig',
     WEBUI_ASSISTANT_CONFIG_KEY,
   );
   const savedApiKey = useCustomEndpointApiKey(WEBUI_ASSISTANT_KEY_ID);
-  const updateMyUserAppConfig = useUpdateMyUserAppConfig();
-  const refetchMyAppConfig = useRefetchMyAppConfig();
 
   const [isCustom, setIsCustom] = useState(
     !!saved?.baseURL && !saved.deploymentId,
@@ -124,12 +119,8 @@ const WebUIAssistantConnectModal: React.FC<WebUIAssistantConnectModalProps> = ({
     apiKey,
     ...connection
   }: WebUIAssistantConnection & { apiKey?: string }) => {
-    await updateMyUserAppConfig(WEBUI_ASSISTANT_CONFIG_KEY, {
-      ...connection,
-      hasApiKey: !!apiKey,
-    });
+    await setSaved({ ...connection, hasApiKey: !!apiKey });
     setCustomEndpointApiKey(WEBUI_ASSISTANT_KEY_ID, apiKey);
-    await refetchMyAppConfig();
     message.success(t('webuiAssistant.Connected'));
     onRequestClose();
   };

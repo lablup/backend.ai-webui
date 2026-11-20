@@ -268,6 +268,15 @@ export function applyConfigToClient(cfg: LoginConfigState): void {
   client._config._proxyToken = '';
   client._config.domainName = cfg.domain_name;
   client._config.domainId = cfg.domain_id;
+  applySettingsToClient(client, cfg);
+  client.ready = true;
+}
+
+/** The config.toml / System Settings fields of `client._config`; identity and connection fields stay. */
+export function applySettingsToClient(
+  client: { _config: Record<string, unknown> },
+  cfg: LoginConfigState,
+): void {
   client._config.default_session_environment = cfg.default_session_environment;
   client._config.default_import_environment = cfg.default_import_environment;
   client._config.allow_manual_image_name_for_session =
@@ -327,5 +336,4 @@ export function applyConfigToClient(cfg: LoginConfigState): void {
   client._config.allowSignout = cfg.allow_signout;
   client._config.enableReservoir = cfg.enableReservoir;
   client._config.enableWebMCP = cfg.enableWebMCP;
-  client.ready = true;
 }

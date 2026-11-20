@@ -22,7 +22,10 @@ import {
   useWebUINavigate,
 } from '../hooks';
 import { useDeviceMetaData, useImageMetaData } from '../hooks/backendai';
-import { useLoginConfig } from '../hooks/useWebUIConfig';
+import {
+  syncLoginConfigToClient,
+  useLoginConfig,
+} from '../hooks/useWebUIConfig';
 import '../index.css';
 import I18nKeyMarkers, { appendI18nKeyMarker } from './I18nKeyMarkers';
 import NotificationHost from './NotificationHost';
@@ -60,6 +63,7 @@ import { RelayEnvironmentProvider } from 'react-relay/hooks';
 import { useLocation } from 'react-router-dom';
 
 export const jotaiStore = createStore();
+syncLoginConfigToClient(jotaiStore);
 dayjs.extend(weekday);
 dayjs.extend(localeData);
 dayjs.extend(localizedFormat);

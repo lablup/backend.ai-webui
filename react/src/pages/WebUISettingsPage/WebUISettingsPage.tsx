@@ -4,14 +4,20 @@
  */
 import BAIErrorBoundary from '../../components/BAIErrorBoundary';
 import { WEBUI_SETTINGS_CONFIG_KEY } from '../../helper/webuiSettings';
-import { useSuspendedBackendaiClient, useTabQuerySnapshot } from '../../hooks';
 import {
-  useDomainAppConfig,
-  useRawPublicDomainAppConfig,
-} from '../../hooks/useAppConfig';
+  useCurrentDomain,
+  useSuspendedBackendaiClient,
+  useTabQuerySnapshot,
+} from '../../hooks';
+import { PUBLIC_SCOPE, useScopedAppConfig } from '../../hooks/useAppConfig';
+import {
+  domainWebUISettingsState,
+  publicWebUISettingsState,
+} from '../../hooks/useWebUIConfig';
 import ConfigurationsSettingList from './components/ConfigurationsSettingList';
 import WebUISettingList from './components/WebUISettingList';
 import { BAICard, BAIFlex, BAISkeleton } from 'backend.ai-ui';
+import { useSetAtom } from 'jotai';
 import { parseAsStringLiteral } from 'nuqs';
 import { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -24,14 +30,47 @@ const tabParser = parseAsStringLiteral([
 /** Reads both saved documents: the public (pre-login) slice and the domain one. */
 const SavedWebUISettingList: React.FC = () => {
   'use memo';
-  const savedDomainSettings = useDomainAppConfig(WEBUI_SETTINGS_CONFIG_KEY);
-  const savedPublicSettings = useRawPublicDomainAppConfig(
-    WEBUI_SETTINGS_CONFIG_KEY,
-  );
+  const { id: domainId, name: domainName } = useCurrentDomain();
+  const domainScope = { type: 'domain', id: domainId } as const;
+  // One read per scope, one after the other (ADR 0033).
+  const domain = useScopedAppConfig(domainScope, ['domainConfig']);
+  const publicConfig = useScopedAppConfig(PUBLIC_SCOPE, [
+    'publicConfigByDomain',
+  ]);
+  const setDomainWebUISettings = useSetAtom(domainWebUISettingsState);
+  const setPublicWebUISettings = useSetAtom(publicWebUISettingsState);
   return (
     <WebUISettingList
-      savedDomainSettings={savedDomainSettings}
-      savedPublicSettings={savedPublicSettings}
+      savedDomainSettings={
+        domain.scopedAppConfig?.domainConfig?.[WEBUI_SETTINGS_CONFIG_KEY]
+      }
+      savedPublicSettings={
+        publicConfig.scopedAppConfig?.publicConfigByDomain?.[domainName]?.[
+          WEBUI_SETTINGS_CONFIG_KEY
+        ]
+      }
+      setDomainSettings={async (value) => {
+        const writtenDocuments = await domain.upsertScopedAppConfig({
+          configName: 'domainConfig',
+          subKey: WEBUI_SETTINGS_CONFIG_KEY,
+          value,
+        });
+        setDomainWebUISettings(
+          writtenDocuments.domainConfig?.[WEBUI_SETTINGS_CONFIG_KEY],
+        );
+      }}
+      setPublicSettings={async (value) => {
+        const writtenDocuments = await publicConfig.upsertScopedAppConfig({
+          configName: 'publicConfigByDomain',
+          subKey: [domainName, WEBUI_SETTINGS_CONFIG_KEY],
+          value,
+        });
+        setPublicWebUISettings(
+          writtenDocuments.publicConfigByDomain?.[domainName]?.[
+            WEBUI_SETTINGS_CONFIG_KEY
+          ],
+        );
+      }}
     />
   );
 };
