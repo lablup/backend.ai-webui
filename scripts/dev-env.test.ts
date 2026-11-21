@@ -929,6 +929,26 @@ describe("dev-env CLI", () => {
     );
   });
 
+  it("reads the board from public_domain over https once the box re-joined", async () => {
+    const config = path.join(root, "dev-gw.json");
+    fs.writeFileSync(
+      config,
+      JSON.stringify({
+        domain: "legacy.invalid",
+        public_domain: "example.invalid",
+        share_base: "https://{app}--x.example.invalid",
+      }),
+    );
+    const result = await run(["status"], {
+      WEBUI_DEV_ENV_CATALOG: undefined,
+      DEV_GW_CONFIG: config,
+    });
+    expect(result.stdout).toContain(
+      "source: https://board.example.invalid/api/catalog",
+    );
+    expect(result.status).toBe(1);
+  });
+
   it("treats a dev-gw config without a domain as missing", async () => {
     const config = path.join(root, "dev-gw.json");
     fs.writeFileSync(config, JSON.stringify({ box: "x" }));

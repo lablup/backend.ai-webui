@@ -14,6 +14,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { appNameBudget, readDevGwConfig, shareBaseOf, shareUrlFor } from './dev-gw.mjs';
 import { resolveAppName } from './portless-app-name.mjs';
 
 const env = { ...process.env };
@@ -173,6 +174,12 @@ function lookupPr(branchName) {
   return readCachedPr(cacheFile);
 }
 
+// Team share URL, present only when this box has run `dev-gw join` once.
+// The gateway rewrites Host to `<app>.localhost:<target_port>`, so routing
+// works with no Portless/Vite change here — only the URL differs.
+const devGwConfig = readDevGwConfig();
+const devGwShareBase = shareBaseOf(devGwConfig);
+
 // Exact mode discards every identifier, so it must not pay for the lookup that
 // produces one — up to the 4s timeout on a box with no network.
 const exactAppName = !!process.env.PORTLESS_APP_NAME_EXACT?.trim();
@@ -181,29 +188,14 @@ const appName = resolveAppName({
   branch,
   pr: exactAppName ? null : lookupPr(branch),
   exact: exactAppName,
+  // `<app>--<box>` is one DNS label, so the box name eats into the app's room.
+  maxLen: appNameBudget(devGwShareBase),
 });
 if (appName) {
   // Surface the app name to the React bundle for the dev-only tab title.
   env.VITE_DEV_SERVER_NAME = appName;
 }
 
-// Team share URL, present only when this box has run `dev-gw join` once.
-// The gateway rewrites Host to `<app>.localhost:<target_port>`, so routing
-// works with no Portless/Vite change here — only the URL differs.
-const devGwConfigPath =
-  process.env.DEV_GW_CONFIG?.trim() || join(homedir(), '.config', 'fw', 'dev-gw.json');
-let devGwConfig = null;
-try {
-  devGwConfig = JSON.parse(readFileSync(devGwConfigPath, 'utf8'));
-} catch {
-  // Not joined (ENOENT), unreadable, or malformed — no share URL to print.
-}
-// A parseable file can still be the wrong shape; only a URL template is usable.
-const devGwShareBase =
-  typeof devGwConfig?.share_base === 'string' &&
-  /^https?:\/\/\{app\}\./.test(devGwConfig.share_base)
-    ? devGwConfig.share_base
-    : null;
 // The gateway forwards to the port recorded at join time forever, so a server
 // on a different port would be proxied to nothing. `portless_port` is the
 // pre-rename spelling, still on boxes that have not re-joined.
@@ -211,14 +203,16 @@ const portlessPort = process.env.PORTLESS_PORT?.trim() || '1355';
 const devGwTargetPort = devGwConfig?.target_port ?? devGwConfig?.portless_port;
 const devGwPortMismatch =
   devGwTargetPort != null && String(devGwTargetPort) !== portlessPort;
+const devGwShare = appName ? shareUrlFor(devGwShareBase, appName) : null;
 if (devGwShareBase && devGwPortMismatch) {
   console.log(
     `-- Team share URL unavailable: the gateway was joined with Portless :${devGwTargetPort}, this server uses :${portlessPort} — re-run \`dev-gw join\``,
   );
-} else if (devGwShareBase && appName) {
-  const shareUrl = devGwShareBase.replace('{app}', appName);
-  env.VITE_DEV_SHARE_URL = shareUrl;
-  console.log(`-- Team share URL: ${shareUrl} (dev VPN, via dev-gw)`);
+} else if (devGwShareBase && devGwShare?.url) {
+  env.VITE_DEV_SHARE_URL = devGwShare.url;
+  console.log(`-- Team share URL: ${devGwShare.url} (dev VPN, via dev-gw)`);
+} else if (devGwShareBase && devGwShare?.error) {
+  console.log(`-- Team share URL unavailable: ${devGwShare.error}`);
 } else if (devGwShareBase) {
   // `portless run` derives the app name itself, so it is unknown until it prints.
   console.log(

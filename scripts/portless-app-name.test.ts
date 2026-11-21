@@ -196,5 +196,34 @@ describe('portless app name', () => {
       expect(resolveAppName({ envName: '', branch: 'main' })).toBeNull();
       expect(resolveAppName()).toBeNull();
     });
+
+    describe('maxLen (the one-label gateway budget)', () => {
+      const pr = { number: 11350, title: 'chore(#11344): move the gateway domain' };
+      const envName = 'a very long descriptive session name';
+
+      it('truncates only the descriptive tail', () => {
+        const name = resolveAppName({ envName, branch: 'chore/gh-11344-x', pr, maxLen: 29 });
+        expect(name).toBe('gh-11344-pr11350-a-very-long');
+        expect(name.length).toBeLessThanOrEqual(29);
+      });
+
+      it('caps a name with no identifiers too', () => {
+        expect(resolveAppName({ envName, branch: 'main', maxLen: 10 })).toBe('a-very-lon');
+      });
+
+      it('never raises the 50-char default', () => {
+        expect(resolveAppName({ envName, branch: 'chore/gh-11344-x', pr, maxLen: 63 }))
+          .toBe(resolveAppName({ envName, branch: 'chore/gh-11344-x', pr }));
+      });
+
+      it('leaves exact names alone, for the share step to refuse', () => {
+        expect(resolveAppName({ envName: 'v26-4-8-rc-3-preview', exact: true, maxLen: 5 }))
+          .toBe('v26-4-8-rc-3-preview');
+      });
+
+      it('never produces a `--` that would move the box separator', () => {
+        expect(resolveAppName({ envName: 'a--b', branch: 'main', maxLen: 29 })).toBe('a-b');
+      });
+    });
   });
 });

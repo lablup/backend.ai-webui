@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // `pnpm run dev-env` — pick a dev API server and test account from the team's
-// catalog (served by the team PR board at `http://board.<domain>/api/catalog`),
+// catalog (served by the team PR board at `<board>/api/catalog`),
 // and write the pick into the git-ignored env files.
 // Conventions: DEV_ENVIRONMENT.md ("Dev servers and test accounts").
 import {
@@ -36,10 +36,14 @@ import {
   ignoredOverridesWarning,
   upsertEnv,
 } from "./dev-env-lib.mjs";
+import {
+  boardCatalogUrl,
+  devGwConfigPath,
+  readDevGwConfig,
+} from "./dev-gw.mjs";
 import dotenv from "dotenv";
 import { execFileSync } from "node:child_process";
 import fs from "node:fs";
-import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -84,7 +88,7 @@ class UserError extends Error {}
 /**
  * Where to read the catalog: a JSON file (`WEBUI_DEV_ENV_CATALOG`), a URL
  * (`WEBUI_DEV_ENV_CATALOG_URL`), or the board on the gateway host named by
- * the dev-gw config. Plain http: Node's fetch rejects the gateway's internal CA.
+ * the dev-gw config (`boardCatalogUrl`).
  */
 function catalogSource() {
   const file = process.env.WEBUI_DEV_ENV_CATALOG?.trim();
@@ -92,16 +96,9 @@ function catalogSource() {
   const url = process.env.WEBUI_DEV_ENV_CATALOG_URL?.trim();
   if (url) return { url, label: `${url} (WEBUI_DEV_ENV_CATALOG_URL)` };
 
-  const configPath =
-    process.env.DEV_GW_CONFIG?.trim() ||
-    path.join(os.homedir(), ".config", "fw", "dev-gw.json");
-  let domain;
-  try {
-    domain = JSON.parse(fs.readFileSync(configPath, "utf8")).domain;
-  } catch {
-    domain = undefined;
-  }
-  if (typeof domain !== "string" || domain.trim() === "") {
+  const configPath = devGwConfigPath();
+  const boardUrl = boardCatalogUrl(readDevGwConfig(configPath));
+  if (!boardUrl) {
     throw new UserError(
       `No dev box gateway configured (${configPath} is missing or has no "domain"), ` +
         "so the board's catalog URL is unknown.\n" +
@@ -109,7 +106,6 @@ function catalogSource() {
         "WEBUI_DEV_ENV_CATALOG_URL at a catalog URL.",
     );
   }
-  const boardUrl = `http://board.${domain.trim()}/api/catalog`;
   return { url: boardUrl, label: boardUrl };
 }
 

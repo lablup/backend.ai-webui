@@ -52,6 +52,22 @@ share_url() {
   printf '%s' "${base//\{app\}/$app}"
 }
 
+# share_label_problem <share_base> <app> — why the gateway cannot route <app>
+# under this template, empty when it can. Mirrors `shareUrlFor` in scripts/dev-gw.mjs:
+# the host label must fit 63 chars, and on the one-label `{app}--<box>` form
+# `box` is the bare address and a dotted name is two labels.
+share_label_problem() {
+  local base=$1 app=$2 label
+  label=${base#*://}; label=${label%%[./:]*}
+  if [[ $base =~ ^https?://\{app\}-- ]]; then
+    [ "$app" != box ] || { printf 'app name `box` is reserved for the box'"'"'s bare address'; return 0; }
+    [[ $app != *.* ]] || { printf 'app name `%s` is not a single DNS label' "$app"; return 0; }
+  fi
+  local budget=$((63 - ${#label} + 5))
+  [ "${#app}" -le "$budget" ] || printf 'app name `%s` is %d characters; this box'"'"'s share host allows %d' "$app" "${#app}" "$budget"
+  return 0
+}
+
 # marker <box> — the hidden HTML marker that identifies THIS box's comment.
 # One per box per PR: a --force takeover by another box carries another marker
 # and so leaves the displaced box's comment alone.
@@ -234,7 +250,7 @@ gateway_share_base() {
   [ -f "$DEV_GW_CONFIG" ] || refuse "this box has not joined the dev gateway ($DEV_GW_CONFIG missing) — nothing advertised"
   local cfg base target live
   cfg=$(cat "$DEV_GW_CONFIG") || refuse "cannot read $DEV_GW_CONFIG — nothing advertised"
-  base=$(jq -r 'select(.share_base | type == "string" and test("^https?://\\{app\\}\\.")) | .share_base' <<<"$cfg" 2>/dev/null || true)
+  base=$(jq -r 'select(.share_base | type == "string" and test("^https?://\\{app\\}(\\.|--)")) | .share_base' <<<"$cfg" 2>/dev/null || true)
   [ -n "$base" ] || refuse "$DEV_GW_CONFIG has no usable share_base template — nothing advertised"
   target=$(jq -r '(.target_port // .portless_port // empty) | tostring' <<<"$cfg")
   live=$(portless_port)
@@ -306,14 +322,21 @@ resolve_app_name() {
   # Exact mode discards every identifier, so it must not pay for the lookup —
   # dev.mjs skips it there too.
   exact_mode || pr_json=$(lookup_pr "$branch")
+  # dev.mjs caps the name to the gateway's label budget, so the prediction must
+  # too; a checkout without dev-gw.mjs predates the cap and gets none.
+  local gw_mod="$root/scripts/dev-gw.mjs"
+  [ -f "$gw_mod" ] || gw_mod=""
   BAI_BRANCH="$branch" BAI_PR_JSON="$pr_json" BAI_MOD="$root/scripts/portless-app-name.mjs" \
+    BAI_GW_MOD="$gw_mod" DEV_GW_CONFIG="$DEV_GW_CONFIG" \
     node -e '
-      import(process.env.BAI_MOD).then((m) => {
+      const gwMod = process.env.BAI_GW_MOD;
+      Promise.all([import(process.env.BAI_MOD), gwMod ? import(gwMod) : null]).then(([m, gw]) => {
         const name = m.resolveAppName({
           envName: process.env.PORTLESS_APP_NAME,
           branch: process.env.BAI_BRANCH,
           pr: JSON.parse(process.env.BAI_PR_JSON),
           exact: !!(process.env.PORTLESS_APP_NAME_EXACT || "").trim(),
+          maxLen: gw ? gw.appNameBudget(gw.shareBaseOf(gw.readDevGwConfig())) : undefined,
         });
         if (name) process.stdout.write(name);
       });
@@ -444,6 +467,8 @@ cmd_advertise() {
   gateway_share_base                  # refuses (exit 0) when not joined / port mismatch
   box=$(gateway_box)
   [ -n "$box" ] || refuse "$DEV_GW_CONFIG has no box name — nothing advertised"
+  local problem; problem=$(share_label_problem "$SHARE_BASE" "$app")
+  [ -z "$problem" ] || refuse "$problem — nothing advertised"
   url=$(share_url "$SHARE_BASE" "$app")
   # Belt and braces: a .localhost URL is useless to a reviewer and must never
   # reach a public PR, whatever the config said.
