@@ -2329,6 +2329,7 @@
     "EndpointUnreachable": "Tähän palvelimeen ei saada yhteyttä. Tarkista osoite ja verkko ja yritä uudelleen.",
     "ForgotPassword": "Unohditko salasanan?",
     "GoToLogin": "Siirry kirjautumiseen",
+    "HidePassword": "Piilota salasana",
     "InvalidChangePasswordToken": "Merkki on virheellinen",
     "InvalidChangePasswordTokenMessage": "Salasanan vaihtamiseen myönnetyssä tokenissa on virhe. Lähetä toinen sähköpostiviesti salasanan vaihtamiseksi ja yritä uudelleen.",
     "LeaveService": "Jätä palvelu",
@@ -2353,6 +2354,7 @@
     "ServerUnreachable": "Palvelimeen ei saada yhteyttä. Tarkista API-päätepiste ja yritä uudelleen.",
     "SessionExpired": "Kirjautumissessiosi on vanhentunut. Kirjaudu sisään uudelleen.",
     "SessionMode": "Istunto",
+    "ShowPassword": "Näytä salasana",
     "SignUp": "Rekisteröidy",
     "SignoutFinished": "Kirjautuminen päättyi.",
     "singleSignOn": {

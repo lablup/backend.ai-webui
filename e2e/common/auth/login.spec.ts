@@ -27,7 +27,7 @@ test.describe(
     test('should display the login form', async ({ page }) => {
       await fillLoginEndpoint(page, webServerEndpoint);
       await expect(page.getByLabel('Email or Username')).toBeVisible();
-      await expect(page.getByLabel('Password')).toBeVisible();
+      await expect(page.getByLabel('Password', { exact: true })).toBeVisible();
       // Astryx `Button`'s accessible name comes from its visible text content,
       // not `aria-label`, so `getByRole` is required (`getByLabel` matches
       // nothing).
@@ -71,7 +71,9 @@ test.describe(
     }) => {
       await fillLoginEndpoint(page, webServerEndpoint + '/');
       await page.getByLabel('Email or Username').fill(userInfo.admin.email);
-      await page.getByLabel('Password').fill(userInfo.admin.password);
+      await page
+        .getByLabel('Password', { exact: true })
+        .fill(userInfo.admin.password);
       await page.getByRole('button', { name: 'Login', exact: true }).click();
 
       await expect(page).toHaveURL(/\/admin\/dashboard/, { timeout: 15_000 });
@@ -85,7 +87,9 @@ test.describe(
     }) => {
       await fillLoginEndpoint(page, webServerEndpoint + '///');
       await page.getByLabel('Email or Username').fill(userInfo.admin.email);
-      await page.getByLabel('Password').fill(userInfo.admin.password);
+      await page
+        .getByLabel('Password', { exact: true })
+        .fill(userInfo.admin.password);
       await page.getByRole('button', { name: 'Login', exact: true }).click();
 
       await expect(page).toHaveURL(/\/admin\/dashboard/, { timeout: 15_000 });
@@ -111,7 +115,9 @@ test.describe(
 
       await fillLoginEndpoint(page, webServerEndpoint + '/');
       await page.getByLabel('Email or Username').fill(userInfo.admin.email);
-      await page.getByLabel('Password').fill(userInfo.admin.password);
+      await page
+        .getByLabel('Password', { exact: true })
+        .fill(userInfo.admin.password);
       await page.getByRole('button', { name: 'Login', exact: true }).click();
 
       await expect(page).toHaveURL(/\/admin\/dashboard/, { timeout: 15_000 });
@@ -132,7 +138,7 @@ test.describe(
         .getByLabel('Email or Username')
         // Use random email to avoid block due to too many requests
         .fill(`nonexistent-${new Date().getTime()}@example.com`);
-      await page.getByLabel('Password').fill('somepassword');
+      await page.getByLabel('Password', { exact: true }).fill('somepassword');
       await page.getByRole('button', { name: 'Login', exact: true }).click();
 
       // Wait for and verify the error notification appears
@@ -146,7 +152,9 @@ test.describe(
     }) => {
       await fillLoginEndpoint(page, webServerEndpoint);
       await page.getByLabel('Email or Username').fill(userInfo.admin.email);
-      await page.getByLabel('Password').fill(userInfo.admin.password + 'wrong');
+      await page
+        .getByLabel('Password', { exact: true })
+        .fill(userInfo.admin.password + 'wrong');
       await page.getByRole('button', { name: 'Login', exact: true }).click();
 
       // Wait for and verify the error notification appears

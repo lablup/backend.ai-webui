@@ -2332,6 +2332,7 @@
     "EndpointUnreachable": "Tidak dapat terhubung ke server ini. Periksa alamat dan jaringan, lalu coba lagi.",
     "ForgotPassword": "Tidak ingat kata sandi?",
     "GoToLogin": "Ke halaman masuk",
+    "HidePassword": "Sembunyikan kata sandi",
     "InvalidChangePasswordToken": "Token Tidak Valid",
     "InvalidChangePasswordTokenMessage": "Ada kesalahan pada token yang dikeluarkan untuk mengubah kata sandi. Silakan kirim email lain untuk mengubah kata sandi dan coba lagi.",
     "LeaveService": "Tinggalkan Layanan",
@@ -2356,6 +2357,7 @@
     "ServerUnreachable": "Tidak dapat terhubung ke server. Silakan periksa titik akhir API dan coba lagi.",
     "SessionExpired": "Sesi login Anda telah kedaluwarsa. Silakan masuk kembali.",
     "SessionMode": "Sesi",
+    "ShowPassword": "Tampilkan kata sandi",
     "SignUp": "Daftar",
     "SignoutFinished": "Keluar selesai.",
     "singleSignOn": {

@@ -2330,6 +2330,7 @@
     "EndpointUnreachable": "Impossible de joindre ce serveur. Vérifiez l'adresse et le réseau, puis réessayez.",
     "ForgotPassword": "Mot de passe oublié?",
     "GoToLogin": "Aller à la connexion",
+    "HidePassword": "Masquer le mot de passe",
     "InvalidChangePasswordToken": "jeton invalide",
     "InvalidChangePasswordTokenMessage": "Le jeton émis pour changer le mot de passe a une erreur. Veuillez envoyer un autre e-mail pour changer le mot de passe et réessayer.",
     "LeaveService": "Quitter le service",
@@ -2354,6 +2355,7 @@
     "ServerUnreachable": "Impossible de se connecter au serveur. Veuillez vérifier le point de terminaison de l'API et réessayer.",
     "SessionExpired": "Votre session de connexion a expiré. Veuillez vous reconnecter.",
     "SessionMode": "Session",
+    "ShowPassword": "Afficher le mot de passe",
     "SignUp": "S'inscrire",
     "SignoutFinished": "Déconnexion terminée.",
     "singleSignOn": {
