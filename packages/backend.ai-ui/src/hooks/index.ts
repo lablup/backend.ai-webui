@@ -195,7 +195,6 @@ export {
 } from './useProjectResourceGroups';
 export type { ScalingGroupItem } from './useProjectResourceGroups';
 export {
-  isAutoMountFolderName,
   mountableVFolderFilter,
   mountableVFolderScope,
   notDeletedVFolderFilter,

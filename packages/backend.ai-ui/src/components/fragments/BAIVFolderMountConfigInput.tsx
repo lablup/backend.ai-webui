@@ -142,7 +142,9 @@ export interface VFolderMountConfigStatusOptions {
   /** Base path prepended to a relative alias input. */
   aliasBasePath?: string;
   /** Auto-mounted folders, included in the overlap check. */
-  autoMountedFolders?: ReadonlyArray<Pick<AutoMountedFolder, 'name'>>;
+  autoMountedFolders?: ReadonlyArray<
+    Pick<AutoMountedFolder, 'name' | 'mountDestination'>
+  >;
 }
 
 export interface VFolderMountConfigEntryStatus {
@@ -175,11 +177,15 @@ export const getVFolderMountConfigStatuses = (
       basePath,
     );
   });
-  // Auto-mounted folders occupy their default mount path; include them so a
-  // user alias colliding with an auto-mounted folder counts as an overlap.
+  // Auto-mounted folders occupy their set or default mount path; include them
+  // so a user alias colliding with an auto-mounted folder counts as an overlap.
   const autoMountDestinations = new Set(
     (options?.autoMountedFolders ?? []).map((folder) =>
-      inputToMountDestination(folder.name, '', basePath),
+      inputToMountDestination(
+        folder.name,
+        folder.mountDestination ?? '',
+        basePath,
+      ),
     ),
   );
   const destinationCounts = _.countBy([
@@ -413,11 +419,26 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
           placeholder={t('comp:BAIVFolderMountConfigInput.SelectFolder')}
           scope={scope}
           filter={mountableVFolderFilter(mountableHosts)}
-          // Dotfile folders are mounted by the session itself, so never offered.
+          // Folders the session mounts itself are never offered.
           optionFilter={{
             AND: _.compact([
               { status: { equals: 'READY' } },
-              { name: { notStartsWith: '.' } },
+              {
+                autoMounts: {
+                  none: {
+                    OR: _.compact([
+                      scope.project && {
+                        scopeType: { equals: 'PROJECT' },
+                        scopeId: { in: _.map(scope.project, 'value') },
+                      },
+                      scope.user && {
+                        scopeType: { equals: 'USER' },
+                        scopeId: { in: _.map(scope.user, 'value') },
+                      },
+                    ]),
+                  },
+                },
+              },
               filter,
             ]),
           }}

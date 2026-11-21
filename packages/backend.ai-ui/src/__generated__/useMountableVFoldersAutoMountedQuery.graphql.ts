@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<f9edc116881a0154b6fb2a920b37a8e7>>
+ * @generated SignedSource<<d0f33fd1a3507d0b11b72a2c5f5377b0>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,150 +9,34 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
-export type MountPermission = "READ_ONLY" | "READ_WRITE" | "RW_DELETE" | "%future added value";
-export type VFolderAutoMountScopeType = "PROJECT" | "USER" | "%future added value";
 export type VFolderMountPermission = "NONE" | "READ_ONLY" | "READ_WRITE" | "RW_DELETE" | "%future added value";
 export type VFolderOperationStatus = "CLONING" | "CREATING" | "DELETE_COMPLETE" | "DELETE_ERROR" | "DELETE_ONGOING" | "DELETE_PENDING" | "READY" | "%future added value";
-export type VFolderUsageMode = "DATA" | "GENERAL" | "MODEL" | "%future added value";
-export type VFolderScope = {
-  domain?: ReadonlyArray<UUIDScope> | null | undefined;
+export type VFolderAutoMountScope = {
   project?: ReadonlyArray<UUIDScope> | null | undefined;
   user?: ReadonlyArray<UUIDScope> | null | undefined;
+  vfolder?: ReadonlyArray<UUIDScope> | null | undefined;
 };
 export type UUIDScope = {
   value: string;
 };
-export type VFolderFilter = {
-  AND?: ReadonlyArray<VFolderFilter> | null | undefined;
-  NOT?: ReadonlyArray<VFolderFilter> | null | undefined;
-  OR?: ReadonlyArray<VFolderFilter> | null | undefined;
-  autoMounts?: VFolderAutoMountNestedFilter | null | undefined;
-  cloneable?: boolean | null | undefined;
-  createdAt?: DateTimeFilter | null | undefined;
-  entityId?: UUIDFilter | null | undefined;
-  host?: StringFilter | null | undefined;
-  labels?: EntityLabelNestedFilter | null | undefined;
-  name?: StringFilter | null | undefined;
-  status?: VFolderOperationStatusFilter | null | undefined;
-  usageMode?: VFolderUsageModeFilter | null | undefined;
-};
-export type StringFilter = {
-  contains?: string | null | undefined;
-  endsWith?: string | null | undefined;
-  equals?: string | null | undefined;
-  iContains?: string | null | undefined;
-  iEndsWith?: string | null | undefined;
-  iEquals?: string | null | undefined;
-  iIn?: ReadonlyArray<string> | null | undefined;
-  iNotContains?: string | null | undefined;
-  iNotEndsWith?: string | null | undefined;
-  iNotEquals?: string | null | undefined;
-  iNotIn?: ReadonlyArray<string> | null | undefined;
-  iNotStartsWith?: string | null | undefined;
-  iStartsWith?: string | null | undefined;
-  in?: ReadonlyArray<string> | null | undefined;
-  notContains?: string | null | undefined;
-  notEndsWith?: string | null | undefined;
-  notEquals?: string | null | undefined;
-  notIn?: ReadonlyArray<string> | null | undefined;
-  notStartsWith?: string | null | undefined;
-  startsWith?: string | null | undefined;
-};
-export type VFolderOperationStatusFilter = {
-  equals?: VFolderOperationStatus | null | undefined;
-  in?: ReadonlyArray<VFolderOperationStatus> | null | undefined;
-  notEquals?: VFolderOperationStatus | null | undefined;
-  notIn?: ReadonlyArray<VFolderOperationStatus> | null | undefined;
-};
-export type VFolderUsageModeFilter = {
-  equals?: VFolderUsageMode | null | undefined;
-  in?: ReadonlyArray<VFolderUsageMode> | null | undefined;
-  notEquals?: VFolderUsageMode | null | undefined;
-  notIn?: ReadonlyArray<VFolderUsageMode> | null | undefined;
-};
-export type DateTimeFilter = {
-  after?: string | null | undefined;
-  before?: string | null | undefined;
-  equals?: string | null | undefined;
-  notEquals?: string | null | undefined;
-};
-export type EntityLabelNestedFilter = {
-  every?: EntityLabelFilter | null | undefined;
-  exists?: boolean | null | undefined;
-  none?: EntityLabelFilter | null | undefined;
-  some?: EntityLabelFilter | null | undefined;
-};
-export type EntityLabelFilter = {
-  AND?: ReadonlyArray<EntityLabelFilter> | null | undefined;
-  NOT?: ReadonlyArray<EntityLabelFilter> | null | undefined;
-  OR?: ReadonlyArray<EntityLabelFilter> | null | undefined;
-  entityId?: UUIDFilter | null | undefined;
-  entityType?: StringFilter | null | undefined;
-  fieldId?: UUIDFilter | null | undefined;
-  key?: StringFilter | null | undefined;
-  value?: StringFilter | null | undefined;
-};
-export type UUIDFilter = {
-  equals?: string | null | undefined;
-  in?: ReadonlyArray<string> | null | undefined;
-  notEquals?: string | null | undefined;
-  notIn?: ReadonlyArray<string> | null | undefined;
-};
-export type VFolderAutoMountNestedFilter = {
-  every?: VFolderAutoMountFilter | null | undefined;
-  exists?: boolean | null | undefined;
-  none?: VFolderAutoMountFilter | null | undefined;
-  some?: VFolderAutoMountFilter | null | undefined;
-};
-export type VFolderAutoMountFilter = {
-  AND?: ReadonlyArray<VFolderAutoMountFilter> | null | undefined;
-  NOT?: ReadonlyArray<VFolderAutoMountFilter> | null | undefined;
-  OR?: ReadonlyArray<VFolderAutoMountFilter> | null | undefined;
-  createdAt?: DateTimeFilter | null | undefined;
-  deletedAt?: NullableDateTimeFilter | null | undefined;
-  entityId?: UUIDFilter | null | undefined;
-  mountDestination?: StringFilter | null | undefined;
-  mountPermission?: VFolderAutoMountPermissionFilter | null | undefined;
-  scopeId?: UUIDFilter | null | undefined;
-  scopeType?: VFolderAutoMountScopeTypeFilter | null | undefined;
-  updatedAt?: DateTimeFilter | null | undefined;
-  vfolderId?: UUIDFilter | null | undefined;
-};
-export type VFolderAutoMountScopeTypeFilter = {
-  equals?: VFolderAutoMountScopeType | null | undefined;
-  in?: ReadonlyArray<VFolderAutoMountScopeType> | null | undefined;
-  notEquals?: VFolderAutoMountScopeType | null | undefined;
-  notIn?: ReadonlyArray<VFolderAutoMountScopeType> | null | undefined;
-};
-export type VFolderAutoMountPermissionFilter = {
-  equals?: MountPermission | null | undefined;
-  in?: ReadonlyArray<MountPermission> | null | undefined;
-  notEquals?: MountPermission | null | undefined;
-  notIn?: ReadonlyArray<MountPermission> | null | undefined;
-};
-export type NullableDateTimeFilter = {
-  after?: string | null | undefined;
-  before?: string | null | undefined;
-  equals?: string | null | undefined;
-  isNull?: boolean | null | undefined;
-  notEquals?: string | null | undefined;
-};
 export type useMountableVFoldersAutoMountedQuery$variables = {
-  filter?: VFolderFilter | null | undefined;
+  autoMountScope: VFolderAutoMountScope;
   limit: number;
-  scope: VFolderScope;
 };
 export type useMountableVFoldersAutoMountedQuery$data = {
-  readonly scopedVFoldersV2: {
+  readonly scopedVfolderAutoMounts: {
     readonly edges: ReadonlyArray<{
       readonly node: {
-        readonly accessControl: {
-          readonly permission: VFolderMountPermission;
-        };
-        readonly entityId: string;
-        readonly metadata: {
-          readonly name: string;
-        };
+        readonly mountDestination: string;
+        readonly vfolder: {
+          readonly host: string;
+          readonly metadata: {
+            readonly name: string;
+          };
+          readonly mountPermission: VFolderMountPermission | null | undefined;
+          readonly status: VFolderOperationStatus;
+        } | null | undefined;
+        readonly vfolderId: string;
       };
     }>;
   } | null | undefined;
@@ -163,27 +47,19 @@ export type useMountableVFoldersAutoMountedQuery = {
 };
 
 const node: ConcreteRequest = (function(){
-var v0 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "filter"
-},
-v1 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "limit"
-},
-v2 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "scope"
-},
-v3 = [
+var v0 = [
   {
-    "kind": "Variable",
-    "name": "filter",
-    "variableName": "filter"
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "autoMountScope"
   },
+  {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "limit"
+  }
+],
+v1 = [
   {
     "kind": "Variable",
     "name": "limit",
@@ -195,42 +71,52 @@ v3 = [
     "value": [
       {
         "direction": "ASC",
-        "field": "NAME"
+        "field": "MOUNT_DESTINATION"
       }
     ]
   },
   {
     "kind": "Variable",
     "name": "scope",
-    "variableName": "scope"
+    "variableName": "autoMountScope"
   }
 ],
+v2 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "vfolderId",
+  "storageKey": null
+},
+v3 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "mountDestination",
+  "storageKey": null
+},
 v4 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "entityId",
+  "name": "host",
   "storageKey": null
 },
 v5 = {
   "alias": null,
   "args": null,
-  "concreteType": "VFolderAccessControlInfo",
-  "kind": "LinkedField",
-  "name": "accessControl",
-  "plural": false,
-  "selections": [
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "permission",
-      "storageKey": null
-    }
-  ],
+  "kind": "ScalarField",
+  "name": "status",
   "storageKey": null
 },
 v6 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "mountPermission",
+  "storageKey": null
+},
+v7 = {
   "alias": null,
   "args": null,
   "concreteType": "VFolderMetadataInfo",
@@ -247,30 +133,33 @@ v6 = {
     }
   ],
   "storageKey": null
+},
+v8 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "id",
+  "storageKey": null
 };
 return {
   "fragment": {
-    "argumentDefinitions": [
-      (v0/*: any*/),
-      (v1/*: any*/),
-      (v2/*: any*/)
-    ],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
     "name": "useMountableVFoldersAutoMountedQuery",
     "selections": [
       {
         "alias": null,
-        "args": (v3/*: any*/),
-        "concreteType": "VFolderConnection",
+        "args": (v1/*: any*/),
+        "concreteType": "VFolderAutoMountConnection",
         "kind": "LinkedField",
-        "name": "scopedVFoldersV2",
+        "name": "scopedVfolderAutoMounts",
         "plural": false,
         "selections": [
           {
             "alias": null,
             "args": null,
-            "concreteType": "VFolderEdge",
+            "concreteType": "VFolderAutoMountEdge",
             "kind": "LinkedField",
             "name": "edges",
             "plural": true,
@@ -278,14 +167,28 @@ return {
               {
                 "alias": null,
                 "args": null,
-                "concreteType": "VFolder",
+                "concreteType": "VFolderAutoMount",
                 "kind": "LinkedField",
                 "name": "node",
                 "plural": false,
                 "selections": [
-                  (v4/*: any*/),
-                  (v5/*: any*/),
-                  (v6/*: any*/)
+                  (v2/*: any*/),
+                  (v3/*: any*/),
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "VFolder",
+                    "kind": "LinkedField",
+                    "name": "vfolder",
+                    "plural": false,
+                    "selections": [
+                      (v4/*: any*/),
+                      (v5/*: any*/),
+                      (v6/*: any*/),
+                      (v7/*: any*/)
+                    ],
+                    "storageKey": null
+                  }
                 ],
                 "storageKey": null
               }
@@ -301,26 +204,22 @@ return {
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": [
-      (v2/*: any*/),
-      (v0/*: any*/),
-      (v1/*: any*/)
-    ],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "useMountableVFoldersAutoMountedQuery",
     "selections": [
       {
         "alias": null,
-        "args": (v3/*: any*/),
-        "concreteType": "VFolderConnection",
+        "args": (v1/*: any*/),
+        "concreteType": "VFolderAutoMountConnection",
         "kind": "LinkedField",
-        "name": "scopedVFoldersV2",
+        "name": "scopedVfolderAutoMounts",
         "plural": false,
         "selections": [
           {
             "alias": null,
             "args": null,
-            "concreteType": "VFolderEdge",
+            "concreteType": "VFolderAutoMountEdge",
             "kind": "LinkedField",
             "name": "edges",
             "plural": true,
@@ -328,21 +227,30 @@ return {
               {
                 "alias": null,
                 "args": null,
-                "concreteType": "VFolder",
+                "concreteType": "VFolderAutoMount",
                 "kind": "LinkedField",
                 "name": "node",
                 "plural": false,
                 "selections": [
-                  (v4/*: any*/),
-                  (v5/*: any*/),
-                  (v6/*: any*/),
+                  (v2/*: any*/),
+                  (v3/*: any*/),
                   {
                     "alias": null,
                     "args": null,
-                    "kind": "ScalarField",
-                    "name": "id",
+                    "concreteType": "VFolder",
+                    "kind": "LinkedField",
+                    "name": "vfolder",
+                    "plural": false,
+                    "selections": [
+                      (v4/*: any*/),
+                      (v5/*: any*/),
+                      (v6/*: any*/),
+                      (v7/*: any*/),
+                      (v8/*: any*/)
+                    ],
                     "storageKey": null
-                  }
+                  },
+                  (v8/*: any*/)
                 ],
                 "storageKey": null
               }
@@ -355,16 +263,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "e1e328b5bd503f08c2eca311e44d22f5",
+    "cacheID": "f553f5b4db42a327fbc947c97d1dd82d",
     "id": null,
     "metadata": {},
     "name": "useMountableVFoldersAutoMountedQuery",
     "operationKind": "query",
-    "text": "query useMountableVFoldersAutoMountedQuery(\n  $scope: VFolderScope!\n  $filter: VFolderFilter\n  $limit: Int!\n) {\n  scopedVFoldersV2(scope: $scope, filter: $filter, limit: $limit, orderBy: [{field: NAME, direction: ASC}]) {\n    edges {\n      node {\n        entityId\n        accessControl {\n          permission\n        }\n        metadata {\n          name\n        }\n        id\n      }\n    }\n  }\n}\n"
+    "text": "query useMountableVFoldersAutoMountedQuery(\n  $autoMountScope: VFolderAutoMountScope!\n  $limit: Int!\n) {\n  scopedVfolderAutoMounts(scope: $autoMountScope, limit: $limit, orderBy: [{field: MOUNT_DESTINATION, direction: ASC}]) {\n    edges {\n      node {\n        vfolderId\n        mountDestination\n        vfolder {\n          host\n          status\n          mountPermission\n          metadata {\n            name\n          }\n          id\n        }\n        id\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "7b931aebf8a54ff24ec5713274ca9fbc";
+(node as any).hash = "ab64b58dfb000e45e958faf253600f6b";
 
 export default node;

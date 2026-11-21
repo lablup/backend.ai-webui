@@ -33,7 +33,7 @@ export interface MockVFolder {
 export interface MockVFolderFileProvidersProps {
   vfolders?: Array<MockVFolder>;
   trees?: MockVFolderFileTrees | (() => MockVFolderFileTrees);
-  /** Folders `scopedVFoldersV2` answers with, after its scope and filter. */
+  /** Folders `scopedVFoldersV2` and `scopedVfolderAutoMounts` answer with, after their scope and filter. */
   folders?: Array<MockMountFolder>;
   /** Fallback for a Suspense boundary around `children`; omit to render bare. */
   suspenseFallback?: React.ReactNode;
@@ -60,6 +60,7 @@ interface MockFilter {
   status?: MockStringFilter;
   usageMode?: MockStringFilter;
   entityId?: MockStringFilter;
+  autoMounts?: { exists?: boolean; none?: unknown };
   AND?: Array<MockFilter>;
   OR?: Array<MockFilter>;
   NOT?: Array<MockFilter>;
@@ -76,6 +77,18 @@ const matchesString = (value: string, filter?: MockStringFilter) =>
     (filter.iContains == null ||
       value.toLowerCase().includes(filter.iContains.toLowerCase())));
 
+const matchesAutoMounts = (
+  folder: MockMountFolder,
+  filter?: MockFilter['autoMounts'],
+) => {
+  const isAutoMounted = folder.autoMountDestination !== undefined;
+  return (
+    !filter ||
+    ((filter.exists == null || filter.exists === isAutoMounted) &&
+      (filter.none == null || !isAutoMounted))
+  );
+};
+
 /** The `VFolderFilter` subset the mount-folder queries send, evaluated in memory. */
 const matchesVFolderFilter = (
   folder: MockMountFolder,
@@ -89,11 +102,12 @@ const matchesVFolderFilter = (
     matchesString(folder.host, filter.host) &&
     matchesString(folder.status, filter.status) &&
     matchesString(folder.usageMode, filter.usageMode) &&
-    matchesString(folder.id, filter.entityId));
+    matchesString(folder.id, filter.entityId) &&
+    matchesAutoMounts(folder, filter.autoMounts));
 
 /**
  * Everything a vfolder file-browsing story needs without a backend: a mock
- * Relay environment answering `scopedVFoldersV2` from `folders` and
+ * Relay environment answering `scopedVFoldersV2` and `scopedVfolderAutoMounts` from `folders` and
  * `vfolder_nodes` / the picker's `vfolderV2` from `vfolders`, and a mock
  * `BAIClient` whose file APIs read and write `trees`.
  */
@@ -128,15 +142,35 @@ const MockVFolderFileProviders: React.FC<MockVFolderFileProvidersProps> = ({
       },
     }));
 
+    const inScope = (folder: MockMountFolder, scope?: MockScope) =>
+      folder.ownershipType === 'USER' ||
+      _.map(scope?.project, 'value').includes(folder.projectId ?? '');
+
+    const scopedVfolderAutoMounts = (variables: Record<string, unknown>) => ({
+      edges: (folders ?? [])
+        .filter(
+          (folder) =>
+            folder.autoMountDestination !== undefined &&
+            inScope(folder, variables.autoMountScope as MockScope),
+        )
+        .map((folder) => ({
+          node: {
+            vfolderId: folder.id,
+            mountDestination: folder.autoMountDestination,
+            vfolder: {
+              host: folder.host,
+              status: folder.status,
+              mountPermission: folder.permission,
+              metadata: { name: folder.name },
+            },
+          },
+        })),
+    });
+
     const scopedVFolders = (variables: Record<string, unknown>) => {
-      const projectIds = _.map(
-        (variables.scope as MockScope | undefined)?.project,
-        'value',
-      );
       const matched = (folders ?? []).filter(
         (folder) =>
-          (folder.ownershipType === 'USER' ||
-            projectIds.includes(folder.projectId ?? '')) &&
+          inScope(folder, variables.scope as MockScope) &&
           matchesVFolderFilter(folder, variables.filter as MockFilter),
       );
       const offset = (variables.offset as number | undefined) ?? 0;
@@ -183,6 +217,9 @@ const MockVFolderFileProviders: React.FC<MockVFolderFileProvidersProps> = ({
         return MockPayloadGenerator.generate(operation, {
           Query: () => ({
             scopedVFoldersV2: scopedVFolders(operation.request.variables),
+            scopedVfolderAutoMounts: scopedVfolderAutoMounts(
+              operation.request.variables,
+            ),
             vfolder_nodes: { count: edges.length, edges },
             vfolderV2: requested
               ? {

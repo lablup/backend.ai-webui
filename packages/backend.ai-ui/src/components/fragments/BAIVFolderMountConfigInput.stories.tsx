@@ -152,7 +152,7 @@ for configuring vfolder mounts.
 - Picks folders with \`BAIScopedVFolderSelect\`, which pages \`scopedVFoldersV2\` over the
   \`scope\` the caller passes (usually its own folders and the current project's), filtered on the server: the host must be in
   \`mountableHosts\` (those granting \`mount-in-session\`), the folder must be ready,
-  and dotfile folders are left out (the session mounts them anyway). Search runs
+  and folders the scope's auto-mount settings already name are left out. Search runs
   on the server too, and \`filter\` (a \`VFolderFilter\`) narrows the options further
   without shrinking the selection. A folder whose mount level is NONE is listed
   but cannot be picked.
@@ -168,7 +168,7 @@ for configuring vfolder mounts.
 - \`mountDestination\` stores the **raw alias** the user typed — \`''\` mounts at the default
   \`/home/work/<name>\`, a relative segment like \`data\` resolves to \`/home/work/data\`, and an
   absolute path like \`/data\` is used as-is. Resolve it with the exported \`inputToMountDestination\`.
-- It reads the auto-mounted folders (ready dotfile folders in the same scope) itself: they join the
+- It reads the auto-mounted folders (the ones the user's and project's auto-mount settings name) itself: they join the
   overlap check (a user alias colliding with one is flagged) and are shown as read-only tokens at the bottom.
 - \`folderExplorerPath\` turns every folder name the component renders — each mount row and each
   auto-mounted badge — into a link into the host app's folder explorer (see **WithFolderExplorerLinks**).
@@ -178,8 +178,8 @@ for configuring vfolder mounts.
 
 The stories below mock the folder list behind the providers' \`suspenseFallback\`,
 so of the six fixture folders \`cold-archive\` is dropped (its host is not in
-\`mountableHosts\`), \`other-team-data\` belongs to another project, and \`.config\` is
-never offered but listed as an auto-mounted folder.
+\`mountableHosts\`), \`other-team-data\` belongs to another project, and \`team-config\`,
+named by a mocked auto-mount setting, is never offered but listed as an auto-mounted folder.
 `,
       },
     },
@@ -348,7 +348,7 @@ export const WithAutoMountedFolders: Story = {
     docs: {
       description: {
         story:
-          'The ready dotfile folder `.config` is read as auto-mounted and listed as a read-only token below the rows (dotfile folders are never offered in the select). The first folder aliases to `.config`, colliding with the auto-mounted `/home/work/.config`, so it shows the overlap error.',
+          'A mocked auto-mount setting names `team-config`, so it is listed as a read-only token below the rows and never offered in the select. The first folder aliases to `team-config`, colliding with the auto-mounted `/home/work/team-config`, so it shows the overlap error.',
       },
     },
   },
@@ -359,7 +359,7 @@ export const WithAutoMountedFolders: Story = {
         {
           vfolderId: folderId(0),
           name: folderName(0),
-          mountDestination: '.config',
+          mountDestination: 'team-config',
           subpath: 'dataset',
         },
         {

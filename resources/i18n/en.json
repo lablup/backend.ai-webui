@@ -4142,6 +4142,7 @@
     "AIAgents": "AI Agents",
     "ApplyThemeToDomain": "Apply Theme to Domain",
     "ApplyThemeToDomainDesc": "This theme will be applied to every user in this domain.",
+    "AutoMount": "Auto-mount folders",
     "AutomaticUpdateCheck": "Automatic Update Check",
     "BetaFeatures": "Beta Features",
     "BootstrapScriptDeleted": "Bootstrap script deleted",

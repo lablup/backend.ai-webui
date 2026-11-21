@@ -39,6 +39,8 @@ export interface MockMountFolder {
   projectId: string | null;
   creatorEmail: string | null;
   createdAt: string;
+  /** Set when an auto-mount in the mock scope names this folder; '' takes the default path. */
+  autoMountDestination?: string;
 }
 
 /**
@@ -72,7 +74,7 @@ const MOCK_OTHER_PROJECT_ID = '88888888-8888-8888-8888-888888888888';
 export const MOCK_MOUNTABLE_HOSTS: Array<string> = ['local:volume1'];
 
 /**
- * The shared folder fixture: two mountable folders, one auto-mounted dotfile,
+ * The shared folder fixture: two mountable folders, one auto-mounted folder,
  * one on a host without `mount-in-session`, and one owned by another project,
  * so a story exercises every gate the mount config input applies.
  */
@@ -90,7 +92,8 @@ export const mockMountFolders: Array<MockMountFolder> = [
   }),
   mockMountFolder({
     id: 'aaaaaaaa-bbbb-cccc-dddd-eeeeffff0003',
-    name: '.config',
+    name: 'team-config',
+    autoMountDestination: '',
   }),
   mockMountFolder({
     id: 'aaaaaaaa-bbbb-cccc-dddd-eeeeffff0004',

@@ -13,7 +13,6 @@ import type { ProjectContext } from '../../../types/projectContext';
 import type { SessionLauncherFormValue } from '../SessionLauncherPage';
 import {
   BAIVFolderMountConfigInput,
-  isAutoMountFolderName,
   mountableVFolderScope,
   type BAIVFolderMountConfigInputRef,
   useSuspendedAutoMountedVFolders,
@@ -70,12 +69,11 @@ const SessionLauncherStorageStep: React.FC<{
         autoMountScopeType={
           project.id === personalProject?.id ? 'USER' : 'PROJECT'
         }
-        onRequestClose={(response) => {
+        onRequestClose={(response, autoMountResponse) => {
           setIsCreateModalOpen(false);
           if (!response) return;
           mountConfigInputRef.current?.refetch();
-          // A dotfile folder is auto-mounted by the session, never selected.
-          if (isAutoMountFolderName(response.metadata.name)) return;
+          if (autoMountResponse) return;
           const vfolderId = response.entityId;
           const mounts = form.getFieldValue('vfolderMounts') ?? [];
           if (_.some(mounts, (mount) => mount.vfolderId === vfolderId)) return;
