@@ -200,11 +200,15 @@ async function resolveApp(flags) {
     // Offline, or no PR yet: `resolveAppName` falls back to the branch alone.
   }
   const mod = await import(resolve(REPO_ROOT, "scripts/portless-app-name.mjs"));
+  // dev.mjs caps the name to the gateway's label budget; predict the same name.
+  const gwPath = resolve(REPO_ROOT, "scripts/dev-gw.mjs");
+  const gw = existsSync(gwPath) ? await import(gwPath) : null;
   const name = mod.resolveAppName({
     envName: process.env.PORTLESS_APP_NAME,
     branch,
     pr,
     exact: !!(process.env.PORTLESS_APP_NAME_EXACT ?? "").trim(),
+    maxLen: gw?.appNameBudget(gw.shareBaseOf(gw.readDevGwConfig())),
   });
   if (!name) fail(3, `no app name for branch '${branch}' — pass --app <name>`);
   return name;

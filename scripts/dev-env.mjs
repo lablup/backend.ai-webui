@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // `pnpm run dev-env` — pick a dev API server and test account from the team's
-// catalog (served by the team PR board at `http://board.<domain>/api/catalog`),
+// catalog (served by the team PR board at `<board>/api/catalog`),
 // and write the pick into the git-ignored env files.
 // Conventions: DEV_ENVIRONMENT.md ("Dev servers and test accounts").
 import {
@@ -36,10 +36,14 @@ import {
   ignoredOverridesWarning,
   upsertEnv,
 } from "./dev-env-lib.mjs";
+import {
+  boardCatalogUrls,
+  devGwConfigPath,
+  readDevGwConfig,
+} from "./dev-gw.mjs";
 import dotenv from "dotenv";
 import { execFileSync } from "node:child_process";
 import fs from "node:fs";
-import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -84,7 +88,7 @@ class UserError extends Error {}
 /**
  * Where to read the catalog: a JSON file (`WEBUI_DEV_ENV_CATALOG`), a URL
  * (`WEBUI_DEV_ENV_CATALOG_URL`), or the board on the gateway host named by
- * the dev-gw config. Plain http: Node's fetch rejects the gateway's internal CA.
+ * the dev-gw config (`boardCatalogUrls`).
  */
 function catalogSource() {
   const file = process.env.WEBUI_DEV_ENV_CATALOG?.trim();
@@ -92,16 +96,9 @@ function catalogSource() {
   const url = process.env.WEBUI_DEV_ENV_CATALOG_URL?.trim();
   if (url) return { url, label: `${url} (WEBUI_DEV_ENV_CATALOG_URL)` };
 
-  const configPath =
-    process.env.DEV_GW_CONFIG?.trim() ||
-    path.join(os.homedir(), ".config", "fw", "dev-gw.json");
-  let domain;
-  try {
-    domain = JSON.parse(fs.readFileSync(configPath, "utf8")).domain;
-  } catch {
-    domain = undefined;
-  }
-  if (typeof domain !== "string" || domain.trim() === "") {
+  const configPath = devGwConfigPath();
+  const [boardUrl, fallbackUrl] = boardCatalogUrls(readDevGwConfig(configPath));
+  if (!boardUrl) {
     throw new UserError(
       `No dev box gateway configured (${configPath} is missing or has no "domain"), ` +
         "so the board's catalog URL is unknown.\n" +
@@ -109,8 +106,7 @@ function catalogSource() {
         "WEBUI_DEV_ENV_CATALOG_URL at a catalog URL.",
     );
   }
-  const boardUrl = `http://board.${domain.trim()}/api/catalog`;
-  return { url: boardUrl, label: boardUrl };
+  return { url: boardUrl, label: boardUrl, fallbackUrl };
 }
 
 async function readCatalogBody(source) {
@@ -134,8 +130,11 @@ async function readCatalogBody(source) {
       error.name === "TimeoutError"
         ? `no answer within ${FETCH_TIMEOUT_MS / 1000} s`
         : (error.cause?.message ?? error.message);
-    throw new UserError(
-      `Could not reach the catalog at ${source.url}: ${reason}. Is the dev VPN up?`,
+    throw Object.assign(
+      new UserError(
+        `Could not reach the catalog at ${source.url}: ${reason}. Is the dev VPN up?`,
+      ),
+      { timedOut: error.name === "TimeoutError" },
     );
   }
   if (!response.ok) {
@@ -150,12 +149,38 @@ async function readCatalogBody(source) {
   }
 }
 
-async function loadCatalog(source = catalogSource()) {
+async function loadCatalogFrom(source) {
   const body = await readCatalogBody(source);
   try {
     return parseCatalog(body);
   } catch (error) {
     throw new UserError(`${source.label}: ${error.message}`);
+  }
+}
+
+// A re-joined box points at the public-domain board first; until the gateway
+// serves it there, the legacy board still answers. A timeout means the VPN is
+// down for both, so it is not retried (that would double verify's wait).
+async function loadCatalog(source = catalogSource()) {
+  try {
+    return await loadCatalogFrom(source);
+  } catch (error) {
+    if (!(error instanceof UserError) || !source.fallbackUrl || error.timedOut)
+      throw error;
+    const primary = error.message.split("\n")[0];
+    console.error(`note: ${primary} Trying ${source.fallbackUrl}.`);
+    const fallback = { url: source.fallbackUrl, label: source.fallbackUrl };
+    let catalog;
+    try {
+      catalog = await loadCatalogFrom(fallback);
+    } catch (fallbackError) {
+      if (!(fallbackError instanceof UserError)) throw fallbackError;
+      throw new UserError(
+        `${primary} The legacy board failed too: ${fallbackError.message.split("\n")[0]}`,
+      );
+    }
+    Object.assign(source, fallback, { fallbackUrl: undefined });
+    return catalog;
   }
 }
 
@@ -168,8 +193,10 @@ function missingPasswordNote(server, account) {
 
 async function status() {
   const source = catalogSource();
-  console.log(`source: ${source.label}`);
+  const requested = source.label;
+  console.log(`source: ${requested}`);
   const catalog = await loadCatalog(source);
+  if (source.label !== requested) console.log(`source: ${source.label} (fallback)`);
   const accounts = catalog.servers.flatMap((s) => s.accounts);
   const missing = accounts.filter((a) => !a.passwordAvailable).length;
   console.log(`updated: ${catalog.updatedAt ?? "unknown"}`);

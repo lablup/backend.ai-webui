@@ -78,6 +78,9 @@ https://fr-3665-pr9049-statusline.localhost:1355
                 dev.mjs
 ```
 
+The whole name is capped at 50 characters, and lower on a box whose gateway share URL is one
+label (`<app>--<box>` must fit in 63): `dev.mjs` trims the descriptive word, never the identifiers.
+
 So there is exactly one question for you to answer: **is there a `/rename` to use?**
 
 1. **Most recent successful `/rename <name>`** — slugify the arg (rules below) and pass it.
@@ -98,8 +101,9 @@ losing the descriptive part for nothing.
 - Replace any character that isn't `[a-z0-9-]` with `-` (spaces, underscores, dots, slashes, non-ASCII all become `-`).
 - Collapse repeated `-` into a single `-`.
 - Trim leading/trailing `-`.
-- Keep it short — a word or three. `dev.mjs` caps the whole hostname at 50 chars and truncates
-  the descriptive tail first, so a long name loses its own end, not the identifiers.
+- Keep it short — a word or three. `dev.mjs` caps the whole hostname at 50 chars (less on a
+  one-label gateway box, see above) and truncates the descriptive tail first, so a long name
+  loses its own end, not the identifiers.
 - If the result is empty after sanitization, treat as unset.
 
 `dev.mjs` re-applies the same sanitization defensively, so it's safe to pass a slightly imperfect
@@ -331,11 +335,18 @@ bash .claude/skills/dev-server/scripts/advertise.sh stop --app "$BAI_DEV_APP"
 ### What the script guarantees
 
 - **A `.localhost` URL never reaches GitHub.** The advertised URL is `share_base` from the
-  gateway config with the claimed app name substituted — plain `http`, no port. A box that
-  has not joined, a gateway joined with a different Portless port, or a URL that does not
+  gateway config with the claimed app name substituted, no port: `https://<app>--<box>.<public
+  domain>` on a box that re-joined after the internal-domain move, `http://<app>.<box>.<sslip
+  domain>` on one that has not (old links keep working). A box that
+  has not joined, a gateway joined with a different Portless port, an app name that makes
+  `<app>--<box>` longer than 63 characters or is exactly `box`, or a URL that does not
   answer a Portless **2xx** (`X-Portless: 1` alone is not enough — Portless sends it on the
   404 it gives an app name it does not serve) yields one printed line and no comment. Repeat
   that line to the user; never route around it.
+- **An `http://` endpoint needs the legacy URL.** An https page cannot call an http API, so
+  when `VITE_DEFAULT_API_ENDPOINT` is `http://` on a re-joined box, give the reviewer the
+  `http://` share URL `dev.mjs` prints on its second share line (from `legacy_share_base`);
+  the PR comment still carries the https one.
 - **One comment per box per PR**, found by the hidden marker `<!-- bai-dev-server box=<box> -->`
   and edited, never duplicated. Another box's `--force` takeover of the same app name carries
   a different marker, so it cannot touch this box's comment.

@@ -16,7 +16,7 @@
 - **Floor in the ADR**: ADR 0010 Decision 1절은 결정 당시의 지원 기준을 `26.4` line으로 적었고, **Floor location**에서 그 값은 코드의 상수가 아니라 ADR 본문이 정하며 기준을 올리는 PR은 그 절을 대신하는 ADR을 함께 쓴다고 정했다.
 - **Release branches**: `main` 외에 `26.9` 같은 release branch도 자기 floor를 갖는다.
 - **Range, not a point**: branch는 floor 하나가 아니라 floor부터 자기 line까지의 모든 매니저 line에 붙는다. 이 결정 전에는 어떤 문서도 그 범위를 적지 않았고, 어느 server가 어느 line을 덮는지 아무도 보여 주지 않았다.
-- **Team dev catalog**: 팀 PR board(`lablup/frontend-board`)가 `http://board.<domain>/api/catalog`로 dev API server와 test account의 catalog를 내고, board의 catalog page(`?view=catalog`)에서 편집한다(`DEV_ENVIRONMENT.md`의 "Dev servers and test accounts"). `scripts/dev-env.mjs`가 이미 그것을 읽고, board는 server마다 매니저 버전을 probe한다. board는 webui와 다른 저장소에 있고, dev VPN 안에서만 열린다.
+- **Team dev catalog**: 팀 PR board(`lablup/frontend-board`)가 `https://board.<public domain>/api/catalog`(gateway에 다시 join하지 않은 box에서는 `http://board.<domain>/api/catalog`)로 dev API server와 test account의 catalog를 내고, board의 catalog page(`?view=catalog`)에서 편집한다(`DEV_ENVIRONMENT.md`의 "Dev servers and test accounts"). `scripts/dev-env.mjs`가 이미 그것을 읽고, board는 server마다 매니저 버전을 probe한다. board는 webui와 다른 저장소에 있고, dev VPN 안에서만 열린다.
 - **Version strings alone**: 매니저는 버전 문자열(`26.9.0rc1`)만 알려 주고 commit은 알려 주지 않는다. backend.ai `main`의 `VERSION` 파일은 release PR만 올리므로, `main`으로 build한 server는 같은 이름의 pre-release와 구별되지 않고 숫자로는 release line의 최신 patch보다 낮아 보인다. 그래서 server는 자기가 [tracks](#용어)하는 것을 선언하고, board는 그것으로 `main` server를 알아본다.
 - **Shared contract**: catalog의 field 이름과 의미는 board, webui, `fw` plugin의 `webui-connection-info` skill이 함께 쓰는 contract로 정했다.
 
