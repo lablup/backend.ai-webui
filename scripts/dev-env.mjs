@@ -130,8 +130,11 @@ async function readCatalogBody(source) {
       error.name === "TimeoutError"
         ? `no answer within ${FETCH_TIMEOUT_MS / 1000} s`
         : (error.cause?.message ?? error.message);
-    throw new UserError(
-      `Could not reach the catalog at ${source.url}: ${reason}. Is the dev VPN up?`,
+    throw Object.assign(
+      new UserError(
+        `Could not reach the catalog at ${source.url}: ${reason}. Is the dev VPN up?`,
+      ),
+      { timedOut: error.name === "TimeoutError" },
     );
   }
   if (!response.ok) {
@@ -156,15 +159,26 @@ async function loadCatalogFrom(source) {
 }
 
 // A re-joined box points at the public-domain board first; until the gateway
-// serves it there, the legacy board still answers.
+// serves it there, the legacy board still answers. A timeout means the VPN is
+// down for both, so it is not retried (that would double verify's wait).
 async function loadCatalog(source = catalogSource()) {
   try {
     return await loadCatalogFrom(source);
   } catch (error) {
-    if (!(error instanceof UserError) || !source.fallbackUrl) throw error;
-    console.error(`note: ${error.message.split("\n")[0]} Trying ${source.fallbackUrl}.`);
+    if (!(error instanceof UserError) || !source.fallbackUrl || error.timedOut)
+      throw error;
+    const primary = error.message.split("\n")[0];
+    console.error(`note: ${primary} Trying ${source.fallbackUrl}.`);
     const fallback = { url: source.fallbackUrl, label: source.fallbackUrl };
-    const catalog = await loadCatalogFrom(fallback);
+    let catalog;
+    try {
+      catalog = await loadCatalogFrom(fallback);
+    } catch (fallbackError) {
+      if (!(fallbackError instanceof UserError)) throw fallbackError;
+      throw new UserError(
+        `${primary} The legacy board failed too: ${fallbackError.message.split("\n")[0]}`,
+      );
+    }
     Object.assign(source, fallback, { fallbackUrl: undefined });
     return catalog;
   }
@@ -179,8 +193,10 @@ function missingPasswordNote(server, account) {
 
 async function status() {
   const source = catalogSource();
-  console.log(`source: ${source.label}`);
+  const requested = source.label;
+  console.log(`source: ${requested}`);
   const catalog = await loadCatalog(source);
+  if (source.label !== requested) console.log(`source: ${source.label} (fallback)`);
   const accounts = catalog.servers.flatMap((s) => s.accounts);
   const missing = accounts.filter((a) => !a.passwordAvailable).length;
   console.log(`updated: ${catalog.updatedAt ?? "unknown"}`);

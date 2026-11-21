@@ -950,8 +950,9 @@ describe("dev-env CLI", () => {
     expect(result.stderr).toContain(
       "Trying http://board.legacy.invalid/api/catalog.",
     );
-    expect(result.stderr).toContain(
-      "Could not reach the catalog at http://board.legacy.invalid/api/catalog",
+    // When both fail, the error names the public board's reason first.
+    expect(result.stderr).toMatch(
+      /Could not reach the catalog at https:\/\/board\.example\.invalid\/api\/catalog: .* The legacy board failed too: Could not reach the catalog at http:\/\/board\.legacy\.invalid\/api\/catalog/,
     );
     expect(result.status).toBe(1);
   });
