@@ -118,10 +118,3 @@ export const useAccessibleProjects = (
 
   return { groups, accessibleProjects, personalProject };
 };
-
-/** Whether `projectId` is the current user's own personal project. */
-export const useIsPersonalProject = (projectId?: string | null) => {
-  'use memo';
-  const { personalProject } = useAccessibleProjects();
-  return !!projectId && personalProject?.id === projectId;
-};

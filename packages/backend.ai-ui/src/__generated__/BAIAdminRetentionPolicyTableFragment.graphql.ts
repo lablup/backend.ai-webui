@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<986a38da34e631ace75db7db301f87b4>>
+ * @generated SignedSource<<aeba6e33af6b7d7b902fec4200da02cd>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,7 +9,7 @@
 // @ts-nocheck
 
 import { ReaderFragment } from 'relay-runtime';
-export type RetentionCategory = "DEPLOYMENTS" | "LOGIN" | "LOGS" | "RECONCILE_HISTORY" | "ROLES_INVITATIONS" | "SESSIONS" | "USAGE_BUCKETS" | "USAGE_RECORDS" | "%future added value";
+export type RetentionCategory = "DEPLOYMENTS" | "LOGIN" | "LOGS" | "PROJECTS" | "RECONCILE_HISTORY" | "ROLES_INVITATIONS" | "SESSIONS" | "USAGE_BUCKETS" | "USAGE_RECORDS" | "%future added value";
 import { FragmentRefs } from "relay-runtime";
 export type BAIAdminRetentionPolicyTableFragment$data = ReadonlyArray<{
   readonly category: RetentionCategory;

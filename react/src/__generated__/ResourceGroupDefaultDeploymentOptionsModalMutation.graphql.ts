@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<9f46cee25ff0a5fc3fab7fad6d9494f2>>
+ * @generated SignedSource<<85cb6d47cdaa0ddcb1b4ac4193896f40>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,11 +10,13 @@
 
 import { ConcreteRequest } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
+export type SessionAgentSelectionPolicy = "PREFERRED" | "STRICT" | "%future added value";
 export type ReplaceResourceGroupDefaultDeploymentOptionsInput = {
   options: DeploymentOptionsInput;
   resourceGroupName: string;
 };
 export type DeploymentOptionsInput = {
+  agentSelectionPolicy?: SessionAgentSelectionPolicy | null | undefined;
   handlerOptions: DeploymentHandlerOptionsInput;
 };
 export type DeploymentHandlerOptionsInput = {

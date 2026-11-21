@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<4cddf9f901b7c98f7b0d801d421938b4>>
+ * @generated SignedSource<<24ff9ac4e1a28b116b0b0a60c017deee>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,7 +9,7 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
-export type RetentionCategory = "DEPLOYMENTS" | "LOGIN" | "LOGS" | "RECONCILE_HISTORY" | "ROLES_INVITATIONS" | "SESSIONS" | "USAGE_BUCKETS" | "USAGE_RECORDS" | "%future added value";
+export type RetentionCategory = "DEPLOYMENTS" | "LOGIN" | "LOGS" | "PROJECTS" | "RECONCILE_HISTORY" | "ROLES_INVITATIONS" | "SESSIONS" | "USAGE_BUCKETS" | "USAGE_RECORDS" | "%future added value";
 export type RetentionPolicyFilter = {
   category?: RetentionCategory | null | undefined;
   enabled?: boolean | null | undefined;
