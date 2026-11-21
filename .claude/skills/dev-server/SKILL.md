@@ -343,6 +343,10 @@ bash .claude/skills/dev-server/scripts/advertise.sh stop --app "$BAI_DEV_APP"
   answer a Portless **2xx** (`X-Portless: 1` alone is not enough — Portless sends it on the
   404 it gives an app name it does not serve) yields one printed line and no comment. Repeat
   that line to the user; never route around it.
+- **An `http://` endpoint needs the legacy URL.** An https page cannot call an http API, so
+  when `VITE_DEFAULT_API_ENDPOINT` is `http://` on a re-joined box, give the reviewer the
+  `http://` share URL `dev.mjs` prints on its second share line (from `legacy_share_base`);
+  the PR comment still carries the https one.
 - **One comment per box per PR**, found by the hidden marker `<!-- bai-dev-server box=<box> -->`
   and edited, never duplicated. Another box's `--force` takeover of the same app name carries
   a different marker, so it cannot touch this box's comment.

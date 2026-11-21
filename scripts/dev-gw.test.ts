@@ -6,6 +6,7 @@ import {
   appNameBudget,
   boardCatalogUrl,
   boardCatalogUrls,
+  legacyShareBaseOf,
   readDevGwConfig,
   shareBaseOf,
   shareUrlFor,
@@ -75,6 +76,13 @@ describe('dev-gw config', () => {
       'https://board.frontend.internal.lablup.ai/api/catalog',
       'http://board.10-82-0-159.sslip.io/api/catalog',
     ]);
+  });
+
+  it('offers the legacy http template only when a re-joined box has one', () => {
+    expect(legacyShareBaseOf(CURRENT)).toBe('http://{app}.jongeun.10-82-0-159.sslip.io');
+    expect(legacyShareBaseOf(LEGACY)).toBeNull();
+    expect(legacyShareBaseOf({ legacy_share_base: 'https://{app}--x.y' })).toBeNull();
+    expect(legacyShareBaseOf(null)).toBeNull();
   });
 
   it('reads a missing or malformed file as not joined', () => {

@@ -36,6 +36,16 @@ export function shareBaseOf(config) {
   return typeof base === 'string' && SHARE_BASE_RE.test(base) ? base : null;
 }
 
+/**
+ * The legacy http `{app}` template a re-joined box keeps (`legacy_share_base`),
+ * or null. An https page cannot call an http:// API, so it is the address for a
+ * server whose API endpoint is http.
+ */
+export function legacyShareBaseOf(config) {
+  const base = config?.legacy_share_base;
+  return typeof base === 'string' && /^http:\/\/\{app\}\./.test(base) ? base : null;
+}
+
 /** True for the one-label `{app}--<box>` template. */
 export const isOneLabel = (base) => SHARE_BASE_RE.exec(base ?? '')?.[1] === '--';
 

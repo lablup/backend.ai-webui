@@ -14,7 +14,14 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { appNameBudget, isOneLabel, readDevGwConfig, shareBaseOf, shareUrlFor } from './dev-gw.mjs';
+import {
+  appNameBudget,
+  isOneLabel,
+  legacyShareBaseOf,
+  readDevGwConfig,
+  shareBaseOf,
+  shareUrlFor,
+} from './dev-gw.mjs';
 import { resolveAppName } from './portless-app-name.mjs';
 
 const env = { ...process.env };
@@ -211,6 +218,11 @@ if (devGwShareBase && devGwPortMismatch) {
 } else if (devGwShareBase && devGwShare?.url) {
   env.VITE_DEV_SHARE_URL = devGwShare.url;
   console.log(`-- Team share URL: ${devGwShare.url} (dev VPN, via dev-gw)`);
+  const legacy = shareUrlFor(legacyShareBaseOf(devGwConfig), appName).url;
+  if (legacy)
+    console.log(
+      `-- Team share URL for an http:// API endpoint: ${legacy} (an https page cannot call an http API)`,
+    );
 } else if (devGwShareBase && devGwShare?.error) {
   console.log(`-- Team share URL unavailable: ${devGwShare.error}`);
 } else if (devGwShareBase) {
