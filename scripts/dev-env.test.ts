@@ -946,6 +946,13 @@ describe("dev-env CLI", () => {
     expect(result.stdout).toContain(
       "source: https://board.example.invalid/api/catalog",
     );
+    // The public board is not served yet everywhere: the legacy one is tried next.
+    expect(result.stderr).toContain(
+      "Trying http://board.legacy.invalid/api/catalog.",
+    );
+    expect(result.stderr).toContain(
+      "Could not reach the catalog at http://board.legacy.invalid/api/catalog",
+    );
     expect(result.status).toBe(1);
   });
 

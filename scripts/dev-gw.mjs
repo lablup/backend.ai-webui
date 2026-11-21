@@ -36,7 +36,8 @@ export function shareBaseOf(config) {
   return typeof base === 'string' && SHARE_BASE_RE.test(base) ? base : null;
 }
 
-const isOneLabel = (base) => SHARE_BASE_RE.exec(base)?.[1] === '--';
+/** True for the one-label `{app}--<box>` template. */
+export const isOneLabel = (base) => SHARE_BASE_RE.exec(base ?? '')?.[1] === '--';
 
 /** The longest app name whose share host label still fits in one DNS label. */
 export function appNameBudget(shareBase) {
@@ -61,12 +62,19 @@ export function shareUrlFor(shareBase, app) {
 }
 
 /**
- * The PR board's catalog endpoint. The public domain has a public certificate;
- * the legacy domain is plain http because Node's fetch rejects the gateway's CA.
+ * The PR board's catalog endpoints, preferred first: the public domain (public
+ * certificate), then the legacy domain, which stays valid during the move and
+ * is plain http because Node's fetch rejects the gateway's CA.
  */
-export function boardCatalogUrl(config) {
+export function boardCatalogUrls(config) {
   const pub = typeof config?.public_domain === 'string' ? config.public_domain.trim() : '';
-  if (pub) return `https://board.${pub}/api/catalog`;
   const legacy = typeof config?.domain === 'string' ? config.domain.trim() : '';
-  return legacy ? `http://board.${legacy}/api/catalog` : null;
+  return [
+    pub && `https://board.${pub}/api/catalog`,
+    legacy && `http://board.${legacy}/api/catalog`,
+  ].filter(Boolean);
+}
+
+export function boardCatalogUrl(config) {
+  return boardCatalogUrls(config)[0] ?? null;
 }

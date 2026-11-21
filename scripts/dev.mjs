@@ -14,7 +14,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { appNameBudget, readDevGwConfig, shareBaseOf, shareUrlFor } from './dev-gw.mjs';
+import { appNameBudget, isOneLabel, readDevGwConfig, shareBaseOf, shareUrlFor } from './dev-gw.mjs';
 import { resolveAppName } from './portless-app-name.mjs';
 
 const env = { ...process.env };
@@ -215,8 +215,12 @@ if (devGwShareBase && devGwPortMismatch) {
   console.log(`-- Team share URL unavailable: ${devGwShare.error}`);
 } else if (devGwShareBase) {
   // `portless run` derives the app name itself, so it is unknown until it prints.
+  // A worktree's `<branch>.<project>` is two labels, which the one-label form cannot route.
+  const caveat = isOneLabel(devGwShareBase)
+    ? '; a name with a dot cannot be routed — set PORTLESS_APP_NAME'
+    : '';
   console.log(
-    `-- Team share URL: ${devGwShareBase.replace('{app}', '<app>')} — <app> is the name Portless prints below (dev VPN, via dev-gw)`,
+    `-- Team share URL: ${devGwShareBase.replaceAll('{app}', '<app>')} — <app> is the name Portless prints below${caveat} (dev VPN, via dev-gw)`,
   );
 }
 

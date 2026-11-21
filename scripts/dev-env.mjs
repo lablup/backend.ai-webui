@@ -37,7 +37,7 @@ import {
   upsertEnv,
 } from "./dev-env-lib.mjs";
 import {
-  boardCatalogUrl,
+  boardCatalogUrls,
   devGwConfigPath,
   readDevGwConfig,
 } from "./dev-gw.mjs";
@@ -88,7 +88,7 @@ class UserError extends Error {}
 /**
  * Where to read the catalog: a JSON file (`WEBUI_DEV_ENV_CATALOG`), a URL
  * (`WEBUI_DEV_ENV_CATALOG_URL`), or the board on the gateway host named by
- * the dev-gw config (`boardCatalogUrl`).
+ * the dev-gw config (`boardCatalogUrls`).
  */
 function catalogSource() {
   const file = process.env.WEBUI_DEV_ENV_CATALOG?.trim();
@@ -97,7 +97,7 @@ function catalogSource() {
   if (url) return { url, label: `${url} (WEBUI_DEV_ENV_CATALOG_URL)` };
 
   const configPath = devGwConfigPath();
-  const boardUrl = boardCatalogUrl(readDevGwConfig(configPath));
+  const [boardUrl, fallbackUrl] = boardCatalogUrls(readDevGwConfig(configPath));
   if (!boardUrl) {
     throw new UserError(
       `No dev box gateway configured (${configPath} is missing or has no "domain"), ` +
@@ -106,7 +106,7 @@ function catalogSource() {
         "WEBUI_DEV_ENV_CATALOG_URL at a catalog URL.",
     );
   }
-  return { url: boardUrl, label: boardUrl };
+  return { url: boardUrl, label: boardUrl, fallbackUrl };
 }
 
 async function readCatalogBody(source) {
@@ -146,12 +146,27 @@ async function readCatalogBody(source) {
   }
 }
 
-async function loadCatalog(source = catalogSource()) {
+async function loadCatalogFrom(source) {
   const body = await readCatalogBody(source);
   try {
     return parseCatalog(body);
   } catch (error) {
     throw new UserError(`${source.label}: ${error.message}`);
+  }
+}
+
+// A re-joined box points at the public-domain board first; until the gateway
+// serves it there, the legacy board still answers.
+async function loadCatalog(source = catalogSource()) {
+  try {
+    return await loadCatalogFrom(source);
+  } catch (error) {
+    if (!(error instanceof UserError) || !source.fallbackUrl) throw error;
+    console.error(`note: ${error.message.split("\n")[0]} Trying ${source.fallbackUrl}.`);
+    const fallback = { url: source.fallbackUrl, label: source.fallbackUrl };
+    const catalog = await loadCatalogFrom(fallback);
+    Object.assign(source, fallback, { fallbackUrl: undefined });
+    return catalog;
   }
 }
 

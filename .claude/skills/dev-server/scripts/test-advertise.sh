@@ -416,6 +416,7 @@ cat >"$DEV_GW_CONFIG" <<'JSON'
  "bare_url":"https://box--testbox.pub.invalid","legacy_share_base":"http://{app}.testbox.legacy.invalid"}
 JSON
 mkdir -p "$STATE_DIR"
+SAVED_PORTLESS_PORT=${PORTLESS_PORT-__unset__}
 PORTLESS_PORT=1357
 served_set() { printf '%s' '[{"pr":9330,"branch":"c"}]'; }
 issue_ref_for_pr() { printf '|'; }
@@ -432,7 +433,7 @@ check '`box` is refused before anything is written' 'no-record' \
   "$([ -f "$STATE_DIR/box.json" ] && echo record || echo no-record)"
 check 'with the reason' 'yes' \
   "$(grep -q 'reserved for the box' "$TMP/said" && echo yes || echo no)"
-unset PORTLESS_PORT
+if [ "$SAVED_PORTLESS_PORT" = __unset__ ]; then unset PORTLESS_PORT; else PORTLESS_PORT=$SAVED_PORTLESS_PORT; fi
 rm -rf "$TMP"
 
 # ── boot-env predicts the capped name dev.mjs claims ──────────────────────────

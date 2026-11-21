@@ -5,6 +5,7 @@ import path from 'node:path';
 import {
   appNameBudget,
   boardCatalogUrl,
+  boardCatalogUrls,
   readDevGwConfig,
   shareBaseOf,
   shareUrlFor,
@@ -70,6 +71,10 @@ describe('dev-gw config', () => {
     );
     expect(boardCatalogUrl(LEGACY)).toBe('http://board.10-82-0-159.sslip.io/api/catalog');
     expect(boardCatalogUrl({ box: 'x' })).toBeNull();
+    expect(boardCatalogUrls(CURRENT)).toEqual([
+      'https://board.frontend.internal.lablup.ai/api/catalog',
+      'http://board.10-82-0-159.sslip.io/api/catalog',
+    ]);
   });
 
   it('reads a missing or malformed file as not joined', () => {

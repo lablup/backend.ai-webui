@@ -101,8 +101,9 @@ losing the descriptive part for nothing.
 - Replace any character that isn't `[a-z0-9-]` with `-` (spaces, underscores, dots, slashes, non-ASCII all become `-`).
 - Collapse repeated `-` into a single `-`.
 - Trim leading/trailing `-`.
-- Keep it short — a word or three. `dev.mjs` caps the whole hostname at 50 chars and truncates
-  the descriptive tail first, so a long name loses its own end, not the identifiers.
+- Keep it short — a word or three. `dev.mjs` caps the whole hostname at 50 chars (less on a
+  one-label gateway box, see above) and truncates the descriptive tail first, so a long name
+  loses its own end, not the identifiers.
 - If the result is empty after sanitization, treat as unset.
 
 `dev.mjs` re-applies the same sanitization defensively, so it's safe to pass a slightly imperfect

@@ -89,11 +89,11 @@ The URL is the config's `share_base` with `{app}` replaced by the same Portless 
 Notes:
 
 - **Dev VPN only.** The gateway is reachable only from the VPN and dev-net ranges. The internal domain is HTTPS (plain http redirects to it); the legacy sslip.io form is plain HTTP.
-- **`<app>--<box>` must fit in 63 characters.** On the internal domain `dev.mjs` (and `advertise.sh boot-env`) shortens the descriptive tail of the app name to fit; a name that still does not fit, an app named exactly `box` (reserved for the box's bare address `https://box--<box>.…`), or a dotted auto-derived name gets an "unavailable" line instead of a URL.
+- **`<app>--<box>` must fit in 63 characters.** On the internal domain `dev.mjs` (and `advertise.sh boot-env`) shortens the descriptive tail of the app name to fit; a name that still does not fit, an app named exactly `box` (reserved for the box's bare address `https://box--<box>.…`), gets an "unavailable" line instead of a URL.
 - **The share URL is unauthenticated.** Anyone on the dev VPN or in dev-net can open it, and the dev bundle they receive contains every `VITE_*` value from your `.env.development.local` — including `VITE_DEFAULT_EMAIL` / `VITE_DEFAULT_PASSWORD` if you set them (see the `SECURITY:` note in `.env.development.local.sample`). Don't run a shared dev server with credentials you would not hand to the whole team.
 - **Changing `PORTLESS_PORT` requires re-running `dev-gw join`.** The gateway forwards to the port recorded at join time; when they differ, `dev.mjs` says so and prints no URL.
 - `dev.mjs` also exposes the URL to the React bundle as `VITE_DEV_SHARE_URL`. Set `DEV_GW_CONFIG` to read the config from a different path.
-- When the app name is auto-derived by `portless run` (no `FR-XXXX` or `gh-N` branch, no `PORTLESS_APP_NAME`), `dev.mjs` prints the pattern instead of a concrete URL — substitute the name Portless prints.
+- When the app name is auto-derived by `portless run` (no `FR-XXXX` or `gh-N` branch, no `PORTLESS_APP_NAME`), `dev.mjs` prints the pattern instead of a concrete URL — substitute the name Portless prints. On the internal domain a dotted name (a worktree's `<branch>.<project>`) cannot be routed, so set `PORTLESS_APP_NAME` there.
 
 ## Dev servers and test accounts (`pnpm run dev-env`)
 
