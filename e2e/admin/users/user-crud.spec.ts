@@ -961,3 +961,170 @@ test.describe(
     });
   },
 );
+
+// #11089: "Use as this user" opens a confirm modal whose Debug mode checkbox
+// turns debug mode on for the act-as tab only. Each test creates its own
+// active user through the admin API and purges it in afterEach.
+test.describe(
+  'Use as this user - Superadmin',
+  { tag: ['@regression', '@user', '@functional', '@requires-manager-v26.9'] },
+  () => {
+    let api: APIRequestContext | null = null;
+    let actAsEmail: string | null = null;
+
+    test.beforeEach(async ({ page, request }) => {
+      api = await createAdminApiContext();
+      const runId = `${Date.now().toString(36)}${randomBytes(3).toString('hex')}`;
+      const email = `e2e-act-as-${runId}@lablup.com`;
+      // Set before the create call so a partial failure is still purged.
+      actAsEmail = email;
+      const { create_user } = await gqlAdmin<{
+        create_user: { ok: boolean; msg: string };
+      }>(
+        api,
+        `mutation($email: String!, $props: UserInput!) {
+          create_user(email: $email, props: $props) { ok msg }
+        }`,
+        {
+          email,
+          props: {
+            username: email.split('@')[0],
+            password: `e2e-${randomBytes(12).toString('hex')}@Pw`,
+            need_password_change: false,
+            domain_name: await getE2EDomainName(api),
+            is_active: true,
+            status: 'active',
+          },
+        },
+      );
+      expect(create_user.ok, create_user.msg).toBe(true);
+
+      await loginAsAdmin(page, request);
+    });
+
+    test.afterEach(async () => {
+      if (!api) return;
+      const adminApi = api;
+      api = null;
+      try {
+        if (actAsEmail) {
+          await purgeUserViaApi(adminApi, actAsEmail).catch((error) =>
+            console.warn(`could not purge ${actAsEmail}:`, error),
+          );
+        }
+      } finally {
+        actAsEmail = null;
+        await adminApi.dispose();
+      }
+    });
+
+    async function openActAsModal(page: Page, email: string) {
+      const row = page
+        .getByRole('row')
+        .filter({ has: page.getByRole('cell', { name: email }) });
+      // The admin server intermittently answers 503, which crashes the page load.
+      await expect(async () => {
+        await navigateTo(
+          page,
+          `credential?tab=users&filter=${encodeURIComponent(
+            JSON.stringify({ email: { equals: email } }),
+          )}`,
+        );
+        await expect(row).toBeVisible({ timeout: 15000 });
+      }).toPass({ timeout: 60000 });
+      await clickRowAction(page, row, 'Use as this user');
+      const modal = page.getByRole('dialog', {
+        name: `Use as ${email.split('@')[0]}`,
+      });
+      await expect(modal).toBeVisible();
+      return modal;
+    }
+
+    test('Superadmin can see an unchecked Debug mode checkbox in the Use as this user modal and cancel it', async ({
+      page,
+    }) => {
+      const modal = await openActAsModal(page, actAsEmail!);
+      await expect(modal).toContainText(actAsEmail!);
+
+      const debugCheckbox = modal.getByRole('checkbox', {
+        name: 'Debug mode',
+      });
+      const cancelButton = modal.getByRole('button', {
+        name: 'Cancel',
+        exact: true,
+      });
+      const openButton = modal.getByRole('button', {
+        name: 'Open in new tab',
+        exact: true,
+      });
+      await expect(debugCheckbox).toBeVisible();
+      await expect(debugCheckbox).not.toBeChecked();
+      await expect(cancelButton).toBeVisible();
+      await expect(openButton).toBeVisible();
+
+      // Debug mode sits at the footer's left, the two buttons at its right.
+      const checkboxBox = await debugCheckbox.boundingBox();
+      const cancelBox = await cancelButton.boundingBox();
+      const openBox = await openButton.boundingBox();
+      expect(checkboxBox!.x).toBeLessThan(cancelBox!.x);
+      expect(cancelBox!.x).toBeLessThan(openBox!.x);
+
+      const pagesBefore = page.context().pages().length;
+      await cancelButton.click();
+      await expect(modal).toBeHidden();
+      expect(page.context().pages()).toHaveLength(pagesBefore);
+    });
+
+    test('Superadmin can open an act-as tab with Debug mode that stays off in the admin tab', async ({
+      page,
+    }) => {
+      const modal = await openActAsModal(page, actAsEmail!);
+      const debugCheckbox = modal.getByRole('checkbox', {
+        name: 'Debug mode',
+      });
+      await debugCheckbox.check();
+      await expect(debugCheckbox).toBeChecked();
+
+      const newTabPromise = page.context().waitForEvent('page');
+      await modal
+        .getByRole('button', { name: 'Open in new tab', exact: true })
+        .click();
+      const actAsTab = await newTabPromise;
+      try {
+        await expect(modal).toBeHidden();
+        await actAsTab.waitForLoadState('domcontentloaded');
+
+        const banner = actAsTab.getByTestId('act-as-banner');
+        // A reload keeps the tab's act-as state; it only retries a 503-crashed load.
+        let attempt = 0;
+        await expect(async () => {
+          if (attempt++ > 0) await actAsTab.reload();
+          await expect(banner).toBeVisible({ timeout: 15000 });
+        }).toPass({ timeout: 60000 });
+        await expect(banner).toContainText(actAsEmail!);
+        // Production builds show no i18n key markers, so the tab's own state is the signal.
+        const actAsState = await actAsTab.evaluate(() =>
+          JSON.parse(sessionStorage.getItem('backendaiwebui.actAs') ?? 'null'),
+        );
+        expect(actAsState).toMatchObject({ email: actAsEmail, debug: true });
+
+        // The superadmin tab stays out of act-as and out of debug mode.
+        const adminRow = page.getByRole('row').filter({
+          has: page.getByRole('cell', { name: actAsEmail! }),
+        });
+        await expect(async () => {
+          await page.reload();
+          await expect(adminRow).toBeVisible({ timeout: 15000 });
+        }).toPass({ timeout: 60000 });
+        await expect(page.getByTestId('act-as-banner')).toHaveCount(0);
+        expect(
+          await page.evaluate(() =>
+            sessionStorage.getItem('backendaiwebui.actAs'),
+          ),
+        ).toBeNull();
+      } finally {
+        await actAsTab.close();
+      }
+    });
+  },
+);
