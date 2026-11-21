@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import {
+  linkManualReferences,
   buildAssistantSystemPrompt,
   parseManualTarget,
 } from './webUIAssistantPrompt';
@@ -79,5 +80,30 @@ describe('parseManualTarget', () => {
       anchor: undefined,
     });
     expect(parseManualTarget(base)).toBeNull();
+  });
+});
+
+describe('linkManualReferences', () => {
+  const references = [
+    { title: 'Sessions › Start', url: 'https://docs/ko/session.html#start' },
+    { title: 'Folders › Share', url: 'https://docs/ko/vfolder.html' },
+  ];
+
+  it('links [n] lines a small model writes without a URL', () => {
+    expect(
+      linkManualReferences(
+        'Steps.\n\nReferences:\n\n- [1] 연산 세션 › 자원 할당\n[2]',
+        references,
+      ),
+    ).toBe(
+      'Steps.\n\nReferences:\n\n- [연산 세션 › 자원 할당](https://docs/ko/session.html#start)\n[Folders › Share](https://docs/ko/vfolder.html)',
+    );
+  });
+
+  it('leaves real links, unknown numbers and inline mentions alone', () => {
+    const text =
+      '- [1] [Start](https://docs/ko/session.html)\n- [7] Nowhere\nSee [1](x) and step [2] above.';
+    expect(linkManualReferences(text, references)).toBe(text);
+    expect(linkManualReferences('[1] A', [])).toBe('[1] A');
   });
 });

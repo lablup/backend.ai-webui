@@ -16,3 +16,15 @@ export const WEBUI_ASSISTANT_PROFILE = {
 };
 
 export type WebUIAssistantProfile = typeof WEBUI_ASSISTANT_PROFILE;
+
+/** The dashboard agent's fixed instructions; `buildDashboardChatPrompt` adds the board on screen. */
+export const DASHBOARD_AGENT_PROFILE = {
+  name: 'Dashboard Agent',
+  systemPrompt: [
+    'You edit a Backend.AI WebUI dashboard in a chat. Turn each request into changes. Reply with only a JSON object, no other text:',
+    'When the message asks how to use the WebUI, or anything else that is not a change to this dashboard, reply with only {"question":true}.',
+    '{"reply":"<one short sentence in the user\'s language>","actions":[{"type":"show","id":"<card id>"}]}',
+  ].join('\n\n'),
+  rules:
+    'Copy ids exactly from the lists. Match what the user names by its title, in any language; "it" or "that" means the panel or card changed last. Check the state first: never show a card that is already on board or hide one that is not. If nothing fits, return "actions":[] and say why in "reply".',
+};

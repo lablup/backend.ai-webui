@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { generateUUID } from '../../helper/uuid';
 import { useCurrentUserRole } from '../../hooks/backendai';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
 import { useIsCurrentProjectAdmin } from '../../hooks/useCurrentUserProjectRoles';
@@ -9,6 +10,12 @@ import { useEffectiveLoginConfig } from '../../hooks/useWebUIConfig';
 import DashboardPanelContent from './DashboardPanelContent';
 import PanelFrame from './PanelFrame';
 import { PanelHeaderSettingsContext } from './PanelSettingsHeaderControls';
+import {
+  applyAssistantActions as applyActionsToBoard,
+  settingsTouchedBy,
+  type DashboardAssistantAction,
+  type DashboardAssistantCard,
+} from './assistantActions';
 import type { BoardLayoutEntry } from './boardLayout';
 import {
   addPanel,
@@ -26,7 +33,13 @@ import {
   updatePanel,
   type CatalogEntry,
 } from './boardModel';
-import { mergePanelEdits, updateBoard } from './dashboardConfig';
+import type { DashboardChatPanel } from './dashboardChat';
+import {
+  addBoard,
+  createEmptyBoard,
+  mergePanelEdits,
+  updateBoard,
+} from './dashboardConfig';
 import {
   createPanel,
   panelConfigFromInput,
@@ -41,7 +54,7 @@ import {
   overriddenSettings,
   panelSettingOverridesAtom,
 } from './panelSettingOverrides';
-import { mergeSettings, panelDefinitionOf } from './panelSettings';
+import { hasSetting, mergeSettings, panelDefinitionOf } from './panelSettings';
 import { availableResourceKeys, resolvePanelTitle } from './resourceRegistry';
 import type {
   DashboardBoard,
@@ -111,6 +124,8 @@ export interface UseDashboardBoardOptions {
   catalog: ReadonlyArray<PanelDefinition>;
   /** Panels the viewer may not read: left off the board, kept in the stored one. */
   deniedPanelIds?: ReadonlyMap<string, string>;
+  /** Proposed changes the board previews without saving them. */
+  draftActions?: ReadonlyArray<DashboardAssistantAction>;
 }
 
 export interface UseDashboardBoardResult {
@@ -139,6 +154,14 @@ export interface UseDashboardBoardResult {
     settings: PanelSettings | undefined,
   ) => void;
   boards: DashboardBoardsState;
+  /** The previewed board's cards, on-board ones first in board order. */
+  assistantCards: Array<DashboardAssistantCard>;
+  /** The previewed board's custom panels. */
+  assistantPanels: Array<DashboardChatPanel>;
+  /** Applies the WebUI Assistant's proposed changes in one save. */
+  applyAssistantActions: (
+    actions: ReadonlyArray<DashboardAssistantAction>,
+  ) => void;
 }
 
 export interface PanelSettingsTarget {
@@ -155,6 +178,7 @@ export const useDashboardBoard = ({
   onRequestEditCustomPanel,
   catalog,
   deniedPanelIds,
+  draftActions,
 }: UseDashboardBoardOptions): UseDashboardBoardResult => {
   'use memo';
   const { t } = useTranslation();
@@ -405,12 +429,26 @@ export const useDashboardBoard = ({
     );
   };
 
+  const draftNewBoard = draftActions?.find(
+    (action) => action.type === 'createBoard',
+  );
+  const shownBoard = draftActions?.length
+    ? applyActionsToBoard(board, draftActions, {
+        definitionByKey,
+        catalog,
+        page,
+        template,
+        emptyBoard: draftNewBoard
+          ? createEmptyBoard({ id: 'draft', title: '' }, catalog, page)
+          : undefined,
+      })
+    : board;
   const boardItems: Array<BAIBoardItem> = toBoardLayout(
-    board,
+    shownBoard,
     catalog,
     isRenderable,
   ).map((entry) => {
-    const panel = board.panels.find((item) => item.id === entry.id)!;
+    const panel = shownBoard.panels.find((item) => item.id === entry.id)!;
     return { ...entry, data: { content: contentOf(panel) } };
   });
 
@@ -420,9 +458,88 @@ export const useDashboardBoard = ({
     return legacyPanel ? [legacyPanel] : [];
   });
 
+  const titleOf = (panel: PersistedPanelV2, definition: PanelDefinition) => {
+    const legacyPanel = toLegacyPanel(panel, definition);
+    return legacyPanel
+      ? resolvePanelTitle(legacyPanel.descriptor, t)
+      : t(panelTitleKey(definition, role, page));
+  };
+  const assistantCardOf = (
+    panel: PersistedPanelV2,
+    shown: boolean,
+  ): DashboardAssistantCard | null => {
+    const catalogDefinition = definitionByKey.get(panel.key);
+    if (!catalogDefinition) return null;
+    const definition = panelDefinitionOf(catalogDefinition, panel);
+    return {
+      id: panel.id,
+      title: titleOf(panel, definition),
+      shown,
+      ...(shown
+        ? { columnSpan: panel.columnSpan, rowSpan: panel.rowSpan }
+        : {}),
+      ...(hasSetting(definition, 'range')
+        ? { range: panel.settings?.range ?? 'default' }
+        : {}),
+    };
+  };
+  // The previewed board, so a follow-up request sees the chat's earlier changes.
+  const onBoardIds = new Set(boardItems.map((item) => item.id));
+  const assistantCards = [
+    ...shownBoard.panels
+      .filter((panel) => onBoardIds.has(panel.id))
+      .map((panel) => assistantCardOf(panel, true)),
+    // User-made panels taken off the board, then the catalog cards not on it.
+    ...shownBoard.panels
+      .filter((panel) => panel.hidden && isRenderable(panel))
+      .map((panel) => assistantCardOf(panel, false)),
+    ...siderEntries(visibleEntries)
+      .filter(
+        (entry) =>
+          !shownBoard.panels.some((p) => p.key === entry.definition.key),
+      )
+      .map((entry) =>
+        assistantCardOf(
+          {
+            id: entry.definition.key,
+            key: entry.definition.key,
+            ...entry.definition.defaultSize,
+          },
+          false,
+        ),
+      ),
+  ].filter((card): card is DashboardAssistantCard => !!card);
+  const assistantPanels = shownBoard.panels.flatMap(
+    (panel): Array<DashboardChatPanel> => {
+      const definition = definitionByKey.get(panel.key);
+      const legacy = definition ? toLegacyPanel(panel, definition) : null;
+      if (!legacy) return [];
+      const { descriptor } = legacy;
+      return [
+        {
+          id: panel.id,
+          title: resolvePanelTitle(descriptor, t),
+          input: {
+            panelType: legacy.panelType,
+            resourceType: descriptor.resourceType,
+            title: descriptor.title,
+            filter: descriptor.filter,
+            order: descriptor.order,
+            gridView: descriptor.gridView,
+            chart: descriptor.chart,
+            range: descriptor.range,
+          },
+        },
+      ];
+    },
+  );
+
   return {
     boardItems,
-    onLayoutChange: (reported) => save(applyLayout(board, reported)),
+    // A preview is not saved, so a move made on it would land on the stored layout.
+    onLayoutChange: (reported) => {
+      if (!draftActions?.length) save(applyLayout(board, reported));
+    },
     catalogEntries: siderEntries(visibleEntries),
     // Catalog keys of the cards on the board, plus the ids of the user-made panels shown on it.
     activeKeys: new Set(
@@ -478,5 +595,55 @@ export const useDashboardBoard = ({
       save(resetBoard(board, catalog, page, template));
     },
     boards,
+    assistantCards,
+    assistantPanels,
+    applyAssistantActions: (actions) => {
+      const newBoard = actions.find((action) => action.type === 'createBoard');
+      if (newBoard) {
+        const empty = createEmptyBoard(
+          { id: generateUUID(), title: newBoard.title },
+          catalog,
+          page,
+        );
+        const filled = applyActionsToBoard(board, actions, {
+          definitionByKey,
+          catalog,
+          page,
+          template,
+          emptyBoard: empty,
+        });
+        // Changes before createBoard stay on the current board.
+        const before = actions.slice(0, actions.indexOf(newBoard));
+        const current = applyActionsToBoard(board, before, {
+          definitionByKey,
+          catalog,
+          page,
+          template,
+        });
+        // One update: two in a row would each start from this render's config.
+        boards.update((config) =>
+          addBoard(
+            current === board
+              ? config
+              : updateBoard(config, boards.activeBoard.id, (active) => ({
+                  ...active,
+                  panels: current.panels,
+                  knownKeys: current.knownKeys,
+                })),
+            { ...empty, panels: filled.panels, knownKeys: filled.knownKeys },
+          ),
+        );
+        return;
+      }
+      const next = applyActionsToBoard(board, actions, {
+        definitionByKey,
+        catalog,
+        page,
+        template,
+      });
+      if (next === board) return;
+      clearOverrides(settingsTouchedBy(actions));
+      save(next);
+    },
   };
 };
