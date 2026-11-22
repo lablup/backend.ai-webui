@@ -54,10 +54,13 @@ test.describe.serial(
       return page.getByRole('dialog', { name: 'RBAC Role Info' });
     }
 
-    // The app-shim's `message.*` renders an Astryx toast (role="status") and
-    // a live-region copy of it, so the text matches twice.
+    // The app-shim's `message.*` renders an Astryx toast in the "Notifications"
+    // region; the card has no role outside a native modal since Astryx 0.7.11.
     function toast(page: Page, text: RegExp) {
-      return page.getByRole('status').filter({ hasText: text }).first();
+      return page
+        .getByRole('region', { name: 'Notifications' })
+        .getByText(text)
+        .first();
     }
 
     // Scope status-filter clicks to the radiogroup — the AutoAssign column
