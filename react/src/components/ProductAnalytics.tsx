@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 // Build flag, domainConfig.analytics and privacy defaults: docs/adr/0036-opt-in-posthog-analytics-build.md
+import { getActAsTarget } from '../helper/actAs';
 import type { UserRole } from '../helper/userRole';
 import { useMyAppConfig } from '../hooks/useAppConfig';
 import { LogLevel, useBAILogger } from 'backend.ai-ui';
@@ -16,6 +17,7 @@ const URL_PROPERTY_KEYS = [
   '$initial_referrer',
   '$session_entry_url',
   '$session_entry_referrer',
+  '$external_click_url',
 ];
 const EXCEPTION_DEDUPE_WINDOW_MS = 5 * 60 * 1000;
 
@@ -28,6 +30,11 @@ const stripUrlQueryAndHash = (properties?: Properties) => {
     const value = properties[key];
     if (typeof value === 'string') {
       properties[key] = value.split(/[?#]/)[0];
+    }
+  }
+  for (const [key, value] of Object.entries(properties)) {
+    if (/^\$web_vitals_.+_event$/.test(key) && value) {
+      stripUrlQueryAndHash(value);
     }
   }
 };
@@ -86,8 +93,17 @@ const syncUserRoleProperty = () => {
 };
 
 type AnalyticsConfig = {
-  posthogKey?: string;
-  posthogHost?: string;
+  posthogKey?: unknown;
+  posthogHost?: unknown;
+};
+
+const isHttpsUrl = (value: unknown): value is string => {
+  if (typeof value !== 'string') return false;
+  try {
+    return new URL(value).protocol === 'https:';
+  } catch {
+    return false;
+  }
 };
 
 const ProductAnalytics: React.FC = () => {
@@ -97,11 +113,16 @@ const ProductAnalytics: React.FC = () => {
     'domainConfig',
     'analytics',
   );
-  const apiKey = analyticsConfig?.posthogKey;
-  const apiHost = analyticsConfig?.posthogHost;
+  const apiKey =
+    typeof analyticsConfig?.posthogKey === 'string'
+      ? analyticsConfig.posthogKey
+      : undefined;
+  const apiHost = isHttpsUrl(analyticsConfig?.posthogHost)
+    ? analyticsConfig.posthogHost
+    : undefined;
 
   const start = useEffectEvent(() => {
-    if (isStarted || !apiKey || !apiHost) return;
+    if (isStarted || !apiKey || !apiHost || getActAsTarget()) return;
     isStarted = true;
 
     posthog.init(apiKey, {
@@ -119,6 +140,7 @@ const ProductAnalytics: React.FC = () => {
       },
       session_recording: {
         maskAllInputs: true,
+        maskTextSelector: '*',
       },
       before_send: (event) => {
         if (event.event === '$exception' && isDuplicateException(event)) {

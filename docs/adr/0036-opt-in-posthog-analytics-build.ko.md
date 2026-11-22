@@ -63,6 +63,9 @@ flowchart TD
 
 - **Read location**: `ProductAnalytics`는 로그인이 `myAppConfigState`에 넣은 merged `domainConfig`를 `useMyAppConfig('domainConfig', 'analytics')`로 읽는다(ADR 0033). 따로 query를 보내지 않는다.
 - **Missing value**: 둘 중 하나라도 비어 있는 동안 `ProductAnalytics`는 `posthog.init`을 부르지 않고, SDK는 요청을 보내지 않는다. 로그인 전과 app config 읽기가 실패했을 때도 같다.
+- **Act-as tab**: act-as 탭(`getActAsTarget()`이 있음)도 SDK를 시작하지 않는다. ADR 0035에서 act-as 탭이 아무것도 저장하지 않는 것과 같아, super admin의 act-as 사용은 세지 않고 act-as를 나가도 다른 탭이 공유하는 distinct id를 reset하지 않는다.
+- **Accepted values**: `posthogKey`는 문자열, `posthogHost`는 `https:` URL이어야 하고, 다른 값은 없는 것으로 본다.
+- **Script execution**: `posthog-js`는 `posthogHost`에서 script를 받아 WebUI origin에서 실행하고, production CSP의 `'strict-dynamic'`은 어떤 host든 허용한다. 그래서 `domainConfig.analytics`를 쓸 수 있는 권한은 그 domain의 모든 session에서 script를 실행할 수 있는 권한과 같다.
 - **Who sets it**: `analytics`를 고치는 WebUI 화면은 없다. superadmin이 manager의 app config API나 CLI로 domain의 `domainConfig`에 쓴다. `WebUISettingsPage`는 `domainConfig` 쓰기를 raw 문서 위에 만들므로 이 key를 지우지 않는다.
 - **Readable by every user**: `myAppConfigs`는 모든 role에 `domainConfig`를 돌려주므로 domain의 모든 사용자가 key와 host를 읽을 수 있다. PostHog project API key는 쓰기 전용 공개 수집 key라 이를 받아들이고, `analytics`에는 다른 secret을 넣지 않는다.
 - **No secrets in the repository**: 저장소는 공개이므로 어떤 tracked 파일도 실제 key나 host를 기본값·예시로 담지 않는다.
@@ -85,16 +88,17 @@ flowchart TD
 | `disable_capture_url_hashes`      | `true`                                          | URL fragment를 보내지 않는다                        |
 | `capture_exceptions`              | unhandled error와 unhandled rejection만         | console error는 수집하지 않는다                     |
 | `session_recording.maskAllInputs` | `true`                                          | replay에서 모든 input 값을 가린다                   |
+| `session_recording.maskTextSelector` | `'*'`                                        | replay에서 모든 text를 가린다. 일부 화면은 secret을 text로 보여준다 |
 | `before_send`                     | URL query·fragment 제거, `$exception` 중복 제거 | 5절과 7절                                           |
 
 - **Platform property**: `ProductAnalytics`는 `globalThis.isElectron`으로 super property `platform`(`web` 또는 `electron`)을 등록한다.
-- **Session replay**: `ProductAnalytics`는 replay를 켜거나 끄지 않는다. PostHog project 설정이 replay를 켤 때만 SDK가 녹화하고, 그때도 input 값은 가려진다.
+- **Session replay**: `ProductAnalytics`는 replay를 켜거나 끄지 않는다. PostHog project 설정이 replay를 켤 때만 SDK가 녹화하고, 그때도 input 값과 모든 text가 가려지므로, replay는 화면이 무엇을 말하는지가 아니라 layout과 pointer 움직임을 보여준다.
 - **Single start**: module 변수 `isStarted`가 StrictMode의 effect 두 번 실행에서도 init, `document` listener 등록, `logger.use()`를 한 번만 하게 한다. 이 셋은 page가 살아 있는 동안 해제하지 않는다. 로그아웃은 page를 다시 불러오므로 다음 로그인은 그 domain의 `analytics`를 새로 읽는다.
 
 ### 5. Privacy defaults
 
-- **URL query and fragment**: `before_send`가 `properties`, `$set`, `$set_once`의 `$current_url`, `$referrer`, `$initial_current_url`, `$initial_referrer`, `$session_entry_url`, `$session_entry_referrer`에서 `?`나 `#`부터 뒤를 지운다. query에는 이름과 id가 실릴 수 있다.
-- **Secrets**: SDK는 password input을 수집하지 않는다. autocapture는 input 값을 보내지 않고 replay는 input을 가리므로, access key·secret key·SSH key·token 입력 칸에 `ph-no-capture`를 따로 달지 않는다.
+- **URL query and fragment**: `before_send`가 `properties`, `$set`, `$set_once`의 `$current_url`, `$referrer`, `$initial_current_url`, `$initial_referrer`, `$session_entry_url`, `$session_entry_referrer`, `$external_click_url`과 중첩된 `$web_vitals_*_event` 객체의 같은 key에서 `?`나 `#`부터 뒤를 지운다. query에는 이름과 id가 실릴 수 있다.
+- **Secrets**: SDK는 password input을 수집하지 않는다. autocapture는 input 값을 보내지 않고 replay는 input을 가리므로, access key·secret key·SSH key·token 입력 칸에 `ph-no-capture`를 따로 달지 않는다. text로 보이는 secret(새 keypair의 secret key, deployment access token)은 replay의 text masking이 가린다.
 - **Anonymous identity**: account UUID와 domain은 browser 밖으로 나가면 안 된다. 그래서 `ProductAnalytics`는 `posthog.identify`를 부르지 않고 SDK가 만든 무작위 anonymous distinct id만 쓴다.
 - **Role property**: `ProductAnalytics`가 등록하는 사용자 값은 super property `role` 하나다. `role`은 `globalThis.backendaiclient`의 `is_superadmin`과 `is_admin`으로 정한 `superadmin`·`admin`·`user` 중 하나다. `user_uuid`는 로그인 여부를 확인할 때만 읽고, `user_uuid`, `_config.domainName`, email, 이름은 property로 등록하지 않는다.
 - **Role timing**: `ProductAnalytics`는 시작할 때와 `backend-ai-connected` event마다 `role`을 맞춘다. 로그인 전이면 이전 page에서 저장된 `role`을 `posthog.unregister('role')`로 지운다.
@@ -128,7 +132,8 @@ flowchart TD
 - **Plugin cost in production**: plugin이 하나라도 붙으면 production에서도 모든 log 호출이 `LogContext`를 만든다. plugin이 없는 기본 build에서 `logging()`의 비용은 이전과 같다.
 - **Duplicate dev console line**: 개발 환경에서는 `BAIErrorBoundary`가 잡은 render error를 React와 `useBAILogger`가 한 번씩 console에 찍는다.
 - **Anonymous users only**: 같은 사람도 browser가 다르면 다른 user로 세고, 기기를 넘나드는 사용자별 funnel은 만들 수 없다. 로그아웃도 distinct id를 새로 만들므로 같은 browser에서 다시 로그인하면 다른 user로 센다. person property와 cohort는 쓸 수 없고, role별 분석은 event property로 한다.
-- **Rendered values can still be captured**: autocapture의 `$el_text`와 `$elements_chain`(text, `href`, `data-row-key` 같은 attribute), replay의 화면 text, error message에는 화면이나 서버 응답에 있는 email, domain, UUID가 실릴 수 있다. `identify`를 없앤 것만으로는 막지 못하므로 별도 조치가 필요하다.
+- **Rendered values can still be captured**: autocapture의 `$el_text`와 `$elements_chain`(text, `href`, `data-row-key` 같은 attribute), error message에는 화면이나 서버 응답에 있는 email, domain, UUID가 실릴 수 있다. `identify`를 없앤 것만으로는 막지 못하므로 별도 조치가 필요하다.
+- **Replay page addresses keep queries**: PostHog project가 replay를 켜면 그 meta event는 query를 포함한 `window.location.href` 전체를 담는다. `before_send`는 replay snapshot에 닿지 않는다.
 - **Path segments stay**: `before_send`는 URL path를 건드리지 않으므로 project 이름과 deployment id 같은 path segment는 event에 남는다.
 - **Minified stack traces**: `ProductAnalytics`는 source map을 PostHog에 올리지 않는다. PostHog가 build의 source map을 찾지 못하면 error의 stack trace는 minify된 위치를 가리킨다.
 
