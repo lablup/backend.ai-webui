@@ -13,6 +13,7 @@ import {
   getSortableColumnHeader,
   loginAsAdmin,
   loginAsCreatedAccount,
+  loginAsUser,
   navigateTo,
 } from '../../utils/test-util';
 import { usersTabButton } from '../../utils/user-profile-util';
@@ -1273,6 +1274,102 @@ test.describe(
           }
         }
       }
+    });
+  },
+);
+
+// The WebUI Assistant switch is a device-local user setting, so each test's
+// fresh browser context starts with it off and turning it on leaks nowhere.
+const MOCK_ASSISTANT_BASE_URL = 'https://e2e-webui-assistant.example.com/v1';
+
+async function setWebUIAssistantEnabled(page: Page, enabled: boolean) {
+  await navigateTo(page, 'usersettings');
+  const settingsDialog = page.getByRole('dialog', { name: 'Settings & Logs' });
+  await expect(settingsDialog).toBeVisible({ timeout: 15000 });
+  const checkbox = settingsDialog
+    .getByTestId('items-experimental-webui-assistant')
+    .getByRole('checkbox', { name: 'WebUI Assistant' });
+  await checkbox.setChecked(enabled);
+  await expect(checkbox).toBeChecked({ checked: enabled });
+  await settingsDialog.getByRole('button', { name: 'Close' }).click();
+  await expect(settingsDialog).toBeHidden();
+}
+
+test.describe(
+  'WebUI Assistant',
+  { tag: ['@regression', '@user-settings', '@functional'] },
+  () => {
+    test.beforeEach(async ({ page, request }) => {
+      await loginAsUser(page, request);
+    });
+
+    test('User can turn on WebUI Assistant and see the floating chat button', async ({
+      page,
+    }) => {
+      const fab = page.getByTestId('webui-assistant-fab');
+
+      await setWebUIAssistantEnabled(page, true);
+      await expect(fab).toBeVisible();
+      await expect(fab).toHaveAccessibleName('Open WebUI Assistant');
+
+      await setWebUIAssistantEnabled(page, false);
+      await expect(fab).toBeHidden();
+    });
+
+    test('User can open the Connect WebUI Assistant modal from the floating button', async ({
+      page,
+    }) => {
+      // The custom endpoint answers the `/models` probe with 401, so nothing is saved.
+      await page.route(`${MOCK_ASSISTANT_BASE_URL}/models`, async (route) => {
+        const corsHeaders = {
+          'access-control-allow-origin': '*',
+          'access-control-allow-headers': '*',
+          'access-control-allow-methods': 'GET, OPTIONS',
+        };
+        if (route.request().method() === 'OPTIONS') {
+          await route.fulfill({ status: 204, headers: corsHeaders });
+          return;
+        }
+        await route.fulfill({
+          status: 401,
+          headers: corsHeaders,
+          contentType: 'application/json',
+          body: JSON.stringify({ error: { message: 'Invalid API key' } }),
+        });
+      });
+
+      await setWebUIAssistantEnabled(page, true);
+      await page.getByTestId('webui-assistant-fab').click();
+
+      const modal = page.getByRole('dialog', {
+        name: 'Connect WebUI Assistant',
+      });
+      await expect(modal).toBeVisible();
+      await expect(
+        modal.getByRole('radio', { name: 'Deployment', exact: true }),
+      ).toBeVisible();
+      const customEndpoint = modal.getByRole('radio', {
+        name: 'Custom endpoint',
+      });
+      await expect(customEndpoint).toBeVisible();
+
+      await customEndpoint.click();
+      await modal
+        .getByRole('textbox', { name: 'Base URL' })
+        .fill(MOCK_ASSISTANT_BASE_URL);
+      await modal
+        .getByLabel('API key', { exact: true })
+        .fill('e2e-invalid-api-key');
+      await modal.getByRole('button', { name: 'Connect', exact: true }).click();
+
+      await expect(
+        modal
+          .getByRole('alert')
+          .filter({ hasText: 'The endpoint rejected the request (401/403).' }),
+      ).toBeVisible();
+
+      await modal.getByRole('button', { name: 'Cancel' }).click();
+      await expect(modal).toBeHidden();
     });
   },
 );
