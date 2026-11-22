@@ -98,7 +98,7 @@ flowchart TD
 - **Anonymous identity**: account UUID와 domain은 browser 밖으로 나가면 안 된다. 그래서 `ProductAnalytics`는 `posthog.identify`를 부르지 않고 SDK가 만든 무작위 anonymous distinct id만 쓴다.
 - **Role property**: `ProductAnalytics`가 등록하는 사용자 값은 super property `role` 하나다. `role`은 `globalThis.backendaiclient`의 `is_superadmin`과 `is_admin`으로 정한 `superadmin`·`admin`·`user` 중 하나다. `user_uuid`는 로그인 여부를 확인할 때만 읽고, `user_uuid`, `_config.domainName`, email, 이름은 property로 등록하지 않는다.
 - **Role timing**: `ProductAnalytics`는 시작할 때와 `backend-ai-connected` event마다 `role`을 맞춘다. 로그인 전이면 이전 page에서 저장된 `role`을 `posthog.unregister('role')`로 지운다.
-- **Logout**: `backend-ai-logout` event에서 `posthog.reset()`으로 distinct id와 `role`을 지워 다음 계정으로 넘기지 않는다. reset은 `platform`도 지우므로 바로 다시 등록한다.
+- **Logout**: `backend-ai-logout` event에서 `posthog.reset()`으로 distinct id와 `role`을 지워, 로그아웃 뒤 로그인한 다음 계정으로 넘기지 않는다. reset은 `platform`도 지우므로 바로 다시 등록한다. 이 event 없이 끝난 session(browser를 닫음, Electron 앱 종료 정리, 만료된 session의 재로그인 reload)은 저장된 distinct id를 남기고, 그 browser의 다음 계정이 그것을 이어받는다.
 
 ### 6. Logger plugin dispatch in production
 

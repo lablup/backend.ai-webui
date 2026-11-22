@@ -37,6 +37,14 @@ const restrictedImportPatterns = [
   },
 ];
 // `no-restricted-imports` sees only static imports and re-exports.
+const posthogDynamicImportBan = [
+  'ImportExpression[source.value=/^posthog-js/]',
+  "CallExpression[callee.name='require'][arguments.0.value=/^posthog-js/]",
+].map((selector) => ({
+  selector,
+  message:
+    'posthog-js is imported only by src/components/ProductAnalytics.tsx, statically (ADR 0036).',
+}));
 const astryxDynamicImportBan = [
   'ImportExpression[source.value=/^@astryxdesign\\u002F/]',
   'ImportExpression > TemplateLiteral.source[quasis.0.value.cooked=/^@astryxdesign\\u002F/]',
@@ -169,6 +177,7 @@ export default [
             'Direct <style> elements are forbidden (CSP nonce safety). Import a co-located .css file instead, and drive runtime-variable values through CSS custom properties.',
         },
         ...astryxDynamicImportBan,
+        ...posthogDynamicImportBan,
         bailinkEllipsisRestriction,
       ],
     },
@@ -280,7 +289,7 @@ export default [
       'no-restricted-imports': [
         'error',
         {
-          patterns: baseRestrictedImportPatterns,
+          patterns: [...baseRestrictedImportPatterns, setCurrentProjectBan],
           paths: restrictedImportPaths,
         },
       ],

@@ -98,7 +98,7 @@ flowchart TD
 - **Anonymous identity**: the account UUID and the domain must not leave the browser. `ProductAnalytics` therefore never calls `posthog.identify` and uses only the random anonymous distinct id the SDK creates.
 - **Role property**: the only user value `ProductAnalytics` registers is the super property `role`, one of `superadmin`, `admin` and `user`, decided from `is_superadmin` and `is_admin` of `globalThis.backendaiclient`. `user_uuid` is read only to tell whether someone is signed in; `user_uuid`, `_config.domainName`, email and name are not registered as properties.
 - **Role timing**: `ProductAnalytics` syncs `role` when it starts and on every `backend-ai-connected` event. Before sign-in it removes a `role` stored by an earlier page with `posthog.unregister('role')`.
-- **Logout**: on the `backend-ai-logout` event, `posthog.reset()` clears the distinct id and `role`, so neither carries over to the next account. The reset clears `platform` too, so it is registered again right away.
+- **Logout**: on the `backend-ai-logout` event, `posthog.reset()` clears the distinct id and `role`, so neither carries over to the next account signed in after a logout. The reset clears `platform` too, so it is registered again right away. A session that ends without that event (a closed browser, the Electron app-close cleanup, the expired-session re-login reload) keeps the stored distinct id, and the next account on that browser inherits it.
 
 ### 6. Logger plugin dispatch in production
 
