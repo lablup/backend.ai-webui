@@ -297,6 +297,7 @@ Backend.AI ใช้คู่คีย์ SSH ที่อิงตาม OpenSS
 **เปิดใช้งาน**
 
 ![](../images/experimental_features.png)
+<!-- TODO(screenshot): user settings dialog -> General -> Experimental features, showing the WebUI Assistant row. The screenshot environment was unavailable on this run (the capture manager returned 401). -->
 
 - **เอเจนต์ AI**: เปิดใช้งานฟีเจอร์เอเจนต์ AI ซึ่งให้ความสามารถ AI แบบ
   เอเจนต์ภายใน WebUI เมื่อเปิดใช้งาน ฟังก์ชันเอเจนต์ AI จะพร้อมใช้งาน
@@ -313,6 +314,9 @@ Backend.AI ใช้คู่คีย์ SSH ที่อิงตาม OpenSS
   ปุ่มสลับนี้จะปรากฏเฉพาะเมื่อเปิดใช้งานฟีเจอร์นี้เท่านั้น
   สำหรับตัวควบคุมของกริดเอง ดูที่
   [การแสดงผลรายการเซสชัน](#session-list-view-and-refresh)
+- **ผู้ช่วย WebUI**: เพิ่มปุ่มแชทที่ตอบคำถามการใช้งาน WebUI จากคู่มือผู้ใช้
+  เมื่อเปิดครั้งแรก คุณจะเชื่อมต่อกับการปรับใช้หรือเอนด์พอยต์ที่เข้ากันได้กับ
+  OpenAI ซึ่งให้บริการโมเดลแชท
 
 <a id="logs-tab"></a>
 

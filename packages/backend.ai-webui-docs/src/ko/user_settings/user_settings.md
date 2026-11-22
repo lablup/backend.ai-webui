@@ -286,6 +286,7 @@ Backend.AI는 OpenSSH에 기반한 SSH keypair를 사용합니다. Windows에서
 변경되거나 제거될 수 있습니다. 각 기능은 **활성화** 체크박스로 켤 수 있습니다.
 
 ![](../images/experimental_features.png)
+<!-- TODO(screenshot): user settings dialog -> General -> Experimental features, showing the WebUI Assistant row. The screenshot environment was unavailable on this run (the capture manager returned 401). -->
 
 - **AI 에이전트**: AI 에이전트 기능을 활성화합니다. 이 기능은 WebUI 내에서
   에이전트 기반 AI 기능을 제공합니다. 활성화하면 세션에서 AI 에이전트 기능을
@@ -301,6 +302,9 @@ Backend.AI는 OpenSSH에 기반한 SSH keypair를 사용합니다. Windows에서
   해당 세션의 실시간 자원 사용률을 나타냅니다. 이 전환 버튼은 해당 기능을
   활성화한 경우에만 표시됩니다. 그리드 자체의 조작 방법은
   [세션 목록 보기](#session-list-view-and-refresh) 섹션을 참고하세요.
+- **WebUI 도우미**: 사용자 매뉴얼을 근거로 WebUI 사용법에 답하는 채팅 버튼을
+  추가합니다. 처음 열 때 채팅 모델을 서비스하는 배포나 OpenAI 호환 엔드포인트에
+  연결합니다.
 
 <a id="logs-tab"></a>
 
