@@ -1323,7 +1323,7 @@ test.describe(
       await page.route(`${MOCK_ASSISTANT_BASE_URL}/models`, async (route) => {
         const corsHeaders = {
           'access-control-allow-origin': '*',
-          'access-control-allow-headers': '*',
+          'access-control-allow-headers': 'authorization, content-type',
           'access-control-allow-methods': 'GET, OPTIONS',
         };
         if (route.request().method() === 'OPTIONS') {
