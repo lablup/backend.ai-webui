@@ -2,6 +2,7 @@
 // scenarios: 10 (Agent Stats Widget), 11 (Recently Created Sessions Widget), and the
 // admin dashboard entry. Split from e2e/project/dashboard/dashboard.spec.ts.
 import { WIDGET_TIMEOUT, waitForGraphQL } from '../../utils/dashboard-util';
+import { skipUnlessManagerVersion } from '../../utils/feature-gate-util';
 import {
   loginAsAdmin,
   navigateTo,
@@ -287,6 +288,11 @@ test.describe(
         test.beforeEach(async ({ page, request }) => {
           await loginAsAdmin(page, request);
           await navigateTo(page, 'admin/dashboard');
+          await skipUnlessManagerVersion(
+            page,
+            '26.9.0',
+            'The card lists projects through scopedProjectsV2, manager >= 26.9.0',
+          );
         });
 
         test.afterEach(async ({ page }) => {
@@ -307,7 +313,7 @@ test.describe(
           await widget.scrollIntoViewIfNeeded({ timeout: WIDGET_TIMEOUT });
           await expect(widget).toBeVisible({ timeout: WIDGET_TIMEOUT });
 
-          // 3. Verify the Project / CPU / Memory columns
+          // 3. Verify the Project / CPU / RAM columns
           const table = widget.getByRole('table');
           await expect(table).toBeVisible({ timeout: WIDGET_TIMEOUT });
           for (const column of ['Project', 'CPU', 'RAM']) {
