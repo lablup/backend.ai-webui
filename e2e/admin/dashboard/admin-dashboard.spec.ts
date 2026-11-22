@@ -220,6 +220,120 @@ test.describe(
     });
 
     // -----------------------------------------------------------------------
+    // Resource Allocation by Project Widget (superadmin only)
+    // -----------------------------------------------------------------------
+    test.describe('Resource Allocation by Project Widget', () => {
+      const CARD_TITLE = 'Resource Allocation by Project';
+      const CARD_KEY = 'projectAllocations';
+      // Whether a board write puts the card on the admin page's active board.
+      const writeShowsCard = (value: unknown): boolean | undefined => {
+        if (typeof value === 'string') {
+          try {
+            return writeShowsCard(JSON.parse(value));
+          } catch {
+            return undefined;
+          }
+        }
+        if (!value || typeof value !== 'object') return undefined;
+        const page = (value as any).dashboard?.admin;
+        if (page && Array.isArray(page.boards)) {
+          const board =
+            page.boards.find((b: any) => b.id === page.active) ??
+            page.boards[0];
+          return (board?.panels ?? []).some((p: any) => p.key === CARD_KEY);
+        }
+        for (const child of Object.values(value)) {
+          const shows = writeShowsCard(child);
+          if (shows !== undefined) return shows;
+        }
+        return undefined;
+      };
+      // The card is hidden on a new superadmin board, so the test adds it from
+      // the edit sider (personal userConfig) and hides it again afterwards.
+      let addedCard = false;
+      const setCardShown = async (page: Page, shown: boolean) => {
+        const dashboardBar = page.getByTestId('dashboard-filter-bar');
+        await dashboardBar.getByRole('button', { name: 'Edit' }).click();
+        const checkbox = page.getByRole('checkbox', {
+          name: CARD_TITLE,
+          exact: true,
+        });
+        await expect(checkbox).toBeVisible({ timeout: WIDGET_TIMEOUT });
+        const wasShown = await checkbox.isChecked();
+        // Wait for the board write so the afterEach restore is not lost.
+        const saved =
+          wasShown !== shown
+            ? waitForGraphQL(
+                page,
+                'useAppConfigMyUpsertMutation',
+                (variables) => writeShowsCard(variables) === shown,
+                10_000,
+              ).catch((error: Error) => {
+                if (error.name !== 'TimeoutError') throw error;
+              })
+            : undefined;
+        try {
+          if (wasShown !== shown) await checkbox.click();
+          await dashboardBar.getByRole('button', { name: 'Close' }).click();
+        } finally {
+          await saved;
+        }
+        return wasShown;
+      };
+
+      test.beforeEach(async ({ page, request }) => {
+        await loginAsAdmin(page, request);
+        await navigateTo(page, 'admin/dashboard');
+      });
+
+      test.afterEach(async ({ page }) => {
+        if (addedCard) await setCardShown(page, false);
+        addedCard = false;
+      });
+
+      test('Admin can add the Resource Allocation by Project card and see each project used against its limit', async ({
+        page,
+      }) => {
+        // 1. Add the card from the edit sider
+        addedCard = !(await setCardShown(page, true));
+
+        // 2. Locate the card (scroll: a saved board may put it last)
+        const widget = page.locator('.uic-board-item').filter({
+          has: page.getByRole('heading', { name: CARD_TITLE, exact: true }),
+        });
+        await widget.scrollIntoViewIfNeeded({ timeout: WIDGET_TIMEOUT });
+        await expect(widget).toBeVisible({ timeout: WIDGET_TIMEOUT });
+
+        // 3. Verify the Project / CPU / Memory columns
+        const table = widget.getByRole('table');
+        await expect(table).toBeVisible({ timeout: WIDGET_TIMEOUT });
+        for (const column of ['Project', 'CPU', 'RAM']) {
+          await expect(
+            table.getByRole('columnheader', { name: column, exact: true }),
+          ).toBeVisible();
+        }
+
+        // 4. Verify a project row shows "used / limit" (or "used / Unlimited")
+        // in both its CPU and memory cells
+        const usedOverLimit = /\S+ \/ (Unlimited|\S+)/;
+        const firstRow = table
+          .getByRole('row')
+          .filter({ has: page.getByRole('cell') })
+          .first();
+        await expect(firstRow).toBeVisible({ timeout: WIDGET_TIMEOUT });
+        await expect(firstRow.getByRole('cell').first()).not.toBeEmpty();
+        await expect(firstRow.getByRole('cell').nth(1)).toContainText(
+          usedOverLimit,
+          { timeout: WIDGET_TIMEOUT },
+        );
+        await expect(firstRow.getByRole('cell').nth(2)).toContainText(
+          usedOverLimit,
+          { timeout: WIDGET_TIMEOUT },
+        );
+      });
+    });
+
+    // -----------------------------------------------------------------------
     // 11. Recently Created Sessions Widget
     // -----------------------------------------------------------------------
     test.describe('Recently Created Sessions Widget', () => {
