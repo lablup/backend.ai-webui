@@ -141,6 +141,11 @@ const ProductAnalytics: React.FC = () => {
       session_recording: {
         maskAllInputs: true,
         maskTextSelector: '*',
+        maskAllElementAttributes: true,
+        maskCapturedNetworkRequestFn: (request) => ({
+          ...request,
+          name: request.name.split(/[?#]/)[0],
+        }),
       },
       before_send: (event) => {
         if (event.event === '$exception' && isDuplicateException(event)) {

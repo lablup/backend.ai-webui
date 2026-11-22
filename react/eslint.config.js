@@ -39,6 +39,7 @@ const restrictedImportPatterns = [
 // `no-restricted-imports` sees only static imports and re-exports.
 const posthogDynamicImportBan = [
   'ImportExpression[source.value=/^posthog-js/]',
+  'ImportExpression > TemplateLiteral.source[quasis.0.value.cooked=/^posthog-js/]',
   "CallExpression[callee.name='require'][arguments.0.value=/^posthog-js/]",
 ].map((selector) => ({
   selector,

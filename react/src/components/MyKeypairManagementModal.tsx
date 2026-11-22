@@ -718,7 +718,12 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
           </BAIFlex>
           <BAIFlex direction="column" gap="xs">
             <BAIText type="secondary">{t('credential.SecretKey')}</BAIText>
-            <BAIText copyable code ellipsis={{ tooltip: true }}>
+            <BAIText
+              copyable
+              code
+              ellipsis={{ tooltip: true }}
+              className="ph-no-capture"
+            >
               {credentialResult?.secretKey}
             </BAIText>
           </BAIFlex>

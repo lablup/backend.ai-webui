@@ -89,6 +89,8 @@ flowchart TD
 | `capture_exceptions`              | unhandled error와 unhandled rejection만         | console error는 수집하지 않는다                     |
 | `session_recording.maskAllInputs` | `true`                                          | replay에서 모든 input 값을 가린다                   |
 | `session_recording.maskTextSelector` | `'*'`                                        | replay에서 모든 text를 가린다. 일부 화면은 secret을 text로 보여준다 |
+| `session_recording.maskAllElementAttributes` | `true`                               | replay에서 element attribute(`title`, `href`, `aria-label`, `data-*`)를 가린다 |
+| `session_recording.maskCapturedNetworkRequestFn` | `name`에서 `?`·`#` 뒤를 지움       | replay의 page 주소와 기록된 request URL에서 query와 fragment를 지운다 |
 | `before_send`                     | URL query·fragment 제거, `$exception` 중복 제거 | 5절과 7절                                           |
 
 - **Platform property**: `ProductAnalytics`는 `globalThis.isElectron`으로 super property `platform`(`web` 또는 `electron`)을 등록한다.
@@ -97,8 +99,8 @@ flowchart TD
 
 ### 5. Privacy defaults
 
-- **URL query and fragment**: `before_send`가 `properties`, `$set`, `$set_once`의 `$current_url`, `$referrer`, `$initial_current_url`, `$initial_referrer`, `$session_entry_url`, `$session_entry_referrer`, `$external_click_url`과 중첩된 `$web_vitals_*_event` 객체의 같은 key에서 `?`나 `#`부터 뒤를 지운다. query에는 이름과 id가 실릴 수 있다.
-- **Secrets**: SDK는 password input을 수집하지 않는다. autocapture는 input 값을 보내지 않고 replay는 input을 가리므로, access key·secret key·SSH key·token 입력 칸에 `ph-no-capture`를 따로 달지 않는다. text로 보이는 secret(새 keypair의 secret key, deployment access token)은 replay의 text masking이 가린다.
+- **URL query and fragment**: `before_send`가 `properties`, `$set`, `$set_once`의 `$current_url`, `$referrer`, `$initial_current_url`, `$initial_referrer`, `$session_entry_url`, `$session_entry_referrer`, `$external_click_url`과 중첩된 `$web_vitals_*_event` 객체의 같은 key에서 `?`나 `#`부터 뒤를 지운다. replay의 page 주소는 대신 `maskCapturedNetworkRequestFn`을 거친다(4절). query에는 이름과 id가 실릴 수 있다.
+- **Secrets**: SDK는 password input을 수집하지 않는다. autocapture는 input 값을 보내지 않고 replay는 input을 가리므로, access key·secret key·SSH key·token 입력 칸에 `ph-no-capture`를 따로 달지 않는다. text로 보이는 secret(새 keypair의 secret key, deployment access token)에는 `ph-no-capture` class를 달아 autocapture가 그 text도, copy control의 click도 보내지 않고, replay는 다른 text와 함께 가린다. secret을 text로 보여주는 새 화면은 이 class를 단다.
 - **Anonymous identity**: account UUID와 domain은 browser 밖으로 나가면 안 된다. 그래서 `ProductAnalytics`는 `posthog.identify`를 부르지 않고 SDK가 만든 무작위 anonymous distinct id만 쓴다.
 - **Role property**: `ProductAnalytics`가 등록하는 사용자 값은 super property `role` 하나다. `role`은 `globalThis.backendaiclient`의 `is_superadmin`과 `is_admin`으로 정한 `superadmin`·`admin`·`user` 중 하나다. `user_uuid`는 로그인 여부를 확인할 때만 읽고, `user_uuid`, `_config.domainName`, email, 이름은 property로 등록하지 않는다.
 - **Role timing**: `ProductAnalytics`는 시작할 때와 `backend-ai-connected` event마다 `role`을 맞춘다. 로그인 전이면 이전 page에서 저장된 `role`을 `posthog.unregister('role')`로 지운다.
@@ -133,7 +135,6 @@ flowchart TD
 - **Duplicate dev console line**: 개발 환경에서는 `BAIErrorBoundary`가 잡은 render error를 React와 `useBAILogger`가 한 번씩 console에 찍는다.
 - **Anonymous users only**: 같은 사람도 browser가 다르면 다른 user로 세고, 기기를 넘나드는 사용자별 funnel은 만들 수 없다. 로그아웃도 distinct id를 새로 만들므로 같은 browser에서 다시 로그인하면 다른 user로 센다. person property와 cohort는 쓸 수 없고, role별 분석은 event property로 한다.
 - **Rendered values can still be captured**: autocapture의 `$el_text`와 `$elements_chain`(text, `href`, `data-row-key` 같은 attribute), error message에는 화면이나 서버 응답에 있는 email, domain, UUID가 실릴 수 있다. `identify`를 없앤 것만으로는 막지 못하므로 별도 조치가 필요하다.
-- **Replay page addresses keep queries**: PostHog project가 replay를 켜면 그 meta event는 query를 포함한 `window.location.href` 전체를 담는다. `before_send`는 replay snapshot에 닿지 않는다.
 - **Path segments stay**: `before_send`는 URL path를 건드리지 않으므로 project 이름과 deployment id 같은 path segment는 event에 남는다.
 - **Minified stack traces**: `ProductAnalytics`는 source map을 PostHog에 올리지 않는다. PostHog가 build의 source map을 찾지 못하면 error의 stack trace는 minify된 위치를 가리킨다.
 

@@ -89,6 +89,8 @@ flowchart TD
 | `capture_exceptions`              | unhandled errors and unhandled rejections only          | console errors are not collected                 |
 | `session_recording.maskAllInputs` | `true`                                                  | every input value is masked in replay            |
 | `session_recording.maskTextSelector` | `'*'`                                                | every text node is masked in replay; some screens show secrets as text |
+| `session_recording.maskAllElementAttributes` | `true`                                       | element attributes (`title`, `href`, `aria-label`, `data-*`) are masked in replay |
+| `session_recording.maskCapturedNetworkRequestFn` | strips `?` and `#` from `name`             | replay page addresses and recorded request URLs lose their query and fragment |
 | `before_send`                     | URL query and fragment removal, `$exception` dedupe     | sections 5 and 7                                 |
 
 - **Platform property**: `ProductAnalytics` registers the super property `platform` (`web` or `electron`) from `globalThis.isElectron`.
@@ -97,8 +99,8 @@ flowchart TD
 
 ### 5. Privacy defaults
 
-- **URL query and fragment**: `before_send` removes everything from `?` or `#` on in `$current_url`, `$referrer`, `$initial_current_url`, `$initial_referrer`, `$session_entry_url`, `$session_entry_referrer` and `$external_click_url` of `properties`, `$set` and `$set_once`, and in the same keys of each nested `$web_vitals_*_event` object. Replay's page-address meta events are not touched (see Consequences). A query can carry names and ids.
-- **Secrets**: the SDK does not collect password inputs. Autocapture sends no input values and replay masks inputs, so the inputs for access keys, secret keys, SSH keys and tokens get no separate `ph-no-capture`. Secrets shown as text (a new keypair's secret key, deployment access tokens) are covered by replay's text masking.
+- **URL query and fragment**: `before_send` removes everything from `?` or `#` on in `$current_url`, `$referrer`, `$initial_current_url`, `$initial_referrer`, `$session_entry_url`, `$session_entry_referrer` and `$external_click_url` of `properties`, `$set` and `$set_once`, and in the same keys of each nested `$web_vitals_*_event` object. Replay page addresses go through `maskCapturedNetworkRequestFn` instead (section 4). A query can carry names and ids.
+- **Secrets**: the SDK does not collect password inputs. Autocapture sends no input values and replay masks inputs, so the inputs for access keys, secret keys, SSH keys and tokens get no separate `ph-no-capture`. Secrets shown as text (a new keypair's secret key, deployment access tokens) carry the `ph-no-capture` class, so autocapture sends neither their text nor clicks on their copy control, and replay masks their text with all other text. A new screen that shows a secret as text adds the class.
 - **Anonymous identity**: the account UUID and the domain must not leave the browser. `ProductAnalytics` therefore never calls `posthog.identify` and uses only the random anonymous distinct id the SDK creates.
 - **Role property**: the only user value `ProductAnalytics` registers is the super property `role`, one of `superadmin`, `admin` and `user`, decided from `is_superadmin` and `is_admin` of `globalThis.backendaiclient`. `user_uuid` is read only to tell whether someone is signed in; `user_uuid`, `_config.domainName`, email and name are not registered as properties.
 - **Role timing**: `ProductAnalytics` syncs `role` when it starts and on every `backend-ai-connected` event. Before sign-in it removes a `role` stored by an earlier page with `posthog.unregister('role')`.
@@ -133,7 +135,6 @@ flowchart TD
 - **Duplicate dev console line**: in development, a render error `BAIErrorBoundary` catches is printed to the console once by React and once by `useBAILogger`.
 - **Anonymous users only**: the same person on two browsers counts as two users, and per-user funnels across devices are not possible. Logging out also creates a new distinct id, so signing in again on the same browser counts as another user. Person properties and cohorts are unavailable, and analysis by role uses the event property.
 - **Rendered values can still be captured**: autocapture's `$el_text` and `$elements_chain` (text and attributes such as `href` and `data-row-key`), and error messages can carry an email, a domain or a UUID shown on screen or returned by the server. Dropping `identify` does not prevent this; it needs separate measures.
-- **Replay page addresses keep queries**: when the PostHog project turns replay on, its meta events carry the full `window.location.href`, query included; `before_send` does not reach replay snapshots.
 - **Path segments stay**: `before_send` leaves the URL path alone, so path segments such as project names and deployment ids stay in events.
 - **Minified stack traces**: `ProductAnalytics` uploads no source maps to PostHog. When PostHog cannot find the build's source maps, error stack traces point at minified positions.
 
