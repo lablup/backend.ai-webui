@@ -33,7 +33,7 @@ const restrictedImportPatterns = [
   {
     group: ['posthog-js', 'posthog-js/*'],
     message:
-      'posthog-js is imported only by src/components/ProductAnalytics.tsx, which routes.tsx loads behind VITE_ANALYTICS_BUILD (ADR 0017).',
+      'posthog-js is imported only by src/components/ProductAnalytics.tsx, which routes.tsx loads behind VITE_ANALYTICS_BUILD (ADR 0036).',
   },
 ];
 // `no-restricted-imports` sees only static imports and re-exports.

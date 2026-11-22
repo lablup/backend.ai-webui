@@ -2,8 +2,9 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-// Build flag, env vars and privacy defaults: docs/adr/0017-opt-in-posthog-analytics-build.md
+// Build flag, domainConfig.analytics and privacy defaults: docs/adr/0036-opt-in-posthog-analytics-build.md
 import type { UserRole } from '../helper/userRole';
+import { useMyAppConfig } from '../hooks/useAppConfig';
 import { LogLevel, useBAILogger } from 'backend.ai-ui';
 import posthog, { type CaptureResult, type Properties } from 'posthog-js';
 import { useEffect, useEffectEvent } from 'react';
@@ -69,7 +70,7 @@ const registerPlatform = () => {
   posthog.register({ platform: globalThis.isElectron ? 'electron' : 'web' });
 };
 
-// Account identifiers stay in the browser; only the role is registered (ADR 0017).
+// Account identifiers stay in the browser; only the role is registered (ADR 0036).
 const syncUserRoleProperty = () => {
   const client = globalThis.backendaiclient;
   if (!client?.user_uuid) {
@@ -84,13 +85,22 @@ const syncUserRoleProperty = () => {
   posthog.register({ role });
 };
 
+type AnalyticsConfig = {
+  posthogKey?: string;
+  posthogHost?: string;
+};
+
 const ProductAnalytics: React.FC = () => {
   'use memo';
   const { logger } = useBAILogger();
+  const [analyticsConfig] = useMyAppConfig<AnalyticsConfig>(
+    'domainConfig',
+    'analytics',
+  );
+  const apiKey = analyticsConfig?.posthogKey;
+  const apiHost = analyticsConfig?.posthogHost;
 
   const start = useEffectEvent(() => {
-    const apiKey = import.meta.env.VITE_POSTHOG_KEY;
-    const apiHost = import.meta.env.VITE_POSTHOG_HOST;
     if (isStarted || !apiKey || !apiHost) return;
     isStarted = true;
 
@@ -146,7 +156,7 @@ const ProductAnalytics: React.FC = () => {
 
   useEffect(() => {
     start();
-  }, []);
+  }, [apiKey, apiHost]);
 
   return null;
 };

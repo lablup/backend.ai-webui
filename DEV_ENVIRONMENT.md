@@ -191,25 +191,20 @@ The build emits the overlay client as one chunk at `/review-overlay.js` and inje
 
 ## Product analytics in a build (`VITE_ANALYTICS_BUILD`)
 
-**Opt-in, off by default.** `VITE_ANALYTICS_BUILD=1` (or `true`) compiles the PostHog analytics component (`react/src/components/ProductAnalytics.tsx`) and `posthog-js` into the bundle as a lazily loaded chunk. Without it the build contains neither, and the output has no trace of PostHog (ADR 0017):
+**Opt-in, off by default.** `VITE_ANALYTICS_BUILD=1` (or `true`) compiles the PostHog analytics component (`react/src/components/ProductAnalytics.tsx`) and `posthog-js` into the bundle as a lazily loaded chunk. Without it the build contains neither, and the output has no trace of PostHog (ADR 0036):
 
 ```bash
 pnpm run build:react-only
 grep -rli posthog react/build   # prints nothing
 ```
 
-An analytics build also needs the PostHog project key and API host. If either is missing, the app neither initialises the SDK nor sends a request:
+An analytics build still sends nothing until the signed-in domain's app config holds the PostHog project key and API host. A superadmin writes them into that domain's `domainConfig` through the manager's app config API or CLI; no WebUI page edits them:
 
-```bash
-VITE_ANALYTICS_BUILD=1 \
-VITE_POSTHOG_KEY=<project API key> \
-VITE_POSTHOG_HOST=https://posthog.example.com \
-pnpm run build
+```json
+{ "analytics": { "posthogKey": "<project API key>", "posthogHost": "https://posthog.example.com" } }
 ```
 
-The same variables work in `.env.development.local` for a dev server. The SDK posts events to `VITE_POSTHOG_HOST` and loads its replay and exception-capture scripts from it, so the CSP of the server that hosts an analytics build must allow that host in `connect-src` (and in `script-src` unless the policy uses `'strict-dynamic'`). The Electron app reuses the web bundle, so it follows the same flag. What is collected and what is stripped is in ADR 0017.
-
-Per-domain opt-in through the domain app config is not part of this flag yet.
+With either value missing, the app neither initialises the SDK nor sends a request, and screens before sign-in are never collected. A change applies at the next sign-in or page load. The SDK posts events to `posthogHost` and loads its replay and exception-capture scripts from it, so the CSP of the server that hosts an analytics build must allow that host in `connect-src` (and in `script-src` unless the policy uses `'strict-dynamic'`). The Electron app reuses the web bundle, so it follows the same flag. What is collected and what is stripped is in ADR 0036.
 
 ## CLI login (`/cli-login`)
 
