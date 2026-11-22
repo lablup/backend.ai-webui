@@ -5,7 +5,14 @@ import test, { expect } from '@playwright/test';
 
 test.describe(
   'Diagnostics App Config fixture',
-  { tag: ['@regression', '@diagnostics'] },
+  {
+    tag: [
+      '@regression',
+      '@diagnostics',
+      '@functional',
+      '@requires-manager-v26.7',
+    ],
+  },
   () => {
     test('Superadmin can view the App Config fixture check on the Diagnostics page', async ({
       page,
