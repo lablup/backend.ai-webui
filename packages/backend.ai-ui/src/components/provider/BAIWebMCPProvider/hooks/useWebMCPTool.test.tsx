@@ -343,4 +343,29 @@ describe('useWebMCPTool', () => {
 
     await expect(descriptorOf(0).execute({})).resolves.toBe(2);
   });
+
+  it('also registers with the page registry, even without document.modelContext', async () => {
+    installModelContext(false);
+    const pageRegister =
+      vi.fn<
+        (tool: WebMCPToolDescriptor, options: { signal: AbortSignal }) => void
+      >();
+    const Gate = ({ children }: { children: ReactNode }) => (
+      <BAIWebMCPProvider enabled pageRegistry={{ registerTool: pageRegister }}>
+        {children}
+      </BAIWebMCPProvider>
+    );
+    const { unmount } = renderHook(() => useWebMCPTool(makeTool()), {
+      wrapper: Gate,
+    });
+
+    expect(pageRegister).toHaveBeenCalledTimes(1);
+    const [descriptor, { signal }] = pageRegister.mock.calls[0];
+    expect(descriptor.name).toBe('bai_test');
+    expect(await descriptor.execute({ count: 1 })).toEqual({
+      echoed: { count: 1 },
+    });
+    unmount();
+    expect(signal.aborted).toBe(true);
+  });
 });

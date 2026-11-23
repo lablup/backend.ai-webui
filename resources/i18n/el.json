@@ -4503,6 +4503,15 @@
     "Placeholder": "Κάντε μια ερώτηση για το WebUI",
     "Token": "Διακριτικό",
     "TokenHint": "Αυτή η ανάπτυξη δεν είναι δημόσια. Επιλέξτε ένα από τα διακριτικά πρόσβασής της.",
+    "ToolFailed": "Το {{name}} απέτυχε: {{error}}",
+    "ToolNavigate": "Άνοιξε η σελίδα {{page}}",
+    "ToolPrepareSession": "Συμπληρώθηκε η εκκίνηση συνεδρίας για έλεγχο",
+    "ToolPreviewDashboard": "Προεπισκόπηση στον πίνακα: {{change}}",
+    "ToolReadDashboard": "Διαβάστηκε ο πίνακας",
+    "ToolReadPage": "Διαβάστηκε η τρέχουσα σελίδα",
+    "ToolRejected": "Δεν έγινε: {{reason}}",
+    "ToolSearchManual": "Αναζήτηση στο εγχειρίδιο για «{{query}}»",
+    "ToolUsed": "Χρησιμοποιήθηκε το {{name}}",
     "ViewModelInfo": "Προβολή πληροφοριών μοντέλου"
   },
   "webuiSettings": {

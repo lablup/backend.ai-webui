@@ -22,10 +22,12 @@ import {
   useWebUINavigate,
 } from '../hooks';
 import { useDeviceMetaData, useImageMetaData } from '../hooks/backendai';
+import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useLoginConfig } from '../hooks/useWebUIConfig';
 import '../index.css';
 import I18nKeyMarkers, { appendI18nKeyMarker } from './I18nKeyMarkers';
 import NotificationHost from './NotificationHost';
+import { pageToolRegistry } from './WebUIAssistant/pageToolRegistry';
 import { useTheme } from '@lablup/ui-common/theme';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import {
@@ -272,6 +274,9 @@ export const DefaultProvidersForReactRoot: React.FC<{
   const { t } = useTranslation();
   const { token } = useTheme();
   const enableWebMCP = useLoginConfig()?.enableWebMCP ?? false;
+  const [isAssistantEnabled] = useBAISettingUserState(
+    'experimental_webui_assistant',
+  );
 
   // Non-`en` locales are lazy chunks; `loadBuiLocale` caches one promise per
   // language, so `use` suspends on the same object across renders.
@@ -378,8 +383,13 @@ export const DefaultProvidersForReactRoot: React.FC<{
                       <Suspense>
                         {/* <BrowserRouter> */}
                         {/* <RoutingEventHandler /> */}
-                        {/* WebMCP tool gate, ADR 0025. */}
-                        <BAIWebMCPProvider enabled={enableWebMCP}>
+                        {/* WebMCP tool gate, ADR 0025; the assistant's page registry, ADR 0038. */}
+                        <BAIWebMCPProvider
+                          enabled={enableWebMCP}
+                          pageRegistry={
+                            isAssistantEnabled ? pageToolRegistry : undefined
+                          }
+                        >
                           {children}
                         </BAIWebMCPProvider>
                         {/* </BrowserRouter> */}

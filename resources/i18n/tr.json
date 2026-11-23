@@ -4503,6 +4503,15 @@
     "Placeholder": "WebUI hakkında bir soru sorun",
     "Token": "Belirteç",
     "TokenHint": "Bu dağıtım herkese açık değil. Erişim belirteçlerinden birini seçin.",
+    "ToolFailed": "{{name}} başarısız oldu: {{error}}",
+    "ToolNavigate": "{{page}} açıldı",
+    "ToolPrepareSession": "Oturum başlatıcı incelemeniz için dolduruldu",
+    "ToolPreviewDashboard": "Panoda önizleme: {{change}}",
+    "ToolReadDashboard": "Pano okundu",
+    "ToolReadPage": "Geçerli sayfa okundu",
+    "ToolRejected": "Yapılmadı: {{reason}}",
+    "ToolSearchManual": "Kılavuzda \"{{query}}\" arandı",
+    "ToolUsed": "{{name}} kullanıldı",
     "ViewModelInfo": "Model bilgilerini görüntüle"
   },
   "webuiSettings": {

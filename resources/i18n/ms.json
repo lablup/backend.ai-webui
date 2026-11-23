@@ -4503,6 +4503,15 @@
     "Placeholder": "Tanya soalan tentang WebUI",
     "Token": "Token",
     "TokenHint": "Penggunaan ini bukan awam. Pilih salah satu token aksesnya.",
+    "ToolFailed": "{{name}} gagal: {{error}}",
+    "ToolNavigate": "Membuka {{page}}",
+    "ToolPrepareSession": "Pelancar sesi telah diisi untuk anda semak",
+    "ToolPreviewDashboard": "Pratonton pada papan pemuka: {{change}}",
+    "ToolReadDashboard": "Membaca papan pemuka",
+    "ToolReadPage": "Membaca halaman semasa",
+    "ToolRejected": "Tidak dilakukan: {{reason}}",
+    "ToolSearchManual": "Mencari \"{{query}}\" dalam manual",
+    "ToolUsed": "Menggunakan {{name}}",
     "ViewModelInfo": "Lihat maklumat model"
   },
   "webuiSettings": {

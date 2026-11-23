@@ -4505,6 +4505,15 @@
     "Placeholder": "Đặt câu hỏi về WebUI",
     "Token": "Token",
     "TokenHint": "Bản triển khai này không công khai. Hãy chọn một trong các token truy cập của nó.",
+    "ToolFailed": "{{name}} thất bại: {{error}}",
+    "ToolNavigate": "Đã mở {{page}}",
+    "ToolPrepareSession": "Đã điền trình khởi chạy phiên để bạn xem lại",
+    "ToolPreviewDashboard": "Xem trước trên bảng điều khiển: {{change}}",
+    "ToolReadDashboard": "Đã đọc bảng điều khiển",
+    "ToolReadPage": "Đã đọc trang hiện tại",
+    "ToolRejected": "Chưa thực hiện: {{reason}}",
+    "ToolSearchManual": "Đã tìm \"{{query}}\" trong hướng dẫn",
+    "ToolUsed": "Đã dùng {{name}}",
     "ViewModelInfo": "Xem thông tin mô hình"
   },
   "webuiSettings": {

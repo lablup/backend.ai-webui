@@ -4505,6 +4505,15 @@
     "Placeholder": "询问关于 WebUI 的问题",
     "Token": "令牌",
     "TokenHint": "此部署未公开。请选择其中一个访问令牌。",
+    "ToolFailed": "{{name}} 失败：{{error}}",
+    "ToolNavigate": "已打开 {{page}}",
+    "ToolPrepareSession": "已填写会话启动器，请检查",
+    "ToolPreviewDashboard": "仪表板预览：{{change}}",
+    "ToolReadDashboard": "已读取仪表板",
+    "ToolReadPage": "已读取当前页面",
+    "ToolRejected": "未完成：{{reason}}",
+    "ToolSearchManual": "已在手册中搜索“{{query}}”",
+    "ToolUsed": "已使用 {{name}}",
     "ViewModelInfo": "查看模型信息"
   },
   "webuiSettings": {

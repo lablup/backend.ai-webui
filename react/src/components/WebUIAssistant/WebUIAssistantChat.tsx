@@ -25,8 +25,15 @@ import {
   dashboardExamplesOf,
   describeDashboardAction,
   answersFromManual,
+  looksLikeQuestion,
   parseDashboardChatReply,
 } from '../DashboardPanels/dashboardChat';
+import {
+  SEARCH_MANUAL_TOOL,
+  probeToolCalling,
+  searchManualResult,
+  streamToolChat,
+} from './assistantToolChat';
 import { generateAssistantText } from './generateAssistantText';
 import {
   createManualIndex,
@@ -34,13 +41,18 @@ import {
   searchManual,
   type ManualSection,
 } from './manualSearch';
+import { pageToolRegistry } from './pageToolRegistry';
 import { streamChatCompletion } from './streamChatCompletion';
-import { WEBUI_ASSISTANT_PROFILE } from './webUIAssistantProfile';
+import {
+  WEBUI_ASSISTANT_PROFILE,
+  WEBUI_ASSISTANT_TOOL_PROFILE,
+} from './webUIAssistantProfile';
 import {
   MANUAL_RESOURCE_BASE,
   WEBUI_ASSISTANT_EXCERPT_COUNT,
   isAuthRejected,
   buildAssistantSystemPrompt,
+  buildToolSystemPrompt,
   linkManualReferences,
   manualReferencesOf,
   type ManualReference,
@@ -63,9 +75,12 @@ import { Spinner } from '@lablup/ui-common/Spinner';
 import { Text } from '@lablup/ui-common/Text';
 import {
   DefaultChatTransport,
+  convertToModelMessages,
   createUIMessageStream,
   createUIMessageStreamResponse,
   generateId,
+  getToolName,
+  isToolUIPart,
   type ModelMessage,
 } from 'ai';
 import { BAIFlex, useEventNotStable } from 'backend.ai-ui';
@@ -85,6 +100,26 @@ const messageText = (message: ChatUIMessage) =>
     .filter((part) => part.type === 'text')
     .map((part) => part.text)
     .join('');
+
+/** Earlier turns as text only: past tool calls would crowd a small model's context. */
+const textOnlyModelMessages = (
+  messages: ReadonlyArray<ChatUIMessage>,
+): Array<ModelMessage> =>
+  convertToModelMessages(
+    messages
+      .map((message) => ({
+        ...message,
+        parts: message.parts.filter((part) => part.type === 'text'),
+      }))
+      .filter((message) => message.parts.length > 0),
+  );
+
+type ToolPart = Extract<ChatUIMessage['parts'][number], { toolCallId: string }>;
+const toolPartsOf = (message: ChatUIMessage): Array<ToolPart> =>
+  message.parts.filter(
+    (part): part is ToolPart =>
+      isToolUIPart(part) || part.type === 'dynamic-tool',
+  );
 /** How many earlier dashboard messages a request carries; the board itself carries the state. */
 const DASHBOARD_HISTORY_MESSAGES = 6;
 
@@ -227,6 +262,21 @@ const WebUIAssistantChat: React.FC<WebUIAssistantChatProps> = ({
   const modelId = models[0]?.id;
   const isTokenRejected = isAuthRejected(modelsError);
 
+  // Tool calls when the endpoint takes them; otherwise the prompt-only answers below.
+  const toolsQuery = useTanQuery({
+    queryKey: ['webui-assistant-tool-calling', apiBaseURL, token, modelId],
+    queryFn: () =>
+      probeToolCalling({
+        baseURL: apiBaseURL,
+        apiKey: token,
+        modelId: modelId ?? '',
+      }).catch(() => false),
+    enabled: !!modelId,
+    staleTime: Infinity,
+    retry: false,
+  });
+  const usesTools = toolsQuery.data === true;
+
   // `null` = the manual is not loaded, which the prompt must not report as "nothing matched".
   const pickExcerpts = (question: string): ManualSection[] | null => {
     if (!manualIndex) {
@@ -250,6 +300,16 @@ const WebUIAssistantChat: React.FC<WebUIAssistantChatProps> = ({
       ? [...hits.slice(0, WEBUI_ASSISTANT_EXCERPT_COUNT - 1), pageSection]
       : hits;
   };
+
+  /** A question gets the manual searched first; a request on a dashboard gets the board read first. */
+  const prefetchFor = (request: string) =>
+    !request
+      ? []
+      : looksLikeQuestion(request)
+        ? [{ toolName: SEARCH_MANUAL_TOOL, input: { query: request } }]
+        : pageToolRegistry.get('bai_get_current_dashboard')
+          ? [{ toolName: 'bai_get_current_dashboard', input: {} }]
+          : [];
 
   /** The agent's answer, or null when the request is a question for the manual. */
   const askDashboard = async (
@@ -313,6 +373,35 @@ const WebUIAssistantChat: React.FC<WebUIAssistantChatProps> = ({
         const lastUser = [...uiMessages]
           .reverse()
           .find((m) => m.role === 'user');
+        if (usesTools) {
+          return streamToolChat({
+            baseURL: apiBaseURL ?? '',
+            apiKey: token,
+            modelId: modelId ?? '',
+            system: buildToolSystemPrompt(
+              WEBUI_ASSISTANT_TOOL_PROFILE.systemPrompt,
+              { path: location.pathname, manualURL: helpURL ?? undefined },
+            ),
+            messages: textOnlyModelMessages(uiMessages),
+            registry: pageToolRegistry,
+            prefetch: prefetchFor(lastUser ? messageText(lastUser) : ''),
+            searchManual: (query) => {
+              if (!manualIndex) {
+                if (manualQuery.isError) void manualQuery.refetch();
+                return searchManualResult(null, manualBaseURL);
+              }
+              return searchManualResult(
+                searchManual(
+                  manualIndex,
+                  query,
+                  WEBUI_ASSISTANT_EXCERPT_COUNT,
+                ).map((hit) => hit.section),
+                manualBaseURL,
+              );
+            },
+            abortSignal: init?.signal || undefined,
+          });
+        }
         if (dashboardAgent && lastUser) {
           const response = await askDashboard(
             dashboardAgent,
@@ -408,6 +497,55 @@ const WebUIAssistantChat: React.FC<WebUIAssistantChatProps> = ({
     </BAIFlex>
   );
 
+  /** One line for a tool the answer called; the result's own text when it has one. */
+  const toolLineOf = (part: ToolPart): string => {
+    const name =
+      part.type === 'dynamic-tool' ? part.toolName : getToolName(part);
+    if (part.state === 'output-error') {
+      return t('webuiAssistant.ToolFailed', { name, error: part.errorText });
+    }
+    const input = (part.input ?? {}) as Record<string, unknown>;
+    const output = (
+      part.state === 'output-available' ? part.output : undefined
+    ) as Record<string, unknown> | undefined;
+    const failure = (output?.error as { message?: string } | undefined)
+      ?.message;
+    if (failure)
+      return t('webuiAssistant.ToolFailed', { name, error: failure });
+    const rejected = output?.rejected as Array<{ reason: string }> | undefined;
+    if (rejected?.length) {
+      return t('webuiAssistant.ToolRejected', {
+        reason: rejected.map((item) => item.reason).join(' '),
+      });
+    }
+    switch (name) {
+      case 'search_manual':
+        return t('webuiAssistant.ToolSearchManual', {
+          query: String(input.query ?? ''),
+        });
+      case 'bai_navigate':
+        return t('webuiAssistant.ToolNavigate', {
+          page: String(output?.path ?? input.path ?? input.page ?? ''),
+        });
+      case 'bai_get_current_page':
+        return t('webuiAssistant.ToolReadPage');
+      case 'bai_get_current_dashboard':
+        return t('webuiAssistant.ToolReadDashboard');
+      case 'bai_prepare_dashboard':
+        return output
+          ? t('webuiAssistant.ToolPreviewDashboard', {
+              change: (output.applied as Array<string> | undefined)?.join(', '),
+            })
+          : t('webuiAssistant.ToolUsed', { name });
+      case 'bai_prepare_session':
+        return output
+          ? t('webuiAssistant.ToolPrepareSession')
+          : t('webuiAssistant.ToolUsed', { name });
+      default:
+        return t('webuiAssistant.ToolUsed', { name });
+    }
+  };
+
   const dashboardTurnView = (text: string, turn: DashboardTurn) => (
     <BAIFlex direction="column" align="stretch" gap="xxs">
       {text ? <Text size="sm">{text}</Text> : null}
@@ -459,12 +597,22 @@ const WebUIAssistantChat: React.FC<WebUIAssistantChatProps> = ({
       const isMessageStreaming = isStreaming && index === messages.length - 1;
       const text = messageText(message);
       const { dashboard, notice, references } = metadataOf(message);
+      const toolParts = isUser ? [] : toolPartsOf(message);
       if (notice) {
         return <ChatSystemMessage key={message.id}>{text}</ChatSystemMessage>;
       }
       return (
         <ChatMessage key={message.id} sender={isUser ? 'user' : 'assistant'}>
           <ChatMessageBubble>
+            {toolParts.length > 0 ? (
+              <BAIFlex direction="column" align="stretch" gap="xxs">
+                {toolParts.map((part) => (
+                  <Text key={part.toolCallId} size="sm" color="secondary">
+                    {`· ${toolLineOf(part)}`}
+                  </Text>
+                ))}
+              </BAIFlex>
+            ) : null}
             {isUser ? (
               text
             ) : dashboard ? (
@@ -472,11 +620,11 @@ const WebUIAssistantChat: React.FC<WebUIAssistantChatProps> = ({
             ) : isMessageStreaming && !text.trim() ? (
               // A reasoning model streams its reasoning first, which has nothing to show.
               thinking
-            ) : (
+            ) : text.trim() || !toolParts.length ? (
               <ChatMessageContent isStreaming={isMessageStreaming}>
                 {linkManualReferences(text, references ?? [])}
               </ChatMessageContent>
-            )}
+            ) : null}
           </ChatMessageBubble>
         </ChatMessage>
       );

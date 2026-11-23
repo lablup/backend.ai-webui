@@ -4504,6 +4504,15 @@
     "Placeholder": "Kysy WebUI:sta",
     "Token": "Tunnus",
     "TokenHint": "Tämä käyttöönotto ei ole julkinen. Valitse jokin sen käyttötunnuksista.",
+    "ToolFailed": "{{name}} epäonnistui: {{error}}",
+    "ToolNavigate": "Avattiin {{page}}",
+    "ToolPrepareSession": "Istunnon käynnistin täytettiin tarkistettavaksi",
+    "ToolPreviewDashboard": "Esikatselu kojelaudalla: {{change}}",
+    "ToolReadDashboard": "Kojelauta luettiin",
+    "ToolReadPage": "Nykyinen sivu luettiin",
+    "ToolRejected": "Ei tehty: {{reason}}",
+    "ToolSearchManual": "Haettiin käyttöohjeesta \"{{query}}\"",
+    "ToolUsed": "Käytettiin {{name}}",
     "ViewModelInfo": "Näytä mallin tiedot"
   },
   "webuiSettings": {

@@ -4507,6 +4507,15 @@
     "Placeholder": "詢問關於 WebUI 的問題",
     "Token": "權杖",
     "TokenHint": "此部署未公開。請選擇其中一個存取權杖。",
+    "ToolFailed": "{{name}} 失敗：{{error}}",
+    "ToolNavigate": "已開啟 {{page}}",
+    "ToolPrepareSession": "已填寫工作階段啟動器，請檢查",
+    "ToolPreviewDashboard": "儀表板預覽：{{change}}",
+    "ToolReadDashboard": "已讀取儀表板",
+    "ToolReadPage": "已讀取目前頁面",
+    "ToolRejected": "未完成：{{reason}}",
+    "ToolSearchManual": "已在手冊中搜尋「{{query}}」",
+    "ToolUsed": "已使用 {{name}}",
     "ViewModelInfo": "檢視模型資訊"
   },
   "webuiSettings": {

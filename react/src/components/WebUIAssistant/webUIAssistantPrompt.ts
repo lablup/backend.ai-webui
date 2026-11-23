@@ -117,3 +117,11 @@ export function parseManualTarget(
   const match = /\/([^/#?]+)\.html(?:#([^?]*))?$/.exec(url);
   return match ? { page: match[1], anchor: match[2] || undefined } : null;
 }
+
+/** The tool-calling prompt: the fixed instructions plus the page the user is on. */
+export const buildToolSystemPrompt = (
+  basePrompt: string,
+  page: AssistantPageContext,
+): string =>
+  `${basePrompt.trim()}\n\n## Current page\nWebUI path: ${page.path}` +
+  (page.manualURL ? `\nManual page: ${page.manualURL}` : '');

@@ -4503,6 +4503,15 @@
     "Placeholder": "Задайте вопрос о WebUI",
     "Token": "Токен",
     "TokenHint": "Это развертывание не публичное. Выберите один из его токенов доступа.",
+    "ToolFailed": "{{name}}: ошибка: {{error}}",
+    "ToolNavigate": "Открыта страница {{page}}",
+    "ToolPrepareSession": "Форма запуска сеанса заполнена для проверки",
+    "ToolPreviewDashboard": "Предпросмотр на панели: {{change}}",
+    "ToolReadDashboard": "Панель прочитана",
+    "ToolReadPage": "Текущая страница прочитана",
+    "ToolRejected": "Не выполнено: {{reason}}",
+    "ToolSearchManual": "Поиск «{{query}}» в руководстве",
+    "ToolUsed": "Использован {{name}}",
     "ViewModelInfo": "Просмотреть сведения о модели"
   },
   "webuiSettings": {
