@@ -275,13 +275,14 @@ test.describe.serial(
         .getByRole('button', { name: 'Deactivate', exact: true })
         .click();
 
-      // 6. Verify the role disappears from the "Active" roles list
-      await expect(roleRow).toBeHidden({ timeout: 10000 });
-
-      // 7. Verify a success notification "Role deactivated successfully." appears
+      // 6. Verify a success notification "Role deactivated successfully." appears.
+      // Checked before the row: the toast auto-hides after 3s while the list refetches.
       await expect(toast(page, /Role deactivated successfully/i)).toBeVisible({
         timeout: 10000,
       });
+
+      // 7. Verify the role disappears from the "Active" roles list
+      await expect(roleRow).toBeHidden({ timeout: 10000 });
 
       // 8. Click the "Inactive" filter to verify the role appears there
       await statusFilterOption(page, 'Inactive').click();
