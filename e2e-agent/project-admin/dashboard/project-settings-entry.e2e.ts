@@ -1,7 +1,7 @@
 import { expect } from "e2e";
 import { skipAdminViewSwitchTours } from "../../utils/admin-view-tours";
 import { test } from "../../utils/cleanup";
-import { currentProjectName } from "../../utils/project";
+import { currentProjectName, personalProjectName } from "../../utils/project";
 
 test(
   "a project admin opens the project settings from the side menu",
@@ -16,11 +16,19 @@ test(
 
     await skipAdminViewSwitchTours(browser);
     await app.open("/start");
-    const selector = screen.getByRole("button", "Select Project");
-    await expect(selector).toBeVisible({ timeout: 30_000 });
     await expect
       .poll(() => currentProjectName(browser), { timeout: 30_000 })
       .toBeTruthy();
+    const startName = (await currentProjectName(browser)) as string;
+    // The selector's accessible name is its label followed by the project it
+    // shows; the personal project shows as "My Project".
+    const selectorShowing = (shown: string) =>
+      screen.getByRole("button", `Select Project ${shown}`);
+    const startShown =
+      startName === (await personalProjectName(browser))
+        ? "My Project"
+        : startName;
+    await expect(selectorShowing(startShown)).toBeVisible({ timeout: 30_000 });
     // Starting on another project keeps the switch below observable.
     expect(await currentProjectName(browser)).not.toBe(project);
 
@@ -31,7 +39,7 @@ test(
     await expect(browser).toHaveURL(projectDashboardUrl, {
       timeout: 15_000,
     });
-    await expect(selector).toHaveText(new RegExp(project));
+    await expect(selectorShowing(project)).toHaveText(new RegExp(project));
     await expect
       .poll(() => currentProjectName(browser), { timeout: 15_000 })
       .toBe(project);
