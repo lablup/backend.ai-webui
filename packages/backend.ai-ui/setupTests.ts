@@ -126,3 +126,10 @@ if (typeof global.MessageChannel === 'undefined') {
   global.MessageChannel =
     MockMessageChannel as unknown as typeof MessageChannel;
 }
+
+globalThis.fetch = (input: RequestInfo | URL) =>
+  Promise.reject(
+    new Error(
+      `Unit tests must not send real requests: stub fetch with vi.stubGlobal (ADR 0036). Called with ${String(input)}`,
+    ),
+  );
