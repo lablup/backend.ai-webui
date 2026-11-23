@@ -21,7 +21,6 @@ test.describe(
       { tag: ['@requires-manager-v25.15'] },
       () => {
         test.beforeEach(async ({ page, request }) => {
-          await recordFailedLogin();
           await loginAsAdmin(page, request);
           await navigateTo(page, 'admin/dashboard');
         });
