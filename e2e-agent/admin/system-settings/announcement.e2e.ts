@@ -1,5 +1,5 @@
 import { test } from "@e2e-dev/web";
-import { skipUnlessAdminPart } from "../../utils/webui-settings";
+import { skipUnlessAdminPart } from "../../utils/e2e-part";
 
 const draft = {
   session: "admin",

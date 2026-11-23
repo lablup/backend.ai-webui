@@ -1,5 +1,5 @@
 import { test } from "@e2e-dev/web";
-import { skipUnlessAdminPart } from "../../utils/webui-settings";
+import { skipUnlessAdminPart } from "../../utils/e2e-part";
 
 // ported from: e2e/admin/system-settings/webui-settings.spec.ts
 const draft = {
@@ -7,6 +7,17 @@ const draft = {
   tags: ["draft"],
   skip: "draft: act-only flow from #10941, awaiting completion by automation",
 };
+
+// Read-only, so it stays outside the admin-part group below.
+test(
+  "domain admin cannot open System Settings",
+  draft,
+  async ({ app, agent }) => {
+    await app.open("/start");
+    await agent.act("Sign out and sign in with a domain admin account");
+    await agent.act('Open the "System Settings" page by its address');
+  },
+);
 
 test.describe("System Settings", { skip: skipUnlessAdminPart }, () => {
   test(
@@ -18,16 +29,6 @@ test.describe("System Settings", { skip: skipUnlessAdminPart }, () => {
       await agent.act(
         "Go through every settings group and read each row's value",
       );
-    },
-  );
-
-  test(
-    "domain admin cannot open System Settings",
-    draft,
-    async ({ app, agent }) => {
-      await app.open("/start");
-      await agent.act("Sign out and sign in with a domain admin account");
-      await agent.act('Open the "System Settings" page by its address');
     },
   );
 

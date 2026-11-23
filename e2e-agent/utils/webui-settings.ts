@@ -1,17 +1,5 @@
 import type { Browser } from "@e2e-dev/web";
 import type { JsonValue } from "e2e";
-import { resolveE2EParts } from "../../e2e/e2e-parts";
-
-/**
- * The `skip` of a group whose tests write the cluster-wide `settings`
- * documents: they run only when E2E_PART selects the admin part
- * (.claude/rules/e2e-admin-prep-via-api.md rule 5).
- */
-export const skipUnlessAdminPart: false | string = !resolveE2EParts(
-  process.env.E2E_PART,
-).includes("admin")
-  ? "changes server-global settings; runs only with E2E_PART=admin"
-  : false;
 
 /** Domain-scope System Settings keys, as `react/src/helper/webuiSettings.ts` names them. */
 export type WebUISettingsOverride = Record<string, JsonValue>;
