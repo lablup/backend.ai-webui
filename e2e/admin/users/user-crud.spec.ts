@@ -974,6 +974,13 @@ test.describe(
 
     test.beforeEach(async ({ page, request }) => {
       api = await createAdminApiContext();
+      // Gate before any setup: the Users tab reads scopedUsersV2 (26.9.0a4).
+      const info = await (await api.get('/func/')).json().catch(() => ({}));
+      test.skip(
+        !isVersionAtLeast(String(info?.manager ?? ''), '26.9.0a4'),
+        'scopedUsersV2 needs a Backend.AI manager >= 26.9.0a4 (#10302)',
+      );
+
       const runId = `${Date.now().toString(36)}${randomBytes(3).toString('hex')}`;
       const email = `e2e-act-as-${runId}@lablup.com`;
       // Set before the create call so a partial failure is still purged.
