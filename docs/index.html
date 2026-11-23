@@ -280,7 +280,8 @@
         background: var(--surface);
         border: 1px solid var(--border);
       }
-      .seg button {
+      .seg button,
+      .seg a {
         border: 0;
         background: none;
         height: 24px;
@@ -295,7 +296,8 @@
           color 0.15s,
           background 0.15s;
       }
-      .seg button[aria-pressed="true"] {
+      .seg button[aria-pressed="true"],
+      .seg a[aria-current="page"] {
         background: var(--bg);
         color: var(--text);
         box-shadow:
@@ -1553,18 +1555,9 @@
         align-items: center;
         height: 26px;
         padding: 0 12px;
-        border-radius: 6px;
         font-size: 12.5px;
-        font-weight: 600;
-        color: var(--muted);
+        letter-spacing: inherit;
         text-decoration: none;
-      }
-      .seg a[aria-current="page"] {
-        background: var(--bg);
-        color: var(--text);
-        box-shadow:
-          0 1px 2px rgb(0 0 0 / 0.08),
-          0 0 0 1px var(--border);
       }
       .view-switch {
         margin-top: 18px;
@@ -1935,8 +1928,8 @@
         ref
           ? `https://raw.githubusercontent.com/${REPO}/${encodeURI(ref)}/docs/${p}`
           : p;
-      const blobUrl = (p) =>
-        `https://github.com/${REPO}/blob/${encodeURI(blobRef)}/${p}`;
+      const blobUrl = (p, at = blobRef) =>
+        `https://github.com/${REPO}/blob/${encodeURI(at)}/${p}`;
 
       const ADR_PATH = /^adr\/[A-Za-z0-9._-]+\.md$/;
       const FILE_ST = ["added", "modified", "removed", "renamed", "unchanged"];
@@ -1955,15 +1948,27 @@
             const bp = ADR_PATH.test(f.basePath) ? f.basePath : null;
             files[l] = { path: f.path, status: f.status, basePath: bp };
           }
-          adrs.set(c.id, { ...c, title: str(c.title), files });
+          adrs.set(c.id, {
+            id: c.id,
+            status: c.status,
+            title: str(c.title),
+            files,
+          });
         }
         if (!adrs.size) return null;
         const sha = (v) => (/^[0-9a-f]{7,40}$/.test(v) ? v : "");
+        const base = str(j.base) || "main";
+        const head = str(j.head) || builtRef;
+        const baseSha = sha(j.baseSha);
+        const headSha = sha(j.headSha);
         return {
-          base: str(j.base) || "main",
-          head: str(j.head) || builtRef,
-          baseSha: sha(j.baseSha),
-          headSha: sha(j.headSha),
+          base,
+          baseRef: baseSha || base,
+          compare: `https://github.com/${REPO}/compare/${encodeURI(
+            baseSha && headSha
+              ? `${baseSha}...${headSha}`
+              : `${base}...${head}`,
+          )}`,
           adrs: new Map([...adrs].sort(([a], [b]) => a.localeCompare(b))),
           architecture: j.architecture || {},
         };
@@ -1978,8 +1983,14 @@
           : Promise.resolve(null);
       const changeOf = (id) => S.changes?.adrs.get(id) || null;
       const fileOf = (c, l = S.lang) => c?.files[l] || null;
-      const baseBlob = (p) =>
-        `https://github.com/${REPO}/blob/${encodeURI(S.changes.baseSha || S.changes.base)}/docs/${p}`;
+      const archFile = (l) =>
+        l === "ko" ? "ARCHITECTURE.ko.md" : "ARCHITECTURE.md";
+      const sourceOf = (file, gone) => ({
+        fetch: (gone ? "base/" : "") + "adr/" + file,
+        repo: "docs/adr/" + file,
+        blob: blobUrl("docs/adr/" + file, gone ? S.changes.baseRef : blobRef),
+        ref: gone ? S.changes.base : viewRef,
+      });
 
       const store = {
         get: (k) => {
@@ -2011,6 +2022,7 @@
         shown: null,
         changes: null,
       };
+      changesP.then((c) => (S.changes = c));
       const els = {
         shell: $(".shell"),
         doc: $(".doc"),
@@ -2152,11 +2164,7 @@
         );
 
       async function buildIndex(lang) {
-        const [md, changes] = await Promise.all([
-          fetchText(lang === "ko" ? "ARCHITECTURE.ko.md" : "ARCHITECTURE.md"),
-          changesP,
-        ]);
-        S.changes = changes;
+        const [md] = await Promise.all([fetchText(archFile(lang)), changesP]);
         const tokens = base.lexer(md);
         const ti = tokens.findIndex(
           (t) => t.type === "table" && t.rows.some((r) => adrLink(r[0])),
@@ -2178,24 +2186,21 @@
             );
           })
           .filter(Boolean);
-        for (const c of changes?.adrs.values() || []) {
+        for (const c of S.changes?.adrs.values() || []) {
           const own = fileOf(c, lang);
           const e = entries.find((x) => x.id === c.id);
           if (e) {
             if (own?.status === "removed")
-              Object.assign(e, { path: "base/" + own.path, gone: true });
+              Object.assign(e, { file: own.path.slice(4), gone: true });
             continue;
           }
           const f = own || c.files.en || c.files.ko;
           if (!f) continue;
-          const gone = c.status === "removed" || f.status === "removed";
-          const path = gone ? "base/" + f.path : f.path;
           const at = entries.findIndex((x) => x.id > c.id);
           entries.splice(at < 0 ? entries.length : at, 0, {
             id: c.id,
             file: f.path.slice(4),
-            path,
-            gone,
+            gone: c.status === "removed" || f.status === "removed",
             title: c.title || c.id,
             summaryHtml: "",
             summary: "",
@@ -2211,10 +2216,10 @@
             return md;
           }),
         );
-      const docPath = (entry) => entry.path || "adr/" + entry.file;
-      const loadDoc = (entry) => loadPath(docPath(entry));
+      const loadDoc = (entry) =>
+        loadPath(sourceOf(entry.file, entry.gone).fetch);
 
-      function rewriteLinks(root, basePath, curId) {
+      function rewriteLinks(root, basePath, curId, diff) {
         for (const a of $$("a[href]", root)) {
           const raw = a.getAttribute("href");
           if (raw.startsWith("#/")) continue;
@@ -2229,7 +2234,7 @@
           if (raw.startsWith("#")) {
             const anchor = decode(raw.slice(1));
             a.setAttribute("href", curId ? href(curId, anchor) : "#/");
-            a.dataset.anchor = anchor;
+            if (!diff) a.dataset.anchor = anchor;
             continue;
           }
           const u = new URL(raw, "https://repo.invalid/" + basePath);
@@ -2258,24 +2263,20 @@
       }
 
       function enhance(root, basePath, curId, diagrams, t, diff = false) {
-        for (const h of $$("[data-slug]", root)) {
-          if (diff) continue;
-          h.id = h.dataset.slug;
-          if (curId) {
-            const a = document.createElement("a");
-            a.className = "h-anchor";
-            a.textContent = "#";
-            a.setAttribute("href", href(curId, h.id));
-            a.dataset.anchor = h.id;
-            a.setAttribute("aria-hidden", "true");
-            h.prepend(a);
+        if (!diff)
+          for (const h of $$("[data-slug]", root)) {
+            h.id = h.dataset.slug;
+            if (curId) {
+              const a = document.createElement("a");
+              a.className = "h-anchor";
+              a.textContent = "#";
+              a.setAttribute("href", href(curId, h.id));
+              a.dataset.anchor = h.id;
+              a.setAttribute("aria-hidden", "true");
+              h.prepend(a);
+            }
           }
-        }
-        rewriteLinks(root, basePath, curId);
-        if (diff)
-          $$("a[data-anchor]", root).forEach((a) =>
-            a.removeAttribute("data-anchor"),
-          );
+        rewriteLinks(root, basePath, curId, diff);
         for (const c of $$("div.code", root))
           c.insertAdjacentHTML(
             "beforeend",
@@ -2322,6 +2323,8 @@
         return ops;
       }
       const blockKey = (t) => t.raw.replace(/\s+/g, " ").trim();
+      const leadH1 = (ts) =>
+        ts[0]?.type === "heading" && ts[0].depth === 1 ? ts[0] : null;
 
       function diffDoc(m, baseMd, headMd) {
         const lex = (md) => {
@@ -2333,12 +2336,8 @@
         };
         const a = lex(baseMd);
         const b = lex(headMd);
-        const h1 = (x) =>
-          x.list[0]?.type === "heading" && x.list[0].depth === 1
-            ? x.list[0]
-            : null;
-        const ha = h1(a);
-        const hb = h1(b);
+        const ha = leadH1(a.list);
+        const hb = leadH1(b.list);
         const title = hb || ha;
         const same = ha && hb && blockKey(ha) === blockKey(hb);
         if (ha && (same || !b.list.length)) a.list.shift();
@@ -2364,21 +2363,18 @@
           if (!dels.length || !adds.length) {
             if (dels.length) out += wrap("del", ...dels);
             if (adds.length) out += wrap("ins", ...adds);
-            dels = [];
-            adds = [];
-            return;
-          }
-          for (let k = 0; k < Math.max(dels.length, adds.length); k++) {
-            const d = dels[k];
-            const n = adds[k];
-            if (
-              d?.type === "list" &&
-              n?.type === "list" &&
-              d.ordered === n.ordered
-            )
-              out += list(d, n);
-            else out += (d ? wrap("del", d) : "") + (n ? wrap("ins", n) : "");
-          }
+          } else
+            for (let k = 0; k < Math.max(dels.length, adds.length); k++) {
+              const d = dels[k];
+              const n = adds[k];
+              if (
+                d?.type === "list" &&
+                n?.type === "list" &&
+                d.ordered === n.ordered
+              )
+                out += list(d, n);
+              else out += (d ? wrap("del", d) : "") + (n ? wrap("ins", n) : "");
+            }
           dels = [];
           adds = [];
         };
@@ -2560,10 +2556,10 @@
         S.shown = null;
       }
 
-      function badge(id, cls = "") {
+      function badge(id, cls) {
         const st = changeOf(id)?.status;
         return st
-          ? `<span class="badge ${st}${cls}">${T[S.lang].st[st]}</span>`
+          ? `<span class="badge ${st}${cls ? " " + cls : ""}">${T[S.lang].st[st]}</span>`
           : "";
       }
 
@@ -2578,11 +2574,9 @@
           })
           .join("");
         const arch = ch.architecture[S.lang];
-        const archFile =
-          S.lang === "ko" ? "ARCHITECTURE.ko.md" : "ARCHITECTURE.md";
         const note =
           arch && arch !== "unchanged"
-            ? `<p class="note">${t.archChanged(archFile)}</p>`
+            ? `<p class="note">${t.archChanged(archFile(S.lang))}</p>`
             : "";
         return `<section class="changes"><p>${t.changed(ch.adrs.size, esc(ch.base))}</p><ul>${items}</ul>${note}</section>`;
       }
@@ -2621,13 +2615,7 @@
         els.doc.innerHTML = sanitize(html);
         els.doc.lang = S.lang;
         S.shown = { id: null, lang: S.lang, view: null };
-        enhance(
-          els.doc,
-          S.lang === "ko" ? "docs/ARCHITECTURE.ko.md" : "docs/ARCHITECTURE.md",
-          null,
-          [],
-          t,
-        );
+        enhance(els.doc, "docs/" + archFile(S.lang), null, [], t);
         highlightCode(els.doc);
         els.toc.innerHTML = "";
         S.heads = [];
@@ -2651,12 +2639,14 @@
         const ch = changeOf(id);
         const f = fileOf(ch);
         const diff = opts.view === "diff" && !!f && f.status !== "unchanged";
-        const headPath = diff && f.status !== "removed" ? f.path : null;
-        const basePath =
+        const head =
+          diff && f.status !== "removed" ? sourceOf(f.path.slice(4)) : null;
+        const baseSrc =
           diff && f.status !== "added"
-            ? "base/" + (f.basePath || f.path)
+            ? sourceOf((f.basePath || f.path).slice(4), true)
             : null;
-        const paths = diff ? [basePath, headPath] : [docPath(entry)];
+        const src = diff ? head || baseSrc : sourceOf(entry.file, entry.gone);
+        const paths = diff ? [baseSrc?.fetch, head?.fetch] : [src.fetch];
         const cached = paths.every((p) => !p || S.ready.has(p));
         if (!cached && !opts.keep) {
           setLoading();
@@ -2680,7 +2670,7 @@
           body = d.html;
         } else {
           const tokens = m.lexer(mds[0]);
-          if (tokens[0]?.type === "heading" && tokens[0].depth === 1) {
+          if (leadH1(tokens)) {
             const h1 = textOf(tokens.shift().tokens);
             title = stripNum(h1);
             slugger.slug(h1);
@@ -2689,24 +2679,6 @@
         }
         const prev = idx.entries[i - 1];
         const next = idx.entries[i + 1];
-        const repoPath = `docs/adr/${entry.file}`;
-        const gone = diff ? !headPath : entry.gone;
-        const shownPath = diff ? headPath || basePath.slice(5) : null;
-        const gh = diff
-          ? gone
-            ? baseBlob(shownPath)
-            : blobUrl("docs/" + shownPath)
-          : gone
-            ? baseBlob("adr/" + entry.file)
-            : blobUrl(repoPath);
-        const rawPath = diff ? headPath || basePath : docPath(entry);
-        const cmp = S.changes
-          ? `https://github.com/${REPO}/compare/${encodeURI(
-              S.changes.baseSha && S.changes.headSha
-                ? `${S.changes.baseSha}...${S.changes.headSha}`
-                : `${S.changes.base}...${S.changes.head}`,
-            )}`
-          : "";
         const toggle = ch
           ? `<nav class="seg view-switch"><a href="${href(id)}"${opts.view ? "" : ' aria-current="page"'}>${t.viewDoc}</a><a href="${href(id, null, S.lang, "diff")}"${opts.view ? ' aria-current="page"' : ""}>${esc(t.viewDiff(S.changes.base))}</a></nav>`
           : "";
@@ -2716,12 +2688,12 @@
             : "";
         const html = `
           <header class="doc-head">
-            <div class="eyebrow"><span class="chip num">ADR ${id}</span><span class="chip">${t.lang}</span>${badge(id, " chip")}${ref ? `<span class="chip">${icon(ICON.branch)}${esc(ref)}</span>` : ""}</div>
+            <div class="eyebrow"><span class="chip num">ADR ${id}</span><span class="chip">${t.lang}</span>${badge(id, "chip")}${ref ? `<span class="chip">${icon(ICON.branch)}${esc(ref)}</span>` : ""}</div>
             <h1>${esc(title)}</h1>
             <div class="doc-meta">
-              <a href="${gh}" target="_blank" rel="noopener">${icon(ICON.gh)}${t.github}</a>
-              <a href="${srcUrl(rawPath)}" target="_blank" rel="noopener">${icon(ICON.file)}${t.raw}</a>
-              ${diff ? `<a href="${cmp}" target="_blank" rel="noopener">${icon(ICON.branch)}${t.compare}</a>` : ""}
+              <a href="${src.blob}" target="_blank" rel="noopener">${icon(ICON.gh)}${t.github}</a>
+              <a href="${srcUrl(src.fetch)}" target="_blank" rel="noopener">${icon(ICON.file)}${t.raw}</a>
+              ${diff ? `<a href="${S.changes.compare}" target="_blank" rel="noopener">${icon(ICON.branch)}${t.compare}</a>` : ""}
             </div>
             ${toggle}${note}
           </header>
@@ -2730,19 +2702,19 @@
             ${prev ? `<a class="prev" href="${href(prev.id)}"><small>← ${t.prev}</small><strong><span class="n">${prev.id}</span>${esc(prev.title)}</strong></a>` : ""}
             ${next ? `<a class="next" href="${href(next.id)}"><small>${t.next} →</small><strong><span class="n">${next.id}</span>${esc(next.title)}</strong></a>` : ""}
           </nav>
-          <footer class="doc-foot"><span>${t.source}: <a href="${gh}" target="_blank" rel="noopener">${esc(diff ? "docs/" + shownPath : repoPath)}</a> @ ${esc(gone ? S.changes.base : viewRef || t.localCopy)}</span><a href="#" data-top>${t.top} ↑</a></footer>`;
+          <footer class="doc-foot"><span>${t.source}: <a href="${src.blob}" target="_blank" rel="noopener">${esc(src.repo)}</a> @ ${esc(src.ref || t.localCopy)}</span><a href="#" data-top>${t.top} ↑</a></footer>`;
         els.doc.innerHTML = sanitize(html);
         els.doc.lang = S.lang;
         S.shown = { id, lang: S.lang, view: opts.view || null };
         const prose = $(".prose", els.doc);
-        markListItems(prose);
-        enhance(prose, repoPath, id, diagrams, t, diff);
+        if (diff) markListItems(prose);
+        enhance(prose, `docs/adr/${entry.file}`, id, diagrams, t, diff);
         highlightCode(prose);
         document.title = `${id} — ${title} · Backend.AI WebUI ADR`;
         if (diff) {
           els.toc.innerHTML = "";
           S.heads = [];
-        } else buildToc(id, gh);
+        } else buildToc(id, src.blob);
         if (opts.highlight) {
           const first = markHits(prose, opts.highlight);
           if (first && !anchor) {
