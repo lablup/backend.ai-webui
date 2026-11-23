@@ -4162,7 +4162,7 @@
     "DescThemeFamily": "Atur tema.",
     "DescThemeMode": "Atur mode tampilan.",
     "DescUseCompactSidebar": "Sidebar kompak menyediakan ruang kerja lebih banyak. <br />Ketika diaktifkan, sidebar kompak akan menjadi UI default saat startup.",
-    "DescWebUIAssistant": "Menampilkan tombol obrolan di kanan bawah yang menjawab pertanyaan tentang WebUI berdasarkan panduan pengguna. Saat pertama kali dibuka, Anda menghubungkannya ke penerapan atau endpoint yang kompatibel dengan OpenAI.",
+    "DescWebUIAssistant": "Menampilkan tombol obrolan di kiri bawah yang menjawab pertanyaan tentang WebUI berdasarkan panduan pengguna. Saat pertama kali dibuka, Anda menghubungkannya ke penerapan atau endpoint yang kompatibel dengan OpenAI.",
     "DesktopNotification": "Aktifkan Notifikasi Desktop",
     "DetailLogo": "Detail Logo CI",
     "DialogDiscardOrSave": "File dan skrip saat ini akan diubah tanpa disimpan, Apakah Anda ingin melanjutkan?",

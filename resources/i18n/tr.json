@@ -4158,7 +4158,7 @@
     "DescThemeFamily": "Temayı ayarlayın.",
     "DescThemeMode": "Görüntüleme modunu ayarlayın.",
     "DescUseCompactSidebar": "Kompakt kenar çubuğu daha fazla çalışma alanı sağlar. <br />Etkinleştirildiğinde, kompakt kenar çubuğu başlangıçta varsayılan UI olacaktır.",
-    "DescWebUIAssistant": "Sağ altta, kullanıcı kılavuzuna dayanarak WebUI hakkındaki soruları yanıtlayan bir sohbet düğmesi gösterir. İlk açtığınızda onu bir dağıtıma veya OpenAI uyumlu bir uç noktaya bağlarsınız.",
+    "DescWebUIAssistant": "Sol altta, kullanıcı kılavuzuna dayanarak WebUI hakkındaki soruları yanıtlayan bir sohbet düğmesi gösterir. İlk açtığınızda onu bir dağıtıma veya OpenAI uyumlu bir uç noktaya bağlarsınız.",
     "DesktopNotification": "Masaüstü Bildirimlerini Etkinleştir",
     "DetailLogo": "Detay Logo CI",
     "DialogDiscardOrSave": "Mevcut dosya ve komut dosyası kaydedilmeden değiştirilecek, Devam etmek ister misiniz?",

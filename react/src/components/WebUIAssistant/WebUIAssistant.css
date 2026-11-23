@@ -5,23 +5,32 @@
  The floating button and chat panel sit on the ladder's `assistant` rung
  (packages/backend.ai-ui/src/styles/zIndexLadder.ts): over page content, under
  drawers, dialogs and notifications. They are anchored to the bottom-left of
- the main content area (`.main-layout-main-content`, right of the sider), away
- from the bottom-right notification stack.
+ the main content area (`.main-layout-main-content`, right of the sider), so
+ the bottom-right notification stack stays clear of them.
 */
 @layer components {
   :root {
     --webui-assistant-fab-size: 48px;
     --webui-assistant-inset: var(--spacing-6);
+    /* ui-common's NotificationStack: 384px wide, var(--spacing-6) from the right edge. */
+    --webui-assistant-stack-clearance: calc(
+      384px + var(--spacing-6) + var(--spacing-3)
+    );
+  }
+
+  /* Below 480px the stack spans the viewport and would cover the button. */
+  @media (max-width: 480px) {
+    :root:has(.webui-assistant-fab) {
+      --bai-notification-stack-inset-bottom: calc(
+        var(--webui-assistant-fab-size) + var(--spacing-2)
+      );
+    }
   }
 
   .webui-assistant-fab {
     position: absolute;
-    inset-block-end: calc(
-      var(--webui-assistant-inset) + env(safe-area-inset-bottom, 0px)
-    );
-    inset-inline-start: calc(
-      var(--webui-assistant-inset) + env(safe-area-inset-left, 0px)
-    );
+    inset-block-end: var(--webui-assistant-inset);
+    inset-inline-start: var(--webui-assistant-inset);
     z-index: var(--bai-z-assistant);
     width: var(--webui-assistant-fab-size);
     height: var(--webui-assistant-fab-size);
@@ -32,17 +41,25 @@
     position: absolute;
     inset-block-end: calc(
       var(--webui-assistant-inset) + var(--webui-assistant-fab-size) +
-        var(--spacing-3) + env(safe-area-inset-bottom, 0px)
+        var(--spacing-3)
     );
-    inset-inline-start: calc(
-      var(--webui-assistant-inset) + env(safe-area-inset-left, 0px)
-    );
+    inset-inline-start: var(--webui-assistant-inset);
     z-index: var(--bai-z-assistant);
-    width: min(400px, calc(100% - var(--webui-assistant-inset) * 2));
+    /* Stops short of the notification stack; never narrower than 280px. */
+    width: max(
+      min(280px, 100% - var(--webui-assistant-inset) * 2),
+      min(
+        400px,
+        100% - var(--webui-assistant-inset) * 2,
+        100% - var(--webui-assistant-inset) -
+          var(--webui-assistant-stack-clearance)
+      )
+    );
+    /* The containing block is the content area, header included. */
     height: min(
       600px,
       calc(
-        100dvh - var(--webui-header-height, 60px) -
+        100% - var(--webui-header-height, 60px) -
           var(--webui-assistant-fab-size) - var(--spacing-6) * 3
       )
     );

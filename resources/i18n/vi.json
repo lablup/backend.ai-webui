@@ -4160,7 +4160,7 @@
     "DescThemeFamily": "Đặt chủ đề.",
     "DescThemeMode": "Đặt chế độ hiển thị.",
     "DescUseCompactSidebar": "Thanh bên gọn gàng cung cấp nhiều không gian làm việc hơn. <br />Khi được kích hoạt, thanh bên gọn gàng sẽ là giao diện mặc định khi khởi động.",
-    "DescWebUIAssistant": "Hiển thị nút trò chuyện ở góc dưới bên phải để trả lời câu hỏi về WebUI dựa trên hướng dẫn sử dụng. Lần đầu mở, bạn kết nối nó với một triển khai hoặc endpoint tương thích OpenAI.",
+    "DescWebUIAssistant": "Hiển thị nút trò chuyện ở góc dưới bên trái để trả lời câu hỏi về WebUI dựa trên hướng dẫn sử dụng. Lần đầu mở, bạn kết nối nó với một triển khai hoặc endpoint tương thích OpenAI.",
     "DesktopNotification": "Kích hoạt Thông báo Desktop",
     "DetailLogo": "Logo CI chi tiết",
     "DialogDiscardOrSave": "Tệp và tập lệnh hiện tại sẽ được thay đổi mà không cần lưu, Bạn có muốn tiếp tục không?",

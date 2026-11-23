@@ -4160,7 +4160,7 @@
     "DescThemeFamily": "Thema festlegen.",
     "DescThemeMode": "Anzeigemodus festlegen.",
     "DescUseCompactSidebar": "Die kompakte Seitenleiste bietet mehr Arbeitsbereich. <br />Wenn aktiviert, wird die kompakte Seitenleiste beim Start zur Standard-UI.",
-    "DescWebUIAssistant": "Zeigt unten rechts eine Chat-Schaltfläche, die Fragen zur WebUI anhand des Benutzerhandbuchs beantwortet. Beim ersten Öffnen verbinden Sie sie mit einer Bereitstellung oder einem OpenAI-kompatiblen Endpunkt.",
+    "DescWebUIAssistant": "Zeigt unten links eine Chat-Schaltfläche, die Fragen zur WebUI anhand des Benutzerhandbuchs beantwortet. Beim ersten Öffnen verbinden Sie sie mit einer Bereitstellung oder einem OpenAI-kompatiblen Endpunkt.",
     "DesktopNotification": "Desktop-Benachrichtigungen aktivieren",
     "DetailLogo": "Detail-Logo CI",
     "DialogDiscardOrSave": "Aktuelle Datei und Skript werden ohne Speichern geändert. Möchten Sie fortfahren?",

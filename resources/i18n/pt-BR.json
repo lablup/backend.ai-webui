@@ -4158,7 +4158,7 @@
     "DescThemeFamily": "Definir o tema.",
     "DescThemeMode": "Definir o modo de exibição.",
     "DescUseCompactSidebar": "A barra lateral compacta fornece mais espaço de trabalho. <br />Quando habilitada, a barra lateral compacta será a interface padrão na inicialização.",
-    "DescWebUIAssistant": "Mostra no canto inferior direito um botão de chat que responde a perguntas sobre a WebUI com base no manual do usuário. Na primeira vez que abrir, você o conecta a uma implantação ou a um endpoint compatível com OpenAI.",
+    "DescWebUIAssistant": "Mostra no canto inferior esquerdo um botão de chat que responde a perguntas sobre a WebUI com base no manual do usuário. Na primeira vez que abrir, você o conecta a uma implantação ou a um endpoint compatível com OpenAI.",
     "DesktopNotification": "Habilitar Notificações da Área de Trabalho",
     "DetailLogo": "Logo CI detalhado",
     "DialogDiscardOrSave": "O arquivo e o script atuais serão alterados sem salvar. Deseja continuar?",

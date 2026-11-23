@@ -4158,7 +4158,7 @@
     "DescThemeFamily": "Aseta teema.",
     "DescThemeMode": "Aseta näyttötila.",
     "DescUseCompactSidebar": "Kompakti sivupalkki tarjoaa enemmän työtilaa. <br />Kun käytössä, kompakti sivupalkki on oletuskäyttöliittymä käynnistyksen yhteydessä.",
-    "DescWebUIAssistant": "Näyttää oikeassa alakulmassa keskustelupainikkeen, joka vastaa WebUI:ta koskeviin kysymyksiin käyttöoppaan perusteella. Kun avaat sen ensimmäisen kerran, yhdistät sen käyttöönottoon tai OpenAI-yhteensopivaan päätepisteeseen.",
+    "DescWebUIAssistant": "Näyttää vasemmassa alakulmassa keskustelupainikkeen, joka vastaa WebUI:ta koskeviin kysymyksiin käyttöoppaan perusteella. Kun avaat sen ensimmäisen kerran, yhdistät sen käyttöönottoon tai OpenAI-yhteensopivaan päätepisteeseen.",
     "DesktopNotification": "Ota Käyttöön Työpöytäilmoitukset",
     "DetailLogo": "Yksityiskohtainen CI-logo",
     "DialogDiscardOrSave": "Nykyinen tiedosto ja skripti muutetaan tallentamatta, Haluatko jatkaa?",

@@ -4158,7 +4158,7 @@
     "DescThemeFamily": "Tetapkan tema.",
     "DescThemeMode": "Tetapkan mod paparan.",
     "DescUseCompactSidebar": "Bar sisi padat menyediakan lebih banyak ruang kerja. <br />Apabila dibolehkan, bar sisi padat akan menjadi UI lalai semasa permulaan.",
-    "DescWebUIAssistant": "Memaparkan butang sembang di bahagian bawah kanan yang menjawab soalan tentang WebUI berdasarkan manual pengguna. Kali pertama anda membukanya, anda menyambungkannya ke penggunaan atau endpoint serasi OpenAI.",
+    "DescWebUIAssistant": "Memaparkan butang sembang di bahagian bawah kiri yang menjawab soalan tentang WebUI berdasarkan manual pengguna. Kali pertama anda membukanya, anda menyambungkannya ke penggunaan atau endpoint serasi OpenAI.",
     "DesktopNotification": "Bolehkan Pemberitahuan Desktop",
     "DetailLogo": "Logo CI Terperinci",
     "DialogDiscardOrSave": "Fail dan skrip semasa akan diubah tanpa menyimpan, Adakah anda mahu meneruskan?",

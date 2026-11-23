@@ -4145,7 +4145,7 @@
     "DescThemeFamily": "Set the theme.",
     "DescThemeMode": "Set the display mode.",
     "DescUseCompactSidebar": "Compact sidebar provides more workspace. <br />When enabled, the compact sidebar will be the default UI at startup.",
-    "DescWebUIAssistant": "Shows a chat button at the bottom right that answers questions about WebUI from the user manual. The first time you open it, you connect it to a deployment or an OpenAI-compatible endpoint.",
+    "DescWebUIAssistant": "Shows a chat button at the bottom left that answers questions about WebUI from the user manual. The first time you open it, you connect it to a deployment or an OpenAI-compatible endpoint.",
     "DesktopNotification": "Enables Desktop Notifications",
     "DetailLogo": "Detail Logo CI",
     "DialogDiscardOrSave": "Current file and script will be changed without saving, Would you like to proceed?",

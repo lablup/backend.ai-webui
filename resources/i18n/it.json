@@ -4158,7 +4158,7 @@
     "DescThemeFamily": "Imposta il tema.",
     "DescThemeMode": "Imposta la modalità di visualizzazione.",
     "DescUseCompactSidebar": "La barra laterale compatta fornisce più spazio di lavoro. <br />Quando abilitata, la barra laterale compatta sarà l'interfaccia predefinita all'avvio.",
-    "DescWebUIAssistant": "Mostra in basso a destra un pulsante di chat che risponde alle domande sulla WebUI in base al manuale utente. La prima volta che lo apri, lo colleghi a una distribuzione o a un endpoint compatibile con OpenAI.",
+    "DescWebUIAssistant": "Mostra in basso a sinistra un pulsante di chat che risponde alle domande sulla WebUI in base al manuale utente. La prima volta che lo apri, lo colleghi a una distribuzione o a un endpoint compatibile con OpenAI.",
     "DesktopNotification": "Abilita Notifiche Desktop",
     "DetailLogo": "Logo CI di dettaglio",
     "DialogDiscardOrSave": "Il file e lo script correnti verranno modificati senza salvare. Vuoi procedere?",
