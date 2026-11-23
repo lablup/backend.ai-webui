@@ -6,6 +6,7 @@ import '../../__test__/matchMedia.mock.js';
 import {
   getShmemMaxLimit,
   isMatchingMaxPerContainer,
+  toPerContainerCap,
 } from './useResourceLimitAndRemaining';
 
 describe('getConfigName', () => {
@@ -69,5 +70,19 @@ describe('getShmemMaxLimit', () => {
     expect(getShmemMaxLimit(0)).toBeUndefined();
     expect(getShmemMaxLimit(-1)).toBeUndefined();
     expect(getShmemMaxLimit('4')).toBeUndefined();
+  });
+});
+
+describe('toPerContainerCap', () => {
+  test('a positive number is the cap', () => {
+    expect(toPerContainerCap(64)).toBe(64);
+    expect(toPerContainerCap(0.5)).toBe(0.5);
+  });
+
+  test('a missing, zero or non-numeric value sets no cap', () => {
+    expect(toPerContainerCap(undefined)).toBeUndefined();
+    expect(toPerContainerCap(0)).toBeUndefined();
+    expect(toPerContainerCap(-1)).toBeUndefined();
+    expect(toPerContainerCap('8')).toBeUndefined();
   });
 });

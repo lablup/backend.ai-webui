@@ -149,6 +149,7 @@ describe('WebUISettingList', () => {
     for (const [key, toggle] of [
       ['maxFileUploadSize', 'webuiSettings.ServerLimit'],
       ['fileUploadChunkSize', 'webuiSettings.Automatic'],
+      ['maxMemoryPerContainer', 'webuiSettings.Unlimited'],
       ['maxShmPerContainer', 'webuiSettings.Unlimited'],
     ]) {
       const row = within(screen.getByTestId(`webui-setting-${key}`));
@@ -160,14 +161,66 @@ describe('WebUISettingList', () => {
     }
   });
 
-  it('shows an unset size row empty, with its default as the placeholder', () => {
+  it('shows the per-session resource caps as Unlimited by default', () => {
+    renderList();
+    for (const key of [
+      'maxCPUCoresPerContainer',
+      'maxCUDADevicesPerContainer',
+      'maxCUDASharesPerContainer',
+      'maxRNGDDevicesPerContainer',
+    ]) {
+      const row = within(screen.getByTestId(`webui-setting-${key}`));
+      expect(
+        row.getByRole('checkbox', { name: 'webuiSettings.Unlimited' }),
+      ).toBeChecked();
+      const input = row.getByRole('spinbutton');
+      expect(input).toHaveValue('');
+      expect(input).not.toHaveAttribute('placeholder');
+    }
+  });
+
+  it('stores a CPU cap after unticking Unlimited, and 0 when ticked again', async () => {
+    domainWrite.mockResolvedValue();
+    renderList();
+    const row = within(
+      screen.getByTestId('webui-setting-maxCPUCoresPerContainer'),
+    );
+    const unlimited = () =>
+      row.getByRole('checkbox', { name: 'webuiSettings.Unlimited' });
+
+    fireEvent.click(unlimited());
+    expect(domainWrite).not.toHaveBeenCalled();
+    const input = row.getByRole('spinbutton');
+    fireEvent.change(input, { target: { value: '32' } });
+    fireEvent.blur(input);
+
+    expect(writtenDoc(domainWrite, 0)).toEqual({ maxCPUCoresPerContainer: 32 });
+    expect(unlimited()).not.toBeChecked();
+
+    await act(async () => {
+      fireEvent.click(unlimited());
+    });
+    expect(unlimited()).toBeChecked();
+    expect(writtenDoc(domainWrite, domainWrite.mock.calls.length - 1)).toEqual({
+      maxCPUCoresPerContainer: 0,
+    });
+  });
+
+  it('stores a memory cap in GiB after unticking Unlimited', async () => {
+    domainWrite.mockResolvedValue();
     renderList();
     const row = within(
       screen.getByTestId('webui-setting-maxMemoryPerContainer'),
     );
+
+    fireEvent.click(
+      row.getByRole('checkbox', { name: 'webuiSettings.Unlimited' }),
+    );
     const input = row.getByRole('spinbutton');
-    expect(input).toHaveValue('');
-    expect(input).toHaveAttribute('placeholder', '64');
+    fireEvent.change(input, { target: { value: '128' } });
+    fireEvent.blur(input);
+
+    expect(writtenDoc(domainWrite, 0)).toEqual({ maxMemoryPerContainer: 128 });
   });
 
   it('stores nothing on unticking Automatic until a size is entered', async () => {

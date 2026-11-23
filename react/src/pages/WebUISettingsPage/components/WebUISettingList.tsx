@@ -31,6 +31,7 @@ import MenuKeySelector from './MenuKeySelector';
 import PluginPathInput from './PluginPathInput';
 import SettingsJsonModal from './SettingsJsonModal';
 import { useWebUISettingLabels } from './WebUISettingLabels';
+import WebUISettingNumberInput from './WebUISettingNumberInput';
 import WebUISettingSizeInput from './WebUISettingSizeInput';
 import { Button } from '@lablup/ui-common/Button';
 import { Text } from '@lablup/ui-common/Text';
@@ -40,7 +41,6 @@ import {
   BAIDeleteConfirmModal,
   BAIFlex,
   BAIMultiSelector,
-  BAINumberInput,
   BAIUncontrolledInput,
   useErrorMessageResolver,
   BAIUnmountAfterClose,
@@ -381,20 +381,13 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
               onChange={(value) => setValue(definition, value)}
             />
           ) : (
-            // An unset setting shows its default as the placeholder, so the
-            // clear button empties the field instead of refilling the default.
-            <BAINumberInput
-              aria-label={label.title}
+            <WebUISettingNumberInput
+              label={label.title}
+              value={definition.key in values ? (current as number) : undefined}
+              defaultValue={rowDefault as number | undefined}
+              definition={definition}
               width={CONTROL_WIDTH}
-              value={definition.key in values ? (current as number) : null}
-              placeholder={String(rowDefault ?? '')}
-              min={definition.min}
-              max={definition.max}
-              isIntegerOnly={definition.isInteger}
-              units={definition.unit}
-              onChange={(value) =>
-                setValue(definition, value === null ? undefined : value)
-              }
+              onChange={(value) => setValue(definition, value)}
             />
           ),
         };

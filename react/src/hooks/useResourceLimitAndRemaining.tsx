@@ -31,6 +31,10 @@ export const isMatchingMaxPerContainer = (configName: string, key: string) => {
   }
   return false;
 };
+/** A `max*PerContainer` value as a cap; 0 or less, or a non-number, is no cap. */
+export const toPerContainerCap = (value: unknown): number | undefined =>
+  _.isFinite(value) && (value as number) > 0 ? (value as number) : undefined;
+
 /**
  * The shmem cap in `g` from `maxShmPerContainer` (GiB); 0 or less, or a
  * non-number, sets no cap. The memory bound is the current `mem`, applied by
@@ -38,10 +42,10 @@ export const isMatchingMaxPerContainer = (configName: string, key: string) => {
  */
 export const getShmemMaxLimit = (
   maxShmPerContainer: unknown,
-): string | undefined =>
-  _.isFinite(maxShmPerContainer) && (maxShmPerContainer as number) > 0
-    ? `${maxShmPerContainer}g`
-    : undefined;
+): string | undefined => {
+  const cap = toPerContainerCap(maxShmPerContainer);
+  return cap === undefined ? undefined : `${cap}g`;
+};
 
 export interface MergedResourceLimits {
   accelerators: {
@@ -295,7 +299,7 @@ export const useResourceLimitAndRemaining = ({
             max: _.min([
               ignorePerContainerConfig
                 ? undefined
-                : loginConfig.maxCPUCoresPerContainer,
+                : toPerContainerCap(loginConfig.maxCPUCoresPerContainer),
               limitParser(checkPresetInfo?.keypair_limits.cpu),
               limitParser(checkPresetInfo?.group_limits.cpu),
               includeResourceGroupLimits
@@ -325,7 +329,7 @@ export const useResourceLimitAndRemaining = ({
               const minValue = _.min([
                 ignorePerContainerConfig
                   ? undefined
-                  : loginConfig.maxMemoryPerContainer,
+                  : toPerContainerCap(loginConfig.maxMemoryPerContainer),
                 limitParser(checkPresetInfo?.keypair_limits.mem) &&
                   convertToBinaryUnit(
                     limitParser(checkPresetInfo?.keypair_limits.mem) + '',
@@ -368,7 +372,9 @@ export const useResourceLimitAndRemaining = ({
             )?.min || '0',
           ),
           max: _.min([
-            ignorePerContainerConfig ? undefined : perContainerLimit || 8,
+            ignorePerContainerConfig
+              ? undefined
+              : toPerContainerCap(perContainerLimit),
             limitParser(
               checkPresetInfo?.keypair_limits[key as ResourceSlotName],
             ),

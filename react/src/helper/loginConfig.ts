@@ -88,6 +88,7 @@ export interface LoginConfigState {
   openPortToPublic: boolean;
   allowPreferredPort: boolean;
   allowNonAuthTCP: boolean;
+  /** The per-session caps (`max*PerContainer`): 0 means no cap. Memory and shared memory are in GiB. */
   maxCPUCoresPerContainer: number;
   maxMemoryPerContainer: number;
   maxCUDADevicesPerContainer: number;
@@ -102,7 +103,7 @@ export interface LoginConfigState {
   maxATOMPLUSDevicesPerContainer: number;
   /** Unset unless a document names it, so the launcher falls back to the CUDA cap. */
   maxHyperaccelLPUDevicesPerContainer?: number;
-  /** GiB; 0 means no cap, so shared memory is bounded only by the session memory. */
+  /** Shared memory without a cap is bounded only by the session memory. */
   maxShmPerContainer: number;
   maxFileUploadSize: number;
   /** MiB; 0 picks the chunk size from the file size. */
@@ -164,18 +165,18 @@ export function getDefaultLoginConfig(): LoginConfigState {
     openPortToPublic: false,
     allowPreferredPort: false,
     allowNonAuthTCP: false,
-    maxCPUCoresPerContainer: 64,
-    maxMemoryPerContainer: 64,
-    maxCUDADevicesPerContainer: 16,
-    maxCUDASharesPerContainer: 16,
-    maxROCMDevicesPerContainer: 10,
-    maxTPUDevicesPerContainer: 8,
-    maxIPUDevicesPerContainer: 8,
-    maxATOMDevicesPerContainer: 8,
-    maxGaudi2DevicesPerContainer: 8,
-    maxWarboyDevicesPerContainer: 8,
-    maxRNGDDevicesPerContainer: 8,
-    maxATOMPLUSDevicesPerContainer: 8,
+    maxCPUCoresPerContainer: 0,
+    maxMemoryPerContainer: 0,
+    maxCUDADevicesPerContainer: 0,
+    maxCUDASharesPerContainer: 0,
+    maxROCMDevicesPerContainer: 0,
+    maxTPUDevicesPerContainer: 0,
+    maxIPUDevicesPerContainer: 0,
+    maxATOMDevicesPerContainer: 0,
+    maxGaudi2DevicesPerContainer: 0,
+    maxWarboyDevicesPerContainer: 0,
+    maxRNGDDevicesPerContainer: 0,
+    maxATOMPLUSDevicesPerContainer: 0,
     maxHyperaccelLPUDevicesPerContainer: undefined,
     maxShmPerContainer: 0,
     maxFileUploadSize: -1,

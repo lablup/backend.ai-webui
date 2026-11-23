@@ -51,6 +51,8 @@ export interface WebUISettingDefinition {
   max?: number;
   /** For a `number`: only whole numbers are valid (counts, cores, bytes, MiB). */
   isInteger?: boolean;
+  /** For a plain `number`: the value an Unlimited toggle stores; no toggle without it. */
+  unlimitedValue?: number;
   /** For a size `number`: edited with a unit picker and an Unlimited toggle. */
   size?: WebUISizeSetting;
 }
@@ -151,17 +153,20 @@ export const WEBUI_SETTING_DEFINITIONS: ReadonlyArray<WebUISettingDefinition> =
     },
     {
       ...def('maxCPUCoresPerContainer', 'domain', 'number', 'session'),
-      min: 1,
+      min: 0,
+      unlimitedValue: 0,
       max: MAX_CPU_QUOTA,
       isInteger: true,
     },
     {
       ...def('maxMemoryPerContainer', 'domain', 'number', 'session'),
-      min: 1,
+      min: 0,
       max: MAX_MEMORY_QUOTA_GIB,
       unit: 'GiB',
       size: {
         storedUnit: 'g',
+        unlimitedValue: 0,
+        toggleLabel: 'Unlimited',
         units: ['g', 't', 'p'],
         defaultUnit: 'g',
         min: '1g',
@@ -186,59 +191,69 @@ export const WEBUI_SETTING_DEFINITIONS: ReadonlyArray<WebUISettingDefinition> =
     {
       ...def('maxCUDADevicesPerContainer', 'domain', 'number', 'session'),
       min: 0,
+      unlimitedValue: 0,
       max: MAX_CPU_QUOTA,
       isInteger: true,
     },
     {
       ...def('maxCUDASharesPerContainer', 'domain', 'number', 'session'),
       min: 0,
+      unlimitedValue: 0,
       max: MAX_CPU_QUOTA,
     },
     {
       ...def('maxROCMDevicesPerContainer', 'domain', 'number', 'session'),
       min: 0,
+      unlimitedValue: 0,
       max: MAX_CPU_QUOTA,
       isInteger: true,
     },
     {
       ...def('maxTPUDevicesPerContainer', 'domain', 'number', 'session'),
       min: 0,
+      unlimitedValue: 0,
       max: MAX_CPU_QUOTA,
       isInteger: true,
     },
     {
       ...def('maxIPUDevicesPerContainer', 'domain', 'number', 'session'),
       min: 0,
+      unlimitedValue: 0,
       max: MAX_CPU_QUOTA,
       isInteger: true,
     },
     {
       ...def('maxATOMDevicesPerContainer', 'domain', 'number', 'session'),
       min: 0,
+      unlimitedValue: 0,
       max: MAX_CPU_QUOTA,
       isInteger: true,
     },
     {
       ...def('maxATOMPLUSDevicesPerContainer', 'domain', 'number', 'session'),
       min: 0,
+      unlimitedValue: 0,
       max: MAX_CPU_QUOTA,
       isInteger: true,
     },
     {
       ...def('maxGaudi2DevicesPerContainer', 'domain', 'number', 'session'),
       min: 0,
+      unlimitedValue: 0,
       max: MAX_CPU_QUOTA,
       isInteger: true,
     },
     {
       ...def('maxWarboyDevicesPerContainer', 'domain', 'number', 'session'),
       min: 0,
+      unlimitedValue: 0,
       max: MAX_CPU_QUOTA,
       isInteger: true,
     },
     {
       ...def('maxRNGDDevicesPerContainer', 'domain', 'number', 'session'),
       min: 0,
+      unlimitedValue: 0,
       max: MAX_CPU_QUOTA,
       isInteger: true,
     },
@@ -250,6 +265,7 @@ export const WEBUI_SETTING_DEFINITIONS: ReadonlyArray<WebUISettingDefinition> =
         'session',
       ),
       min: 0,
+      unlimitedValue: 0,
       max: MAX_CPU_QUOTA,
       isInteger: true,
     },
