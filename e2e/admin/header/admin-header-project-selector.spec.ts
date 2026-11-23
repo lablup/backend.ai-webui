@@ -28,6 +28,12 @@ const FEATURE_GATED_MENU_KEYS = new Set<ProjectAgnosticMenuKey>([
   'reservoir', // 'reservoir'
 ]);
 
+/**
+ * `navigateTo` is a full reload: the shell re-boots behind the splash and its
+ * header lands 5-8s later on the nightly servers, past the 5s expect default.
+ */
+const SHELL_BOOT_TIMEOUT = 20_000;
+
 /** `navigateTo` resolves against the base URL, so paths are passed unrooted. */
 const PROJECT_AGNOSTIC_ROUTES = PROJECT_AGNOSTIC_MENU_KEYS.filter(
   (menuKey) => !FEATURE_GATED_MENU_KEYS.has(menuKey),
@@ -49,7 +55,9 @@ test.describe(
       for (const route of PROJECT_AGNOSTIC_ROUTES) {
         await navigateTo(page, route);
         // The header itself must still render (no layout collapse) …
-        await expect(page.getByTestId('webui-header')).toBeVisible();
+        await expect(page.getByTestId('webui-header')).toBeVisible({
+          timeout: SHELL_BOOT_TIMEOUT,
+        });
         // … but the project selector block must not be mounted at all.
         await expect(page.getByTestId('selector-project')).toHaveCount(0);
       }
@@ -62,16 +70,20 @@ test.describe(
       // all-projects selector. The header selector is gone; the in-page one is
       // there instead.
       await navigateTo(page, 'admin/environment');
-      await expect(page.getByTestId('webui-header')).toBeVisible();
+      await expect(page.getByTestId('webui-header')).toBeVisible({
+        timeout: SHELL_BOOT_TIMEOUT,
+      });
       await expect(page.getByTestId('selector-project')).toHaveCount(0);
-      await expect(
-        page.getByTestId('environment-project-select'),
-      ).toBeVisible();
+      await expect(page.getByTestId('environment-project-select')).toBeVisible({
+        timeout: SHELL_BOOT_TIMEOUT,
+      });
     });
 
     test('selector is present on the user Data page', async ({ page }) => {
       await navigateTo(page, 'data');
-      await expect(page.getByTestId('selector-project')).toBeVisible();
+      await expect(page.getByTestId('selector-project')).toBeVisible({
+        timeout: SHELL_BOOT_TIMEOUT,
+      });
     });
 
     test('leaving an admin route restores the previous selection untouched', async ({
@@ -80,7 +92,7 @@ test.describe(
       // Capture the selection on a general page.
       await navigateTo(page, 'data');
       const selector = page.getByTestId('selector-project');
-      await expect(selector).toBeVisible();
+      await expect(selector).toBeVisible({ timeout: SHELL_BOOT_TIMEOUT });
       const before = (await selector.innerText()).trim();
       expect(before).not.toEqual('');
 
@@ -92,7 +104,9 @@ test.describe(
 
       // … and come back: the selection must be exactly what it was.
       await navigateTo(page, 'data');
-      await expect(page.getByTestId('selector-project')).toBeVisible();
+      await expect(page.getByTestId('selector-project')).toBeVisible({
+        timeout: SHELL_BOOT_TIMEOUT,
+      });
       await expect(page.getByTestId('selector-project')).toHaveText(before);
     });
   },
