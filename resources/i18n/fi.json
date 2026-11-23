@@ -4608,6 +4608,7 @@
     "StorageWarningThreshold": "Tallennustilan käytön varoitusraja",
     "SystemSSHImage": "Järjestelmän SSH-image",
     "UnknownMenuKeys": "Tuntemattomat avaimet",
+    "Unlimited": "Rajoittamaton",
     "group": {
       "Account": "Tili",
       "AppLauncher": "Sovelluskäynnistin",

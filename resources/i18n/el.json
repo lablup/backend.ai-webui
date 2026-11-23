@@ -4607,6 +4607,7 @@
     "StorageWarningThreshold": "Όριο προειδοποίησης χρήσης αποθηκευτικού χώρου",
     "SystemSSHImage": "Εικόνα SSH συστήματος",
     "UnknownMenuKeys": "Άγνωστα κλειδιά",
+    "Unlimited": "Απεριόριστος",
     "group": {
       "Account": "Λογαριασμός",
       "AppLauncher": "Εκκινητής εφαρμογών",

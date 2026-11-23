@@ -4607,6 +4607,7 @@
     "StorageWarningThreshold": "Soglia di avviso per l'utilizzo dello storage",
     "SystemSSHImage": "Immagine SSH di sistema",
     "UnknownMenuKeys": "Chiavi sconosciute",
+    "Unlimited": "Illimitato",
     "group": {
       "Account": "Account",
       "AppLauncher": "Launcher di app",

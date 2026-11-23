@@ -4609,6 +4609,7 @@
     "StorageWarningThreshold": "ストレージ使用量の警告しきい値",
     "SystemSSHImage": "システム SSH イメージ",
     "UnknownMenuKeys": "不明なキー",
+    "Unlimited": "無制限",
     "group": {
       "Account": "アカウント",
       "AppLauncher": "アプリランチャー",

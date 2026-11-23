@@ -4607,6 +4607,7 @@
     "StorageWarningThreshold": "Порог предупреждения об использовании хранилища",
     "SystemSSHImage": "Системный образ SSH",
     "UnknownMenuKeys": "Неизвестные ключи",
+    "Unlimited": "Безлимитный",
     "group": {
       "Account": "Учётная запись",
       "AppLauncher": "Средство запуска приложений",

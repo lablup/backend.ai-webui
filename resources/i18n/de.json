@@ -4609,6 +4609,7 @@
     "StorageWarningThreshold": "Warnschwelle für Speichernutzung",
     "SystemSSHImage": "System-SSH-Image",
     "UnknownMenuKeys": "Unbekannte Schlüssel",
+    "Unlimited": "Unbegrenzt",
     "group": {
       "Account": "Konto",
       "AppLauncher": "App-Starter",

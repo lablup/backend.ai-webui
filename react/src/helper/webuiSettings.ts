@@ -59,8 +59,8 @@ export interface WebUISizeSetting {
   storedUnit: '' | 'm' | 'g';
   /** The value stored when the toggle is on; no toggle without it. */
   unlimitedValue?: number;
-  /** What the toggle means: the server's limit applies, or the WebUI picks a size. */
-  toggleLabel?: 'ServerLimit' | 'Automatic';
+  /** What the toggle means: the server's limit applies, the WebUI picks a size, or no cap. */
+  toggleLabel?: 'ServerLimit' | 'Automatic' | 'Unlimited';
   units: Array<'m' | 'g' | 't'>;
   defaultUnit: 'm' | 'g' | 't';
   /** The input's bounds in size notation (`"100g"`). */
@@ -170,6 +170,8 @@ export const WEBUI_SETTING_DEFINITIONS: ReadonlyArray<WebUISettingDefinition> =
       unit: 'GiB',
       size: {
         storedUnit: 'g',
+        unlimitedValue: 0,
+        toggleLabel: 'Unlimited',
         units: ['m', 'g', 't'],
         defaultUnit: 'g',
         min: '1m',

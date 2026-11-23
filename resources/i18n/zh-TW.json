@@ -4611,6 +4611,7 @@
     "StorageWarningThreshold": "儲存空間用量警告閾值",
     "SystemSSHImage": "系統 SSH 映像檔",
     "UnknownMenuKeys": "未知的鍵",
+    "Unlimited": "無限",
     "group": {
       "Account": "帳戶",
       "AppLauncher": "應用程式啟動器",

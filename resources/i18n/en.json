@@ -4592,6 +4592,7 @@
     "StorageWarningThreshold": "Storage usage warning threshold",
     "SystemSSHImage": "System SSH image",
     "UnknownMenuKeys": "Unknown keys",
+    "Unlimited": "Unlimited",
     "group": {
       "Account": "Account",
       "AppLauncher": "App launcher",

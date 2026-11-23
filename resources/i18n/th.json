@@ -4593,6 +4593,7 @@
     "StorageWarningThreshold": "เกณฑ์เตือนการใช้พื้นที่จัดเก็บ",
     "SystemSSHImage": "อิมเมจ SSH ของระบบ",
     "UnknownMenuKeys": "คีย์ที่ไม่รู้จัก",
+    "Unlimited": "ไม่จำกัด",
     "group": {
       "Account": "บัญชี",
       "AppLauncher": "ตัวเปิดแอป",

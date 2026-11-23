@@ -4609,6 +4609,7 @@
     "StorageWarningThreshold": "存储用量警告阈值",
     "SystemSSHImage": "系统 SSH 镜像",
     "UnknownMenuKeys": "未知键",
+    "Unlimited": "无限",
     "group": {
       "Account": "账户",
       "AppLauncher": "应用启动器",

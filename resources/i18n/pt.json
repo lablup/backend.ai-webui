@@ -4609,6 +4609,7 @@
     "StorageWarningThreshold": "Limiar de aviso de utilização do armazenamento",
     "SystemSSHImage": "Imagem SSH do sistema",
     "UnknownMenuKeys": "Chaves desconhecidas",
+    "Unlimited": "Ilimitado",
     "group": {
       "Account": "Conta",
       "AppLauncher": "Lançador de aplicações",

@@ -4610,6 +4610,7 @@
     "StorageWarningThreshold": "스토리지 사용량 경고 임계값",
     "SystemSSHImage": "시스템 SSH 이미지",
     "UnknownMenuKeys": "알 수 없는 키",
+    "Unlimited": "무제한",
     "group": {
       "Account": "계정",
       "AppLauncher": "앱 런처",

@@ -4610,6 +4610,7 @@
     "StorageWarningThreshold": "Próg ostrzeżenia o użyciu pamięci masowej",
     "SystemSSHImage": "Systemowy obraz SSH",
     "UnknownMenuKeys": "Nieznane klucze",
+    "Unlimited": "bez limitu",
     "group": {
       "Account": "Konto",
       "AppLauncher": "Program uruchamiający aplikacje",

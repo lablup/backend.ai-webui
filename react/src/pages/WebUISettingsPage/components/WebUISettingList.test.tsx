@@ -149,6 +149,7 @@ describe('WebUISettingList', () => {
     for (const [key, toggle] of [
       ['maxFileUploadSize', 'webuiSettings.ServerLimit'],
       ['fileUploadChunkSize', 'webuiSettings.Automatic'],
+      ['maxShmPerContainer', 'webuiSettings.Unlimited'],
     ]) {
       const row = within(screen.getByTestId(`webui-setting-${key}`));
       expect(row.getByRole('checkbox', { name: toggle })).toBeChecked();

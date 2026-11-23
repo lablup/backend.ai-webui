@@ -4610,6 +4610,7 @@
     "StorageWarningThreshold": "Seuil d'alerte d'utilisation du stockage",
     "SystemSSHImage": "Image SSH système",
     "UnknownMenuKeys": "Clés inconnues",
+    "Unlimited": "Illimité",
     "group": {
       "Account": "Compte",
       "AppLauncher": "Lanceur d'applications",
