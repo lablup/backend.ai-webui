@@ -4482,7 +4482,7 @@
     "DashboardChatExampleBoard": "Erstelle ein Board namens Störungen mit {{first}} und {{second}}",
     "DashboardChatExampleLayout": "Blende die Karte {{title}} aus",
     "DashboardChatExamplePanel": "Füge eine Tabelle laufender interaktiver Sitzungen hinzu",
-    "DashboardChatExampleShow": "Zeige die Karte {{title}}",
+    "DashboardChatExampleShow": "Füge die Karte {{title}} zum Dashboard hinzu",
     "DashboardCreateBoard": "Board {{title}} erstellen",
     "DashboardEditPanel": "Panel {{title}} aktualisieren",
     "DashboardHideCard": "{{title}} ausblenden",

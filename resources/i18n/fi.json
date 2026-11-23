@@ -4481,7 +4481,7 @@
     "DashboardChatExampleBoard": "Luo näkymä nimeltä Häiriöt, jossa on {{first}} ja {{second}}",
     "DashboardChatExampleLayout": "Piilota kortti {{title}}",
     "DashboardChatExamplePanel": "Lisää taulukko käynnissä olevista interaktiivisista istunnoista",
-    "DashboardChatExampleShow": "Näytä kortti {{title}}",
+    "DashboardChatExampleShow": "Lisää kortti {{title}} kojelaudalle",
     "DashboardCreateBoard": "Luo näkymä {{title}}",
     "DashboardEditPanel": "Päivitä paneeli {{title}}",
     "DashboardHideCard": "Piilota {{title}}",

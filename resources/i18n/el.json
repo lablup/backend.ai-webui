@@ -4480,7 +4480,7 @@
     "DashboardChatExampleBoard": "Φτιάξε πίνακα Συμβάντα με {{first}} και {{second}}",
     "DashboardChatExampleLayout": "Κρύψε την κάρτα {{title}}",
     "DashboardChatExamplePanel": "Πρόσθεσε πίνακα με τις ενεργές διαδραστικές συνεδρίες",
-    "DashboardChatExampleShow": "Δείξε την κάρτα {{title}}",
+    "DashboardChatExampleShow": "Πρόσθεσε την κάρτα {{title}} στον πίνακα",
     "DashboardCreateBoard": "Δημιουργία πίνακα {{title}}",
     "DashboardEditPanel": "Ενημέρωση πλαισίου {{title}}",
     "DashboardHideCard": "Απόκρυψη {{title}}",

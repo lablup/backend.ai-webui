@@ -4482,7 +4482,7 @@
     "DashboardChatExampleBoard": "{{first}} と {{second}} で障害対応ボードを作って",
     "DashboardChatExampleLayout": "{{title}} のカードを非表示にして",
     "DashboardChatExamplePanel": "実行中のインタラクティブセッションの表を追加して",
-    "DashboardChatExampleShow": "{{title}} のカードを表示して",
+    "DashboardChatExampleShow": "{{title}} のカードをダッシュボードに追加して",
     "DashboardCreateBoard": "ボード {{title}} を作成",
     "DashboardEditPanel": "パネル {{title}} を更新",
     "DashboardHideCard": "{{title}}を非表示",

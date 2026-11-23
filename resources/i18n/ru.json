@@ -4480,7 +4480,7 @@
     "DashboardChatExampleBoard": "Создай доску «Инциденты» с {{first}} и {{second}}",
     "DashboardChatExampleLayout": "Скрой карточку {{title}}",
     "DashboardChatExamplePanel": "Добавь таблицу запущенных интерактивных сеансов",
-    "DashboardChatExampleShow": "Покажи карточку {{title}}",
+    "DashboardChatExampleShow": "Добавь карточку {{title}} на панель",
     "DashboardCreateBoard": "Создать доску {{title}}",
     "DashboardEditPanel": "Обновить панель {{title}}",
     "DashboardHideCard": "Скрыть {{title}}",

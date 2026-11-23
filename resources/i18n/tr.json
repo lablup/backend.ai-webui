@@ -4480,7 +4480,7 @@
     "DashboardChatExampleBoard": "{{first}} ve {{second}} ile Olaylar adlı bir pano oluştur",
     "DashboardChatExampleLayout": "{{title}} kartını gizle",
     "DashboardChatExamplePanel": "Çalışan etkileşimli oturumların tablosunu ekle",
-    "DashboardChatExampleShow": "{{title}} kartını göster",
+    "DashboardChatExampleShow": "{{title}} kartını panoya ekle",
     "DashboardCreateBoard": "{{title}} panosunu oluştur",
     "DashboardEditPanel": "{{title}} panelini güncelle",
     "DashboardHideCard": "{{title}} kartını gizle",

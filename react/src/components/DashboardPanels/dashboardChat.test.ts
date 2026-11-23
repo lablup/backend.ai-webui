@@ -244,14 +244,28 @@ describe('dashboardExamplesOf', () => {
     typeof dashboardExamplesOf
   >[1];
 
-  it('gives two examples: a board on pages with boards, else a panel', () => {
+  it('adds a card first, then a board on pages with boards, else a panel', () => {
     expect(dashboardExamplesOf(ctx, t)).toEqual([
-      'webuiAssistant.DashboardChatExampleLayout',
+      'webuiAssistant.DashboardChatExampleShow',
       'webuiAssistant.DashboardChatExampleBoard',
     ]);
     expect(dashboardExamplesOf({ ...ctx, canCreateBoard: false }, t)).toEqual([
-      'webuiAssistant.DashboardChatExampleLayout',
+      'webuiAssistant.DashboardChatExampleShow',
       'webuiAssistant.DashboardChatExamplePanel',
+    ]);
+  });
+
+  it('adds a panel when every card is on the board, and hides only as a last resort', () => {
+    const allShown = {
+      ...ctx,
+      canCreateBoard: false,
+      cards: ctx.cards.map((card) => ({ ...card, shown: true })),
+    };
+    expect(dashboardExamplesOf(allShown, t)).toEqual([
+      'webuiAssistant.DashboardChatExamplePanel',
+    ]);
+    expect(dashboardExamplesOf({ ...allShown, sources: [] }, t)).toEqual([
+      'webuiAssistant.DashboardChatExampleLayout',
     ]);
   });
 });

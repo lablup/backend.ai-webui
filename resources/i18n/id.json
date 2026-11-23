@@ -4484,7 +4484,7 @@
     "DashboardChatExampleBoard": "Buat papan bernama Insiden dengan {{first}} dan {{second}}",
     "DashboardChatExampleLayout": "Sembunyikan kartu {{title}}",
     "DashboardChatExamplePanel": "Tambahkan tabel sesi interaktif yang berjalan",
-    "DashboardChatExampleShow": "Tampilkan kartu {{title}}",
+    "DashboardChatExampleShow": "Tambahkan kartu {{title}} ke dasbor",
     "DashboardCreateBoard": "Buat papan {{title}}",
     "DashboardEditPanel": "Perbarui panel {{title}}",
     "DashboardHideCard": "Sembunyikan {{title}}",

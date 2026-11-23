@@ -395,24 +395,30 @@ export const dashboardExamplesOf = (
   const shownCards = ctx.cards.filter((card) => card.shown);
   const otherCards = ctx.cards.filter((card) => !card.shown);
   const boardCards = [...otherCards, ...shownCards].slice(0, 2);
-  return _.compact([
-    // An empty board has nothing to hide, so it suggests showing a card instead.
-    shownCards[0]
-      ? t('webuiAssistant.DashboardChatExampleLayout', {
-          title: shownCards[0].title,
-        })
-      : otherCards[0] &&
-        t('webuiAssistant.DashboardChatExampleShow', {
-          title: otherCards[0].title,
-        }),
-    // Pages with boards show off a new board; the member page a new panel.
-    ctx.canCreateBoard &&
-      boardCards.length === 2 &&
-      t('webuiAssistant.DashboardChatExampleBoard', {
-        first: boardCards[0].title,
-        second: boardCards[1].title,
-      }),
+  const panelExample =
     ctx.sources.some((source) => source.key === 'session') &&
-      t('webuiAssistant.DashboardChatExamplePanel'),
-  ]).slice(0, 2);
+    t('webuiAssistant.DashboardChatExamplePanel');
+  // Adding something is what a user most likely wants; hiding is the last resort.
+  const firstExample = otherCards[0]
+    ? t('webuiAssistant.DashboardChatExampleShow', {
+        title: otherCards[0].title,
+      })
+    : panelExample ||
+      (shownCards[0] &&
+        t('webuiAssistant.DashboardChatExampleLayout', {
+          title: shownCards[0].title,
+        }));
+  return _.uniq(
+    _.compact([
+      firstExample,
+      // Pages with boards show off a new board; the member page a new panel.
+      ctx.canCreateBoard &&
+        boardCards.length === 2 &&
+        t('webuiAssistant.DashboardChatExampleBoard', {
+          first: boardCards[0].title,
+          second: boardCards[1].title,
+        }),
+      panelExample,
+    ]),
+  ).slice(0, 2);
 };

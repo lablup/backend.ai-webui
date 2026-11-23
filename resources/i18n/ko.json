@@ -4483,7 +4483,7 @@
     "DashboardChatExampleBoard": "{{first}}, {{second}} 카드로 장애 대응 보드 만들어 줘",
     "DashboardChatExampleLayout": "{{title}} 카드 숨겨 줘",
     "DashboardChatExamplePanel": "실행 중인 인터랙티브 세션 표 추가해 줘",
-    "DashboardChatExampleShow": "{{title}} 카드 보여 줘",
+    "DashboardChatExampleShow": "{{title}} 카드를 대시보드에 추가해 줘",
     "DashboardCreateBoard": "{{title}} 보드 만들기",
     "DashboardEditPanel": "{{title}} 패널 수정",
     "DashboardHideCard": "{{title}} 숨기기",

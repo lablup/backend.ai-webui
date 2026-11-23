@@ -4483,7 +4483,7 @@
     "DashboardChatExampleBoard": "Crée un tableau nommé Incidents avec {{first}} et {{second}}",
     "DashboardChatExampleLayout": "Masque la carte {{title}}",
     "DashboardChatExamplePanel": "Ajoute un tableau des sessions interactives en cours",
-    "DashboardChatExampleShow": "Affiche la carte {{title}}",
+    "DashboardChatExampleShow": "Ajoute la carte {{title}} au tableau de bord",
     "DashboardCreateBoard": "Créer le tableau {{title}}",
     "DashboardEditPanel": "Mettre à jour le panneau {{title}}",
     "DashboardHideCard": "Masquer {{title}}",

@@ -4483,7 +4483,7 @@
     "DashboardChatExampleBoard": "Utwórz tablicę Incydenty z {{first}} i {{second}}",
     "DashboardChatExampleLayout": "Ukryj kartę {{title}}",
     "DashboardChatExamplePanel": "Dodaj tabelę uruchomionych sesji interaktywnych",
-    "DashboardChatExampleShow": "Pokaż kartę {{title}}",
+    "DashboardChatExampleShow": "Dodaj kartę {{title}} do pulpitu",
     "DashboardCreateBoard": "Utwórz tablicę {{title}}",
     "DashboardEditPanel": "Zaktualizuj panel {{title}}",
     "DashboardHideCard": "Ukryj {{title}}",

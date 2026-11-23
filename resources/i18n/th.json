@@ -4466,7 +4466,7 @@
     "DashboardChatExampleBoard": "สร้างบอร์ดชื่อ เหตุขัดข้อง ที่มี {{first}} และ {{second}}",
     "DashboardChatExampleLayout": "ซ่อนการ์ด {{title}}",
     "DashboardChatExamplePanel": "เพิ่มตารางเซสชันอินเทอร์แอกทีฟที่กำลังทำงาน",
-    "DashboardChatExampleShow": "แสดงการ์ด {{title}}",
+    "DashboardChatExampleShow": "เพิ่มการ์ด {{title}} ลงในแดชบอร์ด",
     "DashboardCreateBoard": "สร้างบอร์ด {{title}}",
     "DashboardEditPanel": "อัปเดตแผง {{title}}",
     "DashboardHideCard": "ซ่อน {{title}}",

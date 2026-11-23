@@ -4482,7 +4482,7 @@
     "DashboardChatExampleBoard": "Tạo bảng tên Sự cố với {{first}} và {{second}}",
     "DashboardChatExampleLayout": "Ẩn thẻ {{title}}",
     "DashboardChatExamplePanel": "Thêm bảng các phiên tương tác đang chạy",
-    "DashboardChatExampleShow": "Hiển thị thẻ {{title}}",
+    "DashboardChatExampleShow": "Thêm thẻ {{title}} vào bảng điều khiển",
     "DashboardCreateBoard": "Tạo bảng {{title}}",
     "DashboardEditPanel": "Cập nhật bảng {{title}}",
     "DashboardHideCard": "Ẩn {{title}}",

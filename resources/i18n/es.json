@@ -4480,7 +4480,7 @@
     "DashboardChatExampleBoard": "Crea un panel llamado Incidentes con {{first}} y {{second}}",
     "DashboardChatExampleLayout": "Oculta la tarjeta {{title}}",
     "DashboardChatExamplePanel": "Agrega una tabla de sesiones interactivas en ejecución",
-    "DashboardChatExampleShow": "Muestra la tarjeta {{title}}",
+    "DashboardChatExampleShow": "Añade la tarjeta {{title}} al tablero",
     "DashboardCreateBoard": "Crear el panel {{title}}",
     "DashboardEditPanel": "Actualizar el panel {{title}}",
     "DashboardHideCard": "Ocultar {{title}}",
