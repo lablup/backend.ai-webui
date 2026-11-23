@@ -1,0 +1,1 @@
+import{n as e}from"./rolldown-runtime-sJBDdmOt.js";import{n as t,t as n}from"./createLucideIcon-BXqG86fR.js";var r,i;function a(){return(a=e((()=>{t(),r={name:`circle-check`,size:24,node:[[`circle`,{cx:`12`,cy:`12`,r:`10`,key:`1mglay`}],[`path`,{d:`m16 9-5.5 5.5L8 12`,key:`xofnsj`}]],aliases:[`check-circle-2`]},r.node,i=n(r)})))()}export{a as n,i as t};
