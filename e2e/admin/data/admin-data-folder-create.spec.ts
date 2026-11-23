@@ -5,7 +5,6 @@
 import { createAdminApiContext, gqlAdmin } from '../../utils/admin-api';
 import { FolderCreationModal } from '../../utils/classes/vfolder/FolderCreationModal';
 import { cleanupVFolderSafely } from '../../utils/cleanup-util';
-import { escapeForRegExp } from '../../utils/deployment-fixtures';
 import { getE2EProjectName } from '../../utils/e2e-scope';
 import { loginAsAdmin, navigateTo } from '../../utils/test-util';
 import { test, expect } from '@playwright/test';
@@ -84,13 +83,12 @@ test.describe(
       await projectSelect.click();
       const targetProject =
         TARGET_PROJECT_OVERRIDE ?? (await getE2EProjectName());
-      // A project the admin administers carries the Project Admin shield,
-      // whose label joins the option's accessible name ("default Project Admin").
-      const targetOption = page.getByRole('listbox').getByRole('option', {
-        name: new RegExp(
-          `^${escapeForRegExp(targetProject)}( Project Admin)?$`,
-        ),
-      });
+      // Match on the name text, not the accessible name: a project the admin
+      // administers adds the Project Admin shield's label to the option's name.
+      const targetOption = page
+        .getByRole('listbox')
+        .getByRole('option')
+        .filter({ has: page.getByText(targetProject, { exact: true }) });
       await targetOption.click();
       await expect(projectSelect).toContainText(targetProject);
 
