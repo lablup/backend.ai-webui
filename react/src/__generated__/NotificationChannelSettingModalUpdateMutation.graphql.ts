@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<76a0a2726c7468b03e1c81f785039e73>>
+ * @generated SignedSource<<98ff77f6cf5b96545dfb6e1654bf96e0>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,7 +9,7 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
-export type NotificationChannelType = "EMAIL" | "WEBHOOK" | "%future added value";
+import { FragmentRefs } from "relay-runtime";
 export type UpdateNotificationChannelInput = {
   description?: string | null | undefined;
   enabled?: boolean | null | undefined;
@@ -50,28 +50,7 @@ export type NotificationChannelSettingModalUpdateMutation$variables = {
 export type NotificationChannelSettingModalUpdateMutation$data = {
   readonly updateNotificationChannel: {
     readonly channel: {
-      readonly channelType: NotificationChannelType;
-      readonly description: string | null | undefined;
-      readonly enabled: boolean;
-      readonly id: string;
-      readonly name: string;
-      readonly spec: {
-        readonly auth?: {
-          readonly username: string | null | undefined;
-        } | null | undefined;
-        readonly message?: {
-          readonly fromEmail: string;
-          readonly subjectTemplate: string | null | undefined;
-          readonly toEmails: ReadonlyArray<string>;
-        };
-        readonly smtp?: {
-          readonly host: string;
-          readonly port: number;
-          readonly timeout: number;
-          readonly useTls: boolean;
-        };
-        readonly url?: string;
-      };
+      readonly " $fragmentSpreads": FragmentRefs<"NotificationChannelSettingModalFragment">;
     };
   } | null | undefined;
 };
@@ -94,152 +73,7 @@ v1 = [
     "name": "input",
     "variableName": "input"
   }
-],
-v2 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "id",
-  "storageKey": null
-},
-v3 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "name",
-  "storageKey": null
-},
-v4 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "description",
-  "storageKey": null
-},
-v5 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "channelType",
-  "storageKey": null
-},
-v6 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "enabled",
-  "storageKey": null
-},
-v7 = {
-  "kind": "InlineFragment",
-  "selections": [
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "url",
-      "storageKey": null
-    }
-  ],
-  "type": "WebhookSpec",
-  "abstractKey": null
-},
-v8 = {
-  "kind": "InlineFragment",
-  "selections": [
-    {
-      "alias": null,
-      "args": null,
-      "concreteType": "SMTPConnection",
-      "kind": "LinkedField",
-      "name": "smtp",
-      "plural": false,
-      "selections": [
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "host",
-          "storageKey": null
-        },
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "port",
-          "storageKey": null
-        },
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "useTls",
-          "storageKey": null
-        },
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "timeout",
-          "storageKey": null
-        }
-      ],
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "concreteType": "EmailMessage",
-      "kind": "LinkedField",
-      "name": "message",
-      "plural": false,
-      "selections": [
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "fromEmail",
-          "storageKey": null
-        },
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "toEmails",
-          "storageKey": null
-        },
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "subjectTemplate",
-          "storageKey": null
-        }
-      ],
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "concreteType": "SMTPAuth",
-      "kind": "LinkedField",
-      "name": "auth",
-      "plural": false,
-      "selections": [
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "username",
-          "storageKey": null
-        }
-      ],
-      "storageKey": null
-    }
-  ],
-  "type": "EmailSpec",
-  "abstractKey": null
-};
+];
 return {
   "fragment": {
     "argumentDefinitions": (v0/*: any*/),
@@ -263,23 +97,10 @@ return {
             "name": "channel",
             "plural": false,
             "selections": [
-              (v2/*: any*/),
-              (v3/*: any*/),
-              (v4/*: any*/),
-              (v5/*: any*/),
-              (v6/*: any*/),
               {
-                "alias": null,
                 "args": null,
-                "concreteType": null,
-                "kind": "LinkedField",
-                "name": "spec",
-                "plural": false,
-                "selections": [
-                  (v7/*: any*/),
-                  (v8/*: any*/)
-                ],
-                "storageKey": null
+                "kind": "FragmentSpread",
+                "name": "NotificationChannelSettingModalFragment"
               }
             ],
             "storageKey": null
@@ -313,29 +134,46 @@ return {
             "name": "channel",
             "plural": false,
             "selections": [
-              (v2/*: any*/),
-              (v3/*: any*/),
-              (v4/*: any*/),
-              (v5/*: any*/),
-              (v6/*: any*/),
               {
                 "alias": null,
                 "args": null,
-                "concreteType": null,
-                "kind": "LinkedField",
-                "name": "spec",
-                "plural": false,
-                "selections": [
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "__typename",
-                    "storageKey": null
-                  },
-                  (v7/*: any*/),
-                  (v8/*: any*/)
-                ],
+                "kind": "ScalarField",
+                "name": "id",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "entityId",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "name",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "description",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "channelType",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "enabled",
                 "storageKey": null
               }
             ],
@@ -347,16 +185,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "1fec74f2f596adb7ada6932b8bc4ef20",
+    "cacheID": "91f2c9ffd225877a0fa77d93d92d6c1c",
     "id": null,
     "metadata": {},
     "name": "NotificationChannelSettingModalUpdateMutation",
     "operationKind": "mutation",
-    "text": "mutation NotificationChannelSettingModalUpdateMutation(\n  $input: UpdateNotificationChannelInput!\n) {\n  updateNotificationChannel(input: $input) {\n    channel {\n      id\n      name\n      description\n      channelType\n      enabled\n      spec {\n        __typename\n        ... on WebhookSpec {\n          url\n        }\n        ... on EmailSpec {\n          smtp {\n            host\n            port\n            useTls\n            timeout\n          }\n          message {\n            fromEmail\n            toEmails\n            subjectTemplate\n          }\n          auth {\n            username\n          }\n        }\n      }\n    }\n  }\n}\n"
+    "text": "mutation NotificationChannelSettingModalUpdateMutation(\n  $input: UpdateNotificationChannelInput!\n) {\n  updateNotificationChannel(input: $input) {\n    channel {\n      ...NotificationChannelSettingModalFragment\n      id\n    }\n  }\n}\n\nfragment NotificationChannelSettingModalFragment on NotificationChannel {\n  id\n  entityId\n  name\n  description\n  channelType\n  enabled\n}\n"
   }
 };
 })();
 
-(node as any).hash = "260508dba19516aa89e6298a94265fa8";
+(node as any).hash = "89caa5aab7f14f2bfb6454ea6f16b572";
 
 export default node;

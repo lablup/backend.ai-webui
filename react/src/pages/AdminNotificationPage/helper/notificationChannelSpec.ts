@@ -106,17 +106,28 @@ export const specFormValuesFromSaved = (
   subjectTemplate: spec?.message?.subjectTemplate ?? undefined,
 });
 
-/** Whether two spec inputs set the same connection, leaving the SMTP password out. */
-export const isSameSpecIgnoringPassword = (
-  a: NotificationChannelSpecInput,
-  b: NotificationChannelSpecInput,
-) => {
-  const withoutPassword = (spec: NotificationChannelSpecInput) =>
-    spec.email
-      ? {
-          ...spec,
-          email: { ...spec.email, auth: spec.email.auth?.username ?? null },
-        }
-      : spec;
-  return _.isEqual(withoutPassword(a), withoutPassword(b));
+/**
+ * Whether an edit sends `spec`, and whether it must first ask for the SMTP password again.
+ * `spec` replaces the saved one whole and the saved password never comes back.
+ */
+export const decideSpecUpdate = ({
+  spec,
+  savedSpec,
+  password,
+  hasSavedAuth,
+}: {
+  spec: NotificationChannelSpecInput;
+  savedSpec: NotificationChannelSpecInput;
+  password?: string;
+  hasSavedAuth: boolean;
+}) => {
+  const includesSpec = !!password || !_.isEqual(spec, savedSpec);
+  const savedUsername = savedSpec.email?.auth?.username;
+  const nextUsername = spec.email?.auth?.username;
+  // Clearing a saved username removes SMTP authentication, which needs no password.
+  const removesAuth = !!savedUsername && !nextUsername;
+  return {
+    includesSpec,
+    needsPassword: includesSpec && hasSavedAuth && !password && !removesAuth,
+  };
 };

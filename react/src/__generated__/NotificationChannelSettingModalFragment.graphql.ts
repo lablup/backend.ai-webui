@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<f655165c2d33a22619a0fcdcaab0bc17>>
+ * @generated SignedSource<<51f8ced8c67f2c4fa28c0b6b1f52b721>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -18,23 +18,6 @@ export type NotificationChannelSettingModalFragment$data = {
   readonly entityId: string;
   readonly id: string;
   readonly name: string;
-  readonly spec: {
-    readonly auth?: {
-      readonly username: string | null | undefined;
-    } | null | undefined;
-    readonly message?: {
-      readonly fromEmail: string;
-      readonly subjectTemplate: string | null | undefined;
-      readonly toEmails: ReadonlyArray<string>;
-    };
-    readonly smtp?: {
-      readonly host: string;
-      readonly port: number;
-      readonly timeout: number;
-      readonly useTls: boolean;
-    };
-    readonly url?: string;
-  };
   readonly " $fragmentType": "NotificationChannelSettingModalFragment";
 };
 export type NotificationChannelSettingModalFragment$key = {
@@ -89,133 +72,12 @@ const node: ReaderFragment = {
       "kind": "ScalarField",
       "name": "enabled",
       "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "concreteType": null,
-      "kind": "LinkedField",
-      "name": "spec",
-      "plural": false,
-      "selections": [
-        {
-          "kind": "InlineFragment",
-          "selections": [
-            {
-              "alias": null,
-              "args": null,
-              "kind": "ScalarField",
-              "name": "url",
-              "storageKey": null
-            }
-          ],
-          "type": "WebhookSpec",
-          "abstractKey": null
-        },
-        {
-          "kind": "InlineFragment",
-          "selections": [
-            {
-              "alias": null,
-              "args": null,
-              "concreteType": "SMTPConnection",
-              "kind": "LinkedField",
-              "name": "smtp",
-              "plural": false,
-              "selections": [
-                {
-                  "alias": null,
-                  "args": null,
-                  "kind": "ScalarField",
-                  "name": "host",
-                  "storageKey": null
-                },
-                {
-                  "alias": null,
-                  "args": null,
-                  "kind": "ScalarField",
-                  "name": "port",
-                  "storageKey": null
-                },
-                {
-                  "alias": null,
-                  "args": null,
-                  "kind": "ScalarField",
-                  "name": "useTls",
-                  "storageKey": null
-                },
-                {
-                  "alias": null,
-                  "args": null,
-                  "kind": "ScalarField",
-                  "name": "timeout",
-                  "storageKey": null
-                }
-              ],
-              "storageKey": null
-            },
-            {
-              "alias": null,
-              "args": null,
-              "concreteType": "EmailMessage",
-              "kind": "LinkedField",
-              "name": "message",
-              "plural": false,
-              "selections": [
-                {
-                  "alias": null,
-                  "args": null,
-                  "kind": "ScalarField",
-                  "name": "fromEmail",
-                  "storageKey": null
-                },
-                {
-                  "alias": null,
-                  "args": null,
-                  "kind": "ScalarField",
-                  "name": "toEmails",
-                  "storageKey": null
-                },
-                {
-                  "alias": null,
-                  "args": null,
-                  "kind": "ScalarField",
-                  "name": "subjectTemplate",
-                  "storageKey": null
-                }
-              ],
-              "storageKey": null
-            },
-            {
-              "alias": null,
-              "args": null,
-              "concreteType": "SMTPAuth",
-              "kind": "LinkedField",
-              "name": "auth",
-              "plural": false,
-              "selections": [
-                {
-                  "alias": null,
-                  "args": null,
-                  "kind": "ScalarField",
-                  "name": "username",
-                  "storageKey": null
-                }
-              ],
-              "storageKey": null
-            }
-          ],
-          "type": "EmailSpec",
-          "abstractKey": null
-        }
-      ],
-      "storageKey": null
     }
   ],
   "type": "NotificationChannel",
   "abstractKey": null
 };
 
-(node as any).hash = "4d606480e216eee704206541581b0230";
+(node as any).hash = "0813702652729b451df600851436d44b";
 
 export default node;

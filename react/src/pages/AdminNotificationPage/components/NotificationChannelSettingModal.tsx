@@ -3,9 +3,14 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { NotificationChannelSettingModalCreateMutation } from '../../../__generated__/NotificationChannelSettingModalCreateMutation.graphql';
-import { NotificationChannelSettingModalFragment$key } from '../../../__generated__/NotificationChannelSettingModalFragment.graphql';
+import {
+  NotificationChannelSettingModalFragment$data,
+  NotificationChannelSettingModalFragment$key,
+} from '../../../__generated__/NotificationChannelSettingModalFragment.graphql';
+import { NotificationChannelSettingModalSpecQuery } from '../../../__generated__/NotificationChannelSettingModalSpecQuery.graphql';
 import { NotificationChannelSettingModalUpdateMutation } from '../../../__generated__/NotificationChannelSettingModalUpdateMutation.graphql';
 import { App } from '../../../app-shim';
+import BAIErrorBoundary from '../../../components/BAIErrorBoundary';
 import { Form, FormInstance } from '../../../form-engine';
 import {
   DEFAULT_SMTP_PORT,
@@ -15,6 +20,7 @@ import {
   buildNotificationChannelSpecInput,
   isHttpUrl,
   isSameSpecIgnoringPassword,
+  decideSpecUpdate,
   specFormValuesFromSaved,
 } from '../helper/notificationChannelSpec';
 import './NotificationChannelSettingModal.css';
@@ -25,15 +31,21 @@ import {
   BAINumberInput,
   BAISegmentedControl,
   BAISegmentedControlItem,
+  BAISkeleton,
   BAISwitch,
   BAITagsInput,
   BAITextArea,
   BAITextInput,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import React, { useRef } from 'react';
+import React, { Suspense, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useFragment, useMutation } from 'react-relay';
+import {
+  graphql,
+  useFragment,
+  useLazyLoadQuery,
+  useMutation,
+} from 'react-relay';
 
 type NotificationChannelFormValues = NotificationChannelSpecFormValues & {
   name: string;
@@ -255,78 +267,99 @@ const ChannelSpecFormItems: React.FC<{ hasSavedPassword: boolean }> = ({
   );
 };
 
-const NotificationChannelSettingModal: React.FC<
-  NotificationChannelSettingModalProps
-> = ({ channelFrgmt, onRequestClose, ...baiModalProps }) => {
+type SavedSpec = {
+  values: Partial<NotificationChannelSpecFormValues>;
+  hasSavedAuth: boolean;
+};
+
+type ChannelFormProps = {
+  channel: NotificationChannelSettingModalFragment$data | null;
+  formRef: React.RefObject<FormInstance<NotificationChannelFormValues> | null>;
+  savedSpecRef: React.RefObject<SavedSpec | null>;
+};
+
+const ChannelForm: React.FC<
+  ChannelFormProps & { savedSpec: SavedSpec | null }
+> = ({ channel, formRef, savedSpecRef, savedSpec }) => {
   'use memo';
   const { t } = useTranslation();
-  const { message } = App.useApp();
-  const formRef = useRef<FormInstance<NotificationChannelFormValues>>(null);
-
-  const channel = useFragment(
-    graphql`
-      fragment NotificationChannelSettingModalFragment on NotificationChannel {
-        id
-        entityId
-        name
-        description
-        channelType
-        enabled
-        spec {
-          ... on WebhookSpec {
-            url
-          }
-          ... on EmailSpec {
-            smtp {
-              host
-              port
-              useTls
-              timeout
-            }
-            message {
-              fromEmail
-              toEmails
-              subjectTemplate
-            }
-            auth {
-              username
-            }
-          }
-        }
-      }
-    `,
-    channelFrgmt ?? null,
+  useEffect(() => {
+    savedSpecRef.current = savedSpec;
+  }, [savedSpec, savedSpecRef]);
+  return (
+    <Form
+      ref={formRef}
+      layout="vertical"
+      initialValues={{
+        name: channel?.name,
+        description: channel?.description ?? undefined,
+        channelType: channel?.channelType ?? 'WEBHOOK',
+        enabled: channel?.enabled ?? true,
+        smtpPort: DEFAULT_SMTP_PORT,
+        smtpUseTls: true,
+        smtpTimeout: DEFAULT_SMTP_TIMEOUT,
+        toEmails: [],
+        ..._.omitBy(savedSpec?.values ?? {}, _.isUndefined),
+      }}
+    >
+      <Form.Item
+        label={t('externalNotification.Name')}
+        name="name"
+        rules={[
+          {
+            required: true,
+            whitespace: true,
+            message: t('externalNotification.NameRequired'),
+          },
+          { max: 256 },
+        ]}
+      >
+        <BAITextInput aria-label={t('externalNotification.Name')} />
+      </Form.Item>
+      <Form.Item
+        label={t('externalNotification.Description')}
+        name="description"
+      >
+        <BAITextArea
+          aria-label={t('externalNotification.Description')}
+          rows={2}
+        />
+      </Form.Item>
+      <Form.Item
+        label={t('externalNotification.ChannelType')}
+        name="channelType"
+      >
+        <BAISegmentedControl
+          aria-label={t('externalNotification.ChannelType')}
+          disabled={!!channel}
+        >
+          {_.map(NOTIFICATION_CHANNEL_TYPES, (channelType) => (
+            <BAISegmentedControlItem
+              key={channelType}
+              value={channelType}
+              label={t(`externalNotification.channelTypes.${channelType}`)}
+            />
+          ))}
+        </BAISegmentedControl>
+      </Form.Item>
+      <Form.Item label={t('externalNotification.Enabled')} name="enabled">
+        <BAISwitch aria-label={t('externalNotification.Enabled')} />
+      </Form.Item>
+      <ChannelSpecFormItems hasSavedPassword={!!savedSpec?.hasSavedAuth} />
+    </Form>
   );
-  const savedSpecValues = specFormValuesFromSaved(channel?.spec);
-  const hasSavedPassword =
-    channel?.channelType === 'EMAIL' && !!savedSpecValues.smtpUsername;
+};
 
-  const [commitCreate, isInFlightCreate] =
-    useMutation<NotificationChannelSettingModalCreateMutation>(graphql`
-      mutation NotificationChannelSettingModalCreateMutation(
-        $input: CreateNotificationChannelInput!
-      ) {
-        adminCreateNotificationChannel(input: $input) {
-          channel {
-            id
-            entityId
-          }
-        }
-      }
-    `);
-
-  const [commitUpdate, isInFlightUpdate] =
-    useMutation<NotificationChannelSettingModalUpdateMutation>(graphql`
-      mutation NotificationChannelSettingModalUpdateMutation(
-        $input: UpdateNotificationChannelInput!
-      ) {
-        updateNotificationChannel(input: $input) {
-          channel {
-            id
-            name
-            description
-            channelType
-            enabled
+/** Reads the saved spec only when a channel is edited, so the list never carries it. */
+const EditChannelForm: React.FC<
+  ChannelFormProps & { channel: NotificationChannelSettingModalFragment$data }
+> = (props) => {
+  'use memo';
+  const { adminNotificationChannel } =
+    useLazyLoadQuery<NotificationChannelSettingModalSpecQuery>(
+      graphql`
+        query NotificationChannelSettingModalSpecQuery($id: ID!) {
+          adminNotificationChannel(id: $id) {
             spec {
               ... on WebhookSpec {
                 url
@@ -350,6 +383,73 @@ const NotificationChannelSettingModal: React.FC<
             }
           }
         }
+      `,
+      { id: props.channel.id },
+      { fetchPolicy: 'network-only' },
+    );
+  const spec = adminNotificationChannel?.spec;
+  return (
+    <ChannelForm
+      {...props}
+      savedSpec={{
+        values: specFormValuesFromSaved(spec),
+        hasSavedAuth:
+          props.channel.channelType === 'EMAIL' &&
+          !!spec &&
+          'auth' in spec &&
+          !!spec.auth,
+      }}
+    />
+  );
+};
+
+const NotificationChannelSettingModal: React.FC<
+  NotificationChannelSettingModalProps
+> = ({ channelFrgmt, onRequestClose, ...baiModalProps }) => {
+  'use memo';
+  const { t } = useTranslation();
+  const { message } = App.useApp();
+  const formRef = useRef<FormInstance<NotificationChannelFormValues>>(null);
+  const savedSpecRef = useRef<SavedSpec | null>(null);
+
+  const channel = useFragment(
+    graphql`
+      fragment NotificationChannelSettingModalFragment on NotificationChannel {
+        id
+        entityId
+        name
+        description
+        channelType
+        enabled
+      }
+    `,
+    channelFrgmt ?? null,
+  );
+
+  const [commitCreate, isInFlightCreate] =
+    useMutation<NotificationChannelSettingModalCreateMutation>(graphql`
+      mutation NotificationChannelSettingModalCreateMutation(
+        $input: CreateNotificationChannelInput!
+      ) {
+        adminCreateNotificationChannel(input: $input) {
+          channel {
+            id
+            entityId
+          }
+        }
+      }
+    `);
+
+  const [commitUpdate, isInFlightUpdate] =
+    useMutation<NotificationChannelSettingModalUpdateMutation>(graphql`
+      mutation NotificationChannelSettingModalUpdateMutation(
+        $input: UpdateNotificationChannelInput!
+      ) {
+        updateNotificationChannel(input: $input) {
+          channel {
+            ...NotificationChannelSettingModalFragment
+          }
+        }
       }
     `);
 
@@ -365,66 +465,78 @@ const NotificationChannelSettingModal: React.FC<
     message.error(error?.message || t('general.ErrorOccurred'));
   };
 
-  const handleOk = () =>
-    formRef.current
-      ?.validateFields()
-      .then((values) => {
-        const description = _.trim(values.description ?? '') || null;
-        if (channel) {
-          const spec = buildNotificationChannelSpecInput({
-            ...values,
-            channelType: channel.channelType,
-          });
-          const savedSpec = buildNotificationChannelSpecInput({
-            ...savedSpecValues,
-            channelType: channel.channelType,
-          });
-          // The spec is replaced as a whole and the saved password never comes back, so an
-          // unchanged connection is left out to keep that password.
-          const isSpecChanged =
-            !isSameSpecIgnoringPassword(spec, savedSpec) ||
-            !!values.smtpPassword;
-          if (isSpecChanged && hasSavedPassword && !values.smtpPassword) {
-            formRef.current?.setFields([
-              {
-                name: 'smtpPassword',
-                errors: [
-                  t('externalNotification.SmtpPasswordRequiredForChange'),
-                ],
-              },
-            ]);
-            return;
-          }
-          commitUpdate({
-            variables: {
-              input: {
-                id: channel.entityId,
-                name: _.trim(values.name),
-                description,
-                enabled: values.enabled,
-                ...(isSpecChanged ? { spec } : {}),
-              },
-            },
-            onCompleted: (_res, errors) => handleResult(errors),
-            onError: handleError,
-          });
-          return;
-        }
-        commitCreate({
-          variables: {
-            input: {
-              name: _.trim(values.name),
-              description,
-              channelType: values.channelType,
-              enabled: values.enabled,
-              spec: buildNotificationChannelSpecInput(values),
-            },
-          },
-          onCompleted: (_res, errors) => handleResult(errors),
-          onError: handleError,
-        });
-      })
-      .catch(() => {});
+  const updateChannel = async () => {
+    const form = formRef.current;
+    if (!form || !channel) return;
+    // The spec fields are validated only when the connection is sent.
+    await form.validateFields(['name', 'description', 'enabled']);
+    const values = form.getFieldsValue(true) as NotificationChannelFormValues;
+    const spec = buildNotificationChannelSpecInput({
+      ...values,
+      channelType: channel.channelType,
+    });
+    const savedSpec = buildNotificationChannelSpecInput({
+      ...(savedSpecRef.current?.values ?? {}),
+      channelType: channel.channelType,
+    });
+    const { includesSpec, needsPassword } = decideSpecUpdate({
+      spec,
+      savedSpec,
+      password: values.smtpPassword,
+      hasSavedAuth: !!savedSpecRef.current?.hasSavedAuth,
+    });
+    if (includesSpec) await form.validateFields();
+    if (needsPassword) {
+      form.setFields([
+        {
+          name: 'smtpPassword',
+          errors: [t('externalNotification.SmtpPasswordRequiredForChange')],
+        },
+      ]);
+      form.scrollToField('smtpPassword', {
+        behavior: 'smooth',
+        block: 'center',
+      });
+      return;
+    }
+    commitUpdate({
+      variables: {
+        input: {
+          id: channel.entityId,
+          name: _.trim(values.name),
+          description: _.trim(values.description ?? '') || null,
+          enabled: values.enabled,
+          ...(includesSpec ? { spec } : {}),
+        },
+      },
+      onCompleted: (_res, errors) => handleResult(errors),
+      onError: handleError,
+    });
+  };
+
+  const createChannel = async () => {
+    const form = formRef.current;
+    if (!form) return;
+    const values = await form.validateFields();
+    commitCreate({
+      variables: {
+        input: {
+          name: _.trim(values.name),
+          description: _.trim(values.description ?? '') || null,
+          channelType: values.channelType,
+          enabled: values.enabled,
+          spec: buildNotificationChannelSpecInput(values),
+        },
+      },
+      onCompleted: (_res, errors) => handleResult(errors),
+      onError: handleError,
+    });
+  };
+
+  const handleOk = () => {
+    // A rejected validateFields is shown on the fields themselves.
+    (channel ? updateChannel() : createChannel()).catch(_.noop);
+  };
 
   return (
     <BAIModal
@@ -441,66 +553,24 @@ const NotificationChannelSettingModal: React.FC<
       onOk={handleOk}
       onCancel={() => onRequestClose(false)}
     >
-      <Form
-        ref={formRef}
-        layout="vertical"
-        initialValues={{
-          name: channel?.name,
-          description: channel?.description ?? undefined,
-          channelType: channel?.channelType ?? 'WEBHOOK',
-          enabled: channel?.enabled ?? true,
-          smtpPort: DEFAULT_SMTP_PORT,
-          smtpUseTls: true,
-          smtpTimeout: DEFAULT_SMTP_TIMEOUT,
-          toEmails: [],
-          ..._.omitBy(savedSpecValues, _.isUndefined),
-        }}
-      >
-        <Form.Item
-          label={t('externalNotification.Name')}
-          name="name"
-          rules={[
-            {
-              required: true,
-              whitespace: true,
-              message: t('externalNotification.NameRequired'),
-            },
-            { max: 256 },
-          ]}
-        >
-          <BAITextInput aria-label={t('externalNotification.Name')} />
-        </Form.Item>
-        <Form.Item
-          label={t('externalNotification.Description')}
-          name="description"
-        >
-          <BAITextArea
-            aria-label={t('externalNotification.Description')}
-            rows={2}
-          />
-        </Form.Item>
-        <Form.Item
-          label={t('externalNotification.ChannelType')}
-          name="channelType"
-        >
-          <BAISegmentedControl
-            aria-label={t('externalNotification.ChannelType')}
-            disabled={!!channel}
-          >
-            {_.map(NOTIFICATION_CHANNEL_TYPES, (channelType) => (
-              <BAISegmentedControlItem
-                key={channelType}
-                value={channelType}
-                label={t(`externalNotification.channelTypes.${channelType}`)}
-              />
-            ))}
-          </BAISegmentedControl>
-        </Form.Item>
-        <Form.Item label={t('externalNotification.Enabled')} name="enabled">
-          <BAISwitch aria-label={t('externalNotification.Enabled')} />
-        </Form.Item>
-        <ChannelSpecFormItems hasSavedPassword={hasSavedPassword} />
-      </Form>
+      <BAIErrorBoundary>
+        <Suspense fallback={<BAISkeleton rows={6} />}>
+          {channel ? (
+            <EditChannelForm
+              channel={channel}
+              formRef={formRef}
+              savedSpecRef={savedSpecRef}
+            />
+          ) : (
+            <ChannelForm
+              channel={null}
+              formRef={formRef}
+              savedSpecRef={savedSpecRef}
+              savedSpec={null}
+            />
+          )}
+        </Suspense>
+      </BAIErrorBoundary>
     </BAIModal>
   );
 };
