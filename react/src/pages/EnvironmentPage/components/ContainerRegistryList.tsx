@@ -2,8 +2,9 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { ContainerRegistryListCreateDomainRegistryRelationMutation } from '../../../__generated__/ContainerRegistryListCreateDomainRegistryRelationMutation.graphql';
 import { ContainerRegistryListDeleteMutation } from '../../../__generated__/ContainerRegistryListDeleteMutation.graphql';
-import { ContainerRegistryListDomainMutation } from '../../../__generated__/ContainerRegistryListDomainMutation.graphql';
+import { ContainerRegistryListPurgeDomainRegistryRelationMutation } from '../../../__generated__/ContainerRegistryListPurgeDomainRegistryRelationMutation.graphql';
 import {
   ContainerRegistryListQuery,
   ContainerRegistryListQuery$data,
@@ -60,6 +61,13 @@ import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
  */
 const ALLOWED_PROJECT_PREVIEW_COUNT = 3;
 
+/**
+ * How many allowed registries the Enabled column reads at once. It is also the
+ * `first:` on the `containerRegistries` read — a domain beyond this bound
+ * would show its extra rows as disabled; the count field reports the total.
+ */
+const ALLOWED_REGISTRIES_FETCH_COUNT = 1000;
+
 /** Columns that restate what another column already says: off until asked for. */
 const DEFAULT_HIDDEN_REGISTRY_COLUMN_KEYS = ['is_global'];
 
@@ -110,6 +118,7 @@ const ContainerRegistryList: React.FC<{
       first: baiPaginationOption.limit,
       offset: baiPaginationOption.offset,
       allowedProjectPreviewCount: ALLOWED_PROJECT_PREVIEW_COUNT,
+      allowedRegistriesFetchCount: ALLOWED_REGISTRIES_FETCH_COUNT,
     }),
     [
       baiClient._config.domainName,
@@ -123,7 +132,7 @@ const ContainerRegistryList: React.FC<{
   const deferredQueryVariables = useDeferredValue(queryVariables);
   const deferredFetchKey = useDeferredValue(fetchKey);
 
-  const { container_registry_nodes, domain } =
+  const { container_registry_nodes, domainV2 } =
     useLazyLoadQuery<ContainerRegistryListQuery>(
       graphql`
         query ContainerRegistryListQuery(
@@ -133,6 +142,7 @@ const ContainerRegistryList: React.FC<{
           $first: Int
           $offset: Int
           $allowedProjectPreviewCount: Int
+          $allowedRegistriesFetchCount: Int
         ) {
           container_registry_nodes(
             filter: $filter
@@ -169,9 +179,19 @@ const ContainerRegistryList: React.FC<{
             }
             count
           }
-          domain(name: $domain) {
-            name
-            allowed_docker_registries
+          # The allowed registries are tracked per registry ID (26.10.0), not
+          # by name: same-named registries are independent.
+          domainV2(domainName: $domain) {
+            containerRegistries(first: $allowedRegistriesFetchCount)
+              @since(version: "26.10.0")
+              @catch(to: NULL) {
+              count
+              edges {
+                node {
+                  entityId
+                }
+              }
+            }
           }
         }
       `,
@@ -185,6 +205,18 @@ const ContainerRegistryList: React.FC<{
       },
     );
   const containerRegistries = _.map(container_registry_nodes?.edges, 'node');
+  // The registry IDs the domain is allowed to use. `null` when the manager
+  // does not carry the ID-based read (26.10.0) yet; the Enabled column stays
+  // hidden rather than showing a state it cannot toggle.
+  const allowedRegistryIds =
+    domainV2?.containerRegistries == null
+      ? null
+      : _.compact(
+          domainV2.containerRegistries.edges.map(
+            (edge) => edge?.node?.entityId,
+          ),
+        );
+  const isNewRegistryApiAvailable = allowedRegistryIds !== null;
 
   const [commitDeleteMutation, isInFlightDeleteMutation] =
     useMutation<ContainerRegistryListDeleteMutation>(graphql`
@@ -197,25 +229,57 @@ const ContainerRegistryList: React.FC<{
       }
     `);
 
-  const [commitDomainMutation, isInFlightDomainMutation] =
-    useMutation<ContainerRegistryListDomainMutation>(graphql`
-      mutation ContainerRegistryListDomainMutation(
-        $id: UUID!
-        $allowedDockerRegistries: [String!]!
-      ) {
-        updateDomainV2(
-          id: $id
-          input: { allowedDockerRegistries: $allowedDockerRegistries }
+  const [commitCreateRelationMutation, isInFlightCreateRelationMutation] =
+    useMutation<ContainerRegistryListCreateDomainRegistryRelationMutation>(
+      graphql`
+        mutation ContainerRegistryListCreateDomainRegistryRelationMutation(
+          $domainId: UUID!
+          $containerRegistryId: UUID!
         ) {
-          domain {
-            id
-            registry {
-              allowedDockerRegistries
+          createDomainContainerRegistryRelations(
+            input: {
+              items: [
+                {
+                  domainId: $domainId
+                  containerRegistryId: $containerRegistryId
+                }
+              ]
+            }
+          ) {
+            items {
+              domainId
+              containerRegistryId
             }
           }
         }
-      }
-    `);
+      `,
+    );
+
+  const [commitPurgeRelationMutation, isInFlightPurgeRelationMutation] =
+    useMutation<ContainerRegistryListPurgeDomainRegistryRelationMutation>(
+      graphql`
+        mutation ContainerRegistryListPurgeDomainRegistryRelationMutation(
+          $domainId: UUID!
+          $containerRegistryId: UUID!
+        ) {
+          purgeDomainContainerRegistryRelations(
+            input: {
+              items: [
+                {
+                  domainId: $domainId
+                  containerRegistryId: $containerRegistryId
+                }
+              ]
+            }
+          ) {
+            items {
+              domainId
+              containerRegistryId
+            }
+          }
+        }
+      `,
+    );
 
   const { t } = useTranslation();
   const [editingRegistry, setEditingRegistry] =
@@ -224,7 +288,7 @@ const ContainerRegistryList: React.FC<{
     useState<ContainerRegistry | null>();
   const [isNewModalOpen, setIsNewModalOpen] = useState(false);
 
-  const [inFlightHostName, setInFlightHostName] = useState<string>();
+  const [inFlightRowKey, setInFlightRowKey] = useState<string>();
 
   const rescanImage = async (
     registry_name: string,
@@ -289,6 +353,70 @@ const ContainerRegistryList: React.FC<{
         }
       })
       .catch(handleReScanError);
+  };
+
+  const enabledColumn: BAIColumnType<ContainerRegistry> = {
+    key: 'enabled',
+    title: t('general.Enabled'),
+    render: (_value, record) => {
+      const isEnabled = _.includes(allowedRegistryIds, record.row_id);
+      const isInFlightRelationMutation =
+        isInFlightCreateRelationMutation || isInFlightPurgeRelationMutation;
+      return (
+        // antd Switch checked/loading/disabled -> Astryx Switch
+        // value/isLoading/isDisabled; `label` is required, hidden here
+        // because the column header already names the control (P2).
+        <BAISwitch
+          aria-label={t('general.Enabled')}
+          value={
+            inFlightRowKey === record.id + deferredFetchKey
+              ? !isEnabled
+              : isEnabled
+          }
+          disabled={deferredFetchKey !== fetchKey || isInFlightRelationMutation}
+          isLoading={
+            (deferredFetchKey !== fetchKey || isInFlightRelationMutation) &&
+            inFlightRowKey === record.id + deferredFetchKey
+          }
+          onChange={(isOn) => {
+            if (!_.isString(record.row_id)) return;
+            setInFlightRowKey(record.id + deferredFetchKey);
+            (isOn ? commitCreateRelationMutation : commitPurgeRelationMutation)(
+              {
+                variables: {
+                  domainId: baiClient._config.domainId,
+                  containerRegistryId: record.row_id,
+                },
+                onCompleted: (_res, errors) => {
+                  if (errors && errors?.length > 0) {
+                    const errorMsgList = _.map(
+                      errors,
+                      (error) => error.message,
+                    );
+                    for (const error of errorMsgList) {
+                      message.error(error);
+                    }
+                  } else {
+                    updateFetchKey();
+                  }
+
+                  message.success({
+                    key: 'registry-enabled',
+                    content: isOn
+                      ? t('registry.RegistryTurnedOn')
+                      : t('registry.RegistryTurnedOff'),
+                  });
+                },
+                onError: (error) => {
+                  message.error(getErrorMessage(error));
+                  updateFetchKey();
+                },
+              },
+            );
+          }}
+        />
+      );
+    },
   };
 
   const columns: BAIColumnsType<ContainerRegistry> = [
@@ -391,80 +519,7 @@ const ContainerRegistryList: React.FC<{
         );
       },
     },
-    {
-      key: 'enabled',
-      title: t('general.Enabled'),
-      render: (_value, record) => {
-        const isEnabled = _.includes(
-          domain?.allowed_docker_registries,
-          record.registry_name,
-        );
-        return (
-          // antd Switch checked/loading/disabled -> Astryx Switch
-          // value/isLoading/isDisabled; `label` is required, hidden here
-          // because the column header already names the control (P2).
-          <BAISwitch
-            aria-label={t('general.Enabled')}
-            value={
-              inFlightHostName === record.id + deferredFetchKey
-                ? !isEnabled
-                : isEnabled
-            }
-            disabled={deferredFetchKey !== fetchKey || isInFlightDomainMutation}
-            isLoading={
-              (deferredFetchKey !== fetchKey || isInFlightDomainMutation) &&
-              inFlightHostName === record.id + deferredFetchKey
-            }
-            onChange={(isOn) => {
-              if (!_.isString(record.registry_name)) return;
-              let newAllowedDockerRegistries = _.compact(
-                domain?.allowed_docker_registries,
-              );
-              if (isOn) {
-                newAllowedDockerRegistries.push(record.registry_name);
-              } else {
-                newAllowedDockerRegistries = _.without(
-                  newAllowedDockerRegistries,
-                  record.registry_name,
-                );
-              }
-
-              setInFlightHostName(record.id + deferredFetchKey);
-              commitDomainMutation({
-                variables: {
-                  id: baiClient._config.domainId,
-                  allowedDockerRegistries: newAllowedDockerRegistries,
-                },
-                onCompleted: (_res, errors) => {
-                  if (errors && errors?.length > 0) {
-                    const errorMsgList = _.map(
-                      errors,
-                      (error) => error.message,
-                    );
-                    for (const error of errorMsgList) {
-                      message.error(error);
-                    }
-                  } else {
-                    updateFetchKey();
-                  }
-
-                  message.success({
-                    key: 'registry-enabled',
-                    content: isOn
-                      ? t('registry.RegistryTurnedOn')
-                      : t('registry.RegistryTurnedOff'),
-                  });
-                },
-                onError: (error) => {
-                  message.error(getErrorMessage(error));
-                  updateFetchKey();
-                },
-              });
-            }}
-          />
-        );
-      },
-    },
+    ...(isNewRegistryApiAvailable ? [enabledColumn] : []),
   ];
 
   const [storedHiddenColumnKeys, setHiddenColumnKeys] =

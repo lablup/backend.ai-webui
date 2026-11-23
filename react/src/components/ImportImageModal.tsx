@@ -81,16 +81,28 @@ const registriesQuery = graphql`
   query ImportImageModalRegistriesQuery(
     $first: Int
     $after: String
-    $domain: String
+    $domainName: String!
   ) {
-    domain(name: $domain) {
-      allowed_docker_registries
+    # The allowed registries are tracked per registry ID (26.10.0), not by
+    # name: same-named registries are independent.
+    domainV2(domainName: $domainName) {
+      containerRegistries(first: 1000)
+        @since(version: "26.10.0")
+        @catch(to: NULL) {
+        count
+        edges {
+          node {
+            entityId
+          }
+        }
+      }
     }
     container_registry_nodes(first: $first, after: $after)
       @since(version: "24.09.0") {
       edges {
         node {
           id
+          row_id
           registry_name
           project
           url
@@ -126,18 +138,19 @@ const scanImageMutation = graphql`
 
 const enableRegistryMutation = graphql`
   mutation ImportImageModalEnableRegistryMutation(
-    $id: UUID!
-    $allowedDockerRegistries: [String!]!
+    $domainId: UUID!
+    $containerRegistryId: UUID!
   ) {
-    updateDomainV2(
-      id: $id
-      input: { allowedDockerRegistries: $allowedDockerRegistries }
+    createDomainContainerRegistryRelations(
+      input: {
+        items: [
+          { domainId: $domainId, containerRegistryId: $containerRegistryId }
+        ]
+      }
     ) {
-      domain {
-        id
-        registry {
-          allowedDockerRegistries
-        }
+      items {
+        domainId
+        containerRegistryId
       }
     }
   }
@@ -160,14 +173,15 @@ const REGISTRY_PAGE_LIMIT = 100;
  */
 const fetchAllRegistries = async (
   environment: IEnvironment,
-  domain: string,
+  domainName: string,
 ): Promise<{
   nodes: Array<RegistryNode>;
-  /** `null` when the manager did not say; treated as allowing everything. */
-  allowedRegistries: ReadonlyArray<string> | null;
+  /** The registry IDs the domain is allowed to use. `null` when the manager
+   * does not carry the ID-based read (26.10.0) yet; treated as unknown. */
+  allowedRegistryIds: ReadonlyArray<string> | null;
 }> => {
   const nodes: Array<RegistryNode> = [];
-  let allowedRegistries: ReadonlyArray<string> | null = null;
+  let allowedRegistryIds: ReadonlyArray<string> | null = null;
   let after: string | null = null;
   for (let page = 0; page < REGISTRY_PAGE_LIMIT; page++) {
     // Annotated: `after` is written from this very result, so an inferred
@@ -176,13 +190,18 @@ const fetchAllRegistries = async (
       await fetchQuery<ImportImageModalRegistriesQuery>(
         environment,
         registriesQuery,
-        { first: REGISTRY_PAGE_SIZE, after, domain },
+        { first: REGISTRY_PAGE_SIZE, after, domainName },
         { fetchPolicy: 'network-only' },
       ).toPromise();
     if (page === 0) {
-      allowedRegistries = data?.domain?.allowed_docker_registries
-        ? _.compact(data.domain.allowed_docker_registries)
-        : null;
+      allowedRegistryIds =
+        data?.domainV2?.containerRegistries == null
+          ? null
+          : _.compact(
+              data.domainV2.containerRegistries.edges.map(
+                (edge) => edge?.node?.entityId,
+              ),
+            );
     }
     const connection: RegistryConnection | null | undefined =
       data?.container_registry_nodes;
@@ -195,7 +214,7 @@ const fetchAllRegistries = async (
     }
     after = connection.pageInfo.endCursor;
   }
-  return { nodes, allowedRegistries };
+  return { nodes, allowedRegistryIds };
 };
 
 export interface ImportImageModalProps extends Omit<BAIModalProps, 'onOk'> {
@@ -301,29 +320,34 @@ const ImportImageModalContent: React.FC<{
   const registryNodes = filterOutNullAndUndefined(
     _.map(registryData.nodes, (edge) => edge?.node),
   ).filter((node) => !!node.registry_name);
-  const { allowedRegistries } = registryData;
+  const { allowedRegistryIds } = registryData;
   // Images of a registry the domain does not allow register fine but stay out
-  // of the domain's image list (manager `ImageAccessCriteria`).
-  const isEnabledInDomain = (registryName: string) =>
-    allowedRegistries === null || allowedRegistries.includes(registryName);
+  // of the domain's image list (manager `ImageAccessCriteria`). `null` means
+  // the manager does not carry the ID-based read yet; treated as unknown.
+  const isEnabledInDomain = (
+    registryRow: RegistryRow & { row_id?: string | null },
+  ) =>
+    allowedRegistryIds === null ||
+    (registryRow.row_id != null &&
+      allowedRegistryIds.includes(registryRow.row_id));
 
   const [commitEnableRegistry, isInFlightEnableRegistry] =
     useMutation<ImportImageModalEnableRegistryMutation>(enableRegistryMutation);
   const refreshRegistries = () =>
     startRegistryTransition(() => updateRegistryFetchKey());
-  // Same write as the Enabled switch on the Registries tab.
-  const enableInDomain = (registryName: string) => {
-    if (isEnabledInDomain(registryName)) {
+  // Same write as the Enabled switch on the Registries tab: one relation pair,
+  // not a rewrite of the whole list.
+  const enableInDomain = (
+    registryRow: RegistryRow & { row_id?: string | null },
+  ) => {
+    if (isEnabledInDomain(registryRow) || registryRow.row_id == null) {
       refreshRegistries();
       return;
     }
     commitEnableRegistry({
       variables: {
-        id: domainId,
-        allowedDockerRegistries: _.uniq([
-          ...(allowedRegistries ?? []),
-          registryName,
-        ]),
+        domainId,
+        containerRegistryId: registryRow.row_id,
       },
       onCompleted: (_res, errors) => {
         if (errors && errors.length > 0) {
@@ -345,10 +369,12 @@ const ImportImageModalContent: React.FC<{
       },
     });
   };
-  const registries: Array<RegistryRow> = registryNodes.map((node) => ({
-    registry_name: node.registry_name as string,
-    project: node.project ?? null,
-  }));
+  const registries: Array<RegistryRow & { row_id?: string | null }> =
+    registryNodes.map((node) => ({
+      registry_name: node.registry_name as string,
+      project: node.project ?? null,
+      row_id: node.row_id ?? null,
+    }));
 
   // A host already registered under a different project fixes the URL and the
   // type of the row we are about to create; only the project differs.
@@ -724,13 +750,18 @@ const ImportImageModalContent: React.FC<{
             ))}
             {previewLines.map(({ key, raw, resolved }) => {
               const outcome = outcomes[key];
+              // A submittable reference has exactly one matched registry (an
+              // ambiguous one is blocked above), so that row is the one the
+              // domain must allow.
+              const matchedRow = resolved.matchedRegistries[0];
               const disabledRegistry =
                 resolved.submittable &&
                 resolved.registryHost &&
                 outcome?.status !== 'success' &&
-                !isEnabledInDomain(resolved.registryHost)
+                !isEnabledInDomain(matchedRow)
                   ? resolved.registryHost
                   : null;
+              const disabledRegistryRow = disabledRegistry ? matchedRow : null;
               const status: LineStatus =
                 disabledRegistry && !outcome
                   ? {
@@ -830,14 +861,14 @@ const ImportImageModalContent: React.FC<{
                             }
                           />
                         ) : null}
-                        {disabledRegistry ? (
+                        {disabledRegistryRow ? (
                           <Button
                             size="sm"
                             variant="secondary"
                             label={t('environment.ImportImageEnableRegistry')}
                             isLoading={isInFlightEnableRegistry}
                             isDisabled={isSubmitting}
-                            onClick={() => enableInDomain(disabledRegistry)}
+                            onClick={() => enableInDomain(disabledRegistryRow)}
                           />
                         ) : null}
                       </HStack>
@@ -863,8 +894,8 @@ const ImportImageModalContent: React.FC<{
               });
               // Enabled here too, or its images would import into a list that
               // cannot show them; the refresh re-resolves every line it names.
-              if (registry?.registry_name) {
-                enableInDomain(registry.registry_name);
+              if (registry?.row_id) {
+                enableInDomain(registry);
               } else {
                 refreshRegistries();
               }
