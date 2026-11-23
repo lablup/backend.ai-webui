@@ -1571,7 +1571,7 @@ Drawer มีแท็บต่อไปนี้:
 ซึ่งส่งออกเป็นไฟล์หรือนำเข้าไฟล์ได้
 
 ![](../images/system_settings_page.png)
-<!-- TODO(screenshot): /admin/system-settings (System Settings tab) - recapture the toolbar without the removed Apply button (JSON Config and Reset only). Not captured on 2026-11-22: the capture backend's manager was unhealthy (/func/ returned 401). -->
+<!-- TODO(screenshot): /admin/system-settings (System Settings tab), viewport 1460x900, en/ko/ja/th - recapture so the toolbar shows only JSON Config and Reset; the current image still shows the removed Apply button. Still blocked on 2026-11-23: the capture backend at 10.82.1.75:8090 answers /func/ with 401 and no capture environment was provisioned this run, so no login is possible. Needs a human capture. -->
 
 ในแท็บ **การกำหนดค่า** คุณสามารถดูการตั้งค่าหลักของเซิร์ฟเวอร์ Backend.AI ได้
 ในปัจจุบันมีการควบคุมหลายอย่างที่สามารถเปลี่ยนแปลงและแสดงการตั้งค่าได้
@@ -1828,7 +1828,7 @@ Superadmin สามารถดูโปรเจกต์ทั้งหมด
 ผู้ดูแลระบบสูงสุด (superadmin) สามารถเปิดหน้า **การวินิจฉัย** จากแถบด้านข้างของผู้ดูแลระบบเพื่อเรียกใช้การตรวจสอบสถานะอัตโนมัติของการ deploy WebUI หน้านี้จะประเมินการกำหนดค่าระหว่างเบราว์เซอร์กับเซิร์ฟเวอร์ และรายงานการตั้งค่าที่ไม่ถูกต้อง เพื่อให้สามารถระบุปัญหาการเชื่อมต่อหรือความปลอดภัยได้ก่อนที่จะส่งผลกระทบต่อผู้ใช้
 
 ![](../images/diagnostics_page.png)
-<!-- TODO(screenshot): /admin/diagnostics - recapture the section list including the new App Config section. Not captured on 2026-11-22: the capture backend's manager was unhealthy (/func/ returned 401). -->
+<!-- TODO(screenshot): /admin/diagnostics, viewport 1460x900, en/ko/ja/th - recapture the section list so it includes the new App Config section; the current image predates it. Still blocked on 2026-11-23: the capture backend at 10.82.1.75:8090 answers /func/ with 401 and no capture environment was provisioned this run, so no login is possible. Needs a human capture. -->
 
 แถบเครื่องมือที่ด้านบนของหน้ามีตัวควบคุมต่อไปนี้
 

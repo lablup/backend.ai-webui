@@ -1796,7 +1796,7 @@ saved for the domain, returning each setting to its default. **JSON Config** sho
 settings as JSON, and can export them to a file or import one.
 
 ![](../images/system_settings_page.png)
-<!-- TODO(screenshot): /admin/system-settings (System Settings tab) - recapture the toolbar without the removed Apply button (JSON Config and Reset only). Not captured on 2026-11-22: the capture backend's manager was unhealthy (/func/ returned 401). -->
+<!-- TODO(screenshot): /admin/system-settings (System Settings tab), viewport 1460x900, en/ko/ja/th - recapture so the toolbar shows only JSON Config and Reset; the current image still shows the removed Apply button. Still blocked on 2026-11-23: the capture backend at 10.82.1.75:8090 answers /func/ with 401 and no capture environment was provisioned this run, so no login is possible. Needs a human capture. -->
 
 On the **Configurations** tab, you can see main settings of Backend.AI server.
 Currently, it provides several controls which can change and list settings.
@@ -2091,7 +2091,7 @@ For detailed information about managing roles, permissions, and user assignments
 Superadmins can open the **Diagnostics** page from the admin sidebar to run a set of automated health checks on the WebUI deployment. The page evaluates the browser-to-server configuration and reports any misconfiguration, so that connectivity or security problems can be identified before they affect users.
 
 ![](../images/diagnostics_page.png)
-<!-- TODO(screenshot): /admin/diagnostics - recapture the section list including the new App Config section. Not captured on 2026-11-22: the capture backend's manager was unhealthy (/func/ returned 401). -->
+<!-- TODO(screenshot): /admin/diagnostics, viewport 1460x900, en/ko/ja/th - recapture the section list so it includes the new App Config section; the current image predates it. Still blocked on 2026-11-23: the capture backend at 10.82.1.75:8090 answers /func/ with 401 and no capture environment was provisioned this run, so no login is possible. Needs a human capture. -->
 
 The toolbar at the top of the page provides the following controls:
 

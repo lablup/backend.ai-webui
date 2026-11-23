@@ -1669,7 +1669,7 @@ WebUI がドメインのすべてのユーザーに提供するオプション�
 現在の設定を JSON で表示し、ファイルへのエクスポートやファイルからのインポートができます。
 
 ![](../images/system_settings_page.png)
-<!-- TODO(screenshot): /admin/system-settings (System Settings tab) - recapture the toolbar without the removed Apply button (JSON Config and Reset only). Not captured on 2026-11-22: the capture backend's manager was unhealthy (/func/ returned 401). -->
+<!-- TODO(screenshot): /admin/system-settings (System Settings tab), viewport 1460x900, en/ko/ja/th - recapture so the toolbar shows only JSON Config and Reset; the current image still shows the removed Apply button. Still blocked on 2026-11-23: the capture backend at 10.82.1.75:8090 answers /func/ with 401 and no capture environment was provisioned this run, so no login is possible. Needs a human capture. -->
 
 **構成** タブでは、Backend.AIサーバーの主要な設定を確認できます。現在、設定を変更および
 一覧表示できる複数のコントロールが提供されています。
@@ -1957,7 +1957,7 @@ RBAC（ロールベースアクセス制御）管理では、スーパー管理�
 スーパー管理者は、管理者サイドバーから **診断** ページを開いて、WebUI デプロイメントに対する自動状態チェックを実行できます。このページはブラウザーとサーバー間の構成を評価し、誤った設定を報告することで、接続またはセキュリティの問題がユーザーに影響を与える前に把握できるようにします。
 
 ![](../images/diagnostics_page.png)
-<!-- TODO(screenshot): /admin/diagnostics - recapture the section list including the new App Config section. Not captured on 2026-11-22: the capture backend's manager was unhealthy (/func/ returned 401). -->
+<!-- TODO(screenshot): /admin/diagnostics, viewport 1460x900, en/ko/ja/th - recapture the section list so it includes the new App Config section; the current image predates it. Still blocked on 2026-11-23: the capture backend at 10.82.1.75:8090 answers /func/ with 401 and no capture environment was provisioned this run, so no login is possible. Needs a human capture. -->
 
 ページ上部のツールバーには、次のコントロールがあります。
 
