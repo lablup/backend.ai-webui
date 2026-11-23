@@ -5,20 +5,23 @@
  The floating button and chat panel sit on the ladder's `assistant` rung
  (packages/backend.ai-ui/src/styles/zIndexLadder.ts): over page content, under
  drawers, dialogs and notifications. They are anchored to the bottom-left of
- the main content area (`.main-layout-main-content`, right of the sider), so
- the bottom-right notification stack stays clear of them.
+ the main content area (`.main-layout-main-content`, right of the sider), away
+ from the bottom-right notification stack; on narrow viewports the stack can
+ still reach them (see the media query and the panel width below).
 */
 @layer components {
   :root {
     --webui-assistant-fab-size: 48px;
     --webui-assistant-inset: var(--spacing-6);
-    /* ui-common's NotificationStack: 384px wide, var(--spacing-6) from the right edge. */
+    /* Mirrors ui-common's NotificationStack.css (width 384px, padding spacing-6);
+       update it, and the 480px query below, when that changes. */
     --webui-assistant-stack-clearance: calc(
       384px + var(--spacing-6) + var(--spacing-3)
     );
   }
 
-  /* Below 480px the stack spans the viewport and would cover the button. */
+  /* Below 480px (384 + 2 x 48, no sider under 768px) the viewport-fixed stack
+     spans the screen and would cover the button. */
   @media (max-width: 480px) {
     :root:has(.webui-assistant-fab) {
       --bai-notification-stack-inset-bottom: calc(
