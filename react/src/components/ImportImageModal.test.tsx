@@ -263,7 +263,7 @@ let registryPageFetchCount = 0;
 const queueRegistryPages = (
   environment: ReturnType<typeof createMockEnvironment>,
   registryPages: Array<Array<RegistryNodeShape>>,
-  /** The registry IDs the domain allows; `null` means not reported. */
+  /** The registry IDs the domain allows; `null`, or omitting it, means not reported. */
   allowedRegistryIds?: Array<string> | null,
 ) => {
   registryPages.forEach((nodes, index) => {
@@ -465,6 +465,8 @@ describe('ImportImageModal (FR-3940 review round)', () => {
         screen.getByText('environment.ImportImageRegistryDisabledInDomain'),
       ).toBeInTheDocument(),
     );
+    // A warning, not a block, as with any disallowed registry.
+    expect(importButton()).toBeEnabled();
   });
 
   it('matches against registries from every page of the connection', async () => {
