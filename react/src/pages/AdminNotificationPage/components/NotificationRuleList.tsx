@@ -426,7 +426,8 @@ const NotificationRuleList: React.FC = () => {
         scroll={{ x: 'max-content' }}
         size="small"
         rowKey="id"
-        loading={isLoading}
+        // Until the names arrive, a new channel would read "-" like a purged one.
+        loading={isLoading || deferredChannelIdsKey !== channelIdsKey}
         dataSource={rules}
         columns={columns}
         order={queryParams.order ?? undefined}
