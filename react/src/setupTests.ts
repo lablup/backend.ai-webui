@@ -63,13 +63,9 @@ if (typeof HTMLDialogElement !== 'undefined') {
   }
 }
 
-// Polyfill fetch for jsdom environment
-if (typeof global.fetch === 'undefined') {
-  global.fetch = () =>
-    Promise.resolve({
-      json: () => Promise.resolve({}),
-      text: () => Promise.resolve(''),
-      ok: true,
-      status: 200,
-    } as Response);
-}
+globalThis.fetch = (input: RequestInfo | URL) =>
+  Promise.reject(
+    new Error(
+      `Unit tests must not send real requests: stub fetch with vi.stubGlobal (ADR 0036). Called with ${String(input)}`,
+    ),
+  );

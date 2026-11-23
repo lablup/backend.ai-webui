@@ -15,7 +15,7 @@
 - **Test count**: `react/src` holds about 230 `*.test.ts(x)` files and `packages/backend.ai-ui/src` about 110. Contributors and agents add more with each component change.
 - **No written convention**: `.github/instructions/react.instructions.md` says only that unit tests are Vitest and how `VERIFY_TESTS=1 bash scripts/verify.sh` runs them. Each test file chooses its own mocking and its own scope.
 - **Mocking in use today**: About 40 files use `createMockEnvironment` from `relay-test-utils`, and 8 replace `react-relay` itself with `vi.mock`. Many files replace `useSuspendedBackendaiClient` or `useConnectedBAIClient` through `vi.mock`, and a few stub `fetch` with `vi.stubGlobal`. No test uses MSW.
-- **No `fetch` guard**: Under Node 24 the jsdom environment keeps Node's own `fetch`, so the fallback in `react/src/setupTests.ts` never runs. Nothing stops a test that forgets its stub from sending a real request.
+- **No `fetch` guard**: Under Node 24 the jsdom environment keeps Node's own `fetch`, so the fallback in `react/src/setupTests.ts` never runs. Before this ADR nothing stopped a test that forgot its stub from sending a real request.
 - **Misuse cases in use today**: some tests assert errors for usage the types already reject, for example `should handle multiple children error gracefully` in `packages/backend.ai-ui/src/components/BAIUnmountAfterClose.test.tsx`, which passes two children under `@ts-expect-error` and expects a throw. Such a test fixes React's behavior for a call no caller makes, and a reader cannot tell it from a requirement.
 
 ## Diagram
@@ -55,7 +55,7 @@ flowchart LR
 - **Backend.AI client in BUI**: A test replaces `useConnectedBAIClient` or `useAnonymousBAIClient` from `packages/backend.ai-ui/src/components/provider/BAIClientProvider/hooks/` with `vi.mock`, as `BAIFileExplorer.createFolder.test.tsx` does. `react/src` code that calls these hooks is tested the same way.
 - **Partial client objects**: The fake client holds only the members the component calls.
 - **Client package**: `react/vitest.config.ts` aliases `backend.ai-client` to `react/__test__/backendAiClient.mock.js`, which exports empty classes. A test of the client's own error handling may import the real `Client` by relative path with `fetch` stubbed, as `react/src/hooks/useBackendAIAppLauncher.errors.test.ts` does.
-- **`fetch`**: A component that calls `fetch` directly is tested with `vi.stubGlobal('fetch', ...)`, and the test restores it with `vi.unstubAllGlobals` after each case. No setup file installs a guard, so the stub is each test's own job.
+- **`fetch`**: A component that calls `fetch` directly is tested with `vi.stubGlobal('fetch', ...)`, and the test restores it with `vi.unstubAllGlobals` after each case. `react/src/setupTests.ts` and `packages/backend.ai-ui/setupTests.ts` replace the global `fetch` with a function that throws, so a test that forgets its stub fails instead of sending a request.
 - **Other request paths**: A component that sends a request another way, such as an upload through `tus-js-client` over `XMLHttpRequest`, is tested with a `vi.mock` of the module that sends it.
 - **No real requests**: A unit test never reads an endpoint, a credential, or `config.toml`. Behavior against a real manager belongs to the e2e suites.
 - **Other mocks**: This section governs only API and network boundaries. A test may still mock `react-i18next`, the router, or a browser API when the component needs it to render.
@@ -88,7 +88,7 @@ flowchart LR
 
 ## Consequences
 
-- **Stable runs**: A test that follows section 1 depends on no running manager, so it runs the same in CI and on any machine. A test that forgets its `fetch` stub is the exception, because no setup file blocks the request.
+- **Stable runs**: A test that follows section 1 depends on no running manager, so it runs the same in CI and on any machine. A test that forgets its `fetch` stub fails on the guard in the setup files instead of reaching the network.
 - **Fewer cases per component**: A new component ships with tests for what it is for. Reviewers judge a test by whether its behavior is intended, not by how many cases there are.
 - **Misuse can regress unseen**: A misuse that changes behavior is not caught until a user meets it. The fix then adds the test.
 - **Mixed tree**: Existing tests that assert misuse or reach past their types stay until a change edits those cases. A reader can meet both styles in one file.

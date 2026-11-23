@@ -15,7 +15,7 @@
 - **Test count**: `react/src`에는 약 230개, `packages/backend.ai-ui/src`에는 약 110개의 `*.test.ts(x)` 파일이 있다. 기여자와 agent가 component를 바꿀 때마다 test를 더한다.
 - **No written convention**: `.github/instructions/react.instructions.md`는 unit test가 Vitest라는 것과 `VERIFY_TESTS=1 bash scripts/verify.sh`로 돌린다는 것만 적는다. test 파일마다 mock 방식과 범위를 제각각 정한다.
 - **Mocking in use today**: 약 40개 파일이 `relay-test-utils`의 `createMockEnvironment`를 쓰고, 8개는 `react-relay` 자체를 `vi.mock`으로 바꾼다. 많은 파일이 `useSuspendedBackendaiClient`나 `useConnectedBAIClient`를 `vi.mock`으로 바꾸고, 몇 개는 `fetch`를 `vi.stubGlobal`로 대신한다. MSW를 쓰는 test는 없다.
-- **No `fetch` guard**: Node 24에서 jsdom environment는 Node 자체의 `fetch`를 그대로 두므로, `react/src/setupTests.ts`의 fallback은 실행되지 않는다. stub을 빠뜨린 test가 실제 요청을 보내도 아무것도 막지 않는다.
+- **No `fetch` guard**: Node 24에서 jsdom environment는 Node 자체의 `fetch`를 그대로 두므로, `react/src/setupTests.ts`의 fallback은 실행되지 않는다. 이 ADR 전에는 stub을 빠뜨린 test가 실제 요청을 보내도 아무것도 막지 않았다.
 - **Misuse cases in use today**: 일부 test는 type이 이미 막는 사용에 대한 error를 검사한다. 예를 들어 `packages/backend.ai-ui/src/components/BAIUnmountAfterClose.test.tsx`의 `should handle multiple children error gracefully`는 `@ts-expect-error`로 child 두 개를 넘기고 throw를 기대한다. 이런 test는 어떤 caller도 하지 않는 호출에 대한 React의 동작을 고정하고, 읽는 사람은 그것을 요구사항과 구별할 수 없다.
 
 ## 설계도
@@ -55,7 +55,7 @@ flowchart LR
 - **Backend.AI client in BUI**: test는 `packages/backend.ai-ui/src/components/provider/BAIClientProvider/hooks/`의 `useConnectedBAIClient`나 `useAnonymousBAIClient`를 `vi.mock`으로 바꾼다. `BAIFileExplorer.createFolder.test.tsx`가 그렇게 한다. 이 hook을 부르는 `react/src` 코드도 같은 방식으로 test한다.
 - **Partial client objects**: 가짜 client는 component가 호출하는 member만 가진다.
 - **Client package**: `react/vitest.config.ts`는 `backend.ai-client`를 빈 class를 export하는 `react/__test__/backendAiClient.mock.js`로 alias한다. client 자체의 error 처리를 검사하는 test는 `fetch`를 stub한 채 실제 `Client`를 상대 경로로 import할 수 있다. `react/src/hooks/useBackendAIAppLauncher.errors.test.ts`가 그렇게 한다.
-- **`fetch`**: `fetch`를 직접 호출하는 component는 `vi.stubGlobal('fetch', ...)`로 test하고, test는 case마다 `vi.unstubAllGlobals`로 되돌린다. 막아 주는 setup 파일이 없으므로 stub은 각 test가 직접 한다.
+- **`fetch`**: `fetch`를 직접 호출하는 component는 `vi.stubGlobal('fetch', ...)`로 test하고, test는 case마다 `vi.unstubAllGlobals`로 되돌린다. `react/src/setupTests.ts`와 `packages/backend.ai-ui/setupTests.ts`는 전역 `fetch`를 에러를 던지는 함수로 바꾸므로, stub을 빠뜨린 test는 요청을 보내지 않고 실패한다.
 - **Other request paths**: `XMLHttpRequest`로 `tus-js-client` upload를 하는 것처럼 다른 방법으로 요청을 보내는 component는 그 요청을 보내는 module을 `vi.mock`해서 test한다.
 - **No real requests**: unit test는 endpoint, credential, `config.toml`을 읽지 않는다. 실제 manager에 대한 동작은 e2e suite가 맡는다.
 - **Other mocks**: 이 절은 API·network 경계만 다룬다. component가 렌더하는 데 필요하면 test는 여전히 `react-i18next`, router, browser API를 mock할 수 있다.
@@ -88,7 +88,7 @@ flowchart LR
 
 ## Consequences
 
-- **Stable runs**: 1절을 따르는 test는 돌고 있는 manager에 의존하지 않으므로 CI와 어느 machine에서나 같게 돈다. `fetch` stub을 빠뜨린 test는 예외다. 어떤 setup 파일도 그 요청을 막지 않기 때문이다.
+- **Stable runs**: 1절을 따르는 test는 돌고 있는 manager에 의존하지 않으므로 CI와 어느 machine에서나 같게 돈다. `fetch` stub을 빠뜨린 test는 network에 닿지 않고 setup 파일의 guard에서 실패한다.
 - **Fewer cases per component**: 새 component는 그 목적에 대한 test와 함께 들어온다. reviewer는 test를 case 개수가 아니라 그 동작이 의도된 것인지로 판단한다.
 - **Misuse can regress unseen**: 동작이 바뀐 잘못된 사용은 사용자가 만나기 전까지 잡히지 않는다. 그때 수정이 test를 추가한다.
 - **Mixed tree**: 잘못된 사용을 검사하거나 type을 넘어서는 기존 test는 변경이 그 case를 고칠 때까지 남는다. 읽는 사람은 한 파일 안에서 두 방식을 모두 만날 수 있다.
