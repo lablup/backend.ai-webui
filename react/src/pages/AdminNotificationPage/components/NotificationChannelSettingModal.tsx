@@ -85,7 +85,7 @@ const ChannelSpecFormItems: React.FC = () => {
     <>
       <BAIFlex gap="sm" align="start">
         <Form.Item
-          style={{ flex: 1 }}
+          style={{ flex: 1, minWidth: 0 }}
           label={t('externalNotification.SmtpHost')}
           name="smtpHost"
           rules={[
@@ -102,12 +102,15 @@ const ChannelSpecFormItems: React.FC = () => {
           />
         </Form.Item>
         <Form.Item
+          style={{ flex: 1, minWidth: 0 }}
           label={t('externalNotification.SmtpPort')}
           name="smtpPort"
           rules={[{ required: true }]}
         >
           <BAINumberInput
             aria-label={t('externalNotification.SmtpPort')}
+            width="100%"
+            hasClear={false}
             min={1}
             max={65535}
             isIntegerOnly
@@ -116,19 +119,22 @@ const ChannelSpecFormItems: React.FC = () => {
       </BAIFlex>
       <BAIFlex gap="sm" align="start">
         <Form.Item
-          style={{ flex: 1 }}
+          style={{ flex: 1, minWidth: 0 }}
           label={t('externalNotification.SmtpUseTls')}
           name="smtpUseTls"
         >
           <BAISwitch aria-label={t('externalNotification.SmtpUseTls')} />
         </Form.Item>
         <Form.Item
+          style={{ flex: 1, minWidth: 0 }}
           label={t('externalNotification.SmtpTimeout')}
           name="smtpTimeout"
           rules={[{ required: true }]}
         >
           <BAINumberInput
             aria-label={t('externalNotification.SmtpTimeout')}
+            width="100%"
+            hasClear={false}
             min={1}
             isIntegerOnly
             units={t('externalNotification.Seconds')}
@@ -137,7 +143,7 @@ const ChannelSpecFormItems: React.FC = () => {
       </BAIFlex>
       <BAIFlex gap="sm" align="start">
         <Form.Item
-          style={{ flex: 1 }}
+          style={{ flex: 1, minWidth: 0 }}
           label={t('externalNotification.SmtpUsername')}
           name="smtpUsername"
         >
@@ -147,7 +153,7 @@ const ChannelSpecFormItems: React.FC = () => {
           />
         </Form.Item>
         <Form.Item
-          style={{ flex: 1 }}
+          style={{ flex: 1, minWidth: 0 }}
           label={t('externalNotification.SmtpPassword')}
           name="smtpPassword"
         >
