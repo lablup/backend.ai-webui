@@ -839,8 +839,15 @@
     "MemoryInUsePercent": "Memoria in uso {{percent}}%",
     "Used": "Usato",
     "agentDraft": {
+      "Added": "Aggiunto",
+      "ChangeEdited": "impostazioni",
+      "ChangeMoved": "posizione",
+      "ChangeRange": "intervallo",
+      "ChangeResized": "dimensione",
+      "Changed": "Modificato: {{changes}}",
       "Description": "Un agente IA ha proposto queste modifiche. La bacheca qui sotto ne mostra l'anteprima; nulla viene salvato finché non premi {{apply}}.",
-      "Title": "Modifiche proposte da un agente IA"
+      "Title": "Modifiche proposte da un agente IA",
+      "WillBeHidden": "Verrà nascosto"
     },
     "boards": {
       "BoardName": "Nome della bacheca",

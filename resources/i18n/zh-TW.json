@@ -839,8 +839,15 @@
     "MemoryInUsePercent": "記憶體使用 {{percent}}%",
     "Used": "用過的",
     "agentDraft": {
+      "Added": "已新增",
+      "ChangeEdited": "設定",
+      "ChangeMoved": "位置",
+      "ChangeRange": "時間範圍",
+      "ChangeResized": "大小",
+      "Changed": "已變更：{{changes}}",
       "Description": "AI 代理建議了以下變更。下方的看板為預覽，按下 {{apply}} 之前不會儲存。",
-      "Title": "AI 代理建議的變更"
+      "Title": "AI 代理建議的變更",
+      "WillBeHidden": "將隱藏"
     },
     "boards": {
       "BoardName": "看板名稱",

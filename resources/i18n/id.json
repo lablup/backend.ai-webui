@@ -839,8 +839,15 @@
     "MemoryInUsePercent": "Memori terpakai {{percent}}%",
     "Used": "Digunakan",
     "agentDraft": {
+      "Added": "Ditambahkan",
+      "ChangeEdited": "pengaturan",
+      "ChangeMoved": "posisi",
+      "ChangeRange": "rentang",
+      "ChangeResized": "ukuran",
+      "Changed": "Diubah: {{changes}}",
       "Description": "Agen AI mengusulkan perubahan ini. Papan di bawah menampilkan pratinjaunya; tidak ada yang disimpan sampai Anda menekan {{apply}}.",
-      "Title": "Perubahan yang diusulkan agen AI"
+      "Title": "Perubahan yang diusulkan agen AI",
+      "WillBeHidden": "Akan disembunyikan"
     },
     "boards": {
       "BoardName": "Nama papan",

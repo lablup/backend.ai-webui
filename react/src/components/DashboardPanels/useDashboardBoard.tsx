@@ -8,6 +8,7 @@ import { useBAISettingUserState } from '../../hooks/useBAISetting';
 import { useIsCurrentProjectAdmin } from '../../hooks/useCurrentUserProjectRoles';
 import { useEffectiveLoginConfig } from '../../hooks/useWebUIConfig';
 import DashboardPanelContent from './DashboardPanelContent';
+import DashboardPreviewMark from './DashboardPreviewMark';
 import PanelFrame from './PanelFrame';
 import { PanelHeaderSettingsContext } from './PanelSettingsHeaderControls';
 import {
@@ -55,6 +56,7 @@ import {
   panelSettingOverridesAtom,
 } from './panelSettingOverrides';
 import { hasSetting, mergeSettings, panelDefinitionOf } from './panelSettings';
+import { previewMarksOf } from './previewMarks';
 import { availableResourceKeys, resolvePanelTitle } from './resourceRegistry';
 import type {
   DashboardBoard,
@@ -443,14 +445,52 @@ export const useDashboardBoard = ({
           : undefined,
       })
     : board;
+  const savedLayout = toBoardLayout(board, catalog, isRenderable);
+  const previewMarks = draftActions?.length
+    ? previewMarksOf(
+        new Set(savedLayout.map((entry) => entry.id)),
+        draftActions,
+      )
+    : new Map();
+  const markedContent = (id: string, content: React.ReactNode) => {
+    const mark = previewMarks.get(id);
+    return mark ? (
+      <DashboardPreviewMark mark={mark}>{content}</DashboardPreviewMark>
+    ) : (
+      content
+    );
+  };
   const boardItems: Array<BAIBoardItem> = toBoardLayout(
     shownBoard,
     catalog,
     isRenderable,
   ).map((entry) => {
     const panel = shownBoard.panels.find((item) => item.id === entry.id)!;
-    return { ...entry, data: { content: contentOf(panel) } };
+    return {
+      ...entry,
+      data: { content: markedContent(panel.id, contentOf(panel)) },
+    };
   });
+  // A card the preview hides stays where it was, dimmed, after the card that preceded it.
+  const previewItems = [...boardItems];
+  if (!draftNewBoard) {
+    savedLayout.forEach((entry, index) => {
+      if (previewMarks.get(entry.id)?.kind !== 'hidden') return;
+      if (previewItems.some((item) => item.id === entry.id)) return;
+      const panel = board.panels.find((item) => item.id === entry.id);
+      if (!panel) return;
+      const before = _.findLast(savedLayout.slice(0, index), (prior) =>
+        previewItems.some((item) => item.id === prior.id),
+      );
+      const at = before
+        ? previewItems.findIndex((item) => item.id === before.id) + 1
+        : 0;
+      previewItems.splice(at, 0, {
+        ...entry,
+        data: { content: markedContent(panel.id, contentOf(panel)) },
+      });
+    });
+  }
 
   const customPanels = board.panels.flatMap((panel) => {
     const definition = definitionByKey.get(panel.key);
@@ -535,7 +575,7 @@ export const useDashboardBoard = ({
   );
 
   return {
-    boardItems,
+    boardItems: previewItems,
     // A preview is not saved, so a move made on it would land on the stored layout.
     onLayoutChange: (reported) => {
       if (!draftActions?.length) save(applyLayout(board, reported));

@@ -839,8 +839,15 @@
     "MemoryInUsePercent": "Санах ой ашиглаж буй {{percent}}%",
     "Used": "Ашиг ашиглагдсан",
     "agentDraft": {
+      "Added": "Нэмсэн",
+      "ChangeEdited": "тохиргоо",
+      "ChangeMoved": "байршил",
+      "ChangeRange": "хугацаа",
+      "ChangeResized": "хэмжээ",
+      "Changed": "Өөрчилсөн: {{changes}}",
       "Description": "AI агент эдгээр өөрчлөлтийг санал болголоо. Доорх самбар урьдчилан харуулж байна; {{apply}} дарах хүртэл юу ч хадгалагдахгүй.",
-      "Title": "AI агентын санал болгосон өөрчлөлт"
+      "Title": "AI агентын санал болгосон өөрчлөлт",
+      "WillBeHidden": "Нуугдана"
     },
     "boards": {
       "BoardName": "Самбарын нэр",

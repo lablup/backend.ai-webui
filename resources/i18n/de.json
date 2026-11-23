@@ -839,8 +839,15 @@
     "MemoryInUsePercent": "Speicher belegt {{percent}} %",
     "Used": "Gebraucht",
     "agentDraft": {
+      "Added": "Hinzugefügt",
+      "ChangeEdited": "Einstellungen",
+      "ChangeMoved": "Position",
+      "ChangeRange": "Zeitraum",
+      "ChangeResized": "Größe",
+      "Changed": "Geändert: {{changes}}",
       "Description": "Ein KI-Agent hat diese Änderungen vorgeschlagen. Das Board unten zeigt eine Vorschau; nichts wird gespeichert, bevor Sie {{apply}} drücken.",
-      "Title": "Von einem KI-Agenten vorgeschlagene Änderungen"
+      "Title": "Von einem KI-Agenten vorgeschlagene Änderungen",
+      "WillBeHidden": "Wird ausgeblendet"
     },
     "boards": {
       "BoardName": "Board-Name",

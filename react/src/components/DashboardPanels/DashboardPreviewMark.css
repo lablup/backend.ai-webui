@@ -1,0 +1,30 @@
+/* The mark sits in the item's body, so the outline and the badge go on the board item around it. */
+[data-board-item-id]:has(.dashboard-preview-mark) {
+  position: relative;
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+  border-radius: var(--radius-container);
+}
+
+[data-board-item-id]:has(.dashboard-preview-mark--hidden) {
+  outline-style: dashed;
+  outline-color: var(--color-border);
+}
+
+/* Still on the saved board, so the user sees where it was. */
+[data-board-item-id]:has(.dashboard-preview-mark--hidden) {
+  opacity: 0.45;
+}
+
+/* On the outline, clear of the header's own controls. */
+.dashboard-preview-mark__badge {
+  position: absolute;
+  top: calc(-1 * var(--spacing-3));
+  left: var(--spacing-4);
+  z-index: 1;
+}
+
+.dashboard-preview-mark,
+.dashboard-preview-mark__content {
+  height: 100%;
+}

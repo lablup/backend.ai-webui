@@ -839,8 +839,15 @@
     "MemoryInUsePercent": "Mémoire utilisée {{percent}} %",
     "Used": "Utilisé",
     "agentDraft": {
+      "Added": "Ajouté",
+      "ChangeEdited": "paramètres",
+      "ChangeMoved": "position",
+      "ChangeRange": "période",
+      "ChangeResized": "taille",
+      "Changed": "Modifié : {{changes}}",
       "Description": "Un agent IA a proposé ces modifications. Le tableau ci-dessous en affiche un aperçu ; rien n'est enregistré avant que vous n'appuyiez sur {{apply}}.",
-      "Title": "Modifications proposées par un agent IA"
+      "Title": "Modifications proposées par un agent IA",
+      "WillBeHidden": "Sera masqué"
     },
     "boards": {
       "BoardName": "Nom du tableau",

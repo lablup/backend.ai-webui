@@ -839,8 +839,15 @@
     "MemoryInUsePercent": "Muistia käytössä {{percent}} %",
     "Used": "Käytetty",
     "agentDraft": {
+      "Added": "Lisätty",
+      "ChangeEdited": "asetukset",
+      "ChangeMoved": "sijainti",
+      "ChangeRange": "aikaväli",
+      "ChangeResized": "koko",
+      "Changed": "Muutettu: {{changes}}",
       "Description": "Tekoälyagentti ehdotti näitä muutoksia. Alla oleva taulu näyttää esikatselun; mitään ei tallenneta ennen kuin painat {{apply}}.",
-      "Title": "Tekoälyagentin ehdottamat muutokset"
+      "Title": "Tekoälyagentin ehdottamat muutokset",
+      "WillBeHidden": "Piilotetaan"
     },
     "boards": {
       "BoardName": "Taulun nimi",

@@ -839,8 +839,15 @@
     "MemoryInUsePercent": "Memori digunakan {{percent}}%",
     "Used": "digunakan",
     "agentDraft": {
+      "Added": "Ditambah",
+      "ChangeEdited": "tetapan",
+      "ChangeMoved": "kedudukan",
+      "ChangeRange": "julat",
+      "ChangeResized": "saiz",
+      "Changed": "Diubah: {{changes}}",
       "Description": "Ejen AI mencadangkan perubahan ini. Papan di bawah memaparkan pratontonnya; tiada apa disimpan sehingga anda menekan {{apply}}.",
-      "Title": "Perubahan yang dicadangkan oleh ejen AI"
+      "Title": "Perubahan yang dicadangkan oleh ejen AI",
+      "WillBeHidden": "Akan disembunyikan"
     },
     "boards": {
       "BoardName": "Nama papan",

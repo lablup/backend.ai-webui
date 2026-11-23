@@ -839,8 +839,15 @@
     "MemoryInUsePercent": "Używana pamięć {{percent}}%",
     "Used": "Używany",
     "agentDraft": {
+      "Added": "Dodano",
+      "ChangeEdited": "ustawienia",
+      "ChangeMoved": "położenie",
+      "ChangeRange": "zakres",
+      "ChangeResized": "rozmiar",
+      "Changed": "Zmieniono: {{changes}}",
       "Description": "Agent AI zaproponował te zmiany. Tablica poniżej pokazuje ich podgląd; nic nie zostanie zapisane, dopóki nie naciśniesz {{apply}}.",
-      "Title": "Zmiany zaproponowane przez agenta AI"
+      "Title": "Zmiany zaproponowane przez agenta AI",
+      "WillBeHidden": "Zostanie ukryte"
     },
     "boards": {
       "BoardName": "Nazwa tablicy",

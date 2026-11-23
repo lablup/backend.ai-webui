@@ -839,8 +839,15 @@
     "MemoryInUsePercent": "Bộ nhớ đang dùng {{percent}}%",
     "Used": "Đã sử dụng",
     "agentDraft": {
+      "Added": "Đã thêm",
+      "ChangeEdited": "cài đặt",
+      "ChangeMoved": "vị trí",
+      "ChangeRange": "khoảng thời gian",
+      "ChangeResized": "kích thước",
+      "Changed": "Đã thay đổi: {{changes}}",
       "Description": "Một tác tử AI đã đề xuất các thay đổi này. Bảng bên dưới hiển thị bản xem trước; không có gì được lưu cho đến khi bạn nhấn {{apply}}.",
-      "Title": "Thay đổi do tác tử AI đề xuất"
+      "Title": "Thay đổi do tác tử AI đề xuất",
+      "WillBeHidden": "Sẽ bị ẩn"
     },
     "boards": {
       "BoardName": "Tên bảng",

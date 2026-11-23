@@ -826,8 +826,15 @@
     "MemoryInUsePercent": "Memory in use {{percent}}%",
     "Used": "Used",
     "agentDraft": {
+      "Added": "Added",
+      "ChangeEdited": "settings",
+      "ChangeMoved": "position",
+      "ChangeRange": "range",
+      "ChangeResized": "size",
+      "Changed": "Changed: {{changes}}",
       "Description": "An AI agent proposed these changes. The board below previews them; nothing is saved until you press {{apply}}.",
-      "Title": "Changes proposed by an AI agent"
+      "Title": "Changes proposed by an AI agent",
+      "WillBeHidden": "Will be hidden"
     },
     "boards": {
       "BoardName": "Board name",

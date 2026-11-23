@@ -836,8 +836,15 @@
     "MemoryInUsePercent": "หน่วยความจำที่ใช้อยู่ {{percent}}%",
     "Used": "ใช้แล้ว",
     "agentDraft": {
+      "Added": "เพิ่มแล้ว",
+      "ChangeEdited": "การตั้งค่า",
+      "ChangeMoved": "ตำแหน่ง",
+      "ChangeRange": "ช่วงเวลา",
+      "ChangeResized": "ขนาด",
+      "Changed": "เปลี่ยนแล้ว: {{changes}}",
       "Description": "เอเจนต์ AI เสนอการเปลี่ยนแปลงเหล่านี้ บอร์ดด้านล่างแสดงตัวอย่าง และจะไม่มีการบันทึกจนกว่าคุณจะกด {{apply}}",
-      "Title": "การเปลี่ยนแปลงที่เอเจนต์ AI เสนอ"
+      "Title": "การเปลี่ยนแปลงที่เอเจนต์ AI เสนอ",
+      "WillBeHidden": "จะถูกซ่อน"
     },
     "boards": {
       "BoardName": "ชื่อบอร์ด",
