@@ -4585,7 +4585,6 @@
     "MaxRNGDDevicesPerContainer": "Maksymalna liczba urządzeń RNGD na sesję",
     "MaxROCMDevicesPerContainer": "Maksymalna liczba GPU ROCm na sesję",
     "MaxShmPerContainer": "Maksymalna pamięć współdzielona na sesję",
-    "MaxSizeHint": "(maks. {{size}})",
     "MaxTPUDevicesPerContainer": "Maksymalna liczba TPU na sesję",
     "MaxWarboyDevicesPerContainer": "Maksymalna liczba urządzeń Warboy na sesję",
     "MenuBlocklist": "Ukryj menu",
@@ -4610,6 +4609,7 @@
     "StorageWarningThreshold": "Próg ostrzeżenia o użyciu pamięci masowej",
     "SystemSSHImage": "Systemowy obraz SSH",
     "UnknownMenuKeys": "Nieznane klucze",
+    "Unlimited": "bez limitu",
     "group": {
       "Account": "Konto",
       "AppLauncher": "Program uruchamiający aplikacje",

@@ -4584,7 +4584,6 @@
     "MaxRNGDDevicesPerContainer": "Số thiết bị RNGD tối đa mỗi phiên",
     "MaxROCMDevicesPerContainer": "Số GPU ROCm tối đa mỗi phiên",
     "MaxShmPerContainer": "Bộ nhớ dùng chung tối đa mỗi phiên",
-    "MaxSizeHint": "(tối đa {{size}})",
     "MaxTPUDevicesPerContainer": "Số TPU tối đa mỗi phiên",
     "MaxWarboyDevicesPerContainer": "Số thiết bị Warboy tối đa mỗi phiên",
     "MenuBlocklist": "Ẩn menu",
@@ -4609,6 +4608,7 @@
     "StorageWarningThreshold": "Ngưỡng cảnh báo dung lượng lưu trữ",
     "SystemSSHImage": "Image SSH hệ thống",
     "UnknownMenuKeys": "Khóa không xác định",
+    "Unlimited": "Vô hạn",
     "group": {
       "Account": "Tài khoản",
       "AppLauncher": "Trình khởi chạy ứng dụng",

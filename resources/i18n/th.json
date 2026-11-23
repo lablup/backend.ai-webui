@@ -4568,7 +4568,6 @@
     "MaxRNGDDevicesPerContainer": "จำนวนอุปกรณ์ RNGD สูงสุดต่อเซสชัน",
     "MaxROCMDevicesPerContainer": "จำนวน ROCm GPU สูงสุดต่อเซสชัน",
     "MaxShmPerContainer": "หน่วยความจำที่ใช้ร่วมกันสูงสุดต่อเซสชัน",
-    "MaxSizeHint": "(สูงสุด {{size}})",
     "MaxTPUDevicesPerContainer": "จำนวน TPU สูงสุดต่อเซสชัน",
     "MaxWarboyDevicesPerContainer": "จำนวนอุปกรณ์ Warboy สูงสุดต่อเซสชัน",
     "MenuBlocklist": "ซ่อนเมนู",
@@ -4593,6 +4592,7 @@
     "StorageWarningThreshold": "เกณฑ์เตือนการใช้พื้นที่จัดเก็บ",
     "SystemSSHImage": "อิมเมจ SSH ของระบบ",
     "UnknownMenuKeys": "คีย์ที่ไม่รู้จัก",
+    "Unlimited": "ไม่จำกัด",
     "group": {
       "Account": "บัญชี",
       "AppLauncher": "ตัวเปิดแอป",

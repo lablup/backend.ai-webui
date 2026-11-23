@@ -4585,7 +4585,6 @@
     "MaxRNGDDevicesPerContainer": "세션당 최대 RNGD 수",
     "MaxROCMDevicesPerContainer": "세션당 최대 ROCm GPU 수",
     "MaxShmPerContainer": "세션당 최대 공유 메모리",
-    "MaxSizeHint": "(최대 {{size}})",
     "MaxTPUDevicesPerContainer": "세션당 최대 TPU 수",
     "MaxWarboyDevicesPerContainer": "세션당 최대 Warboy 수",
     "MenuBlocklist": "메뉴 숨기기",
@@ -4610,6 +4609,7 @@
     "StorageWarningThreshold": "스토리지 사용량 경고 임계값",
     "SystemSSHImage": "시스템 SSH 이미지",
     "UnknownMenuKeys": "알 수 없는 키",
+    "Unlimited": "무제한",
     "group": {
       "Account": "계정",
       "AppLauncher": "앱 런처",
