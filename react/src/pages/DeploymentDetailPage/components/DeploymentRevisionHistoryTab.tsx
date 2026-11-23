@@ -2,8 +2,8 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import type { DeploymentRevisionCompareDrawer_revision$key } from '../../../__generated__/DeploymentRevisionCompareDrawer_revision.graphql';
 import { DeploymentRevisionHistoryTabActivateMutation } from '../../../__generated__/DeploymentRevisionHistoryTabActivateMutation.graphql';
+import { DeploymentRevisionHistoryTabComparePairQuery } from '../../../__generated__/DeploymentRevisionHistoryTabComparePairQuery.graphql';
 import {
   DeploymentRevisionHistoryTabListQuery,
   ModelRevisionOrderBy,
@@ -59,6 +59,8 @@ import {
   LoaderCircle,
 } from 'lucide-react';
 import {
+  parseAsArrayOf,
+  parseAsBoolean,
   parseAsInteger,
   parseAsString,
   parseAsStringLiteral,
@@ -83,10 +85,7 @@ type RevisionNode = NonNullable<
   >['node']
 >;
 
-type RevisionComparable = DeploymentRevisionCompareDrawer_revision$key & {
-  readonly fieldId: string;
-  readonly revisionNumber: number;
-};
+type RollbackTarget = Pick<RevisionNode, 'id' | 'fieldId' | 'revisionNumber'>;
 
 const availableRevisionSorterKeys = [
   'revisionNumber',
@@ -115,6 +114,69 @@ export interface DeploymentRevisionHistoryTabProps {
  * schema; switching the active revision atomically replaces the current
  * one. See FR-2678 and spec.md §Flow 5.
  */
+interface RevisionCompareFromUrlProps {
+  deploymentId: string;
+  fieldIds: ReadonlyArray<string>;
+  currentRevisionId?: string | null;
+  deployingRevisionId?: string | null;
+  showsUnchanged: boolean;
+  onShowsUnchangedChange: (showsUnchanged: boolean) => void;
+  applyDisabledReasonOf: (fieldId: string, id: string) => string | undefined;
+  onApply: (revision: RollbackTarget) => Promise<void>;
+  onClose: () => void;
+}
+
+/** Reads the pair named in the URL, so it opens whether or not it is on the visible page. */
+const RevisionCompareFromUrl: React.FC<RevisionCompareFromUrlProps> = ({
+  deploymentId,
+  fieldIds,
+  applyDisabledReasonOf,
+  onApply,
+  ...drawerProps
+}) => {
+  'use memo';
+  const { deployment } =
+    useLazyLoadQuery<DeploymentRevisionHistoryTabComparePairQuery>(
+      graphql`
+        query DeploymentRevisionHistoryTabComparePairQuery(
+          $deploymentId: ID!
+          $filter: ModelRevisionFilter
+        ) {
+          deployment(id: $deploymentId) {
+            revisionHistory(filter: $filter, limit: 2) {
+              edges {
+                node {
+                  id
+                  fieldId
+                  revisionNumber
+                  ...DeploymentRevisionCompareDrawer_revision
+                }
+              }
+            }
+          }
+        }
+      `,
+      { deploymentId, filter: { fieldId: { in: [...fieldIds] } } },
+      { fetchPolicy: 'store-and-network' },
+    );
+  const revisions = filterOutNullAndUndefined(
+    _.map(deployment?.revisionHistory?.edges, 'node'),
+  );
+  const left = _.find(revisions, { fieldId: fieldIds[0] });
+  const right = _.find(revisions, { fieldId: fieldIds[1] });
+  if (!left || !right) return null;
+  return (
+    <DeploymentRevisionCompareDrawer
+      {...drawerProps}
+      open
+      leftRevisionFrgmt={left}
+      rightRevisionFrgmt={right}
+      applyDisabledReason={applyDisabledReasonOf(right.fieldId, right.id)}
+      onApply={() => onApply(right)}
+    />
+  );
+};
+
 const DeploymentRevisionHistoryTab: React.FC<
   DeploymentRevisionHistoryTabProps
 > = ({ deploymentFrgmt, deploymentId, fetchKey }) => {
@@ -144,10 +206,6 @@ const DeploymentRevisionHistoryTab: React.FC<
   const [selectedRevisions, setSelectedRevisions] = useState<RevisionNode[]>(
     [],
   );
-  const [comparePair, setComparePair] = useState<{
-    left: RevisionComparable;
-    right: RevisionNode;
-  } | null>(null);
 
   const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
     'table_column_overrides.DeploymentRevisionHistoryTab',
@@ -159,6 +217,8 @@ const DeploymentRevisionHistoryTab: React.FC<
       pageSize: parseAsInteger.withDefault(10),
       order: parseAsStringLiteral(availableRevisionSorterValues),
       rvFilter: parseAsString,
+      compare: parseAsArrayOf(parseAsString, ','),
+      showUnchanged: parseAsBoolean.withDefault(false),
     },
     {
       history: 'replace',
@@ -171,6 +231,8 @@ const DeploymentRevisionHistoryTab: React.FC<
         pageSize: 'rvPageSize',
         order: 'rvOrder',
         rvFilter: 'rvFilter',
+        compare: 'rvCompare',
+        showUnchanged: 'rvShowUnchanged',
       },
     },
   );
@@ -257,7 +319,6 @@ const DeploymentRevisionHistoryTab: React.FC<
             currentRevision {
               fieldId
               revisionNumber
-              ...DeploymentRevisionCompareDrawer_revision
             }
             revisionHistory(
               filter: $filter
@@ -307,7 +368,6 @@ const DeploymentRevisionHistoryTab: React.FC<
                   }
                   ...DeploymentRevisionDetail_revision
                   ...DeploymentAddRevisionModal_revisionSource
-                  ...DeploymentRevisionCompareDrawer_revision
                 }
               }
             }
@@ -369,7 +429,7 @@ const DeploymentRevisionHistoryTab: React.FC<
     startTransition(() => updateInternalFetchKey());
   };
 
-  const handleRollback = (revision: RevisionNode): Promise<boolean> => {
+  const handleRollback = (revision: RollbackTarget): Promise<boolean> => {
     return new Promise<boolean>((resolve) => {
       setRollingBackRevisionId(revision.id);
       commitActivate({
@@ -417,6 +477,13 @@ const DeploymentRevisionHistoryTab: React.FC<
 
   const currentRevision = listData?.currentRevision;
 
+  // The compared pair lives in the URL (rvCompare=<left>,<right>), so a link reopens it.
+  const comparedIds = _.filter(queryParams.compare, (id) => isValidUUID(id));
+  const openCompare = (left: { fieldId: string }, right: { fieldId: string }) =>
+    setQueryParams({ compare: [left.fieldId, right.fieldId] });
+  const closeCompare = () =>
+    setQueryParams({ compare: null, showUnchanged: null });
+
   // The baseline goes left: the current revision when it is one of the pair,
   // else the newer one, so Apply always targets the right-hand revision.
   const openCompareForSelection = () => {
@@ -425,7 +492,8 @@ const DeploymentRevisionHistoryTab: React.FC<
     const aIsBase =
       a.fieldId === currentRevisionId ||
       (b.fieldId !== currentRevisionId && a.revisionNumber > b.revisionNumber);
-    setComparePair(aIsBase ? { left: a, right: b } : { left: b, right: a });
+    if (aIsBase) openCompare(a, b);
+    else openCompare(b, a);
   };
 
   const columns: BAIColumnType<RevisionNode>[] = [
@@ -525,7 +593,7 @@ const DeploymentRevisionHistoryTab: React.FC<
                 disabled: isCurrent || !currentRevision,
                 onClick: () => {
                   if (currentRevision) {
-                    setComparePair({ left: currentRevision, right: record });
+                    openCompare(currentRevision, record);
                   }
                 },
               },
@@ -896,29 +964,26 @@ const DeploymentRevisionHistoryTab: React.FC<
           },
         }}
       />
-      <BAIUnmountAfterClose>
-        <DeploymentRevisionCompareDrawer
-          open={!!comparePair}
-          onClose={() => setComparePair(null)}
-          leftRevisionFrgmt={comparePair?.left}
-          rightRevisionFrgmt={comparePair?.right}
-          currentRevisionId={currentRevisionId}
-          deployingRevisionId={deployingRevisionId}
-          applyDisabledReason={
-            comparePair
-              ? applyDisabledReasonOf(
-                  comparePair.right.fieldId,
-                  comparePair.right.id,
-                )
-              : undefined
-          }
-          onApply={async () => {
-            if (!comparePair) return;
-            const success = await handleRollback(comparePair.right);
-            if (success) setComparePair(null);
-          }}
-        />
-      </BAIUnmountAfterClose>
+      {comparedIds.length === 2 ? (
+        <Suspense fallback={null}>
+          <RevisionCompareFromUrl
+            deploymentId={deploymentId}
+            fieldIds={comparedIds}
+            currentRevisionId={currentRevisionId}
+            deployingRevisionId={deployingRevisionId}
+            showsUnchanged={queryParams.showUnchanged}
+            onShowsUnchangedChange={(showUnchanged) =>
+              setQueryParams({ showUnchanged: showUnchanged || null })
+            }
+            applyDisabledReasonOf={applyDisabledReasonOf}
+            onApply={async (revision) => {
+              const success = await handleRollback(revision);
+              if (success) closeCompare();
+            }}
+            onClose={closeCompare}
+          />
+        </Suspense>
+      ) : null}
       {/* Local Suspense around the lazily-mounted modal so its lazy form
           selects (preset / vfolder / runtime variant `useLazyLoadQuery`)
           don't bubble their suspend up to the page-level boundary and blank

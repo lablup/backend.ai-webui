@@ -17,6 +17,7 @@ import {
 import { Badge } from '@lablup/ui-common/Badge';
 import { Button } from '@lablup/ui-common/Button';
 import { Text } from '@lablup/ui-common/Text';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
 import {
   BAIDrawer,
   type BAIDrawerProps,
@@ -127,6 +128,8 @@ export interface DeploymentRevisionCompareDrawerProps extends Omit<
   deployingRevisionId?: string | null;
   applyDisabledReason?: string;
   onApply?: () => Promise<unknown>;
+  showsUnchanged: boolean;
+  onShowsUnchangedChange: (showsUnchanged: boolean) => void;
 }
 
 const MASKED_VALUE = '••••••';
@@ -140,12 +143,13 @@ const DeploymentRevisionCompareDrawer: React.FC<
   deployingRevisionId,
   applyDisabledReason,
   onApply,
+  showsUnchanged,
+  onShowsUnchangedChange,
   ...drawerProps
 }) => {
   'use memo';
   const { t } = useTranslation();
   const { mergedResourceSlots } = useResourceSlotsDetails();
-  const [showsUnchanged, setShowsUnchanged] = useState(false);
   const [revealsSecrets, setRevealsSecrets] = useState(false);
 
   const left = useFragment(revisionFragment, leftRevisionFrgmt);
@@ -231,14 +235,15 @@ const DeploymentRevisionCompareDrawer: React.FC<
       },
     }[row.status];
     return (
-      <BAIText
-        type={type}
-        aria-label={label}
-        title={label}
-        style={{ display: 'inline-flex', flexShrink: 0 }}
-      >
-        <Icon size="1em" aria-hidden />
-      </BAIText>
+      <Tooltip content={label}>
+        <BAIText
+          type={type}
+          aria-label={label}
+          style={{ display: 'inline-flex', flexShrink: 0 }}
+        >
+          <Icon size="1em" aria-hidden />
+        </BAIText>
+      </Tooltip>
     );
   };
 
@@ -366,7 +371,7 @@ const DeploymentRevisionCompareDrawer: React.FC<
                 {t('deployment.CompareRevealValues')}
               </BAISwitch>
             ) : null}
-            <BAISwitch value={showsUnchanged} onChange={setShowsUnchanged}>
+            <BAISwitch value={showsUnchanged} onChange={onShowsUnchangedChange}>
               {t('deployment.CompareShowUnchanged')}
             </BAISwitch>
           </BAIFlex>
