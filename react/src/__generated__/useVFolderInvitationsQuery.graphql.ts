@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<df3e8a87970fde1c72f4a5deceb2a8e1>>
+ * @generated SignedSource<<94892e1c5f4ce7a747dbc1fb8330a637>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -19,6 +19,8 @@ export type useVFolderInvitationsQuery$data = {
         readonly createdAt: string;
         readonly entityId: string;
         readonly permissions: ReadonlyArray<PermissionBit>;
+        readonly recipientEntityId: string | null | undefined;
+        readonly recipientEntityType: string | null | undefined;
         readonly sharer: {
           readonly basicInfo: {
             readonly email: string;
@@ -40,6 +42,18 @@ export type useVFolderInvitationsQuery$data = {
       };
     }>;
   } | null | undefined;
+  readonly myUserV2: {
+    readonly projects: {
+      readonly edges: ReadonlyArray<{
+        readonly node: {
+          readonly basicInfo: {
+            readonly name: string;
+          };
+          readonly entityId: string;
+        };
+      }>;
+    } | null | undefined;
+  } | null | undefined;
 };
 export type useVFolderInvitationsQuery = {
   response: useVFolderInvitationsQuery$data;
@@ -47,7 +61,12 @@ export type useVFolderInvitationsQuery = {
 };
 
 const node: ConcreteRequest = (function(){
-var v0 = [
+var v0 = {
+  "kind": "Literal",
+  "name": "limit",
+  "value": 100
+},
+v1 = [
   {
     "kind": "Literal",
     "name": "filter",
@@ -57,11 +76,7 @@ var v0 = [
       }
     }
   },
-  {
-    "kind": "Literal",
-    "name": "limit",
-    "value": 100
-  },
+  (v0/*: any*/),
   {
     "kind": "Literal",
     "name": "orderBy",
@@ -80,49 +95,63 @@ var v0 = [
     ]
   }
 ],
-v1 = {
+v2 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "entityId",
   "storageKey": null
 },
-v2 = {
+v3 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "status",
   "storageKey": null
 },
-v3 = {
+v4 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "permissions",
   "storageKey": null
 },
-v4 = {
+v5 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "targetEntityType",
   "storageKey": null
 },
-v5 = {
+v6 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "targetEntityId",
   "storageKey": null
 },
-v6 = {
+v7 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "createdAt",
   "storageKey": null
 },
-v7 = {
+v8 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "recipientEntityType",
+  "storageKey": null
+},
+v9 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "recipientEntityId",
+  "storageKey": null
+},
+v10 = {
   "alias": null,
   "args": null,
   "concreteType": "UserV2BasicInfo",
@@ -140,14 +169,23 @@ v7 = {
   ],
   "storageKey": null
 },
-v8 = {
+v11 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "__typename",
   "storageKey": null
 },
-v9 = {
+v12 = [
+  {
+    "alias": null,
+    "args": null,
+    "kind": "ScalarField",
+    "name": "name",
+    "storageKey": null
+  }
+],
+v13 = {
   "kind": "InlineFragment",
   "selections": [
     {
@@ -157,30 +195,42 @@ v9 = {
       "kind": "LinkedField",
       "name": "metadata",
       "plural": false,
-      "selections": [
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "name",
-          "storageKey": null
-        }
-      ],
+      "selections": (v12/*: any*/),
       "storageKey": null
     }
   ],
   "type": "VFolder",
   "abstractKey": null
 },
-v10 = {
+v14 = [
+  {
+    "kind": "Literal",
+    "name": "filter",
+    "value": {
+      "isActive": true
+    }
+  },
+  (v0/*: any*/)
+],
+v15 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "ProjectBasicInfo",
+  "kind": "LinkedField",
+  "name": "basicInfo",
+  "plural": false,
+  "selections": (v12/*: any*/),
+  "storageKey": null
+},
+v16 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
 },
-v11 = [
-  (v10/*: any*/)
+v17 = [
+  (v16/*: any*/)
 ];
 return {
   "fragment": {
@@ -191,7 +241,7 @@ return {
     "selections": [
       {
         "alias": null,
-        "args": (v0/*: any*/),
+        "args": (v1/*: any*/),
         "concreteType": "EntityShareConnection",
         "kind": "LinkedField",
         "name": "myEntityShares",
@@ -213,12 +263,14 @@ return {
                 "name": "node",
                 "plural": false,
                 "selections": [
-                  (v1/*: any*/),
                   (v2/*: any*/),
                   (v3/*: any*/),
                   (v4/*: any*/),
                   (v5/*: any*/),
                   (v6/*: any*/),
+                  (v7/*: any*/),
+                  (v8/*: any*/),
+                  (v9/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -227,7 +279,7 @@ return {
                     "name": "sharer",
                     "plural": false,
                     "selections": [
-                      (v7/*: any*/)
+                      (v10/*: any*/)
                     ],
                     "storageKey": null
                   },
@@ -239,8 +291,8 @@ return {
                     "name": "targetEntity",
                     "plural": false,
                     "selections": [
-                      (v8/*: any*/),
-                      (v9/*: any*/)
+                      (v11/*: any*/),
+                      (v13/*: any*/)
                     ],
                     "storageKey": null
                   }
@@ -252,6 +304,52 @@ return {
           }
         ],
         "storageKey": "myEntityShares(filter:{\"status\":{\"equals\":\"PENDING\"}},limit:100,orderBy:[{\"direction\":\"DESC\",\"field\":\"CREATED_AT\"}],sides:[\"RECIPIENT\"])"
+      },
+      {
+        "alias": null,
+        "args": null,
+        "concreteType": "UserV2",
+        "kind": "LinkedField",
+        "name": "myUserV2",
+        "plural": false,
+        "selections": [
+          {
+            "alias": null,
+            "args": (v14/*: any*/),
+            "concreteType": "ProjectV2Connection",
+            "kind": "LinkedField",
+            "name": "projects",
+            "plural": false,
+            "selections": [
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "ProjectV2Edge",
+                "kind": "LinkedField",
+                "name": "edges",
+                "plural": true,
+                "selections": [
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "ProjectV2",
+                    "kind": "LinkedField",
+                    "name": "node",
+                    "plural": false,
+                    "selections": [
+                      (v2/*: any*/),
+                      (v15/*: any*/)
+                    ],
+                    "storageKey": null
+                  }
+                ],
+                "storageKey": null
+              }
+            ],
+            "storageKey": "projects(filter:{\"isActive\":true},limit:100)"
+          }
+        ],
+        "storageKey": null
       }
     ],
     "type": "Query",
@@ -265,7 +363,7 @@ return {
     "selections": [
       {
         "alias": null,
-        "args": (v0/*: any*/),
+        "args": (v1/*: any*/),
         "concreteType": "EntityShareConnection",
         "kind": "LinkedField",
         "name": "myEntityShares",
@@ -287,12 +385,14 @@ return {
                 "name": "node",
                 "plural": false,
                 "selections": [
-                  (v1/*: any*/),
                   (v2/*: any*/),
                   (v3/*: any*/),
                   (v4/*: any*/),
                   (v5/*: any*/),
                   (v6/*: any*/),
+                  (v7/*: any*/),
+                  (v8/*: any*/),
+                  (v9/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -301,8 +401,8 @@ return {
                     "name": "sharer",
                     "plural": false,
                     "selections": [
-                      (v7/*: any*/),
-                      (v10/*: any*/)
+                      (v10/*: any*/),
+                      (v16/*: any*/)
                     ],
                     "storageKey": null
                   },
@@ -314,24 +414,24 @@ return {
                     "name": "targetEntity",
                     "plural": false,
                     "selections": [
-                      (v8/*: any*/),
-                      (v9/*: any*/),
+                      (v11/*: any*/),
+                      (v13/*: any*/),
                       {
                         "kind": "InlineFragment",
-                        "selections": (v11/*: any*/),
+                        "selections": (v17/*: any*/),
                         "type": "Node",
                         "abstractKey": "__isNode"
                       },
                       {
                         "kind": "InlineFragment",
-                        "selections": (v11/*: any*/),
+                        "selections": (v17/*: any*/),
                         "type": "ArtifactRegistry",
                         "abstractKey": null
                       }
                     ],
                     "storageKey": null
                   },
-                  (v10/*: any*/)
+                  (v16/*: any*/)
                 ],
                 "storageKey": null
               }
@@ -340,20 +440,68 @@ return {
           }
         ],
         "storageKey": "myEntityShares(filter:{\"status\":{\"equals\":\"PENDING\"}},limit:100,orderBy:[{\"direction\":\"DESC\",\"field\":\"CREATED_AT\"}],sides:[\"RECIPIENT\"])"
+      },
+      {
+        "alias": null,
+        "args": null,
+        "concreteType": "UserV2",
+        "kind": "LinkedField",
+        "name": "myUserV2",
+        "plural": false,
+        "selections": [
+          {
+            "alias": null,
+            "args": (v14/*: any*/),
+            "concreteType": "ProjectV2Connection",
+            "kind": "LinkedField",
+            "name": "projects",
+            "plural": false,
+            "selections": [
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "ProjectV2Edge",
+                "kind": "LinkedField",
+                "name": "edges",
+                "plural": true,
+                "selections": [
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "ProjectV2",
+                    "kind": "LinkedField",
+                    "name": "node",
+                    "plural": false,
+                    "selections": [
+                      (v2/*: any*/),
+                      (v15/*: any*/),
+                      (v16/*: any*/)
+                    ],
+                    "storageKey": null
+                  }
+                ],
+                "storageKey": null
+              }
+            ],
+            "storageKey": "projects(filter:{\"isActive\":true},limit:100)"
+          },
+          (v16/*: any*/)
+        ],
+        "storageKey": null
       }
     ]
   },
   "params": {
-    "cacheID": "59c30f2ab8d4319c9061ce34e21d7f28",
+    "cacheID": "cfc98a901842cfde752d4595551b07ae",
     "id": null,
     "metadata": {},
     "name": "useVFolderInvitationsQuery",
     "operationKind": "query",
-    "text": "query useVFolderInvitationsQuery {\n  myEntityShares(sides: [RECIPIENT], filter: {status: {equals: PENDING}}, orderBy: [{field: CREATED_AT, direction: \"DESC\"}], limit: 100) {\n    edges {\n      node {\n        entityId\n        status\n        permissions\n        targetEntityType\n        targetEntityId\n        createdAt\n        sharer {\n          basicInfo {\n            email\n          }\n          id\n        }\n        targetEntity {\n          __typename\n          ... on VFolder {\n            metadata {\n              name\n            }\n          }\n          ... on Node {\n            __isNode: __typename\n            id\n          }\n          ... on ArtifactRegistry {\n            id\n          }\n        }\n        id\n      }\n    }\n  }\n}\n"
+    "text": "query useVFolderInvitationsQuery {\n  myEntityShares(sides: [RECIPIENT], filter: {status: {equals: PENDING}}, orderBy: [{field: CREATED_AT, direction: \"DESC\"}], limit: 100) {\n    edges {\n      node {\n        entityId\n        status\n        permissions\n        targetEntityType\n        targetEntityId\n        createdAt\n        recipientEntityType\n        recipientEntityId\n        sharer {\n          basicInfo {\n            email\n          }\n          id\n        }\n        targetEntity {\n          __typename\n          ... on VFolder {\n            metadata {\n              name\n            }\n          }\n          ... on Node {\n            __isNode: __typename\n            id\n          }\n          ... on ArtifactRegistry {\n            id\n          }\n        }\n        id\n      }\n    }\n  }\n  myUserV2 {\n    projects(filter: {isActive: true}, limit: 100) {\n      edges {\n        node {\n          entityId\n          basicInfo {\n            name\n          }\n          id\n        }\n      }\n    }\n    id\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "cfc89c0bad7f355cdb962928b147a345";
+(node as any).hash = "c5bc51eed1fcc317a478b25d8a6def45";
 
 export default node;

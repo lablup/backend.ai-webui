@@ -711,8 +711,6 @@ const InviteFolderSettingModalBody: React.FC<{
         <VStack gap={1} align="stretch">
           <HStack align="end" gap={2} width="100%">
             <StackItem size="fill">
-              {/* TODO(needs-backend): BA-8736 — a project share cannot be
-                  accepted yet; the manager answers offers in the user scope only. */}
               {isProjectInvite ? (
                 <Field
                   label={t('general.Project')}

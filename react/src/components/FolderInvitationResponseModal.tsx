@@ -2,9 +2,9 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
- Pending folder shares offered to the current user, each a labeled block with
- Accept / Decline. The empty state is rendered explicitly — Astryx `List` has
- no `locale.emptyText` slot.
+ Pending folder shares offered to the current user or to a project they answer
+ for, each a labeled block with Accept / Decline. The empty state is rendered
+ explicitly — Astryx `List` has no `locale.emptyText` slot.
 */
 import { App } from '../app-shim';
 import { useSetBAINotification } from '../hooks/useBAINotification';
@@ -77,6 +77,11 @@ const FolderInvitationResponseModal: React.FC<
           <MetadataListItem label={t('data.Foldername')}>
             {folderName}
           </MetadataListItem>
+          {item.recipientProjectName !== undefined && (
+            <MetadataListItem label={t('general.Project')}>
+              {item.recipientProjectName}
+            </MetadataListItem>
+          )}
           <MetadataListItem label={t('data.From')}>
             {item.sharerEmail || t('data.invitation.UnknownUser')}
           </MetadataListItem>
