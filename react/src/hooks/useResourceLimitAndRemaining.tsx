@@ -393,7 +393,7 @@ export const useResourceLimitAndRemaining = ({
             max: getShmemMaxLimit(
               ignorePerContainerConfig
                 ? undefined
-                : baiClient._config.maxShmPerContainer,
+                : loginConfig.maxShmPerContainer,
             ),
           },
   });
