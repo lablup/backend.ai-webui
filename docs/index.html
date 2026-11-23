@@ -60,6 +60,12 @@
         --danger: #dc2626;
         --danger-soft: #fef2f2;
         --danger-line: #fecaca;
+        --add: #1a7f37;
+        --add-soft: #edfbf1;
+        --add-line: #a6e3b8;
+        --mod: #9a6700;
+        --mod-soft: #fff8e1;
+        --mod-line: #f2d68c;
         --shadow: 0 1px 2px rgb(0 0 0 / 0.04), 0 4px 16px rgb(0 0 0 / 0.04);
         --shadow-lg: 0 10px 40px rgb(0 0 0 / 0.12);
         --hl-keyword: #cf222e;
@@ -103,6 +109,12 @@
         --danger: #f87171;
         --danger-soft: #1f1213;
         --danger-line: #4c1d1d;
+        --add: #4ade80;
+        --add-soft: #0e1f14;
+        --add-line: #1f4d2e;
+        --mod: #fbbf24;
+        --mod-soft: #1f1a0b;
+        --mod-line: #4d3d12;
         --shadow: 0 1px 2px rgb(0 0 0 / 0.3), 0 4px 16px rgb(0 0 0 / 0.25);
         --shadow-lg: 0 10px 40px rgb(0 0 0 / 0.6);
         --hl-keyword: #ff7b72;
@@ -1440,6 +1452,171 @@
         overflow: hidden;
       }
 
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        height: 18px;
+        padding: 0 6px;
+        border-radius: 5px;
+        border: 1px solid;
+        font-size: 10.5px;
+        font-weight: 650;
+        letter-spacing: 0.03em;
+        line-height: 1;
+        white-space: nowrap;
+      }
+      .chip.badge {
+        height: 24px;
+        padding: 0 9px;
+        font-size: 12px;
+      }
+      .badge.added {
+        color: var(--add);
+        background: var(--add-soft);
+        border-color: var(--add-line);
+      }
+      .badge.modified {
+        color: var(--mod);
+        background: var(--mod-soft);
+        border-color: var(--mod-line);
+      }
+      .badge.removed {
+        color: var(--danger);
+        background: var(--danger-soft);
+        border-color: var(--danger-line);
+      }
+      .card-chips {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .nav-end {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .nav-item.gone .nav-title {
+        text-decoration: line-through;
+        text-decoration-color: var(--faint);
+        color: var(--muted);
+      }
+      .changes {
+        margin-top: 26px;
+        padding: 14px 16px;
+        border: 1px solid var(--mod-line);
+        border-radius: var(--radius);
+        background: var(--mod-soft);
+        font-size: 14px;
+        color: var(--text-2);
+      }
+      .changes p {
+        margin: 0 0 8px;
+      }
+      .changes code {
+        font-family: var(--font-mono);
+        font-size: 0.86em;
+      }
+      .changes ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        gap: 2px;
+      }
+      .doc .changes li {
+        margin: 0;
+        padding: 0;
+      }
+      .changes li a {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 4px 0;
+        text-decoration: none;
+        color: var(--text);
+      }
+      .changes li a:hover .t {
+        color: var(--accent-text);
+        text-decoration: underline;
+      }
+      .changes .n {
+        font: 500 12px var(--font-mono);
+        color: var(--muted);
+      }
+      .changes .note {
+        margin: 8px 0 0;
+        font-size: 13px;
+        color: var(--muted);
+      }
+      .seg a {
+        display: inline-flex;
+        align-items: center;
+        height: 26px;
+        padding: 0 12px;
+        border-radius: 6px;
+        font-size: 12.5px;
+        font-weight: 600;
+        color: var(--muted);
+        text-decoration: none;
+      }
+      .seg a[aria-current="page"] {
+        background: var(--bg);
+        color: var(--text);
+        box-shadow:
+          0 1px 2px rgb(0 0 0 / 0.08),
+          0 0 0 1px var(--border);
+      }
+      .view-switch {
+        margin-top: 18px;
+      }
+      .diff-note {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin: 14px 0 0;
+        font-size: 13.5px;
+        color: var(--muted);
+      }
+      .dblk {
+        display: block;
+        margin: 0 0 1.1em -17px;
+        padding: 8px 14px;
+        border-left: 3px solid;
+        border-radius: 0 8px 8px 0;
+        text-decoration: none;
+      }
+      .dblk.h {
+        margin-top: 2.2em;
+      }
+      .dblk > :first-child {
+        margin-top: 0;
+      }
+      .dblk > :last-child {
+        margin-bottom: 0;
+      }
+      ins.dblk,
+      .dlist li.d-ins {
+        border-color: var(--add);
+        background: var(--add-soft);
+      }
+      del.dblk,
+      .dlist li.d-del {
+        border-color: var(--danger);
+        background: var(--danger-soft);
+        color: var(--muted);
+      }
+      del.dblk > :is(figure, .code, .table-wrap) {
+        opacity: 0.72;
+      }
+      .dlist li.d-ins,
+      .dlist li.d-del {
+        border-radius: 4px;
+        box-shadow: -3px 0 0 var(--add);
+      }
+      .dlist li.d-del {
+        box-shadow: -3px 0 0 var(--danger);
+      }
+
       @media (max-width: 1240px) {
         .shell,
         .shell.landing {
@@ -1670,6 +1847,14 @@
           localCopy: "local copy",
           lang: "English",
           clearRef: "Back to the published copy",
+          st: { added: "Added", modified: "Changed", removed: "Removed" },
+          viewDoc: "Document",
+          viewDiff: (b) => `Changes vs ${b}`,
+          compare: "Compare on GitHub",
+          noLangChange: "No changes in this language.",
+          changed: (n, b) =>
+            `This preview shows <b>${n}</b> ADR${n === 1 ? "" : "s"} changed against <code>${b}</code>.`,
+          archChanged: (f) => `The index (<code>${f}</code>) changed too.`,
         },
         ko: {
           search: "ADR 검색",
@@ -1700,6 +1885,14 @@
           localCopy: "로컬 파일",
           lang: "한국어",
           clearRef: "배포본으로 돌아가기",
+          st: { added: "추가", modified: "변경", removed: "삭제" },
+          viewDoc: "문서",
+          viewDiff: (b) => `${b} 대비 변경`,
+          compare: "GitHub에서 비교",
+          noLangChange: "이 언어의 문서는 바뀌지 않았습니다.",
+          changed: (n, b) =>
+            `이 미리보기는 <code>${b}</code> 대비 바뀐 ADR <b>${n}개</b>를 보여 줍니다.`,
+          archChanged: (f) => `목록 문서(<code>${f}</code>)도 바뀌었습니다.`,
         },
       };
 
@@ -1745,6 +1938,49 @@
       const blobUrl = (p) =>
         `https://github.com/${REPO}/blob/${encodeURI(blobRef)}/${p}`;
 
+      const ADR_PATH = /^adr\/[A-Za-z0-9._-]+\.md$/;
+      const FILE_ST = ["added", "modified", "removed", "renamed", "unchanged"];
+      const str = (v) => (typeof v === "string" ? v : "");
+      function readChanges(j) {
+        if (!Array.isArray(j?.adrs)) return null;
+        const adrs = new Map();
+        for (const c of j.adrs) {
+          if (!/^\d{4}$/.test(c?.id)) continue;
+          if (!["added", "modified", "removed"].includes(c.status)) continue;
+          const files = {};
+          for (const l of ["en", "ko"]) {
+            const f = c.files?.[l];
+            if (!ADR_PATH.test(f?.path) || !FILE_ST.includes(f.status))
+              continue;
+            const bp = ADR_PATH.test(f.basePath) ? f.basePath : null;
+            files[l] = { path: f.path, status: f.status, basePath: bp };
+          }
+          adrs.set(c.id, { ...c, title: str(c.title), files });
+        }
+        if (!adrs.size) return null;
+        const sha = (v) => (/^[0-9a-f]{7,40}$/.test(v) ? v : "");
+        return {
+          base: str(j.base) || "main",
+          head: str(j.head) || builtRef,
+          baseSha: sha(j.baseSha),
+          headSha: sha(j.headSha),
+          adrs: new Map([...adrs].sort(([a], [b]) => a.localeCompare(b))),
+          architecture: j.architecture || {},
+        };
+      }
+      // Only a deployed preview (adr-ref filled at deploy) ships changes.json.
+      const changesP =
+        builtRef && !ref
+          ? fetch("changes.json", { cache: "no-cache" })
+              .then((r) => (r.ok ? r.json() : null))
+              .then(readChanges)
+              .catch(() => null)
+          : Promise.resolve(null);
+      const changeOf = (id) => S.changes?.adrs.get(id) || null;
+      const fileOf = (c, l = S.lang) => c?.files[l] || null;
+      const baseBlob = (p) =>
+        `https://github.com/${REPO}/blob/${encodeURI(S.changes.baseSha || S.changes.base)}/docs/${p}`;
+
       const store = {
         get: (k) => {
           try {
@@ -1773,6 +2009,7 @@
         highlight: null,
         query: "",
         shown: null,
+        changes: null,
       };
       const els = {
         shell: $(".shell"),
@@ -1811,10 +2048,15 @@
         const id = /^\d{4}$/.test(first) ? first : null;
         const anchor = id && rest.length ? decode(rest.join("/")) : null;
         const l = q.get("lang");
-        return { id, anchor, lang: l === "ko" || l === "en" ? l : null };
+        return {
+          id,
+          anchor,
+          lang: l === "ko" || l === "en" ? l : null,
+          view: id && q.get("view") === "diff" ? "diff" : null,
+        };
       }
-      const href = (id, anchor, l = S.lang) =>
-        `#/${id ? id + (anchor ? "/" + encodeURIComponent(anchor) : "") : ""}?lang=${l}`;
+      const href = (id, anchor, l = S.lang, v = null) =>
+        `#/${id ? id + (anchor ? "/" + encodeURIComponent(anchor) : "") : ""}?${v === "diff" ? "view=diff&" : ""}lang=${l}`;
 
       async function fetchText(path) {
         const r = await fetch(
@@ -1910,9 +2152,11 @@
         );
 
       async function buildIndex(lang) {
-        const md = await fetchText(
-          lang === "ko" ? "ARCHITECTURE.ko.md" : "ARCHITECTURE.md",
-        );
+        const [md, changes] = await Promise.all([
+          fetchText(lang === "ko" ? "ARCHITECTURE.ko.md" : "ARCHITECTURE.md"),
+          changesP,
+        ]);
+        S.changes = changes;
         const tokens = base.lexer(md);
         const ti = tokens.findIndex(
           (t) => t.type === "table" && t.rows.some((r) => adrLink(r[0])),
@@ -1934,16 +2178,41 @@
             );
           })
           .filter(Boolean);
+        for (const c of changes?.adrs.values() || []) {
+          const own = fileOf(c, lang);
+          const e = entries.find((x) => x.id === c.id);
+          if (e) {
+            if (own?.status === "removed")
+              Object.assign(e, { path: "base/" + own.path, gone: true });
+            continue;
+          }
+          const f = own || c.files.en || c.files.ko;
+          if (!f) continue;
+          const gone = c.status === "removed" || f.status === "removed";
+          const path = gone ? "base/" + f.path : f.path;
+          const at = entries.findIndex((x) => x.id > c.id);
+          entries.splice(at < 0 ? entries.length : at, 0, {
+            id: c.id,
+            file: f.path.slice(4),
+            path,
+            gone,
+            title: c.title || c.id,
+            summaryHtml: "",
+            summary: "",
+          });
+        }
         return { tokens, ti, entries };
       }
 
-      const loadDoc = (entry) =>
-        memo(S.docs, entry.file, () =>
-          fetchText("adr/" + entry.file).then((md) => {
-            S.ready.add(entry.file);
+      const loadPath = (path) =>
+        memo(S.docs, path, () =>
+          fetchText(path).then((md) => {
+            S.ready.add(path);
             return md;
           }),
         );
+      const docPath = (entry) => entry.path || "adr/" + entry.file;
+      const loadDoc = (entry) => loadPath(docPath(entry));
 
       function rewriteLinks(root, basePath, curId) {
         for (const a of $$("a[href]", root)) {
@@ -1988,8 +2257,9 @@
         }
       }
 
-      function enhance(root, basePath, curId, diagrams, t) {
+      function enhance(root, basePath, curId, diagrams, t, diff = false) {
         for (const h of $$("[data-slug]", root)) {
+          if (diff) continue;
           h.id = h.dataset.slug;
           if (curId) {
             const a = document.createElement("a");
@@ -2002,6 +2272,10 @@
           }
         }
         rewriteLinks(root, basePath, curId);
+        if (diff)
+          $$("a[data-anchor]", root).forEach((a) =>
+            a.removeAttribute("data-anchor"),
+          );
         for (const c of $$("div.code", root))
           c.insertAdjacentHTML(
             "beforeend",
@@ -2019,6 +2293,114 @@
         }
         for (const f of $$("figure.diagram", root))
           f._src = diagrams[+f.dataset.i];
+      }
+
+      function lcs(a, b) {
+        const dp = Array.from(
+          { length: a.length + 1 },
+          () => new Uint32Array(b.length + 1),
+        );
+        for (let i = a.length - 1; i >= 0; i--)
+          for (let j = b.length - 1; j >= 0; j--)
+            dp[i][j] =
+              a[i] === b[j]
+                ? dp[i + 1][j + 1] + 1
+                : Math.max(dp[i + 1][j], dp[i][j + 1]);
+        const ops = [];
+        let i = 0;
+        let j = 0;
+        while (i < a.length || j < b.length) {
+          if (i < a.length && j < b.length && a[i] === b[j])
+            ops.push(["=", i++, j++]);
+          else if (
+            j >= b.length ||
+            (i < a.length && dp[i + 1][j] >= dp[i][j + 1])
+          )
+            ops.push(["-", i++]);
+          else ops.push(["+", null, j++]);
+        }
+        return ops;
+      }
+      const blockKey = (t) => t.raw.replace(/\s+/g, " ").trim();
+
+      function diffDoc(m, baseMd, headMd) {
+        const lex = (md) => {
+          const ts = md ? m.lexer(md) : [];
+          return {
+            links: ts.links || {},
+            list: ts.filter((x) => x.type !== "space"),
+          };
+        };
+        const a = lex(baseMd);
+        const b = lex(headMd);
+        const h1 = (x) =>
+          x.list[0]?.type === "heading" && x.list[0].depth === 1
+            ? x.list[0]
+            : null;
+        const ha = h1(a);
+        const hb = h1(b);
+        const title = hb || ha;
+        const same = ha && hb && blockKey(ha) === blockKey(hb);
+        if (ha && (same || !b.list.length)) a.list.shift();
+        if (hb && (same || !a.list.length)) b.list.shift();
+        const links = { ...a.links, ...b.links };
+        const one = (t) => m.parser(Object.assign([t], { links }));
+        const wrap = (tag, ...ts) =>
+          `<${tag} class="dblk${ts[0].type === "heading" ? " h" : ""}">${ts.map(one).join("")}</${tag}>`;
+        const list = (d, n) => {
+          const items = [];
+          const marks = [];
+          const ops = lcs(d.items.map(blockKey), n.items.map(blockKey));
+          for (const [o, i, j] of ops) {
+            items.push(o === "-" ? d.items[i] : n.items[j]);
+            marks.push(o === "=" ? "" : o === "-" ? "del" : "ins");
+          }
+          return `<div class="dlist" data-marks="${marks.join(",")}">${one({ ...n, items })}</div>`;
+        };
+        let out = "";
+        let dels = [];
+        let adds = [];
+        const flush = () => {
+          if (!dels.length || !adds.length) {
+            if (dels.length) out += wrap("del", ...dels);
+            if (adds.length) out += wrap("ins", ...adds);
+            dels = [];
+            adds = [];
+            return;
+          }
+          for (let k = 0; k < Math.max(dels.length, adds.length); k++) {
+            const d = dels[k];
+            const n = adds[k];
+            if (
+              d?.type === "list" &&
+              n?.type === "list" &&
+              d.ordered === n.ordered
+            )
+              out += list(d, n);
+            else out += (d ? wrap("del", d) : "") + (n ? wrap("ins", n) : "");
+          }
+          dels = [];
+          adds = [];
+        };
+        const ops = lcs(a.list.map(blockKey), b.list.map(blockKey));
+        for (const [o, i, j] of ops) {
+          if (o === "=") {
+            flush();
+            out += one(b.list[j]);
+          } else if (o === "-") dels.push(a.list[i]);
+          else adds.push(b.list[j]);
+        }
+        flush();
+        return { html: out, title: title && stripNum(textOf(title.tokens)) };
+      }
+      function markListItems(root) {
+        for (const d of $$(".dlist", root)) {
+          const marks = d.dataset.marks.split(",");
+          const list = $(":scope > ul, :scope > ol", d);
+          [...(list?.children || [])].forEach(
+            (li, k) => marks[k] && li.classList.add("d-" + marks[k]),
+          );
+        }
       }
 
       let mermaidP;
@@ -2178,6 +2560,33 @@
         S.shown = null;
       }
 
+      function badge(id, cls = "") {
+        const st = changeOf(id)?.status;
+        return st
+          ? `<span class="badge ${st}${cls}">${T[S.lang].st[st]}</span>`
+          : "";
+      }
+
+      function changesBanner(entries) {
+        const ch = S.changes;
+        if (!ch) return "";
+        const t = T[S.lang];
+        const items = [...ch.adrs.values()]
+          .map((c) => {
+            const title = entries.find((e) => e.id === c.id)?.title || c.title;
+            return `<li><a href="${href(c.id, null, S.lang, "diff")}">${badge(c.id)}<span class="n">${c.id}</span><span class="t">${esc(title)}</span></a></li>`;
+          })
+          .join("");
+        const arch = ch.architecture[S.lang];
+        const archFile =
+          S.lang === "ko" ? "ARCHITECTURE.ko.md" : "ARCHITECTURE.md";
+        const note =
+          arch && arch !== "unchanged"
+            ? `<p class="note">${t.archChanged(archFile)}</p>`
+            : "";
+        return `<section class="changes"><p>${t.changed(ch.adrs.size, esc(ch.base))}</p><ul>${items}</ul>${note}</section>`;
+      }
+
       async function showLanding(opts = {}) {
         const t = T[S.lang];
         const seq = S.view;
@@ -2205,13 +2614,13 @@
         const cards = entries
           .map(
             (e) =>
-              `<a class="card" href="${href(e.id)}"><div class="card-top"><span class="chip num">ADR ${e.id}</span><span class="arrow">→</span></div><h3>${esc(e.title)}</h3><p>${e.summaryHtml.replace(/<\/?a\b[^>]*>/g, "")}</p></a>`,
+              `<a class="card" href="${href(e.id)}"><div class="card-top"><span class="card-chips"><span class="chip num">ADR ${e.id}</span>${badge(e.id)}</span><span class="arrow">→</span></div><h3>${esc(e.title)}</h3><p>${e.summaryHtml.replace(/<\/?a\b[^>]*>/g, "")}</p></a>`,
           )
           .join("");
-        const html = `<header class="hero"><div class="eyebrow"><span class="chip">Backend.AI WebUI</span>${ref ? `<span class="chip">${icon(ICON.branch)}${esc(ref)}</span>` : ""}</div><h1>${esc(title)}</h1><div class="lead">${part(lead)}</div><div class="stats"><span class="stat">${t.inForce(entries.length)}</span><span class="stat">${t.languages(2)}</span></div></header><div class="prose">${part(mid)}<div class="cards">${cards}</div>${part(rest)}</div>`;
+        const html = `<header class="hero"><div class="eyebrow"><span class="chip">Backend.AI WebUI</span>${ref ? `<span class="chip">${icon(ICON.branch)}${esc(ref)}</span>` : ""}</div><h1>${esc(title)}</h1><div class="lead">${part(lead)}</div><div class="stats"><span class="stat">${t.inForce(entries.filter((e) => !e.gone).length)}</span><span class="stat">${t.languages(2)}</span></div>${changesBanner(entries)}</header><div class="prose">${part(mid)}<div class="cards">${cards}</div>${part(rest)}</div>`;
         els.doc.innerHTML = sanitize(html);
         els.doc.lang = S.lang;
-        S.shown = { id: null, lang: S.lang };
+        S.shown = { id: null, lang: S.lang, view: null };
         enhance(
           els.doc,
           S.lang === "ko" ? "docs/ARCHITECTURE.ko.md" : "docs/ARCHITECTURE.md",
@@ -2239,14 +2648,23 @@
             `${esc(t.notFoundBody)} <code>${esc(id)}</code>`,
           );
         const entry = idx.entries[i];
-        const cached = S.ready.has(entry.file);
+        const ch = changeOf(id);
+        const f = fileOf(ch);
+        const diff = opts.view === "diff" && !!f && f.status !== "unchanged";
+        const headPath = diff && f.status !== "removed" ? f.path : null;
+        const basePath =
+          diff && f.status !== "added"
+            ? "base/" + (f.basePath || f.path)
+            : null;
+        const paths = diff ? [basePath, headPath] : [docPath(entry)];
+        const cached = paths.every((p) => !p || S.ready.has(p));
         if (!cached && !opts.keep) {
           setLoading();
           scrollTo(0, 0);
         }
-        let md;
+        let mds;
         try {
-          md = await loadDoc(entry);
+          mds = await Promise.all(paths.map((p) => (p ? loadPath(p) : "")));
         } catch (e) {
           if (seq === S.view)
             showState(t.fail, `<code>${esc(e.message)}</code>`);
@@ -2254,39 +2672,77 @@
         }
         if (seq !== S.view) return;
         const { m, slugger, diagrams } = makeMarked();
-        const tokens = m.lexer(md);
         let title = entry.title;
-        if (tokens[0]?.type === "heading" && tokens[0].depth === 1) {
-          const h1 = textOf(tokens.shift().tokens);
-          title = stripNum(h1);
-          slugger.slug(h1);
+        let body;
+        if (diff) {
+          const d = diffDoc(m, mds[0], mds[1]);
+          title = d.title || title;
+          body = d.html;
+        } else {
+          const tokens = m.lexer(mds[0]);
+          if (tokens[0]?.type === "heading" && tokens[0].depth === 1) {
+            const h1 = textOf(tokens.shift().tokens);
+            title = stripNum(h1);
+            slugger.slug(h1);
+          }
+          body = m.parser(tokens);
         }
         const prev = idx.entries[i - 1];
         const next = idx.entries[i + 1];
         const repoPath = `docs/adr/${entry.file}`;
+        const gone = diff ? !headPath : entry.gone;
+        const shownPath = diff ? headPath || basePath.slice(5) : null;
+        const gh = diff
+          ? gone
+            ? baseBlob(shownPath)
+            : blobUrl("docs/" + shownPath)
+          : gone
+            ? baseBlob("adr/" + entry.file)
+            : blobUrl(repoPath);
+        const rawPath = diff ? headPath || basePath : docPath(entry);
+        const cmp = S.changes
+          ? `https://github.com/${REPO}/compare/${encodeURI(
+              S.changes.baseSha && S.changes.headSha
+                ? `${S.changes.baseSha}...${S.changes.headSha}`
+                : `${S.changes.base}...${S.changes.head}`,
+            )}`
+          : "";
+        const toggle = ch
+          ? `<nav class="seg view-switch"><a href="${href(id)}"${opts.view ? "" : ' aria-current="page"'}>${t.viewDoc}</a><a href="${href(id, null, S.lang, "diff")}"${opts.view ? ' aria-current="page"' : ""}>${esc(t.viewDiff(S.changes.base))}</a></nav>`
+          : "";
+        const note =
+          ch && opts.view === "diff" && !diff
+            ? `<p class="diff-note">${icon(ICON.info)}${t.noLangChange}</p>`
+            : "";
         const html = `
           <header class="doc-head">
-            <div class="eyebrow"><span class="chip num">ADR ${id}</span><span class="chip">${t.lang}</span>${ref ? `<span class="chip">${icon(ICON.branch)}${esc(ref)}</span>` : ""}</div>
+            <div class="eyebrow"><span class="chip num">ADR ${id}</span><span class="chip">${t.lang}</span>${badge(id, " chip")}${ref ? `<span class="chip">${icon(ICON.branch)}${esc(ref)}</span>` : ""}</div>
             <h1>${esc(title)}</h1>
             <div class="doc-meta">
-              <a href="${blobUrl(repoPath)}" target="_blank" rel="noopener">${icon(ICON.gh)}${t.github}</a>
-              <a href="${srcUrl("adr/" + entry.file)}" target="_blank" rel="noopener">${icon(ICON.file)}${t.raw}</a>
+              <a href="${gh}" target="_blank" rel="noopener">${icon(ICON.gh)}${t.github}</a>
+              <a href="${srcUrl(rawPath)}" target="_blank" rel="noopener">${icon(ICON.file)}${t.raw}</a>
+              ${diff ? `<a href="${cmp}" target="_blank" rel="noopener">${icon(ICON.branch)}${t.compare}</a>` : ""}
             </div>
+            ${toggle}${note}
           </header>
-          <div class="prose">${m.parser(tokens)}</div>
+          <div class="prose">${body}</div>
           <nav class="pager">
             ${prev ? `<a class="prev" href="${href(prev.id)}"><small>← ${t.prev}</small><strong><span class="n">${prev.id}</span>${esc(prev.title)}</strong></a>` : ""}
             ${next ? `<a class="next" href="${href(next.id)}"><small>${t.next} →</small><strong><span class="n">${next.id}</span>${esc(next.title)}</strong></a>` : ""}
           </nav>
-          <footer class="doc-foot"><span>${t.source}: <a href="${blobUrl(repoPath)}" target="_blank" rel="noopener">${esc(repoPath)}</a> @ ${esc(viewRef || t.localCopy)}</span><a href="#" data-top>${t.top} ↑</a></footer>`;
+          <footer class="doc-foot"><span>${t.source}: <a href="${gh}" target="_blank" rel="noopener">${esc(diff ? "docs/" + shownPath : repoPath)}</a> @ ${esc(gone ? S.changes.base : viewRef || t.localCopy)}</span><a href="#" data-top>${t.top} ↑</a></footer>`;
         els.doc.innerHTML = sanitize(html);
         els.doc.lang = S.lang;
-        S.shown = { id, lang: S.lang };
+        S.shown = { id, lang: S.lang, view: opts.view || null };
         const prose = $(".prose", els.doc);
-        enhance(prose, repoPath, id, diagrams, t);
+        markListItems(prose);
+        enhance(prose, repoPath, id, diagrams, t, diff);
         highlightCode(prose);
         document.title = `${id} — ${title} · Backend.AI WebUI ADR`;
-        buildToc(id, entry);
+        if (diff) {
+          els.toc.innerHTML = "";
+          S.heads = [];
+        } else buildToc(id, gh);
         if (opts.highlight) {
           const first = markHits(prose, opts.highlight);
           if (first && !anchor) {
@@ -2309,7 +2765,7 @@
         spy();
       }
 
-      function buildToc(id, entry) {
+      function buildToc(id, gh) {
         const t = T[S.lang];
         const hs = $$(".prose > h2, .prose > h3", els.doc);
         S.heads = hs;
@@ -2321,7 +2777,7 @@
             )
             .join(
               "",
-            )}</ol><div class="toc-extra"><a href="#" data-top>${icon(ICON.up)}${t.top}</a><a href="${blobUrl("docs/adr/" + entry.file)}" target="_blank" rel="noopener">${icon(ICON.gh)}${t.github}</a></div>`,
+            )}</ol><div class="toc-extra"><a href="#" data-top>${icon(ICON.up)}${t.top}</a><a href="${gh}" target="_blank" rel="noopener">${icon(ICON.gh)}${t.github}</a></div>`,
         );
         els.toc.scrollTop = 0;
       }
@@ -2574,7 +3030,7 @@
           const list = items
             .map(
               ({ e, snip, hits }) =>
-                `<a class="nav-item${e.id === cur ? " active" : ""}" href="${href(e.id)}" data-id="${e.id}"><span class="nav-num">${e.id}</span><span class="nav-title">${highlightText(e.title, terms)}</span>${hits ? `<span class="nav-count">${hits > 99 ? "99+" : hits}</span>` : "<span></span>"}${snip ? `<span class="nav-snip">${snip}</span>` : ""}</a>`,
+                `<a class="nav-item${e.id === cur ? " active" : ""}${e.gone ? " gone" : ""}" href="${href(e.id)}" data-id="${e.id}"><span class="nav-num">${e.id}</span><span class="nav-title">${highlightText(e.title, terms)}</span><span class="nav-end">${badge(e.id)}${hits ? `<span class="nav-count">${hits > 99 ? "99+" : hits}</span>` : ""}</span>${snip ? `<span class="nav-snip">${snip}</span>` : ""}</a>`,
             )
             .join("");
           els.nav.innerHTML = sanitize(
@@ -2619,7 +3075,12 @@
         document.body.classList.remove("nav-open");
         applyChrome();
         renderNav();
-        if (r.id && S.shown?.id === r.id && S.shown.lang === S.lang) {
+        if (
+          r.id &&
+          S.shown?.id === r.id &&
+          S.shown.lang === S.lang &&
+          S.shown.view === r.view
+        ) {
           ++S.view;
           if (opts.keep) restorePosition(opts.keep);
           else if (r.anchor) scrollToAnchor(r.anchor);
@@ -2627,7 +3088,8 @@
         }
         const seq = ++S.view;
         try {
-          if (r.id) await showAdr(r.id, r.anchor, { ...opts, highlight });
+          if (r.id)
+            await showAdr(r.id, r.anchor, { ...opts, highlight, view: r.view });
           else await showLanding(opts);
         } catch (e) {
           if (seq === S.view)
@@ -2639,7 +3101,8 @@
       function switchLang(l) {
         if (l === S.lang) return;
         const keep = capturePosition();
-        history.replaceState(history.state, "", href(parseHash().id, null, l));
+        const h = parseHash();
+        history.replaceState(history.state, "", href(h.id, null, l, h.view));
         route({ keep });
         if (S.query) ensureCorpus(l);
       }
@@ -2798,7 +3261,7 @@
             history.replaceState(
               history.state,
               "",
-              href(cur.id, a.dataset.anchor),
+              href(cur.id, a.dataset.anchor, S.lang, cur.view),
             );
           return;
         }
@@ -2921,7 +3384,7 @@
         history.replaceState(
           history.state,
           "",
-          href(initial.id, initial.anchor),
+          href(initial.id, initial.anchor, S.lang, initial.view),
         );
       S.pendingFirst = true;
       route(initialPos ? { keep: initialPos } : {});
