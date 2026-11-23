@@ -75,7 +75,10 @@ const NotificationChannelTestModal: React.FC<
         ref={formRef}
         layout="vertical"
         initialValues={{
-          testMessage: t('externalNotification.DefaultTestMessage'),
+          // The manager posts it as application/json, which Slack and most webhooks parse.
+          testMessage: JSON.stringify({
+            text: t('externalNotification.DefaultTestMessage'),
+          }),
         }}
       >
         <Form.Item

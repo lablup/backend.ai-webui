@@ -13,6 +13,7 @@ import {
   NOTIFICATION_CHANNEL_TYPES,
   NotificationChannelSpecFormValues,
   buildNotificationChannelSpecInput,
+  isHttpUrl,
 } from '../helper/notificationChannelSpec';
 import './NotificationChannelSettingModal.css';
 import {
@@ -70,8 +71,10 @@ const ChannelSpecFormItems: React.FC = () => {
             message: t('externalNotification.WebhookUrlRequired'),
           },
           {
-            type: 'url',
-            message: t('externalNotification.WebhookUrlInvalid'),
+            validator: async (_rule, value?: string) => {
+              if (!value?.trim() || isHttpUrl(value.trim())) return;
+              throw new Error(t('externalNotification.WebhookUrlInvalid'));
+            },
           },
         ]}
       >
@@ -148,6 +151,17 @@ const ChannelSpecFormItems: React.FC = () => {
           className="notification-channel-field"
           label={t('externalNotification.SmtpUsername')}
           name="smtpUsername"
+          dependencies={['smtpPassword']}
+          rules={[
+            ({ getFieldValue }) => ({
+              validator: async (_rule, value?: string) => {
+                if (value?.trim() || !getFieldValue('smtpPassword')) return;
+                throw new Error(
+                  t('externalNotification.SmtpUsernameRequiredWithPassword'),
+                );
+              },
+            }),
+          ]}
         >
           <BAITextInput
             aria-label={t('externalNotification.SmtpUsername')}
@@ -158,6 +172,17 @@ const ChannelSpecFormItems: React.FC = () => {
           className="notification-channel-field"
           label={t('externalNotification.SmtpPassword')}
           name="smtpPassword"
+          dependencies={['smtpUsername']}
+          rules={[
+            ({ getFieldValue }) => ({
+              validator: async (_rule, value?: string) => {
+                if (value || !getFieldValue('smtpUsername')?.trim()) return;
+                throw new Error(
+                  t('externalNotification.SmtpPasswordRequiredWithUsername'),
+                );
+              },
+            }),
+          ]}
         >
           <BAITextInput
             type="password"

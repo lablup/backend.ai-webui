@@ -6,6 +6,7 @@ import {
   DEFAULT_SMTP_PORT,
   DEFAULT_SMTP_TIMEOUT,
   buildNotificationChannelSpecInput,
+  isHttpUrl,
 } from './notificationChannelSpec';
 import { describe, expect, it } from 'vitest';
 
@@ -72,25 +73,34 @@ describe('buildNotificationChannelSpecInput', () => {
     );
   });
 
-  it('sends auth when either the username or the password is set', () => {
+  it('sends auth only when both the username and the password are set', () => {
+    const email = {
+      channelType: 'EMAIL' as const,
+      smtpHost: 'smtp.example.com',
+      fromEmail: 'noreply@example.com',
+      toEmails: ['ops@example.com'],
+    };
     expect(
       buildNotificationChannelSpecInput({
-        channelType: 'EMAIL',
-        smtpHost: 'smtp.example.com',
-        fromEmail: 'noreply@example.com',
-        toEmails: ['ops@example.com'],
+        ...email,
         smtpUsername: ' mailer ',
         smtpPassword: 's3cret',
       }).email?.auth,
     ).toEqual({ username: 'mailer', password: 's3cret' });
     expect(
       buildNotificationChannelSpecInput({
-        channelType: 'EMAIL',
-        smtpHost: 'smtp.example.com',
-        fromEmail: 'noreply@example.com',
-        toEmails: ['ops@example.com'],
+        ...email,
         smtpPassword: 'only-password',
       }).email?.auth,
-    ).toEqual({ username: null, password: 'only-password' });
+    ).toBeNull();
+  });
+});
+
+describe('isHttpUrl', () => {
+  it('accepts only absolute http and https URLs', () => {
+    expect(isHttpUrl('https://hooks.slack.com/services/T/B/X')).toBe(true);
+    expect(isHttpUrl('http://webhook:8080/hook')).toBe(true);
+    expect(isHttpUrl('hooks.example.com/abc')).toBe(false);
+    expect(isHttpUrl('ftp://example.com/x')).toBe(false);
   });
 });

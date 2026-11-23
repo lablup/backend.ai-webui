@@ -29,6 +29,16 @@ export type NotificationChannelSpecFormValues = {
   subjectTemplate?: string;
 };
 
+/** The manager posts to the URL as is, so only an absolute http(s) URL works. */
+export const isHttpUrl = (value: string): boolean => {
+  try {
+    const { protocol, hostname } = new URL(value);
+    return (protocol === 'http:' || protocol === 'https:') && !!hostname;
+  } catch {
+    return false;
+  }
+};
+
 const trimmedOrNull = (value: string | undefined) => {
   const trimmed = _.trim(value ?? '');
   return trimmed ? trimmed : null;
@@ -58,7 +68,8 @@ export const buildNotificationChannelSpecInput = (
         ),
         subjectTemplate: trimmedOrNull(values.subjectTemplate),
       },
-      auth: username || password ? { username, password } : null,
+      // The manager logs in only with both, so the form requires them together.
+      auth: username && password ? { username, password } : null,
     },
   };
 };
