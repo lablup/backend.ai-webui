@@ -4583,7 +4583,6 @@
     "MaxRNGDDevicesPerContainer": "RNGD-laitteiden enimmäismäärä istuntoa kohden",
     "MaxROCMDevicesPerContainer": "ROCm-GPU:iden enimmäismäärä istuntoa kohden",
     "MaxShmPerContainer": "Jaetun muistin enimmäismäärä istuntoa kohden",
-    "MaxSizeHint": "(enint. {{size}})",
     "MaxTPUDevicesPerContainer": "TPU:iden enimmäismäärä istuntoa kohden",
     "MaxWarboyDevicesPerContainer": "Warboy-laitteiden enimmäismäärä istuntoa kohden",
     "MenuBlocklist": "Piilota valikot",

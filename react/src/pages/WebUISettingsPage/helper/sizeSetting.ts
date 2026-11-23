@@ -47,6 +47,10 @@ export const toSizeString = (
   )?.value;
 };
 
-/** The largest value the setting accepts, for display (`"1 GiB"`). */
-export const toMaxSizeLabel = (size: WebUISizeSetting): string | undefined =>
-  convertToBinaryUnit(size.max, 'auto', 0)?.displayValue;
+/** The default as the number part of the input, in the setting's default unit. */
+export const toPlaceholder = (
+  stored: number,
+  size: WebUISizeSetting,
+): string | undefined =>
+  convertToBinaryUnit(`${stored}${size.storedUnit}`, size.defaultUnit, 2)
+    ?.numberFixed;

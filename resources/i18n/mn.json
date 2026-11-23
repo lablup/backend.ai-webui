@@ -4584,7 +4584,6 @@
     "MaxRNGDDevicesPerContainer": "Session тус бүрийн RNGD төхөөрөмжийн дээд тоо",
     "MaxROCMDevicesPerContainer": "Session тус бүрийн ROCm GPU-ийн дээд тоо",
     "MaxShmPerContainer": "Session тус бүрийн хуваалцсан санах ойн дээд хэмжээ",
-    "MaxSizeHint": "(дээд тал нь {{size}})",
     "MaxTPUDevicesPerContainer": "Session тус бүрийн TPU-ийн дээд тоо",
     "MaxWarboyDevicesPerContainer": "Session тус бүрийн Warboy төхөөрөмжийн дээд тоо",
     "MenuBlocklist": "Цэс нуух",

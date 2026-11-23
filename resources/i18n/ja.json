@@ -4584,7 +4584,6 @@
     "MaxRNGDDevicesPerContainer": "セッションあたりの最大 RNGD 数",
     "MaxROCMDevicesPerContainer": "セッションあたりの最大 ROCm GPU 数",
     "MaxShmPerContainer": "セッションあたりの最大共有メモリ",
-    "MaxSizeHint": "(最大 {{size}})",
     "MaxTPUDevicesPerContainer": "セッションあたりの最大 TPU 数",
     "MaxWarboyDevicesPerContainer": "セッションあたりの最大 Warboy 数",
     "MenuBlocklist": "メニューを非表示",

@@ -160,6 +160,16 @@ describe('WebUISettingList', () => {
     }
   });
 
+  it('shows an unset size row empty, with its default as the placeholder', () => {
+    renderList();
+    const row = within(
+      screen.getByTestId('webui-setting-maxMemoryPerContainer'),
+    );
+    const input = row.getByRole('spinbutton');
+    expect(input).toHaveValue('');
+    expect(input).toHaveAttribute('placeholder', '64');
+  });
+
   it('stores nothing on unticking Automatic until a size is entered', async () => {
     domainWrite.mockResolvedValue();
     renderList();

@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { WEBUI_SETTING_DEFINITIONS } from '../../../helper/webuiSettings';
-import { toMaxSizeLabel, toSizeString, toStoredSize } from './sizeSetting';
+import { toSizeString, toStoredSize } from './sizeSetting';
 import { describe, expect, it } from 'vitest';
 
 const sizeOf = (key: string) => {
@@ -50,17 +50,19 @@ describe('toSizeString', () => {
   });
 });
 
-describe('toMaxSizeLabel', () => {
-  it('shows the largest accepted size in its largest unit', () => {
-    expect(toMaxSizeLabel(chunkSize)).toBe('1 GiB');
-    expect(toMaxSizeLabel(maxFileUploadSize)).toBe('100 GiB');
-  });
-});
-
 describe('memory sizes', () => {
   it('stores the session memory caps in GiB, a fraction included', () => {
     expect(toStoredSize('2t', sizeOf('maxMemoryPerContainer'))).toBe(2048);
     expect(toStoredSize('512m', sizeOf('maxShmPerContainer'))).toBe(0.5);
     expect(toSizeString(0.5, sizeOf('maxShmPerContainer'))).toBe('512m');
+  });
+
+  it('caps the session memory sizes at the keypair resource policy bound (300 PiB)', () => {
+    expect(toStoredSize('400p', sizeOf('maxMemoryPerContainer'))).toBe(
+      300 * 1024 * 1024,
+    );
+    expect(toSizeString(300 * 1024 * 1024, sizeOf('maxShmPerContainer'))).toBe(
+      '300p',
+    );
   });
 });
