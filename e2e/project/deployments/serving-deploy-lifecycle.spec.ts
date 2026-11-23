@@ -18,6 +18,7 @@ import {
   moveToTrashAndVerify,
   deleteForeverAndVerifyFromTrash,
 } from '../../utils/test-util';
+import { readEffectiveWebUISetting } from '../../utils/webui-settings-util';
 import { test, expect, Page } from '@playwright/test';
 import fs from 'fs';
 import path from 'path';
@@ -37,25 +38,25 @@ const resources = createTestResources();
 const DEPLOYMENT_NAME = resources.name('deployment', 'e2e-plan-svc-lifecycle');
 const VFOLDER_NAME = `e2e-mod-${shortId()}`;
 
-// Fallback image if defaultSessionEnvironment is not set in config.toml
+// Fallback image when the defaultSessionEnvironment System Setting is empty
 const DEFAULT_PYTHON_IMAGE =
   'cr.backend.ai/stable/python:3.9-ubuntu20.04@x86_64';
 
-// Resolved at runtime from config.toml's defaultSessionEnvironment
+// Resolved at runtime from the defaultSessionEnvironment System Setting
 let resolvedImage = DEFAULT_PYTHON_IMAGE;
 // Set by the deploy test; the serial follow-up tests open it directly.
 let deploymentDetailUrl: string | null = null;
 
 /**
- * Reads defaultSessionEnvironment from the WebUI config via backendaiclient.
+ * The defaultSessionEnvironment System Setting of the signed-in account.
  * Must be called after login (backendaiclient is initialized).
  */
 async function resolveDefaultImage(page: Page): Promise<string> {
-  const image = await page.evaluate(() => {
-    const client = (globalThis as any).backendaiclient;
-    return client?._config?.default_session_environment || '';
-  });
-  return image || DEFAULT_PYTHON_IMAGE;
+  const image = await readEffectiveWebUISetting(
+    page,
+    'defaultSessionEnvironment',
+  );
+  return (typeof image === 'string' && image) || DEFAULT_PYTHON_IMAGE;
 }
 
 // Max time to wait for a replica to report HEALTHY

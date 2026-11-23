@@ -46,8 +46,17 @@ export const isApplicableSettingValue = (
 export interface SettingsJsonIssue {
   /** `scope.key`, or the scope alone when the whole entry is wrong. */
   path: string;
-  reason: 'unknown' | 'invalid';
+  reason: 'unknown' | 'invalid' | 'notInteger';
 }
+
+const isFractionForIntegerRow = (
+  definition: WebUISettingDefinition,
+  value: unknown,
+) =>
+  !!definition.isInteger &&
+  typeof value === 'number' &&
+  Number.isFinite(value) &&
+  !Number.isInteger(value);
 
 export type SettingsJsonParse =
   | {
@@ -96,13 +105,18 @@ export const parseSettingsJson = (text: string): SettingsJsonParse => {
       }
       const value = restrictToOptions(definition, raw);
       if (!isApplicableSettingValue(definition, value)) {
-        issues.push({ path: `${scope}.${key}`, reason: 'invalid' });
+        issues.push({
+          path: `${scope}.${key}`,
+          reason: isFractionForIntegerRow(definition, value)
+            ? 'notInteger'
+            : 'invalid',
+        });
         continue;
       }
       values.push({ definition, value });
     }
   }
-  if (issues.some(({ reason }) => reason === 'invalid')) {
+  if (issues.some(({ reason }) => reason !== 'unknown')) {
     return { ok: false, issues };
   }
   return { ok: true, values, skipped: issues.map(({ path }) => path) };

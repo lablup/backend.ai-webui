@@ -16,11 +16,7 @@ import { Form, FormInstance } from '../form-engine';
 import { buildPath } from '../helper/pathBuilder';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useAccessibleProjects } from '../hooks/useAccessibleProjects';
-import {
-  useMyAppConfig,
-  useRefetchMyAppConfig,
-  useUpdateMyUserAppConfig,
-} from '../hooks/useAppConfig';
+import { useMyAppConfig } from '../hooks/useAppConfig';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { ProjectContext, ProjectContextOrNull } from '../types/projectContext';
 import BAIFormItem from './BAIFormItem';
@@ -162,11 +158,9 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
         ? createPermission?.canCreate
         : undefined;
 
-  const skipSharedFolderConfirm = !!useMyAppConfig<boolean>(
-    SKIP_PROJECT_FOLDER_CONFIRM_KEY,
-  );
-  const updateMyUserAppConfig = useUpdateMyUserAppConfig();
-  const refetchMyAppConfig = useRefetchMyAppConfig();
+  const [skipSharedFolderConfirmValue, setSkipSharedFolderConfirm] =
+    useMyAppConfig<boolean>('userConfig', SKIP_PROJECT_FOLDER_CONFIRM_KEY);
+  const skipSharedFolderConfirm = !!skipSharedFolderConfirmValue;
   const [isSharedConfirmOpen, setIsSharedConfirmOpen] = useState(false);
   const [dontAskAgain, setDontAskAgain] = useState(false);
   const [isConfirmPending, setIsConfirmPending] = useState(false);
@@ -668,9 +662,9 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
           try {
             if (dontAskAgain) {
               // A failed preference write must not block the creation.
-              await updateMyUserAppConfig(SKIP_PROJECT_FOLDER_CONFIRM_KEY, true)
-                .then(() => refetchMyAppConfig())
-                .catch((error) => logger.error(error));
+              await setSkipSharedFolderConfirm(true).catch((error) =>
+                logger.error(error),
+              );
             }
           } finally {
             setIsConfirmPending(false);

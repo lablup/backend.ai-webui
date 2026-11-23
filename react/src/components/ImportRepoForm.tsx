@@ -8,12 +8,12 @@ import {
 } from '../__generated__/ImportRepoFormCreateVFolderMutation.graphql';
 import { App } from '../app-shim';
 import { Form, FormInstance, FormProps } from '../form-engine';
-import { useSuspendedBackendaiClient } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import {
   StartSessionWithDefaultValue,
   useStartSession,
 } from '../hooks/useStartSession';
+import { useEffectiveLoginConfig } from '../hooks/useWebUIConfig';
 import StorageSelect from './StorageSelect';
 import {
   BAIButton,
@@ -106,7 +106,7 @@ const ImportRepoForm: React.FC<ImportFromURLFormProps> = ({
   'use memo';
   const { logger } = useBAILogger();
   const formRef = useRef<FormInstance<ImportFromURLFormValues> | null>(null);
-  const baiClient = useSuspendedBackendaiClient();
+  const loginConfig = useEffectiveLoginConfig();
   const { upsertNotification } = useSetBAINotification();
   const app = App.useApp();
   const { getErrorMessage } = useErrorMessageResolver();
@@ -304,7 +304,7 @@ const ImportRepoForm: React.FC<ImportFromURLFormProps> = ({
       const launcherValue: StartSessionWithDefaultValue = {
         sessionName: `importing-files-to-${folderName}`,
         environments: {
-          version: baiClient._config.default_import_environment,
+          version: loginConfig.default_import_environment,
         },
         sessionType: 'batch',
         batch: {
@@ -405,7 +405,7 @@ const ImportRepoForm: React.FC<ImportFromURLFormProps> = ({
       <Form.Item
         label={t('import.VFolderUsageMode')}
         name={'vfolder_usage_mode'}
-        hidden={baiClient._config.enableModelFolders !== true}
+        hidden={loginConfig.enableModelFolders !== true}
         required
       >
         <BAIRadioList

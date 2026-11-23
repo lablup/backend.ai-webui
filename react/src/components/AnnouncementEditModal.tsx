@@ -9,10 +9,8 @@ import {
   DomainAnnouncement,
   withAnnouncement,
 } from '../helper/announcement';
-import {
-  useDomainAppConfig,
-  useUpdateDomainAppConfig,
-} from '../hooks/useAppConfig';
+import { useCurrentDomain } from '../hooks';
+import { useScopedAppConfig } from '../hooks/useAppConfig';
 import './AnnouncementEditModal.css';
 import BAICodeEditor from './BAICodeEditor';
 import BAIFormItem from './BAIFormItem';
@@ -26,6 +24,7 @@ import { Token } from '@lablup/ui-common/Token';
 import { useTheme } from '@lablup/ui-common/theme';
 import type { OnMount } from '@monaco-editor/react';
 import {
+  BAIAlert,
   BAIFlex,
   BAIModal,
   BAIModalProps,
@@ -112,14 +111,23 @@ const AnnouncementEditModalContent: React.FC<AnnouncementEditModalProps> = ({
   const { logger } = useBAILogger();
   const { getErrorMessage } = useErrorMessageResolver();
 
-  const announcement = readDomainAnnouncement(useDomainAppConfig('settings'));
-  const updateDomainAppConfig = useUpdateDomainAppConfig();
-  // One read-modify-write of `settings`, so the System Settings keys beside
-  // the announcement are kept as the manager holds them.
+  const { id: domainId } = useCurrentDomain();
+  const domainScope = { type: 'domain', id: domainId } as const;
+  const { scopedAppConfig, upsertScopedAppConfig } = useScopedAppConfig(
+    domainScope,
+    ['domainConfig'],
+  );
+  const announcement = readDomainAnnouncement(
+    scopedAppConfig?.domainConfig?.settings,
+  );
+  // Keeps the System Settings keys beside the announcement; the write reloads
+  // this user's banner (ADR 0033), other users see it after a reload.
   const writeAnnouncement = (next: DomainAnnouncement | undefined) =>
-    updateDomainAppConfig('settings', (current: unknown) =>
-      withAnnouncement(current, next),
-    );
+    upsertScopedAppConfig({
+      configName: 'domainConfig',
+      subKey: 'settings',
+      value: (current: unknown) => withAnnouncement(current, next),
+    });
 
   const formRef = useRef<FormInstance<AnnouncementFormValues>>(null);
   const [bodyDraft, setBodyDraft] = useState<string>();
@@ -260,6 +268,12 @@ const AnnouncementEditModalContent: React.FC<AnnouncementEditModalProps> = ({
       {...modalProps}
     >
       <BAIFlex direction="column" align="stretch" gap="sm">
+        <BAIAlert
+          data-testid="announcement-reload-notice"
+          type="info"
+          showIcon
+          title={t('summary.AnnouncementReloadNotice')}
+        />
         <Form
           ref={formRef}
           layout="vertical"

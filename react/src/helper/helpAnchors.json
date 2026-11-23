@@ -19,7 +19,17 @@
     { "path": "agent-summary", "docPage": "agent_summary.html" },
     { "path": "statistics", "docPage": "statistics.html" },
     { "path": "usersettings", "docPage": "user_settings.html" },
-    { "path": "admin-dashboard", "docPage": "dashboard.html" },
+    {
+      "path": "admin-dashboard",
+      "docPage": "admin_menu.html",
+      "anchor": "admin-dashboard"
+    },
+    {
+      "path": "admin-dashboard",
+      "scope": "projectAdmin",
+      "docPage": "project_admin.html",
+      "anchor": "project-admin-dashboard"
+    },
     {
       "path": "admin-session",
       "docPage": "project_admin.html",

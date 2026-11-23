@@ -93,6 +93,20 @@ describe('parse — links on their own', () => {
     );
   });
 
+  it('reads a link on either gateway host form', async () => {
+    const anchorB64 = await encodeAnchor(anchor);
+    const hash = `/session#bai=v3.c_abcdef2.${anchorB64}`;
+    for (const origin of [
+      'http://gh-1-pr2.jongeun.10-82-0-159.sslip.io',
+      'https://gh-1-pr2--jongeun.frontend.internal.lablup.ai',
+    ]) {
+      const pins = await parsePins(`see ${origin}${hash}`);
+      expect(pins).toHaveLength(1);
+      expect(pins[0].anchor).toEqual(anchor);
+      expect(pins[0].url).toBe(`${origin}${hash}`);
+    }
+  });
+
   it("decodes GitHub's quote-reply escaping of the link", async () => {
     const anchorB64 = await encodeAnchor(anchor);
     const quoted = `&gt; [Open on dev server](http://x/y%23bai%3Dv3.c_abcdef2.${anchorB64})`;

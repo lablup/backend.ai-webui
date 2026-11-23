@@ -158,6 +158,8 @@ export async function seedStoredApiEndpoint(
  * their intro modal does not cover the page in a fresh context. Keys already
  * set (e.g. `'false'` by a spec that walks the tour) are left alone.
  */
+// TODO(e2e): the tour flags are account settings (ADR 0035), so this seed reaches
+// only an account without `settings`; write them through the API after sign-in.
 export async function skipAdminViewSwitchTours(page: Page) {
   await page.addInitScript(() => {
     for (const key of [
@@ -1696,6 +1698,23 @@ function overrideSettings(
   };
   for (const key of settings.cleared[scope]) delete merged[key];
   return merged;
+}
+
+/**
+ * `stored` with the settings `modifyConfigToml` serves to `page` for `scope`
+ * layered on top, as that page's route handlers do.
+ */
+export function withRequestedSettings(
+  page: Page,
+  scope: SettingScope,
+  stored: Record<string, unknown> | undefined,
+): Record<string, unknown> | undefined {
+  const requested = requestedConfigCache.get(page);
+  if (!requested) return stored;
+  const settings = settingsFromToml(requested);
+  return touchesScope(settings, scope)
+    ? overrideSettings(stored, settings, scope)
+    : stored;
 }
 
 type RouteHandler = Parameters<Page['route']>[1];

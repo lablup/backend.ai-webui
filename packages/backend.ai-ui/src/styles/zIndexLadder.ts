@@ -10,6 +10,7 @@
  |---|---|---|
  | `appHeader` | 100 | `MainLayout` header; `SiderToggleButton` sits one above it |
  | (reserved) | 101–899 | unowned. A layer placed here sits BELOW the boot curtain, so anything that must stay visible during boot belongs above `splash` |
+ | `assistant` | 800 | `WebUIAssistant`'s floating button and chat panel: over page content, under every drawer and dialog |
  | `splash` | 900 | `index.html` `#splash`, which stays mounted as the logged-out backdrop. It sits BELOW `modalBase` deliberately: every dialog is a `document.body` portal now, so no login-screen wrapper can lift one over a splash that outranks the band |
  | `loginHost` | 950 | `InteractiveLoginPage`'s full-viewport card host |
  | (legacy 1000 band) | 1000–1002 | a SECOND vocabulary this ladder does not own: the antd-era popup base (1000), inlined by `FolderExplorerModal` (`+ 2`); the non-modal `Drawer` (ui-common's fork) bases at 1000 too, and `DragAndDrop` sits at 1001 |
@@ -25,6 +26,7 @@ import { configureModalZIndex } from '@lablup/ui-common/Modal';
 /** Low → high; `zIndexLadder.test.ts` pins the declaration order increasing. */
 export const BAI_Z_INDEX = {
   appHeader: 100,
+  assistant: 800,
   splash: 900,
   loginHost: 950,
   modalBase: 1100,

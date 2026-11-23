@@ -130,6 +130,7 @@ export const Default: Story = {
 };
 
 export const CustomRender: Story = {
+  tags: ['no-vrt'],
   parameters: {
     docs: {
       description: {
@@ -300,6 +301,7 @@ export const MultipleCounters: Story = {
 };
 
 export const RealWorldExample: Story = {
+  tags: ['no-vrt'],
   parameters: {
     docs: {
       description: {

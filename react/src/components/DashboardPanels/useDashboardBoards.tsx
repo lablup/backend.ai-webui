@@ -3,13 +3,8 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { App } from '../../app-shim';
-import {
-  useDomainAppConfig,
-  useMyAppConfig,
-  usePublicDomainAppConfig,
-  useRefetchMyAppConfig,
-  useUpdateMyUserAppConfig,
-} from '../../hooks/useAppConfig';
+import { useCurrentDomainValue } from '../../hooks';
+import { useMyAppConfig } from '../../hooks/useAppConfig';
 import {
   activeBoardOf,
   keepUnreadablePanels,
@@ -33,7 +28,7 @@ import { atom, useSetAtom, useAtomValue } from 'jotai';
 import * as _ from 'lodash-es';
 import { useEffect } from 'react';
 
-/** Written page configs the refetched `userConfig` does not reflect yet. */
+/** Page configs whose write has not landed in the stored `userConfig` yet. */
 const optimisticDashboardAtom = atom<DashboardConfig>({});
 
 type DashboardWrite = (
@@ -56,7 +51,7 @@ export interface DashboardBoardsState {
   activeBoard: DashboardModel;
   /** What a new board and "Reset layout" start from. */
   template: DashboardModel;
-  /** Applies `update` to the page's boards at once; the write replays it on the server's value. */
+  /** Applies `update` to the page's boards at once; the write replays it on the stored document. */
   update: (
     update: (config: DashboardPageConfig) => DashboardPageConfig,
   ) => void;
@@ -65,8 +60,7 @@ export interface DashboardBoardsState {
 /**
  * One page's boards in `userConfig.dashboard`, falling back to the role template.
  *
- * Only this hook writes `userConfig.dashboard`, and only into the USER
- * fragment: the read is deep-merged across scopes, which mixes board arrays.
+ * Only this hook writes `userConfig.dashboard`.
  */
 export const useDashboardBoards = (
   page: PanelPage,
@@ -75,11 +69,18 @@ export const useDashboardBoards = (
   'use memo';
   const { message } = App.useApp();
   const { getErrorMessage } = useErrorMessageResolver();
-  const storedDashboard = useMyAppConfig<Record<string, unknown>>('dashboard');
-  const domainTemplates = useDomainAppConfig('dashboardTemplates');
-  const publicTemplates = usePublicDomainAppConfig('dashboardTemplates');
-  const updateMyUserAppConfig = useUpdateMyUserAppConfig();
-  const refetchMyAppConfig = useRefetchMyAppConfig();
+  const domainName = useCurrentDomainValue();
+  const [storedDashboard, setStoredDashboard] = useMyAppConfig<
+    Record<string, unknown>
+  >('userConfig', 'dashboard');
+  const [domainTemplates] = useMyAppConfig(
+    'domainConfig',
+    'dashboardTemplates',
+  );
+  const [publicTemplates] = useMyAppConfig('publicConfigByDomain', [
+    domainName,
+    'dashboardTemplates',
+  ]);
   const optimistic = useAtomValue(optimisticDashboardAtom);
   const setOptimistic = useSetAtom(optimisticDashboardAtom);
 
@@ -112,25 +113,23 @@ export const useDashboardBoards = (
           writtenPage,
           { update, resolve: resolveStored, keep },
         ] of batch) {
-          // Replayed on the value the server holds now, so edits made elsewhere survive.
-          await updateMyUserAppConfig(
-            ['dashboard', writtenPage],
-            (stored: unknown) => {
-              const written = update(resolveStored(stored));
-              return keep ? keep(written, stored) : written;
-            },
-          );
+          // Replayed on the latest stored document, so this tab's earlier writes survive.
+          await setStoredDashboard((dashboard) => {
+            const stored = dashboard?.[writtenPage];
+            const written = update(resolveStored(stored));
+            return {
+              ...dashboard,
+              [writtenPage]: keep ? keep(written, stored) : written,
+            };
+          });
         }
       } catch (error) {
         setOptimistic(settle(batch));
         message.error(getErrorMessage(error));
         throw error;
       }
-      // The write landed: a failed refetch keeps the optimistic copy rather than a stale one.
-      await refetchMyAppConfig().then(
-        () => setOptimistic(settle(batch)),
-        () => {},
-      );
+      // The write already updated myAppConfigState.
+      setOptimistic(settle(batch));
     };
   });
 

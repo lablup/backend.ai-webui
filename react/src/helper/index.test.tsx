@@ -29,6 +29,7 @@ import {
   resolveImageFullName,
   convertToOrderBy,
   convertFirstOrderByToString,
+  maskUserIdentity,
 } from './index';
 
 describe('convertToOrderBy', () => {
@@ -1269,5 +1270,16 @@ describe('extractErrorType', () => {
 
   it('returns the input itself when it is not a URL', () => {
     expect(extractErrorType('expired-token')).toBe('expired-token');
+  });
+});
+
+describe('maskUserIdentity', () => {
+  it('keeps the first two characters and the email domain', () => {
+    expect(maskUserIdentity('sungchul@lablup.com')).toBe('su******@lablup.com');
+  });
+
+  it('masks a name after its first two characters', () => {
+    expect(maskUserIdentity('Hong Gildong')).toBe('Ho**********');
+    expect(maskUserIdentity('A')).toBe('A');
   });
 });

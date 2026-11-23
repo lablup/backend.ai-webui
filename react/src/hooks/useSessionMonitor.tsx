@@ -19,7 +19,10 @@ import {
   type SessionMonitorSummary,
 } from '../helper/sessionMonitor';
 import { useCurrentUserInfo } from './backendai';
-import { hasStoredUserSetting, useBAISettingUserState } from './useBAISetting';
+import {
+  useBAISettingUserState,
+  useHasStoredUserSetting,
+} from './useBAISetting';
 import { useCurrentUserProjectRoles } from './useCurrentUserProjectRoles';
 import { INITIAL_FETCH_KEY } from 'backend.ai-ui';
 import { atom } from 'jotai';
@@ -58,10 +61,13 @@ export const useSessionMonitorCondition = () => {
   const { isSuperAdmin } = useCurrentUserProjectRoles();
   const [currentUser] = useCurrentUserInfo();
   const [condition] = useBAISettingUserState('session_monitor_condition');
+  const hasStoredCondition = useHasStoredUserSetting(
+    'session_monitor_condition',
+  );
   const isDomainAdmin = isSuperAdmin;
   const userId = currentUser.uuid ?? '';
   return {
-    condition: hasStoredUserSetting('session_monitor_condition')
+    condition: hasStoredCondition
       ? (condition ?? '')
       : buildSessionMonitorDefaultCondition({ userId, isDomainAdmin }),
     isDomainAdmin,

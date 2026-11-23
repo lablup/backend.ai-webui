@@ -3,11 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { App } from '../app-shim';
-import {
-  useMyAppConfig,
-  useRefetchMyAppConfig,
-  useUpdateMyUserAppConfig,
-} from './useAppConfig';
+import { useMyAppConfig } from './useAppConfig';
 import { SessionHistory, useBAISettingUserState } from './useBAISetting';
 import {
   useEventNotStable,
@@ -19,9 +15,6 @@ import { useEffect, useEffectEvent, useState } from 'react';
 
 type SessionHistoryKey = 'recentSessionHistory' | 'pinnedSessionHistory';
 
-// Each write replaces the whole `userConfig` document, so concurrent writes
-// (a rename updates both lists) must run one after another.
-let writeQueue: Promise<unknown> = Promise.resolve();
 // Several stores of one key mount at once; only the first moves its local history.
 const migratingKeys = new Set<SessionHistoryKey>();
 
@@ -34,22 +27,19 @@ const useSessionHistoryStore = (key: SessionHistoryKey) => {
   'use memo';
   const { message } = App.useApp();
   const { getErrorMessage } = useErrorMessageResolver();
-  const serverValue = useMyAppConfig<Array<SessionHistory>>(key);
+  const [serverValue, setServerValue, , userConfigStatus] = useMyAppConfig<
+    Array<SessionHistory>
+  >('userConfig', key);
+  // Without a loaded userConfig, `undefined` does not mean the server has no history.
+  const isUserConfigLoaded = userConfigStatus === 'loaded';
   const [localValue, setLocalValue] = useBAISettingUserState(key);
-  const updateMyUserAppConfig = useUpdateMyUserAppConfig();
-  const refetchMyAppConfig = useRefetchMyAppConfig();
-  // Shows the written value while the write and the refetch are in flight.
+  // Shows the written value while the write is in flight.
   const [pending, setPending] = useState<{ value: Array<SessionHistory> }>();
 
-  /** Writes `next` after any write already queued; false when it failed (the error is shown). */
+  /** Writes `next` after the writes already queued on `userConfig`; false when it failed (the error is shown). */
   const write = async (next: Array<SessionHistory>): Promise<boolean> => {
-    const queued = writeQueue.then(async () => {
-      await updateMyUserAppConfig(key, next);
-      await refetchMyAppConfig();
-    });
-    writeQueue = queued.catch(() => {});
     try {
-      await queued;
+      await setServerValue(next);
       return true;
     } catch (error) {
       message.error(getErrorMessage(error));
@@ -68,6 +58,7 @@ const useSessionHistoryStore = (key: SessionHistoryKey) => {
 
   const migrateLocalHistory = useEffectEvent(() => {
     if (
+      !isUserConfigLoaded ||
       migratingKeys.has(key) ||
       serverValue !== undefined ||
       _.isEmpty(localValue)

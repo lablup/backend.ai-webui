@@ -7,10 +7,10 @@ import {
   SessionActionButtonsFragment$key,
 } from '../../__generated__/SessionActionButtonsFragment.graphql';
 import { isNotYetAllocatedSession } from '../../helper/sessionResourceGridData';
-import { useSuspendedBackendaiClient } from '../../hooks';
 import { useCurrentUserInfo } from '../../hooks/backendai';
 import { useSuspendedAppTemplateConfig } from '../../hooks/useAppTemplate';
 import { useBackendAIAppLauncher } from '../../hooks/useBackendAIAppLauncher';
+import { useEffectiveLoginConfig } from '../../hooks/useWebUIConfig';
 import ErrorBoundaryWithNullFallback from '../ErrorBoundaryWithNullFallback';
 import AppLauncherModal from './AppLauncherModal';
 import ContainerCommitModal from './ContainerCommitModal';
@@ -109,7 +109,7 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
   onAction,
 }) => {
   const { t } = useTranslation();
-  const baiClient = useSuspendedBackendaiClient();
+  const loginConfig = useEffectiveLoginConfig();
   const { hideAppsOnBatchSession } = useSuspendedAppTemplateConfig();
 
   const session = useFragment(
@@ -176,7 +176,7 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
     }
 
     // If containerCommit feature is disabled in the config, hide the button
-    if (!baiClient._config.enableContainerCommit && key === 'containerCommit') {
+    if (!loginConfig.enableContainerCommit && key === 'containerCommit') {
       return false;
     }
     return !hiddenButtons.has(key);

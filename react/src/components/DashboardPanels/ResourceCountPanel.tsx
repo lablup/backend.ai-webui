@@ -4,8 +4,14 @@
  */
 import PanelFrame from './PanelFrame';
 import type { ResourceTablePanelProps } from './ResourceTablePanel';
-import { resolvePanelTitle, resourceRegistry } from './resourceRegistry';
+import { isClusterAuditScope } from './cards/AuditLogPanel';
+import {
+  auditLogClusterQuery,
+  resolvePanelTitle,
+  resourceRegistry,
+} from './resourceRegistry';
 import type { PanelDescriptor } from './types';
+import { useAuditLogQueryScope } from './useAuditLogQueryScope';
 import { useDashboardQueryScope } from './useDashboardFilters';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
@@ -60,6 +66,7 @@ export const ResourceCountContent: React.FC<{
   'use memo';
   const { t } = useTranslation();
   const queryScope = useDashboardQueryScope();
+  const auditScope = useAuditLogQueryScope(descriptor.resourceType);
   const config = resourceRegistry[descriptor.resourceType];
 
   // Offset mode with the minimum page — only `count` is consumed.
@@ -69,14 +76,19 @@ export const ResourceCountContent: React.FC<{
     limit: 1,
     offset: 0,
     ...queryScope,
+    auditScope,
     resourceGroups: descriptor.resourceGroups,
   });
   const deferredVariables = useDeferredValue(variables);
   const deferredFetchKey = useDeferredValue(fetchKey);
-  const data = useLazyLoadQuery(config.query, deferredVariables, {
-    fetchPolicy: 'store-and-network',
-    fetchKey: deferredFetchKey,
-  });
+  const data = useLazyLoadQuery(
+    isClusterAuditScope(auditScope) ? auditLogClusterQuery : config.query,
+    deferredVariables,
+    {
+      fetchPolicy: 'store-and-network',
+      fetchKey: deferredFetchKey,
+    },
+  );
   const connection = config.selectConnection(data);
 
   // Sub-label = resource label, like the built-in count rows

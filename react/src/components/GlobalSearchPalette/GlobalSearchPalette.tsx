@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { useSuspendedBackendaiClient, useWebUINavigate } from '../../hooks';
+import { useWebUINavigate } from '../../hooks';
 import { useOpenHelp } from '../../hooks/useHelpURL';
 import { useActiveProjectName } from '../../hooks/useRouteScope';
 import {
@@ -10,6 +10,7 @@ import {
   useSiderCollapsedState,
 } from '../../hooks/useShellPanels';
 import { useThemeMode } from '../../hooks/useThemeMode';
+import { useEffectiveLoginConfig } from '../../hooks/useWebUIConfig';
 import { plainText } from './rank';
 import type { PaletteActionContext, SearchHit } from './types';
 import {
@@ -23,12 +24,11 @@ import {
   CommandPaletteInput,
 } from '@lablup/ui-common/CommandPalette';
 import { Kbd } from '@lablup/ui-common/Kbd';
-import { Skeleton } from '@lablup/ui-common/Skeleton';
 import { HStack, VStack } from '@lablup/ui-common/Stack';
 import { Text } from '@lablup/ui-common/Text';
 import { textSizeVars } from '@lablup/ui-common/theme/tokens.stylex';
 import * as stylex from '@stylexjs/stylex';
-import { useBAILogger } from 'backend.ai-ui';
+import { BAISkeleton, useBAILogger } from 'backend.ai-ui';
 import { Settings } from 'lucide-react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -53,13 +53,6 @@ const styles = stylex.create({
     width: textSizeVars['--font-size-xl'],
     height: textSizeVars['--font-size-xl'],
   },
-  // Placeholder bars sized off the same type scale the two row lines use.
-  placeholderColumn: { flexGrow: 1, minWidth: 0 },
-  placeholderLabel: { width: '40%', height: textSizeVars['--font-size-base'] },
-  placeholderSecondary: {
-    width: '24%',
-    height: textSizeVars['--font-size-sm'],
-  },
 });
 
 export interface GlobalSearchPaletteProps {
@@ -77,17 +70,13 @@ const PALETTE_WIDTH = 'min(640px, 92vw)';
 const BOOTSTRAP_PLACEHOLDER = (
   <VStack gap={2} width="100%">
     {[0, 1, 2].map((index) => (
-      <HStack key={index} gap={2} align="center" width="100%">
-        <Skeleton index={index} radius={2} xstyle={styles.iconSlot} />
-        <VStack gap={0.5} xstyle={styles.placeholderColumn}>
-          <Skeleton index={index} radius={1} xstyle={styles.placeholderLabel} />
-          <Skeleton
-            index={index}
-            radius={1}
-            xstyle={styles.placeholderSecondary}
-          />
-        </VStack>
-      </HStack>
+      <BAISkeleton
+        key={index}
+        hasAvatar
+        hasTitle={false}
+        rows={2}
+        startIndex={index}
+      />
     ))}
   </VStack>
 );
@@ -101,7 +90,7 @@ const GlobalSearchPalette: React.FC<GlobalSearchPaletteProps> = ({
   const { t } = useTranslation();
   const { logger } = useBAILogger();
   const navigate = useWebUINavigate();
-  const baiClient = useSuspendedBackendaiClient();
+  const loginConfig = useEffectiveLoginConfig();
   const projectName = useActiveProjectName();
   const { setThemeMode } = useThemeMode();
   const [, setNotificationDrawerOpen] = useNotificationDrawerState();
@@ -116,11 +105,11 @@ const GlobalSearchPalette: React.FC<GlobalSearchPaletteProps> = ({
   const actionContext: PaletteActionContext = {
     navigate,
     projectName: projectName ?? null,
-    config: toSearchConfigFlags(baiClient),
+    config: toSearchConfigFlags(loginConfig),
     setThemeMode,
     openNotifications: () => setNotificationDrawerOpen(true),
     toggleSider: () => setSiderCollapsed((collapsed) => !collapsed),
-    openHelp,
+    openHelp: () => openHelp?.(),
   };
 
   const translate = toTranslator(t);

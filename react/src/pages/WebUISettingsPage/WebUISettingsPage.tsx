@@ -4,11 +4,9 @@
  */
 import BAIErrorBoundary from '../../components/BAIErrorBoundary';
 import { WEBUI_SETTINGS_CONFIG_KEY } from '../../helper/webuiSettings';
-import { useSuspendedBackendaiClient, useTabQuerySnapshot } from '../../hooks';
-import {
-  useDomainAppConfig,
-  useRawPublicDomainAppConfig,
-} from '../../hooks/useAppConfig';
+import { useCurrentDomain, useTabQuerySnapshot } from '../../hooks';
+import { PUBLIC_SCOPE, useScopedAppConfig } from '../../hooks/useAppConfig';
+import { useEffectiveLoginConfig } from '../../hooks/useWebUIConfig';
 import ConfigurationsSettingList from './components/ConfigurationsSettingList';
 import WebUISettingList from './components/WebUISettingList';
 import { BAICard, BAIFlex, BAISkeleton } from 'backend.ai-ui';
@@ -24,14 +22,44 @@ const tabParser = parseAsStringLiteral([
 /** Reads both saved documents: the public (pre-login) slice and the domain one. */
 const SavedWebUISettingList: React.FC = () => {
   'use memo';
-  const savedDomainSettings = useDomainAppConfig(WEBUI_SETTINGS_CONFIG_KEY);
-  const savedPublicSettings = useRawPublicDomainAppConfig(
-    WEBUI_SETTINGS_CONFIG_KEY,
-  );
+  const { id: domainId, name: domainName } = useCurrentDomain();
+  const domainScope = { type: 'domain', id: domainId } as const;
+  // One read per scope, one after the other (ADR 0033).
+  const domain = useScopedAppConfig(domainScope, ['domainConfig']);
+  const publicConfig = useScopedAppConfig(PUBLIC_SCOPE, [
+    'publicConfigByDomain',
+  ]);
+  // A change rebuilds both settings layers from these reads, so an unreadable
+  // scope would reset its live settings to the defaults: show the error instead.
+  if (!domain.scopedAppConfig || !publicConfig.scopedAppConfig) {
+    throw new Error(
+      `System Settings could not read the ${domain.scopedAppConfig ? 'public' : 'domain'} settings document`,
+    );
+  }
   return (
     <WebUISettingList
-      savedDomainSettings={savedDomainSettings}
-      savedPublicSettings={savedPublicSettings}
+      savedDomainSettings={
+        domain.scopedAppConfig.domainConfig?.[WEBUI_SETTINGS_CONFIG_KEY]
+      }
+      savedPublicSettings={
+        publicConfig.scopedAppConfig.publicConfigByDomain?.[domainName]?.[
+          WEBUI_SETTINGS_CONFIG_KEY
+        ]
+      }
+      setDomainSettings={async (value) => {
+        await domain.upsertScopedAppConfig({
+          configName: 'domainConfig',
+          subKey: WEBUI_SETTINGS_CONFIG_KEY,
+          value,
+        });
+      }}
+      setPublicSettings={async (value) => {
+        await publicConfig.upsertScopedAppConfig({
+          configName: 'publicConfigByDomain',
+          subKey: [domainName, WEBUI_SETTINGS_CONFIG_KEY],
+          value,
+        });
+      }}
     />
   );
 };
@@ -39,18 +67,18 @@ const SavedWebUISettingList: React.FC = () => {
 const WebUISettingsPage: React.FC = () => {
   'use memo';
   const { t } = useTranslation();
-  const baiClient = useSuspendedBackendaiClient();
+  const loginConfig = useEffectiveLoginConfig();
   const { currentTab, onTabChange } = useTabQuerySnapshot(tabParser);
 
   // The Configurations tab replaced the `settings` sidebar entry (#10684), so
   // the menu lists keyed on `settings` still govern it: blocked hides the
   // tab, inactive shows it disabled but keeps the URL reachable.
-  const showsConfigurations = !(baiClient._config.blockList ?? []).includes(
+  const showsConfigurations = !(loginConfig.blockList ?? []).includes(
     'settings',
   );
-  const isConfigurationsInactive = (
-    baiClient._config.inactiveList ?? []
-  ).includes('settings');
+  const isConfigurationsInactive = (loginConfig.inactiveList ?? []).includes(
+    'settings',
+  );
   const activeTab = showsConfigurations ? currentTab : 'settings';
 
   return (

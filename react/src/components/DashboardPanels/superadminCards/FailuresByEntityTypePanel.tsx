@@ -12,6 +12,7 @@ import { useBAIPaginationOptionState } from '../../../hooks/reactPaginationQuery
 import {
   AuditLogRows,
   DomainAuditScope,
+  isClusterAuditScope,
   ScopedAuditLogList,
 } from '../cards/AuditLogPanel';
 import ScopedCard from '../cards/ScopedCard';
@@ -38,7 +39,7 @@ import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
 /** One entity type's failed audit entries in the card's window, a page at a time. */
-const FailedEntries: React.FC<{
+export const FailedEntries: React.FC<{
   scope: AuditLogScope;
   filter: AuditLogFilter;
   fetchKey: string;
@@ -93,61 +94,117 @@ const EntityTypeFailures: React.FC<{
   );
   const [isListOpen, setIsListOpen] = useState(false);
   const data = useLazyLoadQuery<FailuresByEntityTypePanelQuery>(
-    graphql`
-      query FailuresByEntityTypePanelQuery(
-        $scope: AuditLogScope!
-        $session: AuditLogFilter!
-        $vfolder: AuditLogFilter!
-        $deployment: AuditLogFilter!
-        $user: AuditLogFilter!
-        $project: AuditLogFilter!
-        $resourceGroup: AuditLogFilter!
-        $artifactRegistry: AuditLogFilter!
-        $other: AuditLogFilter!
-      ) {
-        session: scopedAuditLogsV2(scope: $scope, filter: $session, limit: 1)
-          @catch(to: RESULT) {
-          count
-        }
-        vfolder: scopedAuditLogsV2(scope: $scope, filter: $vfolder, limit: 1)
-          @catch(to: RESULT) {
-          count
-        }
-        deployment: scopedAuditLogsV2(
-          scope: $scope
-          filter: $deployment
-          limit: 1
-        ) @catch(to: RESULT) {
-          count
-        }
-        user: scopedAuditLogsV2(scope: $scope, filter: $user, limit: 1)
-          @catch(to: RESULT) {
-          count
-        }
-        project: scopedAuditLogsV2(scope: $scope, filter: $project, limit: 1)
-          @catch(to: RESULT) {
-          count
-        }
-        resourceGroup: scopedAuditLogsV2(
-          scope: $scope
-          filter: $resourceGroup
-          limit: 1
-        ) @catch(to: RESULT) {
-          count
-        }
-        artifactRegistry: scopedAuditLogsV2(
-          scope: $scope
-          filter: $artifactRegistry
-          limit: 1
-        ) @catch(to: RESULT) {
-          count
-        }
-        other: scopedAuditLogsV2(scope: $scope, filter: $other, limit: 1)
-          @catch(to: RESULT) {
-          count
-        }
-      }
-    `,
+    isClusterAuditScope(scope)
+      ? graphql`
+          query FailuresByEntityTypePanelClusterQuery(
+            $session: AuditLogFilter!
+            $vfolder: AuditLogFilter!
+            $deployment: AuditLogFilter!
+            $user: AuditLogFilter!
+            $project: AuditLogFilter!
+            $resourceGroup: AuditLogFilter!
+            $artifactRegistry: AuditLogFilter!
+            $other: AuditLogFilter!
+          ) {
+            session: adminAuditLogsV2(filter: $session, limit: 1)
+              @catch(to: RESULT) {
+              count
+            }
+            vfolder: adminAuditLogsV2(filter: $vfolder, limit: 1)
+              @catch(to: RESULT) {
+              count
+            }
+            deployment: adminAuditLogsV2(filter: $deployment, limit: 1)
+              @catch(to: RESULT) {
+              count
+            }
+            user: adminAuditLogsV2(filter: $user, limit: 1) @catch(to: RESULT) {
+              count
+            }
+            project: adminAuditLogsV2(filter: $project, limit: 1)
+              @catch(to: RESULT) {
+              count
+            }
+            resourceGroup: adminAuditLogsV2(filter: $resourceGroup, limit: 1)
+              @catch(to: RESULT) {
+              count
+            }
+            artifactRegistry: adminAuditLogsV2(
+              filter: $artifactRegistry
+              limit: 1
+            ) @catch(to: RESULT) {
+              count
+            }
+            other: adminAuditLogsV2(filter: $other, limit: 1)
+              @catch(to: RESULT) {
+              count
+            }
+          }
+        `
+      : graphql`
+          query FailuresByEntityTypePanelQuery(
+            $scope: AuditLogScope!
+            $session: AuditLogFilter!
+            $vfolder: AuditLogFilter!
+            $deployment: AuditLogFilter!
+            $user: AuditLogFilter!
+            $project: AuditLogFilter!
+            $resourceGroup: AuditLogFilter!
+            $artifactRegistry: AuditLogFilter!
+            $other: AuditLogFilter!
+          ) {
+            session: scopedAuditLogsV2(
+              scope: $scope
+              filter: $session
+              limit: 1
+            ) @catch(to: RESULT) {
+              count
+            }
+            vfolder: scopedAuditLogsV2(
+              scope: $scope
+              filter: $vfolder
+              limit: 1
+            ) @catch(to: RESULT) {
+              count
+            }
+            deployment: scopedAuditLogsV2(
+              scope: $scope
+              filter: $deployment
+              limit: 1
+            ) @catch(to: RESULT) {
+              count
+            }
+            user: scopedAuditLogsV2(scope: $scope, filter: $user, limit: 1)
+              @catch(to: RESULT) {
+              count
+            }
+            project: scopedAuditLogsV2(
+              scope: $scope
+              filter: $project
+              limit: 1
+            ) @catch(to: RESULT) {
+              count
+            }
+            resourceGroup: scopedAuditLogsV2(
+              scope: $scope
+              filter: $resourceGroup
+              limit: 1
+            ) @catch(to: RESULT) {
+              count
+            }
+            artifactRegistry: scopedAuditLogsV2(
+              scope: $scope
+              filter: $artifactRegistry
+              limit: 1
+            ) @catch(to: RESULT) {
+              count
+            }
+            other: scopedAuditLogsV2(scope: $scope, filter: $other, limit: 1)
+              @catch(to: RESULT) {
+              count
+            }
+          }
+        `,
     variables,
     { fetchPolicy: 'store-and-network', fetchKey },
   );

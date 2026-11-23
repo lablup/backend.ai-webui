@@ -23,12 +23,11 @@ import { Banner } from '@lablup/ui-common/Banner';
 import { Card } from '@lablup/ui-common/Card';
 import { Divider } from '@lablup/ui-common/Divider';
 import { IconButton } from '@lablup/ui-common/IconButton';
-import { Skeleton } from '@lablup/ui-common/Skeleton';
 import { HStack, VStack } from '@lablup/ui-common/Stack';
 import { Heading, Text } from '@lablup/ui-common/Text';
 import { Tooltip } from '@lablup/ui-common/Tooltip';
 import { useTheme } from '@lablup/ui-common/theme';
-import { BAIFlex, BAITable, BAITextInput } from 'backend.ai-ui';
+import { BAIFlex, BAISkeleton, BAITable, BAITextInput } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import {
@@ -449,11 +448,7 @@ const PureChatPage = ({ id }: { id: string }) => {
                     flex: 1,
                   }}
                 >
-                  <Suspense
-                    fallback={
-                      <Skeleton width="100%" height="100%" radius={3} />
-                    }
-                  >
+                  <Suspense fallback={<BAISkeleton rows={4} />}>
                     {_.map(chat.chats, (chatData) => (
                       <ChatCard
                         key={chatData.id}

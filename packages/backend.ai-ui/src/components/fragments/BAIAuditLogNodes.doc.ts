@@ -26,6 +26,11 @@ export const docs = {
           'Expose the id columns through `tableSettings` rather than `customizeColumns` when the surface only needs them occasionally — they exist already and merely start hidden.',
       },
       {
+        guidance: true,
+        description:
+          'Show an action name outside the table through the exported `useAuditLogActionLabel()` hook, so the two never name one action two ways.',
+      },
+      {
         guidance: false,
         description:
           'Expect duration, description or the id columns to sort — only time, action, operation and result carry a sorter.',

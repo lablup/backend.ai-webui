@@ -1,5 +1,7 @@
 # 0026 — Dashboard boards in manager app config
 
+> The app config hooks this ADR names, and its write base (**Optimistic state**, **Replay on the server value**, **Same-panel edits**, **Shared queue scope**), are replaced by [ADR 0033](0033-scoped-and-merged-app-config-hooks.md): a write now builds on the merged `userConfig` that sign-in read into `myAppConfigState`. ADR 0033 also records that the manager's merge replaces an array whole, so a DOMAIN-scope board list does not mix with a user's (**Deep merge of arrays** above does not hold).
+
 ## Summary
 
 > Unfamiliar terms are collected in the [Glossary](#glossary) at the end.

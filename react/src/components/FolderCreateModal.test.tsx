@@ -41,9 +41,12 @@ const clientState = vi.hoisted(() => ({
 }));
 
 vi.mock('../hooks/useAppConfig', () => ({
-  useMyAppConfig: () => clientState.skipSharedConfirm,
-  useRefetchMyAppConfig: () => () => Promise.resolve(),
-  useUpdateMyUserAppConfig: () => () => Promise.resolve(),
+  useMyAppConfig: () => [
+    clientState.skipSharedConfirm,
+    () => Promise.resolve(),
+    () => Promise.resolve(),
+    'loaded',
+  ],
 }));
 
 vi.mock('../hooks', async (importOriginal) => {
@@ -54,7 +57,6 @@ vi.mock('../hooks', async (importOriginal) => {
       is_superadmin: clientState.isSuperadmin,
       _config: {
         domainName: 'default',
-        enableModelFolders: true,
       },
       vfolder: {
         list_allowed_types: () => Promise.resolve(['user', 'group']),

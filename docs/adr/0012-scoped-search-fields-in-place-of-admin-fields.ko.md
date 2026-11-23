@@ -47,6 +47,7 @@ flowchart LR
 
 - **Rule**: 대응하는 `scoped*` field가 있는 `admin*` 읽기(`adminUsersV2`, `adminProjectsV2`, `adminResourceGroups`, `adminImagesV2` …)는 `scoped*` field(`scopedUsersV2`, `scopedProjectsV2`, `scopedResourceGroups`, `scopedImagesV2` …)로 바꾸고 `admin*` 선택은 지운다.
 - **System-wide management**: 도메인에 묶이지 않은 엔티티를 superadmin이 만들고 관리하는 화면은 `admin*` field를 유지한다. 리소스 그룹 관리의 `ResourceGroupList`, Agent 설정과 RBAC role 모달의 `BAIAdminResourceGroupSelect`, fair share 설정(`FairShareItems/*`), RBAC 관리 화면과 `BAIAdminUserV2Select`가 여기에 든다. 도메인 scope로 읽으면 그 화면에서 관리할 엔티티가 빠진다.
+- **Superadmin dashboard audit log**: superadmin 대시보드의 감사 로그 카드와 사용자 정의 패널은 `adminAuditLogsV2`로 시스템 기록을 포함한 cluster의 모든 기록을 읽는다. 감사 로그의 도메인 scope는 도메인의 모든 프로젝트와 사용자를 나열해야 하고, superadmin에게 필요한 시스템 기록을 감추며, 보드를 느리게 만들었다([ADR 0027](0027-dashboard-filter-bar.ko.md), "Cluster audit log", 2026-11-17). 멤버와 프로젝트 관리자 대시보드는 `scopedAuditLogsV2`를 그대로 쓴다.
 - **No scoped field**: 읽기나 쓰기에 `scoped*` field가 없으면, 그 동작은 host component가 `useSuspendedBackendaiClient().is_superadmin`이 참일 때만 렌더하고, 도메인 관리자에게 답하는 legacy 읽기가 있으면 그 field를 쓴다. `TODO(needs-backend)`로 backend 요청 issue를 가리킨다.
 
 ### 2. scope는 현재 도메인이다

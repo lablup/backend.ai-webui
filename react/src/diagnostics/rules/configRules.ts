@@ -20,6 +20,16 @@ export function isValidUrl(value: string): boolean {
   }
 }
 
+/** The URL carries a user name or password (`https://user:pass@host`). */
+export function hasUrlCredentials(value: string): boolean {
+  try {
+    const url = new URL(value);
+    return url.username !== '' || url.password !== '';
+  } catch {
+    return false;
+  }
+}
+
 /**
  * The keys `config.toml` still owns, as the file sets them. `server.webServerURL`
  * is read only by the Electron app (`electron-app/main.js`), so it is left out elsewhere.

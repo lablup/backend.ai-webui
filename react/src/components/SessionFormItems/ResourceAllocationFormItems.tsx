@@ -10,7 +10,6 @@ import {
   isUnifiedAcceleratorSlot,
   UNIFIED_SLOT_TAG_PREFIX,
 } from '../../helper/unifiedAcceleratorSlot';
-import { useSuspendedBackendaiClient } from '../../hooks';
 import {
   useResourceSlots,
   useResourceSlotsDetails,
@@ -22,6 +21,7 @@ import {
   useResourceLimitAndRemaining,
 } from '../../hooks/useResourceLimitAndRemaining';
 import { useSessionResourcePresets } from '../../hooks/useSessionResourcePresets';
+import { useEffectiveLoginConfig } from '../../hooks/useWebUIConfig';
 import { ProjectContext } from '../../types/projectContext';
 import AgentSelect from '../AgentSelect';
 import {
@@ -151,10 +151,21 @@ interface ResourceAllocationFormItemsProps {
    * for `sessionType === 'system'` (FR-3996).
    */
   includeSFTPResourceGroups?: boolean;
+  /**
+   * Caller rules on the accelerator quantity. In preset-only mode the
+   * accelerator item is hidden, so they report on the Resource Presets item
+   * instead (ADR 0016).
+   */
   extraAcceleratorRules?: Array<{
     warningOnly?: boolean;
     validator: (rule: unknown, value: number) => Promise<void>;
   }>;
+  /**
+   * Extra `dependencies` for the item that reports `extraAcceleratorRules`:
+   * the exact paths of outside fields those rules read, so they re-validate
+   * when one changes.
+   */
+  extraAcceleratorDependencies?: ReadonlyArray<NamePath>;
   /** Keep a prefilled `allocationPreset: 'custom'` and its values in preset-only mode (a cloned revision). */
   keepRestoredAllocation?: boolean;
 }
@@ -226,13 +237,14 @@ const ResourceAllocationFormItems: React.FC<
   hideResourceGroupFormItem = false,
   includeSFTPResourceGroups = false,
   extraAcceleratorRules,
+  extraAcceleratorDependencies,
   keepRestoredAllocation = false,
 }) => {
   const form = Form.useFormInstance<MergedResourceAllocationFormValue>();
   const { t } = useTranslation();
   const { token } = useTheme();
 
-  const baiClient = useSuspendedBackendaiClient();
+  const loginConfig = useEffectiveLoginConfig();
 
   const [{ keypairResourcePolicy }] =
     useCurrentKeyPairResourcePolicyLazyLoadQuery();
@@ -346,9 +358,12 @@ const ResourceAllocationFormItems: React.FC<
   );
   const allocatablePresetIds: string[] = JSON.parse(allocatablePresetIdsKey);
 
-  const mode: AllocationMode = baiClient._config.allowCustomResourceAllocation
+  const mode: AllocationMode = loginConfig.allowCustomResourceAllocation
     ? 'free'
     : 'preset-only';
+  // Same item choice as `acceleratorTypeErrorTarget` (ADR 0016).
+  const extraAcceleratorRulesTarget =
+    mode === 'free' || !enableResourcePresets ? 'accelerator' : 'preset';
   const ruleContext: RuleContext = {
     mode,
     enableResourcePresets: !!enableResourcePresets,
@@ -403,6 +418,14 @@ const ResourceAllocationFormItems: React.FC<
     if (mode === 'free' || !enableResourcePresets) {
       names.push(['resource', 'acceleratorType']);
     }
+    // A restored accelerator shows the caller's warning on load, not on first edit.
+    if (
+      !_.isEmpty(extraAcceleratorRules) &&
+      extraAcceleratorRulesTarget === 'accelerator' &&
+      Number(form.getFieldValue(['resource', 'accelerator'])) > 0
+    ) {
+      names.push(['resource', 'accelerator']);
+    }
     if (label) names.push('allocationPreset');
     if (names.length > 0) form.validateFields(names).catch(() => {});
   });
@@ -447,6 +470,11 @@ const ResourceAllocationFormItems: React.FC<
           label={t('resourcePreset.ResourcePresets')}
           name="allocationPreset"
           style={{ marginBottom: token('--spacing-2') }}
+          dependencies={
+            extraAcceleratorRulesTarget === 'preset'
+              ? [...(extraAcceleratorDependencies ?? [])]
+              : undefined
+          }
           rules={[
             {
               required: true,
@@ -507,13 +535,21 @@ const ResourceAllocationFormItems: React.FC<
                 if (message) return Promise.reject(message);
               },
             }),
+            ...(extraAcceleratorRulesTarget === 'preset'
+              ? _.map(extraAcceleratorRules, (rule) => ({
+                  warningOnly: rule.warningOnly,
+                  validator: (validatorRule: unknown) =>
+                    rule.validator(
+                      validatorRule,
+                      form.getFieldValue(['resource', 'accelerator']),
+                    ),
+                }))
+              : []),
           ]}
         >
           <ResourcePresetSelect
-            showCustom={baiClient._config.allowCustomResourceAllocation}
-            showMinimumRequired={
-              baiClient._config.allowCustomResourceAllocation
-            }
+            showCustom={loginConfig.allowCustomResourceAllocation}
+            showMinimumRequired={loginConfig.allowCustomResourceAllocation}
             onChange={(value) => {
               runRule({ type: 'user.selectPreset', id: value });
               if (value !== 'custom') validateResource();
@@ -545,7 +581,7 @@ const ResourceAllocationFormItems: React.FC<
                 {resourceSlotsInRG?.cpu && (
                   <Form.Item
                     name={['resource', 'cpu']}
-                    hidden={!baiClient._config.allowCustomResourceAllocation}
+                    hidden={!loginConfig.allowCustomResourceAllocation}
                     // initialValue={0}
                     label={
                       mergedResourceSlots?.cpu?.human_readable_name || 'CPU'
@@ -674,7 +710,7 @@ const ResourceAllocationFormItems: React.FC<
                       shouldUpdate={(prev, next) =>
                         prev.resource?.shmem !== next.resource?.shmem
                       }
-                      hidden={!baiClient._config.allowCustomResourceAllocation}
+                      hidden={!loginConfig.allowCustomResourceAllocation}
                     >
                       {() => {
                         return (
@@ -845,7 +881,7 @@ const ResourceAllocationFormItems: React.FC<
                       prev.cluster_size !== next.cluster_size
                     );
                   }}
-                  hidden={!baiClient._config.allowCustomResourceAllocation}
+                  hidden={!loginConfig.allowCustomResourceAllocation}
                 >
                   {({ getFieldValue }) => {
                     const currentAcceleratorType = getFieldValue([
@@ -933,6 +969,7 @@ const ResourceAllocationFormItems: React.FC<
                           ['resource', 'acceleratorType'],
                           'cluster_size',
                           ['resource', 'mem'],
+                          ...(extraAcceleratorDependencies ?? []),
                         ]}
                         // Unified-memory slots clear the accelerator field
                         // (it stays empty, not mirrored) and disable direct
@@ -1082,7 +1119,10 @@ const ResourceAllocationFormItems: React.FC<
                                     return Promise.resolve();
                                   },
                                 },
-                                ...(extraAcceleratorRules ?? []),
+                                ...(extraAcceleratorRulesTarget ===
+                                'accelerator'
+                                  ? (extraAcceleratorRules ?? [])
+                                  : []),
                               ]
                         }
                       >

@@ -2,11 +2,11 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { useSuspendedBackendaiClient } from '../../hooks';
 import { useIsProjectAgnosticPage } from '../../hooks/useIsProjectAgnosticPage';
 import { useRouteScope } from '../../hooks/useRouteScope';
 import { sessionMonitorScopeAtom } from '../../hooks/useSessionMonitor';
 import { useThemeMode } from '../../hooks/useThemeMode';
+import { useEffectiveLoginConfig } from '../../hooks/useWebUIConfig';
 import BAINotificationButton from '../BAINotificationButton';
 import GlobalSearchPaletteButton from '../GlobalSearchPalette/GlobalSearchPaletteButton';
 import LoginSessionExtendButton from '../LoginSessionExtendButton';
@@ -46,11 +46,11 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = () => {
   const bandOverlays =
     ANTD_REVERSED_BAND_OVERLAYS[isDarkMode ? 'dark' : 'light'];
   const { t } = useTranslation();
-  const baiClient = useSuspendedBackendaiClient();
+  const loginConfig = useEffectiveLoginConfig();
   // Supplementary information, so it gives its width to the project on mobile.
   const sessionMonitorScope = useAtomValue(sessionMonitorScopeAtom);
   const hasSessionMonitor = !isMobile && sessionMonitorScope !== null;
-  const hasLoginSessionExtend = !!baiClient._config.enableExtendLoginSession;
+  const hasLoginSessionExtend = !!loginConfig.enableExtendLoginSession;
   // FR-3414 (ADR-0001): the project-agnostic pages operate above project
   // scope, so the header's current-project selector (and the selector-bound
   // admin-exit confirm flow inside it) is not mounted there at all. Nothing

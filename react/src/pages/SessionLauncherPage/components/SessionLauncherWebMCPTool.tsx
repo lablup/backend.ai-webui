@@ -7,6 +7,7 @@ import { generateUUID } from '../../../helper/uuid';
 import { AGENT_PREFILL_PARAM } from '../../../helper/webmcpConstants';
 import { useSuspendedBackendaiClient } from '../../../hooks';
 import { useMountableStorageHosts } from '../../../hooks/useMountableStorageHosts';
+import { useEffectiveLoginConfig } from '../../../hooks/useWebUIConfig';
 import type { ProjectContext } from '../../../types/projectContext';
 import {
   buildSessionPrefill,
@@ -198,6 +199,7 @@ const SessionLauncherWebMCPTool: React.FC<SessionLauncherWebMCPToolProps> = ({
 }) => {
   'use memo';
   const baiClient = useSuspendedBackendaiClient();
+  const loginConfig = useEffectiveLoginConfig();
   const mountableHosts = useMountableStorageHosts(project.id);
   const relayEnvironment = useRelayEnvironment();
 
@@ -267,7 +269,7 @@ const SessionLauncherWebMCPTool: React.FC<SessionLauncherWebMCPToolProps> = ({
     createPrepareSessionTool({
       findFolders,
       allowCustomResourceAllocation:
-        !!baiClient._config?.allowCustomResourceAllocation,
+        !!loginConfig.allowCustomResourceAllocation,
       openLauncher,
       readEnvironment,
     }),

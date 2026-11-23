@@ -158,7 +158,9 @@ test.describe(
         // confirm modal; report it unset without touching the stored value.
         await page.route('**/admin/gql', async (route) => {
           if (
-            !(route.request().postData() ?? '').includes('useAppConfigMyQuery')
+            !(route.request().postData() ?? '').includes(
+              'loginSessionAuthMyUserQuery',
+            )
           ) {
             await route.fallback();
             return;

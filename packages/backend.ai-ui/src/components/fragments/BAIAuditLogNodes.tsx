@@ -38,6 +38,17 @@ export const availableAuditLogSorterValues = [
   ...availableAuditLogSorterKeys.map((key) => `-${key}` as const),
 ] as const;
 
+/** An audit log action's label, as the audit log table shows it; the raw name when no label exists. */
+export const useAuditLogActionLabel = () => {
+  const { t } = useBAIi18n();
+  return (actionName?: string | null) =>
+    actionName
+      ? t(`comp:BAIAuditLogNodes.ActionName_${actionName}`, {
+          defaultValue: actionName,
+        })
+      : '-';
+};
+
 const isEnableSorter = (key: string) => {
   return _.includes(availableAuditLogSorterKeys, key);
 };
@@ -72,6 +83,7 @@ const BAIAuditLogNodes = ({
 }: BAIAuditLogNodesProps) => {
   'use memo';
   const { t } = useBAIi18n();
+  const actionLabel = useAuditLogActionLabel();
   const baiClient = useConnectedBAIClient();
   const isClientIpSupported =
     baiClient.isManagerVersionCompatibleWith('26.9.0');
@@ -123,9 +135,7 @@ const BAIAuditLogNodes = ({
         render: (__, record) =>
           record.actionName ? (
             <BAIText ellipsis={{ tooltip: true }} style={{ width: '100%' }}>
-              {t(`comp:BAIAuditLogNodes.ActionName_${record.actionName}`, {
-                defaultValue: record.actionName,
-              })}
+              {actionLabel(record.actionName)}
             </BAIText>
           ) : (
             '-'

@@ -21,7 +21,8 @@
 // Portless daemon at import time, so a test cannot import it.
 
 // A DNS label may be 63 chars. Staying well under leaves room for the worktree
-// prefix Portless adds in its auto-derived mode.
+// prefix Portless adds in its auto-derived mode. A one-label gateway host
+// (`<app>--<box>`) lowers it further through `maxLen`.
 const MAX_LEN = 50;
 const MAX_TITLE_WORDS = 3;
 
@@ -49,7 +50,7 @@ const STOP_WORDS = new Set([
  * Callers pass arbitrary strings — a Claude Code session name, a PR title — so this
  * has to be total, returning null when nothing usable survives.
  */
-export function sanitizeAppName(raw) {
+export function sanitizeAppName(raw, maxLen = MAX_LEN) {
   if (!raw) return null;
   const slug = raw
     .toString()
@@ -65,7 +66,7 @@ export function sanitizeAppName(raw) {
     // Normalize BEFORE the cap: this inserts a dash, so capping first would let a
     // 50-char input ending in `-fr123` come back out at 51.
     .replace(ISSUE_TOKEN, '$1$2-$3')
-    .slice(0, MAX_LEN)
+    .slice(0, maxLen)
     .replace(/-+$/, ''); // the slice can land mid-word and leave a trailing dash
   return slug || null;
 }
@@ -110,13 +111,13 @@ function withoutTokens(slug, tokens) {
  * identifiers: only the descriptive tail is truncated, because that is the part
  * a reader can still guess at when it is short.
  */
-export function composeAppName({ issue, prNumber, word } = {}) {
+export function composeAppName({ issue, prNumber, word, maxLen = MAX_LEN } = {}) {
   const prToken = prNumber ? `pr${prNumber}` : null;
   const head = [issue, prToken].filter(Boolean).join('-');
   const tail = withoutTokens(word, [issue, prToken]);
-  if (!head) return tail || null;
+  if (!head) return tail ? tail.slice(0, maxLen).replace(/-+$/, '') || null : null;
   if (!tail) return head;
-  const room = MAX_LEN - head.length - 1;
+  const room = maxLen - head.length - 1;
   if (room <= 0) return head;
   return `${head}-${tail.slice(0, room).replace(/-+$/, '')}`;
 }
@@ -127,12 +128,14 @@ export function composeAppName({ issue, prNumber, word } = {}) {
  * `pr` is `{ number, title }` when the branch has one — dev.mjs looks it up; it is
  * injected rather than fetched here so this module stays pure and testable.
  * `exact` returns the caller's name verbatim, for a caller that owns the whole
- * hostname (PORTLESS_APP_NAME_EXACT=1).
+ * hostname (PORTLESS_APP_NAME_EXACT=1), and is not shortened to `maxLen`.
+ * `maxLen` (default 50) is the gateway's budget from `appNameBudget`.
  */
-export function resolveAppName({ envName, branch, pr, exact } = {}) {
-  const human = sanitizeAppName(envName);
-  if (exact) return human;
+export function resolveAppName({ envName, branch, pr, exact, maxLen } = {}) {
+  const cap = Math.max(1, Math.min(MAX_LEN, maxLen ?? MAX_LEN));
+  if (exact) return sanitizeAppName(envName);
+  const human = sanitizeAppName(envName, cap);
   const issue = branchAppName(branch);
   const word = human ?? titleWord(pr?.title);
-  return composeAppName({ issue, prNumber: pr?.number, word });
+  return composeAppName({ issue, prNumber: pr?.number, word, maxLen: cap });
 }

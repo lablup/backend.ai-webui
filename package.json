@@ -34,7 +34,7 @@
     "electron:d:hmr": "LIVE_DEBUG=1 electron build/electron-app --dev",
     "relay": "relay-compiler",
     "relay:watch": "nodemon --watch data/schema.graphql --watch data/client-directives.graphql --exec 'pnpm run relay --watch'",
-    "copyresource": "cp -Rp resources build/web && cp -Rp manifest build/web",
+    "copyresource": "node scripts/copy-manual.mjs && cp -Rp resources build/web && cp -Rp manifest build/web",
     "copyconfig": "./scripts/copy-config.js && cp version.json build/web && cp manifest.json build/web",
     "copyindex": "cp index.html build/web",
     "copymonaco": "mkdir -p build/web/resources/monaco/vs && cp -R react/node_modules/monaco-editor/min/vs/. build/web/resources/monaco/vs/",
@@ -43,7 +43,8 @@
     "ui-common:pin": "node scripts/ui-common-pin.mjs",
     "bai-agent": "node packages/backend.ai-agent-cli/dist/cli.js",
     "review-pins": "node --import ./react/vite-plugins/review-overlay/register.mjs react/vite-plugins/review-overlay/cli.ts",
-    "search-index": "pnpm --prefix ./react run search-index"
+    "search-index": "pnpm --prefix ./react run search-index",
+    "manual": "node scripts/copy-manual.mjs"
   },
   "dependencies": {
     "@iarna/toml": "^2.2.5",

@@ -1,18 +1,11 @@
 /**
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
-
- `form-engine` alias: the form engine lives in `@lablup/ui-common/Form`
- (ADR 0009), and every `import { Form } from '../form-engine'` resolves there
- through this module. `BAIFormItem` / `BAIFormItemVisual` are the engine's
- `FormItem` / `FormItemVisual` under their BUI names.
-
- RE-EXPORTS ONLY — never read a property off an imported binding at module
- scope (`const FormItem = Form.Item`). Tests that replace a whole module with
- `vi.mock(...)` hand back a mock without `Form`; an eager read throws at
- import time, while a re-export is lazy. This module rides the BUI barrel into
- almost every suite.
  */
+// Alias of `@lablup/ui-common/Form` (ADR 0009); `BAIFormItem*` are its
+// `FormItem*` under BUI names.
+// RE-EXPORTS ONLY: a module-scope read (`const FormItem = Form.Item`) throws
+// when a test replaces the module with a whole-module mock; a re-export is lazy.
 export type * from '@lablup/ui-common/Form';
 // A star re-export does not carry a default binding; `import Form from
 // '../form-engine'` sites need this line.

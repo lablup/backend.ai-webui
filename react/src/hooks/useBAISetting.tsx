@@ -2,20 +2,28 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import type { PersistedPanel } from '../components/DashboardPanels/types';
 import { jotaiStore } from '../components/DefaultProviders';
 import type { RecentSearchHit } from '../components/GlobalSearchPalette/types';
 import { backendaiOptions } from '../global-stores';
 import { BAIAppearanceConfig } from '../helper/customThemeConfig';
+import {
+  isAccountUserSetting,
+  queueUserSettingWrite,
+  rawToSetting,
+  settingToRaw,
+  USER_SETTING_STORAGE_PREFIX,
+  USER_SETTINGS_CONFIG_KEY,
+} from '../helper/userSettingsAppConfig';
 import type { AgentEndpointBindings, AgentProfile } from './useAIAgent';
+import { applyMyUserConfig, myAppConfigState } from './useAppConfig';
 import { type BAIBoardItem, BAITableColumnOverrideRecord } from 'backend.ai-ui';
-import { atom, useAtom } from 'jotai';
+import { atom, useAtom, useAtomValue } from 'jotai';
 import { atomFamily } from 'jotai-family';
+import * as _ from 'lodash-es';
 import { SetStateAction } from 'react';
 
 export interface UserSettings {
   has_opened_tour_neo_session_validation?: boolean;
-  has_opened_tour_neo_deployment_validation?: boolean;
   has_opened_tour_deployment_preset_validation?: boolean;
   has_opened_tour_back_to_user_view?: boolean;
   has_opened_tour_back_to_admin_settings?: boolean;
@@ -31,26 +39,22 @@ export interface UserSettings {
   compact_sidebar?: boolean;
   preserve_login?: boolean;
   automatic_update_check?: boolean;
-  custom_ssh_port?: string;
-  beta_feature?: boolean;
   last_window_close_time?: number;
   endpoints?: Array<string>;
   selected_language?: string;
   recentSessionHistory?: Array<SessionHistory>;
   pinnedSessionHistory?: Array<SessionHistory>;
   recentSearchHits?: Array<RecentSearchHit>;
-  start_board_items?: Array<Omit<BAIBoardItem, 'data'>>;
   experimental_ai_agents?: boolean;
   experimental_import_from_huggingface?: boolean;
   experimental_session_resource_grid?: boolean;
   /** Header session monitor (chip, polling, idle alerts); default off. */
   experimental_session_monitor?: boolean;
+  /** Floating WebUI Assistant chat; default off. */
+  experimental_webui_assistant?: boolean;
   extra_ai_agents?: Array<AgentProfile>;
   agent_endpoints?: AgentEndpointBindings;
   session_metrics_board_items?: Array<Omit<BAIBoardItem, 'data'>>;
-  dashboard_board_items?: Array<Omit<BAIBoardItem, 'data'>>;
-  admin_dashboard_board_items?: Array<Omit<BAIBoardItem, 'data'>>;
-  custom_dashboard_panels?: Array<PersistedPanel>;
   resource_panel_type?:
     | 'MyResource'
     | 'MyResourceWithinResourceGroup'
@@ -92,21 +96,14 @@ export const useBAISettingUserState = <K extends keyof UserSettings>(
 };
 
 /**
- * Whether a user setting has ever been explicitly written to `localStorage`.
- * Needed because `useBAISettingUserState` collapses "never set" and
- * "explicitly set to `null`" into the same `null` return value — callers that
- * need a fallback-only-when-unset default (e.g. a per-consumer auto-refresh
- * interval where the user can legitimately choose "off") can't tell the two
- * apart from the hook's value alone.
+ * Whether a user setting holds a value, an explicit `null` included.
+ * `useBAISettingUserState` returns `null` for both "never set" and "set to
+ * `null`", so a caller whose default applies only while unset (an auto-refresh
+ * the user may turn off) reads this instead.
  */
-export const hasStoredUserSetting = <K extends keyof UserSettings>(
+export const useHasStoredUserSetting = <K extends keyof UserSettings>(
   name: K,
-): boolean => {
-  if (typeof window === 'undefined') return false;
-  return (
-    window.localStorage.getItem('backendaiwebui.settings.user.' + name) !== null
-  );
-};
+): boolean => useAtomValue(HasStoredSettingAtomFamily(name));
 
 export const useBAISettingGeneralState = <K extends keyof GeneralSettings>(
   name: K,
@@ -114,46 +111,73 @@ export const useBAISettingGeneralState = <K extends keyof GeneralSettings>(
   return useAtom(SettingAtomFamily('general.' + name));
 };
 
-const isJson = (str: any) => {
-  try {
-    JSON.parse(str);
-  } catch {
-    return false;
-  }
-  return true;
-};
-
-const rawToSetting = (value: string | null) => {
-  if (value !== null && value !== '' && value !== '""') {
-    if (value === 'false') {
-      return false;
-    } else if (value === 'true') {
-      return true;
-    } else if (isJson(value)) {
-      return JSON.parse(value);
-    } else {
-      return value;
-    }
-  } else {
-    return null;
-  }
-};
-
-const settingToRaw = (settingValue: any) => {
-  if (typeof settingValue === 'boolean') {
-    return settingValue ? 'true' : 'false';
-  } else if (typeof settingValue === 'object') {
-    return JSON.stringify(settingValue);
-  } else {
-    return settingValue;
-  }
-};
-
 const settingAtom = atom<{
   [key: string]: any;
 }>({});
-const SettingAtomFamily = atomFamily((param: string) => {
-  return atom(
+
+// Account settings (ADR 0035): `userConfig.settings` in `myAppConfigState`.
+const accountUserSettingsAtom = atom((get): Record<string, unknown> => {
+  const settings =
+    get(myAppConfigState).configs.userConfig?.[USER_SETTINGS_CONFIG_KEY];
+  return _.isPlainObject(settings) ? settings : {};
+});
+
+// Split at the first dot only: a setting name may itself contain dots.
+const splitParam = (param: string) => {
+  const separator = param.indexOf('.');
+  return {
+    namespace: param.slice(0, separator),
+    name: param.slice(separator + 1),
+  };
+};
+
+const isAccountParam = (param: string) => {
+  const { namespace, name } = splitParam(param);
+  return namespace === 'user' && isAccountUserSetting(name);
+};
+
+const TOUR_FLAG_PREFIX = 'has_opened_tour_';
+
+const accountSettingAtom = (name: string) =>
+  atom(
+    (get) => {
+      // Without the account document a dismissal cannot be stored, so a tour
+      // reads as already opened and never shows.
+      if (
+        name.startsWith(TOUR_FLAG_PREFIX) &&
+        get(myAppConfigState).status !== 'loaded'
+      )
+        return true;
+      return get(accountUserSettingsAtom)[name] ?? null;
+    },
+    (get, _set, newValueOrUpdater: any) => {
+      const current = get(accountUserSettingsAtom);
+      const newValue =
+        typeof newValueOrUpdater === 'function'
+          ? newValueOrUpdater(current[name] ?? null)
+          : newValueOrUpdater;
+      // An unchanged value (an absent key set to `undefined` included) writes nothing.
+      if (
+        _.isEqual(current[name], newValue) &&
+        name in current === (newValue !== undefined)
+      )
+        return;
+      try {
+        applyMyUserConfig(
+          jotaiStore,
+          [USER_SETTINGS_CONFIG_KEY, name],
+          newValue,
+        );
+      } catch {
+        // Before sign-in or after a failed read there is no document to change.
+        return;
+      }
+      queueUserSettingWrite(name, newValue);
+    },
+  );
+
+const localSettingAtom = (param: string) =>
+  atom(
     (get) => {
       const key = 'backendaiwebui.settings.' + param;
       get(settingAtom); // only for the reactivity
@@ -167,10 +191,7 @@ const SettingAtomFamily = atomFamily((param: string) => {
           ? newValueOrUpdater(currentValue)
           : newValueOrUpdater;
 
-      // Split at the first dot only: a setting name may itself contain dots.
-      const separator = param.indexOf('.');
-      const namespace = param.slice(0, separator);
-      const name = param.slice(separator + 1);
+      const { namespace, name } = splitParam(param);
       // `undefined` removes the key; writing it would store the string "undefined".
       if (newValue === undefined) {
         localStorage.removeItem(key);
@@ -191,7 +212,22 @@ const SettingAtomFamily = atomFamily((param: string) => {
       }
     },
   );
-});
+
+const SettingAtomFamily = atomFamily((param: string) =>
+  isAccountParam(param)
+    ? accountSettingAtom(splitParam(param).name)
+    : localSettingAtom(param),
+);
+
+const HasStoredSettingAtomFamily = atomFamily((name: string) =>
+  atom((get) => {
+    if (isAccountUserSetting(name)) {
+      return name in get(accountUserSettingsAtom);
+    }
+    get(settingAtom); // only for the reactivity
+    return localStorage.getItem(USER_SETTING_STORAGE_PREFIX + name) !== null;
+  }),
+);
 
 document?.addEventListener('backendaiwebui.settings:set', (e: any) => {
   const { detail } = e;
@@ -207,6 +243,10 @@ document?.addEventListener('backendaiwebui.settings:delete', (e: any) => {
   const { detail } = e;
   if (detail.namespace && detail.name) {
     const key = detail.namespace + '.' + detail.name;
+    if (isAccountParam(key)) {
+      jotaiStore.set(SettingAtomFamily(key), undefined);
+      return;
+    }
     // localStorage removal is now handled directly in BackendAISettingsStore.delete().
     // Trigger jotai reactivity so React components re-render.
     const prev = jotaiStore.get(settingAtom);

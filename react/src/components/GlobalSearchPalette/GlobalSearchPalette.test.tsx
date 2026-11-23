@@ -184,7 +184,7 @@ vi.mock('./useRecentSearchHits', () => ({
 
 vi.mock('./useGlobalSearchSource', () => ({
   toTranslator: () => (key: string) => key,
-  toSearchConfigFlags: () => ({ fasttrackEndpoint: null }),
+  toSearchConfigFlags: () => ({ fasttrackEndpoint: null, isHelpHidden: false }),
   useGlobalSearchSource: () => {
     suspension.throwIfHeld();
     return {

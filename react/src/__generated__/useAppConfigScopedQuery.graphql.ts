@@ -1,0 +1,131 @@
+/**
+ * @generated SignedSource<<d3a9685f9607f2a8394709bf85fd7fc7>>
+ * @lightSyntaxTransform
+ * @nogrep
+ */
+
+/* tslint:disable */
+/* eslint-disable */
+// @ts-nocheck
+
+import { ConcreteRequest } from 'relay-runtime';
+export type AppConfigScopeType = "DOMAIN" | "PUBLIC" | "USER" | "%future added value";
+export type AppConfigScopeRef = {
+  scopeId?: string | null | undefined;
+  scopeType: AppConfigScopeType;
+};
+export type useAppConfigScopedQuery$variables = {
+  configNames: ReadonlyArray<string>;
+  scope: AppConfigScopeRef;
+};
+export type useAppConfigScopedQuery$data = {
+  readonly scopedAppConfigFragmentsByNames: ReadonlyArray<{
+    readonly config: any;
+    readonly configName: string;
+    readonly id: string;
+  } | null | undefined> | null | undefined;
+};
+export type useAppConfigScopedQuery = {
+  response: useAppConfigScopedQuery$data;
+  variables: useAppConfigScopedQuery$variables;
+};
+
+const node: ConcreteRequest = (function(){
+var v0 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "configNames"
+},
+v1 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "scope"
+},
+v2 = {
+  "alias": null,
+  "args": [
+    {
+      "kind": "Variable",
+      "name": "configNames",
+      "variableName": "configNames"
+    },
+    {
+      "kind": "Variable",
+      "name": "scope",
+      "variableName": "scope"
+    }
+  ],
+  "concreteType": "AppConfigFragment",
+  "kind": "LinkedField",
+  "name": "scopedAppConfigFragmentsByNames",
+  "plural": true,
+  "selections": [
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "id",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "configName",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "config",
+      "storageKey": null
+    }
+  ],
+  "storageKey": null
+};
+return {
+  "fragment": {
+    "argumentDefinitions": [
+      (v0/*: any*/),
+      (v1/*: any*/)
+    ],
+    "kind": "Fragment",
+    "metadata": null,
+    "name": "useAppConfigScopedQuery",
+    "selections": [
+      {
+        "kind": "CatchField",
+        "field": (v2/*: any*/),
+        "to": "NULL"
+      }
+    ],
+    "type": "Query",
+    "abstractKey": null
+  },
+  "kind": "Request",
+  "operation": {
+    "argumentDefinitions": [
+      (v1/*: any*/),
+      (v0/*: any*/)
+    ],
+    "kind": "Operation",
+    "name": "useAppConfigScopedQuery",
+    "selections": [
+      (v2/*: any*/)
+    ]
+  },
+  "params": {
+    "cacheID": "8df627dc07cf71c155c9574a29909539",
+    "id": null,
+    "metadata": {},
+    "name": "useAppConfigScopedQuery",
+    "operationKind": "query",
+    "text": "query useAppConfigScopedQuery(\n  $scope: AppConfigScopeRef!\n  $configNames: [String!]!\n) {\n  scopedAppConfigFragmentsByNames(scope: $scope, configNames: $configNames) {\n    id\n    configName\n    config\n  }\n}\n"
+  }
+};
+})();
+
+(node as any).hash = "5f84980224a629eaadd4e7dfadc2df2e";
+
+export default node;

@@ -11,6 +11,7 @@ import {
   StartSessionWithDefaultValue,
   useStartSession,
 } from '../hooks/useStartSession';
+import { useEffectiveLoginConfig } from '../hooks/useWebUIConfig';
 import { toProjectContext } from '../types/projectContext';
 import FolderCreateModal from './FolderCreateModal';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
@@ -239,7 +240,7 @@ const ImportHuggingFaceModelForm: React.FC<ImportHuggingFaceModelFormProps> = ({
   const formRef = useRef<FormInstance<ImportHuggingFaceModelFormValues> | null>(
     null,
   );
-  const baiClient = useSuspendedBackendaiClient();
+  const loginConfig = useEffectiveLoginConfig();
   const currentProject = useCurrentProjectValue();
   const { startSessionWithDefault, upsertSessionNotification } =
     useStartSession();
@@ -279,7 +280,7 @@ const ImportHuggingFaceModelForm: React.FC<ImportHuggingFaceModelFormProps> = ({
       const launcherValue: StartSessionWithDefaultValue = {
         sessionName: `hf-model-to-${sessionSafeFolderName}-${generateRandomString()}`,
         environments: {
-          version: baiClient._config.default_import_environment,
+          version: loginConfig.default_import_environment,
         },
         sessionType: 'batch',
         batch: {

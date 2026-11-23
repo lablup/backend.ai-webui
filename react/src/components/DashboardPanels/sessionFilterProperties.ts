@@ -18,7 +18,7 @@ const asOptions = (
 ) => values.map((value) => ({ label: toLabel(value), value }));
 
 /** `SessionStatus` (manager `data/session/types.py`). */
-const SESSION_STATUSES = [
+export const SESSION_STATUSES = [
   'PENDING',
   'DEPRIORITIZING',
   'RESERVED',

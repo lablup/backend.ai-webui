@@ -57,6 +57,8 @@ export interface BAIDirectoryPickerModalProps extends Omit<
   defaultPath?: string;
   /** Called with the chosen sub path, or `undefined` when cancelled. */
   onRequestClose: (selectedSubPath?: string) => void;
+  /** Shows each directory's size in the explorer; the host passes its setting. */
+  isDirectorySizeVisible?: boolean;
 }
 
 /**
@@ -76,6 +78,7 @@ const BAIDirectoryPickerModal: React.FC<BAIDirectoryPickerModalProps> = ({
   queryRef,
   defaultPath,
   onRequestClose,
+  isDirectorySizeVisible = false,
   ...modalProps
 }) => {
   'use memo';
@@ -133,6 +136,7 @@ const BAIDirectoryPickerModal: React.FC<BAIDirectoryPickerModalProps> = ({
     >
       <BAIFileExplorer
         mode="directoryPicker"
+        isDirectorySizeVisible={isDirectorySizeVisible}
         targetVFolderId={vfolderUuid}
         targetVFolderName={folderName ?? undefined}
         defaultPath={toExplorerPath(defaultPath ?? '')}

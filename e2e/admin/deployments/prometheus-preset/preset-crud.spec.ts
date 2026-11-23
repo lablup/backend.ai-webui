@@ -197,9 +197,9 @@ test.describe(
         modal.getByRole('textbox', { name: 'Description' }),
       ).toBeVisible();
       // The Category field's Selector trigger is a plain <button> (no
-      // role="combobox" attribute), unlike the Filter/Group Labels inputs.
+      // role="combobox" attribute) named '<label> <current value>'.
       await expect(
-        modal.getByRole('button', { name: 'Category', exact: true }),
+        modal.getByRole('button', { name: /^Category\b/ }),
       ).toBeVisible();
       // Note: 'Rank' field is not exposed in the Create Preset form UI
       await expect(

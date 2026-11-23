@@ -3,10 +3,12 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { message } from '../../app-shim';
+import BAIErrorBoundary from '../../components/BAIErrorBoundary';
 import ErrorBoundaryWithNullFallback from '../../components/ErrorBoundaryWithNullFallback';
 import { diagnosticText } from '../../diagnostics/diagnosticText';
 import { downloadCSV, escapeCsvValue } from '../../helper/csv-util';
 import { DiagnosticResult } from '../../types/diagnostics';
+import AppConfigFixtureDiagnosticsSection from './components/AppConfigFixtureDiagnosticsSection';
 import CspDiagnosticsSection from './components/CspDiagnosticsSection';
 import EndpointDiagnosticsSection from './components/EndpointDiagnosticsSection';
 import StorageProxyDiagnosticsSection from './components/StorageProxyDiagnosticsSection';
@@ -27,7 +29,7 @@ import { parseAsStringLiteral, useQueryState } from 'nuqs';
 import { Suspense, useCallback, useRef, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 
-type SectionKey = 'csp' | 'storage' | 'endpoint' | 'config';
+type SectionKey = 'csp' | 'storage' | 'endpoint' | 'config' | 'appConfig';
 
 const DiagnosticsPage = () => {
   'use memo';
@@ -47,6 +49,7 @@ const DiagnosticsPage = () => {
     storage: true,
     endpoint: true,
     config: true,
+    appConfig: true,
   });
 
   const sectionResultsRef = useRef<{
@@ -54,11 +57,13 @@ const DiagnosticsPage = () => {
     storage: DiagnosticResult[];
     endpoint: DiagnosticResult[];
     config: DiagnosticResult[];
+    appConfig: DiagnosticResult[];
   }>({
     csp: [],
     storage: [],
     endpoint: [],
     config: [],
+    appConfig: [],
   });
 
   const handleRefresh = () => {
@@ -69,6 +74,7 @@ const DiagnosticsPage = () => {
         storage: [],
         endpoint: [],
         config: [],
+        appConfig: [],
       };
     });
   };
@@ -95,6 +101,9 @@ const DiagnosticsPage = () => {
   const onConfigResultsChange = useCallback((results: DiagnosticResult[]) => {
     sectionResultsRef.current.config = results;
   }, []);
+  const onAppConfigResultsChange = (results: DiagnosticResult[]) => {
+    sectionResultsRef.current.appConfig = results;
+  };
 
   const handleExport = () => {
     const allResults = [
@@ -102,6 +111,7 @@ const DiagnosticsPage = () => {
       ...sectionResultsRef.current.storage,
       ...sectionResultsRef.current.endpoint,
       ...sectionResultsRef.current.config,
+      ...sectionResultsRef.current.appConfig,
     ];
 
     if (allResults.length === 0) {
@@ -202,6 +212,22 @@ const DiagnosticsPage = () => {
             />
           </Suspense>
         </ErrorBoundaryWithNullFallback>
+      ),
+    },
+    {
+      key: 'appConfig' as SectionKey,
+      label: t('diagnostics.AppConfig'),
+      children: (
+        <BAIErrorBoundary>
+          <Suspense fallback={<BAISkeleton />}>
+            <AppConfigFixtureDiagnosticsSection
+              hidePassed={showOnlyFailed}
+              fetchKey={fetchKey}
+              onHasIssues={createHasIssuesCallback('appConfig')}
+              onResultsChange={onAppConfigResultsChange}
+            />
+          </Suspense>
+        </BAIErrorBoundary>
       ),
     },
   ];
