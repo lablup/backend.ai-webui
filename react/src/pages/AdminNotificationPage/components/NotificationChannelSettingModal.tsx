@@ -14,10 +14,11 @@ import {
   NotificationChannelSpecFormValues,
   buildNotificationChannelSpecInput,
   isHttpUrl,
+  isSameSpecIgnoringPassword,
+  specFormValuesFromSaved,
 } from '../helper/notificationChannelSpec';
 import './NotificationChannelSettingModal.css';
 import {
-  BAIAlert,
   BAIFlex,
   BAIModal,
   BAIModalProps,
@@ -38,7 +39,6 @@ type NotificationChannelFormValues = NotificationChannelSpecFormValues & {
   name: string;
   description?: string;
   enabled: boolean;
-  replaceSpec?: boolean;
 };
 
 interface NotificationChannelSettingModalProps extends Omit<
@@ -52,7 +52,9 @@ interface NotificationChannelSettingModalProps extends Omit<
 const isEmail = (value: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 
 // Mounted inside the Form, so the watches are fresh on every open.
-const ChannelSpecFormItems: React.FC = () => {
+const ChannelSpecFormItems: React.FC<{ hasSavedPassword: boolean }> = ({
+  hasSavedPassword,
+}) => {
   'use memo';
   const { t } = useTranslation();
   const form = Form.useFormInstance<NotificationChannelFormValues>();
@@ -183,6 +185,11 @@ const ChannelSpecFormItems: React.FC = () => {
               },
             }),
           ]}
+          extra={
+            hasSavedPassword
+              ? t('externalNotification.SmtpPasswordSavedExtra')
+              : undefined
+          }
         >
           <BAITextInput
             type="password"
@@ -265,10 +272,34 @@ const NotificationChannelSettingModal: React.FC<
         description
         channelType
         enabled
+        spec {
+          ... on WebhookSpec {
+            url
+          }
+          ... on EmailSpec {
+            smtp {
+              host
+              port
+              useTls
+              timeout
+            }
+            message {
+              fromEmail
+              toEmails
+              subjectTemplate
+            }
+            auth {
+              username
+            }
+          }
+        }
       }
     `,
     channelFrgmt ?? null,
   );
+  const savedSpecValues = specFormValuesFromSaved(channel?.spec);
+  const hasSavedPassword =
+    channel?.channelType === 'EMAIL' && !!savedSpecValues.smtpUsername;
 
   const [commitCreate, isInFlightCreate] =
     useMutation<NotificationChannelSettingModalCreateMutation>(graphql`
@@ -296,6 +327,27 @@ const NotificationChannelSettingModal: React.FC<
             description
             channelType
             enabled
+            spec {
+              ... on WebhookSpec {
+                url
+              }
+              ... on EmailSpec {
+                smtp {
+                  host
+                  port
+                  useTls
+                  timeout
+                }
+                message {
+                  fromEmail
+                  toEmails
+                  subjectTemplate
+                }
+                auth {
+                  username
+                }
+              }
+            }
           }
         }
       }
@@ -319,6 +371,30 @@ const NotificationChannelSettingModal: React.FC<
       .then((values) => {
         const description = _.trim(values.description ?? '') || null;
         if (channel) {
+          const spec = buildNotificationChannelSpecInput({
+            ...values,
+            channelType: channel.channelType,
+          });
+          const savedSpec = buildNotificationChannelSpecInput({
+            ...savedSpecValues,
+            channelType: channel.channelType,
+          });
+          // The spec is replaced as a whole and the saved password never comes back, so an
+          // unchanged connection is left out to keep that password.
+          const isSpecChanged =
+            !isSameSpecIgnoringPassword(spec, savedSpec) ||
+            !!values.smtpPassword;
+          if (isSpecChanged && hasSavedPassword && !values.smtpPassword) {
+            formRef.current?.setFields([
+              {
+                name: 'smtpPassword',
+                errors: [
+                  t('externalNotification.SmtpPasswordRequiredForChange'),
+                ],
+              },
+            ]);
+            return;
+          }
           commitUpdate({
             variables: {
               input: {
@@ -326,14 +402,7 @@ const NotificationChannelSettingModal: React.FC<
                 name: _.trim(values.name),
                 description,
                 enabled: values.enabled,
-                ...(values.replaceSpec
-                  ? {
-                      spec: buildNotificationChannelSpecInput({
-                        ...values,
-                        channelType: channel.channelType,
-                      }),
-                    }
-                  : {}),
+                ...(isSpecChanged ? { spec } : {}),
               },
             },
             onCompleted: (_res, errors) => handleResult(errors),
@@ -380,11 +449,11 @@ const NotificationChannelSettingModal: React.FC<
           description: channel?.description ?? undefined,
           channelType: channel?.channelType ?? 'WEBHOOK',
           enabled: channel?.enabled ?? true,
-          replaceSpec: false,
           smtpPort: DEFAULT_SMTP_PORT,
           smtpUseTls: true,
           smtpTimeout: DEFAULT_SMTP_TIMEOUT,
           toEmails: [],
+          ..._.omitBy(savedSpecValues, _.isUndefined),
         }}
       >
         <Form.Item
@@ -430,38 +499,7 @@ const NotificationChannelSettingModal: React.FC<
         <Form.Item label={t('externalNotification.Enabled')} name="enabled">
           <BAISwitch aria-label={t('externalNotification.Enabled')} />
         </Form.Item>
-        {channel ? (
-          <>
-            <Form.Item
-              label={t('externalNotification.ReplaceConnectionSettings')}
-              name="replaceSpec"
-              extra={t('externalNotification.ReplaceConnectionSettingsExtra')}
-            >
-              <BAISwitch
-                aria-label={t('externalNotification.ReplaceConnectionSettings')}
-              />
-            </Form.Item>
-            <Form.Item dependencies={['replaceSpec']} noStyle>
-              {({ getFieldValue }) =>
-                getFieldValue('replaceSpec') ? (
-                  <>
-                    <BAIAlert
-                      type="warning"
-                      showIcon
-                      className="notification-channel-alert"
-                      description={t(
-                        'externalNotification.ReplaceConnectionSettingsWarning',
-                      )}
-                    />
-                    <ChannelSpecFormItems />
-                  </>
-                ) : null
-              }
-            </Form.Item>
-          </>
-        ) : (
-          <ChannelSpecFormItems />
-        )}
+        <ChannelSpecFormItems hasSavedPassword={hasSavedPassword} />
       </Form>
     </BAIModal>
   );

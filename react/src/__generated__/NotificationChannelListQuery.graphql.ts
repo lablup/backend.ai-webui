@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<ebf61664d3fea8dfe0ba1ef9fea7911f>>
+ * @generated SignedSource<<c4bfd46b96a42e646030964291c62119>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -291,7 +291,135 @@ return {
                   (v9/*: any*/),
                   (v10/*: any*/),
                   (v11/*: any*/),
-                  (v12/*: any*/)
+                  (v12/*: any*/),
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": null,
+                    "kind": "LinkedField",
+                    "name": "spec",
+                    "plural": false,
+                    "selections": [
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "__typename",
+                        "storageKey": null
+                      },
+                      {
+                        "kind": "InlineFragment",
+                        "selections": [
+                          {
+                            "alias": null,
+                            "args": null,
+                            "kind": "ScalarField",
+                            "name": "url",
+                            "storageKey": null
+                          }
+                        ],
+                        "type": "WebhookSpec",
+                        "abstractKey": null
+                      },
+                      {
+                        "kind": "InlineFragment",
+                        "selections": [
+                          {
+                            "alias": null,
+                            "args": null,
+                            "concreteType": "SMTPConnection",
+                            "kind": "LinkedField",
+                            "name": "smtp",
+                            "plural": false,
+                            "selections": [
+                              {
+                                "alias": null,
+                                "args": null,
+                                "kind": "ScalarField",
+                                "name": "host",
+                                "storageKey": null
+                              },
+                              {
+                                "alias": null,
+                                "args": null,
+                                "kind": "ScalarField",
+                                "name": "port",
+                                "storageKey": null
+                              },
+                              {
+                                "alias": null,
+                                "args": null,
+                                "kind": "ScalarField",
+                                "name": "useTls",
+                                "storageKey": null
+                              },
+                              {
+                                "alias": null,
+                                "args": null,
+                                "kind": "ScalarField",
+                                "name": "timeout",
+                                "storageKey": null
+                              }
+                            ],
+                            "storageKey": null
+                          },
+                          {
+                            "alias": null,
+                            "args": null,
+                            "concreteType": "EmailMessage",
+                            "kind": "LinkedField",
+                            "name": "message",
+                            "plural": false,
+                            "selections": [
+                              {
+                                "alias": null,
+                                "args": null,
+                                "kind": "ScalarField",
+                                "name": "fromEmail",
+                                "storageKey": null
+                              },
+                              {
+                                "alias": null,
+                                "args": null,
+                                "kind": "ScalarField",
+                                "name": "toEmails",
+                                "storageKey": null
+                              },
+                              {
+                                "alias": null,
+                                "args": null,
+                                "kind": "ScalarField",
+                                "name": "subjectTemplate",
+                                "storageKey": null
+                              }
+                            ],
+                            "storageKey": null
+                          },
+                          {
+                            "alias": null,
+                            "args": null,
+                            "concreteType": "SMTPAuth",
+                            "kind": "LinkedField",
+                            "name": "auth",
+                            "plural": false,
+                            "selections": [
+                              {
+                                "alias": null,
+                                "args": null,
+                                "kind": "ScalarField",
+                                "name": "username",
+                                "storageKey": null
+                              }
+                            ],
+                            "storageKey": null
+                          }
+                        ],
+                        "type": "EmailSpec",
+                        "abstractKey": null
+                      }
+                    ],
+                    "storageKey": null
+                  }
                 ],
                 "storageKey": null
               }
@@ -304,12 +432,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "b2bf60eac8379e728c25530ac2fef96e",
+    "cacheID": "5d0eaa062fcb866c13d9fb121308387e",
     "id": null,
     "metadata": {},
     "name": "NotificationChannelListQuery",
     "operationKind": "query",
-    "text": "query NotificationChannelListQuery(\n  $filter: NotificationChannelFilter\n  $orderBy: [NotificationChannelOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  adminNotificationChannels(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        entityId\n        name\n        description\n        channelType\n        enabled\n        createdAt\n        ...NotificationChannelSettingModalFragment\n      }\n    }\n  }\n}\n\nfragment NotificationChannelSettingModalFragment on NotificationChannel {\n  id\n  entityId\n  name\n  description\n  channelType\n  enabled\n}\n"
+    "text": "query NotificationChannelListQuery(\n  $filter: NotificationChannelFilter\n  $orderBy: [NotificationChannelOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  adminNotificationChannels(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        entityId\n        name\n        description\n        channelType\n        enabled\n        createdAt\n        ...NotificationChannelSettingModalFragment\n      }\n    }\n  }\n}\n\nfragment NotificationChannelSettingModalFragment on NotificationChannel {\n  id\n  entityId\n  name\n  description\n  channelType\n  enabled\n  spec {\n    __typename\n    ... on WebhookSpec {\n      url\n    }\n    ... on EmailSpec {\n      smtp {\n        host\n        port\n        useTls\n        timeout\n      }\n      message {\n        fromEmail\n        toEmails\n        subjectTemplate\n      }\n      auth {\n        username\n      }\n    }\n  }\n}\n"
   }
 };
 })();

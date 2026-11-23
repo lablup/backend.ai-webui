@@ -7,6 +7,8 @@ import {
   DEFAULT_SMTP_TIMEOUT,
   buildNotificationChannelSpecInput,
   isHttpUrl,
+  isSameSpecIgnoringPassword,
+  specFormValuesFromSaved,
 } from './notificationChannelSpec';
 import { describe, expect, it } from 'vitest';
 
@@ -102,5 +104,84 @@ describe('isHttpUrl', () => {
     expect(isHttpUrl('http://webhook:8080/hook')).toBe(true);
     expect(isHttpUrl('hooks.example.com/abc')).toBe(false);
     expect(isHttpUrl('ftp://example.com/x')).toBe(false);
+  });
+});
+
+describe('specFormValuesFromSaved', () => {
+  it('fills the email fields from a saved spec', () => {
+    expect(
+      specFormValuesFromSaved({
+        smtp: {
+          host: 'smtp.example.com',
+          port: 465,
+          useTls: false,
+          timeout: 10,
+        },
+        message: {
+          fromEmail: 'noreply@example.com',
+          toEmails: ['ops@example.com'],
+          subjectTemplate: null,
+        },
+        auth: { username: 'mailer' },
+      }),
+    ).toEqual({
+      webhookUrl: undefined,
+      smtpHost: 'smtp.example.com',
+      smtpPort: 465,
+      smtpUseTls: false,
+      smtpTimeout: 10,
+      smtpUsername: 'mailer',
+      fromEmail: 'noreply@example.com',
+      toEmails: ['ops@example.com'],
+      subjectTemplate: undefined,
+    });
+  });
+
+  it('fills only the URL from a saved webhook spec', () => {
+    expect(
+      specFormValuesFromSaved({ url: 'https://hooks.example.com/abc' }),
+    ).toMatchObject({ webhookUrl: 'https://hooks.example.com/abc' });
+  });
+});
+
+describe('isSameSpecIgnoringPassword', () => {
+  const email = (password: string | null, host = 'smtp.example.com') =>
+    buildNotificationChannelSpecInput({
+      channelType: 'EMAIL',
+      smtpHost: host,
+      fromEmail: 'noreply@example.com',
+      toEmails: ['ops@example.com'],
+      smtpUsername: 'mailer',
+      smtpPassword: password ?? undefined,
+    });
+
+  it('treats a typed password alone as no change', () => {
+    expect(isSameSpecIgnoringPassword(email('s3cret'), email(null))).toBe(true);
+  });
+
+  it('sees a changed host', () => {
+    expect(
+      isSameSpecIgnoringPassword(email(null), email(null, 'mail.example.com')),
+    ).toBe(false);
+  });
+
+  it('compares webhook URLs', () => {
+    const webhook = (url: string) =>
+      buildNotificationChannelSpecInput({
+        channelType: 'WEBHOOK',
+        webhookUrl: url,
+      });
+    expect(
+      isSameSpecIgnoringPassword(
+        webhook('https://a.example.com'),
+        webhook(' https://a.example.com '),
+      ),
+    ).toBe(true);
+    expect(
+      isSameSpecIgnoringPassword(
+        webhook('https://a.example.com'),
+        webhook('https://b.example.com'),
+      ),
+    ).toBe(false);
   });
 });

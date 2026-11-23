@@ -3,7 +3,3 @@
   flex: 1;
   min-width: 0;
 }
-
-.notification-channel-alert {
-  margin-bottom: var(--spacing-4);
-}

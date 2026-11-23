@@ -73,3 +73,50 @@ export const buildNotificationChannelSpecInput = (
     },
   };
 };
+
+/** A channel's saved spec as the manager returns it; the SMTP password never comes back. */
+export type SavedNotificationChannelSpec = {
+  readonly url?: string;
+  readonly smtp?: {
+    readonly host: string;
+    readonly port: number;
+    readonly useTls: boolean;
+    readonly timeout: number;
+  } | null;
+  readonly message?: {
+    readonly fromEmail: string;
+    readonly toEmails: ReadonlyArray<string>;
+    readonly subjectTemplate?: string | null;
+  } | null;
+  readonly auth?: { readonly username?: string | null } | null;
+};
+
+/** The form values that show a saved spec, so editing starts from what is stored. */
+export const specFormValuesFromSaved = (
+  spec: SavedNotificationChannelSpec | null | undefined,
+): Partial<NotificationChannelSpecFormValues> => ({
+  webhookUrl: spec?.url,
+  smtpHost: spec?.smtp?.host,
+  smtpPort: spec?.smtp?.port,
+  smtpUseTls: spec?.smtp?.useTls,
+  smtpTimeout: spec?.smtp?.timeout,
+  smtpUsername: spec?.auth?.username ?? undefined,
+  fromEmail: spec?.message?.fromEmail,
+  toEmails: spec?.message ? [...spec.message.toEmails] : undefined,
+  subjectTemplate: spec?.message?.subjectTemplate ?? undefined,
+});
+
+/** Whether two spec inputs set the same connection, leaving the SMTP password out. */
+export const isSameSpecIgnoringPassword = (
+  a: NotificationChannelSpecInput,
+  b: NotificationChannelSpecInput,
+) => {
+  const withoutPassword = (spec: NotificationChannelSpecInput) =>
+    spec.email
+      ? {
+          ...spec,
+          email: { ...spec.email, auth: spec.email.auth?.username ?? null },
+        }
+      : spec;
+  return _.isEqual(withoutPassword(a), withoutPassword(b));
+};
