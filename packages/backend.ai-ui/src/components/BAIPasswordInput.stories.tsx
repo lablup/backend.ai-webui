@@ -35,7 +35,7 @@ type Story = StoryObj<typeof BAIPasswordInput>;
 
 const stories = formControlStories(
   { label: 'Password', initialValue: 'correct-horse' },
-  () => <BAIPasswordInput autoComplete="new-password" />,
+  () => <BAIPasswordInput autoComplete="current-password" />,
 );
 
 export const Default: Story = stories.Default;
