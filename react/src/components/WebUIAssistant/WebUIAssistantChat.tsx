@@ -120,6 +120,10 @@ const toolPartsOf = (message: ChatUIMessage): Array<ToolPart> =>
     (part): part is ToolPart =>
       isToolUIPart(part) || part.type === 'dynamic-tool',
   );
+// Words that make a request about the dashboard, so the board is read before the model answers.
+const DASHBOARD_WORDS =
+  /\b(card|panel|board|dashboard|widget)s?\b|카드|패널|보드|대시보드/;
+
 /** How many earlier dashboard messages a request carries; the board itself carries the state. */
 const DASHBOARD_HISTORY_MESSAGES = 6;
 
@@ -301,13 +305,25 @@ const WebUIAssistantChat: React.FC<WebUIAssistantChatProps> = ({
       : hits;
   };
 
-  /** A question gets the manual searched first; a request on a dashboard gets the board read first. */
+  /** A request that names a card, a panel or the board itself. */
+  const namesDashboard = (request: string) => {
+    const text = request.toLowerCase();
+    return (
+      DASHBOARD_WORDS.test(text) ||
+      !!dashboardAgent?.context.cards.some((card) =>
+        text.includes(card.title.toLowerCase()),
+      )
+    );
+  };
+
+  /** A question gets the manual searched first; a request about the dashboard gets the board read first. */
   const prefetchFor = (request: string) =>
     !request
       ? []
       : looksLikeQuestion(request)
         ? [{ toolName: SEARCH_MANUAL_TOOL, input: { query: request } }]
-        : pageToolRegistry.get('bai_get_current_dashboard')
+        : pageToolRegistry.get('bai_get_current_dashboard') &&
+            namesDashboard(request)
           ? [{ toolName: 'bai_get_current_dashboard', input: {} }]
           : [];
 

@@ -201,9 +201,11 @@ export const streamToolChat = ({
         const history = [...messages];
         writer.write({ type: 'start' });
         const tools = toolSetOf(registry, searchManual);
+        const calledBefore = new Set<string>();
         for (const { toolName, input } of prefetch) {
           const execute = tools[toolName]?.execute;
           if (!execute) continue;
+          calledBefore.add(JSON.stringify([toolName, input]));
           const toolCallId = generateId();
           const output = await execute(input, {
             toolCallId,
@@ -258,6 +260,12 @@ export const streamToolChat = ({
           ]);
           history.push(...response.messages);
           if (finishReason !== 'tool-calls' || !toolCalls.length) break;
+          // A small model repeats a call it already made until the context runs out.
+          const keys = toolCalls.map((call) =>
+            JSON.stringify([call.toolName, call.input]),
+          );
+          if (keys.every((key) => calledBefore.has(key))) break;
+          keys.forEach((key) => calledBefore.add(key));
           if (toolCalls.some((call) => call.toolName === 'bai_navigate')) {
             await waitForToolsToSettle(registry);
           }
