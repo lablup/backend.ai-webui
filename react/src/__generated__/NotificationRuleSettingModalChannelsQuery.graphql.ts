@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<d330c624bd311c25fcd8e90f8e1e716e>>
+ * @generated SignedSource<<4ab319fa0710f6d1d905a36532b39b4e>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -16,7 +16,6 @@ export type NotificationRuleSettingModalChannelsQuery$data = {
     readonly edges: ReadonlyArray<{
       readonly node: {
         readonly channelType: NotificationChannelType;
-        readonly enabled: boolean;
         readonly entityId: string;
         readonly id: string;
         readonly name: string;
@@ -98,13 +97,6 @@ var v0 = [
                 "kind": "ScalarField",
                 "name": "channelType",
                 "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "enabled",
-                "storageKey": null
               }
             ],
             "storageKey": null
@@ -134,16 +126,16 @@ return {
     "selections": (v0/*: any*/)
   },
   "params": {
-    "cacheID": "6483fa2c6ab9ba69daf4b23a52a0fdc5",
+    "cacheID": "1d6ddf3a6294f797bacccaa097ef956e",
     "id": null,
     "metadata": {},
     "name": "NotificationRuleSettingModalChannelsQuery",
     "operationKind": "query",
-    "text": "query NotificationRuleSettingModalChannelsQuery {\n  adminNotificationChannels(orderBy: [{field: NAME, direction: ASC}], limit: 100) {\n    edges {\n      node {\n        id\n        entityId\n        name\n        channelType\n        enabled\n      }\n    }\n  }\n}\n"
+    "text": "query NotificationRuleSettingModalChannelsQuery {\n  adminNotificationChannels(orderBy: [{field: NAME, direction: ASC}], limit: 100) {\n    edges {\n      node {\n        id\n        entityId\n        name\n        channelType\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "03392868a3c9dd9e0c12002a446ee836";
+(node as any).hash = "b9c816e634870e52079ba6e2cf7ca22a";
 
 export default node;

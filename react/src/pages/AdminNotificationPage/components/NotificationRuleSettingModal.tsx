@@ -11,6 +11,7 @@ import { NotificationRuleSettingModalFragment$key } from '../../../__generated__
 import { NotificationRuleSettingModalSchemaQuery } from '../../../__generated__/NotificationRuleSettingModalSchemaQuery.graphql';
 import { NotificationRuleSettingModalUpdateMutation } from '../../../__generated__/NotificationRuleSettingModalUpdateMutation.graphql';
 import { App } from '../../../app-shim';
+import BAIErrorBoundary from '../../../components/BAIErrorBoundary';
 import { Form, FormInstance } from '../../../form-engine';
 import {
   NOTIFICATION_RULE_TYPES,
@@ -60,6 +61,7 @@ interface NotificationRuleSettingModalProps extends Omit<
 }
 
 export const useRuleTypeLabel = () => {
+  'use memo';
   const { t } = useTranslation();
   return (ruleType: string) =>
     t(`externalNotification.ruleTypes.${ruleType}`, {
@@ -84,7 +86,6 @@ const ChannelFormItem: React.FC<{ isDisabled: boolean }> = ({ isDisabled }) => {
                 entityId
                 name
                 channelType
-                enabled
               }
             }
           }
@@ -215,12 +216,14 @@ const RuleTypeDependentItems: React.FC = () => {
   const autoFilledRef = useRef<string | null>(null);
   if (!ruleType) return null;
   return (
-    <Suspense fallback={<BAISkeleton rows={3} />}>
-      <MessageTemplateFormItem
-        ruleType={ruleType}
-        autoFilledRef={autoFilledRef}
-      />
-    </Suspense>
+    <BAIErrorBoundary>
+      <Suspense fallback={<BAISkeleton rows={3} />}>
+        <MessageTemplateFormItem
+          ruleType={ruleType}
+          autoFilledRef={autoFilledRef}
+        />
+      </Suspense>
+    </BAIErrorBoundary>
   );
 };
 
@@ -296,6 +299,15 @@ const NotificationRuleSettingModal: React.FC<
     formRef.current
       ?.validateFields()
       .then((values) => {
+        // These items mount once their queries load; until then validateFields skips them.
+        if (!values.channelId || !_.trim(values.messageTemplate ?? '')) {
+          message.error(
+            !values.channelId
+              ? t('externalNotification.ChannelRequired')
+              : t('externalNotification.MessageTemplateRequired'),
+          );
+          return;
+        }
         const common = {
           name: _.trim(values.name),
           description: _.trim(values.description ?? '') || null,
@@ -397,9 +409,11 @@ const NotificationRuleSettingModal: React.FC<
             }))}
           />
         </Form.Item>
-        <Suspense fallback={<BAISkeleton rows={1} />}>
-          <ChannelFormItem isDisabled={!!rule} />
-        </Suspense>
+        <BAIErrorBoundary>
+          <Suspense fallback={<BAISkeleton rows={1} />}>
+            <ChannelFormItem isDisabled={!!rule} />
+          </Suspense>
+        </BAIErrorBoundary>
         <Form.Item label={t('externalNotification.Enabled')} name="enabled">
           <BAISwitch aria-label={t('externalNotification.Enabled')} />
         </Form.Item>

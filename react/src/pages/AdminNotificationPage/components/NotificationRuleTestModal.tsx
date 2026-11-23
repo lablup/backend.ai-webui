@@ -6,12 +6,15 @@ import { NotificationRuleType } from '../../../__generated__/NotificationRuleSet
 import { NotificationRuleTestModalSchemaQuery } from '../../../__generated__/NotificationRuleTestModalSchemaQuery.graphql';
 import { NotificationRuleTestModalValidateMutation } from '../../../__generated__/NotificationRuleTestModalValidateMutation.graphql';
 import { App } from '../../../app-shim';
+import BAIErrorBoundary from '../../../components/BAIErrorBoundary';
 import { Form, FormInstance } from '../../../form-engine';
 import {
   buildSampleNotificationData,
   getTemplateVariables,
 } from '../helper/notificationRuleTemplate';
+import './NotificationRuleTestModal.css';
 import { BAIAlert, BAIModal, BAISkeleton, BAITextArea } from 'backend.ai-ui';
+import * as _ from 'lodash-es';
 import React, { Suspense, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
@@ -32,7 +35,8 @@ const TestForm: React.FC<{
   rule: TestRule;
   formRef: React.RefObject<FormInstance<{ data: string }> | null>;
   sentMessage: string | null;
-}> = ({ rule, formRef, sentMessage }) => {
+  onDataChange: () => void;
+}> = ({ rule, formRef, sentMessage, onDataChange }) => {
   'use memo';
   const { t } = useTranslation();
   const { notificationRuleTypeSchema } =
@@ -56,11 +60,12 @@ const TestForm: React.FC<{
       ref={formRef}
       layout="vertical"
       initialValues={{ data: JSON.stringify(sampleData, null, 2) }}
+      onValuesChange={onDataChange}
     >
       <BAIAlert
         type="warning"
         showIcon
-        style={{ marginBottom: 'var(--spacing-4)' }}
+        className="notification-rule-test-alert"
         description={t('externalNotification.TestNotificationSendsTo', {
           channel: rule.channelName,
         })}
@@ -73,11 +78,14 @@ const TestForm: React.FC<{
           {
             validator: (_rule, value?: string) => {
               try {
-                JSON.parse(value ?? '');
-                return Promise.resolve();
+                // The manager takes an object keyed like the event's schema.
+                if (_.isPlainObject(JSON.parse(value ?? ''))) {
+                  return Promise.resolve();
+                }
               } catch {
-                return Promise.reject(t('externalNotification.InvalidJson'));
+                // reported below
               }
+              return Promise.reject(t('externalNotification.InvalidJson'));
             },
           },
         ]}
@@ -127,6 +135,7 @@ const NotificationRuleTestModal: React.FC<NotificationRuleTestModalProps> = ({
       ?.validateFields()
       .then(({ data }) => {
         if (!rule) return;
+        setSentMessage(null);
         commitValidate({
           variables: {
             input: { id: rule.entityId, notificationData: JSON.parse(data) },
@@ -169,9 +178,16 @@ const NotificationRuleTestModal: React.FC<NotificationRuleTestModalProps> = ({
       }}
     >
       {rule ? (
-        <Suspense fallback={<BAISkeleton rows={6} />}>
-          <TestForm rule={rule} formRef={formRef} sentMessage={sentMessage} />
-        </Suspense>
+        <BAIErrorBoundary>
+          <Suspense fallback={<BAISkeleton rows={6} />}>
+            <TestForm
+              rule={rule}
+              formRef={formRef}
+              sentMessage={sentMessage}
+              onDataChange={() => setSentMessage(null)}
+            />
+          </Suspense>
+        </BAIErrorBoundary>
       ) : null}
     </BAIModal>
   );

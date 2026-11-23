@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<8315f1a86407834ec33a89e3646237af>>
+ * @generated SignedSource<<52d6d7229096a3fd12948daf73123a37>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,7 +10,6 @@
 
 import { ConcreteRequest } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
-export type NotificationChannelType = "EMAIL" | "WEBHOOK" | "%future added value";
 export type NotificationRuleOrderField = "CREATED_AT" | "NAME" | "UPDATED_AT" | "%future added value";
 export type NotificationRuleType = "ARTIFACT_DOWNLOAD_COMPLETED" | "ENDPOINT_LIFECYCLE_CHANGED" | "SESSION_STARTED" | "SESSION_TERMINATED" | "%future added value";
 export type OrderDirection = "ASC" | "DESC" | "%future added value";
@@ -72,12 +71,7 @@ export type NotificationRuleListQuery$data = {
     readonly count: number;
     readonly edges: ReadonlyArray<{
       readonly node: {
-        readonly channel: {
-          readonly channelType: NotificationChannelType;
-          readonly enabled: boolean;
-          readonly id: string;
-          readonly name: string;
-        };
+        readonly channelId: string;
         readonly createdAt: string;
         readonly description: string | null | undefined;
         readonly enabled: boolean;
@@ -197,22 +191,8 @@ v12 = {
 v13 = {
   "alias": null,
   "args": null,
-  "concreteType": "NotificationChannel",
-  "kind": "LinkedField",
-  "name": "channel",
-  "plural": false,
-  "selections": [
-    (v6/*: any*/),
-    (v8/*: any*/),
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "channelType",
-      "storageKey": null
-    },
-    (v11/*: any*/)
-  ],
+  "kind": "ScalarField",
+  "name": "channelId",
   "storageKey": null
 };
 return {
@@ -326,13 +306,6 @@ return {
                     "alias": null,
                     "args": null,
                     "kind": "ScalarField",
-                    "name": "channelId",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
                     "name": "messageTemplate",
                     "storageKey": null
                   }
@@ -348,16 +321,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "deb12ba74066af3c7df7255f45ca58ba",
+    "cacheID": "063742e6e2f1375a187ae1c30f0cc20e",
     "id": null,
     "metadata": {},
     "name": "NotificationRuleListQuery",
     "operationKind": "query",
-    "text": "query NotificationRuleListQuery(\n  $filter: NotificationRuleFilter\n  $orderBy: [NotificationRuleOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  adminNotificationRules(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        entityId\n        name\n        description\n        ruleType\n        enabled\n        createdAt\n        channel {\n          id\n          name\n          channelType\n          enabled\n        }\n        ...NotificationRuleSettingModalFragment\n      }\n    }\n  }\n}\n\nfragment NotificationRuleSettingModalFragment on NotificationRule {\n  id\n  entityId\n  name\n  description\n  ruleType\n  channelId\n  messageTemplate\n  enabled\n}\n"
+    "text": "query NotificationRuleListQuery(\n  $filter: NotificationRuleFilter\n  $orderBy: [NotificationRuleOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  adminNotificationRules(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        entityId\n        name\n        description\n        ruleType\n        enabled\n        createdAt\n        channelId\n        ...NotificationRuleSettingModalFragment\n      }\n    }\n  }\n}\n\nfragment NotificationRuleSettingModalFragment on NotificationRule {\n  id\n  entityId\n  name\n  description\n  ruleType\n  channelId\n  messageTemplate\n  enabled\n}\n"
   }
 };
 })();
 
-(node as any).hash = "1307df8da263f0ea31c07643c2f42108";
+(node as any).hash = "ab69e2a011ee0680cf5844ca93af6652";
 
 export default node;

@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { NotificationRuleListChannelsQuery } from '../../../__generated__/NotificationRuleListChannelsQuery.graphql';
 import { NotificationRuleListEnabledMutation } from '../../../__generated__/NotificationRuleListEnabledMutation.graphql';
 import { NotificationRuleListPurgeMutation } from '../../../__generated__/NotificationRuleListPurgeMutation.graphql';
 import {
@@ -36,6 +37,7 @@ import {
   filterOutNullAndUndefined,
   INITIAL_FETCH_KEY,
   useFetchKey,
+  useMutationWithPromise,
   type BAIColumnType,
   type GraphQLFilter,
 } from 'backend.ai-ui';
@@ -132,12 +134,7 @@ const NotificationRuleList: React.FC = () => {
                 ruleType
                 enabled
                 createdAt
-                channel {
-                  id
-                  name
-                  channelType
-                  enabled
-                }
+                channelId
                 ...NotificationRuleSettingModalFragment
               }
             }
@@ -154,8 +151,8 @@ const NotificationRuleList: React.FC = () => {
       },
     );
 
-  const [commitEnabled] = useMutation<NotificationRuleListEnabledMutation>(
-    graphql`
+  const commitEnabled =
+    useMutationWithPromise<NotificationRuleListEnabledMutation>(graphql`
       mutation NotificationRuleListEnabledMutation(
         $input: UpdateNotificationRuleInput!
       ) {
@@ -166,8 +163,7 @@ const NotificationRuleList: React.FC = () => {
           }
         }
       }
-    `,
-  );
+    `);
 
   const [commitPurge, isInFlightPurge] =
     useMutation<NotificationRuleListPurgeMutation>(graphql`
@@ -185,24 +181,59 @@ const NotificationRuleList: React.FC = () => {
     _.map(adminNotificationRules?.edges, (edge) => edge?.node),
   );
 
-  const setEnabled = (rule: NotificationRuleNode, enabled: boolean) =>
-    new Promise<void>((resolve, reject) => {
-      commitEnabled({
-        variables: { input: { id: rule.entityId, enabled } },
-        onCompleted: (_res, errors) => {
-          if (errors && errors.length > 0) {
-            message.error(errors[0]?.message || t('general.ErrorOccurred'));
-            reject(errors[0]);
-            return;
+  // A purged channel leaves its rules behind, and the non-null `channel` field would then
+  // null the whole connection, so channel names are looked up separately by id.
+  const channelIdsKey = _.uniq(_.map(rules, 'channelId')).sort().join(',');
+  const deferredChannelIdsKey = useDeferredValue(channelIdsKey);
+  const channelIds = deferredChannelIdsKey
+    ? deferredChannelIdsKey.split(',')
+    : [];
+  const { adminNotificationChannels: ruleChannels } =
+    useLazyLoadQuery<NotificationRuleListChannelsQuery>(
+      graphql`
+        query NotificationRuleListChannelsQuery(
+          $filter: NotificationChannelFilter
+          $limit: Int
+        ) {
+          adminNotificationChannels(filter: $filter, limit: $limit) {
+            edges {
+              node {
+                id
+                entityId
+                name
+                enabled
+              }
+            }
           }
-          resolve();
-        },
-        onError: (error) => {
-          message.error(error?.message || t('general.ErrorOccurred'));
-          reject(error);
-        },
-      });
-    });
+        }
+      `,
+      {
+        filter: { entityId: { in: channelIds } },
+        limit: Math.max(channelIds.length, 1),
+      },
+      {
+        fetchKey: deferredFetchKey,
+        fetchPolicy:
+          deferredFetchKey === INITIAL_FETCH_KEY
+            ? 'store-and-network'
+            : 'network-only',
+      },
+    );
+  const channelById = _.keyBy(
+    filterOutNullAndUndefined(_.map(ruleChannels?.edges, (edge) => edge?.node)),
+    'entityId',
+  );
+
+  // Never rejects: the Switch runs this in a transition without a catch, so a rejection
+  // would reach the page's error boundary. Its optimistic value reverts on its own.
+  const setEnabled = async (rule: NotificationRuleNode, enabled: boolean) => {
+    try {
+      await commitEnabled({ input: { id: rule.entityId, enabled } });
+      if (_.isBoolean(filter?.enabled)) refetch();
+    } catch (error) {
+      message.error((error as Error)?.message || t('general.ErrorOccurred'));
+    }
+  };
 
   const purgeRule = (rule: NotificationRuleNode) => {
     commitPurge({
@@ -253,7 +284,8 @@ const NotificationRuleList: React.FC = () => {
                   entityId: row.entityId,
                   name: row.name,
                   ruleType: row.ruleType,
-                  channelName: row.channel.name,
+                  channelName:
+                    channelById[row.channelId]?.name ?? row.channelId,
                 }),
             },
             {
@@ -276,18 +308,22 @@ const NotificationRuleList: React.FC = () => {
     {
       title: t('externalNotification.Channel'),
       key: 'channel',
-      render: (__, row) => (
-        <BAIFlex gap="xxs" align="center" wrap="nowrap">
-          <BAIText>{row.channel.name}</BAIText>
-          {row.channel.enabled ? null : (
-            <Token
-              size="sm"
-              color="gray"
-              label={t('externalNotification.ChannelDisabled')}
-            />
-          )}
-        </BAIFlex>
-      ),
+      render: (__, row) => {
+        const channel = channelById[row.channelId];
+        if (!channel) return <BAIText type="secondary">-</BAIText>;
+        return (
+          <BAIFlex gap="xxs" align="center" wrap="nowrap">
+            <BAIText>{channel.name}</BAIText>
+            {channel.enabled ? null : (
+              <Token
+                size="sm"
+                color="gray"
+                label={t('externalNotification.ChannelDisabled')}
+              />
+            )}
+          </BAIFlex>
+        );
+      },
     },
     {
       title: t('externalNotification.Enabled'),
