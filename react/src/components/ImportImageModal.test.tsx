@@ -263,8 +263,8 @@ let registryPageFetchCount = 0;
 const queueRegistryPages = (
   environment: ReturnType<typeof createMockEnvironment>,
   registryPages: Array<Array<RegistryNodeShape>>,
-  /** The registry IDs the domain allows; omitted means not reported. */
-  allowedRegistryIds?: Array<string>,
+  /** The registry IDs the domain allows; `null` means not reported. */
+  allowedRegistryIds?: Array<string> | null,
 ) => {
   registryPages.forEach((nodes, index) => {
     const hasNextPage = index < registryPages.length - 1;
@@ -272,16 +272,17 @@ const queueRegistryPages = (
       registryPageFetchCount += 1;
       return {
         data: {
-          domainV2: allowedRegistryIds
-            ? {
-                containerRegistries: {
-                  count: allowedRegistryIds.length,
-                  edges: allowedRegistryIds.map((entityId) => ({
-                    node: { entityId },
-                  })),
+          domainV2:
+            allowedRegistryIds == null
+              ? null
+              : {
+                  containerRegistries: {
+                    count: allowedRegistryIds.length,
+                    edges: allowedRegistryIds.map((entityId) => ({
+                      node: { entityId },
+                    })),
+                  },
                 },
-              }
-            : null,
           container_registry_nodes: {
             edges: nodes.map((node) => ({ node })),
             pageInfo: {
@@ -443,6 +444,27 @@ describe('ImportImageModal (FR-3940 review round)', () => {
     expect(
       screen.getByText(/environment\.ImportImageReady/),
     ).toBeInTheDocument();
+  });
+
+  it('treats an empty allow-list as no registry allowed, not as unknown', async () => {
+    // `[]` and `null` are different states: an empty allow-list gates every
+    // registry, a missing report gates none.
+    const environment = createMockEnvironment();
+    queueRegistryPages(environment, [[REGISTRY, NGC_REGISTRY]], []);
+    render(
+      <QueryClientProvider client={new QueryClient()}>
+        <RelayEnvironmentProvider environment={environment}>
+          <ImportImageModal open onRequestClose={vi.fn()} />
+        </RelayEnvironmentProvider>
+      </QueryClientProvider>,
+    );
+    await typeReferences(PYTORCH);
+
+    await waitFor(() =>
+      expect(
+        screen.getByText('environment.ImportImageRegistryDisabledInDomain'),
+      ).toBeInTheDocument(),
+    );
   });
 
   it('matches against registries from every page of the connection', async () => {

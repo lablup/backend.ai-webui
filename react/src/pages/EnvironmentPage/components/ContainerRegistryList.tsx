@@ -397,15 +397,16 @@ const ContainerRegistryList: React.FC<{
                       message.error(error);
                     }
                   } else {
-                    updateFetchKey();
+                    message.success({
+                      key: 'registry-enabled',
+                      content: isOn
+                        ? t('registry.RegistryTurnedOn')
+                        : t('registry.RegistryTurnedOff'),
+                    });
                   }
-
-                  message.success({
-                    key: 'registry-enabled',
-                    content: isOn
-                      ? t('registry.RegistryTurnedOn')
-                      : t('registry.RegistryTurnedOff'),
-                  });
+                  // The refetch also recovers the optimistically-toggled
+                  // switch when the manager returned GraphQL errors.
+                  updateFetchKey();
                 },
                 onError: (error) => {
                   message.error(getErrorMessage(error));
