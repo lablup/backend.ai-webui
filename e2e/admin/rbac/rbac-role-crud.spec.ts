@@ -276,7 +276,7 @@ test.describe.serial(
         .click();
 
       // 6. Verify a success notification "Role deactivated successfully." appears.
-      // Checked before the row: the toast auto-hides after 3s while the list refetches.
+      // Checked before the row: the toast auto-hides after 4s while the list refetches.
       await expect(toast(page, /Role deactivated successfully/i)).toBeVisible({
         timeout: 10000,
       });
