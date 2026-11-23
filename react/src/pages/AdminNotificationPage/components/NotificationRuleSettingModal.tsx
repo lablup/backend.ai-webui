@@ -2,7 +2,6 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { NotificationRuleSettingModalChannelsQuery } from '../../../__generated__/NotificationRuleSettingModalChannelsQuery.graphql';
 import {
   NotificationRuleSettingModalCreateMutation,
   NotificationRuleType,
@@ -20,6 +19,7 @@ import {
   insertAtSelection,
   toTemplateExpression,
 } from '../helper/notificationRuleTemplate';
+import NotificationChannelSelect from './NotificationChannelSelect';
 import { Token } from '@lablup/ui-common/Token';
 import { Tooltip } from '@lablup/ui-common/Tooltip';
 import {
@@ -72,28 +72,6 @@ export const useRuleTypeLabel = () => {
 const ChannelFormItem: React.FC<{ isDisabled: boolean }> = ({ isDisabled }) => {
   'use memo';
   const { t } = useTranslation();
-  const { adminNotificationChannels } =
-    useLazyLoadQuery<NotificationRuleSettingModalChannelsQuery>(
-      graphql`
-        query NotificationRuleSettingModalChannelsQuery {
-          adminNotificationChannels(
-            orderBy: [{ field: NAME, direction: ASC }]
-            limit: 100
-          ) {
-            edges {
-              node {
-                id
-                entityId
-                name
-                channelType
-              }
-            }
-          }
-        }
-      `,
-      {},
-      { fetchPolicy: 'store-and-network' },
-    );
   return (
     <Form.Item
       label={t('externalNotification.Channel')}
@@ -102,16 +80,10 @@ const ChannelFormItem: React.FC<{ isDisabled: boolean }> = ({ isDisabled }) => {
         { required: true, message: t('externalNotification.ChannelRequired') },
       ]}
     >
-      <BAISelect
-        disabled={isDisabled}
-        showSearch
-        placeholder={t('externalNotification.SelectChannel')}
-        options={_.map(adminNotificationChannels?.edges, (edge) => ({
-          value: edge?.node?.entityId ?? '',
-          label: `${edge?.node?.name} (${t(
-            `externalNotification.channelTypes.${edge?.node?.channelType}`,
-          )})`,
-        }))}
+      <NotificationChannelSelect
+        label={t('externalNotification.Channel')}
+        isLabelHidden
+        isDisabled={isDisabled}
       />
     </Form.Item>
   );
