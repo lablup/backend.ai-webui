@@ -29,7 +29,7 @@ import {
   type BAIColumnType,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { CirclePlay } from 'lucide-react';
+import { CirclePlay, SquareDot, SquareMinus, SquarePlus } from 'lucide-react';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
@@ -208,41 +208,36 @@ const DeploymentRevisionCompareDrawer: React.FC<
     }
   };
 
-  // A diff-style marker in front of the setting: + added, − removed, ~ changed.
+  // The diff status icons of GitHub's Primer octicons: added, removed, modified.
   const statusMarker = (row: RevisionDiffRow) => {
     if (row.status === 'same') {
-      return <BAIText style={{ width: '1ch', flexShrink: 0 }} />;
+      return <BAIText style={{ width: '1em', flexShrink: 0 }} />;
     }
-    const { type, symbol, label } = {
+    const { type, Icon, label } = {
       added: {
-        type: 'success',
-        symbol: '+',
+        type: 'success' as const,
+        Icon: SquarePlus,
         label: t('deployment.CompareAdded'),
       },
       removed: {
-        type: 'danger',
-        symbol: '−',
+        type: 'danger' as const,
+        Icon: SquareMinus,
         label: t('deployment.CompareRemoved'),
       },
       changed: {
-        type: 'warning',
-        symbol: '~',
+        type: 'warning' as const,
+        Icon: SquareDot,
         label: t('deployment.CompareChanged'),
       },
-    }[row.status] as {
-      type: 'success' | 'danger' | 'warning';
-      symbol: string;
-      label: string;
-    };
+    }[row.status];
     return (
       <BAIText
         type={type}
-        strong
         aria-label={label}
         title={label}
-        style={{ width: '1ch', flexShrink: 0, textAlign: 'center' }}
+        style={{ display: 'inline-flex', flexShrink: 0 }}
       >
-        {symbol}
+        <Icon size="1em" aria-hidden />
       </BAIText>
     );
   };
