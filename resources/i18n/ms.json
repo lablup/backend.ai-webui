@@ -838,6 +838,10 @@
     "InUsePercent": "Digunakan {{percent}}%",
     "MemoryInUsePercent": "Memori digunakan {{percent}}%",
     "Used": "digunakan",
+    "agentDraft": {
+      "Description": "Ejen AI mencadangkan perubahan ini. Papan di bawah memaparkan pratontonnya; tiada apa disimpan sehingga anda menekan {{apply}}.",
+      "Title": "Perubahan yang dicadangkan oleh ejen AI"
+    },
     "boards": {
       "BoardName": "Nama papan",
       "BoardNameRequired": "Masukkan nama papan",

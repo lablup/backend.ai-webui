@@ -838,6 +838,10 @@
     "InUsePercent": "Käytössä {{percent}} %",
     "MemoryInUsePercent": "Muistia käytössä {{percent}} %",
     "Used": "Käytetty",
+    "agentDraft": {
+      "Description": "Tekoälyagentti ehdotti näitä muutoksia. Alla oleva taulu näyttää esikatselun; mitään ei tallenneta ennen kuin painat {{apply}}.",
+      "Title": "Tekoälyagentin ehdottamat muutokset"
+    },
     "boards": {
       "BoardName": "Taulun nimi",
       "BoardNameRequired": "Anna taulun nimi",

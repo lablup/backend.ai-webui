@@ -838,6 +838,10 @@
     "InUsePercent": "Kullanımda %{{percent}}",
     "MemoryInUsePercent": "Bellek kullanımda %{{percent}}",
     "Used": "Kullanılmış",
+    "agentDraft": {
+      "Description": "Bir yapay zekâ ajanı bu değişiklikleri önerdi. Aşağıdaki pano bir önizleme gösterir; {{apply}} düğmesine basana kadar hiçbir şey kaydedilmez.",
+      "Title": "Bir yapay zekâ ajanının önerdiği değişiklikler"
+    },
     "boards": {
       "BoardName": "Pano adı",
       "BoardNameRequired": "Bir pano adı girin",

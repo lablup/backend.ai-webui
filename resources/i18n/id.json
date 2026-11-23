@@ -838,6 +838,10 @@
     "InUsePercent": "Terpakai {{percent}}%",
     "MemoryInUsePercent": "Memori terpakai {{percent}}%",
     "Used": "Digunakan",
+    "agentDraft": {
+      "Description": "Agen AI mengusulkan perubahan ini. Papan di bawah menampilkan pratinjaunya; tidak ada yang disimpan sampai Anda menekan {{apply}}.",
+      "Title": "Perubahan yang diusulkan agen AI"
+    },
     "boards": {
       "BoardName": "Nama papan",
       "BoardNameRequired": "Masukkan nama papan",
