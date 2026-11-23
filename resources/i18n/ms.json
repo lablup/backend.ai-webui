@@ -2037,7 +2037,6 @@
     "SmtpPassword": "Kata laluan SMTP",
     "SmtpPasswordRequiredForChange": "Masukkan semula kata laluan SMTP untuk menukar tetapan sambungan.",
     "SmtpPasswordRequiredWithUsername": "Masukkan kata laluan SMTP, yang dihantar bersama nama pengguna.",
-    "SmtpPasswordSavedExtra": "Kata laluan yang disimpan tidak dipaparkan. Biarkan kosong untuk mengekalkannya.",
     "SmtpPort": "Port",
     "SmtpTimeout": "Had masa",
     "SmtpUseTls": "Guna TLS",

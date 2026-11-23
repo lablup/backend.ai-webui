@@ -111,23 +111,28 @@ export const specFormValuesFromSaved = (
  * `spec` replaces the saved one whole and the saved password never comes back.
  */
 export const decideSpecUpdate = ({
-  spec,
-  savedSpec,
-  password,
+  values,
+  savedValues,
   hasSavedAuth,
 }: {
-  spec: NotificationChannelSpecInput;
-  savedSpec: NotificationChannelSpecInput;
-  password?: string;
+  values: NotificationChannelSpecFormValues;
+  savedValues: NotificationChannelSpecFormValues;
   hasSavedAuth: boolean;
 }) => {
-  const includesSpec = !!password || !_.isEqual(spec, savedSpec);
-  const savedUsername = savedSpec.email?.auth?.username;
-  const nextUsername = spec.email?.auth?.username;
-  // Clearing a saved username removes SMTP authentication, which needs no password.
-  const removesAuth = !!savedUsername && !nextUsername;
+  const withoutAuth = (spec: NotificationChannelSpecInput) =>
+    spec.email ? { email: { ...spec.email, auth: null } } : spec;
+  const username = trimmedOrNull(values.smtpUsername);
+  const changesConnection =
+    username !== trimmedOrNull(savedValues.smtpUsername) ||
+    !_.isEqual(
+      withoutAuth(buildNotificationChannelSpecInput(values)),
+      withoutAuth(buildNotificationChannelSpecInput(savedValues)),
+    );
+  const includesSpec = !!values.smtpPassword || changesConnection;
+  // An empty username removes SMTP authentication, which needs no password.
   return {
     includesSpec,
-    needsPassword: includesSpec && hasSavedAuth && !password && !removesAuth,
+    needsPassword:
+      includesSpec && hasSavedAuth && !!username && !values.smtpPassword,
   };
 };

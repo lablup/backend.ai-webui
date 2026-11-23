@@ -2037,7 +2037,6 @@
     "SmtpPassword": "Mật khẩu SMTP",
     "SmtpPasswordRequiredForChange": "Nhập lại mật khẩu SMTP để thay đổi cài đặt kết nối.",
     "SmtpPasswordRequiredWithUsername": "Nhập mật khẩu SMTP, được gửi cùng với tên người dùng.",
-    "SmtpPasswordSavedExtra": "Mật khẩu đã lưu không được hiển thị. Để trống để giữ nguyên.",
     "SmtpPort": "Cổng",
     "SmtpTimeout": "Thời gian chờ",
     "SmtpUseTls": "Dùng TLS",

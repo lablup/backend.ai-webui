@@ -2101,7 +2101,6 @@
         "externalNotification.SmtpPassword",
         "externalNotification.SmtpPasswordRequiredForChange",
         "externalNotification.SmtpPasswordRequiredWithUsername",
-        "externalNotification.SmtpPasswordSavedExtra",
         "externalNotification.SmtpPort",
         "externalNotification.SmtpTimeout",
         "externalNotification.SmtpUseTls",

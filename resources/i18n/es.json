@@ -2037,7 +2037,6 @@
     "SmtpPassword": "Contraseña SMTP",
     "SmtpPasswordRequiredForChange": "Vuelva a introducir la contraseña SMTP para cambiar la configuración de conexión.",
     "SmtpPasswordRequiredWithUsername": "Introduzca la contraseña SMTP, que se envía junto con el usuario.",
-    "SmtpPasswordSavedExtra": "La contraseña guardada no se muestra. Déjela vacía para conservarla.",
     "SmtpPort": "Puerto",
     "SmtpTimeout": "Tiempo de espera",
     "SmtpUseTls": "Usar TLS",

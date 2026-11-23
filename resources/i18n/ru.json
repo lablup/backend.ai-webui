@@ -2037,7 +2037,6 @@
     "SmtpPassword": "Пароль SMTP",
     "SmtpPasswordRequiredForChange": "Введите пароль SMTP снова, чтобы изменить параметры подключения.",
     "SmtpPasswordRequiredWithUsername": "Введите пароль SMTP, который отправляется вместе с именем пользователя.",
-    "SmtpPasswordSavedExtra": "Сохранённый пароль не показывается. Оставьте поле пустым, чтобы сохранить его.",
     "SmtpPort": "Порт",
     "SmtpTimeout": "Тайм-аут",
     "SmtpUseTls": "Использовать TLS",

@@ -2037,7 +2037,6 @@
     "SmtpPassword": "SMTP-salasana",
     "SmtpPasswordRequiredForChange": "Anna SMTP-salasana uudelleen muuttaaksesi yhteysasetuksia.",
     "SmtpPasswordRequiredWithUsername": "Anna SMTP-salasana, joka lähetetään käyttäjätunnuksen kanssa.",
-    "SmtpPasswordSavedExtra": "Tallennettua salasanaa ei näytetä. Jätä tyhjäksi, jos haluat säilyttää sen.",
     "SmtpPort": "Portti",
     "SmtpTimeout": "Aikakatkaisu",
     "SmtpUseTls": "Käytä TLS:ää",

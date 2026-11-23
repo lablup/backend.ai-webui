@@ -2037,7 +2037,6 @@
     "SmtpPassword": "Κωδικός SMTP",
     "SmtpPasswordRequiredForChange": "Εισαγάγετε ξανά τον κωδικό SMTP για να αλλάξετε τις ρυθμίσεις σύνδεσης.",
     "SmtpPasswordRequiredWithUsername": "Εισαγάγετε τον κωδικό πρόσβασης SMTP, που αποστέλλεται μαζί με το όνομα χρήστη.",
-    "SmtpPasswordSavedExtra": "Ο αποθηκευμένος κωδικός δεν εμφανίζεται. Αφήστε το κενό για να διατηρηθεί.",
     "SmtpPort": "Θύρα",
     "SmtpTimeout": "Χρονικό όριο",
     "SmtpUseTls": "Χρήση TLS",

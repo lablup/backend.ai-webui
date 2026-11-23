@@ -2037,7 +2037,6 @@
     "SmtpPassword": "SMTP нууц үг",
     "SmtpPasswordRequiredForChange": "Холболтын тохиргоог өөрчлөхийн тулд SMTP нууц үгээ дахин оруулна уу.",
     "SmtpPasswordRequiredWithUsername": "Хэрэглэгчийн нэртэй хамт илгээх SMTP нууц үгийг оруулна уу.",
-    "SmtpPasswordSavedExtra": "Хадгалсан нууц үг харагдахгүй. Хэвээр үлдээхийн тулд хоосон орхино уу.",
     "SmtpPort": "Порт",
     "SmtpTimeout": "Хугацаа хэтрэх",
     "SmtpUseTls": "TLS ашиглах",

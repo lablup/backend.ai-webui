@@ -2037,7 +2037,6 @@
     "SmtpPassword": "SMTP-Passwort",
     "SmtpPasswordRequiredForChange": "Geben Sie das SMTP-Passwort erneut ein, um die Verbindungseinstellungen zu ändern.",
     "SmtpPasswordRequiredWithUsername": "Geben Sie das SMTP-Passwort ein, das mit dem Benutzernamen gesendet wird.",
-    "SmtpPasswordSavedExtra": "Das gespeicherte Passwort wird nicht angezeigt. Leer lassen, um es beizubehalten.",
     "SmtpPort": "Port",
     "SmtpTimeout": "Zeitlimit",
     "SmtpUseTls": "TLS verwenden",

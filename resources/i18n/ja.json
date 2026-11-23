@@ -2037,7 +2037,6 @@
     "SmtpPassword": "SMTP パスワード",
     "SmtpPasswordRequiredForChange": "接続設定を変更するには SMTP パスワードを再入力してください。",
     "SmtpPasswordRequiredWithUsername": "ユーザー名と一緒に送る SMTP パスワードを入力してください。",
-    "SmtpPasswordSavedExtra": "保存済みのパスワードは表示されません。空欄のままにすると保持されます。",
     "SmtpPort": "ポート",
     "SmtpTimeout": "タイムアウト",
     "SmtpUseTls": "TLS を使用",

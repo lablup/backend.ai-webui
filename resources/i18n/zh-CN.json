@@ -2037,7 +2037,6 @@
     "SmtpPassword": "SMTP 密码",
     "SmtpPasswordRequiredForChange": "要更改连接设置，请重新输入 SMTP 密码。",
     "SmtpPasswordRequiredWithUsername": "请输入 SMTP 密码，它会与用户名一起发送。",
-    "SmtpPasswordSavedExtra": "已保存的密码不会显示。留空则保持不变。",
     "SmtpPort": "端口",
     "SmtpTimeout": "超时",
     "SmtpUseTls": "使用 TLS",

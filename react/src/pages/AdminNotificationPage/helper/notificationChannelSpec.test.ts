@@ -7,7 +7,6 @@ import {
   DEFAULT_SMTP_TIMEOUT,
   buildNotificationChannelSpecInput,
   isHttpUrl,
-  isSameSpecIgnoringPassword,
   decideSpecUpdate,
   specFormValuesFromSaved,
 } from './notificationChannelSpec';
@@ -154,21 +153,20 @@ describe('decideSpecUpdate', () => {
     host?: string;
     username?: string;
     password?: string;
-  }) =>
-    buildNotificationChannelSpecInput({
-      channelType: 'EMAIL',
-      smtpHost: host,
-      fromEmail: 'noreply@example.com',
-      toEmails: ['ops@example.com'],
-      smtpUsername: username,
-      smtpPassword: password,
-    });
+  }) => ({
+    channelType: 'EMAIL' as const,
+    smtpHost: host,
+    fromEmail: 'noreply@example.com',
+    toEmails: ['ops@example.com'],
+    smtpUsername: username,
+    smtpPassword: password,
+  });
 
   it('leaves an unchanged connection out of the update', () => {
     expect(
       decideSpecUpdate({
-        spec: email({ username: 'mailer' }),
-        savedSpec: email({ username: 'mailer' }),
+        values: email({ username: 'mailer' }),
+        savedValues: email({ username: 'mailer' }),
         hasSavedAuth: true,
       }),
     ).toEqual({ includesSpec: false, needsPassword: false });
@@ -177,28 +175,28 @@ describe('decideSpecUpdate', () => {
   it('asks for the password again when a connection with auth changes', () => {
     expect(
       decideSpecUpdate({
-        spec: email({ host: 'mail.example.com', username: 'mailer' }),
-        savedSpec: email({ username: 'mailer' }),
+        values: email({ host: 'mail.example.com', username: 'mailer' }),
+        savedValues: email({ username: 'mailer' }),
         hasSavedAuth: true,
       }),
     ).toEqual({ includesSpec: true, needsPassword: true });
   });
 
-  it('asks for the password when the saved auth has a password only', () => {
+  it('asks for the password when only the username changes', () => {
     expect(
       decideSpecUpdate({
-        spec: email({ host: 'mail.example.com' }),
-        savedSpec: email({}),
+        values: email({ username: 'other' }),
+        savedValues: email({ username: 'mailer' }),
         hasSavedAuth: true,
-      }).needsPassword,
-    ).toBe(true);
+      }),
+    ).toEqual({ includesSpec: true, needsPassword: true });
   });
 
   it('lets a cleared username remove authentication', () => {
     expect(
       decideSpecUpdate({
-        spec: email({}),
-        savedSpec: email({ username: 'mailer' }),
+        values: email({}),
+        savedValues: email({ username: 'mailer' }),
         hasSavedAuth: true,
       }),
     ).toEqual({ includesSpec: true, needsPassword: false });
@@ -207,24 +205,24 @@ describe('decideSpecUpdate', () => {
   it('sends the spec when only a new password is typed', () => {
     expect(
       decideSpecUpdate({
-        spec: email({ username: 'mailer', password: 'new' }),
-        savedSpec: email({ username: 'mailer' }),
-        password: 'new',
+        values: email({ username: 'mailer', password: 'new' }),
+        savedValues: email({ username: 'mailer' }),
         hasSavedAuth: true,
       }),
     ).toEqual({ includesSpec: true, needsPassword: false });
   });
 
   it('compares webhook URLs after trimming', () => {
-    const webhook = (url: string) =>
-      buildNotificationChannelSpecInput({
-        channelType: 'WEBHOOK',
-        webhookUrl: url,
-      });
     expect(
       decideSpecUpdate({
-        spec: webhook(' https://a.example.com '),
-        savedSpec: webhook('https://a.example.com'),
+        values: {
+          channelType: 'WEBHOOK',
+          webhookUrl: ' https://a.example.com ',
+        },
+        savedValues: {
+          channelType: 'WEBHOOK',
+          webhookUrl: 'https://a.example.com',
+        },
         hasSavedAuth: false,
       }).includesSpec,
     ).toBe(false);

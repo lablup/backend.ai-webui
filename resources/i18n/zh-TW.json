@@ -2038,7 +2038,6 @@
     "SmtpPassword": "SMTP 密碼",
     "SmtpPasswordRequiredForChange": "若要變更連線設定，請重新輸入 SMTP 密碼。",
     "SmtpPasswordRequiredWithUsername": "請輸入 SMTP 密碼，它會與使用者名稱一起傳送。",
-    "SmtpPasswordSavedExtra": "已儲存的密碼不會顯示。留空則維持不變。",
     "SmtpPort": "連接埠",
     "SmtpTimeout": "逾時",
     "SmtpUseTls": "使用 TLS",

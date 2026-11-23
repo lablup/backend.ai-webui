@@ -19,7 +19,6 @@ import {
   NotificationChannelSpecFormValues,
   buildNotificationChannelSpecInput,
   isHttpUrl,
-  isSameSpecIgnoringPassword,
   decideSpecUpdate,
   specFormValuesFromSaved,
 } from '../helper/notificationChannelSpec';
@@ -190,18 +189,15 @@ const ChannelSpecFormItems: React.FC<{ hasSavedPassword: boolean }> = ({
           rules={[
             ({ getFieldValue }) => ({
               validator: async (_rule, value?: string) => {
-                if (value || !getFieldValue('smtpUsername')?.trim()) return;
+                // Left empty with a saved password, the save asks for it only when needed.
+                if (value || hasSavedPassword) return;
+                if (!getFieldValue('smtpUsername')?.trim()) return;
                 throw new Error(
                   t('externalNotification.SmtpPasswordRequiredWithUsername'),
                 );
               },
             }),
           ]}
-          extra={
-            hasSavedPassword
-              ? t('externalNotification.SmtpPasswordSavedExtra')
-              : undefined
-          }
         >
           <BAITextInput
             type="password"
@@ -471,18 +467,13 @@ const NotificationChannelSettingModal: React.FC<
     // The spec fields are validated only when the connection is sent.
     await form.validateFields(['name', 'description', 'enabled']);
     const values = form.getFieldsValue(true) as NotificationChannelFormValues;
-    const spec = buildNotificationChannelSpecInput({
-      ...values,
-      channelType: channel.channelType,
-    });
-    const savedSpec = buildNotificationChannelSpecInput({
-      ...(savedSpecRef.current?.values ?? {}),
-      channelType: channel.channelType,
-    });
+    const formValues = { ...values, channelType: channel.channelType };
     const { includesSpec, needsPassword } = decideSpecUpdate({
-      spec,
-      savedSpec,
-      password: values.smtpPassword,
+      values: formValues,
+      savedValues: {
+        ...(savedSpecRef.current?.values ?? {}),
+        channelType: channel.channelType,
+      },
       hasSavedAuth: !!savedSpecRef.current?.hasSavedAuth,
     });
     if (includesSpec) await form.validateFields();
@@ -506,7 +497,9 @@ const NotificationChannelSettingModal: React.FC<
           name: _.trim(values.name),
           description: _.trim(values.description ?? '') || null,
           enabled: values.enabled,
-          ...(includesSpec ? { spec } : {}),
+          ...(includesSpec
+            ? { spec: buildNotificationChannelSpecInput(formValues) }
+            : {}),
         },
       },
       onCompleted: (_res, errors) => handleResult(errors),

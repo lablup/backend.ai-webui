@@ -2037,7 +2037,6 @@
     "SmtpPassword": "SMTP parolası",
     "SmtpPasswordRequiredForChange": "Bağlantı ayarlarını değiştirmek için SMTP parolasını yeniden girin.",
     "SmtpPasswordRequiredWithUsername": "Kullanıcı adıyla birlikte gönderilen SMTP parolasını girin.",
-    "SmtpPasswordSavedExtra": "Kayıtlı parola gösterilmez. Korumak için boş bırakın.",
     "SmtpPort": "Bağlantı noktası",
     "SmtpTimeout": "Zaman aşımı",
     "SmtpUseTls": "TLS kullan",

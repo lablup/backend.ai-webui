@@ -2027,7 +2027,6 @@
     "SmtpPassword": "รหัสผ่าน SMTP",
     "SmtpPasswordRequiredForChange": "ป้อนรหัสผ่าน SMTP อีกครั้งเพื่อเปลี่ยนการตั้งค่าการเชื่อมต่อ",
     "SmtpPasswordRequiredWithUsername": "ป้อนรหัสผ่าน SMTP ซึ่งจะส่งไปพร้อมชื่อผู้ใช้",
-    "SmtpPasswordSavedExtra": "รหัสผ่านที่บันทึกไว้จะไม่แสดง เว้นว่างไว้เพื่อคงไว้",
     "SmtpPort": "พอร์ต",
     "SmtpTimeout": "หมดเวลา",
     "SmtpUseTls": "ใช้ TLS",

@@ -2038,7 +2038,6 @@
     "SmtpPassword": "Mot de passe SMTP",
     "SmtpPasswordRequiredForChange": "Saisissez à nouveau le mot de passe SMTP pour modifier les paramètres de connexion.",
     "SmtpPasswordRequiredWithUsername": "Saisissez le mot de passe SMTP, envoyé avec le nom d'utilisateur.",
-    "SmtpPasswordSavedExtra": "Le mot de passe enregistré n'est pas affiché. Laissez le champ vide pour le conserver.",
     "SmtpPort": "Port",
     "SmtpTimeout": "Délai d'expiration",
     "SmtpUseTls": "Utiliser TLS",
