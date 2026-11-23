@@ -197,7 +197,7 @@ export const docs = {
             'Badges shown before "+N". Only meaningful with triggerDisplay="badges".',
         },
         {
-          name: 'showTooltip',
+          name: 'showSelectedOptionsTooltip',
           type: 'boolean',
           description:
             'Multiple/tags mode only: lists every selected label in a tooltip on the trigger, which cuts the selection off after three. Pass false where the select already sits under another tooltip.',

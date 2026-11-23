@@ -213,7 +213,7 @@ export interface BAISelectProps<ValueType = any, OptionType = BAISelectOption> {
    * `mode="multiple"` / `mode="tags"`: lists every selected label in a tooltip
    * on the trigger. On by default (`BAIMultiSelector`); ignored in single mode.
    */
-  showTooltip?: boolean;
+  showSelectedOptionsTooltip?: boolean;
   /**
    * antd's trigger-label source selector. Only `'children'` is honoured: the
    * selected option's rich node renders on the closed trigger (FR-3544).
@@ -283,7 +283,7 @@ function BAISelect<ValueType = any, OptionType = BAISelectOption>({
   optionRender,
   triggerDisplay = 'labels',
   maxBadges,
-  showTooltip,
+  showSelectedOptionsTooltip,
   children,
   className,
   style,
@@ -614,7 +614,7 @@ function BAISelect<ValueType = any, OptionType = BAISelectOption>({
         // QA2-B-1: labels, not "N selected". See the PILOT-DECISION above.
         triggerDisplay={triggerDisplay}
         maxBadges={maxBadges}
-        showTooltip={showTooltip}
+        showSelectedOptionsTooltip={showSelectedOptionsTooltip}
         hasClear={allowClear}
         onChange={(next) => {
           const originals = next.map(

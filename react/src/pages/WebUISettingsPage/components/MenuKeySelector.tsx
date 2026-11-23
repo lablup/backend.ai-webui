@@ -109,7 +109,7 @@ const MenuKeySelector: React.FC<MenuKeySelectorProps> = ({
         </BAIFlex>
       )}
       formatValue={formatSelection}
-      showTooltip={{ content: formatSelection }}
+      showSelectedOptionsTooltip={{ content: formatSelection }}
     />
   );
 };

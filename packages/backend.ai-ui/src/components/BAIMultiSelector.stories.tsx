@@ -11,7 +11,7 @@ const sampleOptions = [
 
 /**
  * BAIMultiSelector is ui-common's `MultiSelector` under its BAI name, with
- * `showTooltip` on by default.
+ * `showSelectedOptionsTooltip` on by default.
  *
  * @see ADR 0014 (docs/adr/0014-bai-names-for-ui-common-form-controls.md)
  */
@@ -29,7 +29,7 @@ const meta: Meta<typeof BAIMultiSelector> = {
 ## Features
 - Form.Item-aware: value, onChange, disabled, validation status and the accessible name come from the item
 - Fills the Form.Item row by default
-- \`showTooltip\` defaults to \`true\`: the trigger names three labels, then "+N", and its tooltip lists every selected label
+- \`showSelectedOptionsTooltip\` defaults to \`true\`: the trigger names three labels, then "+N", and its tooltip lists every selected label
 - Import from \`backend.ai-ui\`; ESLint blocks \`MultiSelector\` from the ui-common subpath in \`react/\`
 
 ## Usage
@@ -40,7 +40,7 @@ const meta: Meta<typeof BAIMultiSelector> = {
 \`\`\`
 
 ## Props
-ui-common's \`MultiSelectorProps\`, with \`showTooltip\` defaulting to \`true\`. Run \`ui-common component MultiSelector\` for the full list.
+ui-common's \`MultiSelectorProps\`, with \`showSelectedOptionsTooltip\` defaulting to \`true\`. Run \`ui-common component MultiSelector\` for the full list.
 `,
       },
     },
@@ -72,7 +72,7 @@ export const SelectionTooltip: Story = {
     docs: {
       description: {
         story:
-          'Hover or focus the trigger: the tooltip lists every selected label, including the ones "+N" hides. `showTooltip={false}` turns it off.',
+          'Hover or focus the trigger: the tooltip lists every selected label, including the ones "+N" hides. `showSelectedOptionsTooltip={false}` turns it off.',
       },
     },
   },
@@ -87,7 +87,7 @@ export const SelectionTooltip: Story = {
       <BAIMultiSelector
         aria-label="Without tooltip"
         width={300}
-        showTooltip={false}
+        showSelectedOptionsTooltip={false}
         options={manyOptions}
         defaultValue={manyOptions.map((option) => option.value)}
       />

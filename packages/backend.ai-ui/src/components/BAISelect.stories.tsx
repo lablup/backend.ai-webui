@@ -213,7 +213,7 @@ export const MultipleSelectionTooltip: Story = {
     docs: {
       description: {
         story:
-          'In multiple mode the trigger names three labels, then "+N"; hovering or focusing it lists every selected label. `showTooltip={false}` turns the tooltip off.',
+          'In multiple mode the trigger names three labels, then "+N"; hovering or focusing it lists every selected label. `showSelectedOptionsTooltip={false}` turns the tooltip off.',
       },
     },
   },
@@ -229,7 +229,7 @@ export const MultipleSelectionTooltip: Story = {
       <BAISelect
         mode="multiple"
         aria-label="Without tooltip"
-        showTooltip={false}
+        showSelectedOptionsTooltip={false}
         options={sampleOptions}
         defaultValue={['option1', 'option2', 'option3', 'option4']}
         style={{ width: 250 }}

@@ -8,7 +8,7 @@ export const docs = {
   keywords: ['form', 'form item', 'multi select', 'multiple', 'selector'],
   usage: {
     description:
-      'ui-common `MultiSelector` under its BAI name: several choices from a static option list, the trigger naming the selection. It is the same component and props, with one default changed (ADR 0014): showTooltip is on, so hovering or focusing the trigger lists every selected label, which the trigger cuts off after three. Inside a Form.Item it takes value, onChange, disabled, status and its accessible name from the item and fills the item row. webui imports it from backend.ai-ui, not from the ui-common subpath. Other props: `ui-common component MultiSelector`.',
+      'ui-common `MultiSelector` under its BAI name: several choices from a static option list, the trigger naming the selection. It is the same component and props, with one default changed (ADR 0014): showSelectedOptionsTooltip is on, so hovering or focusing the trigger lists every selected label, which the trigger cuts off after three. Inside a Form.Item it takes value, onChange, disabled, status and its accessible name from the item and fills the item row. webui imports it from backend.ai-ui, not from the ui-common subpath. Other props: `ui-common component MultiSelector`.',
     bestPractices: [
       {
         guidance: true,
@@ -34,7 +34,7 @@ export const docs = {
   },
   props: [
     {
-      name: 'showTooltip',
+      name: 'showSelectedOptionsTooltip',
       type: 'boolean | { content: (items: MultiSelectorSelectedItem[]) => ReactNode }',
       description:
         'Lists every selected label in a tooltip on the trigger while something is selected, held shut while the listbox is open; `{ content }` renders content(items) instead, with the selection as formatValue receives it. None while disabled or with renderTrigger. Pass false where the trigger already sits under another tooltip.',

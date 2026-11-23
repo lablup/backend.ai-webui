@@ -83,7 +83,7 @@ flowchart LR
 
 - **Promotion**: 어떤 control에 BUI 쪽 동작(번역, 기본값, 다른 props)이 필요해지면 그 `BAI<X>.tsx`의 re-export를 component로 바꾸고 `BAI<X>.doc.ts`에 그 props를 적는다. props interface는 ui-common `<X>Props`를 extend한다. 파일과 이름이 그대로이므로 barrel과 call site는 바뀌지 않는다.
 - **SegmentedControlItem**: `BAISegmentedControlItem`은 이미 그런 component다. `label`을 `ReactNode`로 넓히고, `isLabelHidden`은 `label`이 string일 때만 받는다. 그래서 `SegmentedControlItem`의 BAI 이름은 이것이고, 같은 이름의 re-export는 두지 않는다.
-- **MultiSelector**: `BAIMultiSelector`는 `showTooltip`을 기본으로 켜서, trigger의 tooltip이 선택한 label을 모두 보여 준다(#10951). 끄려면 호출부가 `showTooltip={false}`를 넘긴다.
+- **MultiSelector**: `BAIMultiSelector`는 `showSelectedOptionsTooltip`을 기본으로 켜서, trigger의 tooltip이 선택한 label을 모두 보여 준다(#10951). 끄려면 호출부가 `showSelectedOptionsTooltip={false}`를 넘긴다.
 - **Existing antd-shaped wrappers stay**: `BAISelect`, `BAICheckbox`, `BAIDynamicUnitInputNumber`처럼 frozen antd-v6 props를 받는 기존 BUI component는 그대로 남는다. 새 code는 Astryx 모양 props가 맞으면 이 문서의 `BAI<X>`를 쓴다.
 
 ### 3. BUI source도 `BAI<X>`를 쓴다

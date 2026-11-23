@@ -83,7 +83,7 @@ flowchart LR
 
 - **Promotion**: When a control needs BUI-side behaviour (translation, default values, different props), BUI replaces the re-export in that `BAI<X>.tsx` with a component and writes those props in `BAI<X>.doc.ts`. The props interface extends ui-common's `<X>Props`. The file and the name stay the same, so the barrel and the call sites do not change.
 - **SegmentedControlItem**: `BAISegmentedControlItem` is already such a component. It widens `label` to `ReactNode` and accepts `isLabelHidden` only when `label` is a string. For this reason this component is the BAI name of `SegmentedControlItem`, and no re-export with the same name exists.
-- **MultiSelector**: `BAIMultiSelector` turns `showTooltip` on by default, so the trigger's tooltip lists every selected label (#10951). A caller passes `showTooltip={false}` to opt out.
+- **MultiSelector**: `BAIMultiSelector` turns `showSelectedOptionsTooltip` on by default, so the trigger's tooltip lists every selected label (#10951). A caller passes `showSelectedOptionsTooltip={false}` to opt out.
 - **Existing antd-shaped wrappers stay**: Existing BUI components that take frozen antd-v6 props, such as `BAISelect`, `BAICheckbox`, and `BAIDynamicUnitInputNumber`, stay as they are. New code uses the `BAI<X>` of this document when Astryx-shaped props fit.
 
 ### 3. BUI source also uses `BAI<X>`

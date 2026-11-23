@@ -50,11 +50,11 @@ describe('multi-select trigger tooltip (#10951)', () => {
     expect(screen.getByRole('tooltip')).toHaveTextContent(allLabels);
   });
 
-  it('BAIMultiSelector shows no tooltip with showTooltip={false}', () => {
+  it('BAIMultiSelector shows no tooltip with showSelectedOptionsTooltip={false}', () => {
     render(
       <BAIMultiSelector
         aria-label="Session types"
-        showTooltip={false}
+        showSelectedOptionsTooltip={false}
         options={options}
         value={allValues}
       />,
@@ -63,7 +63,7 @@ describe('multi-select trigger tooltip (#10951)', () => {
     expect(screen.queryByRole('tooltip')).toBeNull();
   });
 
-  it('BAISelect mode="multiple" gets the tooltip, and passes showTooltip through', () => {
+  it('BAISelect mode="multiple" gets the tooltip, and passes showSelectedOptionsTooltip through', () => {
     const { unmount } = render(
       <BAISelect
         mode="multiple"
@@ -80,7 +80,7 @@ describe('multi-select trigger tooltip (#10951)', () => {
       <BAISelect
         mode="multiple"
         aria-label="Session types"
-        showTooltip={false}
+        showSelectedOptionsTooltip={false}
         options={options}
         value={allValues}
       />,
