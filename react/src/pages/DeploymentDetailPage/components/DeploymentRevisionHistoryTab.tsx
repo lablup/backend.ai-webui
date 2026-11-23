@@ -975,7 +975,8 @@ const DeploymentRevisionHistoryTab: React.FC<
         }}
       />
       {comparedIds.length === 2 ? (
-        <ErrorBoundaryWithNullFallback>
+        // Keyed by the pair, so picking another pair clears a failed one.
+        <ErrorBoundaryWithNullFallback key={comparedIds.join(',')}>
           <Suspense fallback={null}>
             <RevisionCompareFromUrl
               deploymentId={deploymentId}
