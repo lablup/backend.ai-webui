@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<afa3e2f4d292038b65f03dfca9d90613>>
+ * @generated SignedSource<<e793b1d2c61eedc8306acbf899106145>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,15 +10,15 @@
 
 import { ConcreteRequest } from 'relay-runtime';
 export type NotificationRuleType = "ARTIFACT_DOWNLOAD_COMPLETED" | "ENDPOINT_LIFECYCLE_CHANGED" | "SESSION_STARTED" | "SESSION_TERMINATED" | "%future added value";
-export type NotificationRulePreviewModalSchemaQuery$variables = {
+export type NotificationRuleTestModalSchemaQuery$variables = {
   ruleType: NotificationRuleType;
 };
-export type NotificationRulePreviewModalSchemaQuery$data = {
+export type NotificationRuleTestModalSchemaQuery$data = {
   readonly notificationRuleTypeSchema: any | null | undefined;
 };
-export type NotificationRulePreviewModalSchemaQuery = {
-  response: NotificationRulePreviewModalSchemaQuery$data;
-  variables: NotificationRulePreviewModalSchemaQuery$variables;
+export type NotificationRuleTestModalSchemaQuery = {
+  response: NotificationRuleTestModalSchemaQuery$data;
+  variables: NotificationRuleTestModalSchemaQuery$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -49,7 +49,7 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "NotificationRulePreviewModalSchemaQuery",
+    "name": "NotificationRuleTestModalSchemaQuery",
     "selections": (v1/*: any*/),
     "type": "Query",
     "abstractKey": null
@@ -58,20 +58,20 @@ return {
   "operation": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "NotificationRulePreviewModalSchemaQuery",
+    "name": "NotificationRuleTestModalSchemaQuery",
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "df8cacffd05da3978e976cafa4ae3648",
+    "cacheID": "c94c474188b70b1e691e93dae18263e0",
     "id": null,
     "metadata": {},
-    "name": "NotificationRulePreviewModalSchemaQuery",
+    "name": "NotificationRuleTestModalSchemaQuery",
     "operationKind": "query",
-    "text": "query NotificationRulePreviewModalSchemaQuery(\n  $ruleType: NotificationRuleType!\n) {\n  notificationRuleTypeSchema(ruleType: $ruleType)\n}\n"
+    "text": "query NotificationRuleTestModalSchemaQuery(\n  $ruleType: NotificationRuleType!\n) {\n  notificationRuleTypeSchema(ruleType: $ruleType)\n}\n"
   }
 };
 })();
 
-(node as any).hash = "5ca2e5ee2f699ddad63e8bcc3a974497";
+(node as any).hash = "bd6a3d30e1d8dbf74429616e5aebdc9c";
 
 export default node;

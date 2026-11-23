@@ -2,42 +2,43 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { NotificationRulePreviewModalSchemaQuery } from '../../../__generated__/NotificationRulePreviewModalSchemaQuery.graphql';
-import { NotificationRulePreviewModalValidateMutation } from '../../../__generated__/NotificationRulePreviewModalValidateMutation.graphql';
 import { NotificationRuleType } from '../../../__generated__/NotificationRuleSettingModalCreateMutation.graphql';
+import { NotificationRuleTestModalSchemaQuery } from '../../../__generated__/NotificationRuleTestModalSchemaQuery.graphql';
+import { NotificationRuleTestModalValidateMutation } from '../../../__generated__/NotificationRuleTestModalValidateMutation.graphql';
 import { App } from '../../../app-shim';
 import { Form, FormInstance } from '../../../form-engine';
 import {
   buildSampleNotificationData,
   getTemplateVariables,
 } from '../helper/notificationRuleTemplate';
-import { BAIModal, BAISkeleton, BAITextArea } from 'backend.ai-ui';
+import { BAIAlert, BAIModal, BAISkeleton, BAITextArea } from 'backend.ai-ui';
 import React, { Suspense, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
 
-export type PreviewRule = {
+export type TestRule = {
   entityId: string;
   name: string;
   ruleType: NotificationRuleType;
+  channelName: string;
 };
 
-interface NotificationRulePreviewModalProps {
-  rule: PreviewRule | null;
+interface NotificationRuleTestModalProps {
+  rule: TestRule | null;
   onRequestClose: () => void;
 }
 
-const PreviewForm: React.FC<{
-  rule: PreviewRule;
+const TestForm: React.FC<{
+  rule: TestRule;
   formRef: React.RefObject<FormInstance<{ data: string }> | null>;
-  renderedMessage: string | null;
-}> = ({ rule, formRef, renderedMessage }) => {
+  sentMessage: string | null;
+}> = ({ rule, formRef, sentMessage }) => {
   'use memo';
   const { t } = useTranslation();
   const { notificationRuleTypeSchema } =
-    useLazyLoadQuery<NotificationRulePreviewModalSchemaQuery>(
+    useLazyLoadQuery<NotificationRuleTestModalSchemaQuery>(
       graphql`
-        query NotificationRulePreviewModalSchemaQuery(
+        query NotificationRuleTestModalSchemaQuery(
           $ruleType: NotificationRuleType!
         ) {
           notificationRuleTypeSchema(ruleType: $ruleType)
@@ -56,6 +57,14 @@ const PreviewForm: React.FC<{
       layout="vertical"
       initialValues={{ data: JSON.stringify(sampleData, null, 2) }}
     >
+      <BAIAlert
+        type="warning"
+        showIcon
+        style={{ marginBottom: 'var(--spacing-4)' }}
+        description={t('externalNotification.TestNotificationSendsTo', {
+          channel: rule.channelName,
+        })}
+      />
       <Form.Item
         label={t('externalNotification.SampleEventData')}
         name="data"
@@ -78,11 +87,11 @@ const PreviewForm: React.FC<{
           rows={8}
         />
       </Form.Item>
-      {renderedMessage !== null ? (
-        <Form.Item label={t('externalNotification.RenderedMessage')}>
+      {sentMessage !== null ? (
+        <Form.Item label={t('externalNotification.SentMessage')}>
           <BAITextArea
-            aria-label={t('externalNotification.RenderedMessage')}
-            value={renderedMessage}
+            aria-label={t('externalNotification.SentMessage')}
+            value={sentMessage}
             rows={5}
             isReadOnly
           />
@@ -92,18 +101,19 @@ const PreviewForm: React.FC<{
   );
 };
 
-const NotificationRulePreviewModal: React.FC<
-  NotificationRulePreviewModalProps
-> = ({ rule, onRequestClose }) => {
+const NotificationRuleTestModal: React.FC<NotificationRuleTestModalProps> = ({
+  rule,
+  onRequestClose,
+}) => {
   'use memo';
   const { t } = useTranslation();
   const { message } = App.useApp();
   const formRef = useRef<FormInstance<{ data: string }>>(null);
-  const [renderedMessage, setRenderedMessage] = useState<string | null>(null);
+  const [sentMessage, setSentMessage] = useState<string | null>(null);
 
   const [commitValidate, isInFlight] =
-    useMutation<NotificationRulePreviewModalValidateMutation>(graphql`
-      mutation NotificationRulePreviewModalValidateMutation(
+    useMutation<NotificationRuleTestModalValidateMutation>(graphql`
+      mutation NotificationRuleTestModalValidateMutation(
         $input: ValidateNotificationRuleInput!
       ) {
         adminValidateNotificationRule(input: $input) {
@@ -126,9 +136,12 @@ const NotificationRulePreviewModal: React.FC<
               message.error(errors[0]?.message || t('general.ErrorOccurred'));
               return;
             }
-            setRenderedMessage(
-              res.adminValidateNotificationRule?.message ?? '',
+            message.success(
+              t('externalNotification.TestNotificationSent', {
+                channel: rule.channelName,
+              }),
             );
+            setSentMessage(res.adminValidateNotificationRule?.message ?? '');
           },
           onError: (error) => {
             message.error(error?.message || t('general.ErrorOccurred'));
@@ -143,29 +156,25 @@ const NotificationRulePreviewModal: React.FC<
       centered
       unmountOnClose
       width={640}
-      title={t('externalNotification.PreviewMessageOf', {
+      title={t('externalNotification.SendTestNotificationTo', {
         name: rule?.name ?? '',
       })}
-      okText={t('externalNotification.Render')}
+      okText={t('externalNotification.Send')}
       cancelText={t('button.Close')}
       confirmLoading={isInFlight}
       onOk={handleOk}
       onCancel={() => {
-        setRenderedMessage(null);
+        setSentMessage(null);
         onRequestClose();
       }}
     >
       {rule ? (
         <Suspense fallback={<BAISkeleton rows={6} />}>
-          <PreviewForm
-            rule={rule}
-            formRef={formRef}
-            renderedMessage={renderedMessage}
-          />
+          <TestForm rule={rule} formRef={formRef} sentMessage={sentMessage} />
         </Suspense>
       ) : null}
     </BAIModal>
   );
 };
 
-export default NotificationRulePreviewModal;
+export default NotificationRuleTestModal;

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<7c94dc522c1569ddf60fb25edfe09c42>>
+ * @generated SignedSource<<3af03b582dc2d63a012180d7a13d48dc>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -13,17 +13,17 @@ export type ValidateNotificationRuleInput = {
   id: string;
   notificationData?: any | null | undefined;
 };
-export type NotificationRulePreviewModalValidateMutation$variables = {
+export type NotificationRuleTestModalValidateMutation$variables = {
   input: ValidateNotificationRuleInput;
 };
-export type NotificationRulePreviewModalValidateMutation$data = {
+export type NotificationRuleTestModalValidateMutation$data = {
   readonly adminValidateNotificationRule: {
     readonly message: string;
   } | null | undefined;
 };
-export type NotificationRulePreviewModalValidateMutation = {
-  response: NotificationRulePreviewModalValidateMutation$data;
-  variables: NotificationRulePreviewModalValidateMutation$variables;
+export type NotificationRuleTestModalValidateMutation = {
+  response: NotificationRuleTestModalValidateMutation$data;
+  variables: NotificationRuleTestModalValidateMutation$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -65,7 +65,7 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "NotificationRulePreviewModalValidateMutation",
+    "name": "NotificationRuleTestModalValidateMutation",
     "selections": (v1/*: any*/),
     "type": "Mutation",
     "abstractKey": null
@@ -74,20 +74,20 @@ return {
   "operation": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "NotificationRulePreviewModalValidateMutation",
+    "name": "NotificationRuleTestModalValidateMutation",
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "0ac44078b2ca102363ae96c137b69ac1",
+    "cacheID": "72db6432aa910ed5d71abbaa3bd8510a",
     "id": null,
     "metadata": {},
-    "name": "NotificationRulePreviewModalValidateMutation",
+    "name": "NotificationRuleTestModalValidateMutation",
     "operationKind": "mutation",
-    "text": "mutation NotificationRulePreviewModalValidateMutation(\n  $input: ValidateNotificationRuleInput!\n) {\n  adminValidateNotificationRule(input: $input) {\n    message\n  }\n}\n"
+    "text": "mutation NotificationRuleTestModalValidateMutation(\n  $input: ValidateNotificationRuleInput!\n) {\n  adminValidateNotificationRule(input: $input) {\n    message\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "669796798671df747971a6f9fb66cd18";
+(node as any).hash = "6e3b7b73a724c795540b1ce28bb61c36";
 
 export default node;

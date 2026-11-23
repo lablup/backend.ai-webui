@@ -15,12 +15,12 @@ import { App } from '../../../app-shim';
 import { convertToOrderBy } from '../../../helper';
 import { useBAIPaginationOptionState } from '../../../hooks/reactPaginationQueryOptions';
 import { NOTIFICATION_RULE_TYPES } from '../helper/notificationRuleTemplate';
-import NotificationRulePreviewModal, {
-  PreviewRule,
-} from './NotificationRulePreviewModal';
 import NotificationRuleSettingModal, {
   useRuleTypeLabel,
 } from './NotificationRuleSettingModal';
+import NotificationRuleTestModal, {
+  TestRule,
+} from './NotificationRuleTestModal';
 import { Token } from '@lablup/ui-common/Token';
 import {
   BAIAlert,
@@ -40,7 +40,7 @@ import {
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
-import { EyeIcon, PlusIcon, SquarePenIcon, Trash2 } from 'lucide-react';
+import { PlusIcon, SendIcon, SquarePenIcon, Trash2 } from 'lucide-react';
 import { parseAsJson, useQueryState } from 'nuqs';
 import React, { useDeferredValue, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -67,9 +67,7 @@ const NotificationRuleList: React.FC = () => {
   const [isOpenSettingModal, setIsOpenSettingModal] = useState(false);
   const [editingRule, setEditingRule] =
     useState<NotificationRuleSettingModalFragment$key | null>(null);
-  const [previewingRule, setPreviewingRule] = useState<PreviewRule | null>(
-    null,
-  );
+  const [testingRule, setTestingRule] = useState<TestRule | null>(null);
   const [deletingRule, setDeletingRule] = useState<NotificationRuleNode | null>(
     null,
   );
@@ -233,14 +231,15 @@ const NotificationRuleList: React.FC = () => {
               },
             },
             {
-              key: 'preview',
-              title: t('externalNotification.PreviewMessage'),
-              icon: <EyeIcon />,
+              key: 'test',
+              title: t('externalNotification.SendTestNotification'),
+              icon: <SendIcon />,
               onClick: () =>
-                setPreviewingRule({
+                setTestingRule({
                   entityId: row.entityId,
                   name: row.name,
                   ruleType: row.ruleType,
+                  channelName: row.channel.name,
                 }),
             },
             {
@@ -399,9 +398,9 @@ const NotificationRuleList: React.FC = () => {
           }
         }}
       />
-      <NotificationRulePreviewModal
-        rule={previewingRule}
-        onRequestClose={() => setPreviewingRule(null)}
+      <NotificationRuleTestModal
+        rule={testingRule}
+        onRequestClose={() => setTestingRule(null)}
       />
       <BAIDeleteConfirmModal
         open={!!deletingRule}

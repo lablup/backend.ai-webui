@@ -406,7 +406,7 @@ const NotificationRuleSettingModal: React.FC<
         <RuleTypeDependentItems />
         {rule ? null : (
           <BAIText type="secondary">
-            {t('externalNotification.PreviewAfterSave')}
+            {t('externalNotification.TestAfterSave')}
           </BAIText>
         )}
       </Form>

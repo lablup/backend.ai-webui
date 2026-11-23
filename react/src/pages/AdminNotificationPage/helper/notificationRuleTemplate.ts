@@ -77,7 +77,7 @@ export const buildDefaultTemplate = (variables: TemplateVariable[]) =>
     (variable) => `${variable.name}: ${toTemplateExpression(variable.name)}`,
   ).join('\n');
 
-/** Sample event data for previewing a template, keyed like the schema. */
+/** Sample event data for a test notification, keyed like the schema. */
 export const buildSampleNotificationData = (
   variables: TemplateVariable[],
 ): Record<string, unknown> =>
