@@ -6,6 +6,8 @@ import type {
   DeploymentRevisionCompareDrawer_revision$data,
   DeploymentRevisionCompareDrawer_revision$key,
 } from '../../../__generated__/DeploymentRevisionCompareDrawer_revision.graphql';
+import { convertToBinaryUnit } from '../../../helper';
+import { useResourceSlotsDetails } from '../../../hooks/backendai';
 import {
   diffRevisions,
   REVISION_DIFF_GROUPS,
@@ -15,16 +17,15 @@ import {
 import { Badge } from '@lablup/ui-common/Badge';
 import { Button } from '@lablup/ui-common/Button';
 import { Text } from '@lablup/ui-common/Text';
-import { Token } from '@lablup/ui-common/Token';
 import {
   BAIDrawer,
   type BAIDrawerProps,
   BAIFlex,
   BAIPopconfirm,
+  BAIResourceNumberWithIcon,
   BAISwitch,
   BAITable,
   BAIText,
-  tokenColorForTagColor,
   type BAIColumnType,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -143,6 +144,7 @@ const DeploymentRevisionCompareDrawer: React.FC<
 }) => {
   'use memo';
   const { t } = useTranslation();
+  const { mergedResourceSlots } = useResourceSlotsDetails();
   const [showsUnchanged, setShowsUnchanged] = useState(false);
   const [revealsSecrets, setRevealsSecrets] = useState(false);
 
@@ -175,6 +177,12 @@ const DeploymentRevisionCompareDrawer: React.FC<
         return t('deployment.ClusterSize');
       case 'runtimeVariant':
         return t('deployment.RuntimeVariant');
+      case 'resourceSlot':
+        return (
+          (row.name && mergedResourceSlots?.[row.name]?.human_readable_name) ??
+          row.name ??
+          '-'
+        );
       case 'resourceOpt':
         return row.name === 'shmem'
           ? t('resourcePreset.SharedMemory')
@@ -200,20 +208,69 @@ const DeploymentRevisionCompareDrawer: React.FC<
     }
   };
 
-  const statusToken = (row: RevisionDiffRow) => {
-    if (row.status === 'same') return null;
-    const { color, label } = {
-      added: { color: 'success', label: t('deployment.CompareAdded') },
-      removed: { color: 'error', label: t('deployment.CompareRemoved') },
-      changed: { color: 'warning', label: t('deployment.CompareChanged') },
-    }[row.status];
-    return <Token color={tokenColorForTagColor(color)} label={label} />;
+  // A diff-style marker in front of the setting: + added, − removed, ~ changed.
+  const statusMarker = (row: RevisionDiffRow) => {
+    if (row.status === 'same') {
+      return <BAIText style={{ width: '1ch', flexShrink: 0 }} />;
+    }
+    const { type, symbol, label } = {
+      added: {
+        type: 'success',
+        symbol: '+',
+        label: t('deployment.CompareAdded'),
+      },
+      removed: {
+        type: 'danger',
+        symbol: '−',
+        label: t('deployment.CompareRemoved'),
+      },
+      changed: {
+        type: 'warning',
+        symbol: '~',
+        label: t('deployment.CompareChanged'),
+      },
+    }[row.status] as {
+      type: 'success' | 'danger' | 'warning';
+      symbol: string;
+      label: string;
+    };
+    return (
+      <BAIText
+        type={type}
+        strong
+        aria-label={label}
+        title={label}
+        style={{ width: '1ch', flexShrink: 0, textAlign: 'center' }}
+      >
+        {symbol}
+      </BAIText>
+    );
   };
 
   const renderValue = (row: RevisionDiffRow, value: string | null) => {
     if (value === null) return <Text color="secondary">-</Text>;
     if (row.isSecret && !revealsSecrets) {
       return <Text color="secondary">{MASKED_VALUE}</Text>;
+    }
+    // Same units as the revision detail view: memory in binary units, other slots as numbers.
+    if (row.field === 'resourceSlot' && row.name) {
+      return (
+        <BAIResourceNumberWithIcon
+          type={row.name}
+          value={
+            row.name === 'mem'
+              ? String(convertToBinaryUnit(value, '')?.number ?? 0)
+              : String(parseFloat(value))
+          }
+        />
+      );
+    }
+    if (row.field === 'resourceOpt' && row.name === 'shmem') {
+      return (
+        <BAIText>
+          {convertToBinaryUnit(value, 'auto')?.displayValue ?? value}
+        </BAIText>
+      );
     }
     return (
       <BAIText style={{ wordBreak: 'break-all', whiteSpace: 'pre-wrap' }}>
@@ -245,11 +302,11 @@ const DeploymentRevisionCompareDrawer: React.FC<
       title: t('deployment.CompareField'),
       width: 240,
       render: (_value, row) => (
-        <BAIFlex gap="xs" align="center" wrap="wrap">
+        <BAIFlex gap="xs" align="center" wrap="nowrap">
+          {statusMarker(row)}
           <BAIText style={{ wordBreak: 'break-all' }}>
             {fieldLabel(row)}
           </BAIText>
-          {statusToken(row)}
         </BAIFlex>
       ),
     },
