@@ -8,8 +8,6 @@ import { useCustomEndpointApiKey } from '../Chat/customEndpointKeyStore';
 import { useCurrentLanguage } from '../DefaultProviders';
 import ErrorBoundaryWithNullFallback from '../ErrorBoundaryWithNullFallback';
 import './WebUIAssistant.css';
-import WebUIAssistantChat from './WebUIAssistantChat';
-import WebUIAssistantConnectModal from './WebUIAssistantConnectModal';
 import WebUIAssistantKeyRestorer from './WebUIAssistantKeyRestorer';
 import { useCustomConnectionThisLoad } from './customConnectionThisLoad';
 import { WEBUI_ASSISTANT_PROFILE } from './webUIAssistantProfile';
@@ -23,9 +21,14 @@ import { Spinner } from '@lablup/ui-common/Spinner';
 import { Text } from '@lablup/ui-common/Text';
 import { BAIFlex, BAIPopconfirm, BAIUnmountAfterClose } from 'backend.ai-ui';
 import { EraserIcon, MessageCircle, PlugZap, X } from 'lucide-react';
-import { Suspense, useEffect, useState } from 'react';
+import { lazy, Suspense, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
+
+const WebUIAssistantChat = lazy(() => import('./WebUIAssistantChat'));
+const WebUIAssistantConnectModal = lazy(
+  () => import('./WebUIAssistantConnectModal'),
+);
 
 /** The floating WebUI Assistant; renders nothing until the user turns it on. */
 const WebUIAssistant: React.FC = () => {
@@ -149,13 +152,25 @@ const WebUIAssistantFloating: React.FC = () => {
             </BAIFlex>
           ) : (
             <ErrorBoundaryWithNullFallback>
-              <WebUIAssistantChat
-                key={`${conversationKey}-${connection.baseURL}-${apiKey ?? ''}`}
-                baseURL={connection.baseURL}
-                apiKey={apiKey}
-                isVisible={isPanelShown}
-                onChangeConnection={() => setIsConnectOpen(true)}
-              />
+              <Suspense
+                fallback={
+                  <BAIFlex
+                    justify="center"
+                    align="center"
+                    style={{ flex: '1 1 0%' }}
+                  >
+                    <Spinner />
+                  </BAIFlex>
+                }
+              >
+                <WebUIAssistantChat
+                  key={`${conversationKey}-${connection.baseURL}-${apiKey ?? ''}`}
+                  baseURL={connection.baseURL}
+                  apiKey={apiKey}
+                  isVisible={isPanelShown}
+                  onChangeConnection={() => setIsConnectOpen(true)}
+                />
+              </Suspense>
             </ErrorBoundaryWithNullFallback>
           ))}
       </BAIFlex>
