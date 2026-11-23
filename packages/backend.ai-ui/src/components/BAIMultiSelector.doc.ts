@@ -35,9 +35,9 @@ export const docs = {
   props: [
     {
       name: 'showTooltip',
-      type: 'boolean',
+      type: 'boolean | { content: (items: MultiSelectorSelectedItem[]) => ReactNode }',
       description:
-        'Lists every selected label in a tooltip on the trigger while something is selected, held shut while the listbox is open. None while disabled or with renderTrigger. Pass false where the trigger already sits under another tooltip.',
+        'Lists every selected label in a tooltip on the trigger while something is selected, held shut while the listbox is open; `{ content }` renders content(items) instead, with the selection as formatValue receives it. None while disabled or with renderTrigger. Pass false where the trigger already sits under another tooltip.',
       default: 'true',
     },
   ],
