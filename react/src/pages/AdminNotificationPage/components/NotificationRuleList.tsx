@@ -13,7 +13,7 @@ import {
 import { NotificationRuleSettingModalFragment$key } from '../../../__generated__/NotificationRuleSettingModalFragment.graphql';
 import { App } from '../../../app-shim';
 import { convertToOrderBy } from '../../../helper';
-import { useBAIPaginationOptionState } from '../../../hooks/reactPaginationQueryOptions';
+import { useBAIPaginationOptionStateOnSearchParam } from '../../../hooks/reactPaginationQueryOptions';
 import { NOTIFICATION_RULE_TYPES } from '../helper/notificationRuleTemplate';
 import NotificationRuleSettingModal, {
   useRuleTypeLabel,
@@ -34,15 +34,16 @@ import {
   BAITable,
   BAIText,
   filterOutNullAndUndefined,
-  useUpdatableState,
+  INITIAL_FETCH_KEY,
+  useFetchKey,
   type BAIColumnType,
   type GraphQLFilter,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import { PlusIcon, SendIcon, SquarePenIcon, Trash2 } from 'lucide-react';
-import { parseAsJson, useQueryState } from 'nuqs';
-import React, { useDeferredValue, useState, useTransition } from 'react';
+import { parseAsJson, parseAsStringLiteral, useQueryStates } from 'nuqs';
+import React, { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
 
@@ -53,6 +54,12 @@ type NotificationRuleNode = NonNullable<
 >;
 
 const FILTER_KEYS = ['name', 'ruleType', 'enabled'] as const;
+const SORTER_KEYS = ['name', 'created_at'] as const;
+const SORTER_VALUES = [
+  ...SORTER_KEYS,
+  ...SORTER_KEYS.map((key) => `-${key}` as const),
+] as const;
+
 const filterParser = parseAsJson<NotificationRuleFilter>((value) =>
   _.pick(value as NotificationRuleFilter, FILTER_KEYS),
 );
@@ -62,8 +69,7 @@ const NotificationRuleList: React.FC = () => {
   const { t } = useTranslation();
   const { message } = App.useApp();
   const ruleTypeLabel = useRuleTypeLabel();
-  const [isRefetchPending, startRefetchTransition] = useTransition();
-  const [fetchKey, updateFetchKey] = useUpdatableState('initial-fetch');
+  const [fetchKey, updateFetchKey] = useFetchKey();
   const [isOpenSettingModal, setIsOpenSettingModal] = useState(false);
   const [editingRule, setEditingRule] =
     useState<NotificationRuleSettingModalFragment$key | null>(null);
@@ -71,20 +77,35 @@ const NotificationRuleList: React.FC = () => {
   const [deletingRule, setDeletingRule] = useState<NotificationRuleNode | null>(
     null,
   );
-  const [order, setOrder] = useState<string | null>('-created_at');
   const {
     baiPaginationOption,
     tablePaginationOption,
     setTablePaginationOption,
-  } = useBAIPaginationOptionState({ current: 1, pageSize: 10 });
+  } = useBAIPaginationOptionStateOnSearchParam({ current: 1, pageSize: 10 });
 
-  const [filterParam, setFilterParam] = useQueryState(
-    'filter',
-    filterParser.withOptions({ history: 'replace' }),
+  const [queryParams, setQueryParams] = useQueryStates(
+    {
+      order: parseAsStringLiteral(SORTER_VALUES),
+      filter: filterParser,
+    },
+    { history: 'replace' },
   );
-  const filter = _.isEmpty(filterParam) ? null : filterParam;
-  const deferredFilter = useDeferredValue(filter);
-  const isFilterPending = !_.isEqual(deferredFilter, filter);
+  const filter = _.isEmpty(queryParams.filter) ? null : queryParams.filter;
+
+  // Deferred so a sort, page or filter change keeps the current rows on screen
+  // (marked loading) instead of suspending the tab.
+  const queryVariables = {
+    filter,
+    orderBy: convertToOrderBy<NotificationRuleOrderBy>(
+      queryParams.order ?? '-created_at',
+    ),
+    limit: baiPaginationOption.limit,
+    offset: baiPaginationOption.offset,
+  };
+  const deferredQueryVariables = useDeferredValue(queryVariables);
+  const deferredFetchKey = useDeferredValue(fetchKey);
+  const isLoading =
+    deferredQueryVariables !== queryVariables || deferredFetchKey !== fetchKey;
 
   const { adminNotificationRules } =
     useLazyLoadQuery<NotificationRuleListQuery>(
@@ -123,16 +144,13 @@ const NotificationRuleList: React.FC = () => {
           }
         }
       `,
+      deferredQueryVariables,
       {
-        filter: deferredFilter,
-        orderBy: convertToOrderBy<NotificationRuleOrderBy>(order),
-        limit: baiPaginationOption.limit,
-        offset: baiPaginationOption.offset,
-      },
-      {
+        fetchKey: deferredFetchKey,
         fetchPolicy:
-          fetchKey === 'initial-fetch' ? 'store-and-network' : 'network-only',
-        fetchKey,
+          deferredFetchKey === INITIAL_FETCH_KEY
+            ? 'store-and-network'
+            : 'network-only',
       },
     );
 
@@ -161,11 +179,7 @@ const NotificationRuleList: React.FC = () => {
       }
     `);
 
-  const refetch = () => {
-    startRefetchTransition(() => {
-      updateFetchKey();
-    });
-  };
+  const refetch = () => updateFetchKey();
 
   const rules = filterOutNullAndUndefined(
     _.map(adminNotificationRules?.edges, (edge) => edge?.node),
@@ -324,7 +338,9 @@ const NotificationRuleList: React.FC = () => {
             const nextFilter: NotificationRuleFilter = next?.AND
               ? _.assign({}, ..._.castArray(next.AND))
               : (next ?? {});
-            setFilterParam(_.isEmpty(nextFilter) ? null : nextFilter);
+            setQueryParams({
+              filter: _.isEmpty(nextFilter) ? null : nextFilter,
+            });
             setTablePaginationOption({ current: 1 });
           }}
           filterProperties={[
@@ -354,7 +370,7 @@ const NotificationRuleList: React.FC = () => {
         />
         <BAIFlex gap="xs">
           <BAIFetchKeyButton
-            loading={isRefetchPending}
+            loading={isLoading}
             value={fetchKey}
             onChange={refetch}
           />
@@ -374,11 +390,15 @@ const NotificationRuleList: React.FC = () => {
         scroll={{ x: 'max-content' }}
         size="small"
         rowKey="id"
-        loading={isRefetchPending || isFilterPending}
+        loading={isLoading}
         dataSource={rules}
         columns={columns}
-        order={order ?? undefined}
-        onChangeOrder={(nextOrder) => setOrder(nextOrder ?? null)}
+        order={queryParams.order ?? undefined}
+        onChangeOrder={(nextOrder) =>
+          setQueryParams({
+            order: (nextOrder as (typeof SORTER_VALUES)[number]) ?? null,
+          })
+        }
         pagination={{
           pageSize: tablePaginationOption.pageSize,
           current: tablePaginationOption.current,
