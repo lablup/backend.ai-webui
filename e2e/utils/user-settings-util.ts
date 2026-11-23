@@ -1,5 +1,6 @@
+import { gqlAdmin } from './admin-api';
 import { waitForGraphQL } from './dashboard-util';
-import type { Page } from '@playwright/test';
+import type { APIRequestContext, Page } from '@playwright/test';
 
 type AccountSettings = Record<string, unknown>;
 
@@ -51,3 +52,51 @@ export const waitForAccountSettingWrite = (
 /** Resolves once MainLayout has started the account settings sync. */
 export const waitForAccountSettingsSync = (page: Page) =>
   page.waitForFunction(() => (globalThis as any).__mainLayoutReady === true);
+
+// The signed-in account's own `userConfig` fragment, not the merged view.
+const readMyUserConfig = async (
+  api: APIRequestContext,
+): Promise<Record<string, any>> => {
+  const data = await gqlAdmin<{
+    myAppConfigFragmentsByNames: Array<{ config: unknown } | null>;
+  }>(
+    api,
+    `query { myAppConfigFragmentsByNames(configNames: ["userConfig"]) { config } }`,
+  );
+  const config = data.myAppConfigFragmentsByNames?.[0]?.config;
+  const parsed = typeof config === 'string' ? JSON.parse(config) : config;
+  return parsed && typeof parsed === 'object' ? parsed : {};
+};
+
+/** The stored value of account setting `name`; `undefined` when unset. */
+export const readAccountSettingViaApi = async (
+  api: APIRequestContext,
+  name: string,
+): Promise<unknown> => (await readMyUserConfig(api)).settings?.[name];
+
+/**
+ * Stores `value` as account setting `name` of the `api` account, keeping its
+ * other settings; `undefined` removes the key. The app picks it up on its
+ * next full load.
+ */
+export const writeAccountSettingViaApi = async (
+  api: APIRequestContext,
+  name: string,
+  value: unknown,
+): Promise<void> => {
+  const config = await readMyUserConfig(api);
+  const settings = { ...(config.settings ?? {}) };
+  if (value === undefined) delete settings[name];
+  else settings[name] = value;
+  await gqlAdmin(
+    api,
+    `mutation ($input: MyUpsertAppConfigFragmentsInput!) {
+      myAtomicBulkUpsertAppConfigFragments(input: $input) { items { id } }
+    }`,
+    {
+      input: {
+        items: [{ configName: 'userConfig', config: { ...config, settings } }],
+      },
+    },
+  );
+};

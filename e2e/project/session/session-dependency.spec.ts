@@ -2,9 +2,14 @@
 // Tests for session dependency management via useStartSession (dependencies field).
 // Sessions are created via globalThis.backendaiclient API, not through the launcher UI,
 // because the session launcher page intentionally has no dependency UI.
+import { createAccountApiContext } from '../../utils/admin-api';
 import { SessionAPIHelper } from '../../utils/classes/session/SessionAPIHelper';
-import { loginAsUser, navigateTo } from '../../utils/test-util';
-import { waitForAccountSettingsWrite } from '../../utils/user-settings-util';
+import { loginAsUser, navigateTo, userInfo } from '../../utils/test-util';
+import {
+  readAccountSettingViaApi,
+  waitForAccountSettingsWrite,
+  writeAccountSettingViaApi,
+} from '../../utils/user-settings-util';
 import { test, expect } from '@playwright/test';
 
 test.describe(
@@ -236,13 +241,37 @@ test.describe(
   'Session List - Dependencies Column',
   { tag: ['@regression', '@session', '@functional'] },
   () => {
+    // The columns are an account setting of the shared user (ADR 0035).
+    const COLUMNS_SETTING = 'table_column_overrides.ComputeSessionListPage';
+    let restoreColumns: (() => Promise<void>) | undefined;
+
     test.beforeEach(async ({ page, request }) => {
       await loginAsUser(page, request);
+    });
+
+    test.afterEach(async ({ page }) => {
+      if (!restoreColumns) return;
+      // Leave the page first so a pending settings write cannot land after the restore.
+      await page.goto('about:blank').catch(() => undefined);
+      await restoreColumns();
+      restoreColumns = undefined;
     });
 
     test('Dependencies column can be enabled via table settings', async ({
       page,
     }) => {
+      const api = await createAccountApiContext(userInfo.user, 'User');
+      const original = await readAccountSettingViaApi(api, COLUMNS_SETTING);
+      restoreColumns = async () => {
+        try {
+          await writeAccountSettingViaApi(api, COLUMNS_SETTING, original);
+        } finally {
+          await api.dispose();
+        }
+      };
+      // Start from the default columns, where Dependencies is hidden.
+      await writeAccountSettingViaApi(api, COLUMNS_SETTING, undefined);
+
       await navigateTo(page, 'session');
       const settingButton = page.getByRole('button', {
         name: 'Table Settings',
@@ -281,21 +310,20 @@ test.describe(
 
       await expect(dependenciesHeader).toBeVisible({ timeout: 5000 });
 
-      // Revert; the columns are an account setting (ADR 0035), so wait for the write.
+      // Hide it again and wait for the write, so it lands before the restore.
       await settingButton.click();
       await expect(settingModal).toBeVisible({ timeout: 5000 });
       await settingModal
         .getByRole('checkbox', { name: /Dependencies/i })
         .uncheck();
-      const restored = waitForAccountSettingsWrite(page, (settings) => {
-        const overrides = settings[
-          'table_column_overrides.ComputeSessionListPage'
-        ] as Record<string, { hidden?: boolean }> | undefined;
+      const hidden = waitForAccountSettingsWrite(page, (settings) => {
+        const overrides = settings[COLUMNS_SETTING] as
+          Record<string, { hidden?: boolean }> | undefined;
         return overrides?.dependencies?.hidden !== false;
       });
       await settingModal.getByRole('button', { name: 'Apply' }).click();
       await expect(settingModal).not.toBeVisible({ timeout: 5000 });
-      await restored;
+      await hidden;
 
       await expect(dependenciesHeader).not.toBeVisible();
     });
