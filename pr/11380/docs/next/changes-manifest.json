@@ -1,0 +1,154 @@
+{
+  "version": 1,
+  "channel": "next",
+  "label": "PR preview",
+  "generatedAt": "2026-11-23T13:07:39.408Z",
+  "languages": [
+    "en",
+    "ja",
+    "ko",
+    "th"
+  ],
+  "langs": {
+    "en": {
+      "totals": {
+        "pages": 1,
+        "changes": 5,
+        "added": 3,
+        "modified": 1,
+        "removed": 1,
+        "images": 0,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "installation",
+          "title": "Installation",
+          "status": "modified",
+          "url": "next/en/installation.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/en/installation/installation.md",
+          "counts": {
+            "added": 3,
+            "modified": 1,
+            "removed": 1,
+            "images": 0,
+            "total": 5
+          },
+          "fingerprints": [
+            "b9e5c746cc2d",
+            "fce1e7e4087b",
+            "0ebbcec2cbf8",
+            "8d1b78fd35f6",
+            "6de5105b12b3"
+          ]
+        }
+      ]
+    },
+    "ja": {
+      "totals": {
+        "pages": 1,
+        "changes": 5,
+        "added": 3,
+        "modified": 1,
+        "removed": 1,
+        "images": 0,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "installation",
+          "title": "インストール",
+          "status": "modified",
+          "url": "next/ja/installation.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ja/installation/installation.md",
+          "counts": {
+            "added": 3,
+            "modified": 1,
+            "removed": 1,
+            "images": 0,
+            "total": 5
+          },
+          "fingerprints": [
+            "9c06890cf8e4",
+            "5d29438b1278",
+            "429569cd04e3",
+            "6a23fed8f3e7",
+            "634a79d82fba"
+          ]
+        }
+      ]
+    },
+    "ko": {
+      "totals": {
+        "pages": 1,
+        "changes": 5,
+        "added": 3,
+        "modified": 1,
+        "removed": 1,
+        "images": 0,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "installation",
+          "title": "설치",
+          "status": "modified",
+          "url": "next/ko/installation.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ko/installation/installation.md",
+          "counts": {
+            "added": 3,
+            "modified": 1,
+            "removed": 1,
+            "images": 0,
+            "total": 5
+          },
+          "fingerprints": [
+            "7ba844df3234",
+            "5562a6de5624",
+            "384d29277f3a",
+            "b65c7590e43a",
+            "0d0db540ba94"
+          ]
+        }
+      ]
+    },
+    "th": {
+      "totals": {
+        "pages": 1,
+        "changes": 5,
+        "added": 3,
+        "modified": 1,
+        "removed": 1,
+        "images": 0,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "installation",
+          "title": "การติดตั้ง",
+          "status": "modified",
+          "url": "next/th/installation.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/th/installation/installation.md",
+          "counts": {
+            "added": 3,
+            "modified": 1,
+            "removed": 1,
+            "images": 0,
+            "total": 5
+          },
+          "fingerprints": [
+            "97b26fdea879",
+            "f2dc6d147f5f",
+            "ae147ab18219",
+            "989036f87e9b",
+            "0a7f90dfbb99"
+          ]
+        }
+      ]
+    }
+  }
+}
