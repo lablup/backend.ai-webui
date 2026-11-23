@@ -6,7 +6,10 @@ import type {
   DeploymentRevisionCompareDrawer_revision$data,
   DeploymentRevisionCompareDrawer_revision$key,
 } from '../../../__generated__/DeploymentRevisionCompareDrawer_revision.graphql';
-import { convertToBinaryUnit } from '../../../helper';
+import {
+  convertToBinaryUnit,
+  toResourceSlotDisplayValue,
+} from '../../../helper';
 import { useResourceSlotsDetails } from '../../../hooks/backendai';
 import {
   diffRevisions,
@@ -48,6 +51,7 @@ const revisionFragment = graphql`
       quantity
     }
     resourceConfig {
+      resourceGroupName
       resourceOpts {
         entries {
           name
@@ -107,7 +111,22 @@ const revisionFragment = graphql`
         modelPath
         service {
           command
+          startCommand
+          shell
           port
+          healthCheck {
+            enable
+            path
+            interval
+            maxRetries
+            maxWaitTime
+            expectedStatusCode
+            initialDelay
+          }
+          preStartActions {
+            action
+            args
+          }
         }
       }
     }
@@ -175,6 +194,8 @@ const DeploymentRevisionCompareDrawer: React.FC<
     switch (row.field) {
       case 'image':
         return t('deployment.Image');
+      case 'resourceGroup':
+        return t('deployment.ResourceGroup');
       case 'clusterMode':
         return t('deployment.ClusterMode');
       case 'clusterSize':
@@ -203,8 +224,14 @@ const DeploymentRevisionCompareDrawer: React.FC<
         return `${row.name} · ${t('modelStore.ModelPath')}`;
       case 'command':
         return `${row.name} · ${t('modelService.StartCommand')}`;
+      case 'shell':
+        return `${row.name} · ${t('modelService.Shell')}`;
       case 'port':
         return `${row.name} · ${t('modelService.Port')}`;
+      case 'healthCheck':
+        return `${row.name} · ${t('adminDeploymentPreset.SectionHealthCheck')}`;
+      case 'preStartActions':
+        return `${row.name} · ${t('modelService.PreStartActions')}`;
       case 'inferenceRuntimeConfig':
         return row.name || t('modelService.RuntimeConfiguration');
       default:
@@ -252,16 +279,13 @@ const DeploymentRevisionCompareDrawer: React.FC<
     if (row.isSecret && !revealsSecrets) {
       return <Text color="secondary">{MASKED_VALUE}</Text>;
     }
-    // Same units as the revision detail view: memory in binary units, other slots as numbers.
+    // An empty string is set, unlike a missing value.
+    if (value === '') return <Text color="secondary">{'""'}</Text>;
     if (row.field === 'resourceSlot' && row.name) {
       return (
         <BAIResourceNumberWithIcon
           type={row.name}
-          value={
-            row.name === 'mem'
-              ? String(convertToBinaryUnit(value, '')?.number ?? 0)
-              : String(parseFloat(value))
-          }
+          value={toResourceSlotDisplayValue(row.name, value)}
         />
       );
     }

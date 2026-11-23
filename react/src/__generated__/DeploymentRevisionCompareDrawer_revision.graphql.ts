@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<db05caead3198c92580f326406be9a45>>
+ * @generated SignedSource<<3ff2d98f3260f392dccb42fa91b7360f>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -38,7 +38,22 @@ export type DeploymentRevisionCompareDrawer_revision$data = {
       readonly name: string;
       readonly service: {
         readonly command: string | null | undefined;
+        readonly healthCheck: {
+          readonly enable: boolean;
+          readonly expectedStatusCode: number;
+          readonly initialDelay: number;
+          readonly interval: number;
+          readonly maxRetries: number;
+          readonly maxWaitTime: number;
+          readonly path: string;
+        } | null | undefined;
         readonly port: number;
+        readonly preStartActions: ReadonlyArray<{
+          readonly action: string;
+          readonly args: any;
+        }>;
+        readonly shell: string | null | undefined;
+        readonly startCommand: ReadonlyArray<string> | null | undefined;
       } | null | undefined;
     }>;
   } | null | undefined;
@@ -75,6 +90,7 @@ export type DeploymentRevisionCompareDrawer_revision$data = {
     }>;
   };
   readonly resourceConfig: {
+    readonly resourceGroupName: string;
     readonly resourceOpts: {
       readonly entries: ReadonlyArray<{
         readonly name: string;
@@ -218,6 +234,13 @@ return {
       "name": "resourceConfig",
       "plural": false,
       "selections": [
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "resourceGroupName",
+          "storageKey": null
+        },
         {
           "alias": null,
           "args": null,
@@ -475,7 +498,106 @@ return {
                   "alias": null,
                   "args": null,
                   "kind": "ScalarField",
+                  "name": "startCommand",
+                  "storageKey": null
+                },
+                {
+                  "alias": null,
+                  "args": null,
+                  "kind": "ScalarField",
+                  "name": "shell",
+                  "storageKey": null
+                },
+                {
+                  "alias": null,
+                  "args": null,
+                  "kind": "ScalarField",
                   "name": "port",
+                  "storageKey": null
+                },
+                {
+                  "alias": null,
+                  "args": null,
+                  "concreteType": "ModelHealthCheck",
+                  "kind": "LinkedField",
+                  "name": "healthCheck",
+                  "plural": false,
+                  "selections": [
+                    {
+                      "alias": null,
+                      "args": null,
+                      "kind": "ScalarField",
+                      "name": "enable",
+                      "storageKey": null
+                    },
+                    {
+                      "alias": null,
+                      "args": null,
+                      "kind": "ScalarField",
+                      "name": "path",
+                      "storageKey": null
+                    },
+                    {
+                      "alias": null,
+                      "args": null,
+                      "kind": "ScalarField",
+                      "name": "interval",
+                      "storageKey": null
+                    },
+                    {
+                      "alias": null,
+                      "args": null,
+                      "kind": "ScalarField",
+                      "name": "maxRetries",
+                      "storageKey": null
+                    },
+                    {
+                      "alias": null,
+                      "args": null,
+                      "kind": "ScalarField",
+                      "name": "maxWaitTime",
+                      "storageKey": null
+                    },
+                    {
+                      "alias": null,
+                      "args": null,
+                      "kind": "ScalarField",
+                      "name": "expectedStatusCode",
+                      "storageKey": null
+                    },
+                    {
+                      "alias": null,
+                      "args": null,
+                      "kind": "ScalarField",
+                      "name": "initialDelay",
+                      "storageKey": null
+                    }
+                  ],
+                  "storageKey": null
+                },
+                {
+                  "alias": null,
+                  "args": null,
+                  "concreteType": "PreStartAction",
+                  "kind": "LinkedField",
+                  "name": "preStartActions",
+                  "plural": true,
+                  "selections": [
+                    {
+                      "alias": null,
+                      "args": null,
+                      "kind": "ScalarField",
+                      "name": "action",
+                      "storageKey": null
+                    },
+                    {
+                      "alias": null,
+                      "args": null,
+                      "kind": "ScalarField",
+                      "name": "args",
+                      "storageKey": null
+                    }
+                  ],
                   "storageKey": null
                 }
               ],
@@ -493,6 +615,6 @@ return {
 };
 })();
 
-(node as any).hash = "cac24d4ba0eb33d60a99f10daaf717d1";
+(node as any).hash = "50fcd3bf10cfd715c64e127b8b6ebd3f";
 
 export default node;

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<e32ca23005d090185734f16106d5523c>>
+ * @generated SignedSource<<085761a7b34c119e39fdf01724c05157>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -358,6 +358,13 @@ return {
                           {
                             "alias": null,
                             "args": null,
+                            "kind": "ScalarField",
+                            "name": "resourceGroupName",
+                            "storageKey": null
+                          },
+                          {
+                            "alias": null,
+                            "args": null,
                             "concreteType": "ResourceOpts",
                             "kind": "LinkedField",
                             "name": "resourceOpts",
@@ -614,7 +621,106 @@ return {
                                     "alias": null,
                                     "args": null,
                                     "kind": "ScalarField",
+                                    "name": "startCommand",
+                                    "storageKey": null
+                                  },
+                                  {
+                                    "alias": null,
+                                    "args": null,
+                                    "kind": "ScalarField",
+                                    "name": "shell",
+                                    "storageKey": null
+                                  },
+                                  {
+                                    "alias": null,
+                                    "args": null,
+                                    "kind": "ScalarField",
                                     "name": "port",
+                                    "storageKey": null
+                                  },
+                                  {
+                                    "alias": null,
+                                    "args": null,
+                                    "concreteType": "ModelHealthCheck",
+                                    "kind": "LinkedField",
+                                    "name": "healthCheck",
+                                    "plural": false,
+                                    "selections": [
+                                      {
+                                        "alias": null,
+                                        "args": null,
+                                        "kind": "ScalarField",
+                                        "name": "enable",
+                                        "storageKey": null
+                                      },
+                                      {
+                                        "alias": null,
+                                        "args": null,
+                                        "kind": "ScalarField",
+                                        "name": "path",
+                                        "storageKey": null
+                                      },
+                                      {
+                                        "alias": null,
+                                        "args": null,
+                                        "kind": "ScalarField",
+                                        "name": "interval",
+                                        "storageKey": null
+                                      },
+                                      {
+                                        "alias": null,
+                                        "args": null,
+                                        "kind": "ScalarField",
+                                        "name": "maxRetries",
+                                        "storageKey": null
+                                      },
+                                      {
+                                        "alias": null,
+                                        "args": null,
+                                        "kind": "ScalarField",
+                                        "name": "maxWaitTime",
+                                        "storageKey": null
+                                      },
+                                      {
+                                        "alias": null,
+                                        "args": null,
+                                        "kind": "ScalarField",
+                                        "name": "expectedStatusCode",
+                                        "storageKey": null
+                                      },
+                                      {
+                                        "alias": null,
+                                        "args": null,
+                                        "kind": "ScalarField",
+                                        "name": "initialDelay",
+                                        "storageKey": null
+                                      }
+                                    ],
+                                    "storageKey": null
+                                  },
+                                  {
+                                    "alias": null,
+                                    "args": null,
+                                    "concreteType": "PreStartAction",
+                                    "kind": "LinkedField",
+                                    "name": "preStartActions",
+                                    "plural": true,
+                                    "selections": [
+                                      {
+                                        "alias": null,
+                                        "args": null,
+                                        "kind": "ScalarField",
+                                        "name": "action",
+                                        "storageKey": null
+                                      },
+                                      {
+                                        "alias": null,
+                                        "args": null,
+                                        "kind": "ScalarField",
+                                        "name": "args",
+                                        "storageKey": null
+                                      }
+                                    ],
                                     "storageKey": null
                                   }
                                 ],
@@ -642,12 +748,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "b5c87dabcc267a26b92b10d7f5822176",
+    "cacheID": "a8d2473becbb64318bc019f82f9dc949",
     "id": null,
     "metadata": {},
     "name": "DeploymentRevisionHistoryTabComparePairQuery",
     "operationKind": "query",
-    "text": "query DeploymentRevisionHistoryTabComparePairQuery(\n  $deploymentId: ID!\n  $filter: ModelRevisionFilter\n) {\n  deployment(id: $deploymentId) {\n    revisionHistory(filter: $filter, limit: 2) {\n      edges {\n        node {\n          id\n          fieldId\n          revisionNumber\n          ...DeploymentRevisionCompareDrawer_revision\n        }\n      }\n    }\n    id\n  }\n}\n\nfragment DeploymentRevisionCompareDrawer_revision on ModelRevision {\n  fieldId\n  revisionNumber\n  clusterConfig {\n    mode\n    size\n  }\n  resourceSlots {\n    slotName\n    quantity\n  }\n  resourceConfig {\n    resourceOpts {\n      entries {\n        name\n        value\n      }\n    }\n  }\n  modelRuntimeConfig {\n    runtimeVariant {\n      name\n      id\n    }\n    inferenceRuntimeConfig\n    environ {\n      entries {\n        name\n        value\n      }\n    }\n    runtimeVariantPresetValues {\n      presetId\n      value\n      preset {\n        name\n        displayName\n        targetSpec {\n          key\n        }\n        id\n      }\n    }\n  }\n  modelMountConfig {\n    vfolderId\n    mountDestination\n    definitionPath\n    subpath\n    vfolder {\n      name\n      id\n    }\n  }\n  extraMounts {\n    vfolderId\n    mountDestination\n    mountPerm\n    vfolder {\n      name\n      id\n    }\n  }\n  imageV2 {\n    identity {\n      canonicalName\n      architecture\n    }\n    id\n  }\n  modelDefinition {\n    models {\n      name\n      modelPath\n      service {\n        command\n        port\n      }\n    }\n  }\n}\n"
+    "text": "query DeploymentRevisionHistoryTabComparePairQuery(\n  $deploymentId: ID!\n  $filter: ModelRevisionFilter\n) {\n  deployment(id: $deploymentId) {\n    revisionHistory(filter: $filter, limit: 2) {\n      edges {\n        node {\n          id\n          fieldId\n          revisionNumber\n          ...DeploymentRevisionCompareDrawer_revision\n        }\n      }\n    }\n    id\n  }\n}\n\nfragment DeploymentRevisionCompareDrawer_revision on ModelRevision {\n  fieldId\n  revisionNumber\n  clusterConfig {\n    mode\n    size\n  }\n  resourceSlots {\n    slotName\n    quantity\n  }\n  resourceConfig {\n    resourceGroupName\n    resourceOpts {\n      entries {\n        name\n        value\n      }\n    }\n  }\n  modelRuntimeConfig {\n    runtimeVariant {\n      name\n      id\n    }\n    inferenceRuntimeConfig\n    environ {\n      entries {\n        name\n        value\n      }\n    }\n    runtimeVariantPresetValues {\n      presetId\n      value\n      preset {\n        name\n        displayName\n        targetSpec {\n          key\n        }\n        id\n      }\n    }\n  }\n  modelMountConfig {\n    vfolderId\n    mountDestination\n    definitionPath\n    subpath\n    vfolder {\n      name\n      id\n    }\n  }\n  extraMounts {\n    vfolderId\n    mountDestination\n    mountPerm\n    vfolder {\n      name\n      id\n    }\n  }\n  imageV2 {\n    identity {\n      canonicalName\n      architecture\n    }\n    id\n  }\n  modelDefinition {\n    models {\n      name\n      modelPath\n      service {\n        command\n        startCommand\n        shell\n        port\n        healthCheck {\n          enable\n          path\n          interval\n          maxRetries\n          maxWaitTime\n          expectedStatusCode\n          initialDelay\n        }\n        preStartActions {\n          action\n          args\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();

@@ -170,6 +170,69 @@ describe('diffRevisions', () => {
     });
   });
 
+  it('tells an empty environment variable apart from a missing one', () => {
+    const rows = diffRevisions(base, {
+      ...base,
+      modelRuntimeConfig: {
+        ...base.modelRuntimeConfig,
+        environ: {
+          entries: [
+            { name: 'HF_TOKEN', value: 'secret-a' },
+            { name: 'LOG_LEVEL', value: 'info' },
+            { name: 'EMPTY', value: '' },
+          ],
+        },
+      },
+    });
+    expect(rowOf(rows, 'environ:environ:EMPTY')).toMatchObject({
+      status: 'added',
+      left: null,
+      right: '',
+    });
+  });
+
+  it('compares the resource group and every model service setting', () => {
+    const rows = diffRevisions(
+      {
+        ...base,
+        resourceConfig: { ...base.resourceConfig, resourceGroupName: 'gpu-a' },
+      },
+      {
+        ...base,
+        resourceConfig: { ...base.resourceConfig, resourceGroupName: 'gpu-b' },
+        modelDefinition: {
+          models: [
+            {
+              name: 'llama',
+              modelPath: '/models',
+              service: {
+                startCommand: ['vllm', 'serve', '--port', '8000'],
+                shell: '/bin/bash',
+                port: 8000,
+                healthCheck: { enable: true, path: '/health' },
+                preStartActions: [{ action: 'run', args: { cmd: 'ls' } }],
+              },
+            },
+          ],
+        },
+      },
+    );
+    expect(rowOf(rows, 'resources:resourceGroup')).toMatchObject({
+      status: 'changed',
+      left: 'gpu-a',
+      right: 'gpu-b',
+    });
+    expect(rowOf(rows, 'modelDefinition:command:llama')).toMatchObject({
+      status: 'changed',
+      right: 'vllm serve --port 8000',
+    });
+    for (const field of ['shell', 'healthCheck', 'preStartActions']) {
+      expect(rowOf(rows, `modelDefinition:${field}:llama`)?.status).toBe(
+        'added',
+      );
+    }
+  });
+
   it('treats a missing revision side as all added', () => {
     const rows = diffRevisions(null, base);
     expect(rowOf(rows, 'image:image')?.status).toBe('added');

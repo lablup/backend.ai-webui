@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { formatShellCommand } from '../../../helper/parseCliCommand';
 
 type Maybe<T> = T | null | undefined;
 type Entries = Maybe<ReadonlyArray<{ name?: Maybe<string>; value?: unknown }>>;
@@ -12,7 +13,10 @@ export interface RevisionDiffInput {
   resourceSlots?: Maybe<
     ReadonlyArray<{ slotName?: Maybe<string>; quantity?: unknown }>
   >;
-  resourceConfig?: Maybe<{ resourceOpts?: Maybe<{ entries?: Entries }> }>;
+  resourceConfig?: Maybe<{
+    resourceGroupName?: Maybe<string>;
+    resourceOpts?: Maybe<{ entries?: Entries }>;
+  }>;
   modelRuntimeConfig?: Maybe<{
     runtimeVariant?: Maybe<{ name?: Maybe<string> }>;
     inferenceRuntimeConfig?: unknown;
@@ -57,7 +61,11 @@ export interface RevisionDiffInput {
         modelPath?: Maybe<string>;
         service?: Maybe<{
           command?: Maybe<string>;
+          startCommand?: Maybe<ReadonlyArray<string>>;
+          shell?: Maybe<string>;
           port?: Maybe<number>;
+          healthCheck?: unknown;
+          preStartActions?: unknown;
         }>;
       }>
     >;
@@ -93,8 +101,10 @@ export const REVISION_DIFF_GROUPS: ReadonlyArray<RevisionDiffGroup> = [
   'modelDefinition',
 ];
 
-const toText = (value: unknown): string | null => {
-  if (value === null || value === undefined || value === '') return null;
+// keepsEmpty: an empty env var or option value is set, unlike a missing one.
+const toText = (value: unknown, keepsEmpty = false): string | null => {
+  if (value === null || value === undefined) return null;
+  if (value === '' && !keepsEmpty) return null;
   if (typeof value === 'string') return value;
   if (typeof value === 'number' || typeof value === 'boolean') {
     return String(value);
@@ -115,7 +125,7 @@ const statusOf = (
 const entriesToMap = (entries: Entries): Map<string, string | null> => {
   const map = new Map<string, string | null>();
   for (const entry of entries ?? []) {
-    if (entry?.name) map.set(entry.name, toText(entry.value));
+    if (entry?.name) map.set(entry.name, toText(entry.value, true));
   }
   return map;
 };
@@ -149,7 +159,9 @@ export const flattenJson = (
         out,
       );
     }
-  } else if (prefix || parsed != null) {
+  } else if (prefix) {
+    out.set(prefix, toText(parsed, true));
+  } else if (parsed != null && parsed !== '') {
     out.set(prefix, toText(parsed));
   }
   return out;
@@ -193,16 +205,35 @@ const extraMountMap = (revision: Maybe<RevisionDiffInput>) => {
   return map;
 };
 
+const MODEL_FIELDS = [
+  'modelPath',
+  'command',
+  'shell',
+  'port',
+  'healthCheck',
+  'preStartActions',
+] as const;
+type ModelField = (typeof MODEL_FIELDS)[number];
+
 const modelMap = (revision: Maybe<RevisionDiffInput>) => {
-  const map = new Map<
-    string,
-    { modelPath: string | null; command: string | null; port: string | null }
-  >();
+  const map = new Map<string, Record<ModelField, string | null>>();
   (revision?.modelDefinition?.models ?? []).forEach((model, index) => {
+    const service = model.service;
+    // Same fallback as the revision detail view: the deprecated token list.
+    const command =
+      service?.command ||
+      (service?.startCommand ? formatShellCommand(service.startCommand) : null);
     map.set(model.name || `#${index + 1}`, {
       modelPath: toText(model.modelPath),
-      command: toText(model.service?.command),
-      port: toText(model.service?.port),
+      command: toText(command),
+      shell: toText(service?.shell),
+      port: toText(service?.port),
+      healthCheck: toText(service?.healthCheck),
+      preStartActions:
+        Array.isArray(service?.preStartActions) &&
+        service.preStartActions.length > 0
+          ? toText(service.preStartActions)
+          : null,
     });
   });
   return map;
@@ -246,6 +277,12 @@ export const diffRevisions = (
 
   push('image', 'image', imageText(left), imageText(right));
 
+  push(
+    'resources',
+    'resourceGroup',
+    toText(left?.resourceConfig?.resourceGroupName),
+    toText(right?.resourceConfig?.resourceGroupName),
+  );
   const leftSlots = new Map<string, string | null>();
   const rightSlots = new Map<string, string | null>();
   for (const slot of left?.resourceSlots ?? []) {
@@ -377,7 +414,7 @@ export const diffRevisions = (
   for (const modelName of unionKeys(leftModels, rightModels)) {
     const l = leftModels.get(modelName);
     const r = rightModels.get(modelName);
-    for (const field of ['modelPath', 'command', 'port'] as const) {
+    for (const field of MODEL_FIELDS) {
       push('modelDefinition', field, l?.[field] ?? null, r?.[field] ?? null, {
         name: modelName,
         keySuffix: modelName,

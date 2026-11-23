@@ -11,6 +11,7 @@ import {
 import type { DeploymentRevisionHistoryTab_deployment$key } from '../../../__generated__/DeploymentRevisionHistoryTab_deployment.graphql';
 import { App } from '../../../app-shim';
 import DeploymentRevisionDetailDrawer from '../../../components/DeploymentRevisionDetailDrawer';
+import ErrorBoundaryWithNullFallback from '../../../components/ErrorBoundaryWithNullFallback';
 import FolderLink from '../../../components/FolderLink';
 import { convertToOrderBy } from '../../../helper';
 import { useCurrentDomain, useSuspendedBackendaiClient } from '../../../hooks';
@@ -66,7 +67,7 @@ import {
   parseAsStringLiteral,
   useQueryStates,
 } from 'nuqs';
-import React, { Suspense, useState, useTransition } from 'react';
+import React, { Suspense, useEffect, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   graphql,
@@ -104,16 +105,6 @@ export interface DeploymentRevisionHistoryTabProps {
   fetchKey?: string;
 }
 
-/**
- * Revision history tab for a model deployment detail page.
- *
- * Lists all revisions of the deployment (current revision highlighted),
- * and lets operators roll back to any earlier revision. Rollback is
- * executed via the `updateModelDeployment` mutation with the target
- * `activeRevisionId` — there is no dedicated rollback mutation in the
- * schema; switching the active revision atomically replaces the current
- * one. See FR-2678 and spec.md §Flow 5.
- */
 interface RevisionCompareFromUrlProps {
   deploymentId: string;
   fieldIds: ReadonlyArray<string>;
@@ -132,6 +123,7 @@ const RevisionCompareFromUrl: React.FC<RevisionCompareFromUrlProps> = ({
   fieldIds,
   applyDisabledReasonOf,
   onApply,
+  onClose,
   ...drawerProps
 }) => {
   'use memo';
@@ -164,11 +156,17 @@ const RevisionCompareFromUrl: React.FC<RevisionCompareFromUrlProps> = ({
   );
   const left = _.find(revisions, { fieldId: fieldIds[0] });
   const right = _.find(revisions, { fieldId: fieldIds[1] });
+  const isResolved = !!left && !!right;
+  // A pair that no longer resolves leaves nothing on screen, so drop it from the URL.
+  useEffect(() => {
+    if (!isResolved) onClose();
+  }, [isResolved, onClose]);
   if (!left || !right) return null;
   return (
     <DeploymentRevisionCompareDrawer
       {...drawerProps}
       open
+      onClose={onClose}
       leftRevisionFrgmt={left}
       rightRevisionFrgmt={right}
       applyDisabledReason={applyDisabledReasonOf(right.fieldId, right.id)}
@@ -177,6 +175,16 @@ const RevisionCompareFromUrl: React.FC<RevisionCompareFromUrlProps> = ({
   );
 };
 
+/**
+ * Revision history tab for a model deployment detail page.
+ *
+ * Lists all revisions of the deployment (current revision highlighted),
+ * and lets operators roll back to any earlier revision. Rollback is
+ * executed via the `updateModelDeployment` mutation with the target
+ * `activeRevisionId` — there is no dedicated rollback mutation in the
+ * schema; switching the active revision atomically replaces the current
+ * one. See FR-2678 and spec.md §Flow 5.
+ */
 const DeploymentRevisionHistoryTab: React.FC<
   DeploymentRevisionHistoryTabProps
 > = ({ deploymentFrgmt, deploymentId, fetchKey }) => {
@@ -916,6 +924,8 @@ const DeploymentRevisionHistoryTab: React.FC<
           preserveSelectedRowKeys: true,
           selectedRowKeys: _.map(selectedRevisions, 'id'),
           onChange: (keys) => {
+            // The header checkbox would select the whole page; a compare takes two.
+            if (keys.length > 2) return;
             const known = _.uniqBy([...selectedRevisions, ...revisions], 'id');
             setSelectedRevisions(
               _.filter(known, (revision) => keys.includes(revision.id)),
@@ -965,24 +975,26 @@ const DeploymentRevisionHistoryTab: React.FC<
         }}
       />
       {comparedIds.length === 2 ? (
-        <Suspense fallback={null}>
-          <RevisionCompareFromUrl
-            deploymentId={deploymentId}
-            fieldIds={comparedIds}
-            currentRevisionId={currentRevisionId}
-            deployingRevisionId={deployingRevisionId}
-            showsUnchanged={queryParams.showUnchanged}
-            onShowsUnchangedChange={(showUnchanged) =>
-              setQueryParams({ showUnchanged: showUnchanged || null })
-            }
-            applyDisabledReasonOf={applyDisabledReasonOf}
-            onApply={async (revision) => {
-              const success = await handleRollback(revision);
-              if (success) closeCompare();
-            }}
-            onClose={closeCompare}
-          />
-        </Suspense>
+        <ErrorBoundaryWithNullFallback>
+          <Suspense fallback={null}>
+            <RevisionCompareFromUrl
+              deploymentId={deploymentId}
+              fieldIds={comparedIds}
+              currentRevisionId={currentRevisionId}
+              deployingRevisionId={deployingRevisionId}
+              showsUnchanged={queryParams.showUnchanged}
+              onShowsUnchangedChange={(showUnchanged) =>
+                setQueryParams({ showUnchanged: showUnchanged || null })
+              }
+              applyDisabledReasonOf={applyDisabledReasonOf}
+              onApply={async (revision) => {
+                const success = await handleRollback(revision);
+                if (success) closeCompare();
+              }}
+              onClose={closeCompare}
+            />
+          </Suspense>
+        </ErrorBoundaryWithNullFallback>
       ) : null}
       {/* Local Suspense around the lazily-mounted modal so its lazy form
           selects (preset / vfolder / runtime variant `useLazyLoadQuery`)
