@@ -54,6 +54,18 @@ const PasswordRevealInput: React.FC<PasswordRevealInputProps> = (props) => {
     ? t('login.HidePassword')
     : t('login.ShowPassword');
 
+  // Hide again when the form submits: the field disables while the login
+  // request runs, so the password never stays revealed through the loading.
+  // Adjusting state when a prop changes, per react.dev's render-time reset —
+  // not an effect (setState in an effect cascades renders).
+  const [prevDisabled, setPrevDisabled] = useState(props.disabled);
+  if (props.disabled !== prevDisabled) {
+    setPrevDisabled(props.disabled);
+    if (props.disabled) {
+      setIsRevealed(false);
+    }
+  }
+
   return (
     <BAIFlex
       className="bai-password-reveal"
