@@ -251,24 +251,40 @@ test.describe(
 
     test.afterEach(async ({ page }) => {
       if (!restoreColumns) return;
-      // Leave the page first so a pending settings write cannot land after the restore.
-      await page.goto('about:blank').catch(() => undefined);
-      await restoreColumns();
+      const restore = restoreColumns;
       restoreColumns = undefined;
+      // Leaving the page flushes pending settings writes (pagehide); drop them
+      // so none can land after the restore.
+      await page
+        .route('**/admin/gql', (route) =>
+          (route.request().postData() ?? '').includes(
+            'useAppConfigMyUpsertMutation',
+          )
+            ? route.abort()
+            : route.fallback(),
+        )
+        .catch(() => undefined);
+      await page.goto('about:blank').catch(() => undefined);
+      await restore();
     });
 
     test('Dependencies column can be enabled via table settings', async ({
       page,
     }) => {
       const api = await createAccountApiContext(userInfo.user, 'User');
-      const original = await readAccountSettingViaApi(api, COLUMNS_SETTING);
+      let original: unknown;
+      let read = false;
       restoreColumns = async () => {
         try {
-          await writeAccountSettingViaApi(api, COLUMNS_SETTING, original);
+          if (read) {
+            await writeAccountSettingViaApi(api, COLUMNS_SETTING, original);
+          }
         } finally {
           await api.dispose();
         }
       };
+      original = await readAccountSettingViaApi(api, COLUMNS_SETTING);
+      read = true;
       // Start from the default columns, where Dependencies is hidden.
       await writeAccountSettingViaApi(api, COLUMNS_SETTING, undefined);
 
@@ -319,7 +335,7 @@ test.describe(
       const hidden = waitForAccountSettingsWrite(page, (settings) => {
         const overrides = settings[COLUMNS_SETTING] as
           Record<string, { hidden?: boolean }> | undefined;
-        return overrides?.dependencies?.hidden !== false;
+        return !!overrides && overrides.dependencies?.hidden !== false;
       });
       await settingModal.getByRole('button', { name: 'Apply' }).click();
       await expect(settingModal).not.toBeVisible({ timeout: 5000 });
