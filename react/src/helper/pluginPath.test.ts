@@ -98,7 +98,8 @@ describe('resolveLoginPluginScriptUrl', () => {
   const base = {
     path: 'backend-ai-homepage-link',
     isConfigLoaded: true,
-    isAccountFormShown: true,
+    isPanelOpen: true,
+    isEndpointStepOpen: false,
   };
 
   it('resolves once config is loaded and the account form is shown', () => {
@@ -109,7 +110,13 @@ describe('resolveLoginPluginScriptUrl', () => {
 
   it('waits while the endpoint step replaces the account form', () => {
     expect(
-      resolveLoginPluginScriptUrl({ ...base, isAccountFormShown: false }),
+      resolveLoginPluginScriptUrl({ ...base, isEndpointStepOpen: true }),
+    ).toBeUndefined();
+  });
+
+  it('waits for the login panel to open (pinned endpoint, silent login)', () => {
+    expect(
+      resolveLoginPluginScriptUrl({ ...base, isPanelOpen: false }),
     ).toBeUndefined();
   });
 

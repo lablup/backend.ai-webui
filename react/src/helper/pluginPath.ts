@@ -57,20 +57,22 @@ export const resolvePluginScriptUrl = (
 };
 
 /**
- * The login plugin's script URL once config is loaded and the endpoint step is
- * closed, else `undefined`: the account form replaces the step's form (#11231).
+ * The login plugin's script URL once config is loaded and the account form is
+ * on screen (panel open, endpoint step closed), else `undefined` (#11231).
  */
 export const resolveLoginPluginScriptUrl = ({
   path,
   apiEndpoint,
   isConfigLoaded,
-  isAccountFormShown,
+  isPanelOpen,
+  isEndpointStepOpen,
 }: {
   path: string;
   apiEndpoint?: string | null;
   isConfigLoaded: boolean;
-  isAccountFormShown: boolean;
+  isPanelOpen: boolean;
+  isEndpointStepOpen: boolean;
 }): string | undefined =>
-  isConfigLoaded && isAccountFormShown && path
+  isConfigLoaded && isPanelOpen && !isEndpointStepOpen && path
     ? resolvePluginScriptUrl(path, apiEndpoint)
     : undefined;

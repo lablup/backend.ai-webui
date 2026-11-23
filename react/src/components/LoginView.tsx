@@ -330,15 +330,16 @@ const LoginView: React.FC<{
     }
   }
 
-  // Load the login plugin once the endpoint step closes; it is served from
-  // `/dist/plugins/` like page plugins, never bundled.
-  const isAccountFormShown = !endpointStep.isStepOpen;
+  // Load the login plugin once the account form is on screen, so a plugin that
+  // injects into it finds it; served from `/dist/plugins/`, never bundled.
+  const isEndpointStepOpen = endpointStep.isStepOpen;
   useEffect(() => {
     const pluginUrl = resolveLoginPluginScriptUrl({
       path: loginPlugin,
       apiEndpoint,
       isConfigLoaded,
-      isAccountFormShown,
+      isPanelOpen: isLoginPanelOpen,
+      isEndpointStepOpen,
     });
     if (!pluginUrl) return;
 
@@ -348,7 +349,14 @@ const LoginView: React.FC<{
     import(/* @vite-ignore */ pluginUrl).catch(() => {
       setLoginError({ message: t('error.LoginPluginLoadFailed') });
     });
-  }, [isConfigLoaded, isAccountFormShown, loginPlugin, apiEndpoint, t]);
+  }, [
+    isConfigLoaded,
+    isLoginPanelOpen,
+    isEndpointStepOpen,
+    loginPlugin,
+    apiEndpoint,
+    t,
+  ]);
 
   // Keep configRef in sync
   useEffect(() => {
