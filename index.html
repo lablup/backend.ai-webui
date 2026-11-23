@@ -187,21 +187,20 @@
     </noscript>
     <!-- Backend.AI client classes are now initialized by React global-stores.ts -->
     <script nonce="{{nonce}}">
-      if (window.isUnsupportedBrowser) {
-        (function () {
-          var supported = window.formatSupportedBrowsers();
-          var isKorean = /^ko/i.test(window.navigator.language || '');
-          var message = isKorean ?
-            '지원하지 않는 브라우저입니다. 다음 브라우저로 접속해 주세요: ' + supported :
-            'This browser is not supported. Please use one of: ' + supported;
-          var cube = document.querySelector('#splash .splash-cube');
-          if (cube) cube.style.display = 'none';
-          var loadingMessage = document.getElementById('loading-message');
-          loadingMessage.textContent = message;
-          loadingMessage.style.color = 'red';
-          loadingMessage.setAttribute('role', 'alert');
-        })();
-      }
+      (function () {
+        if (!window.isUnsupportedBrowser) return;
+        var supported = window.supportedBrowsersText;
+        var isKorean = /^ko/i.test(window.navigator.language || '');
+        var message = isKorean ?
+          '지원하지 않는 브라우저입니다. 다음 브라우저로 접속해 주세요: ' + supported :
+          'This browser is not supported. Please use one of: ' + supported;
+        var cube = document.querySelector('#splash .splash-cube');
+        if (cube) cube.style.display = 'none';
+        var loadingMessage = document.getElementById('loading-message');
+        loadingMessage.textContent = message;
+        loadingMessage.style.color = 'red';
+        loadingMessage.setAttribute('role', 'alert');
+      })();
     </script>
     <script nonce="{{nonce}}">
       document.getElementById('version-detail').innerText = globalThis.packageVersion;
@@ -243,7 +242,8 @@
         }
       })();
 
-      if (window.location.hostname !== '127.0.0.1' &&
+      if (!window.isUnsupportedBrowser &&
+        window.location.hostname !== '127.0.0.1' &&
         !window.location.hostname.endsWith('localhost') &&
         'enableSW' in globalThis &&
         globalThis.enableSW === true) {

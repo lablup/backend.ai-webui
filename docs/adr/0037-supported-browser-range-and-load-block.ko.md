@@ -6,7 +6,7 @@
 
 - WebUI는 Astryx Tier 2의 브라우저를 지원한다. Chrome 123+, Edge 123+, Safari 17.5+, Firefox 125+다.
 - 이 범위보다 오래된 브라우저에서는 app을 로드하지 않는다. 로딩 splash가 화면에 남고, 지원하지 않는 브라우저라는 메시지와 지원 브라우저 목록을 보여 준다.
-- 두 검사 중 하나라도 범위 밖이라고 하면 브라우저는 범위 밖이다. feature detection이 Popover API나 CSS `light-dark()`가 없다고 판정하거나, userAgent가 최소 버전보다 오래된 알려진 브라우저를 가리키는 경우다. Internet Explorer는 항상 범위 밖이다.
+- 두 검사 중 하나라도 범위 밖이라고 하면 브라우저는 범위 밖이다. feature detection이 Popover API나 CSS `light-dark()`가 없다고 판정하거나, userAgent가 최소 버전보다 오래된 알려진 브라우저를 가리키는 경우다. Internet Explorer는 두 기능이 모두 없으므로 항상 범위 밖이다.
 - Electron app은 자체 Chromium을 포함하므로 절대 차단하지 않는다.
 - 최소 버전은 `manifest/app.js`의 `window.supportedBrowserMinimums` 표 하나에 둔다. userAgent 검사와 splash 메시지가 모두 이 표를 읽는다.
 
@@ -32,7 +32,7 @@ flowchart TD
   ua -- "브라우저 이름과 버전" --> detect
   features -- "기능 유무" --> detect
   table -- "브라우저별 최소 버전" --> detect
-  table -- "formatSupportedBrowsers" --> splash
+  table -- "supportedBrowsersText" --> splash
   detect -- "true 또는 false" --> flag
   flag -- "true: 메시지" --> splash
   flag -- "true: 바로 return" --> lifecycle
@@ -50,7 +50,7 @@ flowchart TD
 ### 2. 검사는 두 가지이고, 하나라도 걸리면 차단한다
 
 - **Feature detection**: `manifest/app.js`의 `lacksRequiredBrowserFeatures`는 `HTMLElement.prototype.hasOwnProperty('popover')`가 false이거나 `CSS.supports('color', 'light-dark(#000, #fff)')`가 false이면 기능이 없다고 보고한다.
-- **userAgent check**: `identifyBrowser`가 브라우저와 버전을 읽고, `isUserAgentBelowSupportedRange`가 이를 표와 비교한다. `MSIE`나 `Trident`가 있는 UA는 Internet Explorer이고 항상 범위 밖이다. iPhone, iPad, iPod에서는 모든 iOS 브라우저가 시스템 WebKit을 쓰므로 iOS 버전을 버전으로 쓴다. `Edg/`, `EdgA/`, legacy `Edge/`는 Edge이고, `Firefox/`는 Firefox다. 그 밖의 `Chrome/`이나 `Chromium/` UA(Samsung Internet, Opera 등)는 Chromium 버전으로 Chrome 행과 비교하고, `Version/… Safari/`는 Safari다.
+- **userAgent check**: `identifyBrowser`가 브라우저와 버전을 읽고, `isUserAgentBelowSupportedRange`가 이를 표와 비교한다. `MSIE`나 `Trident`가 있는 UA는 어떤 패턴에도 맞지 않아 feature detection이 판정하고, 거기서 범위 밖이 된다. iPhone, iPad, iPod에서는 모든 iOS 브라우저가 시스템 WebKit을 쓰므로 iOS 버전을 버전으로 쓴다. `Edg/`, `EdgA/`, legacy `Edge/`는 Edge이고, `Firefox/`는 Firefox다. 그 밖의 `Chrome/`이나 `Chromium/` UA(Samsung Internet, Opera 등)는 Chromium 버전으로 Chrome 행과 비교하고, `Version/… Safari/`는 Safari다.
 - **Unknown UA**: parser가 알아보지 못한 UA는 userAgent 검사를 통과하고, feature detection만으로 판정한다.
 - **Electron**: `isUnsupportedBrowser`는 `isElectron()`이 true이면 두 검사를 실행하기 전에 false를 돌려준다.
 - **Result**: 결과는 `window.isUnsupportedBrowser`에 담긴다. `manifest/app.js`는 다른 어떤 script보다 먼저 실행되고 ES5 문법과 `globalThis` 대신 `window`만 쓰므로, 거부해야 할 브라우저도 이 파일을 parse하고 실행할 수 있다.
@@ -64,8 +64,8 @@ flowchart TD
 | Safari  | 17.5    |
 | Firefox | 125     |
 
-- **Where**: `manifest/app.js`의 `window.supportedBrowserMinimums`이고, `{ name, version }`의 배열이다. `version`은 `[17, 5]`처럼 숫자 배열이다.
-- **Readers**: `isUserAgentBelowSupportedRange`가 이 표와 비교하고, `formatSupportedBrowsers`가 이 표를 splash에 보이는 `Chrome 123+, Edge 123+, Safari 17.5+, Firefox 125+` 목록으로 만든다. 코드 안에 버전의 다른 사본은 없다.
+- **Where**: `manifest/app.js`의 `window.supportedBrowserMinimums`이고, 브라우저 이름을 키로 하는 객체이고, 값은 `[17, 5]`처럼 숫자 배열이다.
+- **Readers**: `isUserAgentBelowSupportedRange`가 이 표와 비교하고, 같은 스크립트가 이 표를 `window.supportedBrowsersText`인 splash에 보이는 `Chrome 123+, Edge 123+, Safari 17.5+, Firefox 125+` 목록으로 만든다. 코드 안에 버전의 다른 사본은 없다.
 
 ### 4. 범위보다 오래된 브라우저는 app을 로드하지 않는다
 

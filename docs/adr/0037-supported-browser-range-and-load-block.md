@@ -6,7 +6,7 @@
 
 - The WebUI supports the browsers of Astryx Tier 2: Chrome 123+, Edge 123+, Safari 17.5+ and Firefox 125+.
 - A browser below that range does not load the app. The loading splash stays on screen with a message that the browser is not supported and the list of supported browsers.
-- A browser is below the range when either check says so: feature detection finds the Popover API or CSS `light-dark()` missing, or the userAgent names a known browser older than its minimum version. Internet Explorer is always below the range.
+- A browser is below the range when either check says so: feature detection finds the Popover API or CSS `light-dark()` missing, or the userAgent names a known browser older than its minimum version. Internet Explorer is always below the range, because it has neither feature.
 - The Electron app is never blocked, because it ships its own Chromium.
 - The minimum versions live in one table, `window.supportedBrowserMinimums` in `manifest/app.js`. The userAgent check and the splash message both read it.
 
@@ -32,7 +32,7 @@ flowchart TD
   ua -- "browser name and version" --> detect
   features -- "feature presence" --> detect
   table -- "minimum per browser" --> detect
-  table -- "formatSupportedBrowsers" --> splash
+  table -- "supportedBrowsersText" --> splash
   detect -- "true or false" --> flag
   flag -- "true: message" --> splash
   flag -- "true: return early" --> lifecycle
@@ -50,7 +50,7 @@ flowchart TD
 ### 2. Two checks; either one blocks
 
 - **Feature detection**: `lacksRequiredBrowserFeatures` in `manifest/app.js` reports a missing feature when `HTMLElement.prototype.hasOwnProperty('popover')` is false or `CSS.supports('color', 'light-dark(#000, #fff)')` is false.
-- **userAgent check**: `identifyBrowser` reads the browser and its version, and `isUserAgentBelowSupportedRange` compares it with the table. A UA with `MSIE` or `Trident` is Internet Explorer and is always below the range. On iPhone, iPad and iPod the version is the iOS version, because every iOS browser uses the system WebKit. `Edg/`, `EdgA/` and legacy `Edge/` are Edge; `Firefox/` is Firefox; any other `Chrome/` or `Chromium/` UA, such as Samsung Internet or Opera, is checked by its Chromium version against the Chrome row; `Version/… Safari/` is Safari.
+- **userAgent check**: `identifyBrowser` reads the browser and its version, and `isUserAgentBelowSupportedRange` compares it with the table. A UA with `MSIE` or `Trident` matches no pattern and is left to feature detection, which rejects it. On iPhone, iPad and iPod the version is the iOS version, because every iOS browser uses the system WebKit. `Edg/`, `EdgA/` and legacy `Edge/` are Edge; `Firefox/` is Firefox; any other `Chrome/` or `Chromium/` UA, such as Samsung Internet or Opera, is checked by its Chromium version against the Chrome row; `Version/… Safari/` is Safari.
 - **Unknown UA**: A UA the parser does not recognise passes the userAgent check, and only feature detection decides.
 - **Electron**: `isUnsupportedBrowser` returns false when `isElectron()` is true, before either check runs.
 - **Result**: `window.isUnsupportedBrowser` holds the result. `manifest/app.js` runs before any other script and uses only ES5 syntax and `window` instead of `globalThis`, so the browsers it must reject can still parse and run it.
@@ -64,8 +64,8 @@ flowchart TD
 | Safari  | 17.5    |
 | Firefox | 125     |
 
-- **Where**: `window.supportedBrowserMinimums` in `manifest/app.js`, an array of `{ name, version }` where `version` is an array of numbers such as `[17, 5]`.
-- **Readers**: `isUserAgentBelowSupportedRange` compares against it, and `formatSupportedBrowsers` turns it into the `Chrome 123+, Edge 123+, Safari 17.5+, Firefox 125+` list the splash shows. No other copy of the versions exists in code.
+- **Where**: `window.supportedBrowserMinimums` in `manifest/app.js`, an object keyed by browser name whose values are arrays of numbers such as `[17, 5]`.
+- **Readers**: `isUserAgentBelowSupportedRange` compares against it, and the same script turns it into `window.supportedBrowsersText`, the `Chrome 123+, Edge 123+, Safari 17.5+, Firefox 125+` list the splash shows. No other copy of the versions exists in code.
 
 ### 4. A browser below the range does not load the app
 
