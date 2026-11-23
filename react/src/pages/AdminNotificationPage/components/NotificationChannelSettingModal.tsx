@@ -14,6 +14,7 @@ import {
   NotificationChannelSpecFormValues,
   buildNotificationChannelSpecInput,
 } from '../helper/notificationChannelSpec';
+import './NotificationChannelSettingModal.css';
 import {
   BAIAlert,
   BAIFlex,
@@ -56,6 +57,7 @@ const ChannelSpecFormItems: React.FC = () => {
   const form = Form.useFormInstance<NotificationChannelFormValues>();
   const channelType = Form.useWatch('channelType', form);
 
+  if (!channelType) return null;
   if (channelType === 'WEBHOOK') {
     return (
       <Form.Item
@@ -85,7 +87,7 @@ const ChannelSpecFormItems: React.FC = () => {
     <>
       <BAIFlex gap="sm" align="start">
         <Form.Item
-          style={{ flex: 1, minWidth: 0 }}
+          className="notification-channel-field"
           label={t('externalNotification.SmtpHost')}
           name="smtpHost"
           rules={[
@@ -102,7 +104,7 @@ const ChannelSpecFormItems: React.FC = () => {
           />
         </Form.Item>
         <Form.Item
-          style={{ flex: 1, minWidth: 0 }}
+          className="notification-channel-field"
           label={t('externalNotification.SmtpPort')}
           name="smtpPort"
           rules={[{ required: true }]}
@@ -119,14 +121,14 @@ const ChannelSpecFormItems: React.FC = () => {
       </BAIFlex>
       <BAIFlex gap="sm" align="start">
         <Form.Item
-          style={{ flex: 1, minWidth: 0 }}
+          className="notification-channel-field"
           label={t('externalNotification.SmtpUseTls')}
           name="smtpUseTls"
         >
           <BAISwitch aria-label={t('externalNotification.SmtpUseTls')} />
         </Form.Item>
         <Form.Item
-          style={{ flex: 1, minWidth: 0 }}
+          className="notification-channel-field"
           label={t('externalNotification.SmtpTimeout')}
           name="smtpTimeout"
           rules={[{ required: true }]}
@@ -143,7 +145,7 @@ const ChannelSpecFormItems: React.FC = () => {
       </BAIFlex>
       <BAIFlex gap="sm" align="start">
         <Form.Item
-          style={{ flex: 1, minWidth: 0 }}
+          className="notification-channel-field"
           label={t('externalNotification.SmtpUsername')}
           name="smtpUsername"
         >
@@ -153,7 +155,7 @@ const ChannelSpecFormItems: React.FC = () => {
           />
         </Form.Item>
         <Form.Item
-          style={{ flex: 1, minWidth: 0 }}
+          className="notification-channel-field"
           label={t('externalNotification.SmtpPassword')}
           name="smtpPassword"
         >
@@ -421,7 +423,7 @@ const NotificationChannelSettingModal: React.FC<
                     <BAIAlert
                       type="warning"
                       showIcon
-                      style={{ marginBottom: 'var(--spacing-4)' }}
+                      className="notification-channel-alert"
                       description={t(
                         'externalNotification.ReplaceConnectionSettingsWarning',
                       )}

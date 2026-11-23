@@ -32,6 +32,7 @@ import {
   filterOutNullAndUndefined,
   INITIAL_FETCH_KEY,
   useFetchKey,
+  useMutationWithPromise,
   type BAIColumnType,
   type GraphQLFilter,
 } from 'backend.ai-ui';
@@ -143,8 +144,8 @@ const NotificationChannelList: React.FC = () => {
       },
     );
 
-  const [commitEnabled] = useMutation<NotificationChannelListEnabledMutation>(
-    graphql`
+  const commitEnabled =
+    useMutationWithPromise<NotificationChannelListEnabledMutation>(graphql`
       mutation NotificationChannelListEnabledMutation(
         $input: UpdateNotificationChannelInput!
       ) {
@@ -155,8 +156,7 @@ const NotificationChannelList: React.FC = () => {
           }
         }
       }
-    `,
-  );
+    `);
 
   const [commitPurge, isInFlightPurge] =
     useMutation<NotificationChannelListPurgeMutation>(graphql`
@@ -179,24 +179,20 @@ const NotificationChannelList: React.FC = () => {
       defaultValue: channelType,
     });
 
-  const setEnabled = (channel: NotificationChannelNode, enabled: boolean) =>
-    new Promise<void>((resolve, reject) => {
-      commitEnabled({
-        variables: { input: { id: channel.entityId, enabled } },
-        onCompleted: (_res, errors) => {
-          if (errors && errors.length > 0) {
-            message.error(errors[0]?.message || t('general.ErrorOccurred'));
-            reject(errors[0]);
-            return;
-          }
-          resolve();
-        },
-        onError: (error) => {
-          message.error(error?.message || t('general.ErrorOccurred'));
-          reject(error);
-        },
-      });
-    });
+  // Never rejects: the Switch runs this in a transition without a catch, so a rejection
+  // would reach the page's error boundary. Its optimistic value reverts on its own.
+  const setEnabled = async (
+    channel: NotificationChannelNode,
+    enabled: boolean,
+  ) => {
+    try {
+      await commitEnabled({ input: { id: channel.entityId, enabled } });
+      // Under an `enabled` filter the row no longer matches; reload the list.
+      if (_.isBoolean(filter?.enabled)) refetch();
+    } catch (error) {
+      message.error((error as Error)?.message || t('general.ErrorOccurred'));
+    }
+  };
 
   const purgeChannel = (channel: NotificationChannelNode) => {
     commitPurge({

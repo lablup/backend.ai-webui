@@ -82,7 +82,7 @@ const NotificationChannelTestModal: React.FC<
           label={t('externalNotification.TestMessage')}
           name="testMessage"
           extra={t('externalNotification.TestMessageExtra')}
-          rules={[{ required: true, whitespace: true }]}
+          rules={[{ required: true, whitespace: true }, { max: 5000 }]}
         >
           <BAITextArea
             aria-label={t('externalNotification.TestMessage')}
