@@ -13,7 +13,7 @@ test(
     await agent.act('Under "Experimental features", turn on "WebUI Assistant"');
     await agent.act("Close User Settings");
     await agent.act(
-      'Press the round "Open WebUI Assistant" button at the bottom right',
+      'Press the round "Open WebUI Assistant" button at the bottom left of the content area',
     );
     await agent.act(
       'In the "Connect WebUI Assistant" dialog, choose a running deployment in the "Deployment" field',
@@ -36,7 +36,7 @@ test(
   async ({ app, agent }) => {
     await app.open("/start");
     await agent.act(
-      'Press the round "Open WebUI Assistant" button at the bottom right',
+      'Press the round "Open WebUI Assistant" button at the bottom left of the content area',
     );
     await agent.act(
       'In the "Connect WebUI Assistant" dialog, switch to "Custom endpoint"',
