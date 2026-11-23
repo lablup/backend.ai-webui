@@ -4497,6 +4497,15 @@
     "Placeholder": "Fai una domanda sulla WebUI",
     "Token": "Token",
     "TokenHint": "Questo deployment non è pubblico. Scegli uno dei suoi token di accesso.",
+    "ToolFailed": "{{name}} non riuscito: {{error}}",
+    "ToolNavigate": "Aperto {{page}}",
+    "ToolPrepareSession": "Launcher di sessione compilato da controllare",
+    "ToolPreviewDashboard": "Anteprima nella dashboard: {{change}}",
+    "ToolReadDashboard": "Dashboard letta",
+    "ToolReadPage": "Pagina corrente letta",
+    "ToolRejected": "Non eseguito: {{reason}}",
+    "ToolSearchManual": "Cercato \"{{query}}\" nel manuale",
+    "ToolUsed": "Usato {{name}}",
     "ViewModelInfo": "Visualizza informazioni sul modello"
   },
   "webuiSettings": {

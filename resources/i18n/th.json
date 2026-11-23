@@ -4483,6 +4483,15 @@
     "Placeholder": "ถามคำถามเกี่ยวกับ WebUI",
     "Token": "โทเค็น",
     "TokenHint": "การปรับใช้นี้ไม่ได้เปิดเป็นสาธารณะ เลือกโทเค็นการเข้าถึงของการปรับใช้นี้",
+    "ToolFailed": "{{name}} ล้มเหลว: {{error}}",
+    "ToolNavigate": "เปิด {{page}} แล้ว",
+    "ToolPrepareSession": "กรอกตัวเปิดเซสชันให้ตรวจสอบแล้ว",
+    "ToolPreviewDashboard": "ตัวอย่างบนแดชบอร์ด: {{change}}",
+    "ToolReadDashboard": "อ่านแดชบอร์ดแล้ว",
+    "ToolReadPage": "อ่านหน้าปัจจุบันแล้ว",
+    "ToolRejected": "ไม่ได้ทำ: {{reason}}",
+    "ToolSearchManual": "ค้นหา \"{{query}}\" ในคู่มือ",
+    "ToolUsed": "ใช้ {{name}} แล้ว",
     "ViewModelInfo": "ดูข้อมูลโมเดล"
   },
   "webuiSettings": {

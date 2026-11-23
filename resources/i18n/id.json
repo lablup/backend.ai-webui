@@ -4501,6 +4501,15 @@
     "Placeholder": "Ajukan pertanyaan tentang WebUI",
     "Token": "Token",
     "TokenHint": "Deployment ini tidak publik. Pilih salah satu token aksesnya.",
+    "ToolFailed": "{{name}} gagal: {{error}}",
+    "ToolNavigate": "Membuka {{page}}",
+    "ToolPrepareSession": "Peluncur sesi telah diisi untuk Anda tinjau",
+    "ToolPreviewDashboard": "Pratinjau di dasbor: {{change}}",
+    "ToolReadDashboard": "Membaca dasbor",
+    "ToolReadPage": "Membaca halaman saat ini",
+    "ToolRejected": "Tidak dilakukan: {{reason}}",
+    "ToolSearchManual": "Mencari \"{{query}}\" di manual",
+    "ToolUsed": "Menggunakan {{name}}",
     "ViewModelInfo": "Lihat info model"
   },
   "webuiSettings": {

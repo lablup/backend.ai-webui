@@ -4499,6 +4499,15 @@
     "Placeholder": "WebUI について質問する",
     "Token": "トークン",
     "TokenHint": "このデプロイメントは公開されていません。アクセストークンを選択してください。",
+    "ToolFailed": "{{name}} が失敗しました: {{error}}",
+    "ToolNavigate": "{{page}} を開きました",
+    "ToolPrepareSession": "セッションランチャーに入力しました。確認してください",
+    "ToolPreviewDashboard": "ダッシュボードのプレビュー: {{change}}",
+    "ToolReadDashboard": "ダッシュボードを読み取りました",
+    "ToolReadPage": "現在のページを読み取りました",
+    "ToolRejected": "実行できませんでした: {{reason}}",
+    "ToolSearchManual": "マニュアルで「{{query}}」を検索しました",
+    "ToolUsed": "{{name}} を使用しました",
     "ViewModelInfo": "モデル情報を確認"
   },
   "webuiSettings": {

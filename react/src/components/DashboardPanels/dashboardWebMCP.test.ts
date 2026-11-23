@@ -215,6 +215,10 @@ describe('bai_prepare_dashboard', () => {
       tool.execute({ type: 'addPanel', resourceType: 'vfolder' }),
     ).toMatchObject({ rejected: [{ field: 'resourceType' }] });
     expect(deps.opened).toHaveLength(0);
+    const unknown = tool.execute({ type: 'hide', id: 'status' }) as {
+      rejected: Array<{ reason: string }>;
+    };
+    expect(unknown.rejected[0].reason).toContain('agents (Agents)');
   });
 
   it('refuses createBoard on a page with a single board', () => {
@@ -249,7 +253,7 @@ describe('bai_get_current_dashboard', () => {
   it('reads the board, the sources and the previewed changes', () => {
     const result = createGetCurrentDashboardTool(
       depsWith([{ type: 'hide', id: 'agents' }]),
-    ).execute({}) as Record<string, unknown>;
+    ).execute({ withSources: true }) as Record<string, unknown>;
     expect(result.cards).toEqual([
       {
         id: 'agents',
@@ -272,5 +276,8 @@ describe('bai_get_current_dashboard', () => {
     expect(String(result.sourcesHelp)).toContain('type (Type, string)');
     expect(result.draft).toEqual(['hide']);
     expect(result.canCreateBoard).toBe(true);
+    expect(
+      createGetCurrentDashboardTool(depsWith()).execute({}),
+    ).not.toHaveProperty('sourcesHelp');
   });
 });

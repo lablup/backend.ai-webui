@@ -4500,6 +4500,15 @@
     "Placeholder": "Posez une question sur la WebUI",
     "Token": "Jeton",
     "TokenHint": "Ce déploiement n'est pas public. Choisissez l'un de ses jetons d'accès.",
+    "ToolFailed": "Échec de {{name}} : {{error}}",
+    "ToolNavigate": "{{page}} ouvert",
+    "ToolPrepareSession": "Lanceur de session rempli, à vérifier",
+    "ToolPreviewDashboard": "Aperçu sur le tableau de bord : {{change}}",
+    "ToolReadDashboard": "Tableau de bord lu",
+    "ToolReadPage": "Page actuelle lue",
+    "ToolRejected": "Non effectué : {{reason}}",
+    "ToolSearchManual": "Recherche de « {{query}} » dans le manuel",
+    "ToolUsed": "{{name}} utilisé",
     "ViewModelInfo": "Voir les informations du modèle"
   },
   "webuiSettings": {

@@ -4499,6 +4499,15 @@
     "Placeholder": "Stellen Sie eine Frage zur WebUI",
     "Token": "Token",
     "TokenHint": "Diese Bereitstellung ist nicht öffentlich. Wählen Sie eines ihrer Zugriffstoken.",
+    "ToolFailed": "{{name}} fehlgeschlagen: {{error}}",
+    "ToolNavigate": "{{page}} geöffnet",
+    "ToolPrepareSession": "Session-Launcher zur Prüfung ausgefüllt",
+    "ToolPreviewDashboard": "Vorschau im Dashboard: {{change}}",
+    "ToolReadDashboard": "Dashboard gelesen",
+    "ToolReadPage": "Aktuelle Seite gelesen",
+    "ToolRejected": "Nicht ausgeführt: {{reason}}",
+    "ToolSearchManual": "Handbuch nach „{{query}}“ durchsucht",
+    "ToolUsed": "{{name}} verwendet",
     "ViewModelInfo": "Modellinformationen anzeigen"
   },
   "webuiSettings": {

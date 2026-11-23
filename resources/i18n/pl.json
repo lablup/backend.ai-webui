@@ -4500,6 +4500,15 @@
     "Placeholder": "Zadaj pytanie o WebUI",
     "Token": "Token",
     "TokenHint": "To wdrożenie nie jest publiczne. Wybierz jeden z jego tokenów dostępu.",
+    "ToolFailed": "{{name}} nie powiodło się: {{error}}",
+    "ToolNavigate": "Otwarto {{page}}",
+    "ToolPrepareSession": "Wypełniono launcher sesji do sprawdzenia",
+    "ToolPreviewDashboard": "Podgląd na pulpicie: {{change}}",
+    "ToolReadDashboard": "Odczytano pulpit",
+    "ToolReadPage": "Odczytano bieżącą stronę",
+    "ToolRejected": "Nie wykonano: {{reason}}",
+    "ToolSearchManual": "Wyszukano „{{query}}” w podręczniku",
+    "ToolUsed": "Użyto {{name}}",
     "ViewModelInfo": "Wyświetl informacje o modelu"
   },
   "webuiSettings": {

@@ -4499,6 +4499,15 @@
     "Placeholder": "Faça uma pergunta sobre a WebUI",
     "Token": "Token",
     "TokenHint": "Esta implementação não é pública. Escolha um dos seus tokens de acesso.",
+    "ToolFailed": "{{name}} falhou: {{error}}",
+    "ToolNavigate": "{{page}} aberto",
+    "ToolPrepareSession": "Iniciador de sessão preenchido para rever",
+    "ToolPreviewDashboard": "Pré-visualização no painel: {{change}}",
+    "ToolReadDashboard": "Painel lido",
+    "ToolReadPage": "Página atual lida",
+    "ToolRejected": "Não feito: {{reason}}",
+    "ToolSearchManual": "Pesquisou \"{{query}}\" no manual",
+    "ToolUsed": "{{name}} usado",
     "ViewModelInfo": "Ver informações do modelo"
   },
   "webuiSettings": {

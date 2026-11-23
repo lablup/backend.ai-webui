@@ -4499,6 +4499,15 @@
     "Placeholder": "WebUI-н талаар асуулт асуух",
     "Token": "Токен",
     "TokenHint": "Энэ байршуулалт нийтэд нээлттэй биш. Түүний хандалтын токенуудаас нэгийг сонгоно уу.",
+    "ToolFailed": "{{name}} амжилтгүй: {{error}}",
+    "ToolNavigate": "{{page}} нээлээ",
+    "ToolPrepareSession": "Сешн эхлүүлэгчийг бөглөлөө, шалгана уу",
+    "ToolPreviewDashboard": "Хянах самбарын урьдчилсан харагдац: {{change}}",
+    "ToolReadDashboard": "Хянах самбарыг уншлаа",
+    "ToolReadPage": "Одоогийн хуудсыг уншлаа",
+    "ToolRejected": "Хийгдсэнгүй: {{reason}}",
+    "ToolSearchManual": "Гарын авлагаас \"{{query}}\" хайлаа",
+    "ToolUsed": "{{name}} ашиглалаа",
     "ViewModelInfo": "Загварын мэдээлэл харах"
   },
   "webuiSettings": {

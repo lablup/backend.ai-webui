@@ -102,7 +102,8 @@ export const PREPARE_DASHBOARD_INPUT_SCHEMA: WebMCPInputSchema = {
       type: 'string',
       minLength: 1,
       maxLength: 100,
-      description: 'addPanel / editPanel: a source key from sources[].key.',
+      description:
+        'addPanel / editPanel: a source key from sources[].key (bai_get_current_dashboard with withSources).',
     },
     panelType: {
       type: 'string',
@@ -272,6 +273,10 @@ export const rawActionsOfParam = (
 
 export const MAX_DRAFT_ACTIONS = 50;
 
+// The ids an agent can use, so a retry needs no second read.
+const idsOf = (items: ReadonlyArray<{ id: string; title: string }>) =>
+  items.map((item) => `${item.id} (${item.title})`).join(', ');
+
 const rejectionOf = (
   raw: Record<string, unknown>,
   ctx: DashboardChatContext,
@@ -296,7 +301,7 @@ const rejectionOf = (
     if (type === 'editPanel' && !ctx.panels.some((p) => p.id === raw.id)) {
       return {
         field: 'id',
-        reason: `"${String(raw.id)}" is not a custom panel on this board; see panels.`,
+        reason: `"${String(raw.id)}" is not a custom panel on this board. Panels: ${idsOf(ctx.panels) || 'none'}.`,
       };
     }
     return {
@@ -323,7 +328,7 @@ const rejectionOf = (
   }
   return {
     field: 'id',
-    reason: `"${String(raw.id)}" is not a card on this board; see cards.`,
+    reason: `"${String(raw.id)}" is not a card on this board. Pass one of these ids: ${idsOf(ctx.cards)}.`,
   };
 };
 
@@ -381,25 +386,38 @@ export const createGetCurrentDashboardTool = ({
 >): WebMCPTool => ({
   name: 'bai_get_current_dashboard',
   description:
-    "Read the dashboard open in this tab, as it is previewed now. Returns { page, cards: [{ id, title, onBoard, columnSpan?, rowSpan?, range? }], panels: [{ id, title, resourceType, panelType, filter }], sources: [{ key, label, panelTypes }], sourcesHelp, panelFieldsHelp, canCreateBoard, draft: [string] }. cards are the cards this user can place, on the board or not; panels are the custom panels; sourcesHelp lists each source's filter properties with their operators and allowed values, for bai_prepare_dashboard conditions; draft describes the changes previewed and not yet applied. Change the board with bai_prepare_dashboard.",
-  inputSchema: { type: 'object', properties: {}, additionalProperties: false },
+    "Read the dashboard open in this tab, as it is previewed now. Returns { page, cards: [{ id, title, onBoard, columnSpan?, rowSpan?, range? }], panels: [{ id, title, resourceType, panelType, filter }], canCreateBoard, draft: [string] }, and with withSources also { sources: [{ key, label, panelTypes }], sourcesHelp, panelFieldsHelp }. cards are the cards this user can place, on the board or not; panels are the custom panels; draft describes the changes previewed and not yet applied. Pass withSources before adding or editing a panel: sourcesHelp lists each source's filter properties with their operators and allowed values, for bai_prepare_dashboard conditions. Change the board with bai_prepare_dashboard.",
+  inputSchema: {
+    type: 'object',
+    properties: {
+      withSources: {
+        type: 'boolean',
+        description:
+          'Also return the data sources and their filter properties, which a new or edited panel needs. Defaults to false.',
+      },
+    },
+    additionalProperties: false,
+  },
   annotations: { readOnlyHint: true, untrustedContentHint: true },
-  execute: () => {
+  execute: (input) => {
     const ctx = getContext();
     const draft = draftOfRawActions(getRawDraft(), ctx);
     return {
       page: ctx.page,
       cards: cardsOf(ctx),
       panels: panelsOf(ctx),
-      sources: ctx.sources.map((source) => ({
-        key: source.key,
-        label: source.label,
-        panelTypes: source.panelTypes,
-      })),
-      sourcesHelp: describePanelSources(ctx.sources),
-      panelFieldsHelp: PANEL_FIELDS_HELP,
       canCreateBoard: ctx.canCreateBoard,
       draft: _.compact(draft.map(({ action }) => action && describe(action))),
+      // Several kilobytes: a small model's whole context, so only on request.
+      ...(input.withSources === true && {
+        sources: ctx.sources.map((source) => ({
+          key: source.key,
+          label: source.label,
+          panelTypes: source.panelTypes,
+        })),
+        sourcesHelp: describePanelSources(ctx.sources),
+        panelFieldsHelp: PANEL_FIELDS_HELP,
+      }),
     };
   },
 });
@@ -427,9 +445,15 @@ export const createPrepareDashboardTool = ({
       rejected: [rejected],
       nextStep: PREPARE_DASHBOARD_REJECTED,
     });
-    const built = rawActionOfInput(request);
-    if (!('raw' in built)) return reject(built);
     const ctx = getContext();
+    const built = rawActionOfInput(request);
+    if (!('raw' in built)) {
+      return reject(
+        built.field === 'id'
+          ? { ...built, reason: `${built.reason} Cards: ${idsOf(ctx.cards)}.` }
+          : built,
+      );
+    }
     const base = request.clearDraft ? [] : getRawDraft();
     if (base.length >= MAX_DRAFT_ACTIONS) {
       return reject({
