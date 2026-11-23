@@ -62,6 +62,7 @@ flowchart LR
 | `BAIFileInput`                           | `FileInput`                        |
 | `BAIMultiSelector`                       | `MultiSelector`                    |
 | `BAINumberInput`                         | `NumberInput`                      |
+| `BAIPasswordInput`                       | `PasswordInput`                    |
 | `BAIRadioList`, `BAIRadioListItem`       | `RadioList`, `RadioListItem`       |
 | `BAISegmentedControl`                    | `SegmentedControl`                 |
 | `BAISelector`                            | `Selector`                         |

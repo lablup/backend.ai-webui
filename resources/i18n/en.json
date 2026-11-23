@@ -2316,7 +2316,6 @@
     "EndpointUnreachable": "Can't connect to this server. Check the address and your network, then try again.",
     "ForgotPassword": "Forgot password?",
     "GoToLogin": "Go to login",
-    "HidePassword": "Hide password",
     "InvalidChangePasswordToken": "Invalid Token",
     "InvalidChangePasswordTokenMessage": "Issued token to change password has error. Please send another email for changing password and try again.",
     "LeaveService": "Leave Service",
@@ -2341,7 +2340,6 @@
     "ServerUnreachable": "Cannot connect to the server. Please check the API endpoint and try again.",
     "SessionExpired": "Your login session has expired. Please log in again.",
     "SessionMode": "Session",
-    "ShowPassword": "Show password",
     "SignUp": "Sign up",
     "SignoutFinished": "Signout finished.",
     "singleSignOn": {

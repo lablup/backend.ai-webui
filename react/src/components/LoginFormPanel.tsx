@@ -31,7 +31,6 @@ import BAIFormItem from './BAIFormItem';
 import EndpointHistoryField, {
   type EndpointHistoryEntry,
 } from './EndpointHistoryField';
-import PasswordRevealInput from './PasswordRevealInput';
 import SanitizedHtml from './SanitizedHtml';
 import type { TOTPActivateFormData } from './TOTPActivateModal';
 import { Banner } from '@lablup/ui-common/Banner';
@@ -51,6 +50,7 @@ import {
   useBAILogger,
   BAIUnmountAfterClose,
   BAISegmentedControl,
+  BAIPasswordInput,
   BAISegmentedControlItem,
   BAITextInput,
 } from 'backend.ai-ui';
@@ -361,7 +361,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
                   name="password"
                   style={{ marginBottom: token('--spacing-3') }}
                 >
-                  <PasswordRevealInput
+                  <BAIPasswordInput
                     aria-label={t('login.Password', { postProcess: [] })}
                     placeholder={t('login.Password', { postProcess: [] })}
                     autoComplete="current-password"

@@ -51,6 +51,7 @@ const formControlImportBans = [
   ['FileInput'],
   ['MultiSelector'],
   ['NumberInput'],
+  ['PasswordInput'],
   ['RadioList', 'RadioListItem'],
   ['SegmentedControl', 'SegmentedControlItem'],
   ['Selector'],
