@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="Admin Features" />
   <meta name="twitter:description" content="Superadmins land on the administration pages right after logging in, and move between them and the user pages with Switch to Admin Console and Switch to…" />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Admin Features","inLanguage":"en","description":"Superadmins land on the administration pages right after logging in, and move between them and the user pages with Switch to Admin Console and Switch to…","dateModified":"2026-11-22T15:12:39.000Z","url":"https://webui.docs.backend.ai/next/en/admin_menu.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Admin Features","inLanguage":"en","description":"Superadmins land on the administration pages right after logging in, and move between them and the user pages with Switch to Admin Console and Switch to…","dateModified":"2026-11-23T15:10:55.000Z","url":"https://webui.docs.backend.ai/next/en/admin_menu.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/admin_menu.html" />
   <link rel="alternate" hreflang="en" href="../en/admin_menu.html" />
   <link rel="alternate" hreflang="ja" href="../ja/admin_menu.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">Manual</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.10.0-alpha.3 (84bfbbb)">v26.10.0-alpha.3 (84bfbbb)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.10.0-alpha.3 (c50deb3)">v26.10.0-alpha.3 (c50deb3)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="Search docs...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -1915,7 +1915,7 @@ saved for the domain, returning each setting to its default. <strong>JSON Config
 settings as JSON, and can export them to a file or import one.</p>
 <p><figure data-bai-block="723" class="doc-figure"><img src="./images/system_settings_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>Figure 23.93</figcaption></figure>
 </p>
-<!-- TODO(screenshot): /admin/system-settings (System Settings tab) - recapture the toolbar without the removed Apply button (JSON Config and Reset only). Not captured on 2026-11-22: the capture backend's manager was unhealthy (/func/ returned 401). -->
+<!-- TODO(screenshot): /admin/system-settings (System Settings tab), viewport 1460x900, en/ko/ja/th - recapture so the toolbar shows only JSON Config and Reset; the current image still shows the removed Apply button. Still blocked on 2026-11-23: the capture backend at 10.82.1.75:8090 answers /func/ with 401 and no capture environment was provisioned this run, so no login is possible. Needs a human capture. -->
 
 <p data-bai-block="724">On the <strong>Configurations</strong> tab, you can see main settings of Backend.AI server.
 Currently, it provides several controls which can change and list settings.</p>
@@ -2226,7 +2226,7 @@ Management page, refer to the <a href="./rbac_management.html#grant-project-admi
 <p data-bai-block="856">Superadmins can open the <strong>Diagnostics</strong> page from the admin sidebar to run a set of automated health checks on the WebUI deployment. The page evaluates the browser-to-server configuration and reports any misconfiguration, so that connectivity or security problems can be identified before they affect users.</p>
 <p><figure data-bai-block="857" class="doc-figure"><img src="./images/diagnostics_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2344" height="1422" /><figcaption>Figure 23.105</figcaption></figure>
 </p>
-<!-- TODO(screenshot): /admin/diagnostics - recapture the section list including the new App Config section. Not captured on 2026-11-22: the capture backend's manager was unhealthy (/func/ returned 401). -->
+<!-- TODO(screenshot): /admin/diagnostics, viewport 1460x900, en/ko/ja/th - recapture the section list so it includes the new App Config section; the current image predates it. Still blocked on 2026-11-23: the capture backend at 10.82.1.75:8090 answers /func/ with 401 and no capture environment was provisioned this run, so no login is possible. Needs a human capture. -->
 
 <p data-bai-block="858">The toolbar at the top of the page provides the following controls:</p>
 <ul>
@@ -2288,7 +2288,7 @@ placeholder reading <code>No failed items. All diagnostics passed.</code>, so a 
     <div class="page-footer">
       <div class="page-metadata">
   <a class="edit-link" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/en/admin_menu/admin_menu.md" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg> Edit this page</a>
-  <span class="last-updated">Last updated on Nov 22, 2026</span>
+  <span class="last-updated">Last updated on Nov 23, 2026</span>
 </div>
       <nav class="pagination-nav" aria-label="Docs pages">
   <a class="pagination-nav__link pagination-nav__link--prev" href="./statistics.html">

@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="管理者機能" />
   <meta name="twitter:description" content="スーパー管理者はログイン直後に管理者ページが表示され、ユーザーメニューの管理者コンソールに切り替えとユーザーコンソールに切り替えで管理者ページとユーザーページを行き来できます。管理者ページでは、サイドバーに管理者向けメニューのみが表示されます。" />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"管理者機能","inLanguage":"ja","description":"スーパー管理者はログイン直後に管理者ページが表示され、ユーザーメニューの管理者コンソールに切り替えとユーザーコンソールに切り替えで管理者ページとユーザーページを行き来できます。管理者ページでは、サイドバーに管理者向けメニューのみが表示されます。","dateModified":"2026-11-22T15:12:39.000Z","url":"https://webui.docs.backend.ai/next/ja/admin_menu.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"管理者機能","inLanguage":"ja","description":"スーパー管理者はログイン直後に管理者ページが表示され、ユーザーメニューの管理者コンソールに切り替えとユーザーコンソールに切り替えで管理者ページとユーザーページを行き来できます。管理者ページでは、サイドバーに管理者向けメニューのみが表示されます。","dateModified":"2026-11-23T15:10:55.000Z","url":"https://webui.docs.backend.ai/next/ja/admin_menu.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/admin_menu.html" />
   <link rel="alternate" hreflang="en" href="../en/admin_menu.html" />
   <link rel="alternate" hreflang="ja" href="../ja/admin_menu.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">マニュアル</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.10.0-alpha.3 (84bfbbb)">v26.10.0-alpha.3 (84bfbbb)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.10.0-alpha.3 (c50deb3)">v26.10.0-alpha.3 (c50deb3)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="ドキュメント検索...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -1789,7 +1789,7 @@ WebUI がドメインのすべてのユーザーに提供するオプション�
 現在の設定を JSON で表示し、ファイルへのエクスポートやファイルからのインポートができます。</p>
 <p><figure data-bai-block="719" class="doc-figure"><img src="./images/system_settings_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>図 23.93</figcaption></figure>
 </p>
-<!-- TODO(screenshot): /admin/system-settings (System Settings tab) - recapture the toolbar without the removed Apply button (JSON Config and Reset only). Not captured on 2026-11-22: the capture backend's manager was unhealthy (/func/ returned 401). -->
+<!-- TODO(screenshot): /admin/system-settings (System Settings tab), viewport 1460x900, en/ko/ja/th - recapture so the toolbar shows only JSON Config and Reset; the current image still shows the removed Apply button. Still blocked on 2026-11-23: the capture backend at 10.82.1.75:8090 answers /func/ with 401 and no capture environment was provisioned this run, so no login is possible. Needs a human capture. -->
 
 <p data-bai-block="720"><strong>構成</strong> タブでは、Backend.AIサーバーの主要な設定を確認できます。現在、設定を変更および
 一覧表示できる複数のコントロールが提供されています。</p>
@@ -2094,7 +2094,7 @@ Backend.AIの各コンポーネントに互換性があるかどうかを確認�
 <p data-bai-block="852">スーパー管理者は、管理者サイドバーから <strong>診断</strong> ページを開いて、WebUI デプロイメントに対する自動状態チェックを実行できます。このページはブラウザーとサーバー間の構成を評価し、誤った設定を報告することで、接続またはセキュリティの問題がユーザーに影響を与える前に把握できるようにします。</p>
 <p><figure data-bai-block="853" class="doc-figure"><img src="./images/diagnostics_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2344" height="1422" /><figcaption>図 23.105</figcaption></figure>
 </p>
-<!-- TODO(screenshot): /admin/diagnostics - recapture the section list including the new App Config section. Not captured on 2026-11-22: the capture backend's manager was unhealthy (/func/ returned 401). -->
+<!-- TODO(screenshot): /admin/diagnostics, viewport 1460x900, en/ko/ja/th - recapture the section list so it includes the new App Config section; the current image predates it. Still blocked on 2026-11-23: the capture backend at 10.82.1.75:8090 answers /func/ with 401 and no capture environment was provisioned this run, so no login is possible. Needs a human capture. -->
 
 <p data-bai-block="854">ページ上部のツールバーには、次のコントロールがあります。</p>
 <ul>
@@ -2157,7 +2157,7 @@ Backend.AIの各コンポーネントに互換性があるかどうかを確認�
     <div class="page-footer">
       <div class="page-metadata">
   <a class="edit-link" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/ja/admin_menu/admin_menu.md" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg> このページを編集</a>
-  <span class="last-updated">最終更新日 2026年11月22日</span>
+  <span class="last-updated">最終更新日 2026年11月23日</span>
 </div>
       <nav class="pagination-nav" aria-label="Docs pages">
   <a class="pagination-nav__link pagination-nav__link--prev" href="./statistics.html">

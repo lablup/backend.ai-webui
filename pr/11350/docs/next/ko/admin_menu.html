@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="관리자 기능" />
   <meta name="twitter:description" content="슈퍼 관리자는 로그인 직후 관리자 페이지로 이동하며, 사용자 메뉴의 관리자 콘솔로 전환과 사용자 콘솔로 전환으로 관리자 페이지와 사용자 페이지를 오갈 수 있습니다. 관리자 페이지에서는 사이드바에 관리자 메뉴만 표시됩니다." />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"관리자 기능","inLanguage":"ko","description":"슈퍼 관리자는 로그인 직후 관리자 페이지로 이동하며, 사용자 메뉴의 관리자 콘솔로 전환과 사용자 콘솔로 전환으로 관리자 페이지와 사용자 페이지를 오갈 수 있습니다. 관리자 페이지에서는 사이드바에 관리자 메뉴만 표시됩니다.","dateModified":"2026-11-22T15:12:39.000Z","url":"https://webui.docs.backend.ai/next/ko/admin_menu.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"관리자 기능","inLanguage":"ko","description":"슈퍼 관리자는 로그인 직후 관리자 페이지로 이동하며, 사용자 메뉴의 관리자 콘솔로 전환과 사용자 콘솔로 전환으로 관리자 페이지와 사용자 페이지를 오갈 수 있습니다. 관리자 페이지에서는 사이드바에 관리자 메뉴만 표시됩니다.","dateModified":"2026-11-23T15:10:55.000Z","url":"https://webui.docs.backend.ai/next/ko/admin_menu.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/admin_menu.html" />
   <link rel="alternate" hreflang="en" href="../en/admin_menu.html" />
   <link rel="alternate" hreflang="ja" href="../ja/admin_menu.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">매뉴얼</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.10.0-alpha.3 (84bfbbb)">v26.10.0-alpha.3 (84bfbbb)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.10.0-alpha.3 (c50deb3)">v26.10.0-alpha.3 (c50deb3)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="문서 검색...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -1608,7 +1608,7 @@ CSV의 모든 셀에 같은 값을 반복해서 입력할 필요가 없습니다
 <p data-bai-block="718"><strong>시스템 설정</strong> 탭에서 슈퍼 관리자는 로그인 방식, 세션 생성 옵션, 사이드바 메뉴 등 WebUI가 도메인의 모든 사용자에게 제공하는 옵션을 설정합니다. 변경한 값은 즉시 저장되어 모든 사용자에게 적용되며, <strong>초기화</strong>는 도메인에 저장된 모든 값을 삭제하여 각 설정을 기본값으로 되돌립니다. <strong>JSON 설정</strong>은 현재 설정을 JSON으로 보여주며, 파일로 내보내거나 파일에서 가져올 수 있습니다.</p>
 <p><figure data-bai-block="719" class="doc-figure"><img src="./images/system_settings_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>그림 23.93</figcaption></figure>
 </p>
-<!-- TODO(screenshot): /admin/system-settings (System Settings tab) - recapture the toolbar without the removed Apply button (JSON Config and Reset only). Not captured on 2026-11-22: the capture backend's manager was unhealthy (/func/ returned 401). -->
+<!-- TODO(screenshot): /admin/system-settings (System Settings tab), viewport 1460x900, en/ko/ja/th - recapture so the toolbar shows only JSON Config and Reset; the current image still shows the removed Apply button. Still blocked on 2026-11-23: the capture backend at 10.82.1.75:8090 answers /func/ with 401 and no capture environment was provisioned this run, so no login is possible. Needs a human capture. -->
 
 <p data-bai-block="720"><strong>환경 설정</strong> 탭에서는 Backend.AI 서버의 주요 설정을 볼 수 있습니다. 현재 설정을 변경하고 나열할 수 있는 여러 컨트롤을 제공합니다.</p>
 <p data-bai-block="721"><code>Digest</code>, <code>Tag</code>, <code>None</code> 중 하나의 옵션을 선택하여 이미지 자동 설치 및 업데이트 규칙을 변경할 수 있습니다. <code>Digest</code>는 이미지의 무결성을 확인하고 중복된 레이어를 재사용하여 이미지 다운로드 효율성을 향상시키는 일종의 체크섬입니다. <code>Tag</code>는 이미지의 무결성을 보장하지 않기 때문에 개발 옵션 전용입니다.</p>
@@ -1889,7 +1889,7 @@ WebUI의 어느 화면에서든 편집기를 열 수 있습니다.</li>
 <p data-bai-block="852">슈퍼 관리자는 관리자 사이드바에서 <strong>진단</strong> 페이지를 열어 WebUI 배포에 대한 자동 상태 점검을 실행할 수 있습니다. 이 페이지는 브라우저와 서버 간 구성을 평가하고 잘못된 설정을 보고하여, 연결 또는 보안 문제가 사용자에게 영향을 미치기 전에 파악할 수 있도록 합니다.</p>
 <p><figure data-bai-block="853" class="doc-figure"><img src="./images/diagnostics_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2344" height="1422" /><figcaption>그림 23.105</figcaption></figure>
 </p>
-<!-- TODO(screenshot): /admin/diagnostics - recapture the section list including the new App Config section. Not captured on 2026-11-22: the capture backend's manager was unhealthy (/func/ returned 401). -->
+<!-- TODO(screenshot): /admin/diagnostics, viewport 1460x900, en/ko/ja/th - recapture the section list so it includes the new App Config section; the current image predates it. Still blocked on 2026-11-23: the capture backend at 10.82.1.75:8090 answers /func/ with 401 and no capture environment was provisioned this run, so no login is possible. Needs a human capture. -->
 
 <p data-bai-block="854">페이지 상단의 도구 모음에서는 다음 컨트롤을 제공합니다.</p>
 <ul>
@@ -1951,7 +1951,7 @@ WebUI의 어느 화면에서든 편집기를 열 수 있습니다.</li>
     <div class="page-footer">
       <div class="page-metadata">
   <a class="edit-link" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/ko/admin_menu/admin_menu.md" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg> 이 페이지 편집</a>
-  <span class="last-updated">마지막 업데이트 2026년 11월 22일</span>
+  <span class="last-updated">마지막 업데이트 2026년 11월 23일</span>
 </div>
       <nav class="pagination-nav" aria-label="Docs pages">
   <a class="pagination-nav__link pagination-nav__link--prev" href="./statistics.html">
