@@ -4,7 +4,9 @@
 
  The floating button and chat panel sit on the ladder's `assistant` rung
  (packages/backend.ai-ui/src/styles/zIndexLadder.ts): over page content, under
- drawers, dialogs and notifications.
+ drawers, dialogs and notifications. They are anchored to the bottom-left of
+ the main content area (`.main-layout-main-content`, right of the sider), away
+ from the bottom-right notification stack.
 */
 @layer components {
   :root {
@@ -12,20 +14,13 @@
     --webui-assistant-inset: var(--spacing-6);
   }
 
-  /* The notification stack would otherwise cover the button. */
-  :root:has(.webui-assistant-fab) {
-    --bai-notification-stack-inset-bottom: calc(
-      var(--webui-assistant-fab-size) + var(--spacing-2)
-    );
-  }
-
   .webui-assistant-fab {
-    position: fixed;
+    position: absolute;
     inset-block-end: calc(
       var(--webui-assistant-inset) + env(safe-area-inset-bottom, 0px)
     );
-    inset-inline-end: calc(
-      var(--webui-assistant-inset) + env(safe-area-inset-right, 0px)
+    inset-inline-start: calc(
+      var(--webui-assistant-inset) + env(safe-area-inset-left, 0px)
     );
     z-index: var(--bai-z-assistant);
     width: var(--webui-assistant-fab-size);
@@ -34,16 +29,16 @@
   }
 
   .webui-assistant-panel {
-    position: fixed;
+    position: absolute;
     inset-block-end: calc(
       var(--webui-assistant-inset) + var(--webui-assistant-fab-size) +
         var(--spacing-3) + env(safe-area-inset-bottom, 0px)
     );
-    inset-inline-end: calc(
-      var(--webui-assistant-inset) + env(safe-area-inset-right, 0px)
+    inset-inline-start: calc(
+      var(--webui-assistant-inset) + env(safe-area-inset-left, 0px)
     );
     z-index: var(--bai-z-assistant);
-    width: min(400px, calc(100vw - var(--webui-assistant-inset) * 2));
+    width: min(400px, calc(100% - var(--webui-assistant-inset) * 2));
     height: min(
       600px,
       calc(
