@@ -72,11 +72,22 @@ const WebUISettingNumberInput: React.FC<WebUISettingNumberInputProps> = ({
         placeholder={
           isDefaultUnlimited ? undefined : String(defaultValue ?? '')
         }
-        min={definition.min}
+        min={
+          // Unlimited is reached only through the checkbox on a whole-number row.
+          hasToggle && definition.isInteger && definition.min === unlimitedValue
+            ? definition.min + 1
+            : definition.min
+        }
         max={definition.max}
         isIntegerOnly={definition.isInteger}
         units={definition.unit}
-        onChange={(next) => onChange(next === null ? undefined : next)}
+        onChange={(next) => {
+          // A commit that leaves the stored value as it is still ends the entry.
+          if (next === null || next === unlimitedValue) {
+            setIsEnteringLimit(false);
+          }
+          onChange(next === null ? undefined : next);
+        }}
       />
     </BAIFlex>
   );

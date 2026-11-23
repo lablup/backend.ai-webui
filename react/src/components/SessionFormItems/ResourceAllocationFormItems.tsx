@@ -786,9 +786,10 @@ const ResourceAllocationFormItems: React.FC<
                                 warningOnly: true,
                                 validator: async (_rule, value: string) => {
                                   if (
+                                    resourceLimits.mem?.max &&
                                     compareNumberWithUnits(
                                       resourceLimits.mem?.min as string,
-                                      resourceLimits.mem?.max as string,
+                                      resourceLimits.mem.max,
                                     ) > 0
                                   ) {
                                     return Promise.reject(
