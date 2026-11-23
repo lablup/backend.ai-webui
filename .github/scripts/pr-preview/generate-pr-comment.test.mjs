@@ -15,6 +15,7 @@ const META = {
   shortHash: "a1b2c3d",
   storybookUrl: "https://lablup.github.io/backend.ai-webui/pr/9541/storybook/",
   docsUrl: "https://lablup.github.io/backend.ai-webui/pr/9541/docs/next/",
+  adrUrl: "https://lablup.github.io/backend.ai-webui/pr/9541/adr/",
   runUrl: "https://github.com/lablup/backend.ai-webui/actions/runs/1",
 };
 
@@ -134,6 +135,53 @@ const TOOLKIT_MANIFEST = {
   },
 };
 
+const ADR_CHANGES = {
+  base: "main",
+  head: "feat/gh-1-adr",
+  baseSha: "a".repeat(40),
+  headSha: "b".repeat(40),
+  adrs: [
+    {
+      id: "0003",
+      status: "removed",
+      title: "Old decision",
+      files: {
+        en: { path: "adr/0003-old.md", status: "removed" },
+        ko: { path: "adr/0003-old.ko.md", status: "removed" },
+      },
+    },
+    {
+      id: "0012",
+      status: "modified",
+      title: "Changed decision",
+      files: {
+        en: {
+          path: "adr/0012-new-name.md",
+          status: "renamed",
+          basePath: "adr/0012-old-name.md",
+        },
+        ko: { path: "adr/0012-new-name.ko.md", status: "unchanged" },
+      },
+    },
+    {
+      id: "0031",
+      status: "added",
+      title: "New decision",
+      files: {
+        en: { path: "adr/0031-new.md", status: "added" },
+        ko: { path: "adr/0031-new.ko.md", status: "added" },
+      },
+    },
+    {
+      id: "0040",
+      status: "modified",
+      title: "Korean only edit",
+      files: { ko: { path: "adr/0040-k.ko.md", status: "modified" } },
+    },
+  ],
+  architecture: { en: "modified", ko: "unchanged" },
+};
+
 const render = (files) => {
   const dir = mkdtempSync(join(tmpdir(), "pr-comment-"));
   const args = [SCRIPT];
@@ -236,4 +284,95 @@ test("manifest fields that could reach a URL are validated, and titles escaped",
 
 test("neither analysis nor docs is an error", () => {
   assert.throws(() => render([["meta", "pr-meta.json", META]]));
+});
+
+test("an ADR-only PR renders the ADR section with diff links", () => {
+  const body = render([
+    ["meta", "pr-meta.json", META],
+    ["adr", "changes.json", ADR_CHANGES],
+  ]);
+  const url = "https://lablup.github.io/backend.ai-webui/pr/9541/adr/";
+  assert.match(body, /### 📐 ADR Preview/);
+  assert.doesNotMatch(body, /Storybook|Docs Preview/);
+  assert.ok(body.includes(`href="${url}"`));
+  assert.ok(
+    body.includes(
+      `| [0003 — Old decision](${url}#/0003?view=diff&lang=en) | \`REMOVED\` | \`en\` (removed), \`ko\` (removed) |`,
+    ),
+  );
+  assert.ok(
+    body.includes(
+      `| [0012 — Changed decision](${url}#/0012?view=diff&lang=en) | changed | \`en\` (renamed) |`,
+    ),
+  );
+  assert.ok(
+    body.includes(
+      `| [0031 — New decision](${url}#/0031?lang=en) | \`NEW\` | \`en\` (added), \`ko\` (added) |`,
+    ),
+  );
+  assert.ok(
+    body.includes(`(${url}#/0040?view=diff&lang=ko) | changed | \`ko\` |`),
+  );
+  assert.match(
+    body,
+    /The ADR index \(`docs\/ARCHITECTURE\*\.md`\) changed: `en` modified\./,
+  );
+  assert.ok(body.includes(`>ADRs</a> · `));
+});
+
+test("an ADR preview with no ADR change says so", () => {
+  const body = render([
+    ["meta", "pr-meta.json", META],
+    [
+      "adr",
+      "changes.json",
+      {
+        ...ADR_CHANGES,
+        adrs: [],
+        architecture: { en: "unchanged", ko: "unchanged" },
+      },
+    ],
+  ]);
+  assert.match(body, /no ADR change to mark \(viewer or pipeline change\)/);
+  assert.doesNotMatch(body, /\| ADR \|/);
+});
+
+test("ADR ids that could reach a URL are dropped, and titles escaped", () => {
+  const body = render([
+    ["meta", "pr-meta.json", META],
+    [
+      "adr",
+      "changes.json",
+      {
+        ...ADR_CHANGES,
+        adrs: [
+          { id: "../x", status: "added", title: "evil", files: {} },
+          {
+            id: "0007",
+            status: "<b>",
+            title: "T [a](b) <img src=x> | p",
+            files: { en: { path: "adr/0007-t.md", status: "<script>" } },
+          },
+        ],
+      },
+    ],
+  ]);
+  assert.doesNotMatch(body, /\.\.\/x|evil|<img|<script>|<b>/);
+  assert.match(body, /0007 — T \\\[a\\\]\(b\) &lt;img src=x&gt; \\\| p/);
+  assert.match(body, /\| changed \| — \|/);
+});
+
+test("all three inputs render all sections in order", () => {
+  const body = render([
+    ["meta", "pr-meta.json", META],
+    ["analysis", "analysis.json", ANALYSIS],
+    ["docs", "docs-manifest.json", DOCS_MANIFEST],
+    ["adr", "changes.json", ADR_CHANGES],
+  ]);
+  const order = [
+    "### 📚 Storybook Preview",
+    "### 📖 Docs Preview",
+    "### 📐 ADR Preview",
+  ].map((h) => body.indexOf(h));
+  assert.ok(order.every((i, n) => i >= 0 && (n === 0 || i > order[n - 1])));
 });
