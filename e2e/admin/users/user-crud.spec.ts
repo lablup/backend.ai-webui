@@ -1022,16 +1022,13 @@ test.describe(
       const row = page
         .getByRole('row')
         .filter({ has: page.getByRole('cell', { name: email }) });
-      // The admin server intermittently answers 503, which crashes the page load.
-      await expect(async () => {
-        await navigateTo(
-          page,
-          `credential?tab=users&filter=${encodeURIComponent(
-            JSON.stringify({ email: { equals: email } }),
-          )}`,
-        );
-        await expect(row).toBeVisible({ timeout: 15000 });
-      }).toPass({ timeout: 60000 });
+      await navigateTo(
+        page,
+        `credential?tab=users&filter=${encodeURIComponent(
+          JSON.stringify({ email: { equals: email } }),
+        )}`,
+      );
+      await expect(row).toBeVisible({ timeout: 20000 });
       await clickRowAction(page, row, 'Use as this user');
       const modal = page.getByRole('dialog', {
         name: `Use as ${email.split('@')[0]}`,
@@ -1095,12 +1092,7 @@ test.describe(
         await actAsTab.waitForLoadState('domcontentloaded');
 
         const banner = actAsTab.getByTestId('act-as-banner');
-        // A reload keeps the tab's act-as state; it only retries a 503-crashed load.
-        let attempt = 0;
-        await expect(async () => {
-          if (attempt++ > 0) await actAsTab.reload();
-          await expect(banner).toBeVisible({ timeout: 15000 });
-        }).toPass({ timeout: 60000 });
+        await expect(banner).toBeVisible({ timeout: 20000 });
         await expect(banner).toContainText(actAsEmail!);
         // Production builds show no i18n key markers, so the tab's own state is the signal.
         const actAsState = await actAsTab.evaluate(() =>
@@ -1112,10 +1104,8 @@ test.describe(
         const adminRow = page.getByRole('row').filter({
           has: page.getByRole('cell', { name: actAsEmail! }),
         });
-        await expect(async () => {
-          await page.reload();
-          await expect(adminRow).toBeVisible({ timeout: 15000 });
-        }).toPass({ timeout: 60000 });
+        await page.reload();
+        await expect(adminRow).toBeVisible({ timeout: 20000 });
         await expect(page.getByTestId('act-as-banner')).toHaveCount(0);
         expect(
           await page.evaluate(() =>
