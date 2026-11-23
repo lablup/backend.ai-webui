@@ -35,6 +35,10 @@ test.describe(
   'WebUI Assistant',
   { tag: ['@regression', '@user-settings', '@functional'] },
   () => {
+    // In order in one worker, so a run creates one fixture user; unlike
+    // 'serial', a failure does not skip the other test.
+    test.describe.configure({ mode: 'default' });
+
     test.beforeAll(async () => {
       const api = await createAdminApiContext();
       try {
@@ -49,17 +53,20 @@ test.describe(
       }
     });
 
+    // Best effort: a cleanup failure must not fail passing tests; the global
+    // teardown sweeps leftover `e2e-` users.
     test.afterAll(async () => {
-      const api = await createAdminApiContext();
+      let api: Awaited<ReturnType<typeof createAdminApiContext>> | undefined;
       try {
-        await purgeUserViaApi(api, FIXTURE_EMAIL).catch((error) =>
-          console.warn(
-            `[webui-assistant] could not purge ${FIXTURE_EMAIL}:`,
-            error,
-          ),
+        api = await createAdminApiContext();
+        await purgeUserViaApi(api, FIXTURE_EMAIL);
+      } catch (error) {
+        console.warn(
+          `[webui-assistant] could not purge ${FIXTURE_EMAIL}:`,
+          error,
         );
       } finally {
-        await api.dispose();
+        await api?.dispose();
       }
     });
 
