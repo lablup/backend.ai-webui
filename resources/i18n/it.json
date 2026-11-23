@@ -838,6 +838,10 @@
     "InUsePercent": "In uso {{percent}}%",
     "MemoryInUsePercent": "Memoria in uso {{percent}}%",
     "Used": "Usato",
+    "agentDraft": {
+      "Description": "Un agente IA ha proposto queste modifiche. La bacheca qui sotto ne mostra l'anteprima; nulla viene salvato finché non premi {{apply}}.",
+      "Title": "Modifiche proposte da un agente IA"
+    },
     "boards": {
       "BoardName": "Nome della bacheca",
       "BoardNameRequired": "Inserisci un nome per la bacheca",

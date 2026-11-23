@@ -838,6 +838,10 @@
     "InUsePercent": "使用中 {{percent}}%",
     "MemoryInUsePercent": "記憶體使用 {{percent}}%",
     "Used": "用過的",
+    "agentDraft": {
+      "Description": "AI 代理建議了以下變更。下方的看板為預覽，按下 {{apply}} 之前不會儲存。",
+      "Title": "AI 代理建議的變更"
+    },
     "boards": {
       "BoardName": "看板名稱",
       "BoardNameRequired": "請輸入看板名稱",

@@ -838,6 +838,10 @@
     "InUsePercent": "使用中 {{percent}}%",
     "MemoryInUsePercent": "メモリ使用 {{percent}}%",
     "Used": "使用済み",
+    "agentDraft": {
+      "Description": "AI エージェントが以下の変更を提案しました。ボードはプレビューで、{{apply}} を押すまで保存されません。",
+      "Title": "AI エージェントが提案した変更"
+    },
     "boards": {
       "BoardName": "ボード名",
       "BoardNameRequired": "ボード名を入力してください",

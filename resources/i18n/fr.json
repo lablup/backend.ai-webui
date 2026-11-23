@@ -838,6 +838,10 @@
     "InUsePercent": "Utilisé {{percent}} %",
     "MemoryInUsePercent": "Mémoire utilisée {{percent}} %",
     "Used": "Utilisé",
+    "agentDraft": {
+      "Description": "Un agent IA a proposé ces modifications. Le tableau ci-dessous en affiche un aperçu ; rien n'est enregistré avant que vous n'appuyiez sur {{apply}}.",
+      "Title": "Modifications proposées par un agent IA"
+    },
     "boards": {
       "BoardName": "Nom du tableau",
       "BoardNameRequired": "Saisissez un nom de tableau",

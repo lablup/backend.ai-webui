@@ -2,8 +2,10 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { AGENT_PREFILL_PARAM } from '../../helper/webmcpConstants';
 import type { ProjectContextOrNull } from '../../types/projectContext';
 import { dashboardEditModeAtom } from '../dashboardEditModeAtom';
+import DashboardAgentDraftNotice from './DashboardAgentDraftNotice';
 import DashboardBoardSection from './DashboardBoardSection';
 import DashboardBoardTabs from './DashboardBoardTabs';
 import DashboardEditSider from './DashboardEditSider';
@@ -19,7 +21,15 @@ import {
   type DashboardAssistantAction,
 } from './assistantActions';
 import { dashboardAgentAtom, type DashboardAgent } from './dashboardAgent';
+import { describeDashboardAction } from './dashboardChat';
 import { dashboardScopeKey } from './dashboardScope';
+import {
+  DASHBOARD_DRAFT_PARAM,
+  createGetCurrentDashboardTool,
+  createPrepareDashboardTool,
+  draftOfRawActions,
+  rawActionsOfParam,
+} from './dashboardWebMCP';
 import { DeniedPanelsContext, useDeniedPanels } from './panelPermission';
 import { panelSettingOverridesAtom } from './panelSettingOverrides';
 import { panelSourceSpecs } from './panelSourceSpecs';
@@ -41,11 +51,19 @@ import {
   BAIFlex,
   BAISkeleton,
   BAIUnmountAfterClose,
+  useWebMCPTool,
   type BAIBoardProps,
 } from 'backend.ai-ui';
 import { useAtom, useSetAtom } from 'jotai';
 import * as _ from 'lodash-es';
-import React, { Suspense, useEffect, useRef, useState } from 'react';
+import { parseAsString, useQueryStates } from 'nuqs';
+import React, {
+  Suspense,
+  useEffect,
+  useEffectEvent,
+  useRef,
+  useState,
+} from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { useTranslation } from 'react-i18next';
 
@@ -134,6 +152,20 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
     useState<ReadonlyArray<DashboardAssistantAction> | null>(null);
   const setDashboardAgent = useSetAtom(dashboardAgentAtom);
   const { t } = useTranslation();
+  // A preview `bai_prepare_dashboard` filled travels in the URL, so its link reopens it.
+  const [agentDraftQuery, setAgentDraftQuery] = useQueryStates(
+    {
+      [DASHBOARD_DRAFT_PARAM]: parseAsString,
+      [AGENT_PREFILL_PARAM]: parseAsString,
+    },
+    { history: 'replace' },
+  );
+  const agentDraftParam = agentDraftQuery[DASHBOARD_DRAFT_PARAM];
+  const clearAgentDraftQuery = () =>
+    setAgentDraftQuery({
+      [DASHBOARD_DRAFT_PARAM]: null,
+      [AGENT_PREFILL_PARAM]: null,
+    });
 
   // These atoms are global: clear them when leaving the page, but not when a
   // suspending query remounts the board on the same path (that would drop an early click).
@@ -205,15 +237,37 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
     );
   };
 
+  const assistantContext: DashboardAgent['context'] = {
+    page,
+    cards: assistantCards,
+    panels: assistantPanels,
+    sources: panelSourceSpecs(availableResources, { gridEnabled, t }),
+    canCreateBoard: page !== 'project',
+  };
+  // The URL's draft replaces the preview whenever it changes; an emptied one is left to Discard.
+  const [agentDraftParamSeen, setAgentDraftParamSeen] = useState<string | null>(
+    null,
+  );
+  if (agentDraftParam !== agentDraftParamSeen) {
+    setAgentDraftParamSeen(agentDraftParam);
+    if (agentDraftParam) {
+      const actions = _.compact(
+        draftOfRawActions(
+          rawActionsOfParam(agentDraftParam),
+          assistantContext,
+        ).map((item) => item.action),
+      );
+      setDraftActions(actions.length ? actions : null);
+    }
+  }
+  const isAgentDraft =
+    !!agentDraftParam &&
+    !!agentDraftQuery[AGENT_PREFILL_PARAM] &&
+    !!draftActions?.length;
+
   // The WebUI Assistant's chat edits this board through the agent it reads here.
   const dashboardAgent: DashboardAgent = {
-    context: {
-      page,
-      cards: assistantCards,
-      panels: assistantPanels,
-      sources: panelSourceSpecs(availableResources, { gridEnabled, t }),
-      canCreateBoard: page !== 'project',
-    },
+    context: assistantContext,
     draft: draftActions ?? [],
     propose: (actions) => {
       setDraftActions((current) => {
@@ -237,12 +291,14 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
       highlightCard(null);
       applyAssistantActions(draftActions);
       setDraftActions(null);
+      clearAgentDraftQuery();
       const changedId = firstShownCardOf(draftActions);
       if (changedId) revealCard(changedId);
     },
     discard: () => {
       highlightCard(null);
       setDraftActions(null);
+      clearAgentDraftQuery();
     },
     highlight: highlightCard,
     reveal: revealCard,
@@ -252,6 +308,33 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
     setDashboardAgent(dashboardAgent);
   });
   useEffect(() => () => setDashboardAgent(null), [setDashboardAgent]);
+
+  const describe = (action: DashboardAssistantAction) =>
+    describeDashboardAction(action, assistantContext, t);
+  const getRawDraft = () => rawActionsOfParam(agentDraftParam);
+  useWebMCPTool(
+    createGetCurrentDashboardTool({
+      getContext: () => assistantContext,
+      getRawDraft,
+      describe,
+    }),
+  );
+  useWebMCPTool(
+    createPrepareDashboardTool({
+      getContext: () => assistantContext,
+      getRawDraft,
+      getSearch: () => window.location.search,
+      pathWith: (search) => `${window.location.pathname}${search}`,
+      openPreview: (search) => {
+        const params = new URLSearchParams(search);
+        setAgentDraftQuery({
+          [DASHBOARD_DRAFT_PARAM]: params.get(DASHBOARD_DRAFT_PARAM),
+          [AGENT_PREFILL_PARAM]: params.get(AGENT_PREFILL_PARAM),
+        });
+      },
+      describe,
+    }),
+  );
 
   const filters = useDashboardFilters(page, boards, project);
   const scopeKey = dashboardScopeKey(page, filters.scope);
@@ -263,6 +346,16 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
     setDraftTargetSeen(draftTarget);
     setDraftActions(null);
   }
+  const onDraftTargetChange = useEffectEvent(() => {
+    if (agentDraftParam) clearAgentDraftQuery();
+  });
+  // Compared, not skipped on mount: an agent's link opens on the board it was made on.
+  const lastDraftTargetRef = useRef(draftTarget);
+  useEffect(() => {
+    if (lastDraftTargetRef.current === draftTarget) return;
+    lastDraftTargetRef.current = draftTarget;
+    onDraftTargetChange();
+  }, [draftTarget]);
   useBoardItemVisibility(boardContainerRef);
 
   const scrollBoardEndIntoView = () => {
@@ -316,6 +409,13 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
                 <DashboardBoardTabs boards={boards} />
               ) : null}
             </DashboardFilterBar>
+            {isAgentDraft ? (
+              <DashboardAgentDraftNotice
+                changes={(draftActions ?? []).map(describe)}
+                onApply={dashboardAgent.apply}
+                onDiscard={dashboardAgent.discard}
+              />
+            ) : null}
             <DeniedPanelsContext value={denied.reporterFor(scopeKey)}>
               <BAIBoard
                 movable

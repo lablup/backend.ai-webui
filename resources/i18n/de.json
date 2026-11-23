@@ -838,6 +838,10 @@
     "InUsePercent": "Belegt {{percent}} %",
     "MemoryInUsePercent": "Speicher belegt {{percent}} %",
     "Used": "Gebraucht",
+    "agentDraft": {
+      "Description": "Ein KI-Agent hat diese Änderungen vorgeschlagen. Das Board unten zeigt eine Vorschau; nichts wird gespeichert, bevor Sie {{apply}} drücken.",
+      "Title": "Von einem KI-Agenten vorgeschlagene Änderungen"
+    },
     "boards": {
       "BoardName": "Board-Name",
       "BoardNameRequired": "Geben Sie einen Board-Namen ein",

@@ -835,6 +835,10 @@
     "InUsePercent": "ใช้อยู่ {{percent}}%",
     "MemoryInUsePercent": "หน่วยความจำที่ใช้อยู่ {{percent}}%",
     "Used": "ใช้แล้ว",
+    "agentDraft": {
+      "Description": "เอเจนต์ AI เสนอการเปลี่ยนแปลงเหล่านี้ บอร์ดด้านล่างแสดงตัวอย่าง และจะไม่มีการบันทึกจนกว่าคุณจะกด {{apply}}",
+      "Title": "การเปลี่ยนแปลงที่เอเจนต์ AI เสนอ"
+    },
     "boards": {
       "BoardName": "ชื่อบอร์ด",
       "BoardNameRequired": "ป้อนชื่อบอร์ด",

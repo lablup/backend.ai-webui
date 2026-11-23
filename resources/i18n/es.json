@@ -838,6 +838,10 @@
     "InUsePercent": "En uso {{percent}} %",
     "MemoryInUsePercent": "Memoria en uso {{percent}} %",
     "Used": "Usado",
+    "agentDraft": {
+      "Description": "Un agente de IA propuso estos cambios. El tablero de abajo los muestra en vista previa; no se guarda nada hasta que pulse {{apply}}.",
+      "Title": "Cambios propuestos por un agente de IA"
+    },
     "boards": {
       "BoardName": "Nombre del tablero",
       "BoardNameRequired": "Introduzca un nombre de tablero",

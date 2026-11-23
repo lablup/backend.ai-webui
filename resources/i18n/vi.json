@@ -838,6 +838,10 @@
     "InUsePercent": "Đang dùng {{percent}}%",
     "MemoryInUsePercent": "Bộ nhớ đang dùng {{percent}}%",
     "Used": "Đã sử dụng",
+    "agentDraft": {
+      "Description": "Một tác tử AI đã đề xuất các thay đổi này. Bảng bên dưới hiển thị bản xem trước; không có gì được lưu cho đến khi bạn nhấn {{apply}}.",
+      "Title": "Thay đổi do tác tử AI đề xuất"
+    },
     "boards": {
       "BoardName": "Tên bảng",
       "BoardNameRequired": "Nhập tên bảng",

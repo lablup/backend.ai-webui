@@ -825,6 +825,10 @@
     "InUsePercent": "In use {{percent}}%",
     "MemoryInUsePercent": "Memory in use {{percent}}%",
     "Used": "Used",
+    "agentDraft": {
+      "Description": "An AI agent proposed these changes. The board below previews them; nothing is saved until you press {{apply}}.",
+      "Title": "Changes proposed by an AI agent"
+    },
     "boards": {
       "BoardName": "Board name",
       "BoardNameRequired": "Enter a board name",
