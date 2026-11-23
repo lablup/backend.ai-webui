@@ -384,7 +384,7 @@ const EditChannelForm: React.FC<
           }
         }
       `,
-      { id: props.channel.id },
+      { id: props.channel.entityId },
       { fetchPolicy: 'network-only' },
     );
   const spec = adminNotificationChannel?.spec;
