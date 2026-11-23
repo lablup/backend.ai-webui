@@ -20,7 +20,7 @@
     );
   }
 
-  /* Below 480px (384 + 2 x 48, no sider under 768px) the viewport-fixed stack
+  /* Below 480px (stack 384 + 24, button edge 72; no sider under 768px) the viewport-fixed stack
      spans the screen and would cover the button. */
   @media (max-width: 480px) {
     :root:has(.webui-assistant-fab) {
