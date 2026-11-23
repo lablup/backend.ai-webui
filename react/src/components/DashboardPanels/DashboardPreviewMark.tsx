@@ -44,7 +44,7 @@ const DashboardPreviewMark: React.FC<{
               ? 'green'
               : mark.kind === 'changed'
                 ? 'blue'
-                : 'neutral'
+                : 'orange'
           }
           label={label}
         />

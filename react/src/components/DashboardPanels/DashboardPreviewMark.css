@@ -8,11 +8,11 @@
 
 [data-board-item-id]:has(.dashboard-preview-mark--hidden) {
   outline-style: dashed;
-  outline-color: var(--color-border);
+  outline-color: var(--color-warning);
 }
 
-/* Still on the saved board, so the user sees where it was. */
-[data-board-item-id]:has(.dashboard-preview-mark--hidden) {
+/* Still on the saved board, so the user sees where it was; the outline and badge stay clear. */
+.dashboard-preview-mark--hidden .dashboard-preview-mark__content {
   opacity: 0.45;
 }
 
