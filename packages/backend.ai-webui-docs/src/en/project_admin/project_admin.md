@@ -82,16 +82,6 @@ The **Dashboard** entry opens a board of cards scoped to the selected project: *
 
 Boards, card settings and the refresh control work as they do on the user [Dashboard](#dashboard).
 
-<a id="refreshing-project-admin-pages"></a>
-
-## Refreshing project-admin pages
-
-The project-admin pages provide the same refresh button. Click the refresh button to refresh the table list.
-
-The dropdown button next to the refresh button opens the **Auto Refresh** menu, where you can choose the auto-refresh interval.
-
-![=99px](../images/project_admin_auto_refresh_menu.png)
-
 <a id="users"></a>
 
 ## Users
