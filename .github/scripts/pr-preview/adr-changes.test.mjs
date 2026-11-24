@@ -246,6 +246,72 @@ test("ARCHITECTURE changes are reported per language", () => {
   });
 });
 
+test("a rewrite under a new name is one rename, not an add and a removal", () => {
+  const result = changes(({ put, rm }) => {
+    rm("docs/adr/0001-first.md");
+    put(
+      "docs/adr/0001-rewritten.md",
+      adr("0001", "Rewritten", "entirely\nnew\ntext\nhere\nwith\nmore\nlines"),
+    );
+  });
+  assert.deepEqual(result.changes.adrs, [
+    {
+      id: "0001",
+      status: "modified",
+      title: "Rewritten",
+      files: {
+        en: {
+          path: "adr/0001-rewritten.md",
+          status: "renamed",
+          basePath: "adr/0001-first.md",
+        },
+        ko: { path: "adr/0001-first.ko.md", status: "unchanged" },
+      },
+    },
+  ]);
+});
+
+test("a move to another id or language is a removal and an addition", () => {
+  const result = changes(({ run }) => {
+    run("mv", "docs/adr/0001-first.md", "docs/adr/0004-first.md");
+    run("mv", "docs/adr/0002-second.md", "docs/adr/0002-second-en.ko.md");
+  });
+  assert.deepEqual(
+    result.changes.adrs.map((a) => [a.id, a.status, a.files]),
+    [
+      [
+        "0001",
+        "modified",
+        {
+          en: { path: "adr/0001-first.md", status: "removed" },
+          ko: { path: "adr/0001-first.ko.md", status: "unchanged" },
+        },
+      ],
+      [
+        "0002",
+        "modified",
+        {
+          en: { path: "adr/0002-second.md", status: "removed" },
+          ko: { path: "adr/0002-second-en.ko.md", status: "added" },
+        },
+      ],
+      ["0004", "added", { en: { path: "adr/0004-first.md", status: "added" } }],
+    ],
+  );
+});
+
+test("moving an ADR out of docs/adr still needs a preview", () => {
+  const result = changes(({ run }) => {
+    run("mv", "docs/adr/0001-first.md", "README-0001.md");
+  });
+  assert.equal(result.adr, true);
+  assert.equal(result.reason, "content");
+  assert.deepEqual(result.changes.adrs[0].files.en, {
+    path: "adr/0001-first.md",
+    status: "removed",
+  });
+});
+
 test("adr-ref is filled and attribute-escaped", () => {
   assert.equal(
     fillAdrRef(VIEWER, `feat/a"b<c>&'d`),

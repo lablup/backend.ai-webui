@@ -371,7 +371,7 @@ if (adr) {
       const langs = ["en", "ko"].filter((lang) =>
         FILE_STATUSES.includes(files[lang]?.status),
       );
-      const linkLang = files.en ? "en" : "ko";
+      const linkLang = langs[0] ?? (files.en ? "en" : "ko");
       const label = `${a.id}${a.title ? ` — ${escapeText(a.title)}` : ""}`;
       const view = status === "added" ? "" : "view=diff&";
       const href = `${meta.adrUrl}#/${a.id}?${view}lang=${linkLang}`;

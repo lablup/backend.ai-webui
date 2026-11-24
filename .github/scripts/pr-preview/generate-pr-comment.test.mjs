@@ -320,6 +320,36 @@ test("an ADR-only PR renders the ADR section with diff links", () => {
   assert.ok(body.includes(`>ADRs</a> · `));
 });
 
+test("a ko-only edit links to the ko document", () => {
+  const body = render([
+    ["meta", "pr-meta.json", META],
+    [
+      "adr",
+      "changes.json",
+      {
+        ...ADR_CHANGES,
+        adrs: [
+          {
+            id: "0002",
+            status: "modified",
+            title: "Second",
+            files: {
+              en: { path: "adr/0002-s.md", status: "unchanged" },
+              ko: { path: "adr/0002-s.ko.md", status: "modified" },
+            },
+          },
+        ],
+      },
+    ],
+  ]);
+  const url = "https://lablup.github.io/backend.ai-webui/pr/9541/adr/";
+  assert.ok(
+    body.includes(
+      `| [0002 — Second](${url}#/0002?view=diff&lang=ko) | changed | \`ko\` |`,
+    ),
+  );
+});
+
 test("an ADR preview with no ADR change says so", () => {
   const body = render([
     ["meta", "pr-meta.json", META],
@@ -357,7 +387,7 @@ test("ADR ids that could reach a URL are dropped, and titles escaped", () => {
       },
     ],
   ]);
-  assert.doesNotMatch(body, /\.\.\/x|evil|<img|<script>|<b>/);
+  assert.doesNotMatch(body, /\.\.\/x|evil|<img|<script>|<b>/i);
   assert.match(body, /0007 — T \\\[a\\\]\(b\) &lt;img src=x&gt; \\\| p/);
   assert.match(body, /\| changed \| — \|/);
 });

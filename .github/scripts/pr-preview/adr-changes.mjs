@@ -87,6 +87,22 @@ export function buildManifest({
     if (!adrs.has(id)) adrs.set(id, { id, files: {} });
     return adrs.get(id).files;
   };
+  const put = ({ id, lang }, file) => {
+    const files = slot(id);
+    const prev = files[lang];
+    const pair = [prev?.status, file.status];
+    if (pair.includes("added") && pair.includes("removed")) {
+      const added = prev.status === "added" ? prev : file;
+      const removed = prev.status === "removed" ? prev : file;
+      files[lang] = {
+        path: added.path,
+        status: "renamed",
+        basePath: removed.path,
+      };
+    } else {
+      files[lang] = file;
+    }
+  };
   const architecture = { en: "unchanged", ko: "unchanged" };
   const archLang = (path) =>
     Object.keys(ARCHITECTURE).find((lang) => ARCHITECTURE[lang] === path);
@@ -97,13 +113,16 @@ export function buildManifest({
     const from = oldPath ? adrFile(oldPath) : null;
 
     if (status === "R" || status === "C") {
-      const renamed = status === "R" && from;
-      if (to) {
-        slot(to.id)[to.lang] = renamed
-          ? { path: rel(path), status: "renamed", basePath: rel(oldPath) }
-          : { path: rel(path), status: "added" };
-      } else if (renamed) {
-        slot(from.id)[from.lang] = { path: rel(oldPath), status: "removed" };
+      const moved = status === "R" && from;
+      if (moved && to && from.id === to.id && from.lang === to.lang) {
+        slot(to.id)[to.lang] = {
+          path: rel(path),
+          status: "renamed",
+          basePath: rel(oldPath),
+        };
+      } else {
+        if (to) put(to, { path: rel(path), status: "added" });
+        if (moved) put(from, { path: rel(oldPath), status: "removed" });
       }
       if (archLang(path)) architecture[archLang(path)] = "added";
       if (status === "R" && archLang(oldPath)) {
@@ -114,7 +133,7 @@ export function buildManifest({
 
     const fileStatus =
       status === "A" ? "added" : status === "D" ? "removed" : "modified";
-    if (to) slot(to.id)[to.lang] = { path: rel(path), status: fileStatus };
+    if (to) put(to, { path: rel(path), status: fileStatus });
     const arch = archLang(path);
     if (arch) architecture[arch] = fileStatus;
   }
@@ -206,7 +225,7 @@ export const showFile = (sha, path, encoding = "utf8") => {
 export function computeChanges({ base, head, headRef }) {
   const { sha: baseSha, diffMode } = resolveBase(base, head);
   const headSha = git(["rev-parse", `${head}^{commit}`]).trim();
-  const files = git(["diff", "--name-only", baseSha, headSha])
+  const files = git(["diff", "--name-only", "--no-renames", baseSha, headSha])
     .split("\n")
     .filter(Boolean);
   const entries = parseNameStatus(
