@@ -307,6 +307,7 @@ Access new experimental features early -- these may change or be removed in
 future updates. Each feature is turned on with its **Enabled** checkbox.
 
 ![](../images/experimental_features.png)
+<!-- TODO(screenshot): recapture ../images/experimental_features.png for every locale (en/ko/ja/th) at /usersettings?settings=general -> Experimental features, so the list includes the WebUI Assistant row. Still open: the capture backend's manager answers 401 on /func/, so no run since 2026-11-22 could log in. -->
 
 - **AI Agents**: Enable the AI Agents feature, which provides agent-based AI
   capabilities within the WebUI. When turned on, AI agent functionality becomes
@@ -322,6 +323,10 @@ future updates. Each feature is turned on with its **Enabled** checkbox.
   colored by the session's live resource utilization. The toggle appears only
   while this feature is enabled; for the grid's own controls, see
   [Session List View](#session-list-view-and-refresh).
+- **WebUI Assistant**: Adds a floating chat button that answers questions about
+  using the WebUI, based on this user manual. The first time you open it, you
+  connect it to a deployment or to an OpenAI-compatible endpoint that serves a
+  chat model.
 
 <a id="logs-tab"></a>
 

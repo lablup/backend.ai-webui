@@ -299,6 +299,7 @@ PPKキーに変換する必要がある場合があります。
 削除される可能性があります。各機能は**有効**チェックボックスでオンにします。
 
 ![](../images/experimental_features.png)
+<!-- TODO(screenshot): recapture ../images/experimental_features.png for every locale (en/ko/ja/th) at /usersettings?settings=general -> Experimental features, so the list includes the WebUI Assistant row. Still open: the capture backend's manager answers 401 on /func/, so no run since 2026-11-22 could log in. -->
 
 - **AIエージェント**: AIエージェント機能を有効にします。この機能はWebUI内で
   エージェントベースのAI機能を提供します。有効にすると、セッションでAI
@@ -315,6 +316,9 @@ PPKキーに変換する必要がある場合があります。
   リアルタイムのリソース使用率を表します。この切り替えは、本機能を有効に
   している間のみ表示されます。グリッド自体の操作については
   [セッションリストの表示](#session-list-view-and-refresh)を参照してください。
+- **WebUI アシスタント**: ユーザーマニュアルに基づいて WebUI の使い方に答える
+  チャットボタンを追加します。初めて開くときに、チャットモデルを提供する
+  デプロイメントまたは OpenAI 互換エンドポイントに接続します。
 
 <a id="logs-tab"></a>
 
