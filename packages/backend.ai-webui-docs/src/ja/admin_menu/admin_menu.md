@@ -1134,7 +1134,6 @@ Admin Sessionページには2つのタブがあります。**セッション** �
 ドリルダウンします。
 
 ![](../images/fair_share_project_page.png)
-<!-- TODO(screenshot): refresh /scheduler (Fair Share Setting, Project step) — capture must show the Status column. Not recaptured on 2026-09-15: the capture backend currently lists no project fair share rows for the default domain, and replacing the populated image with an empty table would be a regression. -->
 
 行を選択した場合、同じ一括操作（利用グラフおよび一括編集）が利用可能です。
 
@@ -1669,7 +1668,6 @@ WebUI がドメインのすべてのユーザーに提供するオプション�
 現在の設定を JSON で表示し、ファイルへのエクスポートやファイルからのインポートができます。
 
 ![](../images/system_settings_page.png)
-<!-- TODO(screenshot): /admin/system-settings (System Settings tab), viewport 1460x900, en/ko/ja/th - recapture so the toolbar shows only JSON Config and Reset; the current image still shows the removed Apply button. Still blocked on 2026-11-23: the capture backend at 10.82.1.75:8090 answers /func/ with 401 and no capture environment was provisioned this run, so no login is possible. Needs a human capture. -->
 
 **構成** タブでは、Backend.AIサーバーの主要な設定を確認できます。現在、設定を変更および
 一覧表示できる複数のコントロールが提供されています。
@@ -1897,7 +1895,6 @@ Backend.AIの各コンポーネントに互換性があるかどうかを確認�
 
 既定では個人プロジェクトは一覧に表示されず、あらかじめ適用されている **タイプ** フィルターを削除すると表示されます。
 
-<!-- TODO(screenshot): /project (Admin Settings > Projects) - recapture the default view showing the pre-applied Type filter and no personal projects; the capture backend runs manager 26.9.0-alpha, where the `group-nodes-type-filter` flag is off and the old unfiltered list is rendered. -->
 ![](../images/projects_page.png)
 
 一覧の上にある **アクティブ**、**非アクティブ** ボタンで表示するプロジェクトを切り替えられます。その隣の
@@ -1957,7 +1954,6 @@ RBAC（ロールベースアクセス制御）管理では、スーパー管理�
 スーパー管理者は、管理者サイドバーから **診断** ページを開いて、WebUI デプロイメントに対する自動状態チェックを実行できます。このページはブラウザーとサーバー間の構成を評価し、誤った設定を報告することで、接続またはセキュリティの問題がユーザーに影響を与える前に把握できるようにします。
 
 ![](../images/diagnostics_page.png)
-<!-- TODO(screenshot): /admin/diagnostics, viewport 1460x900, en/ko/ja/th - recapture the section list so it includes the new App Config section; the current image predates it. Still blocked on 2026-11-23: the capture backend at 10.82.1.75:8090 answers /func/ with 401 and no capture environment was provisioned this run, so no login is possible. Needs a human capture. -->
 
 ページ上部のツールバーには、次のコントロールがあります。
 

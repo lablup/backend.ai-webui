@@ -1001,7 +1001,6 @@ Fair Share 스케줄러는 자원 그룹의 스케줄러 타입이 `FAIR_SHARE`�
 테이블이 표시됩니다. 프로젝트 이름을 클릭하면 사용자 단계로 이동합니다.
 
 ![](../images/fair_share_project_page.png)
-<!-- TODO(screenshot): refresh /scheduler (Fair Share Setting, Project step) — capture must show the Status column. Not recaptured on 2026-09-15: the capture backend currently lists no project fair share rows for the default domain, and replacing the populated image with an empty table would be a regression. -->
 
 행을 선택하면 동일한 일괄 작업(사용량 그래프 및 일괄 편집)을 사용할 수 있습니다.
 
@@ -1484,7 +1483,6 @@ Backend.AI에는 사용자와 관리자(프로젝트)가 생성한 두 가지 �
 **시스템 설정** 탭에서 슈퍼 관리자는 로그인 방식, 세션 생성 옵션, 사이드바 메뉴 등 WebUI가 도메인의 모든 사용자에게 제공하는 옵션을 설정합니다. 변경한 값은 즉시 저장되어 모든 사용자에게 적용되며, **초기화**는 도메인에 저장된 모든 값을 삭제하여 각 설정을 기본값으로 되돌립니다. **JSON 설정**은 현재 설정을 JSON으로 보여주며, 파일로 내보내거나 파일에서 가져올 수 있습니다.
 
 ![](../images/system_settings_page.png)
-<!-- TODO(screenshot): /admin/system-settings (System Settings tab), viewport 1460x900, en/ko/ja/th - recapture so the toolbar shows only JSON Config and Reset; the current image still shows the removed Apply button. Still blocked on 2026-11-23: the capture backend at 10.82.1.75:8090 answers /func/ with 401 and no capture environment was provisioned this run, so no login is possible. Needs a human capture. -->
 
 **환경 설정** 탭에서는 Backend.AI 서버의 주요 설정을 볼 수 있습니다. 현재 설정을 변경하고 나열할 수 있는 여러 컨트롤을 제공합니다.
 
@@ -1688,7 +1686,6 @@ Scheduler의 config 버튼을 클릭하여 작업 스케줄러별 구성을 편�
 
 목록에는 기본적으로 개인 프로젝트가 표시되지 않으며, 미리 적용된 **유형** 필터를 제거하면 함께 표시됩니다.
 
-<!-- TODO(screenshot): /project (Admin Settings > Projects) - recapture the default view showing the pre-applied Type filter and no personal projects; the capture backend runs manager 26.9.0-alpha, where the `group-nodes-type-filter` flag is off and the old unfiltered list is rendered. -->
 ![](../images/projects_page.png)
 
 목록 위의 **활성**, **비활성** 버튼으로 표시할 프로젝트를 선택할 수 있으며, 그 옆의 속성 필터로 **이름**,
@@ -1748,7 +1745,6 @@ RBAC(역할 기반 접근 제어) 관리를 통해 슈퍼 관리자는 세분화
 슈퍼 관리자는 관리자 사이드바에서 **진단** 페이지를 열어 WebUI 배포에 대한 자동 상태 점검을 실행할 수 있습니다. 이 페이지는 브라우저와 서버 간 구성을 평가하고 잘못된 설정을 보고하여, 연결 또는 보안 문제가 사용자에게 영향을 미치기 전에 파악할 수 있도록 합니다.
 
 ![](../images/diagnostics_page.png)
-<!-- TODO(screenshot): /admin/diagnostics, viewport 1460x900, en/ko/ja/th - recapture the section list so it includes the new App Config section; the current image predates it. Still blocked on 2026-11-23: the capture backend at 10.82.1.75:8090 answers /func/ with 401 and no capture environment was provisioned this run, so no login is possible. Needs a human capture. -->
 
 페이지 상단의 도구 모음에서는 다음 컨트롤을 제공합니다.
 
