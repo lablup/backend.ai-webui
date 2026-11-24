@@ -62,6 +62,25 @@ interface NotificationChannelSettingModalProps extends Omit<
 
 const isEmail = (value: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 
+// Sits beside Enabled so the two switches share a row.
+const SmtpUseTlsFormItem: React.FC = () => {
+  'use memo';
+  const { t } = useTranslation();
+  const form = Form.useFormInstance<NotificationChannelFormValues>();
+  const channelType = Form.useWatch('channelType', form);
+
+  if (channelType !== 'EMAIL') return null;
+  return (
+    <Form.Item
+      className="notification-channel-field"
+      label={t('externalNotification.SmtpUseTls')}
+      name="smtpUseTls"
+    >
+      <BAISwitch aria-label={t('externalNotification.SmtpUseTls')} />
+    </Form.Item>
+  );
+};
+
 // Mounted inside the Form, so the watches are fresh on every open.
 const ChannelSpecFormItems: React.FC<{ hasSavedPassword: boolean }> = ({
   hasSavedPassword,
@@ -101,24 +120,23 @@ const ChannelSpecFormItems: React.FC<{ hasSavedPassword: boolean }> = ({
 
   return (
     <>
+      <Form.Item
+        label={t('externalNotification.SmtpHost')}
+        name="smtpHost"
+        rules={[
+          {
+            required: true,
+            whitespace: true,
+            message: t('externalNotification.SmtpHostRequired'),
+          },
+        ]}
+      >
+        <BAITextInput
+          aria-label={t('externalNotification.SmtpHost')}
+          placeholder="smtp.example.com"
+        />
+      </Form.Item>
       <BAIFlex gap="sm" align="start">
-        <Form.Item
-          className="notification-channel-field"
-          label={t('externalNotification.SmtpHost')}
-          name="smtpHost"
-          rules={[
-            {
-              required: true,
-              whitespace: true,
-              message: t('externalNotification.SmtpHostRequired'),
-            },
-          ]}
-        >
-          <BAITextInput
-            aria-label={t('externalNotification.SmtpHost')}
-            placeholder="smtp.example.com"
-          />
-        </Form.Item>
         <Form.Item
           className="notification-channel-field"
           label={t('externalNotification.SmtpPort')}
@@ -133,15 +151,6 @@ const ChannelSpecFormItems: React.FC<{ hasSavedPassword: boolean }> = ({
             max={65535}
             isIntegerOnly
           />
-        </Form.Item>
-      </BAIFlex>
-      <BAIFlex gap="sm" align="start">
-        <Form.Item
-          className="notification-channel-field"
-          label={t('externalNotification.SmtpUseTls')}
-          name="smtpUseTls"
-        >
-          <BAISwitch aria-label={t('externalNotification.SmtpUseTls')} />
         </Form.Item>
         <Form.Item
           className="notification-channel-field"
@@ -338,9 +347,16 @@ const ChannelForm: React.FC<
           ))}
         </BAISegmentedControl>
       </Form.Item>
-      <Form.Item label={t('externalNotification.Enabled')} name="enabled">
-        <BAISwitch aria-label={t('externalNotification.Enabled')} />
-      </Form.Item>
+      <BAIFlex gap="sm" align="start">
+        <Form.Item
+          className="notification-channel-field"
+          label={t('externalNotification.Enabled')}
+          name="enabled"
+        >
+          <BAISwitch aria-label={t('externalNotification.Enabled')} />
+        </Form.Item>
+        <SmtpUseTlsFormItem />
+      </BAIFlex>
       <ChannelSpecFormItems hasSavedPassword={!!savedSpec?.hasSavedAuth} />
     </Form>
   );
