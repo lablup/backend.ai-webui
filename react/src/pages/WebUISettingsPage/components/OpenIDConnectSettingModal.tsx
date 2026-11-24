@@ -4,6 +4,7 @@
  */
 import { App } from '../../../app-shim';
 import BAIFormItem from '../../../components/BAIFormItem';
+import UserResourcePolicySelect from '../../../components/UserResourcePolicySelect';
 import { isValidUrl } from '../../../diagnostics/rules/configRules';
 import { Form, type Rule } from '../../../form-engine';
 import { useSuspendedBackendaiClient } from '../../../hooks';
@@ -22,9 +23,12 @@ import {
   isPluginConfigChangeEmpty,
   readPluginConfig,
 } from '../helper/pluginEtcdConfig';
+import ProjectNameSelect from './ProjectNameSelect';
 import { Banner } from '@lablup/ui-common/Banner';
 import { Heading } from '@lablup/ui-common/Heading';
 import {
+  BAIAdminKeypairResourcePolicySelect,
+  BAIDomainSelect,
   BAIDynamicList,
   BAIFlex,
   BAIModal,
@@ -38,6 +42,7 @@ import {
   useErrorMessageResolver,
 } from 'backend.ai-ui';
 import { Suspense, useRef, useState } from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
 import { useTranslation } from 'react-i18next';
 
 const PEM_PLACEHOLDER = '-----BEGIN …-----';
@@ -79,12 +84,46 @@ const OpenIDConnectSettingModal: React.FC<OpenIDConnectSettingModalProps> = ({
         />
       }
     >
-      <OpenIDConnectSettingModalContent
-        openId={openId}
-        onRequestClose={onRequestClose}
-        {...modalProps}
-      />
+      {/* A failed read stays inside the modal; reopening it refetches. */}
+      <ErrorBoundary
+        fallbackRender={({ error }) => (
+          <OpenIDConnectSettingLoadError
+            error={error}
+            onRequestClose={onRequestClose}
+            {...modalProps}
+          />
+        )}
+      >
+        <OpenIDConnectSettingModalContent
+          openId={openId}
+          onRequestClose={onRequestClose}
+          {...modalProps}
+        />
+      </ErrorBoundary>
     </Suspense>
+  );
+};
+
+const OpenIDConnectSettingLoadError: React.FC<
+  OpenIDConnectSettingModalProps & { error: unknown }
+> = ({ error, onRequestClose, ...modalProps }) => {
+  'use memo';
+  const { t } = useTranslation();
+  const { getErrorMessage } = useErrorMessageResolver();
+  return (
+    <BAIModal
+      title={t('settings.sso.OpenIDConnect')}
+      width={720}
+      onCancel={onRequestClose}
+      footer={null}
+      {...modalProps}
+    >
+      <Banner
+        status="error"
+        title={t('settings.sso.LoadFailed')}
+        description={getErrorMessage(error)}
+      />
+    </BAIModal>
   );
 };
 
@@ -141,6 +180,18 @@ const OpenIDConnectSettingModalContent: React.FC<
     pattern: /^[^,]*$/,
     message: t('settings.sso.ProviderGroupIDNoComma'),
   };
+  const uniqueGroupRule: Rule = ({ getFieldValue }) => ({
+    validator: async (_, value?: string) => {
+      const id = value?.trim();
+      const rows: OpenIDFormValues['group_mapping'] =
+        getFieldValue('group_mapping') ?? [];
+      if (id && rows.filter((row) => row?.group?.trim() === id).length > 1) {
+        throw new Error(t('settings.sso.ProviderGroupIDDuplicate'));
+      }
+    },
+  });
+  const mappingRows: OpenIDFormValues['group_mapping'] | undefined =
+    Form.useWatch('group_mapping', form);
 
   const save = async () => {
     if (isSavingRef.current) return;
@@ -364,7 +415,14 @@ const OpenIDConnectSettingModalContent: React.FC<
                           {...rest}
                           name={[name, 'group']}
                           style={{ marginBottom: 0 }}
-                          rules={[requiredRule, groupIdRule]}
+                          dependencies={fields
+                            .filter((field) => field.name !== name)
+                            .map((field) => [
+                              'group_mapping',
+                              field.name,
+                              'group',
+                            ])}
+                          rules={[requiredRule, groupIdRule, uniqueGroupRule]}
                         >
                           <BAITextInput
                             aria-label={`${t('settings.sso.ProviderGroupID')} ${index + 1}`}
@@ -372,41 +430,101 @@ const OpenIDConnectSettingModalContent: React.FC<
                         </Form.Item>
                       ),
                     },
-                    ...(
-                      [
-                        ['domain', t('credential.Domain'), true],
-                        ['project', t('general.Project'), true],
-                        [
-                          'user_resource_policy',
-                          t('credential.UserResourcePolicy'),
-                          false,
-                        ],
-                        [
-                          'keypair_resource_policy',
-                          t('resourcePolicy.KeypairResourcePolicy'),
-                          false,
-                        ],
-                      ] as const
-                    ).map(([field, header, isRequired]) => ({
-                      key: field,
-                      header,
-                      render: (
-                        { key: _key, name, ...rest }: (typeof fields)[number],
-                        index: number,
-                      ) => (
-                        <Form.Item
-                          {...rest}
-                          name={[name, field]}
-                          style={{ marginBottom: 0 }}
-                          rules={isRequired ? [requiredRule] : []}
-                        >
-                          <BAITextInput
-                            aria-label={`${header} ${index + 1}`}
-                            placeholder={isRequired ? undefined : 'default'}
-                          />
-                        </Form.Item>
+                    {
+                      key: 'domain',
+                      header: t('credential.Domain'),
+                      render: ({ key: _key, name, ...rest }, index) => (
+                        <Suspense fallback={<BAISelect loading disabled />}>
+                          <Form.Item
+                            {...rest}
+                            name={[name, 'domain']}
+                            style={{ marginBottom: 0 }}
+                            rules={[requiredRule]}
+                          >
+                            <BAIDomainSelect
+                              aria-label={`${t('credential.Domain')} ${index + 1}`}
+                              onChange={() =>
+                                form.setFieldValue(
+                                  ['group_mapping', name, 'project'],
+                                  undefined,
+                                )
+                              }
+                            />
+                          </Form.Item>
+                        </Suspense>
                       ),
-                    })),
+                    },
+                    {
+                      key: 'project',
+                      header: t('general.Project'),
+                      render: ({ key: _key, name, ...rest }, index) => {
+                        const domain = mappingRows?.[name]?.domain;
+                        return (
+                          <Suspense fallback={<BAISelect loading disabled />}>
+                            <Form.Item
+                              {...rest}
+                              name={[name, 'project']}
+                              style={{ marginBottom: 0 }}
+                              rules={[requiredRule]}
+                            >
+                              {domain ? (
+                                <ProjectNameSelect
+                                  domain={domain}
+                                  aria-label={`${t('general.Project')} ${index + 1}`}
+                                />
+                              ) : (
+                                <BAISelect
+                                  disabled
+                                  aria-label={`${t('general.Project')} ${index + 1}`}
+                                  placeholder={t(
+                                    'settings.sso.SelectDomainFirst',
+                                  )}
+                                />
+                              )}
+                            </Form.Item>
+                          </Suspense>
+                        );
+                      },
+                    },
+                    {
+                      key: 'user_resource_policy',
+                      header: t('credential.UserResourcePolicy'),
+                      render: ({ key: _key, name, ...rest }, index) => (
+                        <Suspense fallback={<BAISelect loading disabled />}>
+                          <Form.Item
+                            {...rest}
+                            name={[name, 'user_resource_policy']}
+                            style={{ marginBottom: 0 }}
+                          >
+                            <UserResourcePolicySelect
+                              allowClear
+                              placeholder="default"
+                              aria-label={`${t('credential.UserResourcePolicy')} ${index + 1}`}
+                            />
+                          </Form.Item>
+                        </Suspense>
+                      ),
+                    },
+                    {
+                      key: 'keypair_resource_policy',
+                      header: t('resourcePolicy.KeypairResourcePolicy'),
+                      render: ({ key: _key, name, ...rest }, index) => (
+                        <Suspense fallback={<BAISelect loading disabled />}>
+                          <Form.Item
+                            {...rest}
+                            name={[name, 'keypair_resource_policy']}
+                            style={{ marginBottom: 0 }}
+                          >
+                            <BAIAdminKeypairResourcePolicySelect
+                              label={`${t('resourcePolicy.KeypairResourcePolicy')} ${index + 1}`}
+                              isLabelHidden
+                              allowClear
+                              placeholder="default"
+                            />
+                          </Form.Item>
+                        </Suspense>
+                      ),
+                    },
                   ]}
                 />
               )}

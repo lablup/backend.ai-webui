@@ -10,11 +10,11 @@ import { UpdateUsersModalFragment$key } from '../../../__generated__/UpdateUsers
 import { App } from '../../../app-shim';
 import BAIFormItem from '../../../components/BAIFormItem';
 import ProjectSelect from '../../../components/ProjectSelect';
+import UserResourcePolicySelect from '../../../components/UserResourcePolicySelect';
 import { Form, FormInstance } from '../../../form-engine';
 import { SIGNED_32BIT_MAX_INT } from '../../../helper/const-vars';
 import { useCurrentDomainValue } from '../../../hooks';
 import { useTOTPSupported } from '../../../hooks/backendai';
-import UserResourcePolicySelect from './UserResourcePolicySelect';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIFlex,

@@ -15,6 +15,7 @@ import { App } from '../../../app-shim';
 import BAIFormItem from '../../../components/BAIFormItem';
 import ProjectSelect from '../../../components/ProjectSelect';
 import TOTPActivateModal from '../../../components/TOTPActivateModalLazy';
+import UserResourcePolicySelect from '../../../components/UserResourcePolicySelect';
 import { Form, FormInstance } from '../../../form-engine';
 import { isValidIPOrCidr } from '../../../helper';
 import { SIGNED_32BIT_MAX_INT } from '../../../helper/const-vars';
@@ -32,7 +33,6 @@ import {
   type FailedUserCreation,
 } from './BulkCreateUserFailure';
 import GeneratedKeypairListModal from './GeneratedKeypairListModal';
-import UserResourcePolicySelect from './UserResourcePolicySelect';
 import { Text } from '@lablup/ui-common/Text';
 import type { SearchSource, SearchableItem } from '@lablup/ui-common/Typeahead';
 import { useTheme } from '@lablup/ui-common/theme';
