@@ -869,7 +869,8 @@ async function listVFoldersByName(
   return data.vfolder_list.items;
 }
 
-async function purgeVFolderViaApi(
+/** Trashes and purges the folder named exactly `name`; a missing one is a no-op. */
+export async function purgeVFolderViaApi(
   api: APIRequestContext,
   name: string,
 ): Promise<void> {

@@ -20,11 +20,12 @@ import {
   purgeProjectsByNameViaApi,
   purgePrometheusQueryPresetsByNameViaApi,
   purgeRolesByNameViaApi,
+  purgeVFolderViaApi,
 } from './admin-api';
 import type { APIRequestContext } from '@playwright/test';
 
 export type TestResourceKind =
-  'deployment' | 'prometheusQueryPreset' | 'role' | 'project';
+  'deployment' | 'prometheusQueryPreset' | 'role' | 'project' | 'vFolder';
 
 type Remover = (
   api: APIRequestContext,
@@ -39,6 +40,16 @@ type Remover = (
  */
 const REMOVERS: ReadonlyArray<[TestResourceKind, Remover]> = [
   ['deployment', deleteDeploymentsByNameViaApi],
+  // purgeVFolderViaApi returns only once the folder is gone, or throws.
+  [
+    'vFolder',
+    async (api, name) => {
+      if (!name.startsWith('e2e-'))
+        throw new Error(`refusing to purge non-e2e folder "${name}"`);
+      await purgeVFolderViaApi(api, name);
+      return { found: 1, deleted: 1 };
+    },
+  ],
   ['prometheusQueryPreset', purgePrometheusQueryPresetsByNameViaApi],
   ['role', purgeRolesByNameViaApi],
   ['project', purgeProjectsByNameViaApi],
