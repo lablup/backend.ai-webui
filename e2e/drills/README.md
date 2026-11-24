@@ -40,6 +40,36 @@ what changed, what to verify, expected vs observed, the failure text, a
 screenshot of the page the step left on screen, and links to the related code
 (`path:line`, relative to the repository root).
 
+## Data: mock first, real only where the check needs it
+
+A drill proves what a screen says, not that a server state can be built. So the
+state a step only **shows** — a role combination, a permission set, a list, a
+setting — is answered from mocks, not seeded on the server:
+
+```ts
+setup: async (ctx) => {
+  await ctx.mockGraphQL({
+    SomePageQuery: () => ({
+      /* every field the operation selects */
+    }),
+  });
+},
+```
+
+`ctx.mockGraphQL` (from `e2e/mocks/session/graphql-interceptor.ts`) answers the
+named operations on every page of the drill, including pages `ctx.as()` opens
+later; register it before the navigation that reads it. Payloads are shared
+with the suite: start from `e2e/mocks/<area>/`, and copy a real response shape
+when writing a new one rather than guessing the fields.
+
+Real server data is for the cases where the backend itself is what the step
+checks — a mutation, a permission the manager enforces, a value that must
+round-trip (creating a folder, inviting an account, accepting an invitation).
+Even then, create only the objects that check needs, name them `e2e-…`, and
+remove them in teardown. A drill never changes server-global settings, mock or
+not (the e2e admin-preparation rule): RBAC or cluster-wide state that only
+exists on a dedicated test server is out of scope for a drill.
+
 ## Side effects and cleanup
 
 - Every object a drill creates is named with the `e2e-` prefix plus this run's
@@ -115,8 +145,10 @@ Writing rules:
   `to`), not at the spec.
 - Reuse `e2e/utils/test-util.ts` and the POM helpers; a drill that re-implements
   a click path will drift from the suite.
-- Each drill names everything it creates with the `e2e-` prefix and registers
-  it (`ctx.resources.name(kind, prefix)`); teardown must leave nothing behind
+- Data comes from mocks unless the step checks the backend itself; a live case
+  creates only what that check needs (see "Data: mock first" above), names
+  everything it creates with the `e2e-` prefix and registers it
+  (`ctx.resources.name(kind, prefix)`). Teardown must leave nothing behind
   whether the steps passed or not.
 - Use `ctx.as('user2' | 'admin')` for a second account; `ctx.activePage` is
   what the per-step screenshot captures, so call `ctx.as(...)` before acting on

@@ -4,6 +4,7 @@
  * result can be read by someone who never opened the spec. See
  * `e2e/drills/README.md`.
  */
+import type { GraphQLMockMap } from '../mocks/session/graphql-interceptor';
 import type { TestResources } from '../utils/test-resources';
 import type { APIRequestContext, Browser, Page } from '@playwright/test';
 
@@ -28,6 +29,12 @@ export interface DrillContext {
   readonly resources: TestResources;
   /** A page signed in as `account`, opened on first use. */
   as(account: DrillAccount): Promise<Page>;
+  /**
+   * Answers the named GraphQL operations from `mocks` on every page this drill
+   * has open and on any page opened later, so a step can show state it does
+   * not have to create on the server. Register before navigating.
+   */
+  mockGraphQL(mocks: GraphQLMockMap): Promise<void>;
   /** The page the current step last worked on (the screenshot target). */
   readonly activePage: Page;
 }

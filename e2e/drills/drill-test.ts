@@ -4,6 +4,8 @@
  * each, and the describe's `afterAll` always cleans up — a failed or timed-out
  * step does not skip teardown.
  */
+import type { GraphQLMockMap } from '../mocks/session/graphql-interceptor';
+import { setupGraphQLMocks } from '../mocks/session/graphql-interceptor';
 import { createTestResources } from '../utils/test-resources';
 import { loginAsAdmin, loginAsUser, loginAsUser2 } from '../utils/test-util';
 import type { DrillReport, StepReport } from './report';
@@ -87,6 +89,14 @@ export function registerDrill(drill: Drill): void {
       const pages = new Map<DrillAccount, Page>();
       pages.set('user', page);
       let active = page;
+      // Registered mock maps apply to every page of the drill, including the
+      // ones `as()` opens later.
+      const mockMaps: GraphQLMockMap[] = [];
+      const applyMocks = async (target: Page) => {
+        for (const mocks of mockMaps) {
+          await setupGraphQLMocks(target, mocks);
+        }
+      };
       const dir = reportDirectory(reportLabel());
       fs.mkdirSync(dir, { recursive: true });
 
@@ -108,11 +118,18 @@ export function registerDrill(drill: Drill): void {
           }
           const next = await browser.newPage();
           pages.set(account, next);
+          await applyMocks(next);
           if (account === 'admin') await loginAsAdmin(next, request);
           else if (account === 'user2') await loginAsUser2(next, request);
           else await loginAsUser(next, request);
           active = next;
           return next;
+        },
+        async mockGraphQL(mocks) {
+          mockMaps.push(mocks);
+          for (const open of pages.values()) {
+            await setupGraphQLMocks(open, mocks);
+          }
         },
       };
 

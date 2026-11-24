@@ -3,6 +3,11 @@
  * account — share a folder with `E2E_USER2_*` and check the invitation is
  * listed and accepted. Everything it creates is named after this run and
  * removed in teardown, so the same drill can run again with no manual cleanup.
+ *
+ * This is the live-data case the mock-first rule allows: the invitation and its
+ * acceptance are what the drill verifies, so the folder is real; nothing else
+ * is created. A drill that only reads state answers it from `ctx.mockGraphQL`
+ * instead (see README, "Data: mock first").
  */
 import { purgeVFoldersByNameViaApi } from '../utils/admin-api';
 import {
