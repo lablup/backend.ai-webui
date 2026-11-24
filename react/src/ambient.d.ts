@@ -100,6 +100,7 @@ type NonNullableNodeOnEdges<T extends RelayConnection | null> = NonNullable<
 
 interface Window {
   switchLanguage: (lang: string) => void;
+  isUnsupportedBrowser?: boolean;
   // `__BAI_REVIEW__` (FR-3811) is declared with the rest of the overlay
   // contract, in `react/vite-plugins/review-overlay/client/types.ts`.
 }

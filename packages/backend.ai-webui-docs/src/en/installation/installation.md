@@ -10,13 +10,16 @@ or as an form of app provided as a stand-alone executable file which does not re
 
 With web-based form of WebUI, users just need the latest versions of web browsers, no need to install platform-dependent desktop applications.
 
-- Recommended browser: Latest version of Chrome (at least > 80)
+- Supported browsers: Chrome 123 or later, Edge 123 or later, Safari 17.5 or later, Firefox 125 or later
 - Requirement: Any machine that runs web browser (2 cores, 4 GiB memory)
 
 
 :::note
-We do not support Microsoft Internet Explorer since it
-is deprecated and does not follow web standard, and does not support up-to-date browser features.
+When you open the WebUI in a browser older than the supported versions, the WebUI does not load. The loading screen shows a message that the browser is not supported, with the list of supported browsers. Update the browser or use one of the supported browsers.
+
+Microsoft Internet Explorer is not supported, because it is deprecated and does not support up-to-date browser features.
+
+The stand-alone WebUI app ships with its own browser engine, so this check does not apply to it.
 :::
 
 The stand-alone WebUI app can be downloaded from following link:

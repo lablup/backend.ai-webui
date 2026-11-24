@@ -92,6 +92,17 @@ Backend.AI Web UI focuses to
   - Delegate login to web server
   - Support userid / password login
 
+## Supported Browsers
+
+| Browser | Minimum version |
+|---|---|
+| Chrome | 123 |
+| Edge | 123 |
+| Safari (macOS, iOS / iPadOS) | 17.5 |
+| Firefox | 125 |
+
+A browser below this range, or one without the Popover API or CSS `light-dark()`, sees a notice on the loading screen listing these versions, and the Web UI does not load. The desktop app ships its own engine and is not affected. The range and how it is checked are recorded in [ADR 0037](docs/adr/0037-supported-browser-range-and-load-block.md); the table lives in [`manifest/app.js`](manifest/app.js).
+
 ## Setup Guide
 
 ### Baked versions
