@@ -272,12 +272,13 @@ const NotificationRuleSettingModal: React.FC<
       ?.validateFields()
       .then((values) => {
         // These items mount once their queries load; until then validateFields skips them.
-        if (!values.channelId || !_.trim(values.messageTemplate ?? '')) {
-          message.error(
-            !values.channelId
-              ? t('externalNotification.ChannelRequired')
-              : t('externalNotification.MessageTemplateRequired'),
-          );
+        // An edit never sends the channel, so only a new rule needs it.
+        if (!rule && !values.channelId) {
+          message.error(t('externalNotification.ChannelRequired'));
+          return;
+        }
+        if (!_.trim(values.messageTemplate ?? '')) {
+          message.error(t('externalNotification.MessageTemplateRequired'));
           return;
         }
         const common = {
