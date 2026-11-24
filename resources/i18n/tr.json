@@ -845,7 +845,6 @@
       "ChangeRange": "aralık",
       "ChangeResized": "boyut",
       "Changed": "Değişti: {{changes}}",
-      "Description": "Bir yapay zekâ ajanı bu değişiklikleri önerdi. Aşağıdaki pano bir önizleme gösterir; {{apply}} düğmesine basana kadar hiçbir şey kaydedilmez.",
       "Title": "Bir yapay zekâ ajanının önerdiği değişiklikler",
       "WillBeHidden": "Gizlenecek"
     },
@@ -4475,7 +4474,6 @@
     "CustomEndpoint": "Özel uç nokta",
     "DashboardAddPanel": "{{title}} panelini ekle",
     "DashboardAlreadyDone": "zaten yapıldı",
-    "DashboardChangesSaved": "Panoya {{count}} değişiklik kaydedildi.",
     "DashboardChatEmpty": "WebUI'da bir şeyin nasıl yapıldığını sorun veya bu panoda yapılacak bir değişikliği açıklayın. Pano değişiklikleri önce önizlenir ve yalnızca uyguladığınızda kaydedilir.",
     "DashboardChatExampleBoard": "{{first}} ve {{second}} ile Olaylar adlı bir pano oluştur",
     "DashboardChatExampleLayout": "{{title}} kartını gizle",

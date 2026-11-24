@@ -845,7 +845,6 @@
       "ChangeRange": "intervallo",
       "ChangeResized": "dimensione",
       "Changed": "Modificato: {{changes}}",
-      "Description": "Un agente IA ha proposto queste modifiche. La bacheca qui sotto ne mostra l'anteprima; nulla viene salvato finché non premi {{apply}}.",
       "Title": "Modifiche proposte da un agente IA",
       "WillBeHidden": "Verrà nascosto"
     },
@@ -4475,7 +4474,6 @@
     "CustomEndpoint": "Endpoint personalizzato",
     "DashboardAddPanel": "Aggiungi il pannello {{title}}",
     "DashboardAlreadyDone": "già fatto",
-    "DashboardChangesSaved": "{{count}} modifiche salvate nella dashboard.",
     "DashboardChatEmpty": "Chiedi come fare qualcosa in WebUI, oppure descrivi una modifica a questa dashboard. Le modifiche alla dashboard vengono prima mostrate in anteprima e salvate solo quando le applichi.",
     "DashboardChatExampleBoard": "Crea una board chiamata Incidenti con {{first}} e {{second}}",
     "DashboardChatExampleLayout": "Nascondi la scheda {{title}}",

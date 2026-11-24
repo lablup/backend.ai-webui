@@ -845,7 +845,6 @@
       "ChangeRange": "rentang",
       "ChangeResized": "ukuran",
       "Changed": "Diubah: {{changes}}",
-      "Description": "Agen AI mengusulkan perubahan ini. Papan di bawah menampilkan pratinjaunya; tidak ada yang disimpan sampai Anda menekan {{apply}}.",
       "Title": "Perubahan yang diusulkan agen AI",
       "WillBeHidden": "Akan disembunyikan"
     },
@@ -4479,7 +4478,6 @@
     "CustomEndpoint": "Endpoint kustom",
     "DashboardAddPanel": "Tambahkan panel {{title}}",
     "DashboardAlreadyDone": "sudah diterapkan",
-    "DashboardChangesSaved": "{{count}} perubahan disimpan ke dasbor.",
     "DashboardChatEmpty": "Tanyakan cara melakukan sesuatu di WebUI, atau jelaskan perubahan pada dasbor ini. Perubahan dasbor ditampilkan sebagai pratinjau terlebih dahulu dan baru disimpan saat Anda menerapkannya.",
     "DashboardChatExampleBoard": "Buat papan bernama Insiden dengan {{first}} dan {{second}}",
     "DashboardChatExampleLayout": "Sembunyikan kartu {{title}}",

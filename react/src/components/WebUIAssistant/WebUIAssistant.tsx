@@ -47,6 +47,7 @@ const WebUIAssistantFloating: React.FC = () => {
   const [isConnectOpen, setIsConnectOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [conversationKey, setConversationKey] = useState(0);
+  const [isWorking, setIsWorking] = useState(false);
   // A link inside the modal (the token settings shortcut) leaves the page; the modal must not cover the new one.
   const { pathname } = useLocation();
   const [connectPathname, setConnectPathname] = useState(pathname);
@@ -194,7 +195,7 @@ const WebUIAssistantFloating: React.FC = () => {
         direction="column"
         align="stretch"
         ref={panelRef}
-        className="webui-assistant-panel"
+        className={`webui-assistant-panel${isWorking ? ' webui-assistant-panel--working' : ''}`}
         data-below={isPanelBelow || undefined}
         // BAIFlex's inline `position`/`display` would beat the class and `hidden`.
         style={{
@@ -260,6 +261,7 @@ const WebUIAssistantFloating: React.FC = () => {
                 apiKey={apiKey}
                 isVisible={isPanelShown}
                 onChangeConnection={() => setIsConnectOpen(true)}
+                onWorkingChange={setIsWorking}
               />
             </ErrorBoundaryWithNullFallback>
           ))}

@@ -3,7 +3,10 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { generateUUID } from '../../helper/uuid';
-import { AGENT_PREFILL_PARAM } from '../../helper/webmcpConstants';
+import {
+  AGENT_PREFILL_PARAM,
+  WEBUI_URL_SOFT_LIMIT,
+} from '../../helper/webmcpConstants';
 import {
   actionTargetId,
   BOARD_COLUMNS,
@@ -16,10 +19,10 @@ import {
   type DashboardChatPanel,
 } from './dashboardChat';
 import {
-  PANEL_FIELDS_HELP,
   describePanelSources,
   inputOfDraft,
   panelDraftOf,
+  sanitizeConditions,
   type PanelCondition,
 } from './panelFromRequest';
 import { RANGE_PRESETS } from './panelSettings';
@@ -52,9 +55,6 @@ const ID_TYPES = [
   'setRange',
   'editPanel',
 ];
-
-// Below the 8 KB request line of default aiohttp and nginx; not measured on a deployment.
-export const WEBUI_URL_SOFT_LIMIT = 6000;
 
 export const PREPARE_DASHBOARD_INPUT_SCHEMA: WebMCPInputSchema = {
   type: 'object',
@@ -127,7 +127,7 @@ export const PREPARE_DASHBOARD_INPUT_SCHEMA: WebMCPInputSchema = {
       type: 'string',
       maxLength: 2000,
       description:
-        'addPanel / editPanel: the panel filter, conditions separated by ";", each "<property> <operator> <value>" with a property, operator and value sourcesHelp lists for the source; "in" and "notIn" take comma-separated values. Example: "status == RUNNING; type in INTERACTIVE,BATCH". editPanel without conditions keeps the panel\'s own; an empty string removes them.',
+        'addPanel / editPanel: the panel filter, conditions separated by ";", each "<property> <operator> <value>" with a property, operator and value sourcesHelp lists for the source; "in" and "notIn" take comma-separated values. Example: "status == RUNNING". editPanel without conditions keeps the panel\'s own; an empty string removes them.',
     },
     clearDraft: {
       type: 'boolean',
@@ -196,7 +196,9 @@ export const rawActionOfInput = (
   if (type === 'addPanel' && !fields.resourceType) {
     return { field: 'resourceType', reason: 'addPanel needs a resourceType.' };
   }
-  const raw: Record<string, unknown> = { type, ..._.omitBy(fields, _.isNil) };
+  // A new panel's id is made here, never taken from the input.
+  const given = type === 'addPanel' ? _.omit(fields, 'id') : fields;
+  const raw: Record<string, unknown> = { type, ..._.omitBy(given, _.isNil) };
   if (conditions !== undefined) {
     const parsed = parseConditionsText(conditions);
     if ('invalid' in parsed) {
@@ -245,8 +247,13 @@ export const draftOfRawActions = (
     if (action?.type !== 'addPanel') return { raw, action };
     const storedId = (raw as Record<string, unknown>).id;
     // The tool stores the id it showed the agent, so later edits name the same panel.
+    const isFreeId =
+      typeof storedId === 'string' &&
+      STORED_ID.test(storedId) &&
+      !current.cards.some((card) => card.id === storedId) &&
+      !current.panels.some((panel) => panel.id === storedId);
     const kept: DashboardAssistantAction =
-      typeof storedId === 'string' && STORED_ID.test(storedId)
+      isFreeId && typeof storedId === 'string'
         ? { ...action, panel: { ...action.panel, id: storedId } }
         : action;
     const panel =
@@ -272,6 +279,26 @@ export const rawActionsOfParam = (
 };
 
 export const MAX_DRAFT_ACTIONS = 50;
+
+/** The conditions of an addPanel / editPanel the source does not accept, as "<property> <operator> <value>". */
+const droppedConditionsOf = (
+  raw: Record<string, unknown>,
+  action: DashboardAssistantAction,
+  ctx: DashboardChatContext,
+): Array<string> => {
+  if (!Array.isArray(raw.conditions)) return [];
+  const resourceType =
+    action.type === 'editPanel' ? action.input.resourceType : raw.resourceType;
+  const source = ctx.sources.find((item) => item.key === resourceType);
+  if (!source) return [];
+  return (raw.conditions as Array<PanelCondition>)
+    .filter((condition) => !sanitizeConditions([condition], source).length)
+    .map(({ property, operator, value }) =>
+      [property, operator, ([] as Array<string>).concat(value).join(',')].join(
+        ' ',
+      ),
+    );
+};
 
 // The ids an agent can use, so a retry needs no second read.
 const idsOf = (items: ReadonlyArray<{ id: string; title: string }>) =>
@@ -338,12 +365,20 @@ export const PREPARE_DASHBOARD_NEXT_STEP =
 export const PREPARE_DASHBOARD_REJECTED =
   'The change was not added, and the preview was left as it was. Fix the rejected field and call again, or tell the user what could not be done.';
 
+export const PREPARE_DASHBOARD_PARTLY_APPLIED =
+  'The change is previewed without the conditions listed in rejected. Call again with editPanel and valid conditions, or tell the user which ones were left out. Nothing is saved.';
+
 export const PREPARE_DASHBOARD_LINK_TOO_LONG =
   'webui_url is long enough that a server may refuse it (see warnings). Tell the user to apply the changes so far in this tab first, or call with clearDraft and fewer changes.';
+
+/** Field rules for addPanel / editPanel in this tool's flat input. */
+export const PREPARE_PANEL_FIELDS_HELP = `panelType: resourceTable (rows), resourceCount (a number), resourceChart (a chart), sessionResourceGrid (session cards). chartType (charts only): ${CHART_TYPES.join(' ')}. range (charts over time only): ${RANGE_PRESETS.join(' ')}. conditions: text, "<property> <operator> <value>" separated by ";", with the keys, operators and values sourcesHelp lists for the source.`;
 
 export interface DashboardWebMCPDeps {
   /** The board on screen as the assistant reads it, draft included. */
   getContext: () => DashboardChatContext;
+  /** The saved board, which the draft's changes are read against in order. */
+  getSavedContext: () => DashboardChatContext;
   /** The raw actions the preview holds now. */
   getRawDraft: () => ReadonlyArray<unknown>;
   /** The current search params, so the board tab and filters carry over. */
@@ -416,7 +451,7 @@ export const createGetCurrentDashboardTool = ({
           panelTypes: source.panelTypes,
         })),
         sourcesHelp: describePanelSources(ctx.sources),
-        panelFieldsHelp: PANEL_FIELDS_HELP,
+        panelFieldsHelp: PREPARE_PANEL_FIELDS_HELP,
       }),
     };
   },
@@ -425,6 +460,7 @@ export const createGetCurrentDashboardTool = ({
 /** `bai_prepare_dashboard` (ADR 0025): adds one change to the preview; it never saves. */
 export const createPrepareDashboardTool = ({
   getContext,
+  getSavedContext,
   getRawDraft,
   getSearch,
   pathWith,
@@ -461,10 +497,21 @@ export const createPrepareDashboardTool = ({
         reason: `The preview already holds ${MAX_DRAFT_ACTIONS} changes; ask the user to apply or discard them first.`,
       });
     }
-    // Resolved against the saved board plus the earlier changes, as the link will be.
-    const [result] = draftOfRawActions([built.raw], ctx);
-    const action = result?.action;
+    // A model that repeats a call would otherwise preview the same change twice.
+    const sameAs = (raw: unknown) =>
+      _.isEqual(_.omit(raw as object, 'id'), _.omit(built.raw, 'id'));
+    if (base.some(sameAs)) {
+      return reject({
+        field: 'type',
+        reason: 'This change is already in the preview.',
+      });
+    }
+    // Read in order against the saved board, as the link will be.
+    const savedCtx = getSavedContext();
+    const resolved = draftOfRawActions([...base, built.raw], savedCtx);
+    const action = resolved[resolved.length - 1]?.action;
     if (!action) return reject(rejectionOf(built.raw, ctx));
+    const dropped = droppedConditionsOf(built.raw, action, savedCtx);
     // The id resolved here is stored, so the link does not depend on fuzzy matching.
     const target = actionTargetId(action);
     const stored = target ? { ...built.raw, id: target } : built.raw;
@@ -477,12 +524,19 @@ export const createPrepareDashboardTool = ({
     const path = pathWith(search);
     const webuiUrl = new URL(path, window.location.origin).href;
     const isLinkTooLong = webuiUrl.length > WEBUI_URL_SOFT_LIMIT;
-    const draft = draftOfRawActions(raws, ctx);
+    const draft = draftOfRawActions(raws, savedCtx);
     return {
       path,
       webui_url: webuiUrl,
       applied: [describe(action)],
-      rejected: [],
+      rejected: dropped.length
+        ? [
+            {
+              field: 'conditions',
+              reason: `Left out, not listed for this source in sourcesHelp: ${dropped.join('; ')}.`,
+            },
+          ]
+        : [],
       draft: _.compact(
         draft.map((item) => item.action && describe(item.action)),
       ),
@@ -495,9 +549,11 @@ export const createPrepareDashboardTool = ({
           },
         ],
       }),
-      nextStep: isLinkTooLong
-        ? PREPARE_DASHBOARD_LINK_TOO_LONG
-        : PREPARE_DASHBOARD_NEXT_STEP,
+      nextStep: dropped.length
+        ? PREPARE_DASHBOARD_PARTLY_APPLIED
+        : isLinkTooLong
+          ? PREPARE_DASHBOARD_LINK_TOO_LONG
+          : PREPARE_DASHBOARD_NEXT_STEP,
     };
   },
 });

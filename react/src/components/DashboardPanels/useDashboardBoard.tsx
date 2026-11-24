@@ -160,6 +160,9 @@ export interface UseDashboardBoardResult {
   assistantCards: Array<DashboardAssistantCard>;
   /** The previewed board's custom panels. */
   assistantPanels: Array<DashboardChatPanel>;
+  /** The saved board's cards and custom panels, which a URL draft is read against. */
+  savedAssistantCards: Array<DashboardAssistantCard>;
+  savedAssistantPanels: Array<DashboardChatPanel>;
   /** Applies the WebUI Assistant's proposed changes in one save. */
   applyAssistantActions: (
     actions: ReadonlyArray<DashboardAssistantAction>,
@@ -523,34 +526,35 @@ export const useDashboardBoard = ({
         : {}),
     };
   };
-  // The previewed board, so a follow-up request sees the chat's earlier changes.
-  const onBoardIds = new Set(boardItems.map((item) => item.id));
-  const assistantCards = [
-    ...shownBoard.panels
-      .filter((panel) => onBoardIds.has(panel.id))
-      .map((panel) => assistantCardOf(panel, true)),
-    // User-made panels taken off the board, then the catalog cards not on it.
-    ...shownBoard.panels
-      .filter((panel) => panel.hidden && isRenderable(panel))
-      .map((panel) => assistantCardOf(panel, false)),
-    ...siderEntries(visibleEntries)
-      .filter(
-        (entry) =>
-          !shownBoard.panels.some((p) => p.key === entry.definition.key),
-      )
-      .map((entry) =>
-        assistantCardOf(
-          {
-            id: entry.definition.key,
-            key: entry.definition.key,
-            ...entry.definition.defaultSize,
-          },
-          false,
+  /** A board as the assistant reads it: its cards and its custom panels. */
+  const assistantViewOf = (viewed: DashboardBoard) => {
+    const onBoardIds = new Set(
+      toBoardLayout(viewed, catalog, isRenderable).map((entry) => entry.id),
+    );
+    const cards = [
+      ...viewed.panels
+        .filter((panel) => onBoardIds.has(panel.id))
+        .map((panel) => assistantCardOf(panel, true)),
+      // User-made panels taken off the board, then the catalog cards not on it.
+      ...viewed.panels
+        .filter((panel) => panel.hidden && isRenderable(panel))
+        .map((panel) => assistantCardOf(panel, false)),
+      ...siderEntries(visibleEntries)
+        .filter(
+          (entry) => !viewed.panels.some((p) => p.key === entry.definition.key),
+        )
+        .map((entry) =>
+          assistantCardOf(
+            {
+              id: entry.definition.key,
+              key: entry.definition.key,
+              ...entry.definition.defaultSize,
+            },
+            false,
+          ),
         ),
-      ),
-  ].filter((card): card is DashboardAssistantCard => !!card);
-  const assistantPanels = shownBoard.panels.flatMap(
-    (panel): Array<DashboardChatPanel> => {
+    ].filter((card): card is DashboardAssistantCard => !!card);
+    const panels = viewed.panels.flatMap((panel): Array<DashboardChatPanel> => {
       const definition = definitionByKey.get(panel.key);
       const legacy = definition ? toLegacyPanel(panel, definition) : null;
       if (!legacy) return [];
@@ -571,8 +575,16 @@ export const useDashboardBoard = ({
           },
         },
       ];
-    },
-  );
+    });
+    return { cards, panels };
+  };
+  // The previewed board, so a follow-up request sees the chat's earlier changes.
+  const { cards: assistantCards, panels: assistantPanels } =
+    assistantViewOf(shownBoard);
+  // The saved board, which a draft carried in the URL is read against.
+  const savedAssistantView = draftActions?.length
+    ? assistantViewOf(board)
+    : { cards: assistantCards, panels: assistantPanels };
 
   return {
     boardItems: previewItems,
@@ -637,6 +649,8 @@ export const useDashboardBoard = ({
     boards,
     assistantCards,
     assistantPanels,
+    savedAssistantCards: savedAssistantView.cards,
+    savedAssistantPanels: savedAssistantView.panels,
     applyAssistantActions: (actions) => {
       const newBoard = actions.find((action) => action.type === 'createBoard');
       if (newBoard) {
@@ -660,15 +674,21 @@ export const useDashboardBoard = ({
           page,
           template,
         });
+        if (current !== board) clearOverrides(settingsTouchedBy(before));
         // One update: two in a row would each start from this render's config.
+        // The active board merges as save() does, so another tab's edits survive.
         boards.update((config) =>
           addBoard(
             current === board
               ? config
               : updateBoard(config, boards.activeBoard.id, (active) => ({
                   ...active,
-                  panels: current.panels,
-                  knownKeys: current.knownKeys,
+                  panels: mergePanelEdits(
+                    board.panels,
+                    current.panels,
+                    active.panels,
+                  ),
+                  knownKeys: _.union(active.knownKeys, current.knownKeys),
                 })),
             { ...empty, panels: filled.panels, knownKeys: filled.knownKeys },
           ),

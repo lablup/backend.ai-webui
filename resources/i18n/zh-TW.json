@@ -845,7 +845,6 @@
       "ChangeRange": "時間範圍",
       "ChangeResized": "大小",
       "Changed": "已變更：{{changes}}",
-      "Description": "AI 代理建議了以下變更。下方的看板為預覽，按下 {{apply}} 之前不會儲存。",
       "Title": "AI 代理建議的變更",
       "WillBeHidden": "將隱藏"
     },
@@ -4479,7 +4478,6 @@
     "CustomEndpoint": "自訂端點",
     "DashboardAddPanel": "新增面板 {{title}}",
     "DashboardAlreadyDone": "已是此狀態",
-    "DashboardChangesSaved": "已將 {{count}} 項變更儲存到儀表板。",
     "DashboardChatEmpty": "詢問如何在 WebUI 中完成操作，或描述要對此儀表板做的變更。儀表板變更會先預覽，只有套用後才會儲存。",
     "DashboardChatExampleBoard": "用 {{first}} 和 {{second}} 建立一個故障處理面板",
     "DashboardChatExampleLayout": "隱藏 {{title}} 卡片",

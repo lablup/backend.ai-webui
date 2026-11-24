@@ -845,7 +845,6 @@
       "ChangeRange": "période",
       "ChangeResized": "taille",
       "Changed": "Modifié : {{changes}}",
-      "Description": "Un agent IA a proposé ces modifications. Le tableau ci-dessous en affiche un aperçu ; rien n'est enregistré avant que vous n'appuyiez sur {{apply}}.",
       "Title": "Modifications proposées par un agent IA",
       "WillBeHidden": "Sera masqué"
     },
@@ -4478,7 +4477,6 @@
     "CustomEndpoint": "Point de terminaison personnalisé",
     "DashboardAddPanel": "Ajouter le panneau {{title}}",
     "DashboardAlreadyDone": "déjà fait",
-    "DashboardChangesSaved": "{{count}} modifications enregistrées dans le tableau de bord.",
     "DashboardChatEmpty": "Demandez comment faire quelque chose dans WebUI, ou décrivez une modification de ce tableau de bord. Les modifications du tableau de bord sont d'abord affichées en aperçu et ne sont enregistrées que lorsque vous les appliquez.",
     "DashboardChatExampleBoard": "Crée un tableau nommé Incidents avec {{first}} et {{second}}",
     "DashboardChatExampleLayout": "Masque la carte {{title}}",

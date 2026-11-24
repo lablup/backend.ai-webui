@@ -1,0 +1,32 @@
+/* On the assistant's line: same bottom inset and height as its button, just left of it. */
+@layer components {
+  .dashboard-draft-confirm-bar {
+    position: fixed;
+    inset-block-end: calc(
+      var(--webui-assistant-inset, var(--spacing-6)) +
+        env(safe-area-inset-bottom, 0px)
+    );
+    inset-inline-end: calc(
+      var(--webui-assistant-inset, var(--spacing-6)) +
+        env(safe-area-inset-right, 0px)
+    );
+    z-index: var(--bai-z-assistant);
+    min-height: var(--webui-assistant-fab-size, 48px);
+    max-width: calc(100vw - var(--spacing-6) * 2);
+    padding: var(--spacing-2) var(--spacing-2) var(--spacing-2) var(--spacing-4);
+    background: var(--color-background-surface);
+    border: 1px solid var(--color-accent);
+    border-radius: var(--radius-container);
+    box-shadow: var(--shadow-high);
+  }
+
+  :root:has(.webui-assistant-fab) .dashboard-draft-confirm-bar {
+    inset-inline-end: calc(
+      var(--webui-assistant-inset) + var(--webui-assistant-fab-size) +
+        var(--spacing-3) + env(safe-area-inset-right, 0px)
+    );
+    max-width: calc(
+      100vw - var(--webui-assistant-fab-size) - var(--spacing-6) * 3
+    );
+  }
+}

@@ -20,5 +20,8 @@ export interface DashboardAgent {
   reveal: (id: string) => void;
 }
 
+/** The `dashboardDraft` value the tool last wrote, read synchronously so two calls in one tick build on each other. */
+export const latestAgentDraftParamAtom = atom<string | null>(null);
+
 /** Set while a dashboard page is mounted; the assistant switches to its agent prompt then. */
 export const dashboardAgentAtom = atom<DashboardAgent | null>(null);

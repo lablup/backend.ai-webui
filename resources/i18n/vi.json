@@ -845,7 +845,6 @@
       "ChangeRange": "khoảng thời gian",
       "ChangeResized": "kích thước",
       "Changed": "Đã thay đổi: {{changes}}",
-      "Description": "Một tác tử AI đã đề xuất các thay đổi này. Bảng bên dưới hiển thị bản xem trước; không có gì được lưu cho đến khi bạn nhấn {{apply}}.",
       "Title": "Thay đổi do tác tử AI đề xuất",
       "WillBeHidden": "Sẽ bị ẩn"
     },
@@ -4477,7 +4476,6 @@
     "CustomEndpoint": "Endpoint tùy chỉnh",
     "DashboardAddPanel": "Thêm bảng {{title}}",
     "DashboardAlreadyDone": "đã áp dụng",
-    "DashboardChangesSaved": "Đã lưu {{count}} thay đổi vào bảng điều khiển.",
     "DashboardChatEmpty": "Hỏi cách làm một việc trong WebUI, hoặc mô tả thay đổi cho bảng điều khiển này. Thay đổi bảng điều khiển được xem trước và chỉ được lưu khi bạn áp dụng.",
     "DashboardChatExampleBoard": "Tạo bảng tên Sự cố với {{first}} và {{second}}",
     "DashboardChatExampleLayout": "Ẩn thẻ {{title}}",

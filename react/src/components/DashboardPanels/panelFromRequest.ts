@@ -186,6 +186,12 @@ export const sanitizeConditions = (
     const rule = source.filter.properties.find((p) => p.key === property)?.rule;
     if (values.some((v) => /^<.*>$/.test(v) || (rule && !rule.validate(v))))
       return [];
+    // BAIPropertyFilter splits minilang on every '"' and never unescapes, so such a value cannot round-trip.
+    if (
+      source.filter.kind === 'minilang' &&
+      values.some((v) => /["\\]/.test(v))
+    )
+      return [];
     const isList = operator === 'in' || operator === 'notIn';
     return [{ property, operator, value: isList ? values : values[0] }];
   });
@@ -193,7 +199,7 @@ export const sanitizeConditions = (
 const quoteMinilang = (property: FilterProperty | undefined, value: string) =>
   property?.type === 'number' || property?.type === 'boolean'
     ? value
-    : `"${value.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"`;
+    : `"${value}"`;
 
 /** The conditions in the source's own filter format: a minilang string or a `GraphQLFilter`. */
 export const filterOfConditions = (
@@ -205,16 +211,19 @@ export const filterOfConditions = (
     return graphQLFilterOfConditions(conditions, [...source.filter.properties]);
   }
   const properties = source.filter.properties;
-  return conditions
-    .map(({ property, operator, value }) => {
-      const raw = String(Array.isArray(value) ? value[0] : value);
-      const wrapped = operator === 'ilike' ? `%${raw}%` : raw;
-      return `${property} ${operator} ${quoteMinilang(
+  const terms = conditions.flatMap(({ property, operator, value }) => {
+    const raw = String(Array.isArray(value) ? value[0] : value);
+    // Cannot be quoted for BAIPropertyFilter, which never unescapes.
+    if (/["\\]/.test(raw)) return [];
+    const wrapped = operator === 'ilike' ? `%${raw}%` : raw;
+    return [
+      `${property} ${operator} ${quoteMinilang(
         properties.find((p) => p.key === property),
         wrapped,
-      )}`;
-    })
-    .join(' & ');
+      )}`,
+    ];
+  });
+  return terms.length ? terms.join(' & ') : undefined;
 };
 
 /**

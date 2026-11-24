@@ -80,6 +80,13 @@ const unavailable = {
   },
 };
 
+// The user is in this tab, so the links a browser agent hands over only cost the model context.
+const LINK_KEYS = ['webui_url', 'path'];
+
+/** A page tool's result as the model reads it: without the links for another browser. */
+export const modelOutputOf = (output: unknown): unknown =>
+  _.isPlainObject(output) ? _.omit(output as object, LINK_KEYS) : output;
+
 /**
  * `bai_prepare_session` away from the launcher: opens it, then calls the
  * launcher's own tool. A small model skips the navigation step on its own.
@@ -100,14 +107,11 @@ const prepareSessionAnywhere = (registry: PageToolRegistry) =>
       const prepare = await waitForTool(registry, PREPARE_SESSION_TOOL);
       return prepare ? prepare.execute(input) : unavailable;
     },
+    toModelOutput: (output) => ({
+      type: 'json',
+      value: modelOutputOf(output) as never,
+    }),
   });
-
-// The user is in this tab, so the links a browser agent hands over only cost the model context.
-const LINK_KEYS = ['webui_url', 'path'];
-
-/** A page tool's result as the model reads it: without the links for another browser. */
-export const modelOutputOf = (output: unknown): unknown =>
-  _.isPlainObject(output) ? _.omit(output as object, LINK_KEYS) : output;
 
 export const toolSetOf = (
   registry: PageToolRegistry,
@@ -232,7 +236,10 @@ export const streamToolChat = ({
                   type: 'tool-result',
                   toolCallId,
                   toolName,
-                  output: { type: 'json', value: output as never },
+                  output: {
+                    type: 'json',
+                    value: modelOutputOf(output) as never,
+                  },
                 },
               ],
             },

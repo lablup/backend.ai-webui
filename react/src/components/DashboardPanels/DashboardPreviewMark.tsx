@@ -5,6 +5,7 @@
 import './DashboardPreviewMark.css';
 import type { PreviewChange, PreviewMark } from './previewMarks';
 import { Badge } from '@lablup/ui-common/Badge';
+import { BAIFlex } from 'backend.ai-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -33,11 +34,19 @@ const DashboardPreviewMark: React.FC<{
               .join(', '),
           });
   return (
-    <div
+    <BAIFlex
+      direction="column"
+      align="stretch"
       className={`dashboard-preview-mark dashboard-preview-mark--${mark.kind}`}
       data-testid={`dashboard-preview-mark-${mark.kind}`}
+      // Not positioned, so the badge anchors to the board item around it.
+      style={{ position: 'static' }}
     >
-      <span className="dashboard-preview-mark__badge">
+      <BAIFlex
+        className="dashboard-preview-mark__badge"
+        // BAIFlex's inline `position` would beat the class.
+        style={{ position: 'absolute' }}
+      >
         <Badge
           variant={
             mark.kind === 'added'
@@ -48,9 +57,15 @@ const DashboardPreviewMark: React.FC<{
           }
           label={label}
         />
-      </span>
-      <div className="dashboard-preview-mark__content">{children}</div>
-    </div>
+      </BAIFlex>
+      <BAIFlex
+        direction="column"
+        align="stretch"
+        className="dashboard-preview-mark__content"
+      >
+        {children}
+      </BAIFlex>
+    </BAIFlex>
   );
 };
 

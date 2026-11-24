@@ -845,7 +845,6 @@
       "ChangeRange": "Zeitraum",
       "ChangeResized": "Größe",
       "Changed": "Geändert: {{changes}}",
-      "Description": "Ein KI-Agent hat diese Änderungen vorgeschlagen. Das Board unten zeigt eine Vorschau; nichts wird gespeichert, bevor Sie {{apply}} drücken.",
       "Title": "Von einem KI-Agenten vorgeschlagene Änderungen",
       "WillBeHidden": "Wird ausgeblendet"
     },
@@ -4477,7 +4476,6 @@
     "CustomEndpoint": "Benutzerdefinierter Endpunkt",
     "DashboardAddPanel": "Panel {{title}} hinzufügen",
     "DashboardAlreadyDone": "bereits erledigt",
-    "DashboardChangesSaved": "{{count}} Änderungen im Dashboard gespeichert.",
     "DashboardChatEmpty": "Fragen Sie, wie etwas in der WebUI funktioniert, oder beschreiben Sie eine Änderung an diesem Dashboard. Dashboard-Änderungen werden zuerst als Vorschau angezeigt und erst beim Anwenden gespeichert.",
     "DashboardChatExampleBoard": "Erstelle ein Board namens Störungen mit {{first}} und {{second}}",
     "DashboardChatExampleLayout": "Blende die Karte {{title}} aus",

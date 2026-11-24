@@ -69,6 +69,7 @@ const depsWith = (
   return {
     opened,
     getContext: () => ctx,
+    getSavedContext: () => ctx,
     getRawDraft: () => draft,
     getSearch: () => '?board=main',
     pathWith: (search) => `/admin/dashboard${search}`,
@@ -224,6 +225,7 @@ describe('bai_prepare_dashboard', () => {
   it('refuses createBoard on a page with a single board', () => {
     const deps = depsWith([], {
       getContext: () => ({ ...ctx, canCreateBoard: false }),
+      getSavedContext: () => ({ ...ctx, canCreateBoard: false }),
     });
     expect(
       createPrepareDashboardTool(deps).execute({
@@ -246,6 +248,65 @@ describe('bai_prepare_dashboard', () => {
       new URLSearchParams(deps.opened[0]).get(DASHBOARD_DRAFT_PARAM) ?? '',
     );
     expect(stored.id).toBe(result.target);
+  });
+});
+
+describe('bai_prepare_dashboard guards', () => {
+  it('refuses a change the preview already holds', () => {
+    const deps = depsWith([{ type: 'hide', id: 'agents' }]);
+    expect(
+      createPrepareDashboardTool(deps).execute({ type: 'hide', id: 'agents' }),
+    ).toMatchObject({
+      rejected: [{ reason: expect.stringMatching(/already/) }],
+    });
+    expect(deps.opened).toHaveLength(0);
+  });
+
+  it('makes the new panel id itself, ignoring one in the input', () => {
+    const deps = depsWith();
+    const result = createPrepareDashboardTool(deps).execute({
+      type: 'addPanel',
+      id: 'session-1',
+      resourceType: 'session',
+    }) as Record<string, unknown>;
+    expect(result.target).not.toBe('session-1');
+  });
+
+  it('reports the conditions it left out', () => {
+    const deps = depsWith();
+    const result = createPrepareDashboardTool(deps).execute({
+      type: 'addPanel',
+      resourceType: 'session',
+      conditions: 'type == batch; type in a,b',
+    }) as Record<string, unknown>;
+    expect(result.applied).toHaveLength(1);
+    expect(result.rejected).toEqual([
+      { field: 'conditions', reason: expect.stringContaining('type in a,b') },
+    ]);
+  });
+
+  it('reads earlier changes against the saved board, not the preview', () => {
+    const preview = { ...ctx, cards: [], panels: [] };
+    const deps = depsWith([{ type: 'createBoard', title: 'X' }], {
+      getContext: () => preview,
+      getSavedContext: () => ctx,
+    });
+    const result = createPrepareDashboardTool(deps).execute({
+      type: 'hide',
+      id: 'agents',
+    }) as Record<string, unknown>;
+    expect(result.rejected).toEqual([]);
+  });
+});
+
+describe('draftOfRawActions stored ids', () => {
+  it('does not take a stored id that names an existing card or panel', () => {
+    const [result] = draftOfRawActions(
+      [{ type: 'addPanel', resourceType: 'session', id: 'agents' }],
+      ctx,
+    );
+    const added = result.action;
+    expect(added?.type === 'addPanel' && added.panel.id).not.toBe('agents');
   });
 });
 

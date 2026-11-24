@@ -845,7 +845,6 @@
       "ChangeRange": "zakres",
       "ChangeResized": "rozmiar",
       "Changed": "Zmieniono: {{changes}}",
-      "Description": "Agent AI zaproponował te zmiany. Tablica poniżej pokazuje ich podgląd; nic nie zostanie zapisane, dopóki nie naciśniesz {{apply}}.",
       "Title": "Zmiany zaproponowane przez agenta AI",
       "WillBeHidden": "Zostanie ukryte"
     },
@@ -4478,7 +4477,6 @@
     "CustomEndpoint": "Niestandardowy punkt końcowy",
     "DashboardAddPanel": "Dodaj panel {{title}}",
     "DashboardAlreadyDone": "już zrobione",
-    "DashboardChangesSaved": "Zapisano {{count}} zmian na pulpicie.",
     "DashboardChatEmpty": "Zapytaj, jak coś zrobić w WebUI, albo opisz zmianę na tym pulpicie. Zmiany pulpitu są najpierw pokazywane w podglądzie i zapisywane dopiero po ich zastosowaniu.",
     "DashboardChatExampleBoard": "Utwórz tablicę Incydenty z {{first}} i {{second}}",
     "DashboardChatExampleLayout": "Ukryj kartę {{title}}",

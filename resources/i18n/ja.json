@@ -845,7 +845,6 @@
       "ChangeRange": "期間",
       "ChangeResized": "サイズ",
       "Changed": "変更: {{changes}}",
-      "Description": "AI エージェントが以下の変更を提案しました。ボードはプレビューで、{{apply}} を押すまで保存されません。",
       "Title": "AI エージェントが提案した変更",
       "WillBeHidden": "非表示予定"
     },
@@ -4477,7 +4476,6 @@
     "CustomEndpoint": "カスタムエンドポイント",
     "DashboardAddPanel": "パネル {{title}} を追加",
     "DashboardAlreadyDone": "適用済み",
-    "DashboardChangesSaved": "ダッシュボードに {{count}} 件の変更を保存しました。",
     "DashboardChatEmpty": "WebUI での操作方法を質問するか、このダッシュボードの変更内容を入力してください。ダッシュボードの変更はまずプレビューされ、適用したときにのみ保存されます。",
     "DashboardChatExampleBoard": "{{first}} と {{second}} で障害対応ボードを作って",
     "DashboardChatExampleLayout": "{{title}} のカードを非表示にして",

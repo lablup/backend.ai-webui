@@ -845,7 +845,6 @@
       "ChangeRange": "intervalo",
       "ChangeResized": "tamanho",
       "Changed": "Alterado: {{changes}}",
-      "Description": "Um agente de IA propôs estas alterações. O painel abaixo mostra uma prévia; nada é salvo até você pressionar {{apply}}.",
       "Title": "Alterações propostas por um agente de IA",
       "WillBeHidden": "Será ocultado"
     },
@@ -4475,7 +4474,6 @@
     "CustomEndpoint": "Endpoint personalizado",
     "DashboardAddPanel": "Adicionar o painel {{title}}",
     "DashboardAlreadyDone": "já aplicado",
-    "DashboardChangesSaved": "{{count}} alterações salvas no painel.",
     "DashboardChatEmpty": "Pergunte como fazer algo no WebUI ou descreva uma alteração neste painel. As alterações do painel aparecem primeiro em prévia e só são salvas quando você as aplica.",
     "DashboardChatExampleBoard": "Crie um quadro chamado Incidentes com {{first}} e {{second}}",
     "DashboardChatExampleLayout": "Oculte o cartão {{title}}",

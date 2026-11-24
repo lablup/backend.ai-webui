@@ -845,7 +845,6 @@
       "ChangeRange": "julat",
       "ChangeResized": "saiz",
       "Changed": "Diubah: {{changes}}",
-      "Description": "Ejen AI mencadangkan perubahan ini. Papan di bawah memaparkan pratontonnya; tiada apa disimpan sehingga anda menekan {{apply}}.",
       "Title": "Perubahan yang dicadangkan oleh ejen AI",
       "WillBeHidden": "Akan disembunyikan"
     },
@@ -4475,7 +4474,6 @@
     "CustomEndpoint": "Titik akhir tersuai",
     "DashboardAddPanel": "Tambah panel {{title}}",
     "DashboardAlreadyDone": "sudah dibuat",
-    "DashboardChangesSaved": "{{count}} perubahan disimpan ke papan pemuka.",
     "DashboardChatEmpty": "Tanya cara melakukan sesuatu dalam WebUI, atau terangkan perubahan pada papan pemuka ini. Perubahan papan pemuka dipratonton dahulu dan hanya disimpan apabila anda menggunakannya.",
     "DashboardChatExampleBoard": "Cipta papan bernama Insiden dengan {{first}} dan {{second}}",
     "DashboardChatExampleLayout": "Sembunyikan kad {{title}}",

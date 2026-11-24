@@ -114,12 +114,18 @@ describe('filterOfConditions', () => {
     ).toEqual({ usageMode: { equals: 'MODEL' } });
   });
 
-  it('escapes backslashes and quotes in a minilang value', () => {
+  it('leaves out a minilang value with a quote or backslash, which BAIPropertyFilter cannot read back', () => {
     expect(
       filterOfConditions(session, [
         { property: 'name', operator: '==', value: String.raw`a\"b\\` },
       ]),
-    ).toBe(String.raw`name == "a\\\"b\\\\"`);
+    ).toBeUndefined();
+    expect(
+      filterOfConditions(session, [
+        { property: 'name', operator: '==', value: 'a"b' },
+        { property: 'name', operator: '==', value: 'plain' },
+      ]),
+    ).toBe('name == "plain"');
   });
 
   it('is undefined without conditions', () => {

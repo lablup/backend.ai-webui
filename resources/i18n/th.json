@@ -842,7 +842,6 @@
       "ChangeRange": "ช่วงเวลา",
       "ChangeResized": "ขนาด",
       "Changed": "เปลี่ยนแล้ว: {{changes}}",
-      "Description": "เอเจนต์ AI เสนอการเปลี่ยนแปลงเหล่านี้ บอร์ดด้านล่างแสดงตัวอย่าง และจะไม่มีการบันทึกจนกว่าคุณจะกด {{apply}}",
       "Title": "การเปลี่ยนแปลงที่เอเจนต์ AI เสนอ",
       "WillBeHidden": "จะถูกซ่อน"
     },
@@ -4461,7 +4460,6 @@
     "CustomEndpoint": "ปลายทางที่กำหนดเอง",
     "DashboardAddPanel": "เพิ่มแผง {{title}}",
     "DashboardAlreadyDone": "ทำแล้ว",
-    "DashboardChangesSaved": "บันทึกการเปลี่ยนแปลง {{count}} รายการลงแดชบอร์ดแล้ว",
     "DashboardChatEmpty": "ถามวิธีทำสิ่งต่างๆ ใน WebUI หรืออธิบายการเปลี่ยนแปลงที่ต้องการในแดชบอร์ดนี้ การเปลี่ยนแปลงแดชบอร์ดจะแสดงตัวอย่างก่อน และจะบันทึกเมื่อคุณนำไปใช้เท่านั้น",
     "DashboardChatExampleBoard": "สร้างบอร์ดชื่อ เหตุขัดข้อง ที่มี {{first}} และ {{second}}",
     "DashboardChatExampleLayout": "ซ่อนการ์ด {{title}}",

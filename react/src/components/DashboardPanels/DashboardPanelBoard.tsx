@@ -5,9 +5,9 @@
 import { AGENT_PREFILL_PARAM } from '../../helper/webmcpConstants';
 import type { ProjectContextOrNull } from '../../types/projectContext';
 import { dashboardEditModeAtom } from '../dashboardEditModeAtom';
-import DashboardAgentDraftNotice from './DashboardAgentDraftNotice';
 import DashboardBoardSection from './DashboardBoardSection';
 import DashboardBoardTabs from './DashboardBoardTabs';
+import DashboardDraftConfirmBar from './DashboardDraftConfirmBar';
 import DashboardEditSider from './DashboardEditSider';
 import DashboardFilterBar from './DashboardFilterBar';
 import './DashboardPanelBoard.css';
@@ -20,7 +20,11 @@ import {
   actionTargetId,
   type DashboardAssistantAction,
 } from './assistantActions';
-import { dashboardAgentAtom, type DashboardAgent } from './dashboardAgent';
+import {
+  dashboardAgentAtom,
+  latestAgentDraftParamAtom,
+  type DashboardAgent,
+} from './dashboardAgent';
 import { describeDashboardAction } from './dashboardChat';
 import { dashboardScopeKey } from './dashboardScope';
 import {
@@ -54,7 +58,7 @@ import {
   useWebMCPTool,
   type BAIBoardProps,
 } from 'backend.ai-ui';
-import { useAtom, useSetAtom } from 'jotai';
+import { useAtom, useSetAtom, useStore } from 'jotai';
 import * as _ from 'lodash-es';
 import { parseAsString, useQueryStates } from 'nuqs';
 import React, {
@@ -161,11 +165,18 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
     { history: 'replace' },
   );
   const agentDraftParam = agentDraftQuery[DASHBOARD_DRAFT_PARAM];
-  const clearAgentDraftQuery = () =>
+  // The draft the tool last wrote: two calls before the next render must build on each other.
+  const jotaiStore = useStore();
+  useEffect(() => {
+    jotaiStore.set(latestAgentDraftParamAtom, agentDraftParam);
+  }, [jotaiStore, agentDraftParam]);
+  const clearAgentDraftQuery = () => {
+    jotaiStore.set(latestAgentDraftParamAtom, null);
     setAgentDraftQuery({
       [DASHBOARD_DRAFT_PARAM]: null,
       [AGENT_PREFILL_PARAM]: null,
     });
+  };
 
   // These atoms are global: clear them when leaving the page, but not when a
   // suspending query remounts the board on the same path (that would drop an early click).
@@ -195,6 +206,8 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
     boards,
     assistantCards,
     assistantPanels,
+    savedAssistantCards,
+    savedAssistantPanels,
     applyAssistantActions,
   } = useDashboardBoard({
     page,
@@ -244,6 +257,11 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
     sources: panelSourceSpecs(availableResources, { gridEnabled, t }),
     canCreateBoard: page !== 'project',
   };
+  const savedAssistantContext: DashboardAgent['context'] = {
+    ...assistantContext,
+    cards: savedAssistantCards,
+    panels: savedAssistantPanels,
+  };
   // The URL's draft replaces the preview whenever it changes; an emptied one is left to Discard.
   const [agentDraftParamSeen, setAgentDraftParamSeen] = useState<string | null>(
     null,
@@ -254,16 +272,12 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
       const actions = _.compact(
         draftOfRawActions(
           rawActionsOfParam(agentDraftParam),
-          assistantContext,
+          savedAssistantContext,
         ).map((item) => item.action),
       );
       setDraftActions(actions.length ? actions : null);
     }
   }
-  const isAgentDraft =
-    !!agentDraftParam &&
-    !!agentDraftQuery[AGENT_PREFILL_PARAM] &&
-    !!draftActions?.length;
 
   // The WebUI Assistant's chat edits this board through the agent it reads here.
   const dashboardAgent: DashboardAgent = {
@@ -311,7 +325,8 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
 
   const describe = (action: DashboardAssistantAction) =>
     describeDashboardAction(action, assistantContext, t);
-  const getRawDraft = () => rawActionsOfParam(agentDraftParam);
+  const getRawDraft = () =>
+    rawActionsOfParam(jotaiStore.get(latestAgentDraftParamAtom));
   useWebMCPTool(
     createGetCurrentDashboardTool({
       getContext: () => assistantContext,
@@ -322,11 +337,16 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
   useWebMCPTool(
     createPrepareDashboardTool({
       getContext: () => assistantContext,
+      getSavedContext: () => savedAssistantContext,
       getRawDraft,
       getSearch: () => window.location.search,
       pathWith: (search) => `${window.location.pathname}${search}`,
       openPreview: (search) => {
         const params = new URLSearchParams(search);
+        jotaiStore.set(
+          latestAgentDraftParamAtom,
+          params.get(DASHBOARD_DRAFT_PARAM),
+        );
         setAgentDraftQuery({
           [DASHBOARD_DRAFT_PARAM]: params.get(DASHBOARD_DRAFT_PARAM),
           [AGENT_PREFILL_PARAM]: params.get(AGENT_PREFILL_PARAM),
@@ -409,13 +429,6 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
                 <DashboardBoardTabs boards={boards} />
               ) : null}
             </DashboardFilterBar>
-            {isAgentDraft ? (
-              <DashboardAgentDraftNotice
-                changes={(draftActions ?? []).map(describe)}
-                onApply={dashboardAgent.apply}
-                onDiscard={dashboardAgent.discard}
-              />
-            ) : null}
             <DeniedPanelsContext value={denied.reporterFor(scopeKey)}>
               <BAIBoard
                 movable
@@ -502,6 +515,17 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
             }}
           />
         </BAIUnmountAfterClose>
+        {draftActions?.length ? (
+          <DashboardDraftConfirmBar
+            count={draftActions.length}
+            newBoardTitle={
+              draftActions.find((action) => action.type === 'createBoard')
+                ?.title
+            }
+            onApply={dashboardAgent.apply}
+            onDiscard={dashboardAgent.discard}
+          />
+        ) : null}
       </BAIFlex>
     </DashboardFilterContext>
   );

@@ -845,7 +845,6 @@
       "ChangeRange": "aikaväli",
       "ChangeResized": "koko",
       "Changed": "Muutettu: {{changes}}",
-      "Description": "Tekoälyagentti ehdotti näitä muutoksia. Alla oleva taulu näyttää esikatselun; mitään ei tallenneta ennen kuin painat {{apply}}.",
       "Title": "Tekoälyagentin ehdottamat muutokset",
       "WillBeHidden": "Piilotetaan"
     },
@@ -4476,7 +4475,6 @@
     "CustomEndpoint": "Mukautettu päätepiste",
     "DashboardAddPanel": "Lisää paneeli {{title}}",
     "DashboardAlreadyDone": "jo tehty",
-    "DashboardChangesSaved": "{{count}} muutosta tallennettu koontinäyttöön.",
     "DashboardChatEmpty": "Kysy, miten jokin tehdään WebUI:ssa, tai kuvaile muutos tähän koontinäyttöön. Koontinäytön muutokset näytetään ensin esikatseluna ja tallennetaan vasta, kun otat ne käyttöön.",
     "DashboardChatExampleBoard": "Luo näkymä nimeltä Häiriöt, jossa on {{first}} ja {{second}}",
     "DashboardChatExampleLayout": "Piilota kortti {{title}}",

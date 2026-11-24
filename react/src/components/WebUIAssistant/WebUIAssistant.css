@@ -128,6 +128,37 @@
       );
   }
 
+  /* While an answer is being written, a gradient runs around the panel's edge. */
+  .webui-assistant-panel--working::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    padding: 2px;
+    border-radius: inherit;
+    background: conic-gradient(
+      from var(--webui-assistant-angle),
+      var(--color-accent),
+      color-mix(in srgb, var(--color-accent) 15%, transparent) 35%,
+      var(--color-accent) 65%,
+      color-mix(in srgb, var(--color-accent) 15%, transparent) 90%,
+      var(--color-accent)
+    );
+    mask:
+      linear-gradient(black 0 0) content-box,
+      linear-gradient(black 0 0);
+    mask-composite: exclude;
+    pointer-events: none;
+    animation: webui-assistant-working 2.4s linear infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .webui-assistant-panel--working::before {
+      animation: none;
+      background: var(--color-accent);
+    }
+  }
+
   /* Layout (flex, padding, border) is inline: BAIFlex's inline style beats classes. */
   .webui-assistant-panel__header {
     background: var(--color-accent);
@@ -136,5 +167,17 @@
 
   .webui-assistant-panel__header button {
     color: inherit;
+  }
+}
+
+@property --webui-assistant-angle {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+
+@keyframes webui-assistant-working {
+  to {
+    --webui-assistant-angle: 360deg;
   }
 }

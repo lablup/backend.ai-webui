@@ -4,7 +4,10 @@
  */
 import type { SessionLauncherWebMCPToolFoldersQuery } from '../../../__generated__/SessionLauncherWebMCPToolFoldersQuery.graphql';
 import { generateUUID } from '../../../helper/uuid';
-import { AGENT_PREFILL_PARAM } from '../../../helper/webmcpConstants';
+import {
+  AGENT_PREFILL_PARAM,
+  WEBUI_URL_SOFT_LIMIT,
+} from '../../../helper/webmcpConstants';
 import { useSuspendedBackendaiClient } from '../../../hooks';
 import { useMountableStorageHosts } from '../../../hooks/useMountableStorageHosts';
 import { useEffectiveLoginConfig } from '../../../hooks/useWebUIConfig';
@@ -49,8 +52,7 @@ export const PREPARE_SESSION_PARTLY_FILLED =
 export const PREPARE_SESSION_LINK_TOO_LONG =
   'webui_url is long enough that a server may refuse it (see warnings). Shorten startupCommand or mount fewer folders and call again, or tell the user the link may fail to open. Nothing has been started.';
 
-// Below the 8 KB request line of default aiohttp and nginx; not measured on a deployment.
-export const WEBUI_URL_SOFT_LIMIT = 6000;
+export { WEBUI_URL_SOFT_LIMIT };
 
 export interface PrepareSessionToolDeps {
   /** Looks the requested names up among the folders this user can mount here. */

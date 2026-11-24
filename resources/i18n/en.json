@@ -832,7 +832,6 @@
       "ChangeRange": "range",
       "ChangeResized": "size",
       "Changed": "Changed: {{changes}}",
-      "Description": "An AI agent proposed these changes. The board below previews them; nothing is saved until you press {{apply}}.",
       "Title": "Changes proposed by an AI agent",
       "WillBeHidden": "Will be hidden"
     },
@@ -4460,7 +4459,6 @@
     "CustomEndpoint": "Custom endpoint",
     "DashboardAddPanel": "Add the panel {{title}}",
     "DashboardAlreadyDone": "already done",
-    "DashboardChangesSaved": "Saved {{count}} changes to the dashboard.",
     "DashboardChatEmpty": "Ask how to do something in WebUI, or describe a change to this dashboard. Dashboard changes are previewed first and saved only when you apply them.",
     "DashboardChatExampleBoard": "Create a board named Incidents with {{first}} and {{second}}",
     "DashboardChatExampleLayout": "Hide the {{title}} card",

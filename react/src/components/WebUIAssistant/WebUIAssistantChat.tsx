@@ -78,7 +78,6 @@ import {
   convertToModelMessages,
   createUIMessageStream,
   createUIMessageStreamResponse,
-  generateId,
   getToolName,
   isToolUIPart,
   type ModelMessage,
@@ -102,16 +101,22 @@ const messageText = (message: ChatUIMessage) =>
     .join('');
 
 /** Earlier turns as text only: past tool calls would crowd a small model's context. */
+const TOOLS_ONLY_ANSWER = '(Used tools; no text answer.)';
+
 const textOnlyModelMessages = (
   messages: ReadonlyArray<ChatUIMessage>,
 ): Array<ModelMessage> =>
   convertToModelMessages(
-    messages
-      .map((message) => ({
+    messages.map((message) => {
+      const parts = message.parts.filter((part) => part.type === 'text');
+      // An answer that was only tool calls still takes its turn, so roles keep alternating.
+      return {
         ...message,
-        parts: message.parts.filter((part) => part.type === 'text'),
-      }))
-      .filter((message) => message.parts.length > 0),
+        parts: parts.length
+          ? parts
+          : [{ type: 'text' as const, text: TOOLS_ONLY_ANSWER }],
+      };
+    }),
   );
 
 type ToolPart = Extract<ChatUIMessage['parts'][number], { toolCallId: string }>;
@@ -213,6 +218,8 @@ interface WebUIAssistantChatProps {
   isVisible: boolean;
   /** Lets the user fix a connection the endpoint rejects or cannot be reached on. */
   onChangeConnection: () => void;
+  /** Whether an answer is being written, for the panel's working indicator. */
+  onWorkingChange?: (isWorking: boolean) => void;
 }
 
 const WebUIAssistantChat: React.FC<WebUIAssistantChatProps> = ({
@@ -220,6 +227,7 @@ const WebUIAssistantChat: React.FC<WebUIAssistantChatProps> = ({
   apiKey: token,
   isVisible,
   onChangeConnection,
+  onWorkingChange,
 }) => {
   'use memo';
 
@@ -279,7 +287,6 @@ const WebUIAssistantChat: React.FC<WebUIAssistantChatProps> = ({
     staleTime: Infinity,
     retry: false,
   });
-  const usesTools = toolsQuery.data === true;
 
   // `null` = the manual is not loaded, which the prompt must not report as "nothing matched".
   const pickExcerpts = (question: string): ManualSection[] | null => {
@@ -376,7 +383,7 @@ const WebUIAssistantChat: React.FC<WebUIAssistantChatProps> = ({
     return dashboardResponse(reply, { items });
   };
 
-  const { messages, setMessages, sendMessage, status, stop, error } = useChat({
+  const { messages, sendMessage, status, stop, error } = useChat({
     id: 'webui-assistant',
     experimental_throttle: 100,
     transport: new DefaultChatTransport({
@@ -389,7 +396,10 @@ const WebUIAssistantChat: React.FC<WebUIAssistantChatProps> = ({
         const lastUser = [...uiMessages]
           .reverse()
           .find((m) => m.role === 'user');
-        if (usesTools) {
+        // Without page tools (enableWebMCP off) the prompt-only answers still edit the board.
+        const supportsTools =
+          toolsQuery.data ?? (await toolsQuery.refetch()).data === true;
+        if (supportsTools && pageToolRegistry.list().length > 0) {
           return streamToolChat({
             baseURL: apiBaseURL ?? '',
             apiKey: token,
@@ -458,6 +468,13 @@ const WebUIAssistantChat: React.FC<WebUIAssistantChatProps> = ({
   );
 
   const isStreaming = status === 'streaming' || status === 'submitted';
+  const reportWorking = useEffectEvent((isWorking: boolean) =>
+    onWorkingChange?.(isWorking),
+  );
+  useEffect(() => {
+    reportWorking(isStreaming);
+    return () => reportWorking(false);
+  }, [isStreaming]);
   const isModelReady = !!modelId;
 
   if (!isModelReady) {
@@ -660,8 +677,6 @@ const WebUIAssistantChat: React.FC<WebUIAssistantChatProps> = ({
     t('webuiAssistant.ExampleShareFolder'),
     ...(dashboardAgent ? dashboardExamplesOf(dashboardAgent.context, t) : []),
   ];
-  const draft = dashboardAgent?.draft ?? [];
-  const newBoard = draft.find((action) => action.type === 'createBoard');
 
   return (
     <>
@@ -743,54 +758,6 @@ const WebUIAssistantChat: React.FC<WebUIAssistantChatProps> = ({
           padding: 'var(--spacing-3) var(--spacing-4)',
         }}
       >
-        {dashboardAgent && draft.length > 0 ? (
-          <BAIFlex justify="between" align="center" gap="xs">
-            <Text size="sm" color="secondary">
-              {newBoard?.type === 'createBoard'
-                ? t('webuiAssistant.DashboardPreviewingNewBoard', {
-                    title: newBoard.title,
-                    count: draft.length,
-                  })
-                : t('webuiAssistant.DashboardPreviewingCount', {
-                    count: draft.length,
-                  })}
-            </Text>
-            <BAIFlex gap="xs" style={{ flexShrink: 0 }}>
-              <Button
-                size="sm"
-                variant="ghost"
-                label={t('webuiAssistant.DiscardDashboardChanges')}
-                onClick={dashboardAgent.discard}
-              />
-              <Button
-                size="sm"
-                variant="primary"
-                label={t('webuiAssistant.ApplyDashboardChanges')}
-                onClick={() => {
-                  setMessages((current) => [
-                    ...current,
-                    {
-                      id: generateId(),
-                      role: 'assistant',
-                      parts: [
-                        {
-                          type: 'text',
-                          text: t('webuiAssistant.DashboardChangesSaved', {
-                            count: draft.length,
-                          }),
-                        },
-                      ],
-                      metadata: {
-                        notice: true,
-                      } satisfies AssistantMessageMetadata,
-                    },
-                  ]);
-                  dashboardAgent.apply();
-                }}
-              />
-            </BAIFlex>
-          </BAIFlex>
-        ) : null}
         <ChatComposer
           density="compact"
           elevation="none"
