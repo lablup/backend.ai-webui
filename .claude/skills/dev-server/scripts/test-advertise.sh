@@ -177,6 +177,15 @@ check 'a cache without a number is a miss' '{"number":11350,"title":"net"}' \
   "$(lookup_with 0 '{"number":11350,"title":"net"}')"
 rm -f "$CACHE"
 check 'no cache and no gh answer is null' 'null' "$(lookup_with 1 '')"
+check 'and writes no cache' 'absent' "$([ -e "$CACHE" ] && echo written || echo absent)"
+rm -f "$TMP/gh-calls"
+lookup_with 0 '{"number":11351,"title":"fresh"}' >/dev/null
+check 'a gh answer is cached where dev.mjs reads it, as dev.mjs writes it' \
+  '{"number":11351,"title":"fresh"}' "$(cat "$CACHE" 2>/dev/null)"
+check 'so the next lookup does not call gh again' '{"number":11351,"title":"fresh"} 1' \
+  "$(lookup_with 1 '') $( (cat "$TMP/gh-calls" 2>/dev/null) | wc -l | tr -d ' ')"
+check 'no temp file is left beside the cache' '1' \
+  "$(find "$TMP/.cache/backend.ai-webui" -type f | wc -l | tr -d ' ')"
 rm -rf "$TMP"
 
 # ── missing tools ─────────────────────────────────────────────────────────────

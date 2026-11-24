@@ -217,6 +217,16 @@ read_pr_cache() {
   [ -f "$1" ] && jq -ce 'select(.number)' "$1" 2>/dev/null
 }
 
+# write_pr_cache <file> <json> — dev.mjs's `writeCachedPr`: gh's own JSON, compact,
+# no trailing newline. Best-effort, and atomic so dev.mjs never reads half a file.
+write_pr_cache() {
+  local tmp
+  mkdir -p "$(dirname "$1")" 2>/dev/null || return 0
+  tmp=$(mktemp "$1.XXXXXX" 2>/dev/null) || return 0
+  if jq -cj . <<<"$2" >"$tmp" 2>/dev/null && mv -f "$tmp" "$1" 2>/dev/null; then return 0; fi
+  rm -f "$tmp"
+}
+
 # boot_record <app> <url> <repo> <branch> <pid> <startedAt> <served-json>
 #             [<box>] [<localUrl>] [<worktree>]
 # The last three are context for whoever reads the record; they are null when
@@ -305,17 +315,19 @@ exact_mode() {
 # a function of the PR it returns, and a name that differs from the one dev.mjs
 # claims points BAI_REVIEW_BOOT_RECORD and the probe at a server that is not there.
 # So: the same on-disk cache first, and only on a miss `gh pr view <branch>`
-# (any PR state, not just open) with a 4s budget.
+# (any PR state, not just open) with a 4s budget, whose answer is cached for dev.mjs.
 lookup_pr() {
-  local branch=$1 out
+  local branch=$1 out cache
   { [ -n "$branch" ] && [ -z "${PORTLESS_SKIP_PR_LOOKUP:-}" ]; } || { printf 'null'; return; }
-  read_pr_cache "$(pr_cache_path "$branch")" && return
+  cache=$(pr_cache_path "$branch")
+  read_pr_cache "$cache" && return
   if command -v timeout >/dev/null 2>&1; then
     out=$(timeout 4 gh pr view "$branch" --json number,title 2>/dev/null || true)
   else
     out=$(gh pr view "$branch" --json number,title 2>/dev/null || true)
   fi
   if [ -n "$out" ] && jq -e '.number' <<<"$out" >/dev/null 2>&1; then
+    write_pr_cache "$cache" "$out"
     jq -c . <<<"$out"; return
   fi
   printf 'null'
