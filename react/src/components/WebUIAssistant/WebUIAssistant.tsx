@@ -23,7 +23,7 @@ import { Spinner } from '@lablup/ui-common/Spinner';
 import { Text } from '@lablup/ui-common/Text';
 import { BAIFlex, BAIPopconfirm, BAIUnmountAfterClose } from 'backend.ai-ui';
 import { EraserIcon, MessageCircle, PlugZap, X } from 'lucide-react';
-import { Suspense, useEffect, useState } from 'react';
+import { Suspense, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 
@@ -69,6 +69,60 @@ const WebUIAssistantFloating: React.FC = () => {
   // The chat (manual download, /models probe) mounts on first open (ADR 0032) and then stays.
   const [hasBeenShown, setHasBeenShown] = useState(false);
   if (isPanelShown && !hasBeenShown) setHasBeenShown(true);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const dragRef = useRef<{
+    pointerId: number;
+    startX: number;
+    startY: number;
+    minX: number;
+    maxX: number;
+    minY: number;
+    maxY: number;
+    origin: { x: number; y: number };
+  } | null>(null);
+  // Offset from the panel's corner position, set by dragging its header.
+  const [offset, setOffset] = useState({ x: 0, y: 0 });
+
+  const onHeaderPointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (event.button !== 0 || (event.target as Element).closest('button')) {
+      return;
+    }
+    const rect = panelRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    event.currentTarget.setPointerCapture(event.pointerId);
+    // Keeps the whole panel inside the viewport.
+    dragRef.current = {
+      pointerId: event.pointerId,
+      startX: event.clientX,
+      startY: event.clientY,
+      minX: offset.x - rect.left,
+      maxX: offset.x + window.innerWidth - rect.right,
+      minY: offset.y - rect.top,
+      maxY: offset.y + window.innerHeight - rect.bottom,
+      origin: offset,
+    };
+  };
+  const onHeaderPointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
+    const drag = dragRef.current;
+    if (!drag || drag.pointerId !== event.pointerId) return;
+    const clamp = (value: number, min: number, max: number) =>
+      Math.min(Math.max(value, min), max);
+    setOffset({
+      x: clamp(
+        drag.origin.x + event.clientX - drag.startX,
+        drag.minX,
+        drag.maxX,
+      ),
+      y: clamp(
+        drag.origin.y + event.clientY - drag.startY,
+        drag.minY,
+        drag.maxY,
+      ),
+    });
+  };
+  const onHeaderPointerEnd = () => {
+    dragRef.current = null;
+  };
 
   useEffect(() => {
     if (!isOpen || isConnectOpen) return;
@@ -94,11 +148,13 @@ const WebUIAssistantFloating: React.FC = () => {
       <BAIFlex
         direction="column"
         align="stretch"
+        ref={panelRef}
         className="webui-assistant-panel"
         // BAIFlex's inline `position`/`display` would beat the class and `hidden`.
         style={{
-          position: 'absolute',
+          position: 'fixed',
           display: isPanelShown ? 'flex' : 'none',
+          translate: `${offset.x}px ${offset.y}px`,
         }}
         role="dialog"
         aria-label={title}
@@ -108,6 +164,16 @@ const WebUIAssistantFloating: React.FC = () => {
           align="center"
           gap="xs"
           className="webui-assistant-panel__header"
+          title={t('webuiAssistant.DragToMove')}
+          onPointerDown={onHeaderPointerDown}
+          onPointerMove={onHeaderPointerMove}
+          onPointerUp={onHeaderPointerEnd}
+          onPointerCancel={onHeaderPointerEnd}
+          onDoubleClick={(event) => {
+            if (!(event.target as Element).closest('button')) {
+              setOffset({ x: 0, y: 0 });
+            }
+          }}
           style={{
             flexShrink: 0,
             padding:

@@ -4,36 +4,29 @@
 
  The floating button and chat panel sit on the ladder's `assistant` rung
  (packages/backend.ai-ui/src/styles/zIndexLadder.ts): over page content, under
- drawers, dialogs and notifications. They are anchored to the bottom-left of
- the main content area (`.main-layout-main-content`, right of the sider), away
- from the bottom-right notification stack; on narrow viewports the stack can
- still reach them (see the media query and the panel width below).
+ drawers, dialogs and notifications.
 */
 @layer components {
   :root {
     --webui-assistant-fab-size: 48px;
     --webui-assistant-inset: var(--spacing-6);
-    /* Mirrors ui-common's NotificationStack.css (width 384px, padding spacing-6);
-       update it, and the 480px query below, when that changes. */
-    --webui-assistant-stack-clearance: calc(
-      384px + var(--spacing-6) + var(--spacing-3)
+  }
+
+  /* The notification stack would otherwise cover the button. */
+  :root:has(.webui-assistant-fab) {
+    --bai-notification-stack-inset-bottom: calc(
+      var(--webui-assistant-fab-size) + var(--spacing-2)
     );
   }
 
-  /* Below 480px (stack 384 + 24, button edge 72; no sider under 768px) the viewport-fixed stack
-     spans the screen and would cover the button. */
-  @media (max-width: 480px) {
-    :root:has(.webui-assistant-fab) {
-      --bai-notification-stack-inset-bottom: calc(
-        var(--webui-assistant-fab-size) + var(--spacing-2)
-      );
-    }
-  }
-
   .webui-assistant-fab {
-    position: absolute;
-    inset-block-end: var(--webui-assistant-inset);
-    inset-inline-start: var(--webui-assistant-inset);
+    position: fixed;
+    inset-block-end: calc(
+      var(--webui-assistant-inset) + env(safe-area-inset-bottom, 0px)
+    );
+    inset-inline-end: calc(
+      var(--webui-assistant-inset) + env(safe-area-inset-right, 0px)
+    );
     z-index: var(--bai-z-assistant);
     width: var(--webui-assistant-fab-size);
     height: var(--webui-assistant-fab-size);
@@ -41,28 +34,20 @@
   }
 
   .webui-assistant-panel {
-    position: absolute;
+    position: fixed;
     inset-block-end: calc(
       var(--webui-assistant-inset) + var(--webui-assistant-fab-size) +
-        var(--spacing-3)
+        var(--spacing-3) + env(safe-area-inset-bottom, 0px)
     );
-    inset-inline-start: var(--webui-assistant-inset);
+    inset-inline-end: calc(
+      var(--webui-assistant-inset) + env(safe-area-inset-right, 0px)
+    );
     z-index: var(--bai-z-assistant);
-    /* Stops short of the notification stack; never narrower than 280px. */
-    width: max(
-      min(280px, 100% - var(--webui-assistant-inset) * 2),
-      min(
-        400px,
-        100% - var(--webui-assistant-inset) * 2,
-        100% - var(--webui-assistant-inset) -
-          var(--webui-assistant-stack-clearance)
-      )
-    );
-    /* The containing block is the content area, header included. */
+    width: min(400px, calc(100vw - var(--webui-assistant-inset) * 2));
     height: min(
       600px,
       calc(
-        100% - var(--webui-header-height, 60px) -
+        100dvh - var(--webui-header-height, 60px) -
           var(--webui-assistant-fab-size) - var(--spacing-6) * 3
       )
     );
@@ -76,6 +61,9 @@
 
   /* Layout (flex, padding, border) is inline: BAIFlex's inline style beats classes. */
   .webui-assistant-panel__header {
+    cursor: move;
+    touch-action: none;
+    user-select: none;
     background: var(--color-accent);
     color: var(--color-on-accent);
   }
