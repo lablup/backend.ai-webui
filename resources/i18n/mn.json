@@ -4591,6 +4591,7 @@
     "MenuGroupProjectAdmin": "Төслийн админ",
     "MenuGroupUser": "Хэрэглэгч",
     "MenuInactivelist": "Цэс идэвхгүй болгох",
+    "MenuLabelWithTier": "{{menu}} ({{tier}})",
     "NotSaved": "Системийн зарим тохиргоо хадгалагдсангүй",
     "NotSavedItems": "Дараах тохиргоо хадгалагдаагүй тул хадгалсан утга руугаа буцлаа:",
     "OpenPortToPublic": "Аппад нийтийн хандалтыг зөвшөөрөх",

@@ -4575,6 +4575,7 @@
     "MenuGroupProjectAdmin": "ผู้ดูแลโปรเจกต์",
     "MenuGroupUser": "ผู้ใช้",
     "MenuInactivelist": "ปิดใช้งานเมนู",
+    "MenuLabelWithTier": "{{menu}} ({{tier}})",
     "NotSaved": "การตั้งค่าระบบบางรายการไม่ได้บันทึก",
     "NotSavedItems": "การตั้งค่าต่อไปนี้ไม่ได้บันทึกและกลับไปใช้ค่าที่บันทึกไว้:",
     "OpenPortToPublic": "อนุญาตการเข้าถึงแอปแบบสาธารณะ",

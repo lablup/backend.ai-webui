@@ -4591,6 +4591,7 @@
     "MenuGroupProjectAdmin": "项目管理员",
     "MenuGroupUser": "用户",
     "MenuInactivelist": "禁用菜单",
+    "MenuLabelWithTier": "{{menu}}（{{tier}}）",
     "NotSaved": "部分系统设置未保存",
     "NotSavedItems": "以下设置未保存，已恢复为已保存的值：",
     "OpenPortToPublic": "允许公开访问应用",

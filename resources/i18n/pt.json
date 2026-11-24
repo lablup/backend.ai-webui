@@ -4591,6 +4591,7 @@
     "MenuGroupProjectAdmin": "Administrador do projeto",
     "MenuGroupUser": "Utilizador",
     "MenuInactivelist": "Desativar menus",
+    "MenuLabelWithTier": "{{menu}} ({{tier}})",
     "NotSaved": "Algumas definições do sistema não foram guardadas",
     "NotSavedItems": "Estas definições não foram guardadas e voltaram aos valores guardados:",
     "OpenPortToPublic": "Permitir acesso público às aplicações",

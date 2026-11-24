@@ -4590,6 +4590,7 @@
     "MenuGroupProjectAdmin": "Projektin ylläpitäjä",
     "MenuGroupUser": "Käyttäjä",
     "MenuInactivelist": "Poista valikot käytöstä",
+    "MenuLabelWithTier": "{{menu}} ({{tier}})",
     "NotSaved": "Kaikkia järjestelmäasetuksia ei tallennettu",
     "NotSavedItems": "Näitä asetuksia ei tallennettu, ja ne palautettiin tallennettuihin arvoihinsa:",
     "OpenPortToPublic": "Salli sovellusten julkinen käyttö",

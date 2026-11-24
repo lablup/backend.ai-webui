@@ -4592,6 +4592,7 @@
     "MenuGroupProjectAdmin": "Administrateur de projet",
     "MenuGroupUser": "Utilisateur",
     "MenuInactivelist": "Désactiver des menus",
+    "MenuLabelWithTier": "{{menu}} ({{tier}})",
     "NotSaved": "Certains paramètres système n'ont pas été enregistrés",
     "NotSavedItems": "Ces paramètres n'ont pas été enregistrés et ont repris leur valeur enregistrée :",
     "OpenPortToPublic": "Autoriser l'accès public aux applications",

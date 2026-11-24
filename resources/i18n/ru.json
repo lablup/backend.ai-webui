@@ -4589,6 +4589,7 @@
     "MenuGroupProjectAdmin": "Администратор проекта",
     "MenuGroupUser": "Пользователь",
     "MenuInactivelist": "Отключить меню",
+    "MenuLabelWithTier": "{{menu}} ({{tier}})",
     "NotSaved": "Некоторые системные настройки не сохранены",
     "NotSavedItems": "Эти настройки не сохранены и вернулись к сохранённым значениям:",
     "OpenPortToPublic": "Разрешить публичный доступ к приложениям",

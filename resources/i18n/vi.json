@@ -4591,6 +4591,7 @@
     "MenuGroupProjectAdmin": "Quản trị viên dự án",
     "MenuGroupUser": "Người dùng",
     "MenuInactivelist": "Vô hiệu hóa menu",
+    "MenuLabelWithTier": "{{menu}} ({{tier}})",
     "NotSaved": "Một số cài đặt hệ thống chưa được lưu",
     "NotSavedItems": "Các cài đặt sau chưa được lưu và đã trở về giá trị đã lưu:",
     "OpenPortToPublic": "Cho phép truy cập ứng dụng công khai",

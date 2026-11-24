@@ -4593,6 +4593,7 @@
     "MenuGroupProjectAdmin": "Admin proyek",
     "MenuGroupUser": "Pengguna",
     "MenuInactivelist": "Nonaktifkan menu",
+    "MenuLabelWithTier": "{{menu}} ({{tier}})",
     "NotSaved": "Beberapa Pengaturan Sistem tidak disimpan",
     "NotSavedItems": "Pengaturan berikut tidak disimpan dan kembali ke nilai tersimpannya:",
     "OpenPortToPublic": "Izinkan akses aplikasi publik",

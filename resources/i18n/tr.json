@@ -4589,6 +4589,7 @@
     "MenuGroupProjectAdmin": "Proje yöneticisi",
     "MenuGroupUser": "Kullanıcı",
     "MenuInactivelist": "Menüleri devre dışı bırak",
+    "MenuLabelWithTier": "{{menu}} ({{tier}})",
     "NotSaved": "Bazı sistem ayarları kaydedilmedi",
     "NotSavedItems": "Bu ayarlar kaydedilmedi ve kayıtlı değerlerine döndü:",
     "OpenPortToPublic": "Uygulamalara herkese açık erişime izin ver",

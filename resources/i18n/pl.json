@@ -4592,6 +4592,7 @@
     "MenuGroupProjectAdmin": "Administrator projektu",
     "MenuGroupUser": "Użytkownik",
     "MenuInactivelist": "Wyłącz menu",
+    "MenuLabelWithTier": "{{menu}} ({{tier}})",
     "NotSaved": "Niektóre ustawienia systemowe nie zostały zapisane",
     "NotSavedItems": "Te ustawienia nie zostały zapisane i wróciły do zapisanych wartości:",
     "OpenPortToPublic": "Zezwalaj na publiczny dostęp do aplikacji",

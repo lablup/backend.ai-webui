@@ -4589,6 +4589,7 @@
     "MenuGroupProjectAdmin": "Pentadbir projek",
     "MenuGroupUser": "Pengguna",
     "MenuInactivelist": "Nyahaktifkan menu",
+    "MenuLabelWithTier": "{{menu}} ({{tier}})",
     "NotSaved": "Sesetengah Tetapan Sistem tidak disimpan",
     "NotSavedItems": "Tetapan berikut tidak disimpan dan kembali kepada nilai yang disimpan:",
     "OpenPortToPublic": "Benarkan akses awam kepada aplikasi",
