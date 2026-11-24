@@ -1249,7 +1249,7 @@
       "NumberOfFiles": "파일 개수",
       "OpenAFolder": "폴더 열기",
       "OverwriteInvitation": "사용자 초대 덮어쓰기",
-      "OverwriteInvitationDesc": "{{email}} 사용자에 대해 대기 중이거나 수락된 초대가 존재합니다. 덮어쓰시겠습니까?",
+      "OverwriteInvitationDesc": "{{email}}에 대해 대기 중이거나 수락된 초대가 존재합니다. 덮어쓰시겠습니까?",
       "Owner": "소유자",
       "Ownership": "소유",
       "Path": "경로",
