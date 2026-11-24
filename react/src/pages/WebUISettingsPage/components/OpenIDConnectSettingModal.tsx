@@ -4,6 +4,7 @@
  */
 import { App } from '../../../app-shim';
 import BAIFormItem from '../../../components/BAIFormItem';
+import { isValidUrl } from '../../../diagnostics/rules/configRules';
 import { Form, type Rule } from '../../../form-engine';
 import { useSuspendedBackendaiClient } from '../../../hooks';
 import { useSuspenseTanQuery } from '../../../hooks/reactQueryAlias';
@@ -17,13 +18,13 @@ import {
 } from '../helper/openidPluginConfig';
 import {
   applyPluginConfigChange,
-  isHttpUrl,
   isPluginConfigChangeEmpty,
   readPluginConfig,
   type PluginSecretStatus,
 } from '../helper/pluginEtcdConfig';
 import { Banner } from '@lablup/ui-common/Banner';
 import { Heading } from '@lablup/ui-common/Heading';
+import { useQueryClient } from '@tanstack/react-query';
 import {
   BAIDynamicList,
   BAIFlex,
@@ -36,10 +37,11 @@ import {
   BAITextInput,
   useErrorMessageResolver,
 } from 'backend.ai-ui';
-import { Suspense, useState } from 'react';
+import { Suspense, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 const PEM_PLACEHOLDER = '-----BEGIN …-----';
+const OPENID_QUERY_KEY = ['plugin-config', 'openid'];
 
 interface OpenIDConnectSettingModalProps extends BAIModalProps {
   onRequestClose: () => void;
@@ -82,10 +84,12 @@ const OpenIDConnectSettingModalContent: React.FC<
   const baiClient = useSuspendedBackendaiClient();
   const [form] = Form.useForm<OpenIDFormValues>();
   const [isSaving, setIsSaving] = useState(false);
+  const isSavingRef = useRef(false);
+  const queryClient = useQueryClient();
 
   // The query keeps only flags for secrets: the raw trees never reach the cache.
-  const { data: stored } = useSuspenseTanQuery({
-    queryKey: ['plugin-config', 'openid'],
+  const { data: stored, refetch } = useSuspenseTanQuery({
+    queryKey: OPENID_QUERY_KEY,
     queryFn: async () => {
       const [webapp, hook] = await Promise.all([
         readPluginConfig(baiClient, OPENID_WEBAPP_ROOT),
@@ -96,13 +100,18 @@ const OpenIDConnectSettingModalContent: React.FC<
     staleTime: 0,
     gcTime: 0,
   });
+  // Suspense raises both timers to 1 s, so a reopen would diff against the old snapshot.
+  useEffect(
+    () => () => queryClient.removeQueries({ queryKey: OPENID_QUERY_KEY }),
+    [queryClient],
+  );
 
   const clientAuth =
     Form.useWatch('client_auth', form) ?? stored.values.client_auth;
 
   const urlRule: Rule = {
     validator: async (_, value?: string) => {
-      if (value?.trim() && !isHttpUrl(value.trim())) {
+      if (value?.trim() && !isValidUrl(value.trim())) {
         throw new Error(t('settings.sso.InvalidURL'));
       }
     },
@@ -132,24 +141,31 @@ const OpenIDConnectSettingModalContent: React.FC<
         : t('settings.sso.SecretIsNotSet');
 
   const save = async () => {
-    const values = await form.validateFields().catch(() => null);
-    if (!values) return;
-    const change = buildOpenIDConfigChange(
-      { ...stored.values, ...values },
-      stored,
-    );
-    if (isPluginConfigChangeEmpty(change)) {
-      onRequestClose();
-      return;
-    }
+    if (isSavingRef.current) return;
+    isSavingRef.current = true;
     setIsSaving(true);
     try {
-      await applyPluginConfigChange(baiClient, change);
-      message.success(t('notification.SuccessfullyUpdated'));
-      onRequestClose();
-    } catch (error) {
-      message.error(getErrorMessage(error));
+      const values = await form.validateFields().catch(() => null);
+      if (!values) return;
+      const change = buildOpenIDConfigChange(
+        { ...stored.values, ...values },
+        stored,
+      );
+      if (isPluginConfigChangeEmpty(change)) {
+        onRequestClose();
+        return;
+      }
+      try {
+        await applyPluginConfigChange(baiClient, change);
+        message.success(t('notification.SuccessfullyUpdated'));
+        onRequestClose();
+      } catch (error) {
+        message.error(getErrorMessage(error));
+        // A partial write leaves etcd ahead of `stored`; the next diff needs the real state.
+        await refetch();
+      }
     } finally {
+      isSavingRef.current = false;
       setIsSaving(false);
     }
   };

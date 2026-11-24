@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { isValidUrl } from '../../../diagnostics/rules/configRules';
 import {
   buildOpenIDConfigChange,
   readOpenIDStoredConfig,
@@ -9,7 +10,6 @@ import {
 import {
   applyPluginConfigChange,
   getPluginConfigLeaf,
-  isHttpUrl,
   type PluginSettingClient,
 } from './pluginEtcdConfig';
 import { describe, expect, it, vi } from 'vitest';
@@ -64,7 +64,6 @@ describe('readOpenIDStoredConfig', () => {
       readOpenIDStoredConfig(storedWebapp, { secret: 'other' }).secrets.secret,
     ).toBe('mismatch');
     expect(readOpenIDStoredConfig({}, {}).secrets.secret).toBe('unset');
-    expect(readOpenIDStoredConfig({}, {}).isEmpty).toBe(true);
   });
 });
 
@@ -131,6 +130,37 @@ describe('buildOpenIDConfigChange', () => {
   });
 });
 
+describe('buildOpenIDConfigChange against odd stored state', () => {
+  it('writes a missing group_order even when the rows did not change', () => {
+    const { group_order: _order, ...openid } = storedWebapp.openid;
+    const stored = readOpenIDStoredConfig(
+      { ...storedWebapp, openid },
+      { secret: 'jwt-secret' },
+    );
+    expect(buildOpenIDConfigChange(stored.values, stored).set).toEqual({
+      'webapp/openid/openid/group_order': '/nested/group,admins,users',
+    });
+  });
+
+  it('deletes credential and key-only leaves stored as empty strings', () => {
+    const stored = readOpenIDStoredConfig(
+      {
+        ...storedWebapp,
+        openid: { ...storedWebapp.openid, client_secret: '', certificate: '' },
+      },
+      { secret: 'jwt-secret' },
+    );
+    expect(stored.secrets.client_secret).toBe(false);
+    const toKey = buildOpenIDConfigChange(
+      { ...stored.values, client_auth: 'private_key_jwt', private_key: 'K' },
+      stored,
+    );
+    expect(toKey.remove).toContain('webapp/openid/openid/client_secret');
+    const unchanged = buildOpenIDConfigChange(stored.values, stored);
+    expect(unchanged.remove).toEqual(['webapp/openid/openid/certificate']);
+  });
+});
+
 describe('applyPluginConfigChange', () => {
   it('deletes before it writes, in transactions of at most 16 leaves', async () => {
     const calls: Array<string> = [];
@@ -170,10 +200,10 @@ describe('helpers', () => {
   });
 
   it('accepts http(s) URLs with an Entra ID tenant placeholder', () => {
-    expect(isHttpUrl('https://login.microsoftonline.com/{tenantid}/v2.0')).toBe(
-      true,
-    );
-    expect(isHttpUrl('ftp://example.com')).toBe(false);
-    expect(isHttpUrl('not a url')).toBe(false);
+    expect(
+      isValidUrl('https://login.microsoftonline.com/{tenantid}/v2.0'),
+    ).toBe(true);
+    expect(isValidUrl('ftp://example.com')).toBe(false);
+    expect(isValidUrl('not a url')).toBe(false);
   });
 });

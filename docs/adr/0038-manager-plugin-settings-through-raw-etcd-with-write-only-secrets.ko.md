@@ -49,7 +49,7 @@ flowchart LR
 | --- | --- | --- |
 | OpenID Connect | `helper/openidPluginConfig.ts` | `webapp/openid`, `hook/openid` |
 
-- **Read**: `read<Provider>StoredConfig(...trees)`는 `{ values, secrets, isEmpty }`를 돌려준다. secret을 뺀 form 값, secret leaf마다 flag 또는 `PluginSecretStatus` 하나, plugin에 key가 하나도 없는지 여부이다. modal은 `useSuspenseTanQuery`의 `queryFn`(key `['plugin-config', <name>]`, `staleTime`과 `gcTime` 0)에서 tree를 읽고 이 결과만 돌려주므로, secret 값은 query cache에도 form에도 들어가지 않는다.
+- **Read**: `read<Provider>StoredConfig(...trees)`는 `{ values, secrets }`와 diff에 필요한 secret 아닌 raw leaf를 돌려준다. secret을 뺀 form 값과 secret leaf마다 flag 또는 `PluginSecretStatus` 하나이다. modal은 `useSuspenseTanQuery`의 `queryFn`(key `['plugin-config', <name>]`)에서 tree를 읽고 이 결과만 돌려주므로, secret 값은 query cache에도 form에도 들어가지 않는다. Suspense는 `staleTime`과 `gcTime`을 최소 1초로 올리므로, modal은 언마운트될 때 query를 지우고 저장이 실패하면 다시 읽는다. 그래서 다음 diff가 옛 snapshot을 기준으로 계산되지 않는다.
 - **Write**: `build<Provider>ConfigChange(values, stored)`는 읽어 둔 값을 form 값으로 바꾸는 `PluginConfigChange`를 돌려준다. 바뀌지 않은 key는 쓰지 않고, 비운 선택 key는 지우며, `group_mapping`처럼 목록을 나타내는 subtree는 통째로 바꾼다.
 - **Key names**: module은 plugin 자신의 config model(OpenID Connect는 `ai/backend/manager/plugin/openid/config.py`)을 따르고, module header에 그 파일을 적는다.
 

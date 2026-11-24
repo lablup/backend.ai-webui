@@ -78,7 +78,13 @@ export interface OpenIDStoredConfig {
     private_key: boolean;
     secret: PluginSecretStatus;
   };
-  isEmpty: boolean;
+  /** Credential leaves present in etcd, an empty string included. */
+  storedCredentials: {
+    client_secret: boolean;
+    private_key: boolean;
+  };
+  /** The raw `group_order` leaf, which may disagree with the rows. */
+  groupOrder?: string;
 }
 
 export const OPENID_GROUP_MAPPING_FIELDS = [
@@ -94,8 +100,6 @@ const parseGroupOrder = (raw?: string) =>
     .map((s) => s.trim())
     .filter(Boolean);
 
-const hasLeaves = (tree: PluginConfigTree) => Object.keys(tree).length > 0;
-
 export const readOpenIDStoredConfig = (
   webapp: PluginConfigTree,
   hook: PluginConfigTree,
@@ -107,6 +111,7 @@ export const readOpenIDStoredConfig = (
   const webappSecret = getPluginConfigLeaf(webapp, ['secret']);
   const hookSecret = getPluginConfigLeaf(hook, ['secret']);
   const privateKey = getPluginConfigLeaf(provider, ['private_key']);
+  const clientSecret = getPluginConfigLeaf(provider, ['client_secret']);
 
   const values: OpenIDFormValues = {
     client_auth: privateKey ? 'private_key_jwt' : 'client_secret',
@@ -130,7 +135,7 @@ export const readOpenIDStoredConfig = (
   return {
     values,
     secrets: {
-      client_secret: !!getPluginConfigLeaf(provider, ['client_secret']),
+      client_secret: !!clientSecret,
       private_key: !!privateKey,
       secret:
         !webappSecret && !hookSecret
@@ -139,7 +144,11 @@ export const readOpenIDStoredConfig = (
             ? 'set'
             : 'mismatch',
     },
-    isEmpty: !hasLeaves(webapp) && !hasLeaves(hook),
+    storedCredentials: {
+      client_secret: clientSecret !== undefined,
+      private_key: privateKey !== undefined,
+    },
+    groupOrder: getPluginConfigLeaf(provider, ['group_order']),
   };
 };
 
@@ -167,10 +176,11 @@ export const buildOpenIDConfigChange = (
   const provider = (key: string) => `${OPENID_WEBAPP_ROOT}/openid/${key}`;
   const webapp = (key: string) => `${OPENID_WEBAPP_ROOT}/${key}`;
 
+  // A stored '' is still a key the plugin reads, so clearing deletes it too.
   const putText = (path: string, next: string, prev?: string) => {
-    if (next === trimmed(prev)) return;
-    if (next) change.set[path] = next;
-    else if (prev !== undefined) change.remove.push(path);
+    if (next) {
+      if (next !== trimmed(prev)) change.set[path] = next;
+    } else if (prev !== undefined) change.remove.push(path);
   };
 
   const usesKey = values.client_auth === 'private_key_jwt';
@@ -190,12 +200,13 @@ export const buildOpenIDConfigChange = (
   if (usesKey) {
     if (trimmed(values.private_key))
       change.set[provider('private_key')] = values.private_key!.trim();
-    if (stored.secrets.client_secret)
+    if (stored.storedCredentials.client_secret)
       change.remove.push(provider('client_secret'));
   } else {
     if (trimmed(values.client_secret))
       change.set[provider('client_secret')] = values.client_secret!.trim();
-    if (stored.secrets.private_key) change.remove.push(provider('private_key'));
+    if (stored.storedCredentials.private_key)
+      change.remove.push(provider('private_key'));
   }
 
   // The hook verifies the token the webapp signs, so both copies move together.
@@ -206,7 +217,8 @@ export const buildOpenIDConfigChange = (
 
   const rows = normalizeRows(values.group_mapping);
   const storedRows = normalizeRows(stored.values.group_mapping);
-  if (!_.isEqual(rows, storedRows)) {
+  const rowsChanged = !_.isEqual(rows, storedRows);
+  if (rowsChanged) {
     if (storedRows.length > 0)
       change.removeTree.push(provider('group_mapping'));
     for (const row of rows) {
@@ -217,12 +229,13 @@ export const buildOpenIDConfigChange = (
             row[field]!;
       }
     }
+  }
+  // Without group_order the plugin admits no group, so a missing leaf is written too.
+  if (rowsChanged || (stored.groupOrder === undefined && rows.length > 0)) {
     putText(
       provider('group_order'),
       rows.map((row) => row.group).join(','),
-      storedRows.length > 0
-        ? storedRows.map((row) => row.group).join(',')
-        : undefined,
+      stored.groupOrder,
     );
   }
 

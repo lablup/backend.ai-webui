@@ -103,13 +103,3 @@ export const applyPluginConfigChange = async (
     );
   }
 };
-
-/** http(s) URL check for plugin URL fields; `{tenantid}` placeholders parse. */
-export const isHttpUrl = (value: string): boolean => {
-  try {
-    const url = new URL(value);
-    return url.protocol === 'https:' || url.protocol === 'http:';
-  } catch {
-    return false;
-  }
-};
