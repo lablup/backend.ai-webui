@@ -35,14 +35,16 @@ const DashboardDraftConfirmBar: React.FC<DashboardDraftConfirmBarProps> = ({
       role="region"
       aria-label={t('dashboard.agentDraft.Title')}
       data-testid="dashboard-draft-confirm-bar"
-      // BAIFlex's inline `position` and `minHeight` would beat the class.
+      // BAIFlex's inline `position`, `minHeight`, `padding` and `border` would beat the class.
       style={{
         position: 'fixed',
         minHeight: 'var(--webui-assistant-fab-size, 48px)',
+        padding: '0 var(--spacing-2) 0 var(--spacing-4)',
+        border: '1px solid var(--color-border)',
       }}
     >
       <Sparkles size="1.1em" aria-hidden color="var(--color-accent)" />
-      <Text size="sm" maxLines={1}>
+      <Text maxLines={1}>
         {newBoardTitle
           ? t('webuiAssistant.DashboardPreviewingNewBoard', {
               title: newBoardTitle,
@@ -50,18 +52,20 @@ const DashboardDraftConfirmBar: React.FC<DashboardDraftConfirmBarProps> = ({
             })
           : t('webuiAssistant.DashboardPreviewingCount', { count })}
       </Text>
-      <Button
-        size="sm"
-        variant="primary"
-        label={t('webuiAssistant.ApplyDashboardChanges')}
-        onClick={onApply}
-      />
-      <Button
-        size="sm"
-        variant="ghost"
-        label={t('webuiAssistant.DiscardDashboardChanges')}
-        onClick={onDiscard}
-      />
+      <BAIFlex gap="xxs" style={{ flexShrink: 0 }}>
+        <Button
+          size="sm"
+          variant="primary"
+          label={t('webuiAssistant.ApplyDashboardChanges')}
+          onClick={onApply}
+        />
+        <Button
+          size="sm"
+          variant="ghost"
+          label={t('webuiAssistant.DiscardDashboardChanges')}
+          onClick={onDiscard}
+        />
+      </BAIFlex>
     </BAIFlex>
   );
 };
