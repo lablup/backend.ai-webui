@@ -60,7 +60,6 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 function bootstrap() {
-  // Load custom theme config once in react/index.tsx
   loadCustomThemeConfig();
 
   // Writes the first title, before any route or session state exists; it carries

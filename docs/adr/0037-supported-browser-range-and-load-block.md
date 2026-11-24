@@ -24,7 +24,7 @@ flowchart TD
   ua["navigator.userAgent"]
   features["HTMLElement.prototype popover<br/>CSS.supports light-dark"]
   table["window.supportedBrowserMinimums<br/>manifest/app.js"]
-  detect["isUnsupportedBrowser<br/>manifest/app.js"]
+  detect["range check<br/>manifest/app.js"]
   flag["window.isUnsupportedBrowser"]
   splash["index.html splash script<br/>shows the message"]
   lifecycle["index.html splash lifecycle<br/>registers no dismissal"]
@@ -50,9 +50,9 @@ flowchart TD
 ### 2. Two checks; either one blocks
 
 - **Feature detection**: `lacksRequiredBrowserFeatures` in `manifest/app.js` reports a missing feature when `HTMLElement.prototype.hasOwnProperty('popover')` is false or `CSS.supports('color', 'light-dark(#000, #fff)')` is false.
-- **userAgent check**: `identifyBrowser` reads the browser and its version, and `isUserAgentBelowSupportedRange` compares it with the table. A UA with `MSIE` or `Trident` matches no pattern and is left to feature detection, which rejects it. On iPhone, iPad and iPod the version is the iOS version, because every iOS browser uses the system WebKit. `Edg/`, `EdgA/` and legacy `Edge/` are Edge; `Firefox/` is Firefox; any other `Chrome/` or `Chromium/` UA, such as Samsung Internet or Opera, is checked by its Chromium version against the Chrome row; `Version/… Safari/` is Safari.
+- **userAgent check**: `identifyBrowser` reads the browser and its version, and `isUserAgentBelowSupportedRange` compares it with the table. A UA with `MSIE` or `Trident` matches no pattern and is left to feature detection, which rejects it. On iPhone, iPad and iPod the version is the iOS version, because every iOS browser uses the system WebKit. A desktop-mode iOS browser (`CriOS/`, `FxiOS/` or `EdgiOS/` in a Mac UA) carries a fixed `Version/` that is not its engine's, so it is left to feature detection. `Edg/`, `EdgA/` and legacy `Edge/` are Edge; `Firefox/` is Firefox; any other `Chrome/` or `Chromium/` UA, such as Samsung Internet or Opera, is checked by its Chromium version against the Chrome row; `Version/… Safari/` is Safari.
 - **Unknown UA**: A UA the parser does not recognise passes the userAgent check, and only feature detection decides.
-- **Electron**: `isUnsupportedBrowser` returns false when `isElectron()` is true, before either check runs.
+- **Electron**: when `isElectron()` is true, `window.isUnsupportedBrowser` is false and neither check runs.
 - **Result**: `window.isUnsupportedBrowser` holds the result. `manifest/app.js` runs before any other script and uses only ES5 syntax and `window` instead of `globalThis`, so the browsers it must reject can still parse and run it.
 
 ### 3. One table holds the minimum versions

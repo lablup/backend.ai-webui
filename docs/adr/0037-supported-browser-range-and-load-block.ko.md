@@ -24,7 +24,7 @@ flowchart TD
   ua["navigator.userAgent"]
   features["HTMLElement.prototype popover<br/>CSS.supports light-dark"]
   table["window.supportedBrowserMinimums<br/>manifest/app.js"]
-  detect["isUnsupportedBrowser<br/>manifest/app.js"]
+  detect["range check<br/>manifest/app.js"]
   flag["window.isUnsupportedBrowser"]
   splash["index.html splash script<br/>메시지를 보여 준다"]
   lifecycle["index.html splash lifecycle<br/>dismiss를 등록하지 않는다"]
@@ -50,9 +50,9 @@ flowchart TD
 ### 2. 검사는 두 가지이고, 하나라도 걸리면 차단한다
 
 - **Feature detection**: `manifest/app.js`의 `lacksRequiredBrowserFeatures`는 `HTMLElement.prototype.hasOwnProperty('popover')`가 false이거나 `CSS.supports('color', 'light-dark(#000, #fff)')`가 false이면 기능이 없다고 보고한다.
-- **userAgent check**: `identifyBrowser`가 브라우저와 버전을 읽고, `isUserAgentBelowSupportedRange`가 이를 표와 비교한다. `MSIE`나 `Trident`가 있는 UA는 어떤 패턴에도 맞지 않아 feature detection이 판정하고, 거기서 범위 밖이 된다. iPhone, iPad, iPod에서는 모든 iOS 브라우저가 시스템 WebKit을 쓰므로 iOS 버전을 버전으로 쓴다. `Edg/`, `EdgA/`, legacy `Edge/`는 Edge이고, `Firefox/`는 Firefox다. 그 밖의 `Chrome/`이나 `Chromium/` UA(Samsung Internet, Opera 등)는 Chromium 버전으로 Chrome 행과 비교하고, `Version/… Safari/`는 Safari다.
+- **userAgent check**: `identifyBrowser`가 브라우저와 버전을 읽고, `isUserAgentBelowSupportedRange`가 이를 표와 비교한다. `MSIE`나 `Trident`가 있는 UA는 어떤 패턴에도 맞지 않아 feature detection이 판정하고, 거기서 범위 밖이 된다. iPhone, iPad, iPod에서는 모든 iOS 브라우저가 시스템 WebKit을 쓰므로 iOS 버전을 버전으로 쓴다. 데스크톱 모드의 iOS 브라우저(Mac UA에 `CriOS/`, `FxiOS/`, `EdgiOS/`가 있는 경우)는 엔진과 무관한 고정 `Version/`을 보내므로 feature detection에 맡긴다. `Edg/`, `EdgA/`, legacy `Edge/`는 Edge이고, `Firefox/`는 Firefox다. 그 밖의 `Chrome/`이나 `Chromium/` UA(Samsung Internet, Opera 등)는 Chromium 버전으로 Chrome 행과 비교하고, `Version/… Safari/`는 Safari다.
 - **Unknown UA**: parser가 알아보지 못한 UA는 userAgent 검사를 통과하고, feature detection만으로 판정한다.
-- **Electron**: `isUnsupportedBrowser`는 `isElectron()`이 true이면 두 검사를 실행하기 전에 false를 돌려준다.
+- **Electron**: `isElectron()`이 true이면 두 검사를 실행하지 않고 `window.isUnsupportedBrowser`는 false가 된다.
 - **Result**: 결과는 `window.isUnsupportedBrowser`에 담긴다. `manifest/app.js`는 다른 어떤 script보다 먼저 실행되고 ES5 문법과 `globalThis` 대신 `window`만 쓰므로, 거부해야 할 브라우저도 이 파일을 parse하고 실행할 수 있다.
 
 ### 3. 최소 버전은 표 하나에 둔다

@@ -23,9 +23,9 @@ function isElectron() {
   return false;
 }
 
-let ua = window.navigator.userAgent;
-let iOS = /iPhone|iPad|iPod/i.test(ua);
-let webkit = !!ua.match(/WebKit/i);
+var ua = window.navigator.userAgent;
+var iOS = /iPhone|iPad|iPod/i.test(ua);
+var webkit = !!ua.match(/WebKit/i);
 window.supportedBrowserMinimums = {
   Chrome: [123],
   Edge: [123],
@@ -58,6 +58,9 @@ window.supportedBrowserMinimums = {
       match = ua.match(/OS (\d+)[_.](\d+)/);
       return match ? { name: 'Safari', version: match.slice(1).map(Number) } : null;
     }
+    if (/CriOS|FxiOS|EdgiOS/.test(ua)) {
+      return null;
+    }
     for (var i = 0; i < browserPatterns.length; i++) {
       match = ua.match(browserPatterns[i][1]);
       if (match) {
@@ -88,4 +91,4 @@ window.supportedBrowserMinimums = {
   window.isUnsupportedBrowser = !isElectron() &&
     (isUserAgentBelowSupportedRange() || lacksRequiredBrowserFeatures());
 })();
-globalThis.iOSSafari = iOS && webkit && !ua.match(/CriOS/i);
+window.iOSSafari = iOS && webkit && !ua.match(/CriOS/i);
