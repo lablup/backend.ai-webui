@@ -445,7 +445,8 @@ const PROJECT_ADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     titleKey: 'auditLog.AuditLog',
     kind: 'custom',
     Component: AuditLogPanel,
-    defaultSize: size(6, 4),
+    // The counts above a five-row page need a fifth row; at four the card always scrolled.
+    defaultSize: size(6, 5),
     minSize: size(2, 3),
     settings: ['range'],
   },

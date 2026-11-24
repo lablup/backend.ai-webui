@@ -33,6 +33,7 @@ import { projectAuditScope } from '../projectAdminCards/projectCardData';
 import { withinWindow, type DateTimeWindow } from '../timeRange';
 import type { PanelComponentProps } from '../types';
 import ScopedCard from './ScopedCard';
+import { FIT_CARD_WIDTH } from './cardTable';
 import {
   BAIAuditLogNodes,
   BAIFlex,
@@ -605,6 +606,7 @@ export const AuditLogRows: React.FC<{
       auditLogFrgmt={filterOutNullAndUndefined(
         logs?.edges.map((edge) => edge?.node),
       )}
+      scroll={FIT_CARD_WIDTH}
       disableSorter
       loading={loading}
       customizeColumns={(columns) =>
