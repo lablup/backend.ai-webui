@@ -4586,7 +4586,6 @@
     "MaxRNGDDevicesPerContainer": "Maksimum perangkat RNGD per sesi",
     "MaxROCMDevicesPerContainer": "Maksimum GPU ROCm per sesi",
     "MaxShmPerContainer": "Memori bersama maksimum per sesi",
-    "MaxSizeHint": "(maks. {{size}})",
     "MaxTPUDevicesPerContainer": "Maksimum TPU per sesi",
     "MaxWarboyDevicesPerContainer": "Maksimum perangkat Warboy per sesi",
     "MenuBlocklist": "Sembunyikan menu",
@@ -4594,6 +4593,7 @@
     "MenuGroupProjectAdmin": "Admin proyek",
     "MenuGroupUser": "Pengguna",
     "MenuInactivelist": "Nonaktifkan menu",
+    "MenuLabelWithTier": "{{menu}} ({{tier}})",
     "NotSaved": "Beberapa Pengaturan Sistem tidak disimpan",
     "NotSavedItems": "Pengaturan berikut tidak disimpan dan kembali ke nilai tersimpannya:",
     "OpenPortToPublic": "Izinkan akses aplikasi publik",
@@ -4611,6 +4611,7 @@
     "StorageWarningThreshold": "Ambang peringatan penggunaan penyimpanan",
     "SystemSSHImage": "Image SSH sistem",
     "UnknownMenuKeys": "Kunci tidak dikenal",
+    "Unlimited": "Tak terbatas",
     "group": {
       "Account": "Akun",
       "AppLauncher": "Peluncur aplikasi",

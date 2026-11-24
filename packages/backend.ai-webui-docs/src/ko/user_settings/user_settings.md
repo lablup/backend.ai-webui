@@ -301,6 +301,9 @@ Backend.AI는 OpenSSH에 기반한 SSH keypair를 사용합니다. Windows에서
   해당 세션의 실시간 자원 사용률을 나타냅니다. 이 전환 버튼은 해당 기능을
   활성화한 경우에만 표시됩니다. 그리드 자체의 조작 방법은
   [세션 목록 보기](#session-list-view-and-refresh) 섹션을 참고하세요.
+- **WebUI 도우미**: 사용자 매뉴얼을 근거로 WebUI 사용법에 답하는 채팅 버튼을
+  추가합니다. 처음 열 때 채팅 모델을 서비스하는 배포나 OpenAI 호환 엔드포인트에
+  연결합니다.
 
 <a id="logs-tab"></a>
 

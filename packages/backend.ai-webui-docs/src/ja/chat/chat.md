@@ -46,7 +46,7 @@ navTitle: チャット
 
 Backend.AI にデプロイされていない OpenAI 互換サービスとチャットすることもできます。**デプロイメント**ドロップダウンで**カスタムエンドポイントに接続…** を選択し、そのサービスの **Base URL** と、サービスが必要とする場合は **APIキー** を入力して、**接続**をクリックします。するとチャットカードにそのサービスが提供するモデルが一覧表示され、**カスタムエンドポイントを編集**をクリックするとフォームが再び開き、アドレスやキーを変更できます。
 
-<!-- TODO(screenshot): /chat — the custom endpoint form (Base URL + API key) opened from the Deployment dropdown; capture backend manager was unavailable -->
+![](../images/chat_custom_endpoint_form.png)
 
 <a id="model-connection-settings"></a>
 

@@ -187,6 +187,24 @@
     </noscript>
     <!-- Backend.AI client classes are now initialized by React global-stores.ts -->
     <script nonce="{{nonce}}">
+      (function () {
+        if (!window.isUnsupportedBrowser) return;
+        var supported = window.supportedBrowsersText;
+        var isKorean = /^ko/i.test(window.navigator.language || '');
+        var message = isKorean ?
+          '지원하지 않는 브라우저입니다.\n다음 브라우저로 접속해 주세요: ' + supported :
+          'This browser is not supported.\nPlease use one of: ' + supported;
+        var cube = document.querySelector('#splash .splash-cube');
+        if (cube) cube.style.display = 'none';
+        var loadingMessage = document.getElementById('loading-message');
+        loadingMessage.textContent = message;
+        loadingMessage.style.color = document.body.classList.contains('dark-theme') ? '#ff6b6b' : '#c00000';
+        loadingMessage.style.lineHeight = '1.5';
+        loadingMessage.style.whiteSpace = 'pre-line';
+        loadingMessage.setAttribute('role', 'alert');
+      })();
+    </script>
+    <script nonce="{{nonce}}">
       document.getElementById('version-detail').innerText = globalThis.packageVersion;
       document.getElementById('build-detail').innerText = ' · Build ' + globalThis.buildNumber;
       document.getElementById('license-detail').innerText = '';
@@ -226,12 +244,8 @@
         }
       })();
 
-      if (globalThis.isIE) {
-        alert('Internet Explorer is not supported. Please visit with modern browsers.');
-        document.getElementById('loading-message').innerText = 'Not supported browser.';
-        document.getElementById('loading-message').style.color = 'red';
-      }
-      if (window.location.hostname !== '127.0.0.1' &&
+      if (!window.isUnsupportedBrowser &&
+        window.location.hostname !== '127.0.0.1' &&
         !window.location.hostname.endsWith('localhost') &&
         'enableSW' in globalThis &&
         globalThis.enableSW === true) {
@@ -257,7 +271,7 @@
       // gated on the app having actually rendered content — see appHasContent.
       (function () {
         var splash = document.getElementById('splash');
-        if (!splash) return;
+        if (!splash || window.isUnsupportedBrowser) return;
         var state = 'loading'; // 'loading' | 'backdrop' | 'removed'
         var reactRoot = document.getElementById('react-root');
         var observer = null;

@@ -4582,7 +4582,6 @@
     "MaxRNGDDevicesPerContainer": "Μέγιστες συσκευές RNGD ανά συνεδρία",
     "MaxROCMDevicesPerContainer": "Μέγιστες GPU ROCm ανά συνεδρία",
     "MaxShmPerContainer": "Μέγιστη κοινόχρηστη μνήμη ανά συνεδρία",
-    "MaxSizeHint": "(μέγ. {{size}})",
     "MaxTPUDevicesPerContainer": "Μέγιστες TPU ανά συνεδρία",
     "MaxWarboyDevicesPerContainer": "Μέγιστες συσκευές Warboy ανά συνεδρία",
     "MenuBlocklist": "Απόκρυψη μενού",
@@ -4590,6 +4589,7 @@
     "MenuGroupProjectAdmin": "Διαχειριστής έργου",
     "MenuGroupUser": "Χρήστης",
     "MenuInactivelist": "Απενεργοποίηση μενού",
+    "MenuLabelWithTier": "{{menu}} ({{tier}})",
     "NotSaved": "Ορισμένες ρυθμίσεις συστήματος δεν αποθηκεύτηκαν",
     "NotSavedItems": "Αυτές οι ρυθμίσεις δεν αποθηκεύτηκαν και επανήλθαν στις αποθηκευμένες τιμές τους:",
     "OpenPortToPublic": "Να επιτρέπεται η δημόσια πρόσβαση σε εφαρμογές",
@@ -4607,6 +4607,7 @@
     "StorageWarningThreshold": "Όριο προειδοποίησης χρήσης αποθηκευτικού χώρου",
     "SystemSSHImage": "Εικόνα SSH συστήματος",
     "UnknownMenuKeys": "Άγνωστα κλειδιά",
+    "Unlimited": "Απεριόριστος",
     "group": {
       "Account": "Λογαριασμός",
       "AppLauncher": "Εκκινητής εφαρμογών",

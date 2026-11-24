@@ -3,34 +3,43 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import type { WebUISizeSetting } from '../../../helper/webuiSettings';
-import { toSizeString, toStoredSize } from '../helper/sizeSetting';
+import {
+  toPlaceholder,
+  toSizeString,
+  toStoredSize,
+} from '../helper/sizeSetting';
 import {
   BAICheckboxInput,
   BAIDynamicUnitInputNumber,
   BAIFlex,
 } from 'backend.ai-ui';
+import * as _ from 'lodash-es';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface WebUISettingSizeInputProps {
   label: string;
-  /** The effective stored number: the saved value, else the default. */
-  value: number;
+  /** The saved number; `undefined` when unset, which shows `defaultValue` as the placeholder. */
+  value: number | undefined;
+  defaultValue: number;
   size: WebUISizeSetting;
   width: number;
-  onChange: (value: number) => void;
+  /** `undefined` when the field is cleared, which resets the row. */
+  onChange: (value: number | undefined) => void;
 }
 
 /** A stored size number edited as `"<n><unit>"`, with an optional server-limit or Automatic toggle. */
 const WebUISettingSizeInput: React.FC<WebUISettingSizeInputProps> = ({
   label,
-  value,
+  value: savedValue,
+  defaultValue,
   size,
   width,
   onChange,
 }) => {
   'use memo';
   const { t } = useTranslation();
+  const value = savedValue ?? defaultValue;
   // Unticking Unlimited stores nothing until a size is entered.
   const [isEnteringLimit, setIsEnteringLimit] = useState(false);
   const [prevValue, setPrevValue] = useState(value);
@@ -66,13 +75,21 @@ const WebUISettingSizeInput: React.FC<WebUISettingSizeInputProps> = ({
         max={size.max}
         disabled={isUnlimited}
         value={
-          isUnlimited || (hasToggle && value === size.unlimitedValue)
+          savedValue === undefined ||
+          isUnlimited ||
+          (hasToggle && value === size.unlimitedValue)
             ? null
             : toSizeString(value, size)
+        }
+        placeholder={
+          hasToggle && defaultValue === size.unlimitedValue
+            ? undefined
+            : toPlaceholder(defaultValue, size)
         }
         onChange={(next) => {
           const stored = toStoredSize(next, size);
           if (stored > 0) onChange(stored);
+          else if (_.isEmpty(next)) onChange(undefined);
         }}
       />
     </BAIFlex>

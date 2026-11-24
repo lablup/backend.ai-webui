@@ -4584,7 +4584,6 @@
     "MaxRNGDDevicesPerContainer": "Maximale RNGD-Geräte pro Sitzung",
     "MaxROCMDevicesPerContainer": "Maximale ROCm-GPUs pro Sitzung",
     "MaxShmPerContainer": "Maximaler gemeinsamer Speicher pro Sitzung",
-    "MaxSizeHint": "(max. {{size}})",
     "MaxTPUDevicesPerContainer": "Maximale TPUs pro Sitzung",
     "MaxWarboyDevicesPerContainer": "Maximale Warboy-Geräte pro Sitzung",
     "MenuBlocklist": "Menüs ausblenden",
@@ -4592,6 +4591,7 @@
     "MenuGroupProjectAdmin": "Projektadmin",
     "MenuGroupUser": "Benutzer",
     "MenuInactivelist": "Menüs deaktivieren",
+    "MenuLabelWithTier": "{{menu}} ({{tier}})",
     "NotSaved": "Einige Systemeinstellungen wurden nicht gespeichert",
     "NotSavedItems": "Diese Einstellungen wurden nicht gespeichert und auf ihre gespeicherten Werte zurückgesetzt:",
     "OpenPortToPublic": "Öffentlichen App-Zugriff erlauben",
@@ -4609,6 +4609,7 @@
     "StorageWarningThreshold": "Warnschwelle für Speichernutzung",
     "SystemSSHImage": "System-SSH-Image",
     "UnknownMenuKeys": "Unbekannte Schlüssel",
+    "Unlimited": "Unbegrenzt",
     "group": {
       "Account": "Konto",
       "AppLauncher": "App-Starter",

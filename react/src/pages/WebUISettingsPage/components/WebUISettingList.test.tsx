@@ -149,6 +149,7 @@ describe('WebUISettingList', () => {
     for (const [key, toggle] of [
       ['maxFileUploadSize', 'webuiSettings.ServerLimit'],
       ['fileUploadChunkSize', 'webuiSettings.Automatic'],
+      ['maxShmPerContainer', 'webuiSettings.Unlimited'],
     ]) {
       const row = within(screen.getByTestId(`webui-setting-${key}`));
       expect(row.getByRole('checkbox', { name: toggle })).toBeChecked();
@@ -157,6 +158,16 @@ describe('WebUISettingList', () => {
         'true',
       );
     }
+  });
+
+  it('shows an unset size row empty, with its default as the placeholder', () => {
+    renderList();
+    const row = within(
+      screen.getByTestId('webui-setting-maxMemoryPerContainer'),
+    );
+    const input = row.getByRole('spinbutton');
+    expect(input).toHaveValue('');
+    expect(input).toHaveAttribute('placeholder', '64');
   });
 
   it('stores nothing on unticking Automatic until a size is entered', async () => {

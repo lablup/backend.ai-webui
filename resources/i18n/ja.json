@@ -4584,7 +4584,6 @@
     "MaxRNGDDevicesPerContainer": "セッションあたりの最大 RNGD 数",
     "MaxROCMDevicesPerContainer": "セッションあたりの最大 ROCm GPU 数",
     "MaxShmPerContainer": "セッションあたりの最大共有メモリ",
-    "MaxSizeHint": "(最大 {{size}})",
     "MaxTPUDevicesPerContainer": "セッションあたりの最大 TPU 数",
     "MaxWarboyDevicesPerContainer": "セッションあたりの最大 Warboy 数",
     "MenuBlocklist": "メニューを非表示",
@@ -4592,6 +4591,7 @@
     "MenuGroupProjectAdmin": "プロジェクト管理者",
     "MenuGroupUser": "ユーザー",
     "MenuInactivelist": "メニューを無効化",
+    "MenuLabelWithTier": "{{menu}}（{{tier}}）",
     "NotSaved": "一部のシステム設定が保存されませんでした",
     "NotSavedItems": "次の設定は保存されず、保存済みの値に戻りました:",
     "OpenPortToPublic": "アプリの外部公開を許可",
@@ -4609,6 +4609,7 @@
     "StorageWarningThreshold": "ストレージ使用量の警告しきい値",
     "SystemSSHImage": "システム SSH イメージ",
     "UnknownMenuKeys": "不明なキー",
+    "Unlimited": "無制限",
     "group": {
       "Account": "アカウント",
       "AppLauncher": "アプリランチャー",

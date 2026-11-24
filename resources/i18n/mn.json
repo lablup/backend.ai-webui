@@ -4584,7 +4584,6 @@
     "MaxRNGDDevicesPerContainer": "Session тус бүрийн RNGD төхөөрөмжийн дээд тоо",
     "MaxROCMDevicesPerContainer": "Session тус бүрийн ROCm GPU-ийн дээд тоо",
     "MaxShmPerContainer": "Session тус бүрийн хуваалцсан санах ойн дээд хэмжээ",
-    "MaxSizeHint": "(дээд тал нь {{size}})",
     "MaxTPUDevicesPerContainer": "Session тус бүрийн TPU-ийн дээд тоо",
     "MaxWarboyDevicesPerContainer": "Session тус бүрийн Warboy төхөөрөмжийн дээд тоо",
     "MenuBlocklist": "Цэс нуух",
@@ -4592,6 +4591,7 @@
     "MenuGroupProjectAdmin": "Төслийн админ",
     "MenuGroupUser": "Хэрэглэгч",
     "MenuInactivelist": "Цэс идэвхгүй болгох",
+    "MenuLabelWithTier": "{{menu}} ({{tier}})",
     "NotSaved": "Системийн зарим тохиргоо хадгалагдсангүй",
     "NotSavedItems": "Дараах тохиргоо хадгалагдаагүй тул хадгалсан утга руугаа буцлаа:",
     "OpenPortToPublic": "Аппад нийтийн хандалтыг зөвшөөрөх",
@@ -4609,6 +4609,7 @@
     "StorageWarningThreshold": "Хадгалах сангийн ашиглалтын анхааруулгын босго",
     "SystemSSHImage": "Системийн SSH имаж",
     "UnknownMenuKeys": "Үл мэдэгдэх түлхүүр",
+    "Unlimited": "Хязгааргүй",
     "group": {
       "Account": "Бүртгэл",
       "AppLauncher": "Апп эхлүүлэгч",
