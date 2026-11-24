@@ -2,7 +2,7 @@
   "version": 1,
   "channel": "next",
   "label": "PR preview",
-  "generatedAt": "2026-11-24T03:13:05.545Z",
+  "generatedAt": "2026-11-24T07:35:41.854Z",
   "languages": [
     "en",
     "ja",
@@ -12,55 +12,159 @@
   "langs": {
     "en": {
       "totals": {
-        "pages": 0,
-        "changes": 0,
+        "pages": 1,
+        "changes": 9,
         "added": 0,
-        "modified": 0,
-        "removed": 0,
-        "images": 0,
+        "modified": 7,
+        "removed": 2,
+        "images": 7,
         "newPages": 0,
         "deletedPages": 0
       },
-      "pages": []
+      "pages": [
+        {
+          "slug": "project_admin",
+          "title": "Project Admin Features",
+          "status": "modified",
+          "url": "next/en/project_admin.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/en/project_admin/project_admin.md",
+          "counts": {
+            "added": 0,
+            "modified": 7,
+            "removed": 2,
+            "images": 7,
+            "total": 9
+          },
+          "fingerprints": [
+            "f1bb19036ecf",
+            "5883f7a60930",
+            "e97f3a03e575",
+            "b127d9e4bdbf",
+            "5aff5ebd0a81",
+            "2374ad434be4",
+            "10ced13ebf09",
+            "a0900c9c45b8",
+            "9f1b827b294e"
+          ]
+        }
+      ]
     },
     "ja": {
       "totals": {
-        "pages": 0,
-        "changes": 0,
+        "pages": 1,
+        "changes": 9,
         "added": 0,
-        "modified": 0,
-        "removed": 0,
-        "images": 0,
+        "modified": 7,
+        "removed": 2,
+        "images": 7,
         "newPages": 0,
         "deletedPages": 0
       },
-      "pages": []
+      "pages": [
+        {
+          "slug": "project_admin",
+          "title": "プロジェクト管理者機能",
+          "status": "modified",
+          "url": "next/ja/project_admin.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ja/project_admin/project_admin.md",
+          "counts": {
+            "added": 0,
+            "modified": 7,
+            "removed": 2,
+            "images": 7,
+            "total": 9
+          },
+          "fingerprints": [
+            "3d1ce8043371",
+            "b47da28eac98",
+            "69b459ec1c36",
+            "49e71f5e5ba3",
+            "ee830c365ef0",
+            "006dda4b5646",
+            "79a954c181c2",
+            "bbe87684e134",
+            "0eea66033f29"
+          ]
+        }
+      ]
     },
     "ko": {
       "totals": {
-        "pages": 0,
-        "changes": 0,
+        "pages": 1,
+        "changes": 9,
         "added": 0,
-        "modified": 0,
-        "removed": 0,
-        "images": 0,
+        "modified": 7,
+        "removed": 2,
+        "images": 7,
         "newPages": 0,
         "deletedPages": 0
       },
-      "pages": []
+      "pages": [
+        {
+          "slug": "project_admin",
+          "title": "프로젝트 관리자 기능",
+          "status": "modified",
+          "url": "next/ko/project_admin.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ko/project_admin/project_admin.md",
+          "counts": {
+            "added": 0,
+            "modified": 7,
+            "removed": 2,
+            "images": 7,
+            "total": 9
+          },
+          "fingerprints": [
+            "54ec238ec037",
+            "df931ae05b0c",
+            "023768f2ae05",
+            "0b147ee4097b",
+            "4820be74a541",
+            "fb81fdccdc14",
+            "ba94985b98cc",
+            "4f647773707e",
+            "54e160b26292"
+          ]
+        }
+      ]
     },
     "th": {
       "totals": {
-        "pages": 0,
-        "changes": 0,
+        "pages": 1,
+        "changes": 9,
         "added": 0,
-        "modified": 0,
-        "removed": 0,
-        "images": 0,
+        "modified": 7,
+        "removed": 2,
+        "images": 7,
         "newPages": 0,
         "deletedPages": 0
       },
-      "pages": []
+      "pages": [
+        {
+          "slug": "project_admin",
+          "title": "ฟีเจอร์ผู้ดูแลโปรเจกต์",
+          "status": "modified",
+          "url": "next/th/project_admin.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/th/project_admin/project_admin.md",
+          "counts": {
+            "added": 0,
+            "modified": 7,
+            "removed": 2,
+            "images": 7,
+            "total": 9
+          },
+          "fingerprints": [
+            "3665c710d6bb",
+            "2102dedb20bf",
+            "35fddd9ac610",
+            "5f931b53057b",
+            "38df1ce46983",
+            "4ae12c517f04",
+            "3c4076780ded",
+            "b7d49f2681cf",
+            "5efbffae8d71"
+          ]
+        }
+      ]
     }
   }
 }
