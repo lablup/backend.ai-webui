@@ -268,7 +268,7 @@ const WebUIAssistantFloating: React.FC = () => {
       </BAIFlex>
       <IconButton
         ref={fabRef}
-        className="webui-assistant-fab"
+        className={`webui-assistant-fab${isWorking ? ' webui-assistant-fab--working' : ''}`}
         data-testid="webui-assistant-fab"
         variant="primary"
         size="lg"
