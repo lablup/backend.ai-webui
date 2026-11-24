@@ -316,7 +316,7 @@ const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
     kind: 'custom',
     Component: AuditLogPanel,
     // A time axis: full width, last on the board.
-    defaultSize: size(6, 3),
+    defaultSize: size(6, 5),
     minSize: size(2, 2),
     settings: ['range'],
   },
@@ -445,7 +445,7 @@ const PROJECT_ADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     titleKey: 'auditLog.AuditLog',
     kind: 'custom',
     Component: AuditLogPanel,
-    // The counts above a five-row page need a fifth row; at four the card always scrolled.
+    // The counts and a five-row page with its pager need five board rows.
     defaultSize: size(6, 5),
     minSize: size(2, 3),
     settings: ['range'],
