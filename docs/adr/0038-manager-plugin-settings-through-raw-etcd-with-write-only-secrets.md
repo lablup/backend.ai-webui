@@ -55,7 +55,7 @@ flowchart LR
 
 ### 3. Secret leaves are write-only
 
-- **Display**: A secret field renders as an empty password input (or an empty text area for a PEM key) with "set" or "not set" beneath it. The stored value is never placed in a field.
+- **Display**: A secret field, the PEM private key included, is a password input. When a value is stored, the field holds a fixed mask (`********`) as its value, and saving the mask untouched keeps the stored value. The stored value is never placed in a field. A password input drops the line breaks of a pasted PEM, so the private key is rebuilt into its 64-column form before it is written.
 - **Blank keeps**: A blank secret field leaves the stored value unchanged. The field is required only while no value is stored.
 - **Linked copies**: When two plugin parts must share a secret, one field writes both, and a stored pair where only one copy is set, or the two differ, reads as `mismatch`, which requires a new value. OpenID Connect's token signing `secret` lives in both `webapp/openid` and `hook/openid`.
 - **Exclusive credentials**: When a plugin accepts exactly one of two credentials, choosing one removes the other's keys on save. OpenID Connect's `client_secret` and `private_key` with `certificate` work this way; `client_assertion_alg` belongs to the private key and is removed with it.

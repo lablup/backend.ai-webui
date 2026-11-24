@@ -154,6 +154,25 @@ export const readOpenIDStoredConfig = (
 
 const trimmed = (value?: string) => value?.trim() ?? '';
 
+/** Stands in a secret field for a stored value, which the form never reads back. */
+export const OPENID_SECRET_MASK = '********';
+
+/** A blank or untouched (still masked) secret field keeps the stored value. */
+const newSecret = (value?: string) => {
+  const next = trimmed(value);
+  return next === OPENID_SECRET_MASK ? '' : next;
+};
+
+/** The form's initial values: the stored values, with the mask in each stored secret's field. */
+export const openIDFormInitialValues = (
+  stored: OpenIDStoredConfig,
+): OpenIDFormValues => ({
+  ...stored.values,
+  private_key: stored.secrets.private_key ? OPENID_SECRET_MASK : undefined,
+  client_secret: stored.secrets.client_secret ? OPENID_SECRET_MASK : undefined,
+  secret: stored.secrets.secret === 'unset' ? undefined : OPENID_SECRET_MASK,
+});
+
 const normalizeRows = (rows: ReadonlyArray<OpenIDGroupMappingRow>) =>
   rows
     .map(
@@ -166,6 +185,20 @@ const normalizeRows = (rows: ReadonlyArray<OpenIDGroupMappingRow>) =>
         ) as Required<OpenIDGroupMappingRow>,
     )
     .filter((row) => row.group);
+
+const PEM_BLOCK = /^-----BEGIN ([A-Z0-9 ]+)-----([\s\S]*?)-----END \1-----$/;
+
+/** A password input drops the line breaks of a pasted PEM; this rebuilds its 64-column form. */
+export const normalizePem = (value: string) => {
+  const match = PEM_BLOCK.exec(value.trim());
+  // Encapsulated headers (`Proc-Type: …`) cannot be rebuilt from a flattened body.
+  if (!match || match[2].includes(':')) return value;
+  const [, label, body] = match;
+  const lines = body.replace(/\s+/g, '').match(/.{1,64}/g) ?? [];
+  return [`-----BEGIN ${label}-----`, ...lines, `-----END ${label}-----`].join(
+    '\n',
+  );
+};
 
 /** The etcd writes that turn `stored` into `values`; unchanged keys are left alone. */
 export const buildOpenIDConfigChange = (
@@ -196,23 +229,26 @@ export const buildOpenIDConfigChange = (
     putText(webapp(key), trimmed(values[key]), stored.values[key]);
   }
 
+  const privateKey = newSecret(values.private_key);
+  const clientSecret = newSecret(values.client_secret);
+  const secret = newSecret(values.secret);
+
   // The plugin accepts exactly one credential, so switching drops the other.
   if (usesKey) {
-    if (trimmed(values.private_key))
-      change.set[provider('private_key')] = values.private_key!.trim();
+    if (privateKey)
+      change.set[provider('private_key')] = normalizePem(privateKey);
     if (stored.storedCredentials.client_secret)
       change.remove.push(provider('client_secret'));
   } else {
-    if (trimmed(values.client_secret))
-      change.set[provider('client_secret')] = values.client_secret!.trim();
+    if (clientSecret) change.set[provider('client_secret')] = clientSecret;
     if (stored.storedCredentials.private_key)
       change.remove.push(provider('private_key'));
   }
 
   // The hook verifies the token the webapp signs, so both copies move together.
-  if (trimmed(values.secret)) {
-    change.set[webapp('secret')] = values.secret!.trim();
-    change.set[`${OPENID_HOOK_ROOT}/secret`] = values.secret!.trim();
+  if (secret) {
+    change.set[webapp('secret')] = secret;
+    change.set[`${OPENID_HOOK_ROOT}/secret`] = secret;
   }
 
   const rows = normalizeRows(values.group_mapping);

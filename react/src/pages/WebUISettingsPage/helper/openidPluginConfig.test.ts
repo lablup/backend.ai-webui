@@ -5,6 +5,9 @@
 import { isValidUrl } from '../../../diagnostics/rules/configRules';
 import {
   buildOpenIDConfigChange,
+  normalizePem,
+  OPENID_SECRET_MASK,
+  openIDFormInitialValues,
   readOpenIDStoredConfig,
 } from './openidPluginConfig';
 import {
@@ -215,5 +218,65 @@ describe('helpers', () => {
     ).toBe(true);
     expect(isValidUrl('ftp://example.com')).toBe(false);
     expect(isValidUrl('not a url')).toBe(false);
+  });
+});
+
+describe('normalizePem', () => {
+  const body = 'A'.repeat(64) + 'B'.repeat(10);
+  const wellFormed = `-----BEGIN PRIVATE KEY-----\n${'A'.repeat(64)}\n${'B'.repeat(10)}\n-----END PRIVATE KEY-----`;
+
+  it('rebuilds a PEM whose line breaks a password input dropped', () => {
+    expect(
+      normalizePem(
+        `-----BEGIN PRIVATE KEY-----${body}-----END PRIVATE KEY-----`,
+      ),
+    ).toBe(wellFormed);
+  });
+
+  it('keeps a well-formed PEM as it is', () => {
+    expect(normalizePem(wellFormed)).toBe(wellFormed);
+  });
+
+  it('leaves non-PEM text and encapsulated headers alone', () => {
+    expect(normalizePem('PEM KEY')).toBe('PEM KEY');
+    const legacy =
+      '-----BEGIN RSA PRIVATE KEY-----Proc-Type: 4,ENCRYPTED AAAA-----END RSA PRIVATE KEY-----';
+    expect(normalizePem(legacy)).toBe(legacy);
+  });
+
+  it('writes the rebuilt PEM when saving a private key', () => {
+    const stored = readOpenIDStoredConfig(storedWebapp, {
+      secret: 'jwt-secret',
+    });
+    const change = buildOpenIDConfigChange(
+      {
+        ...stored.values,
+        client_auth: 'private_key_jwt',
+        private_key: `-----BEGIN PRIVATE KEY-----${body}-----END PRIVATE KEY-----`,
+      },
+      stored,
+    );
+    expect(change.set['webapp/openid/openid/private_key']).toBe(wellFormed);
+  });
+});
+
+describe('masked secret fields', () => {
+  const stored = readOpenIDStoredConfig(storedWebapp, { secret: 'jwt-secret' });
+
+  it('fills each stored secret field with the mask, never the value', () => {
+    const initial = openIDFormInitialValues(stored);
+    expect(initial.client_secret).toBe(OPENID_SECRET_MASK);
+    expect(initial.secret).toBe(OPENID_SECRET_MASK);
+    expect(initial.private_key).toBeUndefined();
+    expect(JSON.stringify(initial)).not.toContain('client-secret');
+  });
+
+  it('keeps the stored secrets when the masked fields are saved untouched', () => {
+    const change = buildOpenIDConfigChange(
+      openIDFormInitialValues(stored),
+      stored,
+    );
+    expect(change.set).toEqual({});
+    expect(change.remove).toEqual([]);
   });
 });

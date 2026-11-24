@@ -13,6 +13,7 @@ import {
   OPENID_CLIENT_ASSERTION_ALGS,
   OPENID_HOOK_ROOT,
   OPENID_WEBAPP_ROOT,
+  openIDFormInitialValues,
   readOpenIDStoredConfig,
   type OpenIDFormValues,
 } from '../helper/openidPluginConfig';
@@ -20,7 +21,6 @@ import {
   applyPluginConfigChange,
   isPluginConfigChangeEmpty,
   readPluginConfig,
-  type PluginSecretStatus,
 } from '../helper/pluginEtcdConfig';
 import { Banner } from '@lablup/ui-common/Banner';
 import { Heading } from '@lablup/ui-common/Heading';
@@ -141,12 +141,6 @@ const OpenIDConnectSettingModalContent: React.FC<
     pattern: /^[^,]*$/,
     message: t('settings.sso.ProviderGroupIDNoComma'),
   };
-  const secretExtra = (status: PluginSecretStatus | boolean) =>
-    status === 'mismatch'
-      ? t('settings.sso.SecretMismatch')
-      : status === true || status === 'set'
-        ? t('settings.sso.SecretIsSet')
-        : t('settings.sso.SecretIsNotSet');
 
   const save = async () => {
     if (isSavingRef.current) return;
@@ -209,7 +203,11 @@ const OpenIDConnectSettingModalContent: React.FC<
           title={t('settings.sso.PluginRequired')}
           description={t('settings.sso.OpenIDRestartNote')}
         />
-        <Form form={form} layout="vertical" initialValues={stored.values}>
+        <Form
+          form={form}
+          layout="vertical"
+          initialValues={openIDFormInitialValues(stored)}
+        >
           <Heading level={5}>{t('settings.sso.Provider')}</Heading>
           <BAIFormItem
             name="well_known"
@@ -259,21 +257,30 @@ const OpenIDConnectSettingModalContent: React.FC<
               <BAIFormItem
                 name="private_key"
                 label={t('settings.sso.PrivateKey')}
-                extra={secretExtra(stored.secrets.private_key)}
                 rules={stored.secrets.private_key ? [] : [requiredRule]}
               >
-                <BAITextArea rows={4} placeholder={PEM_PLACEHOLDER} />
+                <BAITextInput
+                  type="password"
+                  autoComplete="new-password"
+                  placeholder={PEM_PLACEHOLDER}
+                />
               </BAIFormItem>
               <BAIFormItem
                 name="certificate"
-                label={t('settings.sso.Certificate')}
+                label={labelWithHelp(
+                  t('settings.sso.Certificate'),
+                  t('settings.sso.CertificateDesc'),
+                )}
                 rules={[requiredRule]}
               >
                 <BAITextArea rows={4} placeholder={PEM_PLACEHOLDER} />
               </BAIFormItem>
               <BAIFormItem
                 name="client_assertion_alg"
-                label={t('settings.sso.ClientAssertionAlgorithm')}
+                label={labelWithHelp(
+                  t('settings.sso.ClientAssertionAlgorithm'),
+                  t('settings.sso.ClientAssertionAlgorithmDesc'),
+                )}
               >
                 <BAISelect
                   allowClear
@@ -289,7 +296,6 @@ const OpenIDConnectSettingModalContent: React.FC<
             <BAIFormItem
               name="client_secret"
               label={t('settings.sso.ClientSecret')}
-              extra={secretExtra(stored.secrets.client_secret)}
               rules={stored.secrets.client_secret ? [] : [requiredRule]}
             >
               <BAITextInput type="password" autoComplete="new-password" />
@@ -322,7 +328,11 @@ const OpenIDConnectSettingModalContent: React.FC<
               t('settings.sso.TokenSigningSecret'),
               t('settings.sso.TokenSigningSecretDesc'),
             )}
-            extra={secretExtra(stored.secrets.secret)}
+            extra={
+              stored.secrets.secret === 'mismatch'
+                ? t('settings.sso.SecretMismatch')
+                : undefined
+            }
             rules={stored.secrets.secret === 'set' ? [] : [requiredRule]}
           >
             <BAITextInput type="password" autoComplete="new-password" />

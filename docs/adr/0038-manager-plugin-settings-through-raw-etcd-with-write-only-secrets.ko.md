@@ -55,7 +55,7 @@ flowchart LR
 
 ### 3. secret leaf는 쓰기 전용이다
 
-- **Display**: secret field는 빈 password input(PEM key는 빈 text area)으로 그리고, 그 아래에 "설정됨" 또는 "설정 안 됨"을 보여 준다. 저장된 값은 field에 넣지 않는다.
+- **Display**: secret field는 PEM private key를 포함해 password input이다. 저장된 값이 있으면 field 값으로 고정 마스크(`********`)를 넣고, 마스크를 건드리지 않고 저장하면 저장된 값을 유지한다. 저장된 값은 field에 넣지 않는다. password input은 붙여 넣은 PEM의 줄바꿈을 지우므로, private key는 쓰기 전에 64자 줄 형식으로 다시 만든다.
 - **Blank keeps**: secret field를 비워 두면 저장된 값이 바뀌지 않는다. field는 저장된 값이 없을 때만 필수이다.
 - **Linked copies**: 두 plugin 부분이 secret 하나를 공유해야 하면 field 하나가 둘 다 쓰고, 저장된 두 값 중 하나만 설정되어 있거나 두 값이 다르면 `mismatch`로 읽어 새 값을 요구한다. OpenID Connect의 토큰 서명 `secret`은 `webapp/openid`와 `hook/openid` 양쪽에 있다.
 - **Exclusive credentials**: plugin이 두 credential 중 정확히 하나만 받으면, 저장할 때 고른 쪽이 아닌 credential의 key를 지운다. OpenID Connect의 `client_secret`과, `private_key`와 `certificate`의 쌍이 이렇게 동작한다. `client_assertion_alg`는 개인 키에 속하므로 개인 키와 함께 지운다.
