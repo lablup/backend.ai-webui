@@ -88,7 +88,6 @@ window.supportedBrowserMinimums = {
     labels.push(name + ' ' + minimums[name].join('.') + '+');
   }
   function hasAcceptedUnsupportedBrowser() {
-    if (window.name === window.unsupportedBrowserAcceptedKey) return true;
     try {
       return window.sessionStorage.getItem(window.unsupportedBrowserAcceptedKey) === '1';
     } catch (e) {

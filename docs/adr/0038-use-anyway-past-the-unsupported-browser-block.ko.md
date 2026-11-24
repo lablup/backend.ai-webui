@@ -42,14 +42,14 @@ flowchart TD
 
 - **`window.isBrowserBelowSupportedRange`**: ADR 0037의 두 검사 결과이며, 사용자의 선택으로 바뀌지 않는다.
 - **`window.isUnsupportedBrowser`**: 브라우저가 범위 밖이고 그 탭이 아직 수락하지 않았을 때 true다. 차단을 읽는 모든 곳(`index.html`의 차단 화면, splash lifecycle, service worker 조건, `react/src/index.tsx`)은 계속 이 flag를 읽는다.
-- **수락**: `sessionStorage['backendaiwebui.unsupportedBrowserAccepted'] === '1'`이며, key는 `manifest/app.js`의 `window.unsupportedBrowserAcceptedKey`다. `sessionStorage`에 쓸 수 없을 때는 `window.name`이 그 key와 같아도 수락으로 본다. 이 값도 그 탭 동안 유지된다. storage를 읽다가 예외가 나면 수락하지 않은 것으로 본다.
+- **수락**: `sessionStorage['backendaiwebui.unsupportedBrowserAccepted'] === '1'`이며, key는 `manifest/app.js`의 `window.unsupportedBrowserAcceptedKey`다. storage를 읽다가 예외가 나면 수락하지 않은 것으로 본다. 차단 중에는 `react/src/index.tsx`가 app을 띄우지 않고 bootstrap을 `window.__bootstrapApp`으로 노출하며, `index.html`은 splash lifecycle을 실행하지 않고 `window.__startSplashLifecycle`로 둔다. 그래서 차단 화면이 나중에 둘 다 시작할 수 있다.
 
 ### 2. 차단 화면은 확인 modal 뒤에 그래도 이용하기를 둔다
 
 - **버튼**: "Use anyway"(`navigator.language`가 `ko`로 시작하면 "그래도 이용하기")를 메시지 아래 `.splash-center`에 붙인다.
 - **Modal**: `#splash` 안의 `alertdialog` overlay로, 제목 "지원하지 않는 브라우저", 경고 "이 브라우저는 호환되지 않아 정상 동작을 보장할 수 없습니다. 그래도 이용하시겠습니까?", 취소와 계속 이용하기 버튼을 둔다. 처음 focus는 취소에 있고, 취소, Escape, scrim click은 modal을 닫고 focus를 버튼으로 돌린다.
-- **계속**: 수락 key에 `'1'`을 저장하고 `location.reload()`를 부른다. storage가 예외를 내면 대신 `window.name`을 그 key로 바꾸고 그대로 다시 불러온다. 그래서 storage가 없는 브라우저도 차단을 넘어간다.
-- **유지 기간**: 수락은 그 탭의 session 동안 유지된다. 새 탭이나 새 브라우저 session에서는 차단 화면이 다시 나온다. 다만 복제한 탭, 이 탭에서 opener로 연 탭(act-as 탭, `react/src/helper/actAs.ts`의 `window.open`), 복원된 브라우저 session은 `sessionStorage`와 `window.name`을 복사하므로 수락을 이어받는다. 로그아웃도 마찬가지다. 로그아웃은 새로고침 전에 `sessionStorage`를 비우므로(`react/src/hooks/useLogout.ts`의 `clearLoginStorage`) 로그아웃한 사용자는 다시 경고를 본다.
+- **계속**: 수락 key에 `'1'`을 저장하고 `location.reload()`를 부른다. storage가 예외를 내면 다시 불러오지 않는다. 차단 화면이 modal과 버튼을 없애고 로딩 스플래시를 되돌린 뒤, `window.isUnsupportedBrowser`를 false로 바꾸고 `window.__startSplashLifecycle`과 `window.__bootstrapApp`으로 그 자리에서 app을 시작한다. 이 통과는 그 page load 동안만 유지되며, 새로고침하면 차단 화면이 다시 나온다.
+- **유지 기간**: 수락은 그 탭의 session 동안 유지된다. 새 탭이나 새 브라우저 session에서는 차단 화면이 다시 나온다. 다만 복제한 탭, 이 탭에서 opener로 연 탭(act-as 탭, `react/src/helper/actAs.ts`의 `window.open`), 복원된 브라우저 session은 `sessionStorage`를 복사하므로 수락을 이어받는다. 로그아웃도 마찬가지다. 로그아웃은 새로고침 전에 `sessionStorage`를 비우므로(`react/src/hooks/useLogout.ts`의 `clearLoginStorage`) 로그아웃한 사용자는 다시 경고를 본다.
 - **번들을 실행하지 못하는 브라우저**: 버튼은 차단된 모든 브라우저에 나온다. module 번들을 아예 실행하지 못하는 브라우저(Internet Explorer, `type=module` 미지원, `react/vite.config.ts`의 `build.target` 미만)도 포함된다. 그런 브라우저에서는 계속을 누르면 탭을 닫을 때까지 로딩 스플래시가 그대로 남는다. 경고 문구가 이미 정상 동작을 보장하지 않는다고 말하므로 버튼을 더 좁히지 않는다.
 
 ### 3. 차단 코드는 호환성을 넓게 유지한다

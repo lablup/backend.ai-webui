@@ -10,18 +10,32 @@ const indexHtml = readFileSync(resolve(__dirname, '../../index.html'), 'utf8');
 const appJs = readFileSync(resolve(__dirname, '../../manifest/app.js'), 'utf8');
 const ACCEPTED_KEY = 'backendaiwebui.unsupportedBrowserAccepted';
 
+const scriptErrors: string[] = [];
+
+afterEach(() => {
+  const errors = scriptErrors.splice(0);
+  expect(errors).toEqual([]);
+});
+
 type UnsupportedWindow = Window & {
   isUnsupportedBrowser?: boolean;
   isBrowserBelowSupportedRange?: boolean;
   unsupportedBrowserAcceptedKey?: string;
   supportedBrowsersText?: string;
   isElectron?: () => boolean;
+  __bootstrapApp?: () => void;
+  __dismissSplash?: () => void;
 };
 
 function bootIndexHtml({
   language = 'en-US',
   failSetItem = false,
-}: { language?: string; failSetItem?: boolean } = {}) {
+  bootstrapApp,
+}: {
+  language?: string;
+  failSetItem?: boolean;
+  bootstrapApp?: () => void;
+} = {}) {
   const served = indexHtml
     .replace('// DEV_JS_INJECTING', '')
     .replace(/\{\{nonce\}\}/g, '');
@@ -29,6 +43,7 @@ function bootIndexHtml({
   const virtualConsole = new VirtualConsole();
   virtualConsole.on('jsdomError', (error) => {
     if (/navigation/.test(error.message)) navigations.push(error.message);
+    else scriptErrors.push(error.message);
   });
   const dom = new JSDOM(served, {
     url: 'http://localhost/',
@@ -41,6 +56,7 @@ function bootIndexHtml({
       w.isBrowserBelowSupportedRange = true;
       w.unsupportedBrowserAcceptedKey = ACCEPTED_KEY;
       w.supportedBrowsersText = 'Chrome 1+';
+      w.__bootstrapApp = bootstrapApp;
       Object.defineProperty(window.navigator, 'language', {
         value: language,
       });
@@ -132,7 +148,6 @@ describe('index.html unsupported-browser "Use anyway" (ADR 0038)', () => {
     expect(dialog()).toBeNull();
 
     expect(window.sessionStorage.getItem(ACCEPTED_KEY)).toBeNull();
-    expect(window.name).toBe('');
     expect(navigations).toHaveLength(0);
   });
 
@@ -154,31 +169,57 @@ describe('index.html unsupported-browser "Use anyway" (ADR 0038)', () => {
     modalButton('Continue').click();
 
     expect(window.sessionStorage.getItem(ACCEPTED_KEY)).toBe('1');
-    expect(window.name).toBe('');
     expect(navigations).toHaveLength(1);
   });
 
-  it('Continue falls back to window.name when sessionStorage throws', () => {
-    const { window, useAnyway, modalButton, navigations } = bootIndexHtml({
-      failSetItem: true,
-    });
+  it('Continue boots the app in place when sessionStorage throws', () => {
+    const bootstrapApp = vi.fn();
+    const { window, document, useAnyway, dialog, modalButton, navigations } =
+      bootIndexHtml({ failSetItem: true, bootstrapApp });
+    const w = window as unknown as UnsupportedWindow;
+    expect(w.__dismissSplash).toBeUndefined();
+
     useAnyway().click();
     modalButton('Continue').click();
 
-    expect(window.name).toBe(ACCEPTED_KEY);
-    expect(navigations).toHaveLength(1);
+    expect(navigations).toHaveLength(0);
+    expect(dialog()).toBeNull();
+    expect(
+      document.querySelector('#splash .splash-center > button'),
+    ).toBeNull();
+    const loadingMessage = document.getElementById('loading-message')!;
+    expect(loadingMessage.textContent).toBe('Loading components...');
+    expect(loadingMessage.getAttribute('role')).toBeNull();
+    expect(loadingMessage.style.color).toBe('');
+    expect(
+      document.querySelector<HTMLElement>('#splash .splash-cube')!.style
+        .display,
+    ).toBe('');
+    expect(w.isUnsupportedBrowser).toBe(false);
+    expect(bootstrapApp).toHaveBeenCalledTimes(1);
+    expect(typeof w.__dismissSplash).toBe('function');
   });
 });
 
 describe('manifest/app.js unsupported-browser acceptance', () => {
   function runAppJs(prepare: (window: UnsupportedWindow) => void) {
+    const virtualConsole = new VirtualConsole();
+    virtualConsole.on('jsdomError', (error) => {
+      scriptErrors.push(error.message);
+    });
     const { window } = new JSDOM('<!doctype html><html></html>', {
       url: 'http://localhost/',
       runScripts: 'dangerously',
+      virtualConsole,
     });
     const w = window as unknown as UnsupportedWindow & {
       eval: (code: string) => void;
     };
+    delete (window.HTMLElement.prototype as { popover?: unknown }).popover;
+    Object.defineProperty(w, 'CSS', {
+      configurable: true,
+      value: { supports: () => false },
+    });
     prepare(w);
     w.eval(appJs);
     return w;
@@ -190,17 +231,16 @@ describe('manifest/app.js unsupported-browser acceptance', () => {
     expect(w.isUnsupportedBrowser).toBe(true);
   });
 
-  it('lifts the block once the tab accepted via sessionStorage or window.name', () => {
-    const viaStorage = runAppJs((w) =>
-      w.sessionStorage.setItem(ACCEPTED_KEY, '1'),
-    );
-    expect(viaStorage.isBrowserBelowSupportedRange).toBe(true);
-    expect(viaStorage.isUnsupportedBrowser).toBe(false);
+  it('lifts the block once the tab accepted via sessionStorage', () => {
+    const w = runAppJs((w) => w.sessionStorage.setItem(ACCEPTED_KEY, '1'));
+    expect(w.isBrowserBelowSupportedRange).toBe(true);
+    expect(w.isUnsupportedBrowser).toBe(false);
+  });
 
-    const viaName = runAppJs((w) => {
+  it('does not treat window.name as acceptance', () => {
+    const w = runAppJs((w) => {
       w.name = ACCEPTED_KEY;
     });
-    expect(viaName.isBrowserBelowSupportedRange).toBe(true);
-    expect(viaName.isUnsupportedBrowser).toBe(false);
+    expect(w.isUnsupportedBrowser).toBe(true);
   });
 });

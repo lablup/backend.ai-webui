@@ -15,7 +15,7 @@ With web-based form of WebUI, users just need the latest versions of web browser
 
 
 :::note
-When you open the WebUI in a browser older than the supported versions, the loading screen shows a message that the browser is not supported, with the list of supported browsers, and the WebUI does not load. Update the browser or use one of the supported browsers. To use the WebUI in that browser anyway, click **Use anyway** under the message and then **Continue** in the confirmation dialog. Normal behavior is not guaranteed, and the message appears again in a new tab or after you log out.
+When you open the WebUI in a browser older than the supported versions, the loading screen shows a message that the browser is not supported, with the list of supported browsers, and the WebUI does not load. Update the browser or use one of the supported browsers. To use the WebUI in that browser anyway, click **Use anyway** under the message and then **Continue** in the confirmation dialog. Normal behavior is not guaranteed, and the message appears again when you open the WebUI in a new tab (not a duplicated one) or after you log out.
 
 Microsoft Internet Explorer is not supported, because it is deprecated and does not support up-to-date browser features.
 
