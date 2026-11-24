@@ -2,7 +2,7 @@
   "version": 1,
   "channel": "next",
   "label": "PR preview",
-  "generatedAt": "2026-11-24T02:02:59.950Z",
+  "generatedAt": "2026-11-24T06:19:45.302Z",
   "languages": [
     "en",
     "ja",
@@ -13,10 +13,10 @@
     "en": {
       "totals": {
         "pages": 1,
-        "changes": 3,
+        "changes": 6,
         "added": 0,
-        "modified": 3,
-        "removed": 0,
+        "modified": 2,
+        "removed": 4,
         "images": 3,
         "newPages": 0,
         "deletedPages": 0
@@ -30,15 +30,18 @@
           "sourcePath": "packages/backend.ai-webui-docs/src/en/project_admin/project_admin.md",
           "counts": {
             "added": 0,
-            "modified": 3,
-            "removed": 0,
+            "modified": 2,
+            "removed": 4,
             "images": 3,
-            "total": 3
+            "total": 6
           },
           "fingerprints": [
             "bd7eba61371f",
             "5d4e8c3e500f",
-            "b259fc67ba13"
+            "ed75619b8c2f",
+            "1ec0e43cef73",
+            "9fe2eb611f83",
+            "3ac02a38ee99"
           ]
         }
       ]
@@ -46,10 +49,10 @@
     "ja": {
       "totals": {
         "pages": 1,
-        "changes": 3,
+        "changes": 6,
         "added": 0,
-        "modified": 3,
-        "removed": 0,
+        "modified": 2,
+        "removed": 4,
         "images": 3,
         "newPages": 0,
         "deletedPages": 0
@@ -63,15 +66,18 @@
           "sourcePath": "packages/backend.ai-webui-docs/src/ja/project_admin/project_admin.md",
           "counts": {
             "added": 0,
-            "modified": 3,
-            "removed": 0,
+            "modified": 2,
+            "removed": 4,
             "images": 3,
-            "total": 3
+            "total": 6
           },
           "fingerprints": [
             "f3c2d6eda836",
             "f23aeae1b621",
-            "32eff63210b0"
+            "46e7e2c5a4c1",
+            "fef13f12ea46",
+            "468c3569d8db",
+            "bd0fd4669af7"
           ]
         }
       ]
@@ -79,10 +85,10 @@
     "ko": {
       "totals": {
         "pages": 1,
-        "changes": 3,
+        "changes": 6,
         "added": 0,
-        "modified": 3,
-        "removed": 0,
+        "modified": 2,
+        "removed": 4,
         "images": 3,
         "newPages": 0,
         "deletedPages": 0
@@ -96,15 +102,18 @@
           "sourcePath": "packages/backend.ai-webui-docs/src/ko/project_admin/project_admin.md",
           "counts": {
             "added": 0,
-            "modified": 3,
-            "removed": 0,
+            "modified": 2,
+            "removed": 4,
             "images": 3,
-            "total": 3
+            "total": 6
           },
           "fingerprints": [
             "489ab9206362",
             "34ee554bdb26",
-            "9c9c71b08d90"
+            "9959036d1a82",
+            "b774866f04d2",
+            "9fe27035a294",
+            "c08e8beb9d1b"
           ]
         }
       ]
@@ -112,10 +121,10 @@
     "th": {
       "totals": {
         "pages": 1,
-        "changes": 3,
+        "changes": 6,
         "added": 0,
-        "modified": 3,
-        "removed": 0,
+        "modified": 2,
+        "removed": 4,
         "images": 3,
         "newPages": 0,
         "deletedPages": 0
@@ -129,15 +138,18 @@
           "sourcePath": "packages/backend.ai-webui-docs/src/th/project_admin/project_admin.md",
           "counts": {
             "added": 0,
-            "modified": 3,
-            "removed": 0,
+            "modified": 2,
+            "removed": 4,
             "images": 3,
-            "total": 3
+            "total": 6
           },
           "fingerprints": [
             "24cc49aaf19b",
             "29b1414e4d73",
-            "2653384c0b2b"
+            "d899fc50f02c",
+            "b27281054e71",
+            "869445aa3577",
+            "fe4af43af8b3"
           ]
         }
       ]
