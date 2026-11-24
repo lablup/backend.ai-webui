@@ -1,5 +1,7 @@
 # 0037 — Supported browser range and the load block below it
 
+> Section 4's "the app does not load" is partly replaced by [ADR 0038](0038-use-anyway-past-the-unsupported-browser-block.md), which adds a use-anyway path.
+
 ## Summary
 
 > Unfamiliar terms are collected in the [Glossary](#glossary) at the end.

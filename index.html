@@ -202,6 +202,137 @@
         loadingMessage.style.lineHeight = '1.5';
         loadingMessage.style.whiteSpace = 'pre-line';
         loadingMessage.setAttribute('role', 'alert');
+
+        // ADR 0038: "Use anyway" + confirm modal. Runs on the browsers that failed
+        // the check, so it stays ES5 DOM with inline styles and no light-dark().
+        var isDark = document.body.classList.contains('dark-theme');
+        var text = isKorean ? {
+          useAnyway: '그래도 이용하기',
+          title: '지원하지 않는 브라우저',
+          body: '이 브라우저는 호환되지 않아 정상 동작을 보장할 수 없습니다. 그래도 이용하시겠습니까?',
+          cancel: '취소',
+          confirm: '계속 이용하기'
+        } : {
+          useAnyway: 'Use anyway',
+          title: 'Unsupported browser',
+          body: 'This browser is not compatible, so normal behavior is not guaranteed. Do you want to continue anyway?',
+          cancel: 'Cancel',
+          confirm: 'Continue'
+        };
+        var colors = isDark ?
+          { surface: '#262626', text: '#f0f0f0', border: '#4a4a4a', scrim: 'rgba(0, 0, 0, 0.6)' } :
+          { surface: '#ffffff', text: '#1f1f1f', border: '#d0d0d0', scrim: 'rgba(0, 0, 0, 0.45)' };
+
+        function makeButton(label, isPrimary) {
+          var button = document.createElement('button');
+          button.type = 'button';
+          button.appendChild(document.createTextNode(label));
+          var s = button.style;
+          s.font = 'inherit';
+          s.fontSize = '14px';
+          s.padding = '6px 16px';
+          s.borderRadius = '6px';
+          s.cursor = 'pointer';
+          s.border = '1px solid ' + (isPrimary ? '#ff7a00' : colors.border);
+          s.background = isPrimary ? '#ff7a00' : 'transparent';
+          s.color = isPrimary ? '#ffffff' : colors.text;
+          return button;
+        }
+
+        var useAnywayButton = makeButton(text.useAnyway, false);
+        var center = document.querySelector('#splash .splash-center');
+        if (center) center.appendChild(useAnywayButton);
+
+        var overlay = null;
+        function closeModal() {
+          if (!overlay) return;
+          document.removeEventListener('keydown', onKeyDown, true);
+          overlay.parentNode.removeChild(overlay);
+          overlay = null;
+          useAnywayButton.focus();
+        }
+        function onKeyDown(e) {
+          if (e.key === 'Escape' || e.key === 'Esc' || e.keyCode === 27) {
+            e.preventDefault();
+            closeModal();
+          }
+        }
+        function proceed() {
+          try {
+            window.sessionStorage.setItem(window.unsupportedBrowserAcceptedKey, '1');
+          } catch (e) {
+            // Storage unavailable: the reload would block again, so keep the modal open.
+            return;
+          }
+          window.location.reload();
+        }
+        function openModal() {
+          if (overlay) return;
+          overlay = document.createElement('div');
+          var o = overlay.style;
+          o.position = 'fixed';
+          o.top = '0';
+          o.left = '0';
+          o.width = '100%';
+          o.height = '100%';
+          o.zIndex = '10';
+          o.background = colors.scrim;
+          o.display = 'flex';
+          o.alignItems = 'center';
+          o.justifyContent = 'center';
+
+          var dialog = document.createElement('div');
+          dialog.setAttribute('role', 'alertdialog');
+          dialog.setAttribute('aria-modal', 'true');
+          dialog.setAttribute('aria-labelledby', 'unsupported-browser-title');
+          dialog.setAttribute('aria-describedby', 'unsupported-browser-body');
+          var d = dialog.style;
+          d.boxSizing = 'border-box';
+          d.width = '420px';
+          d.maxWidth = '90%';
+          d.padding = '20px 24px';
+          d.borderRadius = '8px';
+          d.background = colors.surface;
+          d.color = colors.text;
+          d.boxShadow = '0 6px 24px rgba(0, 0, 0, 0.25)';
+          d.textAlign = 'left';
+
+          var title = document.createElement('div');
+          title.id = 'unsupported-browser-title';
+          title.appendChild(document.createTextNode(text.title));
+          title.style.fontSize = '16px';
+          title.style.fontWeight = '600';
+          title.style.marginBottom = '8px';
+
+          var body = document.createElement('div');
+          body.id = 'unsupported-browser-body';
+          body.appendChild(document.createTextNode(text.body));
+          body.style.fontSize = '14px';
+          body.style.lineHeight = '1.5';
+          body.style.marginBottom = '20px';
+
+          var actions = document.createElement('div');
+          actions.style.textAlign = 'right';
+          var cancelButton = makeButton(text.cancel, false);
+          var confirmButton = makeButton(text.confirm, true);
+          confirmButton.style.marginLeft = '8px';
+          cancelButton.onclick = closeModal;
+          confirmButton.onclick = proceed;
+          actions.appendChild(cancelButton);
+          actions.appendChild(confirmButton);
+
+          dialog.appendChild(title);
+          dialog.appendChild(body);
+          dialog.appendChild(actions);
+          overlay.appendChild(dialog);
+          overlay.onclick = function (e) {
+            if (e.target === overlay) closeModal();
+          };
+          document.getElementById('splash').appendChild(overlay);
+          document.addEventListener('keydown', onKeyDown, true);
+          cancelButton.focus();
+        }
+        useAnywayButton.onclick = openModal;
       })();
     </script>
     <script nonce="{{nonce}}">
