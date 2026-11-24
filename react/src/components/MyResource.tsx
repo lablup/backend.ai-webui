@@ -228,12 +228,12 @@ const MyTotalResourceStatisticsContent: React.FC<{
   const project = readSecondary(data.projectResourceAllocationV2).value
     ?.project;
   const groups = readSecondary(data.scopedResourceGroups);
-  if (groups.value != null && (groups.value.edges?.length ?? 0) === 0) {
+  const groupEdges = groups.value?.edges ?? [];
+  if (groups.value != null && groupEdges.length === 0) {
     // No resource group reaches the project: the siblings' "no resource group" text.
-    // A null, denied or failed read falls through to the CPU/RAM fallback, not this claim.
+    // A null, denied or failed read falls through to the fallback below, not this claim.
     return <Text type="supporting">{t('dashboard.card.NoResourceGroup')}</Text>;
   }
-  const groupEdges = groups.value?.edges ?? [];
   // Only the slots some group of the project offers; the allocation lists every slot the manager knows.
   const groupSlots = _.compact(
     _.map(groupEdges, (edge) =>
