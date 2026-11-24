@@ -19,7 +19,12 @@ import {
 import { IconButton } from '@lablup/ui-common/IconButton';
 import { Spinner } from '@lablup/ui-common/Spinner';
 import { Text } from '@lablup/ui-common/Text';
-import { BAIFlex, BAIPopconfirm, BAIUnmountAfterClose } from 'backend.ai-ui';
+import {
+  BAIFlex,
+  BAIPopconfirm,
+  BAIUnmountAfterClose,
+  useBAILogger,
+} from 'backend.ai-ui';
 import { EraserIcon, MessageCircle, PlugZap, X } from 'lucide-react';
 import { lazy, startTransition, Suspense, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -42,6 +47,7 @@ const WebUIAssistantFloating: React.FC = () => {
   'use memo';
 
   const { t } = useTranslation();
+  const { logger } = useBAILogger();
   const [lang] = useCurrentLanguage();
   const [connection] = useMyAppConfig<WebUIAssistantConnection>(
     'userConfig',
@@ -73,9 +79,22 @@ const WebUIAssistantFloating: React.FC = () => {
   const [hasBeenShown, setHasBeenShown] = useState(false);
   if (isPanelShown && !hasBeenShown) setHasBeenShown(true);
 
+  const loadChunk = async (load: () => Promise<unknown>) => {
+    try {
+      await load();
+      return true;
+    } catch (error) {
+      logger.error('Failed to load the WebUI Assistant chunk:', error);
+      return false;
+    }
+  };
+
   const openConnectModal = async () => {
-    await loadConnectModal();
+    const clickedPathname = window.location.pathname;
+    if (!(await loadChunk(loadConnectModal))) return false;
+    if (window.location.pathname !== clickedPathname) return false;
     startTransition(() => setIsConnectOpen(true));
+    return true;
   };
 
   useEffect(() => {
@@ -132,7 +151,9 @@ const WebUIAssistantFloating: React.FC = () => {
               icon={<PlugZap size="1em" />}
               label={t('webuiAssistant.ChangeConnection')}
               tooltip={t('webuiAssistant.ChangeConnection')}
-              clickAction={openConnectModal}
+              clickAction={async () => {
+                await openConnectModal();
+              }}
             />
             <BAIPopconfirm
               title={t('webuiAssistant.ClearConversationConfirm')}
@@ -192,11 +213,12 @@ const WebUIAssistantFloating: React.FC = () => {
         clickAction={async () => {
           // Without a connection the button asks for one; the chat opens once it is saved.
           if (!isConnected) {
-            await openConnectModal();
-            startTransition(() => setIsOpen(true));
+            if (await openConnectModal()) {
+              startTransition(() => setIsOpen(true));
+            }
             return;
           }
-          if (!isOpen) await loadChat();
+          if (!isOpen && !(await loadChunk(loadChat))) return;
           startTransition(() => setIsOpen((open) => !open));
         }}
       />
