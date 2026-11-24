@@ -46,7 +46,7 @@ deployment ที่ไม่ได้ให้บริการอะไรอ
 
 คุณยังสามารถแชทกับบริการที่เข้ากันได้กับ OpenAI ซึ่งไม่ได้ปรับใช้อยู่บน Backend.AI ได้เช่นกัน เลือก **เชื่อมต่อเอ็นด์พอยต์ที่กำหนดเอง…** ในเมนูดร็อปดาวน์ **Deployment** จากนั้นป้อน **Base URL** ของบริการนั้น และป้อน **คีย์ API** หากบริการต้องการ แล้วคลิก **เชื่อมต่อ** จากนั้นการ์ดแชทจะแสดงรายการโมเดลที่บริการนั้นมีให้ และการคลิก **แก้ไขเอ็นด์พอยต์ที่กำหนดเอง** จะเปิดฟอร์มขึ้นมาอีกครั้งเพื่อเปลี่ยนที่อยู่หรือคีย์
 
-<!-- TODO(screenshot): /chat — the custom endpoint form (Base URL + API key) opened from the Deployment dropdown; capture backend manager was unavailable -->
+![](../images/custom_endpoint_form.png)
 
 <a id="model-connection-settings"></a>
 
