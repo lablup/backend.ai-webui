@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="Admin Features" />
   <meta name="twitter:description" content="Logging in with an admin account adds an Admin Settings menu at the top of the sidebar." />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Admin Features","inLanguage":"en","description":"Logging in with an admin account adds an Admin Settings menu at the top of the sidebar.","dateModified":"2026-11-24T03:10:49.000Z","url":"https://webui.docs.backend.ai/next/en/admin_menu.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Admin Features","inLanguage":"en","description":"Logging in with an admin account adds an Admin Settings menu at the top of the sidebar.","dateModified":"2026-11-24T07:33:57.000Z","url":"https://webui.docs.backend.ai/next/en/admin_menu.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/admin_menu.html" />
   <link rel="alternate" hreflang="en" href="../en/admin_menu.html" />
   <link rel="alternate" hreflang="ja" href="../ja/admin_menu.html" />
@@ -1344,6 +1344,8 @@ are selected, two additional buttons appear:</p>
 column structure as the Domain step. Click a project name to drill into the User step.</p>
 <p><figure data-bai-block="501" class="doc-figure"><img src="./images/fair_share_project_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2824" height="744" /><figcaption>Figure 24.55</figcaption></figure>
 </p>
+<!-- TODO(screenshot): refresh /scheduler (Fair Share Setting, Project step) — capture must show the Status column. Not recaptured on 2026-09-15: the capture backend currently lists no project fair share rows for the default domain, and replacing the populated image with an empty table would be a regression. -->
+
 <p data-bai-block="502">The same bulk operations (Usage Graph and Bulk Edit) are available when rows are selected.</p>
 <h3 data-bai-block="503" id="admin_menu-user">User<a class="hash-link" href="#admin_menu-user" aria-label="Direct link to User">#</a></h3>
 <p data-bai-block="504">After selecting a project, the User step displays a table of individual users with their
@@ -2089,7 +2091,6 @@ for Backend.AI is compatible or not, check the Component panel.</p>
 <p data-bai-block="798">Superadmins can view every project in the cluster on the Projects page and create, edit, deactivate,
 activate, and purge them. Each row also carries a shortcut for granting Project Admin authority.</p>
 <p data-bai-block="799">The list excludes personal projects by default; remove the pre-applied <strong>Type</strong> filter to include them.</p>
-<!-- TODO(screenshot): /project (Admin Settings > Projects) - recapture the default view showing the pre-applied Type filter and no personal projects. Not recaptured on 2026-11-24: the capture backend runs manager 26.4.20, where `group-nodes-type-filter` is off, so the page still renders the old unfiltered list. -->
 <p><figure data-bai-block="800" class="doc-figure"><img src="./images/projects_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>Figure 24.96</figcaption></figure>
 </p>
 <p data-bai-block="801">The <strong>Active</strong> and <strong>Inactive</strong> buttons above the list choose which projects are listed, and the property

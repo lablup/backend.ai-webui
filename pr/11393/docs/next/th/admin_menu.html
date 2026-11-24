@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="ฟีเจอร์ผู้ดูแลระบบ" />
   <meta name="twitter:description" content="การเข้าสู่ระบบด้วยบัญชีผู้ดูแลระบบจะเพิ่มเมนู การตั้งค่าผู้ดูแลระบบ ที่ด้านบนของแถบด้านข้าง เมื่อเลือกเมนูนี้…" />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"ฟีเจอร์ผู้ดูแลระบบ","inLanguage":"th","description":"การเข้าสู่ระบบด้วยบัญชีผู้ดูแลระบบจะเพิ่มเมนู การตั้งค่าผู้ดูแลระบบ ที่ด้านบนของแถบด้านข้าง เมื่อเลือกเมนูนี้…","dateModified":"2026-11-24T03:10:49.000Z","url":"https://webui.docs.backend.ai/next/th/admin_menu.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"ฟีเจอร์ผู้ดูแลระบบ","inLanguage":"th","description":"การเข้าสู่ระบบด้วยบัญชีผู้ดูแลระบบจะเพิ่มเมนู การตั้งค่าผู้ดูแลระบบ ที่ด้านบนของแถบด้านข้าง เมื่อเลือกเมนูนี้…","dateModified":"2026-11-24T07:33:57.000Z","url":"https://webui.docs.backend.ai/next/th/admin_menu.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/admin_menu.html" />
   <link rel="alternate" hreflang="en" href="../en/admin_menu.html" />
   <link rel="alternate" hreflang="ja" href="../ja/admin_menu.html" />
@@ -1246,6 +1246,8 @@ Fair Share และการใช้งานภายในกลุ่มท
 ขั้นตอนผู้ใช้</p>
 <p><figure data-bai-block="496" class="doc-figure"><img src="./images/fair_share_project_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2824" height="744" /><figcaption>รูปที่ 24.55</figcaption></figure>
 </p>
+<!-- TODO(screenshot): refresh /scheduler (Fair Share Setting, Project step) — capture must show the Status column. Not recaptured on 2026-09-15: the capture backend currently lists no project fair share rows for the default domain, and replacing the populated image with an empty table would be a regression. -->
+
 <p data-bai-block="497">การดำเนินการเป็นกลุ่มเดียวกัน (กราฟการใช้งานและแก้ไขเป็นกลุ่ม) จะพร้อมใช้งานเมื่อเลือกแถว</p>
 <h3 data-bai-block="498" id="admin_menu-ผใช">ผู้ใช้<a class="hash-link" href="#admin_menu-ผใช" aria-label="Direct link to ผู้ใช้">#</a></h3>
 <p data-bai-block="499">หลังจากเลือกโปรเจกต์ ขั้นตอนผู้ใช้จะแสดงตารางของผู้ใช้แต่ละคนพร้อมน้ำหนัก
@@ -1869,7 +1871,6 @@ docker registry ที่เชื่อมต่อกับ Backend.AI กา�
 <h2 data-bai-block="792" id="admin_menu-การจดการโปรเจกต">การจัดการโปรเจกต์<a class="hash-link" href="#admin_menu-การจดการโปรเจกต" aria-label="Direct link to การจัดการโปรเจกต์">#</a></h2>
 <p data-bai-block="793">Superadmin สามารถดูโปรเจกต์ทั้งหมดในคลัสเตอร์ได้จากหน้าโปรเจกต์ และสร้าง แก้ไข ปิดการใช้งาน เปิดใช้งาน และลบโปรเจกต์เหล่านั้นอย่างถาวรได้ แต่ละแถวยังมีทางลัดสำหรับการให้สิทธิ์ผู้ดูแลโปรเจกต์ด้วย</p>
 <p data-bai-block="794">รายการจะไม่แสดงโปรเจกต์ส่วนตัวตามค่าเริ่มต้น หากต้องการแสดงให้ลบตัวกรอง <strong>ประเภท</strong> ที่ถูกใช้ไว้ล่วงหน้าออก</p>
-<!-- TODO(screenshot): /project (Admin Settings > Projects) - recapture the default view showing the pre-applied Type filter and no personal projects. Not recaptured on 2026-11-24: the capture backend runs manager 26.4.20, where `group-nodes-type-filter` is off, so the page still renders the old unfiltered list. -->
 <p><figure data-bai-block="795" class="doc-figure"><img src="./images/projects_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>รูปที่ 24.96</figcaption></figure>
 </p>
 <p data-bai-block="796">ปุ่ม <strong>คล่องแคล่ว</strong> และ <strong>ไม่ทำงาน</strong> เหนือรายการใช้เลือกว่าจะแสดงโปรเจกต์ชุดใด และตัวกรองคุณสมบัติที่อยู่ถัดไปช่วยจำกัดรายการด้วย <strong>ชื่อ</strong>, <strong>โดเมน</strong>, <strong>นโยบายทรัพยากร</strong>, <strong>รหัสโครงการ</strong>, <strong>วันที่สร้าง</strong> หรือ <strong>วันที่แก้ไข</strong> โดย <strong>รหัสโครงการ</strong> ต้องเป็น UUID แบบเต็ม ส่วน <strong>วันที่สร้าง</strong> และ <strong>วันที่แก้ไข</strong> รับค่าเป็นวันที่และเวลา</p>

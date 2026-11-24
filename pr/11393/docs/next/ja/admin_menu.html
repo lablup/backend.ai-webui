@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="管理者機能" />
   <meta name="twitter:description" content="管理者アカウントでログインすると、サイドバー上部に管理者設定メニューが追加されます。これを選択すると、サイドバーは管理者向けメニューのみを表示するように切り替わります。Backend.AIに登録されたユーザー情報は、ユーザー管理メニューに一覧表示されます。" />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"管理者機能","inLanguage":"ja","description":"管理者アカウントでログインすると、サイドバー上部に管理者設定メニューが追加されます。これを選択すると、サイドバーは管理者向けメニューのみを表示するように切り替わります。Backend.AIに登録されたユーザー情報は、ユーザー管理メニューに一覧表示されます。","dateModified":"2026-11-24T03:10:49.000Z","url":"https://webui.docs.backend.ai/next/ja/admin_menu.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"管理者機能","inLanguage":"ja","description":"管理者アカウントでログインすると、サイドバー上部に管理者設定メニューが追加されます。これを選択すると、サイドバーは管理者向けメニューのみを表示するように切り替わります。Backend.AIに登録されたユーザー情報は、ユーザー管理メニューに一覧表示されます。","dateModified":"2026-11-24T07:33:57.000Z","url":"https://webui.docs.backend.ai/next/ja/admin_menu.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/admin_menu.html" />
   <link rel="alternate" hreflang="en" href="../en/admin_menu.html" />
   <link rel="alternate" hreflang="ja" href="../ja/admin_menu.html" />
@@ -1292,6 +1292,8 @@ Backend.AIサーバーに対するAPI認証に使用されます。ログイン�
 ドリルダウンします。</p>
 <p><figure data-bai-block="497" class="doc-figure"><img src="./images/fair_share_project_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2824" height="744" /><figcaption>図 24.55</figcaption></figure>
 </p>
+<!-- TODO(screenshot): refresh /scheduler (Fair Share Setting, Project step) — capture must show the Status column. Not recaptured on 2026-09-15: the capture backend currently lists no project fair share rows for the default domain, and replacing the populated image with an empty table would be a regression. -->
+
 <p data-bai-block="498">行を選択した場合、同じ一括操作（利用グラフおよび一括編集）が利用可能です。</p>
 <h3 data-bai-block="499" id="admin_menu-ユーザー">ユーザー<a class="hash-link" href="#admin_menu-ユーザー" aria-label="Direct link to ユーザー">#</a></h3>
 <p data-bai-block="500">プロジェクトを選択すると、ユーザーステップで個々のユーザーのフェアシェア重みと
@@ -1969,7 +1971,6 @@ Backend.AIの各コンポーネントに互換性があるかどうかを確認�
 <p data-bai-block="794">スーパー管理者はプロジェクトページでクラスター内のすべてのプロジェクトを確認し、作成、編集、無効化、有効化、
 完全削除を行えます。各行には、プロジェクト管理者権限を付与するためのショートカットもあります。</p>
 <p data-bai-block="795">既定では個人プロジェクトは一覧に表示されず、あらかじめ適用されている <strong>タイプ</strong> フィルターを削除すると表示されます。</p>
-<!-- TODO(screenshot): /project (Admin Settings > Projects) - recapture the default view showing the pre-applied Type filter and no personal projects. Not recaptured on 2026-11-24: the capture backend runs manager 26.4.20, where `group-nodes-type-filter` is off, so the page still renders the old unfiltered list. -->
 <p><figure data-bai-block="796" class="doc-figure"><img src="./images/projects_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>図 24.96</figcaption></figure>
 </p>
 <p data-bai-block="797">一覧の上にある <strong>アクティブ</strong>、<strong>非アクティブ</strong> ボタンで表示するプロジェクトを切り替えられます。その隣の
