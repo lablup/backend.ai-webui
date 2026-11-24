@@ -93,15 +93,39 @@ describe('MyResourcesInResourceGroup', () => {
     ]);
   });
 
-  it('shows the no-resource-group text when the picked group is not found', async () => {
+  it('keeps CPU and memory only when the picked group is not found', async () => {
     const environment = renderCard();
     environment.mock.resolve(environment.mock.getMostRecentOperation(), {
       data: { ...allocation, scopedResourceGroups: { edges: [] } },
     });
 
-    expect(
-      await screen.findByText('dashboard.card.NoResourceGroup'),
-    ).toBeInTheDocument();
+    const data = await readResourceData();
+    expect(data.cpu.used).toEqual({ current: 3, total: 7 });
+    expect(data.accelerators).toEqual([]);
+  });
+
+  it('keeps an accelerator in use when the capacity is unknown', async () => {
+    const environment = renderCard();
+    environment.mock.resolve(environment.mock.getMostRecentOperation(), {
+      data: {
+        ...allocation,
+        myUserResourceAllocationV2: {
+          user: {
+            ...allocation.myUserResourceAllocationV2.user,
+            used: [
+              { resourceType: 'cpu', quantity: '3' },
+              { resourceType: 'cuda.device', quantity: '2' },
+            ],
+          },
+        },
+        scopedResourceGroups: null,
+      },
+    });
+
+    const data = await readResourceData();
+    expect(data.accelerators.map((a: { key: string }) => a.key)).toEqual([
+      'cuda.device',
+    ]);
   });
 
   it('keeps CPU and memory only when the group reports no capacity', async () => {

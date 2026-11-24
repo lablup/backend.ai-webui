@@ -121,6 +121,16 @@ export const offeredSlotsOf = (
       ])
     : null;
 
+/** cpu and mem, and every other slot with some amount in use: the fallback when capacity is unknown. */
+export const usedSlotsOf = (used: ReadonlyArray<QuantityEntry>): Set<string> =>
+  new Set([
+    'cpu',
+    'mem',
+    ...used
+      .filter((entry) => toNumber(entry.quantity) > 0)
+      .map((entry) => entry.resourceType),
+  ]);
+
 /** A resource group's free amounts as limits, for {@link toUsageRows}. */
 export const freeAsLimits = (
   free: ReadonlyArray<QuantityEntry> | null | undefined,

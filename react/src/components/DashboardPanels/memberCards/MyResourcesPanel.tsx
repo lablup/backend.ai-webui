@@ -8,7 +8,12 @@ import { readPrimary, readSecondary } from '../panelPermission';
 import type { PanelComponentProps } from '../types';
 import MemberCard, { NoProjectText, mineProjectId } from './MemberCard';
 import ResourceUsageStatistics from './ResourceUsageStatistics';
-import { freeAsLimits, offeredSlotsOf, toUsageRows } from './memberCardData';
+import {
+  freeAsLimits,
+  offeredSlotsOf,
+  toUsageRows,
+  usedSlotsOf,
+} from './memberCardData';
 import { Text } from '@lablup/ui-common/Text';
 import React, { useDeferredValue } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
@@ -24,7 +29,6 @@ export const MyResourcesInResourceGroup: React.FC<{
   fetchKey: string;
 }> = ({ projectId, resourceGroupName, fetchKey }) => {
   'use memo';
-  const { t } = useTranslation();
   const currentDomain = useCurrentDomain();
   const variables = {
     projectId,
@@ -100,12 +104,8 @@ export const MyResourcesInResourceGroup: React.FC<{
   const user = readPrimary(data.myUserResourceAllocationV2)?.user;
   const project = readSecondary(data.projectResourceAllocationV2).value
     ?.project;
-  const groups = readSecondary(data.scopedResourceGroups);
-  if (groups.value != null && (groups.value.edges ?? []).length === 0) {
-    // The picked group is not reachable; a null or denied read falls through to CPU/RAM below.
-    return <Text type="supporting">{t('dashboard.card.NoResourceGroup')}</Text>;
-  }
-  const resourceInfo = groups.value?.edges?.[0]?.node?.resourceInfo;
+  const resourceInfo = readSecondary(data.scopedResourceGroups).value
+    ?.edges?.[0]?.node?.resourceInfo;
   return (
     <ResourceUsageStatistics
       rows={
@@ -118,10 +118,11 @@ export const MyResourcesInResourceGroup: React.FC<{
                 freeAsLimits(resourceInfo?.free.entries),
               ],
               {
-                // Unknown capacity keeps CPU/RAM, not every slot the manager knows.
+                // The scope can miss a group reached through the keypair, so an empty
+                // read is not "no group": unknown capacity keeps CPU/RAM and what is in use.
                 slots:
                   offeredSlotsOf(resourceInfo?.capacity.entries) ??
-                  new Set(['cpu', 'mem']),
+                  usedSlotsOf(user.used),
               },
             )
           : []
