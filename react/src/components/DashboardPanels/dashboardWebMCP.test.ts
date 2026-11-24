@@ -350,6 +350,37 @@ describe('bai_prepare_dashboard order and no-ops', () => {
     ).toMatchObject({ rejected: [] });
   });
 
+  it('refuses a repeated addPanel even after other changes', () => {
+    const deps = depsWith([
+      { type: 'addPanel', resourceType: 'session', id: 'session-x' },
+      { type: 'hide', id: 'agents' },
+    ]);
+    expect(
+      createPrepareDashboardTool(deps).execute({
+        type: 'addPanel',
+        resourceType: 'session',
+      }),
+    ).toMatchObject({
+      rejected: [{ reason: expect.stringMatching(/already/) }],
+    });
+  });
+
+  it('judges a no-op on the saved board when the draft is cleared', () => {
+    const deps = depsWith([{ type: 'hide', id: 'agents' }], {
+      getContext: () => ({
+        ...ctx,
+        cards: ctx.cards.map((card) => ({ ...card, shown: false })),
+      }),
+    });
+    expect(
+      createPrepareDashboardTool(deps).execute({
+        type: 'hide',
+        id: 'agents',
+        clearDraft: true,
+      }),
+    ).toMatchObject({ rejected: [] });
+  });
+
   it('refuses a change the board already shows', () => {
     const deps = depsWith();
     expect(

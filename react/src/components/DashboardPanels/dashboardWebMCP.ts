@@ -296,6 +296,32 @@ export const rawActionsOfParam = (
 
 export const MAX_DRAFT_ACTIONS = 50;
 
+/**
+ * Whether `action` changes nothing after the earlier draft changes. Only shown /
+ * hidden is followed through the draft; after a reset or a new board, or for
+ * another kind of change behind earlier ones, it is never called a no-op.
+ */
+const isNoopOnDraft = (
+  action: DashboardAssistantAction,
+  earlier: ReadonlyArray<{ action: DashboardAssistantAction | null }>,
+  saved: DashboardChatContext,
+): boolean => {
+  const prior = _.compact(earlier.map((item) => item.action));
+  if (!prior.length) return isNoopAction(action, saved.cards);
+  if (action.type !== 'show' && action.type !== 'hide') return false;
+  if (
+    prior.some((item) => item.type === 'reset' || item.type === 'createBoard')
+  )
+    return false;
+  const shown = new Map(saved.cards.map((card) => [card.id, card.shown]));
+  for (const item of prior) {
+    if (item.type === 'show') shown.set(item.id, true);
+    if (item.type === 'hide') shown.set(item.id, false);
+    if (item.type === 'addPanel') shown.set(item.panel.id, true);
+  }
+  return shown.get(action.id) === (action.type === 'show');
+};
+
 /** The conditions of an addPanel / editPanel the source does not accept, as "<property> <operator> <value>". */
 const droppedConditionsOf = (
   raw: Record<string, unknown>,
@@ -529,11 +555,9 @@ export const createPrepareDashboardTool = ({
           : rejectionOf(built.raw, ctx),
       );
     }
-    // A change the board already shows (showing a card that is on it) is not previewed.
-    const startsNewBoard = base.some(
-      (raw) => (raw as { type?: unknown }).type === 'createBoard',
-    );
-    if (!startsNewBoard && isNoopAction(action, ctx.cards)) {
+    // A change the board already shows is not previewed, judged on the saved
+    // board plus the earlier changes, not on the preview of the last render.
+    if (isNoopOnDraft(action, resolved.slice(0, -1), savedCtx)) {
       return reject({
         field: 'type',
         reason: 'The board already shows this; nothing to change.',
@@ -548,8 +572,17 @@ export const createPrepareDashboardTool = ({
       action.type === 'addPanel'
         ? _.isEqual(_.omit(raw as object, 'id'), _.omit(stored, 'id'))
         : _.isEqual(raw, stored);
-    // Only a repeat of the latest change: after an opposite change the same one is new again.
-    if (base.length > 0 && sameAs(base[base.length - 1])) {
+    // A show / hide / move after an opposite change is new again, so only the latest
+    // counts for those; a panel, an edit or a reset repeats wherever it is.
+    const repeatsAnywhere =
+      action.type === 'addPanel' ||
+      action.type === 'editPanel' ||
+      action.type === 'reset';
+    if (
+      repeatsAnywhere
+        ? base.some(sameAs)
+        : base.length > 0 && sameAs(base[base.length - 1])
+    ) {
       return reject({
         field: 'type',
         reason: 'This change is already in the preview.',

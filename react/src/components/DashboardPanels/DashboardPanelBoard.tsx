@@ -208,6 +208,7 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
     assistantPanels,
     savedAssistantCards,
     savedAssistantPanels,
+    blockedByPreview,
     applyAssistantActions,
   } = useDashboardBoard({
     page,
@@ -460,12 +461,19 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
               if (active) scrollBoardEndIntoView();
             }}
             panels={customPanels}
-            onRequestAdd={() => setPanelModalState({ open: true })}
-            onRequestEdit={(panel) => setPanelModalState({ open: true, panel })}
+            // Refused before the modal opens, so nothing the user types is lost.
+            onRequestAdd={() => {
+              if (!blockedByPreview()) setPanelModalState({ open: true });
+            }}
+            onRequestEdit={(panel) => {
+              if (!blockedByPreview())
+                setPanelModalState({ open: true, panel });
+            }}
             onRemove={removePanel}
             onResetLayout={resetLayout}
             settingsTargetOf={settingsTargetOf}
             onRequestSettings={(panelId) => {
+              if (blockedByPreview()) return;
               setSettingsPanelId(panelId);
               setIsSettingsOpen(true);
             }}

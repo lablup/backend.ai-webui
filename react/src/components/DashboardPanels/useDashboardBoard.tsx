@@ -164,6 +164,8 @@ export interface UseDashboardBoardResult {
   /** The saved board's cards and custom panels, which a URL draft is read against. */
   savedAssistantCards: Array<DashboardAssistantCard>;
   savedAssistantPanels: Array<DashboardChatPanel>;
+  /** True, after telling the user, when a preview is shown and a board edit must wait for Apply or Discard. */
+  blockedByPreview: () => boolean;
   /** Applies the WebUI Assistant's proposed changes in one save. */
   applyAssistantActions: (
     actions: ReadonlyArray<DashboardAssistantAction>,
@@ -685,6 +687,7 @@ export const useDashboardBoard = ({
     boards,
     assistantCards,
     assistantPanels,
+    blockedByPreview,
     savedAssistantCards: savedAssistantView.cards,
     savedAssistantPanels: savedAssistantView.panels,
     applyAssistantActions: (actions) => {
