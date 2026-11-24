@@ -49,7 +49,7 @@ flowchart LR
 | --- | --- | --- |
 | OpenID Connect | `helper/openidPluginConfig.ts` | `webapp/openid`, `hook/openid` |
 
-- **Read**: `read<Provider>StoredConfig(...trees)` returns `{ values, secrets }` plus whatever raw non-secret leaves the diff needs: the form values without secrets, and one flag or `PluginSecretStatus` per secret leaf. The modal reads the trees in the `useSuspenseTanQuery` `queryFn` (key `['plugin-config', <name>]`) and returns only this result, so secret values never enter the query cache or the form. Suspense raises `staleTime` and `gcTime` to at least 1 s, so the modal removes the query when it unmounts and refetches after a failed save, and the next diff never runs against an old snapshot.
+- **Read**: `read<Provider>StoredConfig(...trees)` returns `{ values, secrets }` plus whatever raw non-secret leaves the diff needs: the form values without secrets, and one flag or `PluginSecretStatus` per secret leaf. The modal reads the trees in the `useSuspenseTanQuery` `queryFn` (key `['plugin-config', <name>]`) and returns only this result, so secret values never enter the query cache or the form. Suspense keeps an entry at least 1 s, so each open of the modal uses its own key and a failed save refetches, and the next diff never runs against an old snapshot.
 - **Write**: `build<Provider>ConfigChange(values, stored)` returns the `PluginConfigChange` that turns what was read into the form values. An unchanged key is not written, a cleared optional key is removed, and a subtree that represents a list, such as `group_mapping`, is replaced whole.
 - **Key names**: The module follows the plugin's own config model (for OpenID Connect, `ai/backend/manager/plugin/openid/config.py`) and the module header names it.
 

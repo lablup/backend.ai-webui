@@ -142,6 +142,16 @@ describe('buildOpenIDConfigChange against odd stored state', () => {
     });
   });
 
+  it('writes a group_order stored as an empty string', () => {
+    const stored = readOpenIDStoredConfig(
+      { ...storedWebapp, openid: { ...storedWebapp.openid, group_order: '' } },
+      { secret: 'jwt-secret' },
+    );
+    expect(buildOpenIDConfigChange(stored.values, stored).set).toEqual({
+      'webapp/openid/openid/group_order': '/nested/group,admins,users',
+    });
+  });
+
   it('deletes credential and key-only leaves stored as empty strings', () => {
     const stored = readOpenIDStoredConfig(
       {

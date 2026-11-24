@@ -230,8 +230,8 @@ export const buildOpenIDConfigChange = (
       }
     }
   }
-  // Without group_order the plugin admits no group, so a missing leaf is written too.
-  if (rowsChanged || (stored.groupOrder === undefined && rows.length > 0)) {
+  // An empty or missing group_order admits no group, so it is written even unchanged.
+  if (rowsChanged || (!trimmed(stored.groupOrder) && rows.length > 0)) {
     putText(
       provider('group_order'),
       rows.map((row) => row.group).join(','),

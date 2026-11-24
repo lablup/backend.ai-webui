@@ -24,7 +24,6 @@ import {
 } from '../helper/pluginEtcdConfig';
 import { Banner } from '@lablup/ui-common/Banner';
 import { Heading } from '@lablup/ui-common/Heading';
-import { useQueryClient } from '@tanstack/react-query';
 import {
   BAIDynamicList,
   BAIFlex,
@@ -37,14 +36,18 @@ import {
   BAITextInput,
   useErrorMessageResolver,
 } from 'backend.ai-ui';
-import { Suspense, useEffect, useRef, useState } from 'react';
+import { Suspense, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 const PEM_PLACEHOLDER = '-----BEGIN …-----';
-const OPENID_QUERY_KEY = ['plugin-config', 'openid'];
+let openCount = 0;
 
 interface OpenIDConnectSettingModalProps extends BAIModalProps {
   onRequestClose: () => void;
+}
+
+interface OpenIDConnectSettingModalContentProps extends OpenIDConnectSettingModalProps {
+  openId: number;
 }
 
 const OpenIDConnectSettingModal: React.FC<OpenIDConnectSettingModalProps> = ({
@@ -53,6 +56,8 @@ const OpenIDConnectSettingModal: React.FC<OpenIDConnectSettingModalProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
+  // Held above the Suspense boundary: state in a suspended first render is discarded.
+  const [openId] = useState(() => ++openCount);
   return (
     <Suspense
       fallback={
@@ -67,6 +72,7 @@ const OpenIDConnectSettingModal: React.FC<OpenIDConnectSettingModalProps> = ({
       }
     >
       <OpenIDConnectSettingModalContent
+        openId={openId}
         onRequestClose={onRequestClose}
         {...modalProps}
       />
@@ -75,8 +81,8 @@ const OpenIDConnectSettingModal: React.FC<OpenIDConnectSettingModalProps> = ({
 };
 
 const OpenIDConnectSettingModalContent: React.FC<
-  OpenIDConnectSettingModalProps
-> = ({ onRequestClose, ...modalProps }) => {
+  OpenIDConnectSettingModalContentProps
+> = ({ openId, onRequestClose, ...modalProps }) => {
   'use memo';
   const { t } = useTranslation();
   const { message } = App.useApp();
@@ -85,11 +91,11 @@ const OpenIDConnectSettingModalContent: React.FC<
   const [form] = Form.useForm<OpenIDFormValues>();
   const [isSaving, setIsSaving] = useState(false);
   const isSavingRef = useRef(false);
-  const queryClient = useQueryClient();
 
   // The query keeps only flags for secrets: the raw trees never reach the cache.
+  // One key per open: suspense keeps an entry at least 1 s, and a reopen must not diff against it.
   const { data: stored, refetch } = useSuspenseTanQuery({
-    queryKey: OPENID_QUERY_KEY,
+    queryKey: ['plugin-config', 'openid', openId],
     queryFn: async () => {
       const [webapp, hook] = await Promise.all([
         readPluginConfig(baiClient, OPENID_WEBAPP_ROOT),
@@ -97,14 +103,8 @@ const OpenIDConnectSettingModalContent: React.FC<
       ]);
       return readOpenIDStoredConfig(webapp, hook);
     },
-    staleTime: 0,
     gcTime: 0,
   });
-  // Suspense raises both timers to 1 s, so a reopen would diff against the old snapshot.
-  useEffect(
-    () => () => queryClient.removeQueries({ queryKey: OPENID_QUERY_KEY }),
-    [queryClient],
-  );
 
   const clientAuth =
     Form.useWatch('client_auth', form) ?? stored.values.client_auth;
