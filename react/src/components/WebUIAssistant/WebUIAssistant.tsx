@@ -195,7 +195,7 @@ const WebUIAssistantFloating: React.FC = () => {
         direction="column"
         align="stretch"
         ref={panelRef}
-        className={`webui-assistant-panel${isWorking ? ' webui-assistant-panel--working' : ''}`}
+        className="webui-assistant-panel"
         data-below={isPanelBelow || undefined}
         // BAIFlex's inline `position`/`display` would beat the class and `hidden`.
         style={{

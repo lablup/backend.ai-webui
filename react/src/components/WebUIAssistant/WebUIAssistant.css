@@ -128,12 +128,11 @@
       );
   }
 
-  /* While an answer is being written, a gradient runs around the panel's edge and the button. */
-  .webui-assistant-panel--working::before,
+  /* While an answer is being written, a gradient ring runs around the button. */
   .webui-assistant-fab--working::before {
     content: '';
     position: absolute;
-    inset: 0;
+    inset: -5px;
     z-index: 1;
     padding: 3px;
     border-radius: inherit;
@@ -153,13 +152,7 @@
     animation: webui-assistant-working 1.6s linear infinite;
   }
 
-  /* The button's ring sits just outside it. */
-  .webui-assistant-fab--working::before {
-    inset: -5px;
-  }
-
   @media (prefers-reduced-motion: reduce) {
-    .webui-assistant-panel--working::before,
     .webui-assistant-fab--working::before {
       animation: none;
       background: var(--color-accent);
