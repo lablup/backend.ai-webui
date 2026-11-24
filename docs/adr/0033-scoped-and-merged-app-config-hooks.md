@@ -135,7 +135,7 @@ flowchart LR
 - **Allow-list dependency**: if the allow-list adds a scope to `publicConfigByDomain` or `domainConfig`, `useMyAppConfig` no longer returns the raw document for it; if it adds PUBLIC to `userConfig`, `set` also copies PUBLIC values into the USER document.
 - **Shown before stored**: a change is visible before the server stores it, and a failed write takes back only the paths it carried.
 - **Lost concurrent edits**: a `set` overwrites a change another tab or the CLI made to the USER document after the atom was last read.
-- **Act-as**: an act-as tab reads and writes the target account's `userConfig`, and never this browser's localStorage (ADR 0035, section 6).
+- **Act-as**: an act-as tab reads and writes the target account's `userConfig`, and keeps the super admin's localStorage out of it (ADR 0035, section 6).
 
 ## Sources
 

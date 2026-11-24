@@ -135,7 +135,7 @@ flowchart LR
 - **Allow-list dependency**: allow-list가 `publicConfigByDomain`이나 `domainConfig`에 scope를 추가하면 `useMyAppConfig`가 그 이름에 대해 더는 raw document를 돌려주지 않는다. `userConfig`에 PUBLIC을 추가하면 `set`이 PUBLIC 값도 USER 문서로 복사한다.
 - **Shown before stored**: 변경은 서버가 저장하기 전에 보이고, 실패한 쓰기는 자신이 실어 보낸 경로만 되돌린다.
 - **Lost concurrent edits**: atom을 마지막으로 읽은 뒤 다른 탭이나 CLI가 USER 문서에 한 변경은 `set`이 덮어쓴다.
-- **Act-as**: act-as 탭은 대상 계정의 `userConfig`를 읽고 쓰며, 이 브라우저의 localStorage는 건드리지 않는다(ADR 0035, 6절).
+- **Act-as**: act-as 탭은 대상 계정의 `userConfig`를 읽고 쓰며, super admin의 localStorage를 섞지 않는다(ADR 0035, 6절).
 
 ## 출처
 

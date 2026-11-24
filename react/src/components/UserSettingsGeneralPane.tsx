@@ -48,8 +48,8 @@ const UserSettingsGeneralPane = () => {
     setActiveThemeFamily: setThemeFamily,
     themeFamilies: families,
   } = useCustomThemeConfig();
-  // `userConfig.themeFamily` is the authoritative store; the localStorage
-  // FOUC mirror is written only after the server accepts (FR-1964).
+  // `userConfig.themeFamily` is the authoritative store; the FOUC mirror
+  // (`THEME_FAMILY_STORAGE_KEY`) is written only after the server accepts (FR-1964).
   const [, setUserConfigThemeFamily] = useMyAppConfig<string>(
     'userConfig',
     'themeFamily',

@@ -150,6 +150,17 @@ export const stopUserSettingsSync = async (): Promise<void> => {
 export const flushUserSettingsSync = (): Promise<void> =>
   queue.flush().catch(() => {});
 
+const SETTINGS_FLUSH_TIMEOUT_MS = 3000;
+
+/** Sends the debounced account settings, giving up after a bound so a slow manager cannot hold the caller. */
+export const flushUserSettingsSyncWithin = (
+  timeoutMs = SETTINGS_FLUSH_TIMEOUT_MS,
+): Promise<void> =>
+  Promise.race([
+    flushUserSettingsSync(),
+    new Promise<void>((resolve) => setTimeout(resolve, timeoutMs)),
+  ]);
+
 /**
  * Queues a changed user setting for `userConfig.settings`. A no-op for a
  * device-local setting and before the signed-in sync has started.

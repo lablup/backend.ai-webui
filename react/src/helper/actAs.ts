@@ -21,6 +21,7 @@ export interface ActAsTarget {
   debug?: boolean;
 }
 
+// index.html's theme-family bootstrap repeats these three names and the target check.
 export const ACT_AS_HANDOFF_PARAM = 'actAsHandoff';
 const SESSION_KEY = 'backendaiwebui.actAs';
 const HANDOFF_KEY_PREFIX = 'backendaiwebui.actAs.handoff.';
