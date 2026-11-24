@@ -36,6 +36,8 @@ export interface TeardownReport {
 export interface SetupReport {
   status: 'failed' | 'passed';
   error?: string;
+  /** What setup reported it did (e.g. the names it created). */
+  observed?: string;
 }
 
 export interface DrillReport {
@@ -151,7 +153,11 @@ function renderDrill(drill: DrillReport): string {
       ? `<p class="observed"><span>Setup</span> failed — <strong>${escapeHtml(
           drill.setup.error ?? 'unknown error',
         )}</strong>; no step ran.</p>`
-      : '';
+      : drill.setup?.observed
+        ? `<p class="observed"><span>Setup</span> ${escapeHtml(
+            drill.setup.observed,
+          )}</p>`
+        : '';
   return `
 <article class="drill ${drill.status}">
   <header>

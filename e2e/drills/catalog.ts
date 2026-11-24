@@ -7,5 +7,5 @@ import type { Drill } from './types';
  * this array is the only listing, so `--list` and `--all` stay in order.
  */
 export const DRILLS: Drill[] = [folderInvitationDrill].sort(
-  (a, b) => a.order - b.order || a.title.localeCompare(b.title),
+  (a, b) => a.order - b.order || a.title.localeCompare(b.title, 'en'),
 );

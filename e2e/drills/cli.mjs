@@ -36,8 +36,7 @@ function usage(code) {
     'Usage: pnpm e2e:drill <id> [--headed] [-- <playwright args>]',
     '       pnpm e2e:drill --list',
     '       pnpm e2e:drill --all',
-    '',
-    `Drills: ${ids.length ? ids.join(', ') : '(none yet)'}`,
+    'The drills are listed by `--list` (e2e/drills/catalog.ts is the listing).',
   ];
   (code === 0 ? console.log : console.error)(lines.join('\n'));
   process.exit(code);

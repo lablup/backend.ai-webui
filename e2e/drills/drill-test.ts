@@ -7,7 +7,12 @@
 import type { GraphQLMockMap } from '../mocks/session/graphql-interceptor';
 import { setupGraphQLMocks } from '../mocks/session/graphql-interceptor';
 import { createTestResources } from '../utils/test-resources';
-import { loginAsAdmin, loginAsUser, loginAsUser2 } from '../utils/test-util';
+import {
+  loginAsAdmin,
+  loginAsUser,
+  loginAsUser2,
+  webuiEndpoint,
+} from '../utils/test-util';
 import type { DrillReport, StepReport } from './report';
 import { reportDirectory, screenshotName, writeReport } from './report';
 import type {
@@ -33,6 +38,11 @@ const describeError = (error: unknown): string =>
   error instanceof Error ? (error.stack ?? error.message) : String(error);
 
 export function registerDrill(drill: Drill): void {
+  if (!/^[a-z0-9-]+$/.test(drill.id)) {
+    throw new Error(
+      `drill id "${drill.id}" must be lower-case kebab-case (it names the report folder)`,
+    );
+  }
   test.describe(`[drill:${drill.id}] ${drill.title}`, () => {
     let report: DrillReport | undefined;
     let resources = createTestResources();
@@ -71,6 +81,7 @@ export function registerDrill(drill: Drill): void {
       report.finishedAt = new Date().toISOString();
       report.status =
         report.setup?.status === 'failed' ||
+        teardown.status === 'failed' ||
         report.steps.some((step) => step.status === 'failed')
           ? 'failed'
           : 'passed';
@@ -89,6 +100,9 @@ export function registerDrill(drill: Drill): void {
       const pages = new Map<DrillAccount, Page>();
       pages.set('user', page);
       let active = page;
+      // The fixture page is not signed in yet; `as('user')` does it once.
+      const signedIn = new Set<DrillAccount>();
+      const extraPages: Page[] = [];
       // Registered mock maps apply to every page of the drill, including the
       // ones `as()` opens later.
       const mockMaps: GraphQLMockMap[] = [];
@@ -96,6 +110,12 @@ export function registerDrill(drill: Drill): void {
         for (const mocks of mockMaps) {
           await setupGraphQLMocks(target, mocks);
         }
+      };
+      const signIn = async (account: DrillAccount, target: Page) => {
+        if (account === 'admin') await loginAsAdmin(target, request);
+        else if (account === 'user2') await loginAsUser2(target, request);
+        else await loginAsUser(target, request);
+        signedIn.add(account);
       };
       const dir = reportDirectory(reportLabel());
       fs.mkdirSync(dir, { recursive: true });
@@ -113,15 +133,19 @@ export function registerDrill(drill: Drill): void {
         async as(account) {
           const open = pages.get(account);
           if (open) {
+            if (!signedIn.has(account)) await signIn(account, open);
             active = open;
             return open;
           }
-          const next = await browser.newPage();
+          // Its own context: the accounts must not share cookies.
+          const next = await browser.newPage({
+            locale: 'en-US',
+            permissions: ['local-network-access'],
+          });
           pages.set(account, next);
+          extraPages.push(next);
           await applyMocks(next);
-          if (account === 'admin') await loginAsAdmin(next, request);
-          else if (account === 'user2') await loginAsUser2(next, request);
-          else await loginAsUser(next, request);
+          await signIn(account, next);
           active = next;
           return next;
         },
@@ -142,7 +166,7 @@ export function registerDrill(drill: Drill): void {
         startedAt: new Date().toISOString(),
         finishedAt: new Date().toISOString(),
         runSuffix,
-        target: process.env.E2E_WEBUI_ENDPOINT ?? '(E2E_WEBUI_ENDPOINT unset)',
+        target: webuiEndpoint,
         steps: drill.steps.map((step) => ({
           id: step.id,
           title: step.title,
@@ -172,7 +196,10 @@ export function registerDrill(drill: Drill): void {
       }
       if (drill.setup) {
         try {
-          await drill.setup(ctx);
+          const observedSetup = await drill.setup(ctx);
+          if (typeof observedSetup === 'string') {
+            setupReport.observed = observedSetup;
+          }
         } catch (error) {
           setupReport.status = 'failed';
           setupReport.error = describeError(error);
@@ -180,38 +207,47 @@ export function registerDrill(drill: Drill): void {
         }
       }
 
-      for (const [index, step] of drill.steps.entries()) {
-        const stepReport = report.steps[index] as StepReport;
-        const started = Date.now();
-        let failure: unknown;
-        await test.step(step.title, async () => {
-          try {
-            const observed = await step.run(ctx);
-            if (typeof observed === 'string') stepReport.observed = observed;
-            stepReport.status = 'passed';
-          } catch (error) {
-            failure = error;
-            stepReport.status = 'failed';
-            stepReport.error = describeError(error);
-          } finally {
-            stepReport.durationMs = Date.now() - started;
+      try {
+        for (const [index, step] of drill.steps.entries()) {
+          const stepReport = report.steps[index] as StepReport;
+          const started = Date.now();
+          let failure: unknown;
+          await test.step(step.title, async () => {
             try {
-              const name = screenshotName(drill.id, step.id);
-              await ctx.activePage.screenshot({
-                path: path.join(dir, name),
-                fullPage: false,
-                timeout: 5_000,
-              });
-              stepReport.screenshot = name;
-            } catch {
-              // A dead or mid-navigation page has nothing to show; the text stays.
+              const observed = await step.run(ctx);
+              if (typeof observed === 'string') stepReport.observed = observed;
+              stepReport.status = 'passed';
+            } catch (error) {
+              failure = error;
+              stepReport.status = 'failed';
+              stepReport.error = describeError(error);
+            } finally {
+              stepReport.durationMs = Date.now() - started;
+              try {
+                const name = screenshotName(drill.id, step.id);
+                await ctx.activePage.screenshot({
+                  path: path.join(dir, name),
+                  fullPage: false,
+                  timeout: 5_000,
+                });
+                stepReport.screenshot = name;
+              } catch {
+                // A dead or mid-navigation page has nothing to show; the text stays.
+              }
             }
-          }
-          if (failure) {
-            // Re-raised from here so `test.step` marks the step failed.
-            throw failure;
-          }
-        });
+            if (failure) {
+              // Re-raised from here so `test.step` marks the step failed.
+              throw failure;
+            }
+          });
+        }
+      } finally {
+        for (const extra of extraPages) {
+          await extra
+            .context()
+            .close()
+            .catch(() => {});
+        }
       }
     });
   });

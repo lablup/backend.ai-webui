@@ -14,7 +14,8 @@ const requestedPart = process.env.E2E_PART;
 const requestedEnvFile = process.env.E2E_ENV_FILE;
 const e2eParts = resolveE2EParts(requestedPart);
 const e2eEnvFile = resolveE2EEnvFile(e2eParts, requestedEnvFile, {
-  root: __dirname,
+  // This config sits in `e2e/`; the env paths are relative to the repo root.
+  root: path.resolve(__dirname, '..'),
 });
 dotenv.config({ path: e2eEnvFile, override: true });
 for (const [key, value] of [
