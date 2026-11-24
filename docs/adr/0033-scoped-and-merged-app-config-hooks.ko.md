@@ -135,12 +135,12 @@ flowchart LR
 - **Allow-list dependency**: allow-list가 `publicConfigByDomain`이나 `domainConfig`에 scope를 추가하면 `useMyAppConfig`가 그 이름에 대해 더는 raw document를 돌려주지 않는다. `userConfig`에 PUBLIC을 추가하면 `set`이 PUBLIC 값도 USER 문서로 복사한다.
 - **Shown before stored**: 변경은 서버가 저장하기 전에 보이고, 실패한 쓰기는 자신이 실어 보낸 경로만 되돌린다.
 - **Lost concurrent edits**: atom을 마지막으로 읽은 뒤 다른 탭이나 CLI가 USER 문서에 한 변경은 `set`이 덮어쓴다.
-- **Act-as**: act-as 탭은 대상 계정의 `userConfig`를 읽고 쓴다.
+- **Act-as**: act-as 탭은 대상 계정의 `userConfig`를 읽고 쓰며, 이 브라우저의 localStorage는 건드리지 않는다(ADR 0035, 6절).
 
 ## 출처
 
 - #11146 — 이 결정, 2026-11-18.
-- #11293 — act-as 탭이 보낼 수 있는 쓰기.
+- #11293 — act-as 탭은 모든 `userConfig` 쓰기를 보낼 수 있다.
 - Manager `services/app_config/service.py`(`_recursive_override`, `_merge_configs`), `models/app_config_fragment/upserters.py`(문서 전체 upsert), migration `ede445fb9d0d`(기본 allow-list).
 - 2026-11-18 dev 클러스터 실측: `adminAppConfigAllowLists`, superadmin과 일반 사용자에 대한 `myAppConfigs`와 `scopedAppConfigFragmentsByNames` 비교.
 

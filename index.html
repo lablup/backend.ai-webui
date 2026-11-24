@@ -138,7 +138,9 @@
     // attribute keys resources/theme-families.css (glass/stained header effects)
     // on the first render. Mirrors the themeMode read above; useCustomThemeConfig owns
     // this attribute once React mounts.
-    var storedThemeFamily = localStorage.getItem('backendaiwebui.settings.themeFamily');
+    // An act-as tab (react/src/helper/actAs.ts) keeps its family in sessionStorage.
+    var isActAsTab = !!sessionStorage.getItem('backendaiwebui.actAs') || new URLSearchParams(location.search).has('actAsHandoff');
+    var storedThemeFamily = (isActAsTab ? sessionStorage : localStorage).getItem('backendaiwebui.settings.themeFamily');
     var parsedThemeFamily;
     try { parsedThemeFamily = storedThemeFamily ? JSON.parse(storedThemeFamily) : null; } catch(e) { parsedThemeFamily = null; }
     document.body.setAttribute('data-theme-family', parsedThemeFamily || 'default');

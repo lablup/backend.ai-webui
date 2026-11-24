@@ -135,12 +135,12 @@ flowchart LR
 - **Allow-list dependency**: if the allow-list adds a scope to `publicConfigByDomain` or `domainConfig`, `useMyAppConfig` no longer returns the raw document for it; if it adds PUBLIC to `userConfig`, `set` also copies PUBLIC values into the USER document.
 - **Shown before stored**: a change is visible before the server stores it, and a failed write takes back only the paths it carried.
 - **Lost concurrent edits**: a `set` overwrites a change another tab or the CLI made to the USER document after the atom was last read.
-- **Act-as**: an act-as tab reads and writes the target account's `userConfig`.
+- **Act-as**: an act-as tab reads and writes the target account's `userConfig`, and never this browser's localStorage (ADR 0035, section 6).
 
 ## Sources
 
 - #11146 — this decision, 2026-11-18.
-- #11293 — which writes an act-as tab may send.
+- #11293 — an act-as tab may send every `userConfig` write.
 - Manager `services/app_config/service.py` (`_recursive_override`, `_merge_configs`), `models/app_config_fragment/upserters.py` (whole-document upsert), migration `ede445fb9d0d` (default allow-list).
 - Reads of a dev cluster on 2026-11-18: `adminAppConfigAllowLists`, and `myAppConfigs` against `scopedAppConfigFragmentsByNames` for a superadmin and a regular user.
 

@@ -5,11 +5,13 @@
 import { useLocalStorageState } from 'backend.ai-ui';
 import { useCallback, useEffect } from 'react';
 
+/** `useStorageState` may be another `createUseStorageState` hook; it must not change between renders. */
 export const useLocalStorageGlobalState = <T,>(
   key: string,
   defaultValue: T,
+  useStorageState: typeof useLocalStorageState = useLocalStorageState,
 ) => {
-  const [storageValue, setStorageValue] = useLocalStorageState<T>(key, {
+  const [storageValue, setStorageValue] = useStorageState<T>(key, {
     defaultValue: defaultValue,
   });
   const eventName = 'useLocalStorageGlobalState:' + key;

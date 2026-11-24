@@ -26,7 +26,8 @@ let stopRunning: (() => void) | null = null;
 /**
  * Runs at sign-in, after `setMyAppConfigs` (ADR 0035): copies this browser's
  * pre-ADR 0035 localStorage values up once when the account has no
- * `settings`, and sends account setting changes until the returned stop runs.
+ * `settings` (never in an act-as tab), and sends account setting changes
+ * until the returned stop runs.
  */
 export const startAccountUserSettingsSync = ({
   store = jotaiStore,
@@ -41,22 +42,24 @@ export const startAccountUserSettingsSync = ({
   const { status, configs } = store.get(myAppConfigState);
   // A failed sign-in read leaves no document to build on: defaults show and nothing is saved.
   if (status !== 'loaded') return () => {};
-  // An act-as tab shows the target's settings and saves nothing to that account.
-  if (getActAsTarget()) return () => {};
+  // An act-as tab saves to the target's account but never touches this browser's
+  // localStorage, which belongs to the super admin.
+  const isActingAs = !!getActAsTarget();
 
   const hasServerSettings = _.isPlainObject(
     configs.userConfig?.[USER_SETTINGS_CONFIG_KEY],
   );
-  if (hasServerSettings) {
+  if (hasServerSettings && !isActingAs) {
     // The account holds them already; on a shared browser they would reach the next account.
     removeLocalAccountUserSettings(localStorage);
   }
   startUserSettingsSync(send, (error) =>
     onError('Failed to save user settings', error),
   );
-  const local = hasServerSettings
-    ? {}
-    : readLocalAccountUserSettings(localStorage);
+  const local =
+    hasServerSettings || isActingAs
+      ? {}
+      : readLocalAccountUserSettings(localStorage);
   if (!_.isEmpty(local)) {
     applyMyUserConfig(store, [USER_SETTINGS_CONFIG_KEY], local);
     // The local copies stay until the write succeeds, so a failure retries at the next sign-in.
