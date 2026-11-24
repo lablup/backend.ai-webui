@@ -42,14 +42,15 @@ flowchart TD
 
 - **`window.isBrowserBelowSupportedRange`**: the result of ADR 0037's two checks, unchanged by the user's choice.
 - **`window.isUnsupportedBrowser`**: true when the browser is below the range and the tab has not accepted it. Every reader of the block (`index.html`'s block screen, splash lifecycle and service worker gate, and `react/src/index.tsx`) keeps reading this flag.
-- **Acceptance**: `sessionStorage['backendaiwebui.unsupportedBrowserAccepted'] === '1'`, under the key `window.unsupportedBrowserAcceptedKey` in `manifest/app.js`. A read that throws counts as not accepted.
+- **Acceptance**: `sessionStorage['backendaiwebui.unsupportedBrowserAccepted'] === '1'`, under the key `window.unsupportedBrowserAcceptedKey` in `manifest/app.js`. When `sessionStorage` cannot be written, `window.name` equal to that key counts as acceptance too; it also lasts for the tab. A storage read that throws counts as not accepted.
 
 ### 2. The block screen offers Use anyway behind a confirm modal
 
 - **Button**: "Use anyway" (Korean "그래도 이용하기" when `navigator.language` starts with `ko`), appended to `.splash-center` under the message.
 - **Modal**: an `alertdialog` overlay inside `#splash` with the title "Unsupported browser", the warning "This browser is not compatible, so normal behavior is not guaranteed. Do you want to continue anyway?", and Cancel and Continue buttons. Cancel has the initial focus; Cancel, Escape and a click on the scrim close it and return focus to the button.
-- **Continue**: stores `'1'` under the acceptance key and calls `location.reload()`. When storage throws, the modal stays open, because a reload would only block again.
-- **Lifetime**: acceptance lasts for the tab's session. A new tab or a new browser session shows the block again.
+- **Continue**: stores `'1'` under the acceptance key and calls `location.reload()`. When storage throws, it sets `window.name` to the key instead and still reloads, so a browser without storage gets past the block as well.
+- **Lifetime**: acceptance lasts for the tab's session. A new tab or a new browser session shows the block again. A duplicated tab, a tab opened from this one with an opener (the act-as tab, `window.open` in `react/src/helper/actAs.ts`) and a restored browser session copy `sessionStorage` and `window.name`, so they carry the acceptance over. Logout shows the block again too: it clears `sessionStorage` (`clearLoginStorage` in `react/src/hooks/useLogout.ts`) before it reloads; a user who logs out is warned again.
+- **Browsers that cannot run the bundle**: the button is offered to every blocked browser, including one that cannot run the module bundle at all (Internet Explorer, no `type=module`, or below `build.target` in `react/vite.config.ts`). There Continue leaves the loading splash on screen until the tab closes. The warning already says normal behavior is not guaranteed, so the button is not narrowed further.
 
 ### 3. The block code stays broadly compatible
 

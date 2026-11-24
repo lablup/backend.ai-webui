@@ -220,8 +220,8 @@
           confirm: 'Continue'
         };
         var colors = isDark ?
-          { surface: '#262626', text: '#f0f0f0', border: '#4a4a4a', scrim: 'rgba(0, 0, 0, 0.6)' } :
-          { surface: '#ffffff', text: '#1f1f1f', border: '#d0d0d0', scrim: 'rgba(0, 0, 0, 0.45)' };
+          { surface: '#262626', text: '#f0f0f0', border: '#4a4a4a', scrim: 'rgba(0, 0, 0, 0.6)', accent: '#e88a28' } :
+          { surface: '#ffffff', text: '#1f1f1f', border: '#d0d0d0', scrim: 'rgba(0, 0, 0, 0.45)', accent: '#ff7a00' };
 
         function makeButton(label, isPrimary) {
           var button = document.createElement('button');
@@ -234,8 +234,8 @@
           s.padding = '6px 16px';
           s.borderRadius = '6px';
           s.cursor = 'pointer';
-          s.border = '1px solid ' + (isPrimary ? '#ff7a00' : colors.border);
-          s.background = isPrimary ? '#ff7a00' : 'transparent';
+          s.border = '1px solid ' + (isPrimary ? colors.accent : colors.border);
+          s.background = isPrimary ? colors.accent : 'transparent';
           s.color = isPrimary ? '#ffffff' : colors.text;
           return button;
         }
@@ -245,6 +245,7 @@
         if (center) center.appendChild(useAnywayButton);
 
         var overlay = null;
+        var modalButtons = [];
         function closeModal() {
           if (!overlay) return;
           document.removeEventListener('keydown', onKeyDown, true);
@@ -256,14 +257,26 @@
           if (e.key === 'Escape' || e.key === 'Esc' || e.keyCode === 27) {
             e.preventDefault();
             closeModal();
+            return;
+          }
+          if (e.key === 'Tab' || e.keyCode === 9) {
+            var first = modalButtons[0];
+            var last = modalButtons[modalButtons.length - 1];
+            var active = document.activeElement;
+            if (e.shiftKey && (active === first || modalButtons.indexOf(active) < 0)) {
+              e.preventDefault();
+              last.focus();
+            } else if (!e.shiftKey && (active === last || modalButtons.indexOf(active) < 0)) {
+              e.preventDefault();
+              first.focus();
+            }
           }
         }
         function proceed() {
           try {
             window.sessionStorage.setItem(window.unsupportedBrowserAcceptedKey, '1');
           } catch (e) {
-            // Storage unavailable: the reload would block again, so keep the modal open.
-            return;
+            window.name = window.unsupportedBrowserAcceptedKey;
           }
           window.location.reload();
         }
@@ -321,6 +334,7 @@
           confirmButton.onclick = proceed;
           actions.appendChild(cancelButton);
           actions.appendChild(confirmButton);
+          modalButtons = [cancelButton, confirmButton];
 
           dialog.appendChild(title);
           dialog.appendChild(body);

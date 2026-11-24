@@ -1,6 +1,6 @@
 # 0037 — Supported browser range and the load block below it
 
-> Section 4's "the app does not load" is partly replaced by [ADR 0038](0038-use-anyway-past-the-unsupported-browser-block.md), which adds a use-anyway path.
+> Section 4's "the app does not load" is partly replaced by [ADR 0038](0038-use-anyway-past-the-unsupported-browser-block.md), which adds a use-anyway path; it also revisits the rejected alternative "Warn with a dismissible banner and load anyway", as a confirm on the block screen rather than a banner.
 
 ## Summary
 
