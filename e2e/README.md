@@ -23,6 +23,7 @@ e2e/
 ├── project-admin/<page>/    # /project/:projectName/admin/{dashboard,session,deployments,users}
 ├── project/<page>/          # user console, /project/:projectName/*
 ├── common/<area>/           # auth, config.toml behaviour, global search, plugins
+├── drills/                  # on-demand scenarios with explanations (pnpm e2e:drill)
 ├── mocks/ fixtures/         # GraphQL mocks and fixture files shared across folders
 ├── utils/                   # helpers and Page Object classes
 ├── envs/                    # env files (samples committed, real files git-ignored)
@@ -171,6 +172,22 @@ supported; the global `e2e-*` cleanup teardown is deliberately not wired in
 `e2e-`), so a run killed mid-test can leave its own `e2e-`-prefixed
 artifacts; a failed login leaves the password in the retained trace — treat
 `smoke-report/` as sensitive.
+
+### Drills — one scenario on demand, against a server already running
+
+`e2e/drills/` runs a named scenario that clicks, types and asserts like a spec,
+but boots nothing, explains every step (what changed on screen, what to verify,
+the related code) in a generated drill report, and cleans up what it created so
+the same drill can run again. See `e2e/drills/README.md`.
+
+```bash
+pnpm e2e:drill --list                 # ids in run order
+pnpm e2e:drill folder-invitation      # one drill; report at e2e/drill-report/<id>/index.html
+pnpm e2e:drill --all                  # every drill, in order
+```
+
+Drills take the same `E2E_PART` / `E2E_ENV_FILE` and accounts as the suite; a
+normal `playwright test` run never picks them up.
 
 ### Run specific directory
 
