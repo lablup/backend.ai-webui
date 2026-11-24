@@ -201,12 +201,7 @@ const OpenIDConnectSettingModalContent: React.FC<
           title={t('settings.sso.PluginRequired')}
           description={t('settings.sso.OpenIDRestartNote')}
         />
-        <Form
-          form={form}
-          layout="vertical"
-          initialValues={stored.values}
-          preserve={false}
-        >
+        <Form form={form} layout="vertical" initialValues={stored.values}>
           <Heading level={5}>{t('settings.sso.Provider')}</Heading>
           <BAIFormItem
             name="well_known"
