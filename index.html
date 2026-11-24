@@ -198,7 +198,7 @@
         if (cube) cube.style.display = 'none';
         var loadingMessage = document.getElementById('loading-message');
         loadingMessage.textContent = message;
-        loadingMessage.style.color = 'red';
+        loadingMessage.style.color = document.body.classList.contains('dark-theme') ? '#ff6b6b' : '#c00000';
         loadingMessage.style.lineHeight = '1.5';
         loadingMessage.setAttribute('role', 'alert');
       })();
