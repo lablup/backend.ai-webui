@@ -3783,7 +3783,7 @@
     },
     "sso": {
       "AddProviderGroup": "新增提供者群組",
-      "AllowedRedirectHosts": "允許的返回主機",
+      "AllowedRedirectHosts": "允許的重新導向主機",
       "AllowedRedirectHostsDesc": "除 WebUI 位址外，登入後可返回的主機，以逗號分隔。留空則接受任何主機。",
       "AuthorizationEndpoint": "授權端點",
       "Certificate": "憑證",

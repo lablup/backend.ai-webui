@@ -3779,7 +3779,7 @@
     },
     "sso": {
       "AddProviderGroup": "Tambah kumpulan penyedia",
-      "AllowedRedirectHosts": "Hos kembali yang dibenarkan",
+      "AllowedRedirectHosts": "Hos ubah hala yang dibenarkan",
       "AllowedRedirectHostsDesc": "Hos dipisahkan koma yang boleh dikembalikan oleh log masuk selain alamat WebUI. Biarkan kosong untuk menerima mana-mana hos.",
       "AuthorizationEndpoint": "Titik akhir kebenaran",
       "Certificate": "Sijil",

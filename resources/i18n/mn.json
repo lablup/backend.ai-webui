@@ -3781,7 +3781,7 @@
     },
     "sso": {
       "AddProviderGroup": "Үйлчилгээ үзүүлэгчийн бүлэг нэмэх",
-      "AllowedRedirectHosts": "Зөвшөөрөгдсөн буцах хостууд",
+      "AllowedRedirectHosts": "Зөвшөөрөгдсөн дахин чиглүүлэх хостууд",
       "AllowedRedirectHostsDesc": "WebUI хаягаас гадна нэвтрэлт буцаж болох, таслалаар тусгаарласан хостууд. Аль ч хостыг зөвшөөрөх бол хоосон үлдээнэ үү.",
       "AuthorizationEndpoint": "Зөвшөөрлийн endpoint",
       "Certificate": "Гэрчилгээ",

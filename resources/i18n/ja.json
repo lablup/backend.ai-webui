@@ -3781,7 +3781,7 @@
     },
     "sso": {
       "AddProviderGroup": "プロバイダーグループを追加",
-      "AllowedRedirectHosts": "許可する戻り先ホスト",
+      "AllowedRedirectHosts": "許可するリダイレクト先ホスト",
       "AllowedRedirectHostsDesc": "WebUI アドレス以外にサインイン後に戻れるホストをカンマ区切りで入力します。空の場合はすべてのホストを許可します。",
       "AuthorizationEndpoint": "認可エンドポイント",
       "Certificate": "証明書",

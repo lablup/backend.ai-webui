@@ -29,6 +29,7 @@ import {
   BAIFlex,
   BAIModal,
   BAIModalProps,
+  BAIQuestionIconWithTooltip,
   BAISegmentedControl,
   BAISegmentedControlItem,
   BAISelect,
@@ -40,6 +41,13 @@ import { Suspense, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 const PEM_PLACEHOLDER = '-----BEGIN …-----';
+
+const labelWithHelp = (label: string, help: string) => (
+  <BAIFlex gap="xxs" align="center">
+    {label}
+    <BAIQuestionIconWithTooltip title={help} />
+  </BAIFlex>
+);
 let openCount = 0;
 
 interface OpenIDConnectSettingModalProps extends BAIModalProps {
@@ -205,8 +213,10 @@ const OpenIDConnectSettingModalContent: React.FC<
           <Heading level={5}>{t('settings.sso.Provider')}</Heading>
           <BAIFormItem
             name="well_known"
-            label={t('settings.sso.WellKnownURL')}
-            extra={t('settings.sso.WellKnownURLDesc')}
+            label={labelWithHelp(
+              t('settings.sso.WellKnownURL'),
+              t('settings.sso.WellKnownURLDesc'),
+            )}
             rules={[urlRule]}
           >
             <BAITextInput type="url" />
@@ -289,30 +299,42 @@ const OpenIDConnectSettingModalContent: React.FC<
           <Heading level={5}>{t('settings.sso.SignIn')}</Heading>
           <BAIFormItem
             name="login_uri"
-            label={t('settings.sso.LoginURI')}
-            extra={t('settings.sso.LoginURIDesc')}
+            label={labelWithHelp(
+              t('settings.sso.LoginURI'),
+              t('settings.sso.LoginURIDesc'),
+            )}
             rules={[requiredRule, urlRule]}
           >
             <BAITextInput type="url" />
           </BAIFormItem>
           <BAIFormItem
             name="allowed_redirect_hosts"
-            label={t('settings.sso.AllowedRedirectHosts')}
-            extra={t('settings.sso.AllowedRedirectHostsDesc')}
+            label={labelWithHelp(
+              t('settings.sso.AllowedRedirectHosts'),
+              t('settings.sso.AllowedRedirectHostsDesc'),
+            )}
           >
             <BAITextInput placeholder="webui.example.com, other.example.com" />
           </BAIFormItem>
           <BAIFormItem
             name="secret"
-            label={t('settings.sso.TokenSigningSecret')}
-            extra={`${t('settings.sso.TokenSigningSecretDesc')} ${secretExtra(stored.secrets.secret)}`}
+            label={labelWithHelp(
+              t('settings.sso.TokenSigningSecret'),
+              t('settings.sso.TokenSigningSecretDesc'),
+            )}
+            extra={secretExtra(stored.secrets.secret)}
             rules={stored.secrets.secret === 'set' ? [] : [requiredRule]}
           >
             <BAITextInput type="password" autoComplete="new-password" />
           </BAIFormItem>
 
-          <Heading level={5}>{t('settings.sso.ProviderGroupMapping')}</Heading>
-          <BAIFormItem extra={t('settings.sso.ProviderGroupMappingDesc')}>
+          <Heading level={5}>
+            {labelWithHelp(
+              t('settings.sso.ProviderGroupMapping'),
+              t('settings.sso.ProviderGroupMappingDesc'),
+            )}
+          </Heading>
+          <BAIFormItem>
             <Form.List name="group_mapping">
               {(fields, { add, remove }) => (
                 <BAIDynamicList

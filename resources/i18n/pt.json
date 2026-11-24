@@ -3781,7 +3781,7 @@
     },
     "sso": {
       "AddProviderGroup": "Adicionar grupo do fornecedor",
-      "AllowedRedirectHosts": "Anfitriões de retorno permitidos",
+      "AllowedRedirectHosts": "Anfitriões de redirecionamento permitidos",
       "AllowedRedirectHostsDesc": "Anfitriões separados por vírgulas para onde um início de sessão pode voltar além do endereço da WebUI. Deixe vazio para aceitar qualquer anfitrião.",
       "AuthorizationEndpoint": "Endpoint de autorização",
       "Certificate": "Certificado",

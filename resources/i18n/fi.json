@@ -3779,7 +3779,7 @@
     },
     "sso": {
       "AddProviderGroup": "Lisää palveluntarjoajan ryhmä",
-      "AllowedRedirectHosts": "Sallitut paluuisännät",
+      "AllowedRedirectHosts": "Sallitut uudelleenohjausisännät",
       "AllowedRedirectHostsDesc": "Pilkuin erotetut isännät, joille kirjautuminen voi palata WebUI-osoitteen lisäksi. Jätä tyhjäksi, jos mikä tahansa isäntä hyväksytään.",
       "AuthorizationEndpoint": "Valtuutuksen päätepiste",
       "Certificate": "Varmenne",

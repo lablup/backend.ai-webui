@@ -3782,7 +3782,7 @@
     },
     "sso": {
       "AddProviderGroup": "Ajouter un groupe du fournisseur",
-      "AllowedRedirectHosts": "Hôtes de retour autorisés",
+      "AllowedRedirectHosts": "Hôtes de redirection autorisés",
       "AllowedRedirectHostsDesc": "Hôtes séparés par des virgules vers lesquels une connexion peut revenir en plus de l'adresse de la WebUI. Laissez vide pour accepter tout hôte.",
       "AuthorizationEndpoint": "Point de terminaison d'autorisation",
       "Certificate": "Certificat",

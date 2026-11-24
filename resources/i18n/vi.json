@@ -3781,7 +3781,7 @@
     },
     "sso": {
       "AddProviderGroup": "Thêm nhóm của nhà cung cấp",
-      "AllowedRedirectHosts": "Máy chủ quay lại được phép",
+      "AllowedRedirectHosts": "Máy chủ chuyển hướng được phép",
       "AllowedRedirectHostsDesc": "Các máy chủ, phân tách bằng dấu phẩy, mà một lần đăng nhập có thể quay lại ngoài địa chỉ WebUI. Để trống để chấp nhận mọi máy chủ.",
       "AuthorizationEndpoint": "Endpoint ủy quyền",
       "Certificate": "Chứng chỉ",

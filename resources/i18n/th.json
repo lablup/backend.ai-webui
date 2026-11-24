@@ -3765,7 +3765,7 @@
     },
     "sso": {
       "AddProviderGroup": "เพิ่มกลุ่มของผู้ให้บริการ",
-      "AllowedRedirectHosts": "โฮสต์ที่อนุญาตให้กลับไป",
+      "AllowedRedirectHosts": "โฮสต์ที่อนุญาตให้เปลี่ยนเส้นทาง",
       "AllowedRedirectHostsDesc": "โฮสต์ที่คั่นด้วยจุลภาคซึ่งการลงชื่อเข้าใช้สามารถกลับไปได้นอกเหนือจากที่อยู่ WebUI เว้นว่างไว้เพื่อยอมรับทุกโฮสต์",
       "AuthorizationEndpoint": "Authorization Endpoint",
       "Certificate": "ใบรับรอง",

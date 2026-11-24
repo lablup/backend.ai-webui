@@ -3781,7 +3781,7 @@
     },
     "sso": {
       "AddProviderGroup": "添加提供商组",
-      "AllowedRedirectHosts": "允许的返回主机",
+      "AllowedRedirectHosts": "允许的重定向主机",
       "AllowedRedirectHostsDesc": "除 WebUI 地址外，登录后可返回的主机，以逗号分隔。留空则接受任何主机。",
       "AuthorizationEndpoint": "授权端点",
       "Certificate": "证书",

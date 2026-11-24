@@ -3779,7 +3779,7 @@
     },
     "sso": {
       "AddProviderGroup": "Aggiungi gruppo del provider",
-      "AllowedRedirectHosts": "Host di ritorno consentiti",
+      "AllowedRedirectHosts": "Host di reindirizzamento consentiti",
       "AllowedRedirectHostsDesc": "Host separati da virgole a cui un accesso può tornare oltre all'indirizzo della WebUI. Lascia vuoto per accettare qualsiasi host.",
       "AuthorizationEndpoint": "Endpoint di autorizzazione",
       "Certificate": "Certificato",

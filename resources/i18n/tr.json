@@ -3779,7 +3779,7 @@
     },
     "sso": {
       "AddProviderGroup": "Sağlayıcı grubu ekle",
-      "AllowedRedirectHosts": "İzin verilen dönüş ana makineleri",
+      "AllowedRedirectHosts": "İzin verilen yönlendirme ana makineleri",
       "AllowedRedirectHostsDesc": "Bir girişin WebUI adresi dışında dönebileceği, virgülle ayrılmış ana makineler. Her ana makineyi kabul etmek için boş bırakın.",
       "AuthorizationEndpoint": "Yetkilendirme uç noktası",
       "Certificate": "Sertifika",

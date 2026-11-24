@@ -3779,7 +3779,7 @@
     },
     "sso": {
       "AddProviderGroup": "Добавить группу провайдера",
-      "AllowedRedirectHosts": "Разрешённые хосты возврата",
+      "AllowedRedirectHosts": "Разрешённые хосты перенаправления",
       "AllowedRedirectHostsDesc": "Хосты через запятую, на которые может вернуться вход помимо адреса WebUI. Оставьте пустым, чтобы разрешить любой хост.",
       "AuthorizationEndpoint": "Конечная точка авторизации",
       "Certificate": "Сертификат",

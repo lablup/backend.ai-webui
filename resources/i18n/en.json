@@ -3766,7 +3766,7 @@
     },
     "sso": {
       "AddProviderGroup": "Add Provider Group",
-      "AllowedRedirectHosts": "Allowed Return Hosts",
+      "AllowedRedirectHosts": "Allowed Redirect Hosts",
       "AllowedRedirectHostsDesc": "Comma-separated hosts a sign-in may return to besides the WebUI address. Leave empty to accept any host.",
       "AuthorizationEndpoint": "Authorization Endpoint",
       "Certificate": "Certificate",

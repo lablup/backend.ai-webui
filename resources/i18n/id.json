@@ -3783,7 +3783,7 @@
     },
     "sso": {
       "AddProviderGroup": "Tambah grup penyedia",
-      "AllowedRedirectHosts": "Host kembali yang diizinkan",
+      "AllowedRedirectHosts": "Host pengalihan yang diizinkan",
       "AllowedRedirectHostsDesc": "Host yang dipisahkan koma tempat proses masuk dapat kembali selain alamat WebUI. Biarkan kosong untuk menerima host mana pun.",
       "AuthorizationEndpoint": "Endpoint otorisasi",
       "Certificate": "Sertifikat",
