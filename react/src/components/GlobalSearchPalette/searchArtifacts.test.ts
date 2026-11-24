@@ -40,7 +40,10 @@ const menuSources = (): Array<MenuHitSource> =>
 const context = (): SearchContext => ({
   isSuperAdmin: true,
   isManagerVersionCompatibleWith: () => true,
-  config: { fasttrackEndpoint: 'https://fasttrack.example' },
+  config: {
+    fasttrackEndpoint: 'https://fasttrack.example',
+    isHelpHidden: false,
+  },
   visibleMenuKeys: new Set(indexedMenuKeys),
   disabledMenuKeys: new Set<string>(),
   blockedMenuKeys: new Set<string>(),

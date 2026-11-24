@@ -32,7 +32,7 @@ const hits = buildHits({
 const makeCtx = (overrides: Partial<SearchContext> = {}): SearchContext => ({
   isSuperAdmin: false,
   isManagerVersionCompatibleWith: () => false,
-  config: { fasttrackEndpoint: null },
+  config: { fasttrackEndpoint: null, isHelpHidden: false },
   visibleMenuKeys: new Set(allMenuKeys),
   disabledMenuKeys: new Set(),
   blockedMenuKeys: new Set(),

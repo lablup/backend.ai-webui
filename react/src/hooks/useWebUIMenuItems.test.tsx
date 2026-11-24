@@ -25,12 +25,6 @@ vi.mock('react-i18next', () => ({
   initReactI18next: { type: '3rdParty', init: () => {} },
 }));
 
-vi.mock('.', () => ({
-  useSuspendedBackendaiClient: () => ({
-    _config: { hideAgents: true, blockList: [], inactiveList: [] },
-  }),
-}));
-
 vi.mock('./backendai', () => ({
   useCurrentUserRole: () => mockUserRole,
 }));

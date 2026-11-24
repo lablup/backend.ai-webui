@@ -55,7 +55,6 @@ vi.mock('../../hooks', async (importOriginal) => {
   return {
     ...originalModule,
     useSuspendedBackendaiClient: () => ({
-      _config: { allowCustomResourceAllocation: true },
       resourcePreset: { check: mockResourcePresetCheck },
     }),
   };

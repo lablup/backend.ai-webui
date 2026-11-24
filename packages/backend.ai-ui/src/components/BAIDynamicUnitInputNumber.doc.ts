@@ -155,6 +155,12 @@ export const docs = {
         'Whether the group label is visually hidden. Defaults to hidden whenever no `label` is supplied, since the field usually sits under a form-item label.',
     },
     {
+      name: 'width',
+      type: 'number | string',
+      description:
+        'Width of the input group, a number of pixels or a CSS length; it overrides `style.width`.',
+    },
+    {
       name: 'style',
       type: 'CSSProperties',
       description:

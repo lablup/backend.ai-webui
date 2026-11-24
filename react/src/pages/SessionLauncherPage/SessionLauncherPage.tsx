@@ -30,17 +30,14 @@ import {
 } from '../../helper/sessionLauncherHistory';
 import { normalizeLegacyMountFields } from '../../helper/vfolderMounts';
 import { AGENT_PREFILL_PARAM } from '../../helper/webmcpConstants';
-import {
-  useSuspendedBackendaiClient,
-  useWebUILocation,
-  useWebUINavigate,
-} from '../../hooks';
+import { useWebUILocation, useWebUINavigate } from '../../hooks';
 import {
   useCurrentProjectValue,
   useCurrentResourceGroupState,
 } from '../../hooks/useCurrentProject';
 import { useRecentSessionHistory } from '../../hooks/useRecentSessionHistory';
 import { useStartSession } from '../../hooks/useStartSession';
+import { useEffectiveLoginConfig } from '../../hooks/useWebUIConfig';
 import { toProjectContext } from '../../types/projectContext';
 import LaunchMultipleSessionsModal from './components/LaunchMultipleSessionsModal';
 import SessionLauncherAgentPrefillNotice from './components/SessionLauncherAgentPrefillNotice';
@@ -253,7 +250,7 @@ const SessionLauncherPageContent: React.FC<{
   const { getErrorMessage } = useErrorMessageResolver();
 
   const mainContentDivRef = useAtomValue(mainContentDivRefState);
-  const baiClient = useSuspendedBackendaiClient();
+  const loginConfig = useEffectiveLoginConfig();
   const [, setCurrentGlobalResourceGroup] = useCurrentResourceGroupState();
   // ADR-0001 (FR-3411): pages are the only readers of the ambient current
   // project; ResourceAllocationFormItems takes it as an explicit required
@@ -1087,7 +1084,7 @@ const SessionLauncherPageContent: React.FC<{
                     // An SSH/SFTP system session runs in the SFTP resource
                     // group the selector hides from every other session type.
                     includeSFTPResourceGroups={sessionType === 'system'}
-                    enableAgentSelect={!baiClient._config.hideAgents}
+                    enableAgentSelect={!loginConfig.hideAgents}
                     enableResourcePresets
                     showRemainingWarning
                   />

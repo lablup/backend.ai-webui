@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import helpAnchorsData from './helpAnchors.json';
+import type { RouteScope } from './pathBuilder';
 
 /**
  * Route → user-manual mapping behind the header's help ("?") button.
@@ -17,9 +18,12 @@ import helpAnchorsData from './helpAnchors.json';
  * Keep `path` in sync with the route menu keys in `routes.tsx` and `tab` with
  * each page's `?tab=` values; unmapped routes fall back to the index page.
  */
+
 export interface HelpAnchorEntry {
   /** Route menu key (`useCurrentMenuKey()`); `''` is the root route. */
   path: string;
+  /** Route scope this entry overrides, for a menu key shared across scopes. */
+  scope?: RouteScope;
   /** `?tab=` value this entry overrides; absent means the page default. */
   tab?: string;
   /** Manual page slug, e.g. `admin_menu.html`. */
@@ -29,36 +33,48 @@ export interface HelpAnchorEntry {
 }
 
 export const helpAnchors: ReadonlyArray<HelpAnchorEntry> =
-  helpAnchorsData.entries;
+  helpAnchorsData.entries as ReadonlyArray<HelpAnchorEntry>;
 
 /** `docPage` plus its `#anchor`, the form appended to the manual base URL. */
 export const helpAnchorTarget = (entry: HelpAnchorEntry): string =>
   entry.anchor ? `${entry.docPage}#${entry.anchor}` : entry.docPage;
 
+// A scoped entry is keyed `<scope> <menuKey>`; a space never occurs in a menu key.
+const lookupKey = (menuKey: string, scope?: RouteScope) =>
+  scope ? `${scope} ${menuKey}` : menuKey;
+
 const pageTargets = new Map<string, string>();
-/** Route menu key -> (`?tab=` value -> target); nested so keys cannot collide. */
+/** Lookup key -> (`?tab=` value -> target); nested so keys cannot collide. */
 const tabTargets = new Map<string, Map<string, string>>();
 for (const entry of helpAnchors) {
   const target = helpAnchorTarget(entry);
+  const key = lookupKey(entry.path, entry.scope);
   if (entry.tab === undefined) {
-    pageTargets.set(entry.path, target);
+    pageTargets.set(key, target);
   } else {
-    const byTab = tabTargets.get(entry.path) ?? new Map<string, string>();
+    const byTab = tabTargets.get(key) ?? new Map<string, string>();
     byTab.set(entry.tab, target);
-    tabTargets.set(entry.path, byTab);
+    tabTargets.set(key, byTab);
   }
 }
 
 /**
  * Manual path for a route, preferring a tab-specific section when the active
- * tab has one. Unmapped routes resolve to `''` (the per-language index page).
+ * tab has one and an entry for the route's scope over the unscoped one.
+ * Unmapped routes resolve to `''` (the per-language index page).
  */
 export const resolveHelpDocPath = (
   menuKey: string,
   activeTab?: string | null,
+  scope?: RouteScope,
 ): string => {
-  const tabTarget = activeTab
-    ? tabTargets.get(menuKey)?.get(activeTab)
-    : undefined;
-  return tabTarget ?? pageTargets.get(menuKey) ?? '';
+  const keys = scope ? [lookupKey(menuKey, scope), menuKey] : [menuKey];
+  for (const key of keys) {
+    const tabTarget = activeTab
+      ? tabTargets.get(key)?.get(activeTab)
+      : undefined;
+    const target = tabTarget ?? pageTargets.get(key);
+    if (target !== undefined) return target;
+  }
+  return '';
 };

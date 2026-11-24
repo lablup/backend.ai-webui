@@ -275,10 +275,10 @@ export function buildManualIndex({
 // ── Resolution ────────────────────────────────────────────────────────
 
 /** Human-readable label for an entry, for the failure list. */
-const entryLabel = (entry) =>
-  entry.tab
-    ? `${entry.path || "(root)"}?tab=${entry.tab}`
-    : entry.path || "(root)";
+const entryLabel = (entry) => {
+  const route = `${entry.scope ? `${entry.scope} ` : ""}${entry.path || "(root)"}`;
+  return entry.tab ? `${route}?tab=${entry.tab}` : route;
+};
 
 /**
  * Resolve every entry against the manual index. Returns one problem per dead

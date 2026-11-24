@@ -19,12 +19,12 @@ import {
 import type { RelayMockEnvironment } from 'relay-test-utils/lib/RelayModernMockEnvironment';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-vi.mock('../hooks/useWebUIConfig', () => ({
+vi.mock('../hooks/useWebUIConfig', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('../hooks/useWebUIConfig')>()),
   fetchAndParseConfig: vi.fn(),
-  loginConfigState: Symbol('loginConfigState'),
 }));
-vi.mock('../components/DefaultProviders', () => ({
-  jotaiStore: { get: vi.fn(), set: vi.fn() },
+vi.mock('../components/DefaultProviders', async () => ({
+  jotaiStore: (await import('jotai')).createStore(),
 }));
 vi.mock('../RelayEnvironment', async () => {
   const { createMockEnvironment } = await import('relay-test-utils');
@@ -32,6 +32,19 @@ vi.mock('../RelayEnvironment', async () => {
 });
 
 const environment = RelayEnvironment as unknown as RelayMockEnvironment;
+
+// One real store per file: start every test from empty settings layers.
+beforeEach(async () => {
+  const { jotaiStore } = await import('../components/DefaultProviders');
+  const {
+    baseLoginConfigState,
+    domainWebUISettingsState,
+    publicWebUISettingsState,
+  } = await import('../hooks/useWebUIConfig');
+  jotaiStore.set(baseLoginConfigState, null);
+  jotaiStore.set(publicWebUISettingsState, undefined);
+  jotaiStore.set(domainWebUISettingsState, undefined);
+});
 
 const globalId = (typeName: string, uuid: string) =>
   btoa(`${typeName}:${uuid}`);
@@ -142,10 +155,9 @@ describe('connectViaGQL', () => {
     ]);
 
     await connectViaGQL(makeClient(), cfg, []);
-    expect(jotaiStore.set).toHaveBeenCalledWith(
-      loginConfigState,
-      expect.objectContaining({ hideAgents: !cfg.hideAgents }),
-    );
+    expect(jotaiStore.get(loginConfigState)).toMatchObject({
+      hideAgents: !cfg.hideAgents,
+    });
   });
 
   test('stores the user, the default project, and the domain name + uuid from one myUserV2 read', async () => {

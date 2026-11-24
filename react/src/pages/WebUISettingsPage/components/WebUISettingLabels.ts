@@ -171,6 +171,14 @@ export const useWebUISettingLabels = (): {
         title: t('webuiSettings.MaxFileUploadSize'),
         description: t('webuiSettings.DescMaxFileUploadSize'),
       },
+      allowCustomModelDefinitionPath: {
+        title: t('webuiSettings.AllowCustomModelDefinitionPath'),
+        description: t('webuiSettings.DescAllowCustomModelDefinitionPath'),
+      },
+      fileUploadChunkSize: {
+        title: t('webuiSettings.FileUploadChunkSize'),
+        description: t('webuiSettings.DescFileUploadChunkSize'),
+      },
       storageWarningThreshold: {
         title: t('webuiSettings.StorageWarningThreshold'),
         description: t('webuiSettings.DescStorageWarningThreshold'),
@@ -187,6 +195,10 @@ export const useWebUISettingLabels = (): {
         title: t('webuiSettings.HideAgents'),
         description: t('webuiSettings.DescHideAgents'),
       },
+      showAgentNetworkStats: {
+        title: t('webuiSettings.ShowAgentNetworkStats'),
+        description: t('webuiSettings.DescShowAgentNetworkStats'),
+      },
       enableReservoir: {
         title: t('webuiSettings.EnableReservoir'),
         description: t('webuiSettings.DescEnableReservoir'),
@@ -194,6 +206,10 @@ export const useWebUISettingLabels = (): {
       fasttrackEndpoint: {
         title: t('webuiSettings.FasttrackEndpoint'),
         description: t('webuiSettings.DescFasttrackEndpoint'),
+      },
+      manualUrl: {
+        title: t('webuiSettings.ManualUrl'),
+        description: t('webuiSettings.DescManualUrl'),
       },
       allowAppDownloadPanel: {
         title: t('webuiSettings.AllowAppDownloadPanel'),
@@ -234,6 +250,7 @@ export const useWebUISettingLabels = (): {
       appLauncher: t('webuiSettings.group.AppLauncher'),
       environments: t('webuiSettings.group.Environments'),
       storage: t('webuiSettings.group.Storage'),
+      deployments: t('webuiSettings.group.Deployments'),
       menu: t('webuiSettings.group.Menu'),
       downloads: t('webuiSettings.group.Downloads'),
       account: t('webuiSettings.group.Account'),

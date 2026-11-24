@@ -34,6 +34,25 @@ check 'share_url keeps plain http and no port' \
 share_url '' app >/dev/null 2>&1
 check 'share_url rejects an empty base' '1' "$?"
 
+# ── one-label (internal domain) form ──────────────────────────────────────────
+NEW='https://{app}--jongeun.frontend.internal.lablup.ai'
+check 'share_url fills the one-label form' \
+  'https://gh-11344-pr11350-gateway--jongeun.frontend.internal.lablup.ai' \
+  "$(share_url "$NEW" gh-11344-pr11350-gateway)"
+check 'a name that fits has no label problem' '' "$(share_label_problem "$NEW" gh-11344-pr11350-gateway)"
+BOX32='https://{app}--abcdefghijklmnopqrstuvwxyz012345.frontend.internal.lablup.ai'
+check 'a 32-char box leaves 29 chars for the app' '' "$(share_label_problem "$BOX32" "$(printf 'a%.0s' {1..29})")"
+check 'one more character is refused' \
+  "app name \`$(printf 'a%.0s' {1..30})\` is 30 characters; this box's share host allows 29" \
+  "$(share_label_problem "$BOX32" "$(printf 'a%.0s' {1..30})")"
+check '`box` is the bare address on the one-label form' \
+  "app name \`box\` is reserved for the box's bare address" "$(share_label_problem "$NEW" box)"
+check 'a dotted (auto-derived) name is two labels on the one-label form' \
+  'app name `feat-x.backend-ai-webui` is not a single DNS label' \
+  "$(share_label_problem "$NEW" feat-x.backend-ai-webui)"
+check '`box` is an ordinary app on the legacy form' '' "$(share_label_problem "$BASE" box)"
+check 'the legacy form allows 50-char names' '' "$(share_label_problem "$BASE" "$(printf 'a%.0s' {1..50})")"
+
 # ── marker ────────────────────────────────────────────────────────────────────
 check 'marker carries the box name' '<!-- bai-dev-server box=jongeun -->' "$(marker jongeun)"
 check 'another box gets another marker (a --force takeover cannot edit it)' \
@@ -385,6 +404,56 @@ check 'an unresolved key is recorded with no issue' 'FR-9999 null null|FR-9999 n
   "$(jq -r '.served[] | [.jiraKey, .githubIssue, .teamsThread] | map(tostring) | join(" ")' "$STATE_DIR/testapp.json" | paste -sd'|')"
 check 'and the line says no clone was found' 'FR-9999 (no GitHub clone found)' \
   "$(sed -n '1s/.*comment [0-9]*, \(.*\), teams.*/\1/p' "$TMP/said")"
+rm -rf "$TMP"
+
+# ── cmd_advertise with a re-joined box's config (internal domain) ─────────────
+TMP=$(mktemp -d)
+STATE_DIR="$TMP/state"
+DEV_GW_CONFIG="$TMP/dev-gw.json"
+cat >"$DEV_GW_CONFIG" <<'JSON'
+{"box":"testbox","gateway":"10.0.0.1","domain":"legacy.invalid","public_domain":"pub.invalid",
+ "target_port":1357,"share_base":"https://{app}--testbox.pub.invalid",
+ "bare_url":"https://box--testbox.pub.invalid","legacy_share_base":"http://{app}.testbox.legacy.invalid"}
+JSON
+mkdir -p "$STATE_DIR"
+SAVED_PORTLESS_PORT=${PORTLESS_PORT-__unset__}
+PORTLESS_PORT=1357
+served_set() { printf '%s' '[{"pr":9330,"branch":"c"}]'; }
+issue_ref_for_pr() { printf '|'; }
+teams_thread_for_issue() { printf ''; }
+upsert_comment() { printf '%s' "$4" >"$TMP/body"; printf '1\thttps://example.invalid/c/1'; }
+( cmd_advertise --app gh-1-pr9330 --branch c --repo o/r --pid 7 ) 2>/dev/null
+check 'the new form is advertised from share_base' \
+  'Dev server on box `testbox`: https://gh-1-pr9330--testbox.pub.invalid' \
+  "$(sed -n 2p "$TMP/body" 2>/dev/null)"
+check 'and recorded' 'https://gh-1-pr9330--testbox.pub.invalid' \
+  "$(jq -r '.url' "$STATE_DIR/gh-1-pr9330.json" 2>/dev/null)"
+( cmd_advertise --app box --branch c --repo o/r --pid 7 ) 2>"$TMP/said"
+check '`box` is refused before anything is written' 'no-record' \
+  "$([ -f "$STATE_DIR/box.json" ] && echo record || echo no-record)"
+check 'with the reason' 'yes' \
+  "$(grep -q 'reserved for the box' "$TMP/said" && echo yes || echo no)"
+if [ "$SAVED_PORTLESS_PORT" = __unset__ ]; then unset PORTLESS_PORT; else PORTLESS_PORT=$SAVED_PORTLESS_PORT; fi
+rm -rf "$TMP"
+
+# ── boot-env predicts the capped name dev.mjs claims ──────────────────────────
+TMP=$(mktemp -d)
+printf '%s' '{"box":"abcdefghijklmnopqrstuvwxyz012345","share_base":"https://{app}--abcdefghijklmnopqrstuvwxyz012345.pub.invalid"}' >"$TMP/dev-gw.json"
+check 'resolve_app_name caps the descriptive tail to the label budget' 'gh-11344-pr11350-a-very-long' \
+  "$(cd "$HERE" || exit
+     lookup_pr() { printf '%s' '{"number":11350,"title":"t"}'; }
+     DEV_GW_CONFIG="$TMP/dev-gw.json"
+     export PORTLESS_APP_NAME='a very long descriptive session name'
+     unset PORTLESS_APP_NAME_EXACT
+     resolve_app_name 'feat/gh-11344-x')"
+check 'a legacy config keeps the 50-char cap' 'gh-11344-pr11350-a-very-long-descriptive-session-n' \
+  "$(cd "$HERE" || exit
+     lookup_pr() { printf '%s' '{"number":11350,"title":"t"}'; }
+     printf '%s' '{"box":"abcdefghijklmnopqrstuvwxyz012345","share_base":"http://{app}.abcdefghijklmnopqrstuvwxyz012345.legacy.invalid"}' >"$TMP/legacy.json"
+     DEV_GW_CONFIG="$TMP/legacy.json"
+     export PORTLESS_APP_NAME='a very long descriptive session name'
+     unset PORTLESS_APP_NAME_EXACT
+     resolve_app_name 'feat/gh-11344-x')"
 rm -rf "$TMP"
 
 # ── stop: a PR we never commented on gets no first comment at teardown ────────

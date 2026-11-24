@@ -232,6 +232,189 @@ export async function sweepProfileTestUsersViaApi(
   return purged;
 }
 
+/**
+ * Creates a keypair resource policy capped at `totalResourceSlots` (e.g.
+ * `{ cpu: '0', mem: '0' }`). Pair it with `deleteKeypairResourcePolicyViaApi`.
+ */
+export async function createKeypairResourcePolicyViaApi(
+  api: APIRequestContext,
+  name: string,
+  totalResourceSlots: Record<string, string>,
+): Promise<void> {
+  const data = await gqlAdmin<{
+    create_keypair_resource_policy: { ok: boolean; msg: string } | null;
+  }>(
+    api,
+    `mutation($name: String!, $props: CreateKeyPairResourcePolicyInput!) {
+      create_keypair_resource_policy(name: $name, props: $props) { ok msg }
+    }`,
+    {
+      name,
+      props: {
+        default_for_unspecified: 'UNLIMITED',
+        total_resource_slots: JSON.stringify(totalResourceSlots),
+        max_concurrent_sessions: 1,
+        max_containers_per_session: 1,
+        idle_timeout: 3600,
+      },
+    },
+  );
+  if (!data.create_keypair_resource_policy?.ok) {
+    throw new Error(
+      `create_keypair_resource_policy failed: ${data.create_keypair_resource_policy?.msg}`,
+    );
+  }
+}
+
+/**
+ * Deletes a keypair resource policy. Returns `false` instead of throwing so
+ * teardown never masks the test result.
+ */
+export async function deleteKeypairResourcePolicyViaApi(
+  api: APIRequestContext,
+  name: string,
+): Promise<boolean> {
+  try {
+    const data = await gqlAdmin<{
+      delete_keypair_resource_policy: { ok: boolean; msg: string } | null;
+    }>(
+      api,
+      `mutation($name: String!) {
+        delete_keypair_resource_policy(name: $name) { ok msg }
+      }`,
+      { name },
+    );
+    if (!data.delete_keypair_resource_policy?.ok) {
+      console.warn(
+        `[admin-api] delete_keypair_resource_policy did not succeed for ${name}: ${data.delete_keypair_resource_policy?.msg}`,
+      );
+      return false;
+    }
+    return true;
+  } catch (error) {
+    console.warn(
+      `[admin-api] could not delete keypair resource policy ${name}:`,
+      error,
+    );
+    return false;
+  }
+}
+
+/**
+ * Deletes keypair resource policies matching `pattern` that are older than
+ * `minAgeMs`, so a hard-killed run cannot leak them. Stale users matching the
+ * same pattern are purged first, since their keypairs block the delete.
+ */
+export async function sweepStaleKeypairResourcePoliciesViaApi(
+  api: APIRequestContext,
+  pattern: RegExp,
+  minAgeMs = 60 * 60 * 1000,
+): Promise<number> {
+  const data = await gqlAdmin<{
+    keypair_resource_policies: Array<{
+      name: string;
+      created_at: string;
+    }> | null;
+  }>(api, `query { keypair_resource_policies { name created_at } }`);
+  const stale = (data.keypair_resource_policies ?? []).filter((p) => {
+    const createdAt = new Date(p.created_at).getTime();
+    return (
+      pattern.test(p.name) &&
+      Number.isFinite(createdAt) &&
+      Date.now() - createdAt > minAgeMs
+    );
+  });
+  if (stale.length === 0) return 0;
+  const { users } = await gqlAdmin<{
+    users: Array<{ email: string; created_at: string }> | null;
+  }>(api, `query { users(is_active: null) { email created_at } }`);
+  for (const { email, created_at } of users ?? []) {
+    const createdAt = new Date(created_at).getTime();
+    if (
+      pattern.test(email) &&
+      Number.isFinite(createdAt) &&
+      Date.now() - createdAt > minAgeMs
+    ) {
+      await purgeUserViaApi(api, email);
+    }
+  }
+  let deleted = 0;
+  for (const { name } of stale) {
+    if (await deleteKeypairResourcePolicyViaApi(api, name)) deleted++;
+  }
+  return deleted;
+}
+
+/**
+ * Creates an active user in `domainName` and `projectName`. With
+ * `keypairResourcePolicy`, the user's own keypairs are moved onto that policy.
+ * Pair it with `purgeUserViaApi`.
+ */
+export async function createUserViaApi(
+  api: APIRequestContext,
+  user: {
+    email: string;
+    password: string;
+    domainName: string;
+    projectName: string;
+    keypairResourcePolicy?: string;
+  },
+): Promise<void> {
+  const { groups } = await gqlAdmin<{
+    groups: Array<{ id: string; name: string }>;
+  }>(
+    api,
+    `query($domain: String) {
+      groups(domain_name: $domain, is_active: true) { id name }
+    }`,
+    { domain: user.domainName },
+  );
+  const projectId = groups?.find((g) => g.name === user.projectName)?.id;
+  if (!projectId) throw new Error(`Project ${user.projectName} not found`);
+  const created = await gqlAdmin<{
+    create_user: { ok: boolean; msg: string } | null;
+  }>(
+    api,
+    `mutation($email: String!, $props: UserInput!) {
+      create_user(email: $email, props: $props) { ok msg }
+    }`,
+    {
+      email: user.email,
+      props: {
+        username: user.email.split('@')[0],
+        password: user.password,
+        need_password_change: false,
+        domain_name: user.domainName,
+        group_ids: [projectId],
+      },
+    },
+  );
+  if (!created.create_user?.ok) {
+    throw new Error(`create_user failed: ${created.create_user?.msg}`);
+  }
+  if (!user.keypairResourcePolicy) return;
+  const { keypairs } = await gqlAdmin<{
+    keypairs: Array<{ access_key: string }> | null;
+  }>(api, `query($email: String) { keypairs(email: $email) { access_key } }`, {
+    email: user.email,
+  });
+  if (!keypairs?.length) throw new Error(`No keypair for ${user.email}`);
+  for (const { access_key } of keypairs) {
+    const modified = await gqlAdmin<{
+      modify_keypair: { ok: boolean; msg: string } | null;
+    }>(
+      api,
+      `mutation($access_key: String!, $props: ModifyKeyPairInput!) {
+        modify_keypair(access_key: $access_key, props: $props) { ok msg }
+      }`,
+      { access_key, props: { resource_policy: user.keypairResourcePolicy } },
+    );
+    if (!modified.modify_keypair?.ok) {
+      throw new Error(`modify_keypair failed: ${modified.modify_keypair?.msg}`);
+    }
+  }
+}
+
 const UUID_RE =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -463,6 +646,197 @@ export async function sweepLeftoverDeploymentsViaApi(
     console.log(`Swept ${deleted} leftover deployment(s) matching ${pattern}`);
   }
   return deleted;
+}
+
+/**
+ * Creates an empty `model` folder owned by the signed-in account and returns
+ * its id. Delete it with `purgeVFoldersByNameViaApi`.
+ */
+export async function createModelVFolderViaApi(
+  api: APIRequestContext,
+  name: string,
+  host: string,
+): Promise<string> {
+  const res = await api.post('/func/folders', {
+    data: { name, host, usage_mode: 'model', permission: 'rw' },
+  });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok() || !body?.id) {
+    throw new Error(
+      `Could not create model folder "${name}" (${res.status()}): ${JSON.stringify(body).slice(0, 300)}`,
+    );
+  }
+  return body.id;
+}
+
+export interface DeploymentWithRevision {
+  /** Raw UUID, as the `/deployments/:id` route takes it. */
+  id: string;
+  /** The current revision's image as `canonicalName@architecture`. */
+  imageReference: string;
+}
+
+/**
+ * Creates a deployment in `projectName` with zero replicas and an activated
+ * current revision (custom runtime, a registered image, cpu/mem only), so
+ * nothing is scheduled. Delete it with `deleteDeploymentViaApi`.
+ */
+export async function createDeploymentWithRevisionViaApi(
+  api: APIRequestContext,
+  options: {
+    name: string;
+    domainName: string;
+    projectName: string;
+    modelFolderId: string;
+    /** Called with the raw UUID as soon as it exists, before activation. */
+    onCreated?: (id: string) => void;
+  },
+): Promise<DeploymentWithRevision> {
+  const { groups } = await gqlAdmin<{
+    groups: Array<{ id: string; name: string }>;
+  }>(api, `query($d: String) { groups(domain_name: $d) { id name } }`, {
+    d: options.domainName,
+  });
+  const projectId = groups.find((g) => g.name === options.projectName)?.id;
+  if (!projectId) throw new Error(`Project ${options.projectName} not found`);
+
+  const [{ scaling_groups_for_user_group: resourceGroups }, rv, img] =
+    await Promise.all([
+      gqlAdmin<{ scaling_groups_for_user_group: Array<{ name: string }> }>(
+        api,
+        `query($g: String!) {
+          scaling_groups_for_user_group(user_group: $g, is_active: true) { name }
+        }`,
+        { g: projectId },
+      ),
+      gqlAdmin<{
+        runtimeVariants: {
+          edges: Array<{ node: { id: string; name: string } }>;
+        };
+      }>(
+        api,
+        `query { runtimeVariants(limit: 100) { edges { node { id name } } } }`,
+      ),
+      gqlAdmin<{
+        images: Array<{ id: string; name: string; installed: boolean }>;
+      }>(api, `query { images(is_operation: false) { id name installed } }`),
+    ]);
+  const resourceGroup = resourceGroups.map((g) => g.name).sort()[0];
+  const variant = rv.runtimeVariants.edges.find(
+    (e) => e.node.name === 'custom',
+  )?.node;
+  // Same image family as deployment-fixtures' preset; installed ones first.
+  const images = [...(img.images ?? [])].sort(
+    (a, b) => Number(b.installed) - Number(a.installed),
+  );
+  const image =
+    images.find((i) => i.name === 'bai/ngc-pytorch') ??
+    images.find((i) => /python/i.test(i.name));
+  if (!resourceGroup || !variant || !image) {
+    throw new Error(
+      `Cannot create deployment: resourceGroup=${!!resourceGroup} customRuntime=${!!variant} image=${!!image}`,
+    );
+  }
+
+  const created = await gqlAdmin<{
+    createModelDeployment: { deployment: { entityId: string } };
+  }>(
+    api,
+    `mutation($input: CreateDeploymentInput!) {
+      createModelDeployment(input: $input) { deployment { entityId } }
+    }`,
+    {
+      input: {
+        metadata: {
+          projectId,
+          domainName: options.domainName,
+          resourceGroupName: resourceGroup,
+          name: options.name,
+        },
+        networkAccess: { openToPublic: false },
+        defaultDeploymentStrategy: { type: 'ROLLING' },
+        replicaCount: 0,
+        initialRevision: {
+          clusterConfig: { mode: 'SINGLE_NODE', size: 1 },
+          resourceConfig: {
+            resourceSlots: {
+              entries: [
+                { resourceType: 'cpu', quantity: '1' },
+                { resourceType: 'mem', quantity: '1073741824' },
+              ],
+            },
+          },
+          image: { id: toRawUUID(image.id) },
+          modelRuntimeConfig: { runtimeVariantId: toRawUUID(variant.id) },
+          modelMountConfig: {
+            vfolderId: options.modelFolderId,
+            mountDestination: '/models',
+          },
+        },
+      },
+    },
+  );
+  const id = created.createModelDeployment.deployment.entityId;
+  options.onCreated?.(id);
+
+  type Read = {
+    deployment: {
+      currentRevision: {
+        imageV2: { identity: { canonicalName: string; architecture: string } };
+      } | null;
+      revisionHistory: { edges: Array<{ node: { id: string } }> };
+    } | null;
+  };
+  const read = () =>
+    gqlAdmin<Read>(
+      api,
+      `query($id: ID!) {
+        deployment(id: $id) {
+          currentRevision { imageV2 { identity { canonicalName architecture } } }
+          revisionHistory(limit: 1) { edges { node { id } } }
+        }
+      }`,
+      { id: Buffer.from(`ModelDeployment:${id}`).toString('base64') },
+    );
+  // The initial revision is only stored; activating it makes it current a few
+  // seconds to a minute later, even with zero replicas. Transient errors retry.
+  const deadline = Date.now() + 120_000;
+  let activated = false;
+  let lastError = '';
+  for (;;) {
+    try {
+      const { deployment } = await read();
+      lastError = '';
+      const identity = deployment?.currentRevision?.imageV2?.identity;
+      if (identity?.canonicalName) {
+        return {
+          id,
+          imageReference: identity.architecture
+            ? `${identity.canonicalName}@${identity.architecture}`
+            : identity.canonicalName,
+        };
+      }
+      const revisionId = deployment?.revisionHistory.edges[0]?.node.id;
+      if (!activated && revisionId) {
+        await gqlAdmin(
+          api,
+          `mutation($input: ActivateRevisionInput!) {
+            activateDeploymentRevision(input: $input) { activatedRevisionId }
+          }`,
+          { input: { deploymentId: id, revisionId: toRawUUID(revisionId) } },
+        );
+        activated = true;
+      }
+    } catch (error) {
+      lastError = error instanceof Error ? error.message : String(error);
+    }
+    if (Date.now() > deadline) {
+      throw new Error(
+        `Deployment ${id} got no current revision within 120s (activated=${activated}) ${lastError}`.trim(),
+      );
+    }
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+  }
 }
 
 // Past the trash: the manager is deleting it or already has, so nothing is left to do.

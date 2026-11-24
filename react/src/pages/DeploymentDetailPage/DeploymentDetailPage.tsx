@@ -5,7 +5,7 @@
 import { DeploymentDetailPageQuery } from '../../__generated__/DeploymentDetailPageQuery.graphql';
 import { ErrorWithGraphQL } from '../../components/BAIErrorBoundary';
 import DeploymentRevisionDetailDrawer from '../../components/DeploymentRevisionDetailDrawer';
-import { useSuspendedBackendaiClient, useWebUINavigate } from '../../hooks';
+import { useWebUINavigate } from '../../hooks';
 import { useCurrentUserInfo } from '../../hooks/backendai';
 import { useCurrentProjectValue } from '../../hooks/useCurrentProject';
 import { useIsProjectAgnosticPage } from '../../hooks/useIsProjectAgnosticPage';
@@ -13,6 +13,7 @@ import {
   useActiveProjectName,
   useProjectPath,
 } from '../../hooks/useRouteScope';
+import { useEffectiveLoginConfig } from '../../hooks/useWebUIConfig';
 import {
   getPathFromMenuKey,
   useWebUIMenuItems,
@@ -76,7 +77,7 @@ const DeploymentDetailPage: React.FC = () => {
   const { token } = useTheme();
   const [currentUser] = useCurrentUserInfo();
   const webuiNavigate = useWebUINavigate();
-  const baiClient = useSuspendedBackendaiClient();
+  const loginConfig = useEffectiveLoginConfig();
   const currentProject = useCurrentProjectValue();
   // This shared page serves three URL spaces
   // (/project/:projectName/deployments/:deploymentId,
@@ -92,7 +93,7 @@ const DeploymentDetailPage: React.FC = () => {
     ? null
     : toProjectContext(currentProject);
   const buildProjectPath = useProjectPath();
-  const isChatBlocked = !!baiClient?._config?.blockList?.includes('chat');
+  const isChatBlocked = !!loginConfig.blockList?.includes('chat');
 
   const { deploymentId: deploymentIdParam } = useParams<{
     deploymentId: string;

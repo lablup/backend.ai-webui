@@ -106,6 +106,13 @@ read `package.json` / `pnpm-workspace.yaml` / `ls` rather than expecting a list 
 - Architecture-level decisions live in `docs/adr/`, indexed by `docs/ARCHITECTURE.md`. A decision on `main` is in force: read the ADRs covering an area before changing it, and never implement against one.
 - A change that makes a new decision other code must follow records an ADR in the same PR and proceeds; the PR is where a human reviews it. A reversal of an ADR in force is flagged to a human before landing.
 
+### Unit Tests (detail: `docs/adr/0036-component-unit-test-conventions.md`)
+
+- Applies to Vitest unit tests of components and hooks under `react/src` and `packages/backend.ai-ui/src`.
+- Mock every API and network boundary, for example Relay through `createMockEnvironment`, the Backend.AI client through a `vi.mock` of the hook that returns it, `fetch` through `vi.stubGlobal`; the ADR lists the other paths. No unit test reaches a manager: the setup files make an unstubbed `fetch` throw.
+- Hooks beside the client hook in `react/src/hooks` (`useCurrentDomainValue`, …) call the real client hook: replace each one the component calls in the same `vi.mock`.
+- Test what the component is meant to do, with props its type allows. Do not add cases for misuse (forbidden props, `@ts-expect-error` input, missing providers); add one only with the fix for a bug it caused.
+
 ### On-Demand Skills (loaded only when needed)
 
 - **Storybook**: `storybook-patterns` skill (fw plugin; CSF 3, meta config, story patterns, checklists)

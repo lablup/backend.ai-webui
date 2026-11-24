@@ -23,7 +23,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 vi.mock('../../../hooks', async (importOriginal) => ({
   ...(await importOriginal<typeof import('../../../hooks')>()),
   useSuspendedBackendaiClient: () => ({
-    _config: { allowCustomResourceAllocation: true },
     user_uuid: 'user-1',
   }),
 }));

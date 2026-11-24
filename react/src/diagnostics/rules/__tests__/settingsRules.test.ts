@@ -78,13 +78,36 @@ describe('checkSettingUrls', () => {
 
   it('flags a value that is not an http(s) URL', () => {
     const results = checkSettingUrls(
-      state({ appDownloadUrl: 'ftp://x', fasttrackEndpoint: 'nope' }),
+      state({
+        appDownloadUrl: 'ftp://x',
+        fasttrackEndpoint: 'nope',
+        manualUrl: 'docs.example.com',
+      }),
     );
     expect(results.map((r) => r.id)).toEqual([
       'settings-invalid-url-appDownloadUrl',
       'settings-invalid-url-fasttrackEndpoint',
+      'settings-invalid-url-manualUrl',
     ]);
     expect(results[1].interpolationValues).toEqual({ value: 'nope' });
+  });
+
+  it('flags a manual URL with a user name or password without echoing it', () => {
+    const results = checkSettingUrls(
+      state({ manualUrl: 'https://user:secret@docs.example.com' }),
+    );
+    expect(results).toHaveLength(1);
+    expect(results[0].id).toBe('settings-url-credentials-manualUrl');
+    expect(results[0].titleKey).toBe('diagnostics.SettingUrlWithCredentials');
+    expect(results[0].interpolationValues).toBeUndefined();
+  });
+
+  it('leaves credentials in the other URL settings to the URL check alone', () => {
+    expect(
+      checkSettingUrls(
+        state({ appDownloadUrl: 'https://user:secret@downloads.example.com' }),
+      ),
+    ).toEqual([]);
   });
 });
 

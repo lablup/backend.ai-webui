@@ -353,6 +353,22 @@ export const maskString = (
   );
 };
 
+const EMAIL_PATTERN =
+  /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+
+/**
+ * A user's name or email as `maskUserInfo` shows it: the first two characters
+ * stay, and an email keeps its domain.
+ */
+export const maskUserIdentity = (value: string): string => {
+  const maskStartIdx = 2;
+  const visibleLength = EMAIL_PATTERN.test(value)
+    ? value.split('@')[0].length
+    : value.length;
+  if (visibleLength <= maskStartIdx) return value;
+  return maskString(value, '*', maskStartIdx, visibleLength - maskStartIdx);
+};
+
 export const offset_to_cursor = (offset: number): string => {
   return window.btoa(`arrayconnection:${offset}`);
 };

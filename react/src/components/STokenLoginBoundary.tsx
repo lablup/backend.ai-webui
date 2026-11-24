@@ -222,9 +222,8 @@ type PendingStep = 'connecting' | 'authenticating';
  * full contract.
  *
  * Config semantics: the boundary awaits the same-origin `config.toml`
- * bootstrap (`initializeConfigOnce`) before authenticating, so webserver
- * flags like `[resources].allowNonAuthTCP` reach
- * `backendaiclient._config` even though `LoginView` has not mounted yet
+ * bootstrap (`initializeConfigOnce`) before authenticating, so the settings
+ * reach `loginConfigState` even though `LoginView` has not mounted yet
  * (FR-3128). The cross-origin webserver config merge
  * (`loadConfigFromWebServer`) remains excluded (ADR 0022) — callers that
  * target an API endpoint on a different origin may invoke it from

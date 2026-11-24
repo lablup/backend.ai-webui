@@ -207,6 +207,48 @@ describe('getAllocatablePresetIds', () => {
     expect(result).toEqual(['id-cpu1_mem2g']);
   });
 
+  it('excludes presets whose shared memory exceeds the shmem cap', () => {
+    const gib = 1024 ** 3;
+    const shmemPresets: Array<ResourcePreset> = [
+      {
+        id: 'shm-1g',
+        name: 'shm-1g',
+        resource_slots: { cpu: '1', mem: '4GB' },
+        shared_memory: String(gib),
+        allocatable: true,
+      },
+      {
+        id: 'shm-4g',
+        name: 'shm-4g',
+        resource_slots: { cpu: '1', mem: '8GB' },
+        shared_memory: String(4 * gib),
+        allocatable: true,
+      },
+      {
+        id: 'shm-auto',
+        name: 'shm-auto',
+        resource_slots: { cpu: '1', mem: '8GB' },
+        shared_memory: null,
+        allocatable: true,
+      },
+    ];
+    const limits = (shmemMax?: string): MergedResourceLimits => ({
+      cpu: {},
+      mem: {},
+      accelerators: {},
+      shmem: shmemMax ? { max: shmemMax } : undefined,
+    });
+
+    expect(
+      getAllocatablePresetIds(shmemPresets, limits('2g'), undefined),
+    ).toEqual(['shm-1g', 'shm-auto']);
+    expect(getAllocatablePresetIds(shmemPresets, limits(), undefined)).toEqual([
+      'shm-1g',
+      'shm-4g',
+      'shm-auto',
+    ]);
+  });
+
   it('should exclude presets requesting a slot the resource group lacks', () => {
     const result = getAllocatablePresetIds(
       presets,
@@ -262,6 +304,12 @@ describe('getAutomaticShmem', () => {
   it('falls back to the default below 4g or below the image minimum + 1g', () => {
     expect(getAutomaticShmem('2g', '1g')).toBe(AUTOMATIC_DEFAULT_SHMEM);
     expect(getAutomaticShmem('4g', '4g')).toBe(AUTOMATIC_DEFAULT_SHMEM);
+  });
+
+  it('never exceeds the cap when one is given', () => {
+    expect(getAutomaticShmem('8g', '1g', '0.5g')).toBe('0.5g');
+    expect(getAutomaticShmem('8g', '1g', '2g')).toBe('1g');
+    expect(getAutomaticShmem('2g', '1g', '0.03125g')).toBe('0.03125g');
   });
 });
 

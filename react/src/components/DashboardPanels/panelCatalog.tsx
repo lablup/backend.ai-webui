@@ -35,6 +35,7 @@ import AgentsPanel from './superadminCards/AgentsPanel';
 import ContainerRegistriesPanel from './superadminCards/ContainerRegistriesPanel';
 import FailedLoginsPanel from './superadminCards/FailedLoginsPanel';
 import FailuresByEntityTypePanel from './superadminCards/FailuresByEntityTypePanel';
+import ProjectAllocationsPanel from './superadminCards/ProjectAllocationsPanel';
 import ResourcePoliciesPanel from './superadminCards/ResourcePoliciesPanel';
 import SchedulingFailuresPanel from './superadminCards/SchedulingFailuresPanel';
 import SessionLaunchesPanel from './superadminCards/SessionLaunchesPanel';
@@ -375,6 +376,17 @@ const PROJECT_ADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     defaultSize: size(2, 3),
     minSize: size(2, 2),
     defaultHidden: ['admin'],
+  },
+  {
+    key: 'projectAllocations',
+    page: ['admin'],
+    group: 'resource',
+    titleKey: 'dashboard.card.ResourceAllocationByProject',
+    kind: 'custom',
+    Component: ProjectAllocationsPanel,
+    defaultSize: size(6, 3),
+    minSize: size(3, 3),
+    defaultHidden: true,
   },
   {
     key: 'projectDeployments',

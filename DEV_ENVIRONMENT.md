@@ -81,22 +81,23 @@ dev-gw join <box>   # installed by fw:setup-remote-env
 That registers the box with the gateway and writes `~/.config/fw/dev-gw.json`. From then on, every `pnpm run dev` prints the shareable URL alongside the local one:
 
 ```
--- Team share URL: http://fr-2701.jongeun.10-82-0-159.sslip.io (dev VPN, via dev-gw)
+-- Team share URL: https://fr-2701--jongeun.frontend.internal.lablup.ai (dev VPN, via dev-gw)
 ```
 
-The pattern is `http://<app>.<box>.<gateway-domain>`, where `<app>` is the same Portless app name as in the local URL. The gateway rewrites the `Host` header to `<app>.localhost:<PORTLESS_PORT>` before forwarding, so **Portless, Vite, and `dev.mjs` need no configuration for it** — the URL is the only difference.
+The URL is the config's `share_base` with `{app}` replaced by the same Portless app name as in the local URL: `https://<app>--<box>.<public domain>`, one DNS label under a publicly trusted wildcard certificate. A box that joined before the internal domain still has `http://<app>.<box>.<gateway-domain>` (`10-82-0-159.sslip.io`) until it re-runs `dev-gw join`; those links, and old ones in PR comments, keep working. The gateway rewrites the `Host` header to `<app>.localhost:<PORTLESS_PORT>` before forwarding, so **Portless, Vite, and `dev.mjs` need no configuration for it** — the URL is the only difference.
 
 Notes:
 
-- **HTTP only, dev VPN only.** The gateway deliberately serves plain HTTP (no CA to install on the viewer's machine, and the Backend.AI client signs requests in pure JS, so no secure-context dependency). It is reachable only from the VPN and dev-net ranges.
+- **Dev VPN only.** The gateway is reachable only from the VPN and dev-net ranges. The internal domain is HTTPS (plain http redirects to it); the legacy sslip.io form is plain HTTP. An https page cannot call an `http://` API endpoint, so on a re-joined box `dev.mjs` also prints the legacy http URL (from `legacy_share_base`): share that one when the server's endpoint is `http://`. `advertise.sh` still posts the https URL, because it does not know the endpoint.
+- **`<app>--<box>` must fit in 63 characters.** On the internal domain `dev.mjs` (and `advertise.sh boot-env`) shortens the descriptive tail of the app name to fit; a name that still does not fit or an app named exactly `box` (reserved for the box's bare address `https://box--<box>.…`) gets an "unavailable" line instead of a URL.
 - **The share URL is unauthenticated.** Anyone on the dev VPN or in dev-net can open it, and the dev bundle they receive contains every `VITE_*` value from your `.env.development.local` — including `VITE_DEFAULT_EMAIL` / `VITE_DEFAULT_PASSWORD` if you set them (see the `SECURITY:` note in `.env.development.local.sample`). Don't run a shared dev server with credentials you would not hand to the whole team.
 - **Changing `PORTLESS_PORT` requires re-running `dev-gw join`.** The gateway forwards to the port recorded at join time; when they differ, `dev.mjs` says so and prints no URL.
 - `dev.mjs` also exposes the URL to the React bundle as `VITE_DEV_SHARE_URL`. Set `DEV_GW_CONFIG` to read the config from a different path.
-- When the app name is auto-derived by `portless run` (no `FR-XXXX` or `gh-N` branch, no `PORTLESS_APP_NAME`), `dev.mjs` prints the pattern instead of a concrete URL — substitute the name Portless prints.
+- When the app name is auto-derived by `portless run` (no `FR-XXXX` or `gh-N` branch, no `PORTLESS_APP_NAME`), `dev.mjs` prints the pattern instead of a concrete URL — substitute the name Portless prints. On the internal domain a dotted name (a worktree's `<branch>.<project>`) cannot be routed, so set `PORTLESS_APP_NAME` there.
 
 ## Dev servers and test accounts (`pnpm run dev-env`)
 
-Which API server a dev session talks to, and which test account it logs in with, live in the team's catalog on the team PR board ([frontend-board](https://github.com/lablup/frontend-board), running on the dev box gateway host) — not in this repository and not in anyone's notes. Anyone on the dev VPN can read and edit it on the board's **Catalog** page (`http://board.<domain>/`). The board also serves it at `http://board.<domain>/api/catalog` without authentication, so **the catalog is visible to everyone on the dev VPN: store only passwords that may be shared that widely, and leave the others empty — the person logging in types them.** Every save keeps the previous version (the newest 50), so a bad edit is undone by loading an earlier version on the Catalog page and saving it again.
+Which API server a dev session talks to, and which test account it logs in with, live in the team's catalog on the team PR board ([frontend-board](https://github.com/lablup/frontend-board), running on the dev box gateway host) — not in this repository and not in anyone's notes. Anyone on the dev VPN can read and edit it on the board's **Catalog** page (`https://board.<public domain>/`, formerly `http://board.<domain>/`). The board also serves it at `/api/catalog` without authentication, so **the catalog is visible to everyone on the dev VPN: store only passwords that may be shared that widely, and leave the others empty — the person logging in types them.** Every save keeps the previous version (the newest 50), so a bad edit is undone by loading an earlier version on the Catalog page and saving it again.
 
 **Agents** choose a server and account with the `fw:webui-connection-info` skill (the `fw` plugin of [lablup/claude-mp](https://github.com/lablup/claude-mp), 28.1.0 or later): it reads this catalog, applies the selection rules (live, manager version, `config.toml` switches, tags and notes, least-privileged role) and hands the pick to `pnpm run dev-env` below.
 
@@ -127,7 +128,7 @@ In `e2e/envs/.env.playwright`, `use` fills `E2E_ADMIN_*` from the server's first
 
 `--no-password` leaves the password out of the pre-fill. A dev server shared through dev-gw hands every `VITE_*` value to whoever opens the share URL (see the notes above); a password that came from the catalog is already visible to that same audience, so pre-filling it there is fine. Use `--no-password` when the password is one you wrote by hand and is not in the catalog.
 
-The board shares the gateway's domain, which `dev-env` reads from `~/.config/fw/dev-gw.json` (written by `dev-gw join`, see above; `DEV_GW_CONFIG` points elsewhere). It uses plain `http://`, because Node's `fetch` rejects the gateway's internal CA. Without that file, set `WEBUI_DEV_ENV_CATALOG_URL` to the catalog URL, or `WEBUI_DEV_ENV_CATALOG` to a JSON file of the same shape (for tests and for a box that has not joined the gateway).
+The board shares the gateway's domain, which `dev-env` reads from `~/.config/fw/dev-gw.json` (written by `dev-gw join`, see above; `DEV_GW_CONFIG` points elsewhere): `https://board.<public_domain>/api/catalog`, or `http://board.<domain>/api/catalog` on a box whose config has no `public_domain` yet (plain http there, because Node's `fetch` rejects the legacy gateway's internal CA). Without that file, set `WEBUI_DEV_ENV_CATALOG_URL` to the catalog URL, or `WEBUI_DEV_ENV_CATALOG` to a JSON file of the same shape (for tests and for a box that has not joined the gateway).
 
 ### What goes in an entry
 

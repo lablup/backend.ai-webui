@@ -103,6 +103,8 @@ test.describe(
 
       // Updated At is hidden until enabled from Table Settings.
       await expect(getSortableColumnHeader(page, 'Modified At')).toHaveCount(0);
+      // TODO(e2e): table columns are an account setting (ADR 0035), kept on the shared
+      // e2e account: restore 'Modified At' to hidden at the end, or the next run starts with it shown.
       await setColumnVisible(page, 'Modified At', true);
       const modifiedAtHeader = getSortableColumnHeader(page, 'Modified At');
       await expect(modifiedAtHeader).toBeVisible();

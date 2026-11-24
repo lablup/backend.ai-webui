@@ -7,6 +7,8 @@ import AnnouncementEditModal from './AnnouncementEditModal';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import '@testing-library/jest-dom';
 import { act, render, screen } from '@testing-library/react';
+import { RelayEnvironmentProvider } from 'react-relay';
+import { createMockEnvironment } from 'relay-test-utils';
 
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
@@ -22,11 +24,21 @@ vi.mock('react-i18next', () => ({
 // suspends on that Relay read. Stubbing the hooks puts the test past that phase:
 // what it guards is the SECOND one, where the data is in hand and Monaco's lazy
 // chunk is still loading.
+vi.mock('../hooks', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('../hooks')>()),
+  useCurrentDomain: () => ({ id: 'domain-1', name: 'default' }),
+}));
 vi.mock('../hooks/useAppConfig', () => ({
-  useDomainAppConfig: () => ({
-    announcement: { enabled: true, title: 'hello', body: 'world' },
+  useScopedAppConfig: () => ({
+    scopedAppConfig: {
+      domainConfig: {
+        settings: {
+          announcement: { enabled: true, title: 'hello', body: 'world' },
+        },
+      },
+    },
+    upsertScopedAppConfig: async () => ({}),
   }),
-  useUpdateDomainAppConfig: () => async () => undefined,
 }));
 
 // Stand-in for the lazily-imported Monaco editor: `onMount` fires only when the
@@ -55,9 +67,11 @@ const renderModal = () => {
     defaultOptions: { queries: { retry: false } },
   });
   render(
-    <QueryClientProvider client={queryClient}>
-      <AnnouncementEditModal open onRequestClose={vi.fn()} />
-    </QueryClientProvider>,
+    <RelayEnvironmentProvider environment={createMockEnvironment()}>
+      <QueryClientProvider client={queryClient}>
+        <AnnouncementEditModal open onRequestClose={vi.fn()} />
+      </QueryClientProvider>
+    </RelayEnvironmentProvider>,
   );
 };
 

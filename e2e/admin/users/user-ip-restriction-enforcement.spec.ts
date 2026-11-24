@@ -251,8 +251,13 @@ test.describe.serial(
       await page.getByText('Inactive', { exact: true }).click();
       await expect(usersTabButton(page)).toBeVisible();
 
-      // Apply the same email filter on the Inactive tab
-      await applyEmailFilter(page, EMAIL);
+      // The status toggle keeps the property filter, so the Email chip from
+      // the Active view still applies; re-typing would hit the collapsed input.
+      await expect(
+        page
+          .getByRole('group', { name: 'Search filters' })
+          .getByRole('button', { name: /^Email: contains / }),
+      ).toBeVisible();
 
       // Wait for the filtered Inactive table to load and show this specific user
       await expect(page.getByRole('cell', { name: EMAIL })).toBeVisible({
@@ -268,7 +273,7 @@ test.describe.serial(
       });
       await page
         .getByRole('button', { name: 'Action', exact: true })
-        .filter({ has: page.locator('svg.lucide-trash2') })
+        .filter({ has: page.locator('svg.lucide-trash-2') })
         .click();
 
       const purgeModal = new PurgeUsersModal(page);

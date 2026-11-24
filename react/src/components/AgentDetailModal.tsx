@@ -8,6 +8,7 @@ import {
   toFixedFloorWithoutTrailingZeros,
 } from '../helper';
 import { useResourceSlotsDetails } from '../hooks/backendai';
+import { useEffectiveLoginConfig } from '../hooks/useWebUIConfig';
 import { Grid } from '@lablup/ui-common/Grid';
 import { Heading } from '@lablup/ui-common/Heading';
 import { Text } from '@lablup/ui-common/Text';
@@ -59,6 +60,7 @@ const AgentDetailModal: React.FC<AgentDetailModalProps> = ({
     agentNodeFrgmt,
   );
   const parsedLiveStat = JSON.parse(agent?.live_stat || '{}');
+  const { showAgentNetworkStats } = useEffectiveLoginConfig();
   const parsedAvailableSlots = JSON.parse(agent?.available_slots || '{}');
 
   return (
@@ -116,7 +118,7 @@ const AgentDetailModal: React.FC<AgentDetailModalProps> = ({
                 />
               </BAIFlex>
             ) : null}
-            {parsedLiveStat?.node ? (
+            {parsedLiveStat?.node && showAgentNetworkStats ? (
               <BAIFlex direction="column" gap="xxs" align="start">
                 <Heading level={5}>{t('session.launcher.Network')}</Heading>
                 <BAIFlex gap="xl">
