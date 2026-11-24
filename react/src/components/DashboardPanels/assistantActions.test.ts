@@ -198,13 +198,27 @@ describe('applyAssistantActions', () => {
     const next = applyAssistantActions(
       board,
       [
-        { type: 'resize', id: 'a', columnSpan: 9, rowSpan: 1 },
+        { type: 'resize', id: 'a', columnSpan: 20, rowSpan: 1 },
         { type: 'resize', id: 'mine', columnSpan: 1 },
       ],
       context,
     );
-    expect(next.panels[0]).toMatchObject({ columnSpan: 4, rowSpan: 2 });
+    expect(next.panels[0]).toMatchObject({ columnSpan: 12, rowSpan: 2 });
     expect(next.panels[2]).toMatchObject({ columnSpan: 2, rowSpan: 3 });
+  });
+
+  it('keeps the width a rowSpan-only resize does not name', () => {
+    const wide = applyAssistantActions(
+      board,
+      [{ type: 'resize', id: 'a', columnSpan: 6 }],
+      context,
+    );
+    const taller = applyAssistantActions(
+      wide,
+      [{ type: 'resize', id: 'a', rowSpan: 5 }],
+      context,
+    );
+    expect(taller.panels[0]).toMatchObject({ columnSpan: 6, rowSpan: 5 });
   });
 
   it('sets a card range and resets to the template', () => {

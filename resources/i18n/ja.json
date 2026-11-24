@@ -845,6 +845,7 @@
       "ChangeRange": "期間",
       "ChangeResized": "サイズ",
       "Changed": "変更: {{changes}}",
+      "FinishPreviewFirst": "先に AI のプレビューを適用するか破棄してください。",
       "Title": "AI エージェントが提案した変更",
       "WillBeHidden": "非表示予定"
     },
@@ -4490,8 +4491,8 @@
     "DashboardNewPanel": "新しいパネル",
     "DashboardNoProposal": "要求に合う変更がありません。ボードに表示されているカード名で依頼してください。",
     "DashboardPlaceholder": "質問、またはダッシュボードの変更内容を入力",
-    "DashboardPreviewingCount": "ボードで {{count}} 件の変更をプレビュー中です。",
-    "DashboardPreviewingNewBoard": "新しいボード {{title}} を {{count}} 件の変更とともにプレビュー中です。",
+    "DashboardPreviewingCount": "AI が提案した変更 {{count}} 件をプレビューしています。",
+    "DashboardPreviewingNewBoard": "AI が提案した新しいボード {{title}} を変更 {{count}} 件とともにプレビューしています。",
     "DashboardReset": "ダッシュボードを既定のレイアウトにリセット",
     "DashboardResizeCard": "{{title}}のサイズを{{columns}}列 x {{rows}}行に変更",
     "DashboardSetCardRange": "{{title}}の期間を{{range}}に設定",
@@ -4516,7 +4517,7 @@
     "ToolPreviewDashboard": "ダッシュボードのプレビュー: {{change}}",
     "ToolReadDashboard": "ダッシュボードを読み取りました",
     "ToolReadPage": "現在のページを読み取りました",
-    "ToolRejected": "実行できませんでした: {{reason}}",
+    "ToolRejected": "適用できない変更があります。",
     "ToolSearchManual": "マニュアルで「{{query}}」を検索しました",
     "ToolUsed": "{{name}} を使用しました",
     "ViewModelInfo": "モデル情報を確認"

@@ -845,6 +845,7 @@
       "ChangeRange": "εύρος",
       "ChangeResized": "μέγεθος",
       "Changed": "Άλλαξε: {{changes}}",
+      "FinishPreviewFirst": "Εφαρμόστε ή απορρίψτε πρώτα την προεπισκόπηση της ΤΝ.",
       "Title": "Αλλαγές που πρότεινε ένας πράκτορας AI",
       "WillBeHidden": "Θα αποκρυφτεί"
     },
@@ -4488,8 +4489,8 @@
     "DashboardNewPanel": "Νέο πλαίσιο",
     "DashboardNoProposal": "Καμία αλλαγή δεν ταιριάζει με το αίτημα. Αναφέρετε μια κάρτα όπως εμφανίζεται στον πίνακα.",
     "DashboardPlaceholder": "Κάντε μια ερώτηση ή περιγράψτε μια αλλαγή στον πίνακα ελέγχου",
-    "DashboardPreviewingCount": "Προεπισκόπηση {{count}} αλλαγών στον πίνακα.",
-    "DashboardPreviewingNewBoard": "Προεπισκόπηση του νέου πίνακα {{title}} με {{count}} αλλαγές.",
+    "DashboardPreviewingCount": "Προεπισκόπηση {{count}} αλλαγών που πρότεινε μια ΤΝ.",
+    "DashboardPreviewingNewBoard": "Προεπισκόπηση του νέου πίνακα {{title}} που πρότεινε μια ΤΝ, με {{count}} αλλαγές.",
     "DashboardReset": "Επαναφορά του πίνακα ελέγχου στην προεπιλεγμένη διάταξη",
     "DashboardResizeCard": "Αλλαγή μεγέθους {{title}} σε {{columns}} στήλες επί {{rows}} γραμμές",
     "DashboardSetCardRange": "Ορισμός εύρους του {{title}} σε {{range}}",
@@ -4514,7 +4515,7 @@
     "ToolPreviewDashboard": "Προεπισκόπηση στον πίνακα: {{change}}",
     "ToolReadDashboard": "Διαβάστηκε ο πίνακας",
     "ToolReadPage": "Διαβάστηκε η τρέχουσα σελίδα",
-    "ToolRejected": "Δεν έγινε: {{reason}}",
+    "ToolRejected": "Ορισμένες αλλαγές δεν μπόρεσαν να εφαρμοστούν.",
     "ToolSearchManual": "Αναζήτηση στο εγχειρίδιο για «{{query}}»",
     "ToolUsed": "Χρησιμοποιήθηκε το {{name}}",
     "ViewModelInfo": "Προβολή πληροφοριών μοντέλου"

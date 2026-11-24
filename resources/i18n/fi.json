@@ -845,6 +845,7 @@
       "ChangeRange": "aikaväli",
       "ChangeResized": "koko",
       "Changed": "Muutettu: {{changes}}",
+      "FinishPreviewFirst": "Ota tekoälyn esikatselu ensin käyttöön tai hylkää se.",
       "Title": "Tekoälyagentin ehdottamat muutokset",
       "WillBeHidden": "Piilotetaan"
     },
@@ -4489,8 +4490,8 @@
     "DashboardNewPanel": "Uusi paneeli",
     "DashboardNoProposal": "Mikään muutos ei vastaa pyyntöä. Nimeä kortti niin kuin se näkyy koontinäytössä.",
     "DashboardPlaceholder": "Kysy kysymys tai kuvaile koontinäytön muutos",
-    "DashboardPreviewingCount": "Esikatsellaan {{count}} muutosta koontinäytössä.",
-    "DashboardPreviewingNewBoard": "Esikatsellaan uutta näkymää {{title}}, jossa on {{count}} muutosta.",
+    "DashboardPreviewingCount": "Esikatsellaan {{count}} tekoälyn ehdottamaa muutosta.",
+    "DashboardPreviewingNewBoard": "Esikatsellaan tekoälyn ehdottamaa uutta taulua {{title}}, jossa on {{count}} muutosta.",
     "DashboardReset": "Palauta koontinäytön oletusasettelu",
     "DashboardResizeCard": "Muuta kortin {{title}} kooksi {{columns}} saraketta ja {{rows}} riviä",
     "DashboardSetCardRange": "Aseta kortin {{title}} aikaväliksi {{range}}",
@@ -4515,7 +4516,7 @@
     "ToolPreviewDashboard": "Esikatselu kojelaudalla: {{change}}",
     "ToolReadDashboard": "Kojelauta luettiin",
     "ToolReadPage": "Nykyinen sivu luettiin",
-    "ToolRejected": "Ei tehty: {{reason}}",
+    "ToolRejected": "Joitakin muutoksia ei voitu ottaa käyttöön.",
     "ToolSearchManual": "Haettiin käyttöohjeesta \"{{query}}\"",
     "ToolUsed": "Käytettiin {{name}}",
     "ViewModelInfo": "Näytä mallin tiedot"

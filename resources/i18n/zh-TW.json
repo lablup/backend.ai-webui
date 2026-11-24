@@ -845,6 +845,7 @@
       "ChangeRange": "時間範圍",
       "ChangeResized": "大小",
       "Changed": "已變更：{{changes}}",
+      "FinishPreviewFirst": "請先套用或捨棄 AI 的預覽。",
       "Title": "AI 代理建議的變更",
       "WillBeHidden": "將隱藏"
     },
@@ -4492,8 +4493,8 @@
     "DashboardNewPanel": "新面板",
     "DashboardNoProposal": "沒有符合該要求的變更。請使用面板上顯示的卡片名稱。",
     "DashboardPlaceholder": "提問或描述儀表板變更",
-    "DashboardPreviewingCount": "正在面板上預覽 {{count}} 項變更。",
-    "DashboardPreviewingNewBoard": "正在預覽新面板 {{title}}，包含 {{count}} 項變更。",
+    "DashboardPreviewingCount": "正在預覽 AI 建議的 {{count}} 項變更。",
+    "DashboardPreviewingNewBoard": "正在預覽 AI 建議的新看板 {{title}}，含 {{count}} 項變更。",
     "DashboardReset": "將儀表板重設為預設版面",
     "DashboardResizeCard": "將 {{title}} 調整為 {{columns}} 欄 x {{rows}} 列",
     "DashboardSetCardRange": "將 {{title}} 的時間範圍設為 {{range}}",
@@ -4518,7 +4519,7 @@
     "ToolPreviewDashboard": "儀表板預覽：{{change}}",
     "ToolReadDashboard": "已讀取儀表板",
     "ToolReadPage": "已讀取目前頁面",
-    "ToolRejected": "未完成：{{reason}}",
+    "ToolRejected": "有些變更無法套用。",
     "ToolSearchManual": "已在手冊中搜尋「{{query}}」",
     "ToolUsed": "已使用 {{name}}",
     "ViewModelInfo": "檢視模型資訊"

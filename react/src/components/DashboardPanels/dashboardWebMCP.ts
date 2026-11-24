@@ -5,11 +5,13 @@
 import { generateUUID } from '../../helper/uuid';
 import {
   AGENT_PREFILL_PARAM,
+  DASHBOARD_DRAFT_PARAM,
   WEBUI_URL_SOFT_LIMIT,
 } from '../../helper/webmcpConstants';
 import {
   actionTargetId,
   BOARD_COLUMNS,
+  isNoopAction,
   MAX_ROW_SPAN,
   type DashboardAssistantAction,
 } from './assistantActions';
@@ -30,8 +32,7 @@ import { CHART_TYPES, PANEL_TYPES } from './types';
 import type { WebMCPInputSchema, WebMCPTool } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 
-/** Search param carrying the changes `bai_prepare_dashboard` previews, as raw action objects. */
-export const DASHBOARD_DRAFT_PARAM = 'dashboardDraft';
+export { DASHBOARD_DRAFT_PARAM };
 
 const ACTION_TYPES = [
   'show',
@@ -76,7 +77,7 @@ export const PREPARE_DASHBOARD_INPUT_SCHEMA: WebMCPInputSchema = {
       type: 'integer',
       minimum: 1,
       maximum: BOARD_COLUMNS,
-      description: `resize only: width in columns of a ${BOARD_COLUMNS}-column grid; clamped to the card's minimum.`,
+      description: `resize only: width in columns; the grid has 4 to ${BOARD_COLUMNS} columns depending on the screen. Clamped to the card's minimum.`,
     },
     rowSpan: {
       type: 'integer',
@@ -239,11 +240,17 @@ export const draftOfRawActions = (
   ctx: DashboardChatContext,
 ): Array<{ raw: unknown; action: DashboardAssistantAction | null }> => {
   let current = ctx;
+  let hasNewBoard = false;
   return raws.map((raw) => {
     const [action = null] = parseDashboardChatReply(
       JSON.stringify({ actions: [raw] }),
       current,
     ).actions;
+    // Every createBoard starts the same empty board, so a second would drop what the first collected.
+    if (action?.type === 'createBoard') {
+      if (hasNewBoard) return { raw, action: null };
+      hasNewBoard = true;
+    }
     if (action?.type !== 'addPanel') return { raw, action };
     const storedId = (raw as Record<string, unknown>).id;
     // The tool stores the id it showed the agent, so later edits name the same panel.
@@ -260,7 +267,16 @@ export const draftOfRawActions = (
       kept.type === 'addPanel'
         ? panelOfAdd(raw as Record<string, unknown>, kept, current)
         : null;
-    if (panel) current = { ...current, panels: [...current.panels, panel] };
+    // Listed as a card too, so a later resize, move or hide on it resolves.
+    if (panel)
+      current = {
+        ...current,
+        panels: [...current.panels, panel],
+        cards: [
+          ...current.cards,
+          { id: panel.id, title: panel.title, shown: true },
+        ],
+      };
     return { raw, action: kept };
   });
 };
@@ -501,7 +517,28 @@ export const createPrepareDashboardTool = ({
     const savedCtx = getSavedContext();
     const resolved = draftOfRawActions([...base, built.raw], savedCtx);
     const action = resolved[resolved.length - 1]?.action;
-    if (!action) return reject(rejectionOf(built.raw, ctx));
+    if (!action) {
+      return reject(
+        built.raw.type === 'createBoard' &&
+          base.some((raw) => (raw as { type?: unknown }).type === 'createBoard')
+          ? {
+              field: 'type',
+              reason:
+                'The preview already starts a new board; one per preview.',
+            }
+          : rejectionOf(built.raw, ctx),
+      );
+    }
+    // A change the board already shows (showing a card that is on it) is not previewed.
+    const startsNewBoard = base.some(
+      (raw) => (raw as { type?: unknown }).type === 'createBoard',
+    );
+    if (!startsNewBoard && isNoopAction(action, ctx.cards)) {
+      return reject({
+        field: 'type',
+        reason: 'The board already shows this; nothing to change.',
+      });
+    }
     // The id resolved here is stored, so the link does not depend on fuzzy matching.
     const target = actionTargetId(action);
     const stored = target ? { ...built.raw, id: target } : built.raw;
@@ -511,7 +548,8 @@ export const createPrepareDashboardTool = ({
       action.type === 'addPanel'
         ? _.isEqual(_.omit(raw as object, 'id'), _.omit(stored, 'id'))
         : _.isEqual(raw, stored);
-    if (base.some(sameAs)) {
+    // Only a repeat of the latest change: after an opposite change the same one is new again.
+    if (base.length > 0 && sameAs(base[base.length - 1])) {
       return reject({
         field: 'type',
         reason: 'This change is already in the preview.',

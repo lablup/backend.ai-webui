@@ -845,6 +845,7 @@
       "ChangeRange": "intervallo",
       "ChangeResized": "dimensione",
       "Changed": "Modificato: {{changes}}",
+      "FinishPreviewFirst": "Applica o scarta prima l'anteprima dell'IA.",
       "Title": "Modifiche proposte da un agente IA",
       "WillBeHidden": "Verrà nascosto"
     },
@@ -4488,8 +4489,8 @@
     "DashboardNewPanel": "Nuovo pannello",
     "DashboardNoProposal": "Nessuna modifica corrisponde alla richiesta. Indica una scheda come appare nella dashboard.",
     "DashboardPlaceholder": "Fai una domanda o descrivi una modifica alla dashboard",
-    "DashboardPreviewingCount": "Anteprima di {{count}} modifiche sulla dashboard.",
-    "DashboardPreviewingNewBoard": "Anteprima della nuova board {{title}} con {{count}} modifiche.",
+    "DashboardPreviewingCount": "Anteprima di {{count}} modifiche proposte da un'IA.",
+    "DashboardPreviewingNewBoard": "Anteprima della nuova bacheca {{title}} proposta da un'IA, con {{count}} modifiche.",
     "DashboardReset": "Ripristina il layout predefinito della dashboard",
     "DashboardResizeCard": "Ridimensiona {{title}} a {{columns}} colonne per {{rows}} righe",
     "DashboardSetCardRange": "Imposta l'intervallo di {{title}} su {{range}}",
@@ -4514,7 +4515,7 @@
     "ToolPreviewDashboard": "Anteprima nella dashboard: {{change}}",
     "ToolReadDashboard": "Dashboard letta",
     "ToolReadPage": "Pagina corrente letta",
-    "ToolRejected": "Non eseguito: {{reason}}",
+    "ToolRejected": "Alcune modifiche non sono state applicate.",
     "ToolSearchManual": "Cercato \"{{query}}\" nel manuale",
     "ToolUsed": "Usato {{name}}",
     "ViewModelInfo": "Visualizza informazioni sul modello"

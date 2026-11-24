@@ -845,6 +845,7 @@
       "ChangeRange": "기간",
       "ChangeResized": "크기",
       "Changed": "변경됨: {{changes}}",
+      "FinishPreviewFirst": "AI가 제안한 미리보기를 먼저 적용하거나 취소하세요.",
       "Title": "AI 에이전트가 제안한 변경",
       "WillBeHidden": "숨김 예정"
     },
@@ -4491,8 +4492,8 @@
     "DashboardNewPanel": "새 패널",
     "DashboardNoProposal": "요청에 맞는 변경이 없습니다. 보드에 보이는 카드 이름으로 요청해 주세요.",
     "DashboardPlaceholder": "질문하거나 대시보드에서 바꿀 내용을 입력하세요",
-    "DashboardPreviewingCount": "보드에서 변경 {{count}}건을 미리 보는 중입니다.",
-    "DashboardPreviewingNewBoard": "새 보드 {{title}}를 변경 {{count}}건과 함께 미리 보는 중입니다.",
+    "DashboardPreviewingCount": "AI가 제안한 변경 {{count}}건을 미리 보는 중입니다.",
+    "DashboardPreviewingNewBoard": "AI가 제안한 새 보드 {{title}}를 변경 {{count}}건과 함께 미리 보는 중입니다.",
     "DashboardReset": "대시보드를 기본 레이아웃으로 초기화",
     "DashboardResizeCard": "{{title}} 크기를 {{columns}}열, {{rows}}행으로 변경",
     "DashboardSetCardRange": "{{title}}의 기간을 {{range}}(으)로 설정",
@@ -4517,7 +4518,7 @@
     "ToolPreviewDashboard": "대시보드 미리보기: {{change}}",
     "ToolReadDashboard": "대시보드 읽기",
     "ToolReadPage": "현재 페이지 읽기",
-    "ToolRejected": "하지 못함: {{reason}}",
+    "ToolRejected": "적용할 수 없는 변경이 있습니다.",
     "ToolSearchManual": "매뉴얼에서 \"{{query}}\" 검색",
     "ToolUsed": "{{name}} 사용",
     "ViewModelInfo": "모델 정보 확인"

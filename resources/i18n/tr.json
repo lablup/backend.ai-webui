@@ -845,6 +845,7 @@
       "ChangeRange": "aralık",
       "ChangeResized": "boyut",
       "Changed": "Değişti: {{changes}}",
+      "FinishPreviewFirst": "Önce yapay zekânın önizlemesini uygulayın veya atın.",
       "Title": "Bir yapay zekâ ajanının önerdiği değişiklikler",
       "WillBeHidden": "Gizlenecek"
     },
@@ -4488,8 +4489,8 @@
     "DashboardNewPanel": "Yeni panel",
     "DashboardNoProposal": "İstekle eşleşen bir değişiklik yok. Kartı panoda göründüğü adla belirtin.",
     "DashboardPlaceholder": "Bir soru sorun veya pano değişikliğini açıklayın",
-    "DashboardPreviewingCount": "Panoda {{count}} değişiklik önizleniyor.",
-    "DashboardPreviewingNewBoard": "{{count}} değişiklikle yeni {{title}} panosu önizleniyor.",
+    "DashboardPreviewingCount": "Yapay zekânın önerdiği {{count}} değişiklik önizleniyor.",
+    "DashboardPreviewingNewBoard": "Yapay zekânın önerdiği yeni pano {{title}}, {{count}} değişiklikle önizleniyor.",
     "DashboardReset": "Panoyu varsayılan düzene sıfırla",
     "DashboardResizeCard": "{{title}} boyutunu {{columns}} sütun x {{rows}} satır yap",
     "DashboardSetCardRange": "{{title}} aralığını {{range}} olarak ayarla",
@@ -4514,7 +4515,7 @@
     "ToolPreviewDashboard": "Panoda önizleme: {{change}}",
     "ToolReadDashboard": "Pano okundu",
     "ToolReadPage": "Geçerli sayfa okundu",
-    "ToolRejected": "Yapılmadı: {{reason}}",
+    "ToolRejected": "Bazı değişiklikler uygulanamadı.",
     "ToolSearchManual": "Kılavuzda \"{{query}}\" arandı",
     "ToolUsed": "{{name}} kullanıldı",
     "ViewModelInfo": "Model bilgilerini görüntüle"

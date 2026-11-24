@@ -832,6 +832,7 @@
       "ChangeRange": "range",
       "ChangeResized": "size",
       "Changed": "Changed: {{changes}}",
+      "FinishPreviewFirst": "Apply or discard the AI's preview first.",
       "Title": "Changes proposed by an AI agent",
       "WillBeHidden": "Will be hidden"
     },
@@ -4473,8 +4474,8 @@
     "DashboardNewPanel": "New panel",
     "DashboardNoProposal": "No change matched that request. Name a card as it appears on the board.",
     "DashboardPlaceholder": "Ask a question or describe a dashboard change",
-    "DashboardPreviewingCount": "Previewing {{count}} changes on the board.",
-    "DashboardPreviewingNewBoard": "Previewing the new board {{title}} with {{count}} changes.",
+    "DashboardPreviewingCount": "Previewing {{count}} changes an AI proposed.",
+    "DashboardPreviewingNewBoard": "Previewing the new board {{title}} an AI proposed, with {{count}} changes.",
     "DashboardReset": "Reset the dashboard to its default layout",
     "DashboardResizeCard": "Resize {{title}} to {{columns}} columns by {{rows}} rows",
     "DashboardSetCardRange": "Set the range of {{title}} to {{range}}",
@@ -4499,7 +4500,7 @@
     "ToolPreviewDashboard": "Previewed on the dashboard: {{change}}",
     "ToolReadDashboard": "Read the dashboard",
     "ToolReadPage": "Read the current page",
-    "ToolRejected": "Not done: {{reason}}",
+    "ToolRejected": "Some changes could not be applied.",
     "ToolSearchManual": "Searched the manual for \"{{query}}\"",
     "ToolUsed": "Used {{name}}",
     "ViewModelInfo": "View model info"

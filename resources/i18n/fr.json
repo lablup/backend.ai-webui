@@ -845,6 +845,7 @@
       "ChangeRange": "période",
       "ChangeResized": "taille",
       "Changed": "Modifié : {{changes}}",
+      "FinishPreviewFirst": "Appliquez ou abandonnez d'abord l'aperçu de l'IA.",
       "Title": "Modifications proposées par un agent IA",
       "WillBeHidden": "Sera masqué"
     },
@@ -4491,8 +4492,8 @@
     "DashboardNewPanel": "Nouveau panneau",
     "DashboardNoProposal": "Aucune modification ne correspond à la demande. Nommez une carte telle qu'elle apparaît sur le tableau.",
     "DashboardPlaceholder": "Posez une question ou décrivez une modification du tableau de bord",
-    "DashboardPreviewingCount": "Aperçu de {{count}} modifications sur le tableau.",
-    "DashboardPreviewingNewBoard": "Aperçu du nouveau tableau {{title}} avec {{count}} modifications.",
+    "DashboardPreviewingCount": "Aperçu de {{count}} modifications proposées par une IA.",
+    "DashboardPreviewingNewBoard": "Aperçu du nouveau tableau {{title}} proposé par une IA, avec {{count}} modifications.",
     "DashboardReset": "Rétablir la disposition par défaut du tableau de bord",
     "DashboardResizeCard": "Redimensionner {{title}} à {{columns}} colonnes sur {{rows}} lignes",
     "DashboardSetCardRange": "Définir la période de {{title}} sur {{range}}",
@@ -4517,7 +4518,7 @@
     "ToolPreviewDashboard": "Aperçu sur le tableau de bord : {{change}}",
     "ToolReadDashboard": "Tableau de bord lu",
     "ToolReadPage": "Page actuelle lue",
-    "ToolRejected": "Non effectué : {{reason}}",
+    "ToolRejected": "Certaines modifications n'ont pas pu être appliquées.",
     "ToolSearchManual": "Recherche de « {{query}} » dans le manuel",
     "ToolUsed": "{{name}} utilisé",
     "ViewModelInfo": "Voir les informations du modèle"

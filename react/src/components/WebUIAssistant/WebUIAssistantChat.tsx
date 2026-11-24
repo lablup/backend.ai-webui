@@ -93,6 +93,7 @@ import { useEffect, useEffectEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 
 const MODEL_POLL_INTERVAL_MS = 5000;
+const TOOL_PROBE_RETRY_MS = 60_000;
 
 const messageText = (message: ChatUIMessage) =>
   message.parts
@@ -284,7 +285,9 @@ const WebUIAssistantChat: React.FC<WebUIAssistantChatProps> = ({
         modelId: modelId ?? '',
       }).catch(() => false),
     enabled: !!modelId,
-    staleTime: Infinity,
+    // A refusal may be a deployment still warming up, so it is asked again later.
+    staleTime: (query) =>
+      query.state.data === true ? Infinity : TOOL_PROBE_RETRY_MS,
     retry: false,
   });
 
@@ -397,8 +400,11 @@ const WebUIAssistantChat: React.FC<WebUIAssistantChatProps> = ({
           .reverse()
           .find((m) => m.role === 'user');
         // Without page tools (enableWebMCP off) the prompt-only answers still edit the board.
+        // Asked again when unknown or when a refusal has gone stale.
         const supportsTools =
-          toolsQuery.data ?? (await toolsQuery.refetch()).data === true;
+          toolsQuery.data === true ||
+          ((toolsQuery.data === undefined || toolsQuery.isStale) &&
+            (await toolsQuery.refetch()).data === true);
         if (supportsTools && pageToolRegistry.list().length > 0) {
           return streamToolChat({
             baseURL: apiBaseURL ?? '',
@@ -545,12 +551,19 @@ const WebUIAssistantChat: React.FC<WebUIAssistantChatProps> = ({
       ?.message;
     if (failure)
       return t('webuiAssistant.ToolFailed', { name, error: failure });
-    const rejected = output?.rejected as Array<{ reason: string }> | undefined;
-    if (rejected?.length) {
-      return t('webuiAssistant.ToolRejected', {
-        reason: rejected.map((item) => item.reason).join(' '),
-      });
+    // The reasons are English for the model, which explains them in the user's language.
+    const rejected = output?.rejected as Array<unknown> | undefined;
+    const applied = Array.isArray(output?.applied)
+      ? (output.applied as Array<string>)
+      : undefined;
+    // A filled form or a previewed change carries a path; a refused one has none.
+    const hasApplied = output?.path != null || !!applied?.length;
+    if (rejected?.length && !hasApplied) {
+      return t('webuiAssistant.ToolRejected');
     }
+    const partly = rejected?.length
+      ? ` (${t('webuiAssistant.ToolRejected')})`
+      : '';
     switch (name) {
       case 'search_manual':
         return t('webuiAssistant.ToolSearchManual', {
@@ -567,12 +580,12 @@ const WebUIAssistantChat: React.FC<WebUIAssistantChatProps> = ({
       case 'bai_prepare_dashboard':
         return output
           ? t('webuiAssistant.ToolPreviewDashboard', {
-              change: (output.applied as Array<string> | undefined)?.join(', '),
-            })
+              change: applied?.join(', '),
+            }) + partly
           : t('webuiAssistant.ToolUsed', { name });
       case 'bai_prepare_session':
         return output
-          ? t('webuiAssistant.ToolPrepareSession')
+          ? t('webuiAssistant.ToolPrepareSession') + partly
           : t('webuiAssistant.ToolUsed', { name });
       default:
         return t('webuiAssistant.ToolUsed', { name });

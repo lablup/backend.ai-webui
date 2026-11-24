@@ -845,6 +845,7 @@
       "ChangeRange": "хугацаа",
       "ChangeResized": "хэмжээ",
       "Changed": "Өөрчилсөн: {{changes}}",
+      "FinishPreviewFirst": "Эхлээд AI-ийн урьдчилсан харагдацыг хэрэглэх эсвэл цуцална уу.",
       "Title": "AI агентын санал болгосон өөрчлөлт",
       "WillBeHidden": "Нуугдана"
     },
@@ -4490,8 +4491,8 @@
     "DashboardNewPanel": "Шинэ самбар",
     "DashboardNoProposal": "Хүсэлтэд тохирох өөрчлөлт алга. Самбар дээр харагдах картын нэрээр хүсээрэй.",
     "DashboardPlaceholder": "Асуулт асуух эсвэл хяналтын самбарын өөрчлөлтийг тайлбарлана уу",
-    "DashboardPreviewingCount": "Самбар дээр {{count}} өөрчлөлтийг урьдчилан харж байна.",
-    "DashboardPreviewingNewBoard": "{{count}} өөрчлөлттэй шинэ {{title}} самбарыг урьдчилан харж байна.",
+    "DashboardPreviewingCount": "AI-ийн санал болгосон {{count}} өөрчлөлтийг урьдчилан харж байна.",
+    "DashboardPreviewingNewBoard": "AI-ийн санал болгосон шинэ самбар {{title}}-г {{count}} өөрчлөлттэй урьдчилан харж байна.",
     "DashboardReset": "Хянах самбарыг үндсэн байрлалд нь буцаах",
     "DashboardResizeCard": "{{title}}-н хэмжээг {{columns}} багана, {{rows}} мөр болгох",
     "DashboardSetCardRange": "{{title}}-н хугацааны мужийг {{range}} болгох",
@@ -4516,7 +4517,7 @@
     "ToolPreviewDashboard": "Хянах самбарын урьдчилсан харагдац: {{change}}",
     "ToolReadDashboard": "Хянах самбарыг уншлаа",
     "ToolReadPage": "Одоогийн хуудсыг уншлаа",
-    "ToolRejected": "Хийгдсэнгүй: {{reason}}",
+    "ToolRejected": "Зарим өөрчлөлтийг хэрэглэж чадсангүй.",
     "ToolSearchManual": "Гарын авлагаас \"{{query}}\" хайлаа",
     "ToolUsed": "{{name}} ашиглалаа",
     "ViewModelInfo": "Загварын мэдээлэл харах"

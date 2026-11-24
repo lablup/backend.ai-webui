@@ -25,8 +25,8 @@ import type {
 } from './types';
 import * as _ from 'lodash-es';
 
-/** The board grid's column count (BAIBoard). */
-export const BOARD_COLUMNS = 4;
+/** The widest the board grid gets (BAIBoard's largest breakpoint); it narrows with the screen. */
+export const BOARD_COLUMNS = 12;
 export const MAX_ROW_SPAN = 12;
 
 /** One change the WebUI Assistant proposes to the dashboard the user is on. */
@@ -338,16 +338,15 @@ export const applyAssistantActions = (
         if (!panel) return current;
         const { minSize } = sizeOf(definition, panel.viz);
         return updatePanel(current, action.id, {
-          columnSpan: _.clamp(
-            action.columnSpan ?? panel.columnSpan,
-            minSize.columnSpan,
-            BOARD_COLUMNS,
-          ),
-          rowSpan: _.clamp(
-            action.rowSpan ?? panel.rowSpan,
-            minSize.rowSpan,
-            MAX_ROW_SPAN,
-          ),
+          // Only a span the action names is clamped; the other keeps its size.
+          columnSpan:
+            action.columnSpan === undefined
+              ? panel.columnSpan
+              : _.clamp(action.columnSpan, minSize.columnSpan, BOARD_COLUMNS),
+          rowSpan:
+            action.rowSpan === undefined
+              ? panel.rowSpan
+              : _.clamp(action.rowSpan, minSize.rowSpan, MAX_ROW_SPAN),
         });
       }
       case 'setRange':

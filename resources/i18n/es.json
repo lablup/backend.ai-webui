@@ -845,6 +845,7 @@
       "ChangeRange": "rango",
       "ChangeResized": "tamaño",
       "Changed": "Cambiado: {{changes}}",
+      "FinishPreviewFirst": "Aplique o descarte primero la vista previa de la IA.",
       "Title": "Cambios propuestos por un agente de IA",
       "WillBeHidden": "Se ocultará"
     },
@@ -4488,8 +4489,8 @@
     "DashboardNewPanel": "Panel nuevo",
     "DashboardNoProposal": "Ningún cambio coincide con la solicitud. Nombre una tarjeta como aparece en el panel.",
     "DashboardPlaceholder": "Haga una pregunta o describa un cambio en el panel",
-    "DashboardPreviewingCount": "Vista previa de {{count}} cambios en el panel.",
-    "DashboardPreviewingNewBoard": "Vista previa del nuevo panel {{title}} con {{count}} cambios.",
+    "DashboardPreviewingCount": "Vista previa de {{count}} cambios propuestos por una IA.",
+    "DashboardPreviewingNewBoard": "Vista previa del nuevo tablero {{title}} propuesto por una IA, con {{count}} cambios.",
     "DashboardReset": "Restablecer el panel al diseño predeterminado",
     "DashboardResizeCard": "Cambiar el tamaño de {{title}} a {{columns}} columnas por {{rows}} filas",
     "DashboardSetCardRange": "Establecer el rango de {{title}} en {{range}}",
@@ -4514,7 +4515,7 @@
     "ToolPreviewDashboard": "Vista previa en el tablero: {{change}}",
     "ToolReadDashboard": "Se leyó el tablero",
     "ToolReadPage": "Se leyó la página actual",
-    "ToolRejected": "No se hizo: {{reason}}",
+    "ToolRejected": "Algunos cambios no se pudieron aplicar.",
     "ToolSearchManual": "Se buscó \"{{query}}\" en el manual",
     "ToolUsed": "Se usó {{name}}",
     "ViewModelInfo": "Ver información del modelo"

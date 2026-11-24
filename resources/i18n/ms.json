@@ -845,6 +845,7 @@
       "ChangeRange": "julat",
       "ChangeResized": "saiz",
       "Changed": "Diubah: {{changes}}",
+      "FinishPreviewFirst": "Gunakan atau buang pratonton AI dahulu.",
       "Title": "Perubahan yang dicadangkan oleh ejen AI",
       "WillBeHidden": "Akan disembunyikan"
     },
@@ -4488,8 +4489,8 @@
     "DashboardNewPanel": "Panel baharu",
     "DashboardNoProposal": "Tiada perubahan sepadan dengan permintaan. Namakan kad seperti yang dipaparkan pada papan.",
     "DashboardPlaceholder": "Tanya soalan atau terangkan perubahan papan pemuka",
-    "DashboardPreviewingCount": "Pratonton {{count}} perubahan pada papan.",
-    "DashboardPreviewingNewBoard": "Pratonton papan baharu {{title}} dengan {{count}} perubahan.",
+    "DashboardPreviewingCount": "Mempratonton {{count}} perubahan yang dicadangkan AI.",
+    "DashboardPreviewingNewBoard": "Mempratonton papan baharu {{title}} yang dicadangkan AI, dengan {{count}} perubahan.",
     "DashboardReset": "Tetapkan semula papan pemuka kepada susun atur lalai",
     "DashboardResizeCard": "Ubah saiz {{title}} kepada {{columns}} lajur darab {{rows}} baris",
     "DashboardSetCardRange": "Tetapkan julat {{title}} kepada {{range}}",
@@ -4514,7 +4515,7 @@
     "ToolPreviewDashboard": "Pratonton pada papan pemuka: {{change}}",
     "ToolReadDashboard": "Membaca papan pemuka",
     "ToolReadPage": "Membaca halaman semasa",
-    "ToolRejected": "Tidak dilakukan: {{reason}}",
+    "ToolRejected": "Sesetengah perubahan tidak dapat digunakan.",
     "ToolSearchManual": "Mencari \"{{query}}\" dalam manual",
     "ToolUsed": "Menggunakan {{name}}",
     "ViewModelInfo": "Lihat maklumat model"

@@ -845,6 +845,7 @@
       "ChangeRange": "khoảng thời gian",
       "ChangeResized": "kích thước",
       "Changed": "Đã thay đổi: {{changes}}",
+      "FinishPreviewFirst": "Hãy áp dụng hoặc hủy bản xem trước của AI trước.",
       "Title": "Thay đổi do tác tử AI đề xuất",
       "WillBeHidden": "Sẽ bị ẩn"
     },
@@ -4490,8 +4491,8 @@
     "DashboardNewPanel": "Bảng mới",
     "DashboardNoProposal": "Không có thay đổi nào khớp với yêu cầu. Hãy gọi tên thẻ như trên bảng điều khiển.",
     "DashboardPlaceholder": "Đặt câu hỏi hoặc mô tả thay đổi bảng điều khiển",
-    "DashboardPreviewingCount": "Đang xem trước {{count}} thay đổi trên bảng.",
-    "DashboardPreviewingNewBoard": "Đang xem trước bảng mới {{title}} với {{count}} thay đổi.",
+    "DashboardPreviewingCount": "Đang xem trước {{count}} thay đổi do AI đề xuất.",
+    "DashboardPreviewingNewBoard": "Đang xem trước bảng mới {{title}} do AI đề xuất, với {{count}} thay đổi.",
     "DashboardReset": "Đặt lại bảng điều khiển về bố cục mặc định",
     "DashboardResizeCard": "Đổi kích thước {{title}} thành {{columns}} cột x {{rows}} hàng",
     "DashboardSetCardRange": "Đặt khoảng thời gian của {{title}} thành {{range}}",
@@ -4516,7 +4517,7 @@
     "ToolPreviewDashboard": "Xem trước trên bảng điều khiển: {{change}}",
     "ToolReadDashboard": "Đã đọc bảng điều khiển",
     "ToolReadPage": "Đã đọc trang hiện tại",
-    "ToolRejected": "Chưa thực hiện: {{reason}}",
+    "ToolRejected": "Một số thay đổi không thể áp dụng.",
     "ToolSearchManual": "Đã tìm \"{{query}}\" trong hướng dẫn",
     "ToolUsed": "Đã dùng {{name}}",
     "ViewModelInfo": "Xem thông tin mô hình"

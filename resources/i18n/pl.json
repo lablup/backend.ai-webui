@@ -845,6 +845,7 @@
       "ChangeRange": "zakres",
       "ChangeResized": "rozmiar",
       "Changed": "Zmieniono: {{changes}}",
+      "FinishPreviewFirst": "Najpierw zastosuj lub odrzuć podgląd AI.",
       "Title": "Zmiany zaproponowane przez agenta AI",
       "WillBeHidden": "Zostanie ukryte"
     },
@@ -4491,8 +4492,8 @@
     "DashboardNewPanel": "Nowy panel",
     "DashboardNoProposal": "Żadna zmiana nie pasuje do prośby. Podaj nazwę karty tak, jak widnieje na pulpicie.",
     "DashboardPlaceholder": "Zadaj pytanie lub opisz zmianę pulpitu",
-    "DashboardPreviewingCount": "Podgląd {{count}} zmian na pulpicie.",
-    "DashboardPreviewingNewBoard": "Podgląd nowej tablicy {{title}} z {{count}} zmianami.",
+    "DashboardPreviewingCount": "Podgląd {{count}} zmian zaproponowanych przez AI.",
+    "DashboardPreviewingNewBoard": "Podgląd nowej tablicy {{title}} zaproponowanej przez AI, z {{count}} zmianami.",
     "DashboardReset": "Przywróć domyślny układ pulpitu",
     "DashboardResizeCard": "Zmień rozmiar {{title}} na {{columns}} kolumn na {{rows}} wierszy",
     "DashboardSetCardRange": "Ustaw zakres {{title}} na {{range}}",
@@ -4517,7 +4518,7 @@
     "ToolPreviewDashboard": "Podgląd na pulpicie: {{change}}",
     "ToolReadDashboard": "Odczytano pulpit",
     "ToolReadPage": "Odczytano bieżącą stronę",
-    "ToolRejected": "Nie wykonano: {{reason}}",
+    "ToolRejected": "Nie udało się zastosować niektórych zmian.",
     "ToolSearchManual": "Wyszukano „{{query}}” w podręczniku",
     "ToolUsed": "Użyto {{name}}",
     "ViewModelInfo": "Wyświetl informacje o modelu"

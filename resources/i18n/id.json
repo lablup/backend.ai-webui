@@ -845,6 +845,7 @@
       "ChangeRange": "rentang",
       "ChangeResized": "ukuran",
       "Changed": "Diubah: {{changes}}",
+      "FinishPreviewFirst": "Terapkan atau buang pratinjau AI terlebih dahulu.",
       "Title": "Perubahan yang diusulkan agen AI",
       "WillBeHidden": "Akan disembunyikan"
     },
@@ -4492,8 +4493,8 @@
     "DashboardNewPanel": "Panel baru",
     "DashboardNoProposal": "Tidak ada perubahan yang cocok. Sebutkan kartu seperti yang tampil di dasbor.",
     "DashboardPlaceholder": "Ajukan pertanyaan atau jelaskan perubahan dasbor",
-    "DashboardPreviewingCount": "Pratinjau {{count}} perubahan di dasbor.",
-    "DashboardPreviewingNewBoard": "Pratinjau papan baru {{title}} dengan {{count}} perubahan.",
+    "DashboardPreviewingCount": "Mempratinjau {{count}} perubahan yang diusulkan AI.",
+    "DashboardPreviewingNewBoard": "Mempratinjau papan baru {{title}} yang diusulkan AI, dengan {{count}} perubahan.",
     "DashboardReset": "Atur ulang dasbor ke tata letak default",
     "DashboardResizeCard": "Ubah ukuran {{title}} menjadi {{columns}} kolom kali {{rows}} baris",
     "DashboardSetCardRange": "Atur rentang {{title}} ke {{range}}",
@@ -4518,7 +4519,7 @@
     "ToolPreviewDashboard": "Pratinjau di dasbor: {{change}}",
     "ToolReadDashboard": "Membaca dasbor",
     "ToolReadPage": "Membaca halaman saat ini",
-    "ToolRejected": "Tidak dilakukan: {{reason}}",
+    "ToolRejected": "Beberapa perubahan tidak dapat diterapkan.",
     "ToolSearchManual": "Mencari \"{{query}}\" di manual",
     "ToolUsed": "Menggunakan {{name}}",
     "ViewModelInfo": "Lihat info model"

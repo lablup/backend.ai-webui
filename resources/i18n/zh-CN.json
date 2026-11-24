@@ -845,6 +845,7 @@
       "ChangeRange": "时间范围",
       "ChangeResized": "大小",
       "Changed": "已更改：{{changes}}",
+      "FinishPreviewFirst": "请先应用或放弃 AI 的预览。",
       "Title": "AI 代理建议的更改",
       "WillBeHidden": "将隐藏"
     },
@@ -4490,8 +4491,8 @@
     "DashboardNewPanel": "新面板",
     "DashboardNoProposal": "没有与该请求匹配的更改。请使用面板上显示的卡片名称。",
     "DashboardPlaceholder": "提问或描述仪表板更改",
-    "DashboardPreviewingCount": "正在面板上预览 {{count}} 项更改。",
-    "DashboardPreviewingNewBoard": "正在预览新面板 {{title}}，包含 {{count}} 项更改。",
+    "DashboardPreviewingCount": "正在预览 AI 建议的 {{count}} 项更改。",
+    "DashboardPreviewingNewBoard": "正在预览 AI 建议的新看板 {{title}}，含 {{count}} 项更改。",
     "DashboardReset": "将仪表板重置为默认布局",
     "DashboardResizeCard": "将 {{title}} 调整为 {{columns}} 列 x {{rows}} 行",
     "DashboardSetCardRange": "将 {{title}} 的时间范围设为 {{range}}",
@@ -4516,7 +4517,7 @@
     "ToolPreviewDashboard": "仪表板预览：{{change}}",
     "ToolReadDashboard": "已读取仪表板",
     "ToolReadPage": "已读取当前页面",
-    "ToolRejected": "未完成：{{reason}}",
+    "ToolRejected": "有些更改无法应用。",
     "ToolSearchManual": "已在手册中搜索“{{query}}”",
     "ToolUsed": "已使用 {{name}}",
     "ViewModelInfo": "查看模型信息"

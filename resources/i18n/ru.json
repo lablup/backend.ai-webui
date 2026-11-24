@@ -845,6 +845,7 @@
       "ChangeRange": "период",
       "ChangeResized": "размер",
       "Changed": "Изменено: {{changes}}",
+      "FinishPreviewFirst": "Сначала примените или отмените предпросмотр ИИ.",
       "Title": "Изменения, предложенные ИИ-агентом",
       "WillBeHidden": "Будет скрыто"
     },
@@ -4488,8 +4489,8 @@
     "DashboardNewPanel": "Новая панель",
     "DashboardNoProposal": "Ни одно изменение не подходит. Назовите карточку так, как она показана на панели.",
     "DashboardPlaceholder": "Задайте вопрос или опишите изменение панели",
-    "DashboardPreviewingCount": "Предпросмотр изменений на панели: {{count}}.",
-    "DashboardPreviewingNewBoard": "Предпросмотр новой доски {{title}}, изменений: {{count}}.",
+    "DashboardPreviewingCount": "Предпросмотр {{count}} изменений, предложенных ИИ.",
+    "DashboardPreviewingNewBoard": "Предпросмотр новой доски {{title}}, предложенной ИИ, с {{count}} изменениями.",
     "DashboardReset": "Сбросить панель к макету по умолчанию",
     "DashboardResizeCard": "Изменить размер {{title}} на {{columns}} столбцов и {{rows}} строк",
     "DashboardSetCardRange": "Установить период {{title}}: {{range}}",
@@ -4514,7 +4515,7 @@
     "ToolPreviewDashboard": "Предпросмотр на панели: {{change}}",
     "ToolReadDashboard": "Панель прочитана",
     "ToolReadPage": "Текущая страница прочитана",
-    "ToolRejected": "Не выполнено: {{reason}}",
+    "ToolRejected": "Некоторые изменения не удалось применить.",
     "ToolSearchManual": "Поиск «{{query}}» в руководстве",
     "ToolUsed": "Использован {{name}}",
     "ViewModelInfo": "Просмотреть сведения о модели"

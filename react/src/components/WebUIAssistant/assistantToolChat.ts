@@ -248,12 +248,14 @@ export const streamToolChat = ({
             },
           );
         }
-        for (let step = 0; step < maxSteps; step++) {
+        // Set when the model stops by itself, rather than on a repeat or the step cap.
+        let hasAnswered = false;
+        const callModel = (withTools: boolean) => {
           const result = streamText({
             model,
             system,
             messages: history,
-            tools: toolSetOf(registry, searchManual),
+            ...(withTools ? { tools: toolSetOf(registry, searchManual) } : {}),
             abortSignal,
           });
           writer.merge(
@@ -263,13 +265,20 @@ export const streamToolChat = ({
               onError: (error) => getAIErrorMessage(error),
             }),
           );
+          return result;
+        };
+        for (let step = 0; step < maxSteps; step++) {
+          const result = callModel(true);
           const [finishReason, response, toolCalls] = await Promise.all([
             result.finishReason,
             result.response,
             result.toolCalls,
           ]);
           history.push(...response.messages);
-          if (finishReason !== 'tool-calls' || !toolCalls.length) break;
+          if (finishReason !== 'tool-calls' || !toolCalls.length) {
+            hasAnswered = true;
+            break;
+          }
           // A small model repeats a call it already made until the context runs out.
           const keys = toolCalls.map((call) =>
             JSON.stringify([call.toolName, call.input]),
@@ -280,6 +289,8 @@ export const streamToolChat = ({
             await waitForToolsToSettle(registry);
           }
         }
+        // Stopped on a repeat or the cap: one more call without tools writes the answer.
+        if (!hasAnswered) await callModel(false).finishReason;
         writer.write({ type: 'finish' });
       },
       onError: (error) => getAIErrorMessage(error),

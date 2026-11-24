@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { App } from '../../app-shim';
 import { generateUUID } from '../../helper/uuid';
 import { useCurrentUserRole } from '../../hooks/backendai';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
@@ -195,10 +196,22 @@ export const useDashboardBoard = ({
   );
   const {
     board: storedBoard,
-    save,
+    save: saveBoard,
     template,
     boards,
   } = useBoardStore(page, catalog);
+  const { message } = App.useApp();
+  // A card edit during a preview would save the previewed state: Apply or Discard first.
+  const isPreviewing = !!draftActions?.length;
+  const blockedByPreview = () => {
+    if (!isPreviewing) return false;
+    message.info(t('dashboard.agentDraft.FinishPreviewFirst'));
+    return true;
+  };
+  const save = (next: DashboardBoard) => {
+    if (blockedByPreview()) return;
+    saveBoard(next);
+  };
   const [settingOverrides, setSettingOverrides] = useAtom(
     panelSettingOverridesAtom,
   );
@@ -213,6 +226,13 @@ export const useDashboardBoard = ({
         ? { ...prev, [overrideKey(panelId)]: override }
         : _.omit(prev, overrideKey(panelId)),
     );
+
+  // A card the draft re-ranges shows the draft's range, not a header pick.
+  const touchedByDraft = settingsTouchedBy(draftActions ?? []);
+  const overrideOf = (panelId: string) =>
+    touchedByDraft === 'all' || touchedByDraft.includes(panelId)
+      ? undefined
+      : settingOverrides[overrideKey(panelId)];
 
   const config: PanelCatalogConfig = {
     blockList: loginConfig.blockList ?? [],
@@ -251,6 +271,7 @@ export const useDashboardBoard = ({
     );
 
   const removeById = (id: string) => {
+    if (blockedByPreview()) return;
     clearOverrides([id]);
     save(removePanel(board, id));
   };
@@ -262,6 +283,7 @@ export const useDashboardBoard = ({
   };
 
   const updateCustomPanel = (id: string, input: PanelInput) => {
+    if (blockedByPreview()) return;
     const current = board.panels.find((panel) => panel.id === id);
     const next = panelConfigFromInput(input);
     const definition = definitionByKey.get(next.key);
@@ -287,6 +309,7 @@ export const useDashboardBoard = ({
   };
 
   const setPanelsActive = (keys: ReadonlyArray<string>, active: boolean) => {
+    if (blockedByPreview()) return;
     // A user-made panel is listed by its id and only hidden, so unchecking it keeps it.
     const presetIds = new Set(
       board.panels
@@ -319,7 +342,7 @@ export const useDashboardBoard = ({
     const catalogDefinition = definitionByKey.get(panel.key);
     if (!catalogDefinition) return null;
     const definition = panelDefinitionOf(catalogDefinition, panel);
-    const override = settingOverrides[overrideKey(panel.id)];
+    const override = overrideOf(panel.id);
     const effective = effectivePanelSettings(
       panel.settings,
       override,
@@ -412,7 +435,9 @@ export const useDashboardBoard = ({
           deniedFrame={(body) => (
             <PanelFrame
               title={resolvePanelTitle(viewLegacyPanel.descriptor, t)}
-              onEdit={() => onRequestEditCustomPanel(legacyPanel)}
+              onEdit={() => {
+                if (!blockedByPreview()) onRequestEditCustomPanel(legacyPanel);
+              }}
               onRemove={() => removeById(panel.id)}
             >
               {body}
@@ -425,7 +450,9 @@ export const useDashboardBoard = ({
               fetchKey={fetchKey}
               refreshedAt={vars.refreshedAt}
               panelId={panel.id}
-              onEdit={() => onRequestEditCustomPanel(legacyPanel)}
+              onEdit={() => {
+                if (!blockedByPreview()) onRequestEditCustomPanel(legacyPanel);
+              }}
               onRemove={() => removeById(panel.id)}
             />
           )}
@@ -522,7 +549,14 @@ export const useDashboardBoard = ({
         ? { columnSpan: panel.columnSpan, rowSpan: panel.rowSpan }
         : {}),
       ...(hasSetting(definition, 'range')
-        ? { range: panel.settings?.range ?? 'default' }
+        ? {
+            range:
+              effectivePanelSettings(
+                panel.settings,
+                overrideOf(panel.id),
+                definition,
+              )?.range ?? 'default',
+          }
         : {}),
     };
   };
@@ -590,7 +624,7 @@ export const useDashboardBoard = ({
     boardItems: previewItems,
     // A preview is not saved, so a move made on it would land on the stored layout.
     onLayoutChange: (reported) => {
-      if (!draftActions?.length) save(applyLayout(board, reported));
+      if (!draftActions?.length) saveBoard(applyLayout(board, reported));
     },
     catalogEntries: siderEntries(visibleEntries),
     // Catalog keys of the cards on the board, plus the ids of the user-made panels shown on it.
@@ -632,6 +666,7 @@ export const useDashboardBoard = ({
     },
     // The modal edits resource group and range; the table's column picks stay.
     updatePanelSettings: (id, settings) => {
+      if (blockedByPreview()) return;
       const current = board.panels.find((item) => item.id === id)?.settings;
       save(
         updatePanel(board, id, {
@@ -643,6 +678,7 @@ export const useDashboardBoard = ({
       setOverride(id, undefined);
     },
     resetLayout: () => {
+      if (blockedByPreview()) return;
       clearOverrides('all');
       save(resetBoard(board, catalog, page, template));
     },
@@ -684,7 +720,7 @@ export const useDashboardBoard = ({
               : updateBoard(config, boards.activeBoard.id, (active) => ({
                   ...active,
                   panels: mergePanelEdits(
-                    board.panels,
+                    boards.activeBoard.panels,
                     current.panels,
                     active.panels,
                   ),
@@ -703,7 +739,7 @@ export const useDashboardBoard = ({
       });
       if (next === board) return;
       clearOverrides(settingsTouchedBy(actions));
-      save(next);
+      saveBoard(next);
     },
   };
 };

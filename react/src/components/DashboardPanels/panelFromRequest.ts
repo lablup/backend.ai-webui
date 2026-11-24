@@ -183,7 +183,16 @@ export const sanitizeConditions = (
     if (!values.length) return [];
     if (allowed && values.some((v) => !allowed.includes(v))) return [];
     // A small model copies the prompt's `<placeholder>` or an id it cannot know.
-    const rule = source.filter.properties.find((p) => p.key === property)?.rule;
+    const spec = source.filter.properties.find((p) => p.key === property);
+    const rule = spec?.rule;
+    // A number or a date the manager cannot parse fails the whole filter.
+    if (
+      (spec?.type === 'number' &&
+        values.some((v) => !Number.isFinite(Number(v)))) ||
+      (spec?.type === 'datetime' &&
+        values.some((v) => Number.isNaN(Date.parse(v))))
+    )
+      return [];
     if (values.some((v) => /^<.*>$/.test(v) || (rule && !rule.validate(v))))
       return [];
     // BAIPropertyFilter splits minilang on every '"' and never unescapes, so such a value cannot round-trip.

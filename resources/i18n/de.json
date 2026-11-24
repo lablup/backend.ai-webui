@@ -845,6 +845,7 @@
       "ChangeRange": "Zeitraum",
       "ChangeResized": "Größe",
       "Changed": "Geändert: {{changes}}",
+      "FinishPreviewFirst": "Übernehmen oder verwerfen Sie zuerst die Vorschau der KI.",
       "Title": "Von einem KI-Agenten vorgeschlagene Änderungen",
       "WillBeHidden": "Wird ausgeblendet"
     },
@@ -4490,8 +4491,8 @@
     "DashboardNewPanel": "Neues Panel",
     "DashboardNoProposal": "Keine Änderung passt zu dieser Anfrage. Nennen Sie eine Karte so, wie sie auf dem Board steht.",
     "DashboardPlaceholder": "Stellen Sie eine Frage oder beschreiben Sie eine Dashboard-Änderung",
-    "DashboardPreviewingCount": "Vorschau von {{count}} Änderungen auf dem Board.",
-    "DashboardPreviewingNewBoard": "Vorschau des neuen Boards {{title}} mit {{count}} Änderungen.",
+    "DashboardPreviewingCount": "Vorschau von {{count}} Änderungen, die eine KI vorgeschlagen hat.",
+    "DashboardPreviewingNewBoard": "Vorschau des neuen Boards {{title}}, von einer KI vorgeschlagen, mit {{count}} Änderungen.",
     "DashboardReset": "Dashboard auf das Standardlayout zurücksetzen",
     "DashboardResizeCard": "Größe von {{title}} auf {{columns}} Spalten und {{rows}} Zeilen ändern",
     "DashboardSetCardRange": "Zeitraum von {{title}} auf {{range}} setzen",
@@ -4516,7 +4517,7 @@
     "ToolPreviewDashboard": "Vorschau im Dashboard: {{change}}",
     "ToolReadDashboard": "Dashboard gelesen",
     "ToolReadPage": "Aktuelle Seite gelesen",
-    "ToolRejected": "Nicht ausgeführt: {{reason}}",
+    "ToolRejected": "Einige Änderungen konnten nicht übernommen werden.",
     "ToolSearchManual": "Handbuch nach „{{query}}“ durchsucht",
     "ToolUsed": "{{name}} verwendet",
     "ViewModelInfo": "Modellinformationen anzeigen"

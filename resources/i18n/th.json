@@ -842,6 +842,7 @@
       "ChangeRange": "ช่วงเวลา",
       "ChangeResized": "ขนาด",
       "Changed": "เปลี่ยนแล้ว: {{changes}}",
+      "FinishPreviewFirst": "ใช้หรือยกเลิกตัวอย่างของ AI ก่อน",
       "Title": "การเปลี่ยนแปลงที่เอเจนต์ AI เสนอ",
       "WillBeHidden": "จะถูกซ่อน"
     },
@@ -4474,8 +4475,8 @@
     "DashboardNewPanel": "แผงใหม่",
     "DashboardNoProposal": "ไม่มีการเปลี่ยนแปลงที่ตรงกับคำขอ โปรดระบุการ์ดตามชื่อที่แสดงบนแดชบอร์ด",
     "DashboardPlaceholder": "ถามคำถามหรืออธิบายการเปลี่ยนแปลงแดชบอร์ด",
-    "DashboardPreviewingCount": "กำลังแสดงตัวอย่างการเปลี่ยนแปลง {{count}} รายการบนแดชบอร์ด",
-    "DashboardPreviewingNewBoard": "กำลังแสดงตัวอย่างบอร์ดใหม่ {{title}} พร้อมการเปลี่ยนแปลง {{count}} รายการ",
+    "DashboardPreviewingCount": "กำลังแสดงตัวอย่างการเปลี่ยนแปลง {{count}} รายการที่ AI เสนอ",
+    "DashboardPreviewingNewBoard": "กำลังแสดงตัวอย่างบอร์ดใหม่ {{title}} ที่ AI เสนอ พร้อมการเปลี่ยนแปลง {{count}} รายการ",
     "DashboardReset": "รีเซ็ตแดชบอร์ดเป็นเลย์เอาต์เริ่มต้น",
     "DashboardResizeCard": "ปรับขนาด {{title}} เป็น {{columns}} คอลัมน์ x {{rows}} แถว",
     "DashboardSetCardRange": "ตั้งช่วงเวลาของ {{title}} เป็น {{range}}",
@@ -4500,7 +4501,7 @@
     "ToolPreviewDashboard": "ตัวอย่างบนแดชบอร์ด: {{change}}",
     "ToolReadDashboard": "อ่านแดชบอร์ดแล้ว",
     "ToolReadPage": "อ่านหน้าปัจจุบันแล้ว",
-    "ToolRejected": "ไม่ได้ทำ: {{reason}}",
+    "ToolRejected": "มีการเปลี่ยนแปลงบางอย่างที่ใช้ไม่ได้",
     "ToolSearchManual": "ค้นหา \"{{query}}\" ในคู่มือ",
     "ToolUsed": "ใช้ {{name}} แล้ว",
     "ViewModelInfo": "ดูข้อมูลโมเดล"

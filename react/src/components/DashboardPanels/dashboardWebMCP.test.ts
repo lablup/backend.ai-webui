@@ -263,7 +263,14 @@ describe('bai_prepare_dashboard guards', () => {
   });
 
   it('takes the same kind of change on another card', () => {
-    const deps = depsWith([{ type: 'hide', id: 'agents' }]);
+    const bothShown = {
+      ...ctx,
+      cards: ctx.cards.map((card) => ({ ...card, shown: true })),
+    };
+    const deps = depsWith([{ type: 'hide', id: 'agents' }], {
+      getContext: () => bothShown,
+      getSavedContext: () => bothShown,
+    });
     expect(
       createPrepareDashboardTool(deps).execute({
         type: 'hide',
@@ -329,6 +336,50 @@ describe('bai_prepare_dashboard guards', () => {
       id: 'agents',
     }) as Record<string, unknown>;
     expect(result.rejected).toEqual([]);
+  });
+});
+
+describe('bai_prepare_dashboard order and no-ops', () => {
+  it('takes a change again after an opposite one', () => {
+    const deps = depsWith([
+      { type: 'hide', id: 'agents' },
+      { type: 'show', id: 'agents' },
+    ]);
+    expect(
+      createPrepareDashboardTool(deps).execute({ type: 'hide', id: 'agents' }),
+    ).toMatchObject({ rejected: [] });
+  });
+
+  it('refuses a change the board already shows', () => {
+    const deps = depsWith();
+    expect(
+      createPrepareDashboardTool(deps).execute({ type: 'show', id: 'agents' }),
+    ).toMatchObject({
+      rejected: [{ reason: expect.stringMatching(/already/) }],
+    });
+  });
+
+  it('refuses a second new board in one preview', () => {
+    const deps = depsWith([{ type: 'createBoard', title: 'Ops' }]);
+    expect(
+      createPrepareDashboardTool(deps).execute({
+        type: 'createBoard',
+        title: 'Ops2',
+      }),
+    ).toMatchObject({
+      rejected: [{ reason: expect.stringMatching(/one per/) }],
+    });
+  });
+
+  it('lets a panel added earlier in the preview be resized', () => {
+    const [, resized] = draftOfRawActions(
+      [
+        { type: 'addPanel', resourceType: 'session', id: 'session-new' },
+        { type: 'resize', id: 'session-new', columnSpan: 2 },
+      ],
+      ctx,
+    );
+    expect(resized.action).toMatchObject({ type: 'resize', id: 'session-new' });
   });
 });
 
