@@ -211,7 +211,7 @@ export interface BAISelectProps<ValueType = any, OptionType = BAISelectOption> {
   maxBadges?: number;
   /**
    * `mode="multiple"` / `mode="tags"`: lists every selected label in a tooltip
-   * on the trigger. On by default (`BAIMultiSelector`); ignored in single mode.
+   * on the trigger. Off unless passed; ignored in single mode.
    */
   showSelectedOptionsTooltip?: boolean;
   /**

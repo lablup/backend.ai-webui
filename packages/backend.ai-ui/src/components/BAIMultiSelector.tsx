@@ -2,34 +2,9 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
- ui-common `MultiSelector` with `showSelectedOptionsTooltip` on by default (ADR 0014 §2):
- the trigger cuts the selection off after three labels, so the tooltip names
- all of them (#10951).
+ ui-common `MultiSelector`, re-exported unchanged (ADR 0014).
 */
-import {
-  MultiSelector,
-  type MultiSelectorOptionType,
-  type MultiSelectorProps,
+export {
+  MultiSelector as default,
+  type MultiSelectorProps as BAIMultiSelectorProps,
 } from '@lablup/ui-common/MultiSelector';
-import React from 'react';
-
-export type BAIMultiSelectorProps<
-  T extends MultiSelectorOptionType = MultiSelectorOptionType,
-> = MultiSelectorProps<T>;
-
-function BAIMultiSelector<
-  T extends MultiSelectorOptionType = MultiSelectorOptionType,
->({
-  showSelectedOptionsTooltip = true,
-  ...multiSelectorProps
-}: BAIMultiSelectorProps<T>): React.ReactElement {
-  'use memo';
-  return (
-    <MultiSelector
-      {...multiSelectorProps}
-      showSelectedOptionsTooltip={showSelectedOptionsTooltip}
-    />
-  );
-}
-
-export default BAIMultiSelector;

@@ -38,10 +38,22 @@ describe('multi-select trigger tooltip (#10951)', () => {
     vi.useRealTimers();
   });
 
-  it('BAIMultiSelector lists every selected label by default', () => {
+  it('BAIMultiSelector shows no tooltip unless showSelectedOptionsTooltip is passed', () => {
+    const { unmount } = render(
+      <BAIMultiSelector
+        aria-label="Session types"
+        options={options}
+        value={allValues}
+      />,
+    );
+    hoverTrigger('Session types');
+    expect(screen.queryByRole('tooltip')).toBeNull();
+    unmount();
+
     render(
       <BAIMultiSelector
         aria-label="Session types"
+        showSelectedOptionsTooltip
         options={options}
         value={allValues}
       />,
@@ -50,20 +62,7 @@ describe('multi-select trigger tooltip (#10951)', () => {
     expect(screen.getByRole('tooltip')).toHaveTextContent(allLabels);
   });
 
-  it('BAIMultiSelector shows no tooltip with showSelectedOptionsTooltip={false}', () => {
-    render(
-      <BAIMultiSelector
-        aria-label="Session types"
-        showSelectedOptionsTooltip={false}
-        options={options}
-        value={allValues}
-      />,
-    );
-    hoverTrigger('Session types');
-    expect(screen.queryByRole('tooltip')).toBeNull();
-  });
-
-  it('BAISelect mode="multiple" gets the tooltip, and passes showSelectedOptionsTooltip through', () => {
+  it('BAISelect mode="multiple" passes showSelectedOptionsTooltip through', () => {
     const { unmount } = render(
       <BAISelect
         mode="multiple"
@@ -73,19 +72,19 @@ describe('multi-select trigger tooltip (#10951)', () => {
       />,
     );
     hoverTrigger('Session types');
-    expect(screen.getByRole('tooltip')).toHaveTextContent(allLabels);
+    expect(screen.queryByRole('tooltip')).toBeNull();
     unmount();
 
     render(
       <BAISelect
         mode="multiple"
         aria-label="Session types"
-        showSelectedOptionsTooltip={false}
+        showSelectedOptionsTooltip
         options={options}
         value={allValues}
       />,
     );
     hoverTrigger('Session types');
-    expect(screen.queryByRole('tooltip')).toBeNull();
+    expect(screen.getByRole('tooltip')).toHaveTextContent(allLabels);
   });
 });

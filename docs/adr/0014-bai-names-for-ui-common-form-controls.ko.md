@@ -10,7 +10,7 @@
 - `react/`는 ui-common의 [Form.Item-aware form control](#용어)을 `@lablup/ui-common/<X>`가 아니라 `backend.ai-ui`의 `BAI<X>` 이름으로 import한다.
 - BUI는 control마다 `packages/backend.ai-ui/src/components/BAI<X>.tsx` 파일을 두고, 그 파일이 ui-common component를 [re-export](#용어)한다. re-export는 wrapper가 아니므로 props와 동작은 ui-common component 그대로다.
 - form control을 `Form.Item`에 맞추던 webui의 adapter(`AstryxForm*`)는 두지 않는다. value 보정, item 안의 기본 폭, label과 status와 disabled 전달은 ui-common이 한다.
-- BUI 쪽 동작이 필요해진 control은 그 `BAI<X>.tsx`의 re-export를 component로 바꾼다. 지금 그런 control은 `BAISegmentedControlItem`과 `BAIMultiSelector`다.
+- BUI 쪽 동작이 필요해진 control은 그 `BAI<X>.tsx`의 re-export를 component로 바꾼다. 지금 그런 control은 `BAISegmentedControlItem` 하나다.
 - BUI의 다른 source(component, fragment, story, test)도 form control을 그 `BAI<X>.tsx`에서 상대 경로로 import한다.
 - `react/eslint.config.js`의 `no-restricted-imports`가 `react/`에서 이 component 이름을 ui-common subpath로 import하는 것을 막는다. control 자신의 props type은 `BAI<X>Props`를 쓰고, 같은 subpath의 다른 type과 helper(`SelectorOptionType`, `ISODateTimeString`, `SearchSource` 등)는 그대로 import한다.
 
@@ -31,7 +31,7 @@ flowchart LR
     buiuse["BUI component / fragment / story / test"]
     barrel["index.ts"]
     fc["BAITextInput.tsx, BAINumberInput.tsx, ...<br/>re-export only"]
-    item["BAISegmentedControlItem.tsx, BAIMultiSelector.tsx<br/>own component"]
+    item["BAISegmentedControlItem.tsx<br/>own component"]
   end
   subgraph uic["@lablup/ui-common"]
     ctl["TextInput, NumberInput, Selector, ...<br/>Form.Item-aware wrapper"]
@@ -43,7 +43,7 @@ flowchart LR
   buiuse -- "relative import of BAIX" --> fc
   buiuse -- "relative import" --> item
   fc -- "X renamed to BAIX" --> ctl
-  item -- "wraps SegmentedControlItem, MultiSelector" --> ctl
+  item -- "wraps SegmentedControlItem" --> ctl
   ctl -- "reads label, status, disabled from item context" --> form
   page -- "ESLint blocks import of X from @lablup/ui-common/X" --> uic
 ```
@@ -83,14 +83,13 @@ flowchart LR
 
 - **Promotion**: 어떤 control에 BUI 쪽 동작(번역, 기본값, 다른 props)이 필요해지면 그 `BAI<X>.tsx`의 re-export를 component로 바꾸고 `BAI<X>.doc.ts`에 그 props를 적는다. props interface는 ui-common `<X>Props`를 extend한다. 파일과 이름이 그대로이므로 barrel과 call site는 바뀌지 않는다.
 - **SegmentedControlItem**: `BAISegmentedControlItem`은 이미 그런 component다. `label`을 `ReactNode`로 넓히고, `isLabelHidden`은 `label`이 string일 때만 받는다. 그래서 `SegmentedControlItem`의 BAI 이름은 이것이고, 같은 이름의 re-export는 두지 않는다.
-- **MultiSelector**: `BAIMultiSelector`는 `showSelectedOptionsTooltip`을 기본으로 켜서, trigger의 tooltip이 선택한 label을 모두 보여 준다(#10951). 끄려면 호출부가 `showSelectedOptionsTooltip={false}`를 넘긴다.
 - **Existing antd-shaped wrappers stay**: `BAISelect`, `BAICheckbox`, `BAIDynamicUnitInputNumber`처럼 frozen antd-v6 props를 받는 기존 BUI component는 그대로 남는다. 새 code는 Astryx 모양 props가 맞으면 이 문서의 `BAI<X>`를 쓴다.
 
 ### 3. BUI source도 `BAI<X>`를 쓴다
 
 - **Rule**: BUI의 component, fragment, story, test는 form control을 `BAI<X>` 이름으로 쓰고, import하는 파일에서 `components/BAI<X>.tsx`까지의 상대 경로로 import한다(`components/`에서는 `./BAITextInput`, `components/fragments/`에서는 `../BAITextInput`). item component는 부모 파일의 named export다(`import BAIRadioList, { BAIRadioListItem } from './BAIRadioList'`). `backend.ai-ui`나 components barrel `index.ts`에서 import하지 않는다. barrel을 거치면 순환 import가 생긴다.
 - **Antd-shaped wrappers included**: `BAISelect`, `BAICheckbox`, `BAIDynamicUnitInputNumber`처럼 2절의 기존 wrapper도 안에서 그리는 control을 `BAI<X>`로 import한다.
-- **Where the subpath stays**: ui-common subpath에서 control component를 import하는 파일은 1절의 `BAI<X>.tsx`와 2절의 promotion된 component(`BAISegmentedControlItem.tsx`, `BAIMultiSelector.tsx`)뿐이다.
+- **Where the subpath stays**: ui-common subpath에서 control component를 import하는 파일은 1절의 `BAI<X>.tsx`와 2절의 promotion된 component(`BAISegmentedControlItem.tsx`)뿐이다.
 - **Props type**: control 자신의 props type은 1절대로 `BAI<X>.tsx`의 `BAI<X>Props`를 쓴다.
 - **Types stay importable**: 그 밖의 type과 helper(`SelectorOptionData`, `ISODateTimeString`, `SearchSource` 등)는 BUI에서도 ui-common subpath에서 그대로 import한다.
 
