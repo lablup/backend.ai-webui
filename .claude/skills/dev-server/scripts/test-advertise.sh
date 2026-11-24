@@ -149,9 +149,35 @@ check 'the last override for a PR wins' 'b' "$(teams_override 9330 9330 9330=a 9
 check 'no override at all is empty' '' "$(teams_override 9330 9330)"
 
 # ── the PR cache dev.mjs writes (the name must be predicted from the same one) ─
+# dev.mjs: `pr-<stem>-<sha256(branch)[0:8]>.json`; 7bb0cc97 is that digest.
 check 'pr cache path matches dev.mjs spelling' \
-  "$HOME/.cache/backend.ai-webui/pr-feat-FR-3810-dev-server-advertise.json" \
+  "$HOME/.cache/backend.ai-webui/pr-feat-FR-3810-dev-server-advertise-7bb0cc97.json" \
   "$(pr_cache_path feat/FR-3810-dev-server-advertise)"
+check 'branches that share a stem get different caches' 'different' \
+  "$([ "$(pr_cache_path feature/foo)" != "$(pr_cache_path feature-foo)" ] && echo different || echo same)"
+
+# lookup_pr reads the cache dev.mjs wrote before asking gh, as dev.mjs does.
+TMP=$(mktemp -d)
+lookup_with() { # lookup_with <gh exit> <gh stdout> — a fake gh that logs its calls
+  ( HOME="$TMP"; unset PORTLESS_SKIP_PR_LOOKUP
+    timeout() { shift; "$@"; }
+    gh() { echo call >>"$TMP/gh-calls"; printf '%s' "$GH_OUT"; return "$GH_RC"; }
+    GH_RC=$1 GH_OUT=$2 lookup_pr feat/gh-11346-x )
+}
+mkdir -p "$TMP/.cache/backend.ai-webui"
+CACHE="$TMP/.cache/backend.ai-webui/pr-feat-gh-11346-x-$(printf '%s' feat/gh-11346-x | node -e '
+  process.stdout.write(require("crypto").createHash("sha256").update(require("fs").readFileSync(0)).digest("hex").slice(0, 8))').json"
+printf '%s' '{"number":11350,"title":"cached"}' >"$CACHE"
+check 'offline, the PR comes from the cache dev.mjs wrote' '{"number":11350,"title":"cached"}' \
+  "$(lookup_with 1 '')"
+check 'a cached PR wins over a retitle gh would report' '{"number":11350,"title":"cached"} 0' \
+  "$(lookup_with 0 '{"number":11350,"title":"renamed"}') $( (cat "$TMP/gh-calls" 2>/dev/null) | wc -l | tr -d ' ')"
+printf '%s' '{"title":"no number"}' >"$CACHE"
+check 'a cache without a number is a miss' '{"number":11350,"title":"net"}' \
+  "$(lookup_with 0 '{"number":11350,"title":"net"}')"
+rm -f "$CACHE"
+check 'no cache and no gh answer is null' 'null' "$(lookup_with 1 '')"
+rm -rf "$TMP"
 
 # ── missing tools ─────────────────────────────────────────────────────────────
 check 'missing_tools names only what is absent' 'definitely-not-a-real-binary' \

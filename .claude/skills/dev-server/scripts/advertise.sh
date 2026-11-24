@@ -199,11 +199,22 @@ teams_override() {
   printf '%s' "$out"
 }
 
-# pr_cache_path <branch> — the PR cache dev.mjs writes, spelled exactly as
-# dev.mjs spells it, so an offline `boot-env` predicts the name dev.mjs claims.
+# pr_cache_path <branch> — the PR cache file dev.mjs's `lookupPr` writes, computed
+# with dev.mjs's own JS expression (stem + sha256 of the exact branch name).
 pr_cache_path() {
-  printf '%s/.cache/backend.ai-webui/pr-%s.json' \
-    "$HOME" "$(printf '%s' "$1" | sed -E 's/[^A-Za-z0-9]+/-/g')"
+  BAI_BRANCH="$1" node -e '
+    const b = process.env.BAI_BRANCH;
+    process.stdout.write(require("path").join(require("os").homedir(),
+      ".cache", "backend.ai-webui",
+      `pr-${b.replace(/[^A-Za-z0-9]+/g, "-")}-` +
+        `${require("crypto").createHash("sha256").update(b).digest("hex").slice(0, 8)}.json`));
+  '
+}
+
+# read_pr_cache <file> — the cached PR as one JSON line, or nothing. Like dev.mjs's
+# `readCachedPr`, content without a `number` is a miss.
+read_pr_cache() {
+  [ -f "$1" ] && jq -ce 'select(.number)' "$1" 2>/dev/null
 }
 
 # boot_record <app> <url> <repo> <branch> <pid> <startedAt> <served-json>
@@ -293,11 +304,12 @@ exact_mode() {
 # lookup_pr <branch> — dev.mjs's `lookupPr`, in shell. It MUST match: the name is
 # a function of the PR it returns, and a name that differs from the one dev.mjs
 # claims points BAI_REVIEW_BOOT_RECORD and the probe at a server that is not there.
-# So: `gh pr view <branch>` (any PR state, not just open), a 4s budget, and the
-# same on-disk cache as the offline fallback.
+# So: the same on-disk cache first, and only on a miss `gh pr view <branch>`
+# (any PR state, not just open) with a 4s budget.
 lookup_pr() {
-  local branch=$1 out cache
+  local branch=$1 out
   { [ -n "$branch" ] && [ -z "${PORTLESS_SKIP_PR_LOOKUP:-}" ]; } || { printf 'null'; return; }
+  read_pr_cache "$(pr_cache_path "$branch")" && return
   if command -v timeout >/dev/null 2>&1; then
     out=$(timeout 4 gh pr view "$branch" --json number,title 2>/dev/null || true)
   else
@@ -305,10 +317,6 @@ lookup_pr() {
   fi
   if [ -n "$out" ] && jq -e '.number' <<<"$out" >/dev/null 2>&1; then
     jq -c . <<<"$out"; return
-  fi
-  cache=$(pr_cache_path "$branch")
-  if [ -f "$cache" ] && jq -e . "$cache" >/dev/null 2>&1; then
-    jq -c . "$cache"; return
   fi
   printf 'null'
 }
