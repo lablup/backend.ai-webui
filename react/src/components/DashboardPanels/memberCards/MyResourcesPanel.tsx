@@ -24,6 +24,7 @@ export const MyResourcesInResourceGroup: React.FC<{
   fetchKey: string;
 }> = ({ projectId, resourceGroupName, fetchKey }) => {
   'use memo';
+  const { t } = useTranslation();
   const currentDomain = useCurrentDomain();
   const variables = {
     projectId,
@@ -99,8 +100,12 @@ export const MyResourcesInResourceGroup: React.FC<{
   const user = readPrimary(data.myUserResourceAllocationV2)?.user;
   const project = readSecondary(data.projectResourceAllocationV2).value
     ?.project;
-  const resourceInfo = readSecondary(data.scopedResourceGroups).value
-    ?.edges?.[0]?.node?.resourceInfo;
+  const groups = readSecondary(data.scopedResourceGroups);
+  if (groups.value != null && (groups.value.edges ?? []).length === 0) {
+    // The picked group is not reachable; a null or denied read falls through to CPU/RAM below.
+    return <Text type="supporting">{t('dashboard.card.NoResourceGroup')}</Text>;
+  }
+  const resourceInfo = groups.value?.edges?.[0]?.node?.resourceInfo;
   return (
     <ResourceUsageStatistics
       rows={
@@ -113,8 +118,10 @@ export const MyResourcesInResourceGroup: React.FC<{
                 freeAsLimits(resourceInfo?.free.entries),
               ],
               {
+                // Unknown capacity keeps CPU/RAM, not every slot the manager knows.
                 slots:
-                  offeredSlotsOf(resourceInfo?.capacity.entries) ?? undefined,
+                  offeredSlotsOf(resourceInfo?.capacity.entries) ??
+                  new Set(['cpu', 'mem']),
               },
             )
           : []

@@ -83,7 +83,20 @@ describe('MyResourceWithinResourceGroup', () => {
             ],
           },
         },
-        scopedResourceGroups: { edges: [] },
+        scopedResourceGroups: {
+          edges: [
+            {
+              node: {
+                resourceInfo: {
+                  capacity: {
+                    entries: [{ resourceType: 'cpu', quantity: '8' }],
+                  },
+                  free: { entries: [] },
+                },
+              },
+            },
+          ],
+        },
       },
     });
 
