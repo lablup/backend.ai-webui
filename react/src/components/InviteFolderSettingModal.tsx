@@ -505,10 +505,10 @@ const InviteFolderSettingModalBody: React.FC<{
   const [currentUser] = useCurrentUserInfo();
   const { accessibleProjects } = useAccessibleProjects();
   const memberProjectIds = _.compact(_.map(accessibleProjects, 'id'));
-  // A folder cannot be offered to the project that owns it.
+  // A folder cannot be offered to the project that owns it, nor to the model store.
   const projectOptions = _.compact(
     _.map(accessibleProjects, (project) =>
-      project?.id && project.id !== ownerProjectId
+      project?.id && project.id !== ownerProjectId && project.type === 'GENERAL'
         ? { value: project.id, label: project.name ?? project.id }
         : null,
     ),

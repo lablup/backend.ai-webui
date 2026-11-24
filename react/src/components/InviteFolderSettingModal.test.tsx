@@ -66,7 +66,10 @@ vi.mock('../hooks/useCurrentUserProjectRoles', () => ({
 vi.mock('../hooks/useAccessibleProjects', () => ({
   useAccessibleProjects: () => ({
     groups: [],
-    accessibleProjects: [{ id: 'project-1', name: 'team-alpha' }],
+    accessibleProjects: [
+      { id: 'project-1', name: 'team-alpha', type: 'GENERAL' },
+      { id: 'model-store', name: 'model-store', type: 'MODEL_STORE' },
+    ],
   }),
 }));
 
@@ -654,6 +657,10 @@ describe('InviteFolderSettingModal (#10295)', () => {
     ).toMatch(/disabled/);
 
     await user.click(screen.getByRole('combobox', { name: 'general.Project' }));
+    // The model store is not a share recipient.
+    expect(
+      screen.queryByRole('option', { name: 'model-store', ...h }),
+    ).toBeNull();
     await user.click(screen.getByRole('option', { name: 'team-alpha', ...h }));
     await user.click(
       screen.getByRole('button', { name: 'data.folders.Invite' }),
