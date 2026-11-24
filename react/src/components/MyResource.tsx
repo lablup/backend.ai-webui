@@ -12,6 +12,7 @@ import {
 } from './DashboardPanels/memberCards/memberCardData';
 import { readPrimary, readSecondary } from './DashboardPanels/panelPermission';
 import { Heading } from '@lablup/ui-common/Heading';
+import { Text } from '@lablup/ui-common/Text';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIBoardItemTitle,
@@ -174,6 +175,7 @@ const MyTotalResourceStatisticsContent: React.FC<{
   notesOf?: (resourceType: string) => React.ReactNode;
 }> = ({ queryRef, notesOf }) => {
   'use memo';
+  const { t } = useTranslation();
   // Fields a plain project member can read; the user's figures count every keypair.
   const data = useFragment(
     graphql`
@@ -225,15 +227,23 @@ const MyTotalResourceStatisticsContent: React.FC<{
   const user = readPrimary(data.myUserResourceAllocationV2)?.user;
   const project = readSecondary(data.projectResourceAllocationV2).value
     ?.project;
+  const groupEdges =
+    readSecondary(data.scopedResourceGroups).value?.edges ?? [];
+  if (groupEdges.length === 0) {
+    // No resource group reaches the project: the siblings' "no resource group" text,
+    // not the allocation list's every slot.
+    return <Text type="supporting">{t('dashboard.card.NoResourceGroup')}</Text>;
+  }
   // Only the slots some group of the project offers; the allocation lists every slot the manager knows.
   const groupSlots = _.compact(
-    _.map(readSecondary(data.scopedResourceGroups).value?.edges, (edge) =>
+    _.map(groupEdges, (edge) =>
       offeredSlotsOf(edge?.node?.resourceInfo?.capacity.entries),
     ),
   );
+  // No capacity report from any group: keep CPU/RAM instead of the manager's whole slot list.
   const slots = groupSlots.length
     ? new Set(groupSlots.flatMap((offered) => [...offered]))
-    : undefined;
+    : new Set(['cpu', 'mem']);
 
   return (
     <ResourceUsageStatistics

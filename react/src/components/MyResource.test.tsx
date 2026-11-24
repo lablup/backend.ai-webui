@@ -71,12 +71,78 @@ describe('MyResource', () => {
             ],
           },
         },
+        scopedResourceGroups: {
+          edges: [
+            {
+              node: {
+                resourceInfo: {
+                  capacity: {
+                    entries: [
+                      { resourceType: 'cpu', quantity: '8' },
+                      { resourceType: 'mem', quantity: '16' },
+                    ],
+                  },
+                },
+              },
+            },
+          ],
+        },
       },
     });
 
     const data = await readResourceData();
     expect(data.cpu.used).toEqual({ current: 3, total: 7 });
     expect(data.cpu.free).toEqual({ current: 4, total: 7 });
+  });
+
+  it('shows the no-resource-group text when no resource group reaches the project', async () => {
+    const environment = renderCard();
+    environment.mock.resolve(environment.mock.getMostRecentOperation(), {
+      data: {
+        myUserResourceAllocationV2: {
+          user: {
+            used: [{ resourceType: 'cpu', quantity: '3' }],
+            assignable: [
+              { resourceType: 'cpu', quantity: '4', unlimited: false },
+            ],
+          },
+        },
+        projectResourceAllocationV2: {
+          project: { assignable: [] },
+        },
+        scopedResourceGroups: { edges: [] },
+      },
+    });
+
+    expect(
+      await screen.findByText('dashboard.card.NoResourceGroup'),
+    ).toBeInTheDocument();
+  });
+
+  it('keeps CPU and memory only when no group reports capacity', async () => {
+    const environment = renderCard();
+    environment.mock.resolve(environment.mock.getMostRecentOperation(), {
+      data: {
+        myUserResourceAllocationV2: {
+          user: {
+            used: [{ resourceType: 'cpu', quantity: '3' }],
+            assignable: [
+              { resourceType: 'cpu', quantity: '4', unlimited: false },
+            ],
+          },
+        },
+        projectResourceAllocationV2: {
+          project: { assignable: [] },
+        },
+        scopedResourceGroups: {
+          edges: [{ node: { resourceInfo: null } }],
+        },
+      },
+    });
+
+    const data = await readResourceData();
+    expect(data.cpu.used).toEqual({ current: 3, total: 7 });
+    expect(data.accelerators).toEqual([]);
   });
 
   it('keeps a rejected query inside the card', async () => {
