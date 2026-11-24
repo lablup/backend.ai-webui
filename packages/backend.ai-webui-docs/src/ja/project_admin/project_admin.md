@@ -14,8 +14,7 @@ navTitle: プロジェクト管理者機能
 
 ヘッダーのプロジェクトドロップダウンを開くと、プロジェクト管理者ロールを持つプロジェクトには名前の横に盾の形のバッジが表示されます。バッジにカーソルを合わせると **プロジェクト管理者** ツールチップが表示され、このプロジェクトを選択すると以下で説明するプロジェクト管理者向けサイドバー項目が表示されることが確認できます。
 
-![=300px](../images/header_project_selector_with_admin_badge.png)
-<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; the project-admin fixture account cannot load the WebUI on the capture backend (the manager denies it `app_config` read). -->
+![=262px](../images/header_project_selector_with_admin_badge.png)
 
 ヘッダーのプロジェクトセレクターで別のプロジェクトに切り替えると、ユーザーのロールが再評価されます。同じユーザーが同一のログインセッション内で、あるプロジェクトではプロジェクト管理者として、別のプロジェクトでは一般ユーザーとして振る舞うことがあります。プロジェクト管理者ロールの付与と取り消しの方法については、RBAC管理章の[プロジェクト管理者権限の付与](#grant-project-admin)セクションを参照してください。
 
@@ -24,7 +23,6 @@ navTitle: プロジェクト管理者機能
 :::
 
 ![](../images/forbidden_page.png)
-<!-- TODO(screenshot): recapture while logged in as a user who lacks project-admin rights on the requested project. This image was captured with the superadmin account. -->
 
 <a id="set-project-admin"></a>
 
@@ -72,7 +70,7 @@ navTitle: プロジェクト管理者機能
 プロジェクト管理者ページでは、上部のプロジェクトセレクターで選択したプロジェクト配下の項目のみが表示されます。この内容はページ上部のバナーで確認できます。
 
 ![](../images/project_admin_scope_alert.png)
-<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; the project-admin fixture account cannot load the WebUI on the capture backend (the manager denies it `app_config` read). -->
+<!-- TODO(screenshot): recapture while logged in as a Project Admin; this image still shows the superadmin account. 2026-11-24: the capture run for this image failed against the capture backend (manager 26.10.0a11) and was deferred. -->
 
 <a id="project-admin-dashboard"></a>
 
@@ -93,7 +91,6 @@ navTitle: プロジェクト管理者機能
 更新ボタンの横のドロップダウンボタンをクリックすると **自動更新** メニューが開き、自動更新の間隔を選択できます。
 
 ![=94px](../images/project_admin_auto_refresh_menu.png)
-<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; the project-admin fixture account cannot load the WebUI on the capture backend (the manager denies it `app_config` read). -->
 
 <a id="users"></a>
 
@@ -102,7 +99,7 @@ navTitle: プロジェクト管理者機能
 **ユーザー** ページには、現在選択されているプロジェクトに所属するすべてのユーザーが表示されます。このページを使用して、プロジェクトのメンバーを一目で確認できます。例えば、プロジェクトのリソースにアクセスできるユーザーを確認したり、非アクティブなアカウントを特定したりできます。
 
 ![](../images/project_admin_users_page.png)
-<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; the project-admin fixture account cannot load the WebUI on the capture backend (the manager denies it `app_config` read). -->
+<!-- TODO(screenshot): recapture while logged in as a Project Admin; this image still shows the superadmin account. 2026-11-24: the capture run for this image failed against the capture backend (manager 26.10.0a11) and was deferred. -->
 
 このページには以下のコントロールが用意されています:
 
@@ -124,7 +121,7 @@ navTitle: プロジェクト管理者機能
 **セッション** ページには、現在選択されているプロジェクトのユーザーが所有するコンピュートセッションが表示されます。このページから、アクティブなワークロードの監視、長時間実行されているセッションの特定、不要になったセッションの終了を行えます。
 
 ![](../images/project_admin_sessions_page.png)
-<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; the project-admin fixture account cannot load the WebUI on the capture backend (the manager denies it `app_config` read). -->
+<!-- TODO(screenshot): recapture while logged in as a Project Admin; this image still shows the superadmin account. 2026-11-24: the capture run for this image failed against the capture backend (manager 26.10.0a11) and was deferred. -->
 
 このページには以下のコントロールが用意されています:
 
@@ -144,7 +141,7 @@ navTitle: プロジェクト管理者機能
 5. 確認ボタンをクリックしてセッションを終了します。
 
 ![=520px](../images/project_admin_terminate_session_modal.png)
-<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; the project-admin fixture account cannot load the WebUI on the capture backend (the manager denies it `app_config` read). -->
+<!-- TODO(screenshot): recapture while logged in as a Project Admin; this image still shows the superadmin account. 2026-11-24: the capture run for this image failed against the capture backend (manager 26.10.0a11) and was deferred. -->
 
 :::warning
 **強制終了** は、セッションがハングして状態が不当に長時間変化しない場合にのみ使用してください。強制終了はエージェント上の実際のコンテナを削除しないため、その後に手動でのクリーンアップが必要になる場合があります。
@@ -161,7 +158,7 @@ navTitle: プロジェクト管理者機能
 **デプロイメント** ページには、現在選択されているプロジェクトが所有するモデルデプロイメントが表示されます。このページから、推論エンドポイントの管理、デプロイメント設定の編集、使用しなくなったデプロイメントの削除を行えます。
 
 ![](../images/project_admin_deployments_page.png)
-<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; the project-admin fixture account cannot load the WebUI on the capture backend (the manager denies it `app_config` read). -->
+<!-- TODO(screenshot): recapture while logged in as a Project Admin; this image still shows the superadmin account. 2026-11-24: the capture run for this image failed against the capture backend (manager 26.10.0a11) and was deferred. -->
 
 このページには以下のコントロールが用意されています:
 
@@ -183,6 +180,6 @@ navTitle: プロジェクト管理者機能
 - **ゴミ箱アイコン**をクリックすると、デプロイメントを削除できます。削除を実行するには、確認モーダルでデプロイメント名を入力する必要があります。
 
 ![](../images/project_admin_deployment_detail.png)
-<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; the project-admin fixture account cannot load the WebUI on the capture backend (the manager denies it `app_config` read). -->
+<!-- TODO(screenshot): recapture while logged in as a Project Admin; this image still shows the superadmin account. 2026-11-24: the capture run for this image failed against the capture backend (manager 26.10.0a11) and was deferred. -->
 
 デプロイメントのリビジョン、レプリカ、トラフィックルーティングの詳細については、[デプロイ](#model-serving)章を参照してください。

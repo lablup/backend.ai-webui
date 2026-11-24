@@ -14,8 +14,7 @@ navTitle: ฟีเจอร์ผู้ดูแลโปรเจกต์
 
 เมื่อคุณเปิดดรอปดาวน์โปรเจกต์ในส่วนหัว โปรเจกต์ที่คุณมีบทบาทผู้ดูแลโปรเจกต์จะมีตราสัญลักษณ์รูปโล่ปรากฏข้างชื่อโปรเจกต์ การวางเคอร์เซอร์เหนือตราสัญลักษณ์จะแสดงคำแนะนำ **ผู้ดูแลโปรเจกต์** ซึ่งยืนยันว่าการเลือกโปรเจกต์นี้จะเปิดเผยรายการในแถบด้านข้างสำหรับผู้ดูแลโปรเจกต์ตามที่อธิบายไว้ด้านล่าง
 
-![=266px](../images/header_project_selector_with_admin_badge.png)
-<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; the project-admin fixture account cannot load the WebUI on the capture backend (the manager denies it `app_config` read). -->
+![=262px](../images/header_project_selector_with_admin_badge.png)
 
 การสลับไปยังโปรเจกต์อื่นจากตัวเลือกโปรเจกต์ในส่วนหัวจะประเมินบทบาทของผู้ใช้ใหม่ ผู้ใช้คนเดียวกันอาจทำหน้าที่เป็นผู้ดูแลโปรเจกต์ในโปรเจกต์หนึ่งและเป็นผู้ใช้ทั่วไปในอีกโปรเจกต์หนึ่งภายในเซสชันการเข้าสู่ระบบเดียวกันได้ สำหรับวิธีการมอบและเพิกถอนบทบาทผู้ดูแลโปรเจกต์ ดูที่ส่วน[การมอบสิทธิ์ผู้ดูแลโปรเจกต์](#grant-project-admin)ในบทการจัดการ RBAC
 
@@ -24,7 +23,6 @@ navTitle: ฟีเจอร์ผู้ดูแลโปรเจกต์
 :::
 
 ![](../images/forbidden_page.png)
-<!-- TODO(screenshot): recapture while logged in as a user who lacks project-admin rights on the requested project. This image was captured with the superadmin account. -->
 
 <a id="set-project-admin"></a>
 
@@ -72,7 +70,7 @@ navTitle: ฟีเจอร์ผู้ดูแลโปรเจกต์
 ในหน้าผู้ดูแลโปรเจกต์ จะแสดงเฉพาะรายการภายใต้โปรเจกต์ที่เลือกด้วยตัวเลือกโปรเจกต์ที่ด้านบนเท่านั้น คุณสามารถตรวจสอบเนื้อหานี้ได้จากแบนเนอร์ที่ด้านบนของหน้า
 
 ![](../images/project_admin_scope_alert.png)
-<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; the project-admin fixture account cannot load the WebUI on the capture backend (the manager denies it `app_config` read). -->
+<!-- TODO(screenshot): recapture while logged in as a Project Admin; this image still shows the superadmin account. 2026-11-24: the capture run for this image failed against the capture backend (manager 26.10.0a11) and was deferred. -->
 
 <a id="project-admin-dashboard"></a>
 
@@ -93,7 +91,6 @@ navTitle: ฟีเจอร์ผู้ดูแลโปรเจกต์
 ปุ่มดรอปดาวน์ที่อยู่ข้างปุ่มรีเฟรชจะเปิดเมนู **รีเฟรชอัตโนมัติ** ซึ่งคุณสามารถเลือกช่วงเวลาการรีเฟรชอัตโนมัติได้
 
 ![=88px](../images/project_admin_auto_refresh_menu.png)
-<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; the project-admin fixture account cannot load the WebUI on the capture backend (the manager denies it `app_config` read). -->
 
 <a id="users"></a>
 
@@ -102,7 +99,7 @@ navTitle: ฟีเจอร์ผู้ดูแลโปรเจกต์
 หน้า **ผู้ใช้** แสดงผู้ใช้ทุกคนที่เป็นสมาชิกของโปรเจกต์ที่เลือกอยู่ในปัจจุบัน ใช้หน้านี้เพื่อตรวจสอบสมาชิกในโปรเจกต์ได้อย่างรวดเร็ว ตัวอย่างเช่น เพื่อยืนยันว่าใครมีสิทธิ์เข้าถึงทรัพยากรของโปรเจกต์ หรือเพื่อระบุบัญชีที่ไม่ได้ใช้งาน
 
 ![](../images/project_admin_users_page.png)
-<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; the project-admin fixture account cannot load the WebUI on the capture backend (the manager denies it `app_config` read). -->
+<!-- TODO(screenshot): recapture while logged in as a Project Admin; this image still shows the superadmin account. 2026-11-24: the capture run for this image failed against the capture backend (manager 26.10.0a11) and was deferred. -->
 
 หน้านี้มีตัวควบคุมต่อไปนี้:
 
@@ -124,7 +121,7 @@ navTitle: ฟีเจอร์ผู้ดูแลโปรเจกต์
 หน้า **เซสชัน** แสดงเซสชันการคำนวณที่ผู้ใช้ในโปรเจกต์ที่เลือกอยู่ในปัจจุบันเป็นเจ้าของ ใช้หน้านี้เพื่อเฝ้าติดตามภาระงานที่ใช้งานอยู่ ระบุเซสชันที่ทำงานเป็นเวลานาน หรือยุติเซสชันที่ไม่จำเป็นอีกต่อไป
 
 ![](../images/project_admin_sessions_page.png)
-<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; the project-admin fixture account cannot load the WebUI on the capture backend (the manager denies it `app_config` read). -->
+<!-- TODO(screenshot): recapture while logged in as a Project Admin; this image still shows the superadmin account. 2026-11-24: the capture run for this image failed against the capture backend (manager 26.10.0a11) and was deferred. -->
 
 หน้านี้มีตัวควบคุมต่อไปนี้:
 
@@ -144,7 +141,7 @@ navTitle: ฟีเจอร์ผู้ดูแลโปรเจกต์
 5. คลิกปุ่มยืนยันเพื่อยุติเซสชัน
 
 ![=520px](../images/project_admin_terminate_session_modal.png)
-<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; the project-admin fixture account cannot load the WebUI on the capture backend (the manager denies it `app_config` read). -->
+<!-- TODO(screenshot): recapture while logged in as a Project Admin; this image still shows the superadmin account. 2026-11-24: the capture run for this image failed against the capture backend (manager 26.10.0a11) and was deferred. -->
 
 :::warning
 ใช้ **บังคับยุติ** เฉพาะเมื่อเซสชันค้างและสถานะไม่เปลี่ยนแปลงเป็นระยะเวลานานเกินไปเท่านั้น การบังคับยุติจะไม่ลบคอนเทนเนอร์จริงบนเอเจนต์ ดังนั้นอาจต้องทำความสะอาดด้วยตนเองในภายหลัง
@@ -161,7 +158,7 @@ navTitle: ฟีเจอร์ผู้ดูแลโปรเจกต์
 หน้า **การปรับใช้** แสดงการปรับใช้โมเดลที่โปรเจกต์ที่เลือกอยู่ในปัจจุบันเป็นเจ้าของ ใช้หน้านี้เพื่อดูแลปลายทางการอนุมาน แก้ไขการตั้งค่าการปรับใช้ หรือลบการปรับใช้ที่ไม่ใช้งานแล้ว
 
 ![](../images/project_admin_deployments_page.png)
-<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; the project-admin fixture account cannot load the WebUI on the capture backend (the manager denies it `app_config` read). -->
+<!-- TODO(screenshot): recapture while logged in as a Project Admin; this image still shows the superadmin account. 2026-11-24: the capture run for this image failed against the capture backend (manager 26.10.0a11) and was deferred. -->
 
 หน้านี้มีตัวควบคุมต่อไปนี้:
 
@@ -183,6 +180,6 @@ navTitle: ฟีเจอร์ผู้ดูแลโปรเจกต์
 - คลิก**ไอคอนถังขยะ**เพื่อลบการปรับใช้ โมดอลยืนยันต้องการให้คุณพิมพ์ชื่อการปรับใช้ก่อนจึงจะดำเนินการลบ
 
 ![](../images/project_admin_deployment_detail.png)
-<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; the project-admin fixture account cannot load the WebUI on the capture backend (the manager denies it `app_config` read). -->
+<!-- TODO(screenshot): recapture while logged in as a Project Admin; this image still shows the superadmin account. 2026-11-24: the capture run for this image failed against the capture backend (manager 26.10.0a11) and was deferred. -->
 
 สำหรับรายละเอียดเกี่ยวกับรีวิชัน, เรพลิกา และการกำหนดเส้นทางทราฟฟิกของการปรับใช้ ดูที่บท[การปรับใช้](#model-serving)
