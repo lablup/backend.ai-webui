@@ -15,7 +15,7 @@ test(
     await agent.act('Send "Hide the resource presets card" in the chat');
     await agent.act('Send "Add a table of running interactive sessions"');
     await agent.act('Send "Make that panel a count instead"');
-    await agent.act('Press "Apply" above the chat input');
+    await agent.act('Press "Apply" in the bar beside the assistant button');
   },
 );
 
@@ -50,6 +50,6 @@ test(
     await agent.act(
       'Send "Create a board named Incidents with pending sessions and scheduling failures"',
     );
-    await agent.act('Press "Apply" above the chat input');
+    await agent.act('Press "Apply" in the bar beside the assistant button');
   },
 );
