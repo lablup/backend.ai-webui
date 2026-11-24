@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import type { DeploymentRevisionDetail_revision$key } from '../__generated__/DeploymentRevisionDetail_revision.graphql';
-import { toResourceSlotDisplayValue } from '../helper';
+import { convertToBinaryUnit } from '../helper';
 import { formatShellCommand } from '../helper/parseCliCommand';
 import { useEffectiveLoginConfig } from '../hooks/useWebUIConfig';
 // Co-located CSS (P17): keeps long values (model paths, image refs, shell
@@ -312,14 +312,16 @@ const DeploymentRevisionDetail: React.FC<{
                     !!slot.slotName,
                 )
                 .map((slot) => {
+                  const rawValue = String(slot.quantity);
+                  const value =
+                    slot.slotName === 'mem'
+                      ? String(convertToBinaryUnit(rawValue, '')?.number ?? 0)
+                      : String(parseFloat(rawValue));
                   return (
                     <BAIResourceNumberWithIcon
                       key={slot.slotName}
                       type={slot.slotName}
-                      value={toResourceSlotDisplayValue(
-                        slot.slotName,
-                        String(slot.quantity),
-                      )}
+                      value={value}
                     />
                   );
                 })}

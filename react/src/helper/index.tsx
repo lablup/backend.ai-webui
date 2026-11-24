@@ -229,15 +229,6 @@ export function convertToBinaryUnit(
   );
 }
 
-/** A resource slot quantity as BAIResourceNumberWithIcon takes it: memory in binary units. */
-export const toResourceSlotDisplayValue = (
-  slotName: string,
-  quantity: string,
-): string =>
-  slotName === 'mem'
-    ? String(convertToBinaryUnit(quantity, '')?.number ?? 0)
-    : String(parseFloat(quantity));
-
 /**
  * Converts a size value to a different unit in the decimal-based system.
  *

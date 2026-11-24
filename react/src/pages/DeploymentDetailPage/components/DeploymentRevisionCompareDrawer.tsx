@@ -6,10 +6,7 @@ import type {
   DeploymentRevisionCompareDrawer_revision$data,
   DeploymentRevisionCompareDrawer_revision$key,
 } from '../../../__generated__/DeploymentRevisionCompareDrawer_revision.graphql';
-import {
-  convertToBinaryUnit,
-  toResourceSlotDisplayValue,
-} from '../../../helper';
+import { convertToBinaryUnit } from '../../../helper';
 import { useResourceSlotsDetails } from '../../../hooks/backendai';
 import {
   diffRevisions,
@@ -285,7 +282,8 @@ const DeploymentRevisionCompareDrawer: React.FC<
       return (
         <BAIResourceNumberWithIcon
           type={row.name}
-          value={toResourceSlotDisplayValue(row.name, value)}
+          // Quantities arrive as "1.000000"; the chip converts memory itself.
+          value={String(parseFloat(value))}
         />
       );
     }
