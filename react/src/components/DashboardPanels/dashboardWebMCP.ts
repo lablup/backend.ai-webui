@@ -497,24 +497,27 @@ export const createPrepareDashboardTool = ({
         reason: `The preview already holds ${MAX_DRAFT_ACTIONS} changes; ask the user to apply or discard them first.`,
       });
     }
+    // Read in order against the saved board, as the link will be.
+    const savedCtx = getSavedContext();
+    const resolved = draftOfRawActions([...base, built.raw], savedCtx);
+    const action = resolved[resolved.length - 1]?.action;
+    if (!action) return reject(rejectionOf(built.raw, ctx));
+    // The id resolved here is stored, so the link does not depend on fuzzy matching.
+    const target = actionTargetId(action);
+    const stored = target ? { ...built.raw, id: target } : built.raw;
     // A model that repeats a call would otherwise preview the same change twice.
+    // A new panel's id is made per call, so only its other fields can repeat.
     const sameAs = (raw: unknown) =>
-      _.isEqual(_.omit(raw as object, 'id'), _.omit(built.raw, 'id'));
+      action.type === 'addPanel'
+        ? _.isEqual(_.omit(raw as object, 'id'), _.omit(stored, 'id'))
+        : _.isEqual(raw, stored);
     if (base.some(sameAs)) {
       return reject({
         field: 'type',
         reason: 'This change is already in the preview.',
       });
     }
-    // Read in order against the saved board, as the link will be.
-    const savedCtx = getSavedContext();
-    const resolved = draftOfRawActions([...base, built.raw], savedCtx);
-    const action = resolved[resolved.length - 1]?.action;
-    if (!action) return reject(rejectionOf(built.raw, ctx));
     const dropped = droppedConditionsOf(built.raw, action, savedCtx);
-    // The id resolved here is stored, so the link does not depend on fuzzy matching.
-    const target = actionTargetId(action);
-    const stored = target ? { ...built.raw, id: target } : built.raw;
     const raws = [...base, stored];
     const params = new URLSearchParams(getSearch());
     params.set(DASHBOARD_DRAFT_PARAM, JSON.stringify(raws));

@@ -262,6 +262,39 @@ describe('bai_prepare_dashboard guards', () => {
     expect(deps.opened).toHaveLength(0);
   });
 
+  it('takes the same kind of change on another card', () => {
+    const deps = depsWith([{ type: 'hide', id: 'agents' }]);
+    expect(
+      createPrepareDashboardTool(deps).execute({
+        type: 'hide',
+        id: 'pendingSessions',
+      }),
+    ).toMatchObject({ rejected: [] });
+  });
+
+  it('refuses a repeated addPanel, whose id differs each call', () => {
+    const deps = depsWith();
+    const tool = createPrepareDashboardTool(deps);
+    const first = tool.execute({
+      type: 'addPanel',
+      resourceType: 'session',
+    }) as Record<string, unknown>;
+    const deps2 = depsWith(
+      JSON.parse(
+        new URLSearchParams(deps.opened[0]).get('dashboardDraft') ?? '[]',
+      ),
+    );
+    expect(first.rejected).toEqual([]);
+    expect(
+      createPrepareDashboardTool(deps2).execute({
+        type: 'addPanel',
+        resourceType: 'session',
+      }),
+    ).toMatchObject({
+      rejected: [{ reason: expect.stringMatching(/already/) }],
+    });
+  });
+
   it('makes the new panel id itself, ignoring one in the input', () => {
     const deps = depsWith();
     const result = createPrepareDashboardTool(deps).execute({
