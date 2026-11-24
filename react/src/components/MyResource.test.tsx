@@ -145,6 +145,30 @@ describe('MyResource', () => {
     expect(data.accelerators).toEqual([]);
   });
 
+  it('does not claim no resource group when the group read comes back null', async () => {
+    const environment = renderCard();
+    environment.mock.resolve(environment.mock.getMostRecentOperation(), {
+      data: {
+        myUserResourceAllocationV2: {
+          user: {
+            used: [{ resourceType: 'cpu', quantity: '3' }],
+            assignable: [
+              { resourceType: 'cpu', quantity: '4', unlimited: false },
+            ],
+          },
+        },
+        projectResourceAllocationV2: {
+          project: { assignable: [] },
+        },
+        scopedResourceGroups: null,
+      },
+    });
+
+    const data = await readResourceData();
+    expect(data.cpu.used).toEqual({ current: 3, total: 7 });
+    expect(data.accelerators).toEqual([]);
+  });
+
   it('keeps a rejected query inside the card', async () => {
     const environment = renderCard();
     environment.mock.rejectMostRecentOperation(
