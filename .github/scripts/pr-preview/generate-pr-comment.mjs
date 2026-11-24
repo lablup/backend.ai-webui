@@ -4,8 +4,8 @@
 //
 // Usage:
 //   node generate-pr-comment.mjs --meta pr-meta.json \
-//     [--analysis analysis.json] [--bundle-head …] [--bundle-base …] \
-//     [--docs docs-manifest.json] [--docs-meta docs-meta.json]
+//     [--analysis analysis.json] [--docs docs-manifest.json] \
+//     [--docs-meta docs-meta.json]
 //
 // Every section is optional but `--meta`: a PR that only changed the manual
 // renders the docs section alone, and one that only changed the component
@@ -23,8 +23,6 @@ const readJson = (path) =>
 
 const analysis = readJson(getArg("analysis"));
 const meta = readJson(getArg("meta"));
-const bundleHead = readJson(getArg("bundle-head"));
-const bundleBase = readJson(getArg("bundle-base"));
 const docs = readJson(getArg("docs"));
 const docsMeta = readJson(getArg("docs-meta"));
 
@@ -38,10 +36,6 @@ if (!analysis && !docs) {
   );
   process.exit(1);
 }
-
-const kb = (bytes) => `${(bytes / 1024).toFixed(1)} kB`;
-const signed = (bytes) =>
-  `${bytes > 0 ? "+" : bytes < 0 ? "−" : "±"}${kb(Math.abs(bytes))}`;
 
 const link = (text, href) =>
   `<a href="${href}" target="_blank" rel="noopener noreferrer">${text}</a>`;
@@ -165,46 +159,6 @@ if (analysis) {
     out.push("</details>");
     out.push("");
   }
-
-  // ── Bundle size ──────────────────────────────────────────────────────────────
-  out.push("### 📦 Bundle Size");
-  out.push("");
-  if (!bundleHead) {
-    out.push("_Bundle was not measured for this run._");
-  } else {
-    const baseByFile = new Map(
-      (bundleBase?.entries ?? []).map((e) => [e.file, e]),
-    );
-    const rows = bundleHead.entries.filter((e) => e.bytes >= 20 * 1024);
-    out.push(`| File | Size | Gzip |${bundleBase ? " Δ Gzip vs base |" : ""}`);
-    out.push(`|---|---|---|${bundleBase ? "---|" : ""}`);
-    for (const e of rows) {
-      const prev = baseByFile.get(e.file);
-      const delta = bundleBase
-        ? prev
-          ? ` ${prev.hash === e.hash ? "—" : signed(e.gzipBytes - prev.gzipBytes)} |`
-          : " 🆕 new |"
-        : "";
-      out.push(
-        `| \`${e.file}\` | ${kb(e.bytes)} | ${kb(e.gzipBytes)} |${delta}`,
-      );
-    }
-    if (bundleBase) {
-      const totalHead = bundleHead.entries.reduce((n, e) => n + e.gzipBytes, 0);
-      const totalBase = bundleBase.entries.reduce((n, e) => n + e.gzipBytes, 0);
-      out.push("");
-      out.push(
-        `**Total gzip:** ${kb(totalHead)} (${signed(totalHead - totalBase)} vs \`${analysis.base}\`)`,
-      );
-    } else {
-      out.push("");
-      out.push(
-        "_No base measurement — the merge-base build was skipped " +
-          "(dependency changes, or the base build failed)._",
-      );
-    }
-  }
-  out.push("");
 
   if (analysis.diffMode === "two-dot") {
     out.push(

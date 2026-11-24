@@ -182,7 +182,7 @@ test("a storybook-only PR renders unchanged, with no docs section", () => {
 
   assert.match(body, /### 📚 Storybook Preview/);
   assert.match(body, /### 🧩 Changed Components/);
-  assert.match(body, /### 📦 Bundle Size/);
+  assert.doesNotMatch(body, /Bundle Size/);
   assert.match(body, /`BAIDeploymentTable`/);
   assert.doesNotMatch(body, /Docs Preview/);
 });
