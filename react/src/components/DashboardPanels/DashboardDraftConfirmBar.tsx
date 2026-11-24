@@ -30,42 +30,38 @@ const DashboardDraftConfirmBar: React.FC<DashboardDraftConfirmBarProps> = ({
   return (
     <BAIFlex
       align="center"
-      gap="md"
+      gap="sm"
       className="dashboard-draft-confirm-bar"
       role="region"
       aria-label={t('dashboard.agentDraft.Title')}
       data-testid="dashboard-draft-confirm-bar"
-      // BAIFlex's inline `position` would beat the class.
-      style={{ position: 'fixed' }}
+      // BAIFlex's inline `position` and `minHeight` would beat the class.
+      style={{
+        position: 'fixed',
+        minHeight: 'var(--webui-assistant-fab-size, 48px)',
+      }}
     >
-      <Sparkles size="1.25em" aria-hidden color="var(--color-accent)" />
-      <BAIFlex direction="column" align="start" style={{ minWidth: 0 }}>
-        <Text size="sm" weight="semibold">
-          {t('dashboard.agentDraft.Title')}
-        </Text>
-        <Text size="sm" color="secondary">
-          {newBoardTitle
-            ? t('webuiAssistant.DashboardPreviewingNewBoard', {
-                title: newBoardTitle,
-                count,
-              })
-            : t('webuiAssistant.DashboardPreviewingCount', { count })}
-        </Text>
-      </BAIFlex>
-      <BAIFlex gap="xs" style={{ flexShrink: 0 }}>
-        <Button
-          size="sm"
-          variant="ghost"
-          label={t('webuiAssistant.DiscardDashboardChanges')}
-          onClick={onDiscard}
-        />
-        <Button
-          size="sm"
-          variant="primary"
-          label={t('webuiAssistant.ApplyDashboardChanges')}
-          onClick={onApply}
-        />
-      </BAIFlex>
+      <Sparkles size="1.1em" aria-hidden color="var(--color-accent)" />
+      <Text size="sm" maxLines={1}>
+        {newBoardTitle
+          ? t('webuiAssistant.DashboardPreviewingNewBoard', {
+              title: newBoardTitle,
+              count,
+            })
+          : t('webuiAssistant.DashboardPreviewingCount', { count })}
+      </Text>
+      <Button
+        size="sm"
+        variant="primary"
+        label={t('webuiAssistant.ApplyDashboardChanges')}
+        onClick={onApply}
+      />
+      <Button
+        size="sm"
+        variant="ghost"
+        label={t('webuiAssistant.DiscardDashboardChanges')}
+        onClick={onDiscard}
+      />
     </BAIFlex>
   );
 };
