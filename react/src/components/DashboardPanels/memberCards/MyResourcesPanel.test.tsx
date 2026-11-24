@@ -104,7 +104,7 @@ describe('MyResourcesInResourceGroup', () => {
     expect(data.accelerators).toEqual([]);
   });
 
-  it('keeps an accelerator in use when the capacity is unknown', async () => {
+  it('does not list an accelerator used in other groups when the capacity is unknown', async () => {
     const environment = renderCard();
     environment.mock.resolve(environment.mock.getMostRecentOperation(), {
       data: {
@@ -123,9 +123,7 @@ describe('MyResourcesInResourceGroup', () => {
     });
 
     const data = await readResourceData();
-    expect(data.accelerators.map((a: { key: string }) => a.key)).toEqual([
-      'cuda.device',
-    ]);
+    expect(data.accelerators).toEqual([]);
   });
 
   it('keeps CPU and memory only when the group reports no capacity', async () => {

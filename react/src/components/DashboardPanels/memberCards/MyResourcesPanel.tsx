@@ -8,12 +8,7 @@ import { readPrimary, readSecondary } from '../panelPermission';
 import type { PanelComponentProps } from '../types';
 import MemberCard, { NoProjectText, mineProjectId } from './MemberCard';
 import ResourceUsageStatistics from './ResourceUsageStatistics';
-import {
-  freeAsLimits,
-  offeredSlotsOf,
-  toUsageRows,
-  usedSlotsOf,
-} from './memberCardData';
+import { freeAsLimits, offeredSlotsOf, toUsageRows } from './memberCardData';
 import { Text } from '@lablup/ui-common/Text';
 import React, { useDeferredValue } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
@@ -118,11 +113,10 @@ export const MyResourcesInResourceGroup: React.FC<{
                 freeAsLimits(resourceInfo?.free.entries),
               ],
               {
-                // The scope can miss a group reached through the keypair, so an empty
-                // read is not "no group": unknown capacity keeps CPU/RAM and what is in use.
+                // A null, denied or empty read keeps CPU/RAM; `user.used` spans every group.
                 slots:
                   offeredSlotsOf(resourceInfo?.capacity.entries) ??
-                  usedSlotsOf(user.used),
+                  new Set(['cpu', 'mem']),
               },
             )
           : []
