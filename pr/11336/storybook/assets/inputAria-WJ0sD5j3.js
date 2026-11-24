@@ -1,1 +1,0 @@
-import{n as e}from"./rolldown-runtime-sJBDdmOt.js";function t(...e){let t=e.flatMap(e=>typeof e==`string`?e.trim().split(/\s+/):[]).filter(Boolean);if(t.length!==0)return Array.from(new Set(t)).join(` `)}function n(e,n=[],r){return{ariaLabelledBy:r?t(r.labelID,e):void 0,ariaDescribedBy:t(r?.describedByIDs,...n)}}function r(){return(r=e((()=>{})))()}export{r as n,t as r,n as t};
