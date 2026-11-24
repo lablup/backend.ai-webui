@@ -80,12 +80,15 @@ const unavailable = {
   },
 };
 
-// The user is in this tab, so the links a browser agent hands over only cost the model context.
-const LINK_KEYS = ['webui_url', 'path'];
+// The user is in this tab and the system prompt says what to do next, so the
+// links for another browser and the agent's next-step text only cost context.
+const BROWSER_AGENT_KEYS = ['webui_url', 'path', 'nextStep', 'draft'];
 
-/** A page tool's result as the model reads it: without the links for another browser. */
+/** A page tool's result as the model reads it: without what only a browser agent needs. */
 export const modelOutputOf = (output: unknown): unknown =>
-  _.isPlainObject(output) ? _.omit(output as object, LINK_KEYS) : output;
+  _.isPlainObject(output)
+    ? _.omit(output as object, BROWSER_AGENT_KEYS)
+    : output;
 
 /**
  * `bai_prepare_session` away from the launcher: opens it, then calls the

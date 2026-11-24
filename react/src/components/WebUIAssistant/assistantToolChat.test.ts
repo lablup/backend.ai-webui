@@ -98,9 +98,15 @@ describe('toolSetOf', () => {
 });
 
 describe('modelOutputOf', () => {
-  it('drops the links meant for another browser', () => {
+  it('drops what only a browser agent needs', () => {
     expect(
-      modelOutputOf({ path: '/a', webui_url: 'https://x/a', applied: ['x'] }),
+      modelOutputOf({
+        path: '/a',
+        webui_url: 'https://x/a',
+        nextStep: 'Give webui_url to the user.',
+        draft: ['x'],
+        applied: ['x'],
+      }),
     ).toEqual({ applied: ['x'] });
     expect(modelOutputOf('text')).toBe('text');
   });
