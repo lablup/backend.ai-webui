@@ -8,8 +8,6 @@ import { useCustomEndpointApiKey } from '../Chat/customEndpointKeyStore';
 import { useCurrentLanguage } from '../DefaultProviders';
 import ErrorBoundaryWithNullFallback from '../ErrorBoundaryWithNullFallback';
 import './WebUIAssistant.css';
-import WebUIAssistantChat from './WebUIAssistantChat';
-import WebUIAssistantConnectModal from './WebUIAssistantConnectModal';
 import WebUIAssistantKeyRestorer from './WebUIAssistantKeyRestorer';
 import { useCustomConnectionThisLoad } from './customConnectionThisLoad';
 import { WEBUI_ASSISTANT_PROFILE } from './webUIAssistantProfile';
@@ -23,9 +21,14 @@ import { Spinner } from '@lablup/ui-common/Spinner';
 import { Text } from '@lablup/ui-common/Text';
 import { BAIFlex, BAIPopconfirm, BAIUnmountAfterClose } from 'backend.ai-ui';
 import { EraserIcon, MessageCircle, PlugZap, X } from 'lucide-react';
-import { Suspense, useEffect, useState } from 'react';
+import { lazy, startTransition, Suspense, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
+
+const loadChat = () => import('./WebUIAssistantChat');
+const loadConnectModal = () => import('./WebUIAssistantConnectModal');
+const WebUIAssistantChat = lazy(loadChat);
+const WebUIAssistantConnectModal = lazy(loadConnectModal);
 
 /** The floating WebUI Assistant; renders nothing until the user turns it on. */
 const WebUIAssistant: React.FC = () => {
@@ -69,6 +72,11 @@ const WebUIAssistantFloating: React.FC = () => {
   // The chat (manual download, /models probe) mounts on first open (ADR 0032) and then stays.
   const [hasBeenShown, setHasBeenShown] = useState(false);
   if (isPanelShown && !hasBeenShown) setHasBeenShown(true);
+
+  const openConnectModal = async () => {
+    await loadConnectModal();
+    startTransition(() => setIsConnectOpen(true));
+  };
 
   useEffect(() => {
     if (!isOpen || isConnectOpen) return;
@@ -124,7 +132,7 @@ const WebUIAssistantFloating: React.FC = () => {
               icon={<PlugZap size="1em" />}
               label={t('webuiAssistant.ChangeConnection')}
               tooltip={t('webuiAssistant.ChangeConnection')}
-              onClick={() => setIsConnectOpen(true)}
+              clickAction={openConnectModal}
             />
             <BAIPopconfirm
               title={t('webuiAssistant.ClearConversationConfirm')}
@@ -142,22 +150,34 @@ const WebUIAssistantFloating: React.FC = () => {
             </BAIPopconfirm>
           </BAIFlex>
         </BAIFlex>
-        {hasBeenShown &&
-          (!connection || !isConnected ? (
+        <Suspense
+          fallback={
             <BAIFlex justify="center" align="center" style={{ flex: '1 1 0%' }}>
               <Spinner />
             </BAIFlex>
-          ) : (
-            <ErrorBoundaryWithNullFallback>
-              <WebUIAssistantChat
-                key={`${conversationKey}-${connection.baseURL}-${apiKey ?? ''}`}
-                baseURL={connection.baseURL}
-                apiKey={apiKey}
-                isVisible={isPanelShown}
-                onChangeConnection={() => setIsConnectOpen(true)}
-              />
-            </ErrorBoundaryWithNullFallback>
-          ))}
+          }
+        >
+          {hasBeenShown &&
+            (!connection || !isConnected ? (
+              <BAIFlex
+                justify="center"
+                align="center"
+                style={{ flex: '1 1 0%' }}
+              >
+                <Spinner />
+              </BAIFlex>
+            ) : (
+              <ErrorBoundaryWithNullFallback>
+                <WebUIAssistantChat
+                  key={`${conversationKey}-${connection.baseURL}-${apiKey ?? ''}`}
+                  baseURL={connection.baseURL}
+                  apiKey={apiKey}
+                  isVisible={isPanelShown}
+                  onChangeConnection={openConnectModal}
+                />
+              </ErrorBoundaryWithNullFallback>
+            ))}
+        </Suspense>
       </BAIFlex>
       <IconButton
         className="webui-assistant-fab"
@@ -169,14 +189,15 @@ const WebUIAssistantFloating: React.FC = () => {
         label={isPanelShown ? t('button.Close') : t('webuiAssistant.Open')}
         tooltip={isPanelShown ? undefined : title}
         aria-expanded={isPanelShown}
-        onClick={() => {
+        clickAction={async () => {
           // Without a connection the button asks for one; the chat opens once it is saved.
           if (!isConnected) {
-            setIsConnectOpen(true);
-            setIsOpen(true);
+            await openConnectModal();
+            startTransition(() => setIsOpen(true));
             return;
           }
-          setIsOpen((open) => !open);
+          if (!isOpen) await loadChat();
+          startTransition(() => setIsOpen((open) => !open));
         }}
       />
       {connection?.deploymentId && connection.hasApiKey && !apiKey && (
