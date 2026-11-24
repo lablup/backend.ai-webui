@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<94892e1c5f4ce7a747dbc1fb8330a637>>
+ * @generated SignedSource<<fd9af7b35bd15679115a2d58525a0015>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -43,6 +43,9 @@ export type useVFolderInvitationsQuery$data = {
     }>;
   } | null | undefined;
   readonly myUserV2: {
+    readonly basicInfo: {
+      readonly email: string;
+    };
     readonly projects: {
       readonly edges: ReadonlyArray<{
         readonly node: {
@@ -313,6 +316,7 @@ return {
         "name": "myUserV2",
         "plural": false,
         "selections": [
+          (v10/*: any*/),
           {
             "alias": null,
             "args": (v14/*: any*/),
@@ -449,6 +453,7 @@ return {
         "name": "myUserV2",
         "plural": false,
         "selections": [
+          (v10/*: any*/),
           {
             "alias": null,
             "args": (v14/*: any*/),
@@ -492,16 +497,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "cfc98a901842cfde752d4595551b07ae",
+    "cacheID": "e1169ff92d1166d0ab6aa1a2ffcf7ba1",
     "id": null,
     "metadata": {},
     "name": "useVFolderInvitationsQuery",
     "operationKind": "query",
-    "text": "query useVFolderInvitationsQuery {\n  myEntityShares(sides: [RECIPIENT], filter: {status: {equals: PENDING}}, orderBy: [{field: CREATED_AT, direction: \"DESC\"}], limit: 100) {\n    edges {\n      node {\n        entityId\n        status\n        permissions\n        targetEntityType\n        targetEntityId\n        createdAt\n        recipientEntityType\n        recipientEntityId\n        sharer {\n          basicInfo {\n            email\n          }\n          id\n        }\n        targetEntity {\n          __typename\n          ... on VFolder {\n            metadata {\n              name\n            }\n          }\n          ... on Node {\n            __isNode: __typename\n            id\n          }\n          ... on ArtifactRegistry {\n            id\n          }\n        }\n        id\n      }\n    }\n  }\n  myUserV2 {\n    projects(filter: {isActive: true}, limit: 100) {\n      edges {\n        node {\n          entityId\n          basicInfo {\n            name\n          }\n          id\n        }\n      }\n    }\n    id\n  }\n}\n"
+    "text": "query useVFolderInvitationsQuery {\n  myEntityShares(sides: [RECIPIENT], filter: {status: {equals: PENDING}}, orderBy: [{field: CREATED_AT, direction: \"DESC\"}], limit: 100) {\n    edges {\n      node {\n        entityId\n        status\n        permissions\n        targetEntityType\n        targetEntityId\n        createdAt\n        recipientEntityType\n        recipientEntityId\n        sharer {\n          basicInfo {\n            email\n          }\n          id\n        }\n        targetEntity {\n          __typename\n          ... on VFolder {\n            metadata {\n              name\n            }\n          }\n          ... on Node {\n            __isNode: __typename\n            id\n          }\n          ... on ArtifactRegistry {\n            id\n          }\n        }\n        id\n      }\n    }\n  }\n  myUserV2 {\n    basicInfo {\n      email\n    }\n    projects(filter: {isActive: true}, limit: 100) {\n      edges {\n        node {\n          entityId\n          basicInfo {\n            name\n          }\n          id\n        }\n      }\n    }\n    id\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "c5bc51eed1fcc317a478b25d8a6def45";
+(node as any).hash = "afbc665f9e78dfcc30eb566b9c487535";
 
 export default node;

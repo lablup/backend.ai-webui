@@ -60,11 +60,18 @@ export interface RecipientShare {
 
 /**
  * The pending folder shares among the caller's received shares, newest first.
- * `projectNames` names a project share whose `recipientEntity` the caller may not read.
+ * `projectNames` names a project share whose `recipientEntity` the caller may not read;
+ * a share `selfEmail` sent is the caller's own offer, not an invitation.
  */
 export const toInvitationItems = (
   shares: ReadonlyArray<RecipientShare>,
-  projectNames: Readonly<Record<string, string>> = {},
+  {
+    projectNames = {},
+    selfEmail,
+  }: {
+    projectNames?: Readonly<Record<string, string>>;
+    selfEmail?: string | null;
+  } = {},
 ): InvitationItem[] =>
   _.orderBy(
     _.map(
@@ -73,7 +80,8 @@ export const toInvitationItems = (
           shares,
           (share) =>
             share.status === 'PENDING' &&
-            share.targetEntityType === VFOLDER_ENTITY_TYPE,
+            share.targetEntityType === VFOLDER_ENTITY_TYPE &&
+            !(selfEmail && share.sharer?.basicInfo.email === selfEmail),
         ),
         'entityId',
       ),
@@ -88,7 +96,8 @@ export const toInvitationItems = (
         sharerEmail: share.sharer?.basicInfo.email ?? null,
         permissions: share.permissions,
         createdAt: share.createdAt,
-        ...(share.recipientEntityType === PROJECT_ENTITY_TYPE && {
+        ...(share.recipientEntityType?.toLowerCase() ===
+          PROJECT_ENTITY_TYPE && {
           recipientProjectName:
             (share.recipientEntity?.__typename === 'ProjectV2' &&
             'basicInfo' in share.recipientEntity
@@ -96,7 +105,7 @@ export const toInvitationItems = (
               : undefined) ??
             projectNames[share.recipientEntityId ?? ''] ??
             share.recipientEntityId ??
-            '',
+            undefined,
         }),
       }),
     ),
@@ -141,6 +150,9 @@ const invitationsQuery = graphql`
       }
     }
     myUserV2 {
+      basicInfo {
+        email
+      }
       projects(filter: { isActive: true }, limit: 100) {
         edges {
           node {
@@ -265,9 +277,15 @@ const loadInvitations = async (): Promise<InvitationItem[]> => {
       ..._.map(data?.myEntityShares?.edges, (edge) => edge.node),
       ...projectShares,
     ],
-    _.fromPairs(
-      _.map(projects, (project) => [project.entityId, project.basicInfo.name]),
-    ),
+    {
+      projectNames: _.fromPairs(
+        _.map(projects, (project) => [
+          project.entityId,
+          project.basicInfo.name,
+        ]),
+      ),
+      selfEmail: data?.myUserV2?.basicInfo?.email,
+    },
   );
 };
 

@@ -77,7 +77,7 @@ const FolderInvitationResponseModal: React.FC<
           <MetadataListItem label={t('data.Foldername')}>
             {folderName}
           </MetadataListItem>
-          {item.recipientProjectName !== undefined && (
+          {item.recipientProjectName && (
             <MetadataListItem label={t('general.Project')}>
               {item.recipientProjectName}
             </MetadataListItem>

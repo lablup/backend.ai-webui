@@ -380,7 +380,9 @@ const RecipientCell: React.FC<{ name: string; kind: RecipientKind }> = ({
   const { t } = useTranslation();
   return (
     <HStack gap={2} align="center">
-      <BAIText>{name}</BAIText>
+      <BAIText ellipsis={{ tooltip: true }} style={{ minWidth: 0 }}>
+        {name}
+      </BAIText>
       <Token
         label={kind === 'project' ? t('general.Project') : t('general.User')}
       />

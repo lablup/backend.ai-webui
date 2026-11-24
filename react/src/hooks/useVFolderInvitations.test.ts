@@ -74,7 +74,7 @@ describe('toInvitationItems (#10329)', () => {
         }),
         share({ entityId: 'mine', recipientEntityType: 'user' }),
       ],
-      { 'p-2': 'vision' },
+      { projectNames: { 'p-2': 'vision' } },
     );
     expect(
       _.fromPairs(items.map((item) => [item.id, item.recipientProjectName])),
@@ -92,5 +92,30 @@ describe('toInvitationItems (#10329)', () => {
       share({ entityId: 'same' }),
     ]);
     expect(items).toHaveLength(1);
+  });
+
+  it("leaves out the caller's own offer to a project they answer for", () => {
+    const items = toInvitationItems(
+      [
+        share({
+          entityId: 'own',
+          sharer: { basicInfo: { email: 'me@example.com' } },
+        }),
+        share({ entityId: 'theirs' }),
+      ],
+      { selfEmail: 'me@example.com' },
+    );
+    expect(items.map((item) => item.id)).toEqual(['theirs']);
+  });
+
+  it('reads the recipient type regardless of case', () => {
+    const [item] = toInvitationItems([
+      share({
+        recipientEntityType: 'PROJECT',
+        recipientEntityId: 'p-1',
+        recipientEntity: null,
+      }),
+    ]);
+    expect(item.recipientProjectName).toBe('p-1');
   });
 });
