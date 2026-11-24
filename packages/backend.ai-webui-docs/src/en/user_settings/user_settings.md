@@ -307,7 +307,6 @@ Access new experimental features early -- these may change or be removed in
 future updates. Each feature is turned on with its **Enabled** checkbox.
 
 ![](../images/experimental_features.png)
-<!-- TODO(screenshot): recapture ../images/experimental_features.png for every locale (en/ko/ja/th) at /usersettings?settings=general -> Experimental features, so the list includes the WebUI Assistant row. Still open: the capture backend's manager answers 401 on /func/, so no run since 2026-11-22 could log in. -->
 
 - **AI Agents**: Enable the AI Agents feature, which provides agent-based AI
   capabilities within the WebUI. When turned on, AI agent functionality becomes

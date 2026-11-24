@@ -286,7 +286,6 @@ Backend.AI는 OpenSSH에 기반한 SSH keypair를 사용합니다. Windows에서
 변경되거나 제거될 수 있습니다. 각 기능은 **활성화** 체크박스로 켤 수 있습니다.
 
 ![](../images/experimental_features.png)
-<!-- TODO(screenshot): recapture ../images/experimental_features.png for every locale (en/ko/ja/th) at /usersettings?settings=general -> Experimental features, so the list includes the WebUI Assistant row. Still open: the capture backend's manager answers 401 on /func/, so no run since 2026-11-22 could log in. -->
 
 - **AI 에이전트**: AI 에이전트 기능을 활성화합니다. 이 기능은 WebUI 내에서
   에이전트 기반 AI 기능을 제공합니다. 활성화하면 세션에서 AI 에이전트 기능을

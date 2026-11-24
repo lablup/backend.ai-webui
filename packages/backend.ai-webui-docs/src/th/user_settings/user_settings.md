@@ -297,7 +297,6 @@ Backend.AI ใช้คู่คีย์ SSH ที่อิงตาม OpenSS
 **เปิดใช้งาน**
 
 ![](../images/experimental_features.png)
-<!-- TODO(screenshot): recapture ../images/experimental_features.png for every locale (en/ko/ja/th) at /usersettings?settings=general -> Experimental features, so the list includes the WebUI Assistant row. Still open: the capture backend's manager answers 401 on /func/, so no run since 2026-11-22 could log in. -->
 
 - **เอเจนต์ AI**: เปิดใช้งานฟีเจอร์เอเจนต์ AI ซึ่งให้ความสามารถ AI แบบ
   เอเจนต์ภายใน WebUI เมื่อเปิดใช้งาน ฟังก์ชันเอเจนต์ AI จะพร้อมใช้งาน
