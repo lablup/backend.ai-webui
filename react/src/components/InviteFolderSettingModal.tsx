@@ -31,6 +31,7 @@ import { HStack, StackItem, VStack } from '@lablup/ui-common/Stack';
 import { Heading } from '@lablup/ui-common/Text';
 import { Token } from '@lablup/ui-common/Token';
 import { Tooltip } from '@lablup/ui-common/Tooltip';
+import * as stylex from '@stylexjs/stylex';
 import {
   BAIAlert,
   BAIBadge,
@@ -372,6 +373,10 @@ const ExistingShareNoticeModal: React.FC<{
 };
 
 // A recipient's name with a token saying whether it is a user or a project.
+const styles = stylex.create({
+  recipientCell: { minWidth: 0 },
+});
+
 const RecipientCell: React.FC<{ name: string; kind: RecipientKind }> = ({
   name,
   kind,
@@ -379,10 +384,10 @@ const RecipientCell: React.FC<{ name: string; kind: RecipientKind }> = ({
   'use memo';
   const { t } = useTranslation();
   return (
-    <HStack gap={2} align="center">
-      <BAIText ellipsis={{ tooltip: true }} style={{ minWidth: 0 }}>
-        {name}
-      </BAIText>
+    <HStack gap={2} align="center" xstyle={styles.recipientCell}>
+      <StackItem size="fill">
+        <BAIText ellipsis={{ tooltip: true }}>{name}</BAIText>
+      </StackItem>
       <Token
         label={kind === 'project' ? t('general.Project') : t('general.User')}
       />

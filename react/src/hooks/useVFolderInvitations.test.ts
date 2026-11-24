@@ -99,18 +99,20 @@ describe('toInvitationItems (#10329)', () => {
       [
         share({
           entityId: 'own',
-          sharer: { basicInfo: { email: 'me@example.com' } },
+          recipientEntityType: 'project',
+          sharer: { entityId: 'me', basicInfo: { email: 'me@example.com' } },
         }),
-        share({ entityId: 'theirs' }),
+        share({ entityId: 'theirs', recipientEntityType: 'project' }),
       ],
-      { selfEmail: 'me@example.com' },
+      { selfUserId: 'me' },
     );
     expect(items.map((item) => item.id)).toEqual(['theirs']);
   });
 
-  it('reads the recipient type regardless of case', () => {
+  it('reads the entity types regardless of case', () => {
     const [item] = toInvitationItems([
       share({
+        targetEntityType: 'VFOLDER',
         recipientEntityType: 'PROJECT',
         recipientEntityId: 'p-1',
         recipientEntity: null,

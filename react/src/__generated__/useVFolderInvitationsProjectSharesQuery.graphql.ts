@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<81c3e97e26f3bb3a0bcff7b66c7ff98d>>
+ * @generated SignedSource<<d2a0ad34a0fcd7738f6f39ac19daef3a>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -40,6 +40,7 @@ export type useVFolderInvitationsProjectSharesQuery$data = {
           readonly basicInfo: {
             readonly email: string;
           };
+          readonly entityId: string;
         } | null | undefined;
         readonly status: EntityShareStatus;
         readonly targetEntity: {
@@ -318,6 +319,7 @@ return {
                     "name": "sharer",
                     "plural": false,
                     "selections": [
+                      (v2/*: any*/),
                       (v13/*: any*/)
                     ],
                     "storageKey": null
@@ -409,6 +411,7 @@ return {
                     "name": "sharer",
                     "plural": false,
                     "selections": [
+                      (v2/*: any*/),
                       (v13/*: any*/),
                       (v15/*: any*/)
                     ],
@@ -442,16 +445,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "35580ca1bec8a24be0414d8d61ee5ce7",
+    "cacheID": "3795ad450501e1450a45d5c730102e6d",
     "id": null,
     "metadata": {},
     "name": "useVFolderInvitationsProjectSharesQuery",
     "operationKind": "query",
-    "text": "query useVFolderInvitationsProjectSharesQuery(\n  $projects: [UUIDScope!]!\n) {\n  entityShares(scope: {recipientProject: $projects}, filter: {status: {equals: PENDING}}, orderBy: [{field: CREATED_AT, direction: \"DESC\"}], limit: 100) {\n    edges {\n      node {\n        entityId\n        status\n        permissions\n        targetEntityType\n        targetEntityId\n        createdAt\n        recipientEntityType\n        recipientEntityId\n        recipientEntity {\n          __typename\n          ... on ProjectV2 {\n            basicInfo {\n              name\n            }\n          }\n          ... on Node {\n            __isNode: __typename\n            id\n          }\n          ... on ArtifactRegistry {\n            id\n          }\n        }\n        sharer {\n          basicInfo {\n            email\n          }\n          id\n        }\n        targetEntity {\n          __typename\n          ... on VFolder {\n            metadata {\n              name\n            }\n          }\n          ... on Node {\n            __isNode: __typename\n            id\n          }\n          ... on ArtifactRegistry {\n            id\n          }\n        }\n        id\n      }\n    }\n  }\n}\n"
+    "text": "query useVFolderInvitationsProjectSharesQuery(\n  $projects: [UUIDScope!]!\n) {\n  entityShares(scope: {recipientProject: $projects}, filter: {status: {equals: PENDING}}, orderBy: [{field: CREATED_AT, direction: \"DESC\"}], limit: 100) {\n    edges {\n      node {\n        entityId\n        status\n        permissions\n        targetEntityType\n        targetEntityId\n        createdAt\n        recipientEntityType\n        recipientEntityId\n        recipientEntity {\n          __typename\n          ... on ProjectV2 {\n            basicInfo {\n              name\n            }\n          }\n          ... on Node {\n            __isNode: __typename\n            id\n          }\n          ... on ArtifactRegistry {\n            id\n          }\n        }\n        sharer {\n          entityId\n          basicInfo {\n            email\n          }\n          id\n        }\n        targetEntity {\n          __typename\n          ... on VFolder {\n            metadata {\n              name\n            }\n          }\n          ... on Node {\n            __isNode: __typename\n            id\n          }\n          ... on ArtifactRegistry {\n            id\n          }\n        }\n        id\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "5f23abec4f4a5d7424b15a897fe7aef0";
+(node as any).hash = "833d379bc68a7e64d868a2fc9fd014b2";
 
 export default node;

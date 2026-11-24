@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<fd9af7b35bd15679115a2d58525a0015>>
+ * @generated SignedSource<<227718b66fde0e9bb2a820676a90b8e9>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -25,6 +25,7 @@ export type useVFolderInvitationsQuery$data = {
           readonly basicInfo: {
             readonly email: string;
           };
+          readonly entityId: string;
         } | null | undefined;
         readonly status: EntityShareStatus;
         readonly targetEntity: {
@@ -43,9 +44,7 @@ export type useVFolderInvitationsQuery$data = {
     }>;
   } | null | undefined;
   readonly myUserV2: {
-    readonly basicInfo: {
-      readonly email: string;
-    };
+    readonly entityId: string;
     readonly projects: {
       readonly edges: ReadonlyArray<{
         readonly node: {
@@ -282,6 +281,7 @@ return {
                     "name": "sharer",
                     "plural": false,
                     "selections": [
+                      (v2/*: any*/),
                       (v10/*: any*/)
                     ],
                     "storageKey": null
@@ -316,7 +316,7 @@ return {
         "name": "myUserV2",
         "plural": false,
         "selections": [
-          (v10/*: any*/),
+          (v2/*: any*/),
           {
             "alias": null,
             "args": (v14/*: any*/),
@@ -405,6 +405,7 @@ return {
                     "name": "sharer",
                     "plural": false,
                     "selections": [
+                      (v2/*: any*/),
                       (v10/*: any*/),
                       (v16/*: any*/)
                     ],
@@ -453,7 +454,7 @@ return {
         "name": "myUserV2",
         "plural": false,
         "selections": [
-          (v10/*: any*/),
+          (v2/*: any*/),
           {
             "alias": null,
             "args": (v14/*: any*/),
@@ -497,16 +498,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "e1169ff92d1166d0ab6aa1a2ffcf7ba1",
+    "cacheID": "bfff03e31d1b7c8d03fc174261174e25",
     "id": null,
     "metadata": {},
     "name": "useVFolderInvitationsQuery",
     "operationKind": "query",
-    "text": "query useVFolderInvitationsQuery {\n  myEntityShares(sides: [RECIPIENT], filter: {status: {equals: PENDING}}, orderBy: [{field: CREATED_AT, direction: \"DESC\"}], limit: 100) {\n    edges {\n      node {\n        entityId\n        status\n        permissions\n        targetEntityType\n        targetEntityId\n        createdAt\n        recipientEntityType\n        recipientEntityId\n        sharer {\n          basicInfo {\n            email\n          }\n          id\n        }\n        targetEntity {\n          __typename\n          ... on VFolder {\n            metadata {\n              name\n            }\n          }\n          ... on Node {\n            __isNode: __typename\n            id\n          }\n          ... on ArtifactRegistry {\n            id\n          }\n        }\n        id\n      }\n    }\n  }\n  myUserV2 {\n    basicInfo {\n      email\n    }\n    projects(filter: {isActive: true}, limit: 100) {\n      edges {\n        node {\n          entityId\n          basicInfo {\n            name\n          }\n          id\n        }\n      }\n    }\n    id\n  }\n}\n"
+    "text": "query useVFolderInvitationsQuery {\n  myEntityShares(sides: [RECIPIENT], filter: {status: {equals: PENDING}}, orderBy: [{field: CREATED_AT, direction: \"DESC\"}], limit: 100) {\n    edges {\n      node {\n        entityId\n        status\n        permissions\n        targetEntityType\n        targetEntityId\n        createdAt\n        recipientEntityType\n        recipientEntityId\n        sharer {\n          entityId\n          basicInfo {\n            email\n          }\n          id\n        }\n        targetEntity {\n          __typename\n          ... on VFolder {\n            metadata {\n              name\n            }\n          }\n          ... on Node {\n            __isNode: __typename\n            id\n          }\n          ... on ArtifactRegistry {\n            id\n          }\n        }\n        id\n      }\n    }\n  }\n  myUserV2 {\n    entityId\n    projects(filter: {isActive: true}, limit: 100) {\n      edges {\n        node {\n          entityId\n          basicInfo {\n            name\n          }\n          id\n        }\n      }\n    }\n    id\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "afbc665f9e78dfcc30eb566b9c487535";
+(node as any).hash = "817f779db7754d4b91bcce1b0512e748";
 
 export default node;

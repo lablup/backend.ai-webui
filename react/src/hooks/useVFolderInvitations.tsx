@@ -51,26 +51,29 @@ export interface RecipientShare {
     | { __typename: 'ProjectV2'; basicInfo: { name: string } }
     | { __typename: string }
     | null;
-  sharer?: { basicInfo: { email: string } } | null;
+  sharer?: { entityId?: string; basicInfo: { email: string } } | null;
   targetEntity?:
     | { __typename: 'VFolder'; metadata: { name: string } }
     | { __typename: string }
     | null;
 }
 
+const isEntityType = (value: string | null | undefined, type: string) =>
+  value?.toLowerCase() === type;
+
 /**
  * The pending folder shares among the caller's received shares, newest first.
  * `projectNames` names a project share whose `recipientEntity` the caller may not read;
- * a share `selfEmail` sent is the caller's own offer, not an invitation.
+ * a project share `selfUserId` sent is the caller's own offer, not an invitation.
  */
 export const toInvitationItems = (
   shares: ReadonlyArray<RecipientShare>,
   {
     projectNames = {},
-    selfEmail,
+    selfUserId,
   }: {
     projectNames?: Readonly<Record<string, string>>;
-    selfEmail?: string | null;
+    selfUserId?: string | null;
   } = {},
 ): InvitationItem[] =>
   _.orderBy(
@@ -80,8 +83,12 @@ export const toInvitationItems = (
           shares,
           (share) =>
             share.status === 'PENDING' &&
-            share.targetEntityType === VFOLDER_ENTITY_TYPE &&
-            !(selfEmail && share.sharer?.basicInfo.email === selfEmail),
+            isEntityType(share.targetEntityType, VFOLDER_ENTITY_TYPE) &&
+            !(
+              selfUserId &&
+              isEntityType(share.recipientEntityType, PROJECT_ENTITY_TYPE) &&
+              share.sharer?.entityId === selfUserId
+            ),
         ),
         'entityId',
       ),
@@ -96,8 +103,7 @@ export const toInvitationItems = (
         sharerEmail: share.sharer?.basicInfo.email ?? null,
         permissions: share.permissions,
         createdAt: share.createdAt,
-        ...(share.recipientEntityType?.toLowerCase() ===
-          PROJECT_ENTITY_TYPE && {
+        ...(isEntityType(share.recipientEntityType, PROJECT_ENTITY_TYPE) && {
           recipientProjectName:
             (share.recipientEntity?.__typename === 'ProjectV2' &&
             'basicInfo' in share.recipientEntity
@@ -134,6 +140,7 @@ const invitationsQuery = graphql`
           recipientEntityType
           recipientEntityId
           sharer {
+            entityId
             basicInfo {
               email
             }
@@ -150,9 +157,7 @@ const invitationsQuery = graphql`
       }
     }
     myUserV2 {
-      basicInfo {
-        email
-      }
+      entityId
       projects(filter: { isActive: true }, limit: 100) {
         edges {
           node {
@@ -209,6 +214,7 @@ const projectSharesQuery = graphql`
             }
           }
           sharer {
+            entityId
             basicInfo {
               email
             }
@@ -284,7 +290,7 @@ const loadInvitations = async (): Promise<InvitationItem[]> => {
           project.basicInfo.name,
         ]),
       ),
-      selfEmail: data?.myUserV2?.basicInfo?.email,
+      selfUserId: data?.myUserV2?.entityId,
     },
   );
 };
