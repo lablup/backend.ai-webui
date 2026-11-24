@@ -14,8 +14,7 @@ A **Project Admin** is a user who has been granted administrative authority over
 
 When you open the project dropdown in the header, projects in which you have the project-admin role are marked with a shield-shaped badge next to the project name. Hovering the badge displays a **Project Admin** tooltip, confirming that selecting this project will reveal the project-admin sidebar entries described below.
 
-![=260px](../images/header_project_selector_with_admin_badge.png)
-<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
+![=266px](../images/header_project_selector_with_admin_badge.png)
 
 Switching to a different project from the header's project selector re-evaluates the user's role: the same user may act as a project admin in one project and as a regular user in another within the same login session. To learn how project-admin roles are granted and revoked, see [Grant Project Admin Authority](#grant-project-admin) in the RBAC Management chapter.
 
@@ -24,7 +23,6 @@ Because project-admin authority is re-evaluated per selected project, the pages 
 :::
 
 ![](../images/forbidden_page.png)
-<!-- TODO(screenshot): recapture while logged in as a user who lacks project-admin rights on the requested project. This image was captured with the superadmin account. -->
 
 <a id="set-project-admin"></a>
 
@@ -35,10 +33,6 @@ Superadmins can grant and revoke project admin for one or more users in a single
 On each project row, click the **Set Project Admin** button to open the modal.
 
 ![](../images/project_admin_set_admin_action.png)
-
-:::note
-The **Set Project Admin** action is available to superadmins on **manager 26.8.0 or later**. It is hidden on older managers, and it is disabled for Model Store projects.
-:::
 
 The modal provides:
 
@@ -68,12 +62,10 @@ When you select a project in which you are a project admin, the sidebar's **Oper
 - **Deployments** — the model deployments owned by the current project
 
 ![=240px](../images/project_admin_sidebar.png)
-<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
 
 On the project-admin pages, only the items under the project selected with the project selector at the top are shown. You can check this through the banner at the top of the page.
 
 ![](../images/project_admin_scope_alert.png)
-<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
 
 <a id="refreshing-project-admin-pages"></a>
 
@@ -84,7 +76,6 @@ The project-admin pages provide the same refresh button. Click the refresh butto
 The dropdown button next to the refresh button opens the **Auto Refresh** menu, where you can choose the auto-refresh interval.
 
 ![=86px](../images/project_admin_auto_refresh_menu.png)
-<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
 
 <a id="users"></a>
 
@@ -93,7 +84,6 @@ The dropdown button next to the refresh button opens the **Auto Refresh** menu, 
 The **Users** page lists every user who belongs to the currently selected project. Use this page to review project membership at a glance — for example, to confirm who has access to the project's resources or to identify inactive accounts.
 
 ![](../images/project_admin_users_page.png)
-<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
 
 The page provides the following controls:
 
@@ -109,7 +99,6 @@ The Users page is **read-only** for project admins. There are no create, edit, o
 The **Data** page lists the storage folders (vfolders) owned by the currently selected project. Use this page to create project-shared folders, restore folders that were accidentally deleted, or purge folders that no longer need to be retained.
 
 ![](../images/project_admin_data_page.png)
-<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
 
 The page provides the following controls:
 
@@ -129,7 +118,6 @@ To create a new folder from this page:
 3. Click **Create** to create the folder.
 
 ![=650px](../images/project_admin_create_folder_modal.png)
-<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
 
 :::info
 Folders created from the Project Admin Data page are always **project folders** — the creation modal has no folder-type selection. The modal displays the following message to make this explicit:
@@ -147,7 +135,6 @@ Switch to the **Trash** tab to see folders that have been soft-deleted. Select o
 - **Delete forever**: Permanently purge the selected folders. This action is irreversible and requires you to type the folder's name to confirm.
 
 ![](../images/project_admin_data_deleted_tab.png)
-<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
 
 :::danger
 Permanently deleting a storage folder removes all of its contents and cannot be undone. The confirmation modal requires you to type the folder's name before the deletion button becomes enabled.
@@ -160,7 +147,7 @@ Permanently deleting a storage folder removes all of its contents and cannot be 
 The **Sessions** page lists the compute sessions owned by users in the currently selected project. Use this page to monitor active workloads, identify long-running sessions, or terminate sessions that are no longer needed.
 
 ![](../images/project_admin_sessions_page.png)
-<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
+<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; project-admin on 10.82.1.201 has no sessions, 2026-11-24. -->
 
 The page provides the following controls:
 
@@ -178,7 +165,7 @@ To terminate one or more sessions:
 5. Click the confirm button to terminate the sessions.
 
 ![=520px](../images/project_admin_terminate_session_modal.png)
-<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
+<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; project-admin on 10.82.1.201 has no sessions, 2026-11-24. -->
 
 :::warning
 Use **Force Terminate** only when a session is stuck and its state does not change for an unreasonably long time. Force terminate does not delete the actual containers on the agent(s), so manual cleanup may be required afterward.
@@ -195,7 +182,7 @@ Clicking a session name on the project-admin Sessions page does not currently op
 The **Deployments** page lists the model deployments owned by the currently selected project. Use this page to oversee inference endpoints, edit deployment settings, or remove deployments that are no longer in use.
 
 ![](../images/project_admin_deployments_page.png)
-<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
+<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; project-admin on 10.82.1.201 has no deployments, 2026-11-24. -->
 
 The page provides the following controls:
 
@@ -216,6 +203,6 @@ The following actions are available on each deployment row:
 - Click the **trash icon** to delete the deployment. The confirmation modal requires you to type the deployment's name before the deletion is performed.
 
 ![](../images/project_admin_deployment_detail.png)
-<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
+<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; project-admin on 10.82.1.201 has no deployments, 2026-11-24. -->
 
 For details about deployment revisions, replicas, and traffic routing, see the [Deployments](#model-serving) chapter.
