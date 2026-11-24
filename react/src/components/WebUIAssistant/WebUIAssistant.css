@@ -2,21 +2,16 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
- The floating button and chat panel sit on the ladder's `assistant` rung
- (packages/backend.ai-ui/src/styles/zIndexLadder.ts): over page content, under
- drawers, dialogs and notifications.
+ The chat panel sits on the ladder's `assistant` rung and the floating button on
+ `assistantButton` (packages/backend.ai-ui/src/styles/zIndexLadder.ts): the
+ button stays above notifications, and the user drags it (the panel follows).
 */
 @layer components {
   :root {
     --webui-assistant-fab-size: 48px;
     --webui-assistant-inset: var(--spacing-6);
-  }
-
-  /* The notification stack would otherwise cover the button. */
-  :root:has(.webui-assistant-fab) {
-    --bai-notification-stack-inset-bottom: calc(
-      var(--webui-assistant-fab-size) + var(--spacing-2)
-    );
+    --webui-assistant-dx: 0px;
+    --webui-assistant-dy: 0px;
   }
 
   .webui-assistant-fab {
@@ -27,31 +22,75 @@
     inset-inline-end: calc(
       var(--webui-assistant-inset) + env(safe-area-inset-right, 0px)
     );
-    z-index: var(--bai-z-assistant);
+    z-index: var(--bai-z-assistant-button);
+    touch-action: none;
+    /* The drag offset, clamped to the viewport again after a resize. */
+    translate: clamp(
+        calc(
+          var(--webui-assistant-fab-size) + var(--webui-assistant-inset) - 100vw
+        ),
+        var(--webui-assistant-dx),
+        var(--webui-assistant-inset)
+      )
+      clamp(
+        calc(
+          var(--webui-assistant-fab-size) + var(--webui-assistant-inset) -
+            100dvh
+        ),
+        var(--webui-assistant-dy),
+        var(--webui-assistant-inset)
+      );
     width: var(--webui-assistant-fab-size);
     height: var(--webui-assistant-fab-size);
     border-radius: 50%;
   }
 
   .webui-assistant-panel {
+    --webui-assistant-panel-bottom: calc(
+      var(--webui-assistant-inset) + var(--webui-assistant-fab-size) +
+        var(--spacing-3)
+    );
+    --webui-assistant-panel-width: min(
+      400px,
+      calc(100vw - var(--webui-assistant-inset) * 2)
+    );
+    --webui-assistant-panel-height: max(
+      320px,
+      min(
+        600px,
+        calc(
+          100dvh - var(--webui-header-height, 60px) -
+            var(--webui-assistant-fab-size) - var(--spacing-6) * 3
+        )
+      )
+    );
     position: fixed;
     inset-block-end: calc(
-      var(--webui-assistant-inset) + var(--webui-assistant-fab-size) +
-        var(--spacing-3) + env(safe-area-inset-bottom, 0px)
+      var(--webui-assistant-panel-bottom) + env(safe-area-inset-bottom, 0px)
     );
     inset-inline-end: calc(
       var(--webui-assistant-inset) + env(safe-area-inset-right, 0px)
     );
     z-index: var(--bai-z-assistant);
-    width: min(400px, calc(100vw - var(--webui-assistant-inset) * 2));
-    height: min(
-      600px,
-      calc(
-        100dvh - var(--webui-header-height, 60px) -
-          var(--webui-assistant-fab-size) - var(--spacing-6) * 3
+    width: var(--webui-assistant-panel-width);
+    height: var(--webui-assistant-panel-height);
+    /* Follows the button, but stays inside the viewport. */
+    translate: clamp(
+        calc(
+          var(--webui-assistant-panel-width) + var(--webui-assistant-inset) -
+            100vw
+        ),
+        var(--webui-assistant-dx),
+        var(--webui-assistant-inset)
       )
-    );
-    min-height: 320px;
+      clamp(
+        calc(
+          var(--webui-assistant-panel-height) +
+            var(--webui-assistant-panel-bottom) - 100dvh
+        ),
+        var(--webui-assistant-dy),
+        var(--webui-assistant-panel-bottom)
+      );
     overflow: hidden;
     background: var(--color-background-surface);
     border: 1px solid var(--color-border);
@@ -61,9 +100,6 @@
 
   /* Layout (flex, padding, border) is inline: BAIFlex's inline style beats classes. */
   .webui-assistant-panel__header {
-    cursor: move;
-    touch-action: none;
-    user-select: none;
     background: var(--color-accent);
     color: var(--color-on-accent);
   }

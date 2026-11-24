@@ -69,7 +69,6 @@ const WebUIAssistantFloating: React.FC = () => {
   // The chat (manual download, /models probe) mounts on first open (ADR 0032) and then stays.
   const [hasBeenShown, setHasBeenShown] = useState(false);
   if (isPanelShown && !hasBeenShown) setHasBeenShown(true);
-  const panelRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<{
     pointerId: number;
     startX: number;
@@ -79,18 +78,22 @@ const WebUIAssistantFloating: React.FC = () => {
     minY: number;
     maxY: number;
     origin: { x: number; y: number };
+    moved: boolean;
   } | null>(null);
-  // Offset from the panel's corner position, set by dragging its header.
+  const wasDraggedRef = useRef(false);
+  // How far the user dragged the button from its corner; the panel follows it.
   const [offset, setOffset] = useState({ x: 0, y: 0 });
+  const offsetStyle = {
+    '--webui-assistant-dx': `${offset.x}px`,
+    '--webui-assistant-dy': `${offset.y}px`,
+  } as React.CSSProperties;
 
-  const onHeaderPointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
-    if (event.button !== 0 || (event.target as Element).closest('button')) {
-      return;
-    }
-    const rect = panelRef.current?.getBoundingClientRect();
-    if (!rect) return;
+  const onFabPointerDown = (event: React.PointerEvent<HTMLButtonElement>) => {
+    if (event.button !== 0) return;
+    const rect = event.currentTarget.getBoundingClientRect();
     event.currentTarget.setPointerCapture(event.pointerId);
-    // Keeps the whole panel inside the viewport.
+    wasDraggedRef.current = false;
+    // Keeps the button inside the viewport; the CSS clamps the panel the same way.
     dragRef.current = {
       pointerId: event.pointerId,
       startX: event.clientX,
@@ -100,27 +103,26 @@ const WebUIAssistantFloating: React.FC = () => {
       minY: offset.y - rect.top,
       maxY: offset.y + window.innerHeight - rect.bottom,
       origin: offset,
+      moved: false,
     };
   };
-  const onHeaderPointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
+  const onFabPointerMove = (event: React.PointerEvent<HTMLButtonElement>) => {
     const drag = dragRef.current;
     if (!drag || drag.pointerId !== event.pointerId) return;
+    const dx = event.clientX - drag.startX;
+    const dy = event.clientY - drag.startY;
+    // A few pixels of jitter is still a click.
+    if (!drag.moved && Math.hypot(dx, dy) < 4) return;
+    drag.moved = true;
     const clamp = (value: number, min: number, max: number) =>
       Math.min(Math.max(value, min), max);
     setOffset({
-      x: clamp(
-        drag.origin.x + event.clientX - drag.startX,
-        drag.minX,
-        drag.maxX,
-      ),
-      y: clamp(
-        drag.origin.y + event.clientY - drag.startY,
-        drag.minY,
-        drag.maxY,
-      ),
+      x: clamp(drag.origin.x + dx, drag.minX, drag.maxX),
+      y: clamp(drag.origin.y + dy, drag.minY, drag.maxY),
     });
   };
-  const onHeaderPointerEnd = () => {
+  const onFabPointerEnd = () => {
+    wasDraggedRef.current = !!dragRef.current?.moved;
     dragRef.current = null;
   };
 
@@ -148,13 +150,12 @@ const WebUIAssistantFloating: React.FC = () => {
       <BAIFlex
         direction="column"
         align="stretch"
-        ref={panelRef}
         className="webui-assistant-panel"
         // BAIFlex's inline `position`/`display` would beat the class and `hidden`.
         style={{
           position: 'fixed',
           display: isPanelShown ? 'flex' : 'none',
-          translate: `${offset.x}px ${offset.y}px`,
+          ...offsetStyle,
         }}
         role="dialog"
         aria-label={title}
@@ -164,16 +165,6 @@ const WebUIAssistantFloating: React.FC = () => {
           align="center"
           gap="xs"
           className="webui-assistant-panel__header"
-          title={t('webuiAssistant.DragToMove')}
-          onPointerDown={onHeaderPointerDown}
-          onPointerMove={onHeaderPointerMove}
-          onPointerUp={onHeaderPointerEnd}
-          onPointerCancel={onHeaderPointerEnd}
-          onDoubleClick={(event) => {
-            if (!(event.target as Element).closest('button')) {
-              setOffset({ x: 0, y: 0 });
-            }
-          }}
           style={{
             flexShrink: 0,
             padding:
@@ -236,9 +227,23 @@ const WebUIAssistantFloating: React.FC = () => {
         elevation="med"
         icon={isPanelShown ? <X /> : <MessageCircle />}
         label={isPanelShown ? t('button.Close') : t('webuiAssistant.Open')}
-        tooltip={isPanelShown ? undefined : title}
+        tooltip={
+          isPanelShown
+            ? undefined
+            : `${title} · ${t('webuiAssistant.DragToMove')}`
+        }
         aria-expanded={isPanelShown}
+        style={offsetStyle}
+        onPointerDown={onFabPointerDown}
+        onPointerMove={onFabPointerMove}
+        onPointerUp={onFabPointerEnd}
+        onPointerCancel={onFabPointerEnd}
         onClick={() => {
+          // The click that ends a drag does not toggle the panel.
+          if (wasDraggedRef.current) {
+            wasDraggedRef.current = false;
+            return;
+          }
           // Without a connection the button asks for one; the chat opens once it is saved.
           if (!isConnected) {
             setIsConnectOpen(true);

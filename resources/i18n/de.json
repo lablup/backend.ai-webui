@@ -4458,7 +4458,7 @@
     "ConnectionRejected": "Der Endpunkt hat das Token oder den API-Schlüssel abgelehnt.",
     "CustomEndpoint": "Benutzerdefinierter Endpunkt",
     "Deployment": "Bereitstellung",
-    "DragToMove": "Zum Verschieben ziehen. Doppelklicken, um es zurückzusetzen.",
+    "DragToMove": "zum Verschieben ziehen",
     "EmptyState": "Fragen Sie, wie Sie etwas in der WebUI erledigen. Die Antworten stammen aus dem Benutzerhandbuch.",
     "Endpoint": "Modell-Endpunkt",
     "EndpointUnreachable": "{{url}} ist nicht erreichbar.",

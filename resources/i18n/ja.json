@@ -4458,7 +4458,7 @@
     "ConnectionRejected": "エンドポイントがトークンまたは API キーを拒否しました。",
     "CustomEndpoint": "カスタムエンドポイント",
     "Deployment": "デプロイメント",
-    "DragToMove": "ドラッグして移動します。ダブルクリックで元の位置に戻ります。",
+    "DragToMove": "ドラッグで移動",
     "EmptyState": "WebUI でやりたいことを質問してください。回答はユーザーマニュアルに基づきます。",
     "Endpoint": "モデルエンドポイント",
     "EndpointUnreachable": "{{url}} に接続できません。",

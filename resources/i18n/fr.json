@@ -4459,7 +4459,7 @@
     "ConnectionRejected": "Le point de terminaison a refusé le jeton ou la clé API.",
     "CustomEndpoint": "Point de terminaison personnalisé",
     "Deployment": "Déploiement",
-    "DragToMove": "Faites glisser pour déplacer. Double-cliquez pour le remettre en place.",
+    "DragToMove": "faites glisser pour déplacer",
     "EmptyState": "Demandez comment faire quelque chose dans la WebUI. Les réponses proviennent du manuel utilisateur.",
     "Endpoint": "Point de terminaison du modèle",
     "EndpointUnreachable": "Impossible de joindre {{url}}.",

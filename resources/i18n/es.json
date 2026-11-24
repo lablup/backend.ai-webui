@@ -4456,7 +4456,7 @@
     "ConnectionRejected": "El endpoint rechazó el token o la clave de API.",
     "CustomEndpoint": "Endpoint personalizado",
     "Deployment": "Despliegue",
-    "DragToMove": "Arrastre para moverlo. Haga doble clic para devolverlo a su sitio.",
+    "DragToMove": "arrastre para mover",
     "EmptyState": "Pregunte cómo hacer algo en WebUI. Las respuestas provienen del manual de usuario.",
     "Endpoint": "Endpoint del modelo",
     "EndpointUnreachable": "No se puede acceder a {{url}}.",

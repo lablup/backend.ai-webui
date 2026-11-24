@@ -4460,7 +4460,7 @@
     "ConnectionRejected": "Endpoint menolak token atau kunci API.",
     "CustomEndpoint": "Endpoint kustom",
     "Deployment": "Deployment",
-    "DragToMove": "Seret untuk memindahkan. Klik dua kali untuk mengembalikannya.",
+    "DragToMove": "seret untuk memindahkan",
     "EmptyState": "Tanyakan cara melakukan sesuatu di WebUI. Jawaban berasal dari panduan pengguna.",
     "Endpoint": "Endpoint model",
     "EndpointUnreachable": "Tidak dapat menjangkau {{url}}.",
