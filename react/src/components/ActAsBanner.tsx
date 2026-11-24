@@ -33,7 +33,7 @@ const ActAsBanner: React.FC = () => {
           variant="secondary"
           icon={<LogOutIcon size="1em" />}
           label={t('actAs.Exit')}
-          onClick={async () => {
+          clickAction={async () => {
             // The tab closes right after, so the target's pending settings go first.
             await flushUserSettingsSyncWithin();
             exitActAs();

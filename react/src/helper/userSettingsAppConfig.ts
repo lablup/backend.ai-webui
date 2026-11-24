@@ -155,11 +155,15 @@ const SETTINGS_FLUSH_TIMEOUT_MS = 3000;
 /** Sends the debounced account settings, giving up after a bound so a slow manager cannot hold the caller. */
 export const flushUserSettingsSyncWithin = (
   timeoutMs = SETTINGS_FLUSH_TIMEOUT_MS,
-): Promise<void> =>
-  Promise.race([
+): Promise<void> => {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  return Promise.race([
     flushUserSettingsSync(),
-    new Promise<void>((resolve) => setTimeout(resolve, timeoutMs)),
-  ]);
+    new Promise<void>((resolve) => {
+      timer = setTimeout(resolve, timeoutMs);
+    }),
+  ]).finally(() => clearTimeout(timer));
+};
 
 /**
  * Queues a changed user setting for `userConfig.settings`. A no-op for a

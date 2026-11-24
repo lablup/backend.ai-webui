@@ -138,16 +138,16 @@
     // attribute keys resources/theme-families.css (glass/stained header effects)
     // on the first render. Mirrors the themeMode read above; useCustomThemeConfig owns
     // this attribute once React mounts.
-    // An act-as tab keeps its family in sessionStorage; keep the key, the param and the
-    // check in sync with SESSION_KEY, ACT_AS_HANDOFF_PARAM and isActAsTarget in react/src/helper/actAs.ts.
+    // An act-as tab keeps its family in sessionStorage. The key names come from
+    // SESSION_KEY, ACT_AS_HANDOFF_PARAM and HANDOFF_KEY_PREFIX in react/src/helper/actAs.ts;
+    // a hand-off actAs.ts later rejects (expired, bad target) paints the default family until React mounts.
     var isActAsTab = false;
     try {
       var actAsState = JSON.parse(sessionStorage.getItem('backendaiwebui.actAs') || 'null');
-      isActAsTab = !!(actAsState && typeof actAsState.userId === 'string' && actAsState.userId);
+      var actAsNonce = new URLSearchParams(location.search).get('actAsHandoff');
+      isActAsTab = !!(actAsState && typeof actAsState.userId === 'string' && actAsState.userId) ||
+        (!!actAsNonce && localStorage.getItem('backendaiwebui.actAs.handoff.' + actAsNonce) !== null);
     } catch(e) { isActAsTab = false; }
-    // A first load still carries the hand-off nonce (HANDOFF_KEY_PREFIX in actAs.ts).
-    var actAsNonce = new URLSearchParams(location.search).get('actAsHandoff');
-    isActAsTab = isActAsTab || (!!actAsNonce && localStorage.getItem('backendaiwebui.actAs.handoff.' + actAsNonce) !== null);
     var storedThemeFamily = (isActAsTab ? sessionStorage : localStorage).getItem('backendaiwebui.settings.themeFamily');
     var parsedThemeFamily;
     try { parsedThemeFamily = storedThemeFamily ? JSON.parse(storedThemeFamily) : null; } catch(e) { parsedThemeFamily = null; }
