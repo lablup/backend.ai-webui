@@ -4,9 +4,9 @@
  */
 import { useMyAppConfig } from '../../hooks/useAppConfig';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
+import BAIErrorBoundary from '../BAIErrorBoundary';
 import { useCustomEndpointApiKey } from '../Chat/customEndpointKeyStore';
 import { useCurrentLanguage } from '../DefaultProviders';
-import ErrorBoundaryWithNullFallback from '../ErrorBoundaryWithNullFallback';
 import './WebUIAssistant.css';
 import WebUIAssistantKeyRestorer from './WebUIAssistantKeyRestorer';
 import { useCustomConnectionThisLoad } from './customConnectionThisLoad';
@@ -188,15 +188,17 @@ const WebUIAssistantFloating: React.FC = () => {
                 <Spinner />
               </BAIFlex>
             ) : (
-              <ErrorBoundaryWithNullFallback>
+              <BAIErrorBoundary
+                key={`${conversationKey}-${connection.baseURL}-${apiKey ?? ''}`}
+                style={{ flex: '1 1 0%' }}
+              >
                 <WebUIAssistantChat
-                  key={`${conversationKey}-${connection.baseURL}-${apiKey ?? ''}`}
                   baseURL={connection.baseURL}
                   apiKey={apiKey}
                   isVisible={isPanelShown}
                   onChangeConnection={openConnectModal}
                 />
-              </ErrorBoundaryWithNullFallback>
+              </BAIErrorBoundary>
             ))}
         </Suspense>
       </BAIFlex>
