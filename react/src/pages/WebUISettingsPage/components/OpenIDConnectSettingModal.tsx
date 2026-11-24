@@ -131,7 +131,7 @@ const OpenIDConnectSettingModalContent: React.FC<
   // group_order is comma-separated, so a comma would split the ID.
   const groupIdRule: Rule = {
     pattern: /^[^,]*$/,
-    message: t('settings.sso.GroupIDNoComma'),
+    message: t('settings.sso.ProviderGroupIDNoComma'),
   };
   const secretExtra = (status: PluginSecretStatus | boolean) =>
     status === 'mismatch'
@@ -311,21 +311,21 @@ const OpenIDConnectSettingModalContent: React.FC<
             <BAITextInput type="password" autoComplete="new-password" />
           </BAIFormItem>
 
-          <Heading level={5}>{t('settings.sso.GroupMapping')}</Heading>
-          <BAIFormItem extra={t('settings.sso.GroupMappingDesc')}>
+          <Heading level={5}>{t('settings.sso.ProviderGroupMapping')}</Heading>
+          <BAIFormItem extra={t('settings.sso.ProviderGroupMappingDesc')}>
             <Form.List name="group_mapping">
               {(fields, { add, remove }) => (
                 <BAIDynamicList
                   items={fields}
                   addButton={{
                     onClick: () => add({}),
-                    label: t('settings.sso.AddGroup'),
+                    label: t('settings.sso.AddProviderGroup'),
                   }}
                   onRemove={(field) => remove(field.name)}
                   columns={[
                     {
                       key: 'group',
-                      header: t('settings.sso.GroupID'),
+                      header: t('settings.sso.ProviderGroupID'),
                       width: 2,
                       render: ({ key: _key, name, ...rest }, index) => (
                         <Form.Item
@@ -335,7 +335,7 @@ const OpenIDConnectSettingModalContent: React.FC<
                           rules={[requiredRule, groupIdRule]}
                         >
                           <BAITextInput
-                            aria-label={`${t('settings.sso.GroupID')} ${index + 1}`}
+                            aria-label={`${t('settings.sso.ProviderGroupID')} ${index + 1}`}
                           />
                         </Form.Item>
                       ),
