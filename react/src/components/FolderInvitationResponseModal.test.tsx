@@ -103,4 +103,17 @@ describe('FolderInvitationResponseModal (#10329)', () => {
 
     expect(screen.getByText('vf-1')).toBeInTheDocument();
   });
+
+  it('names the project a project share is addressed to (#10659)', () => {
+    invitations.push(invitation({ recipientProjectName: 'research' }));
+    render(<FolderInvitationResponseModal open />);
+    expect(screen.getByText('general.Project')).toBeInTheDocument();
+    expect(screen.getByText('research')).toBeInTheDocument();
+  });
+
+  it('shows no project line for a share addressed to the user', () => {
+    invitations.push(invitation({}));
+    render(<FolderInvitationResponseModal open />);
+    expect(screen.queryByText('general.Project')).not.toBeInTheDocument();
+  });
 });
