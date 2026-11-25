@@ -87,6 +87,8 @@ function bootstrap() {
   reportWebVitals();
 }
 
-if (!window.isUnsupportedBrowser) {
+if (window.isUnsupportedBrowser) {
+  window.__bootstrapApp = bootstrap;
+} else {
   bootstrap();
 }

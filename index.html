@@ -197,11 +197,174 @@
         var cube = document.querySelector('#splash .splash-cube');
         if (cube) cube.style.display = 'none';
         var loadingMessage = document.getElementById('loading-message');
+        var loadingText = loadingMessage.textContent;
         loadingMessage.textContent = message;
         loadingMessage.style.color = document.body.classList.contains('dark-theme') ? '#ff6b6b' : '#c00000';
         loadingMessage.style.lineHeight = '1.5';
         loadingMessage.style.whiteSpace = 'pre-line';
         loadingMessage.setAttribute('role', 'alert');
+
+        // ADR 0038: "Use anyway" + confirm modal. Runs on the browsers that failed
+        // the check, so it stays ES5 DOM with inline styles and no light-dark().
+        var isDark = document.body.classList.contains('dark-theme');
+        var text = isKorean ? {
+          useAnyway: '그래도 이용하기',
+          title: '지원하지 않는 브라우저',
+          body: '이 브라우저는 호환되지 않아 정상 동작을 보장할 수 없습니다. 그래도 이용하시겠습니까?',
+          cancel: '취소',
+          confirm: '계속 이용하기'
+        } : {
+          useAnyway: 'Use anyway',
+          title: 'Unsupported browser',
+          body: 'This browser is not compatible, so normal behavior is not guaranteed. Do you want to continue anyway?',
+          cancel: 'Cancel',
+          confirm: 'Continue'
+        };
+        var colors = isDark ?
+          { surface: '#262626', text: '#f0f0f0', border: '#4a4a4a', scrim: 'rgba(0, 0, 0, 0.6)', accent: '#e88a28' } :
+          { surface: '#ffffff', text: '#1f1f1f', border: '#d0d0d0', scrim: 'rgba(0, 0, 0, 0.45)', accent: '#ff7a00' };
+
+        function makeButton(label, isPrimary) {
+          var button = document.createElement('button');
+          button.type = 'button';
+          button.appendChild(document.createTextNode(label));
+          var s = button.style;
+          s.font = 'inherit';
+          s.fontSize = '14px';
+          s.lineHeight = '20px';
+          s.padding = '6px 16px';
+          s.borderRadius = '6px';
+          s.cursor = 'pointer';
+          s.border = '1px solid ' + (isPrimary ? colors.accent : colors.border);
+          s.background = isPrimary ? colors.accent : 'transparent';
+          s.color = isPrimary ? '#ffffff' : colors.text;
+          return button;
+        }
+
+        var useAnywayButton = makeButton(text.useAnyway, false);
+        var center = document.querySelector('#splash .splash-center');
+        if (center) center.appendChild(useAnywayButton);
+
+        var overlay = null;
+        var modalButtons = [];
+        function closeModal() {
+          if (!overlay) return;
+          document.removeEventListener('keydown', onKeyDown, true);
+          overlay.parentNode.removeChild(overlay);
+          overlay = null;
+          useAnywayButton.focus();
+        }
+        function onKeyDown(e) {
+          if (e.key === 'Escape' || e.key === 'Esc' || e.keyCode === 27) {
+            e.preventDefault();
+            closeModal();
+            return;
+          }
+          if (e.key === 'Tab' || e.keyCode === 9) {
+            var first = modalButtons[0];
+            var last = modalButtons[modalButtons.length - 1];
+            var active = document.activeElement;
+            if (e.shiftKey && (active === first || modalButtons.indexOf(active) < 0)) {
+              e.preventDefault();
+              last.focus();
+            } else if (!e.shiftKey && (active === last || modalButtons.indexOf(active) < 0)) {
+              e.preventDefault();
+              first.focus();
+            }
+          }
+        }
+        function proceed() {
+          try {
+            window.sessionStorage.setItem(window.unsupportedBrowserAcceptedKey, '1');
+          } catch (e) {
+            startInPlace();
+            return;
+          }
+          window.location.reload();
+        }
+        function startInPlace() {
+          document.removeEventListener('keydown', onKeyDown, true);
+          if (overlay) overlay.parentNode.removeChild(overlay);
+          overlay = null;
+          if (useAnywayButton.parentNode) useAnywayButton.parentNode.removeChild(useAnywayButton);
+          if (cube) cube.style.display = '';
+          loadingMessage.textContent = loadingText;
+          loadingMessage.style.color = '';
+          loadingMessage.style.lineHeight = '';
+          loadingMessage.style.whiteSpace = '';
+          loadingMessage.removeAttribute('role');
+          window.isUnsupportedBrowser = false;
+          if (window.__startSplashLifecycle) window.__startSplashLifecycle();
+          if (window.__bootstrapApp) window.__bootstrapApp();
+        }
+        function openModal() {
+          if (overlay) return;
+          overlay = document.createElement('div');
+          var o = overlay.style;
+          o.position = 'fixed';
+          o.top = '0';
+          o.left = '0';
+          o.width = '100%';
+          o.height = '100%';
+          o.zIndex = '10';
+          o.background = colors.scrim;
+          o.display = 'flex';
+          o.alignItems = 'center';
+          o.justifyContent = 'center';
+
+          var dialog = document.createElement('div');
+          dialog.setAttribute('role', 'alertdialog');
+          dialog.setAttribute('aria-modal', 'true');
+          dialog.setAttribute('aria-labelledby', 'unsupported-browser-title');
+          dialog.setAttribute('aria-describedby', 'unsupported-browser-body');
+          var d = dialog.style;
+          d.boxSizing = 'border-box';
+          d.width = '420px';
+          d.maxWidth = '90%';
+          d.padding = '20px 24px';
+          d.borderRadius = '8px';
+          d.background = colors.surface;
+          d.color = colors.text;
+          d.boxShadow = '0 6px 24px rgba(0, 0, 0, 0.25)';
+          d.textAlign = 'left';
+
+          var title = document.createElement('div');
+          title.id = 'unsupported-browser-title';
+          title.appendChild(document.createTextNode(text.title));
+          title.style.fontSize = '16px';
+          title.style.fontWeight = '600';
+          title.style.marginBottom = '8px';
+
+          var body = document.createElement('div');
+          body.id = 'unsupported-browser-body';
+          body.appendChild(document.createTextNode(text.body));
+          body.style.fontSize = '14px';
+          body.style.lineHeight = '1.5';
+          body.style.marginBottom = '20px';
+
+          var actions = document.createElement('div');
+          actions.style.textAlign = 'right';
+          var cancelButton = makeButton(text.cancel, false);
+          var confirmButton = makeButton(text.confirm, true);
+          confirmButton.style.marginLeft = '8px';
+          cancelButton.onclick = closeModal;
+          confirmButton.onclick = proceed;
+          actions.appendChild(cancelButton);
+          actions.appendChild(confirmButton);
+          modalButtons = [cancelButton, confirmButton];
+
+          dialog.appendChild(title);
+          dialog.appendChild(body);
+          dialog.appendChild(actions);
+          overlay.appendChild(dialog);
+          overlay.onclick = function (e) {
+            if (e.target === overlay) closeModal();
+          };
+          document.getElementById('splash').appendChild(overlay);
+          document.addEventListener('keydown', onKeyDown, true);
+          cancelButton.focus();
+        }
+        useAnywayButton.onclick = openModal;
       })();
     </script>
     <script nonce="{{nonce}}">
@@ -270,97 +433,104 @@
       // neither (e.g. /verify-email, /change-password). Every fallback is
       // gated on the app having actually rendered content — see appHasContent.
       (function () {
-        var splash = document.getElementById('splash');
-        if (!splash || window.isUnsupportedBrowser) return;
-        var state = 'loading'; // 'loading' | 'backdrop' | 'removed'
-        var reactRoot = document.getElementById('react-root');
-        var observer = null;
-        var fallbackTimer = null;
+        function startSplashLifecycle() {
+          var splash = document.getElementById('splash');
+          if (!splash) return;
+          var state = 'loading'; // 'loading' | 'backdrop' | 'removed'
+          var reactRoot = document.getElementById('react-root');
+          var observer = null;
+          var fallbackTimer = null;
 
-        function clearFallbacks() {
-          if (observer) { observer.disconnect(); observer = null; }
-          if (fallbackTimer) { clearTimeout(fallbackTimer); fallbackTimer = null; }
+          function clearFallbacks() {
+            if (observer) { observer.disconnect(); observer = null; }
+            if (fallbackTimer) { clearTimeout(fallbackTimer); fallbackTimer = null; }
+          }
+
+          // "Is the app actually on screen?" — NOT "has React committed?".
+          // Astryx's root <Theme> wrapper is `display: contents`, so it adds no
+          // box: #react-root has height only once real content renders. The old
+          // childList observer fired on that wrapper, i.e. before anything was
+          // visible, which is what turned the curtain into a blank screen.
+          function appHasContent() {
+            return !!reactRoot && reactRoot.getBoundingClientRect().height > 0;
+          }
+
+          // Full removal (authenticated UI ready, or fallback).
+          function dismiss() {
+            if (state === 'removed') return;
+            state = 'removed';
+            clearFallbacks();
+            splash.classList.add('splash-hidden');
+            splash.addEventListener('transitionend', function handler(e) {
+              if (e.propertyName === 'opacity') {
+                splash.removeEventListener('transitionend', handler);
+                if (splash.parentNode) splash.remove();
+              }
+            });
+            // Safety net: remove even if transitionend never fires (e.g. prefers-reduced-motion)
+            setTimeout(function () { if (splash.parentNode) splash.remove(); }, 1000);
+          }
+
+          // Transition to the login backdrop (logged-out login screen).
+          function enterLoginBackdrop() {
+            if (state !== 'loading') return;
+            state = 'backdrop';
+            // The backdrop must persist through the whole login flow, so cancel
+            // the auto-removal fallbacks.
+            clearFallbacks();
+            splash.classList.add('splash-backdrop');
+          }
+
+          window.__dismissSplash = dismiss;
+          window.__enterLoginBackdrop = enterLoginBackdrop;
+
+          // Dev-only (the NODE_ENV shim above is injected by react/vite.config.ts
+          // in dev): Backspace on the loading splash reloads straight to the login
+          // form. Lives here, not in a module, so it exists before Vite loads the
+          // app. Not Esc: browsers treat Esc during a page load as "stop loading".
+          if (globalThis.process && globalThis.process.env &&
+              globalThis.process.env.NODE_ENV === 'development') {
+            window.addEventListener('keydown', function (e) {
+              if (e.key !== 'Backspace' || state !== 'loading') return;
+              e.preventDefault();
+              e.stopImmediatePropagation();
+              // INTENTIONAL_LOGOUT_FLAG in react/src/hooks/useLogout.ts. Already
+              // set means this load is the reload heading to the form: let it finish.
+              var flag = 'backendai_intentional_logout';
+              if (sessionStorage.getItem(flag) === '1') return;
+              sessionStorage.setItem(flag, '1');
+              window.location.reload();
+            }, true);
+          }
+
+          // Fallback for routes that signal neither (/verify-email,
+          // /change-password): dismiss once the app occupies space. A
+          // ResizeObserver IS the predicate, so no polling and no forced layout.
+          // The 3s delay is the margin that lets LoginView's
+          // __enterLoginBackdrop() win this race on the logged-out path.
+          if (reactRoot && typeof ResizeObserver === 'function') {
+            observer = new ResizeObserver(function () {
+              if (state === 'loading' && appHasContent()) {
+                clearFallbacks();
+                fallbackTimer = setTimeout(dismiss, 3000);
+              }
+            });
+            observer.observe(reactRoot);
+          }
+          // Ultimate safety net — never tear the curtain down over NOTHING. If
+          // React has rendered no content by now the boot is broken or merely
+          // slow, and "Loading components…" is a better screen than the blank
+          // page this used to reveal; the observer above still dismisses if
+          // content lands later.
+          setTimeout(function () {
+            if (state !== 'backdrop' && appHasContent()) dismiss();
+          }, 10000);
         }
-
-        // "Is the app actually on screen?" — NOT "has React committed?".
-        // Astryx's root <Theme> wrapper is `display: contents`, so it adds no
-        // box: #react-root has height only once real content renders. The old
-        // childList observer fired on that wrapper, i.e. before anything was
-        // visible, which is what turned the curtain into a blank screen.
-        function appHasContent() {
-          return !!reactRoot && reactRoot.getBoundingClientRect().height > 0;
+        if (window.isUnsupportedBrowser) {
+          window.__startSplashLifecycle = startSplashLifecycle;
+        } else {
+          startSplashLifecycle();
         }
-
-        // Full removal (authenticated UI ready, or fallback).
-        function dismiss() {
-          if (state === 'removed') return;
-          state = 'removed';
-          clearFallbacks();
-          splash.classList.add('splash-hidden');
-          splash.addEventListener('transitionend', function handler(e) {
-            if (e.propertyName === 'opacity') {
-              splash.removeEventListener('transitionend', handler);
-              if (splash.parentNode) splash.remove();
-            }
-          });
-          // Safety net: remove even if transitionend never fires (e.g. prefers-reduced-motion)
-          setTimeout(function () { if (splash.parentNode) splash.remove(); }, 1000);
-        }
-
-        // Transition to the login backdrop (logged-out login screen).
-        function enterLoginBackdrop() {
-          if (state !== 'loading') return;
-          state = 'backdrop';
-          // The backdrop must persist through the whole login flow, so cancel
-          // the auto-removal fallbacks.
-          clearFallbacks();
-          splash.classList.add('splash-backdrop');
-        }
-
-        window.__dismissSplash = dismiss;
-        window.__enterLoginBackdrop = enterLoginBackdrop;
-
-        // Dev-only (the NODE_ENV shim above is injected by react/vite.config.ts
-        // in dev): Backspace on the loading splash reloads straight to the login
-        // form. Lives here, not in a module, so it exists before Vite loads the
-        // app. Not Esc: browsers treat Esc during a page load as "stop loading".
-        if (globalThis.process && globalThis.process.env &&
-            globalThis.process.env.NODE_ENV === 'development') {
-          window.addEventListener('keydown', function (e) {
-            if (e.key !== 'Backspace' || state !== 'loading') return;
-            e.preventDefault();
-            e.stopImmediatePropagation();
-            // INTENTIONAL_LOGOUT_FLAG in react/src/hooks/useLogout.ts. Already
-            // set means this load is the reload heading to the form: let it finish.
-            var flag = 'backendai_intentional_logout';
-            if (sessionStorage.getItem(flag) === '1') return;
-            sessionStorage.setItem(flag, '1');
-            window.location.reload();
-          }, true);
-        }
-
-        // Fallback for routes that signal neither (/verify-email,
-        // /change-password): dismiss once the app occupies space. A
-        // ResizeObserver IS the predicate, so no polling and no forced layout.
-        // The 3s delay is the margin that lets LoginView's
-        // __enterLoginBackdrop() win this race on the logged-out path.
-        if (reactRoot && typeof ResizeObserver === 'function') {
-          observer = new ResizeObserver(function () {
-            if (state === 'loading' && appHasContent()) {
-              clearFallbacks();
-              fallbackTimer = setTimeout(dismiss, 3000);
-            }
-          });
-          observer.observe(reactRoot);
-        }
-        // Ultimate safety net — never tear the curtain down over NOTHING. If
-        // React has rendered no content by now the boot is broken or merely
-        // slow, and "Loading components…" is a better screen than the blank
-        // page this used to reveal; the observer above still dismisses if
-        // content lands later.
-        setTimeout(function () {
-          if (state !== 'backdrop' && appHasContent()) dismiss();
-        }, 10000);
       })();
     </script>
 </body>
