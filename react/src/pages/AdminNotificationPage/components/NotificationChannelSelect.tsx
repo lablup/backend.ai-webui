@@ -45,6 +45,8 @@ const NotificationChannelSelect: React.FC<NotificationChannelSelectProps> = ({
     { valuePropName: 'open', trigger: 'onOpenChange' },
   );
   const deferredOpen = useDeferredValue(open);
+  // Deferred so a pick never suspends the select out of its Form.Item mid-save.
+  const deferredValue = useDeferredValue(value);
   const [searchStr, setSearchStr] = useState('');
   const deferredSearchStr = useDeferredValue(searchStr);
 
@@ -75,10 +77,10 @@ const NotificationChannelSelect: React.FC<NotificationChannelSelectProps> = ({
         }
       `,
       {
-        filter: value ? { entityId: { in: [value] } } : null,
-        skip: !value,
+        filter: deferredValue ? { entityId: { in: [deferredValue] } } : null,
+        skip: !deferredValue,
       },
-      { fetchPolicy: value ? 'store-or-network' : 'store-only' },
+      { fetchPolicy: deferredValue ? 'store-or-network' : 'store-only' },
     );
 
   const { paginationData, result, loadNext, isLoadingNext } =
@@ -122,7 +124,9 @@ const NotificationChannelSelect: React.FC<NotificationChannelSelectProps> = ({
       },
     );
 
-  const selectedNode = selected?.edges?.[0]?.node;
+  const selectedNode =
+    _.find(paginationData, (node) => node?.entityId === value) ??
+    _.find(selected?.edges, (edge) => edge?.node?.entityId === value)?.node;
 
   return (
     <BAIComplexSelect
