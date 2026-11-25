@@ -84,10 +84,14 @@
         var(--webui-assistant-inset)
       )
       clamp(
-        calc(
-          var(--webui-assistant-panel-height) +
-            var(--webui-assistant-panel-bottom) +
-            var(--webui-header-height, 60px) - 100dvh
+        min(
+          calc(
+            var(--webui-assistant-panel-height) +
+              var(--webui-assistant-panel-bottom) +
+              var(--webui-header-height, 60px) +
+              var(--webui-titlebar-height, 0px) - 100dvh
+          ),
+          var(--webui-assistant-panel-bottom)
         ),
         var(--webui-assistant-dy),
         var(--webui-assistant-panel-bottom)
@@ -112,9 +116,12 @@
         var(--webui-assistant-inset)
       )
       clamp(
-        var(--webui-header-height, 60px),
         calc(
-          100dvh - var(--webui-assistant-inset) + var(--webui-assistant-dy) +
+          var(--webui-header-height, 60px) + var(--webui-titlebar-height, 0px)
+        ),
+        calc(
+          100dvh - var(--webui-assistant-inset) -
+            env(safe-area-inset-bottom, 0px) + var(--webui-assistant-dy) +
             var(--spacing-3)
         ),
         calc(100dvh - var(--webui-assistant-panel-height))

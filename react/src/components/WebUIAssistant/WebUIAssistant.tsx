@@ -23,7 +23,7 @@ import { Spinner } from '@lablup/ui-common/Spinner';
 import { Text } from '@lablup/ui-common/Text';
 import { BAIFlex, BAIPopconfirm, BAIUnmountAfterClose } from 'backend.ai-ui';
 import { EraserIcon, MessageCircle, PlugZap, X } from 'lucide-react';
-import { Suspense, useEffect, useRef, useState } from 'react';
+import { Suspense, useEffect, useEffectEvent, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 
@@ -83,8 +83,29 @@ const WebUIAssistantFloating: React.FC = () => {
   const wasDraggedRef = useRef(false);
   // How far the user dragged the button from its corner; the panel follows it.
   const [offset, setOffset] = useState({ x: 0, y: 0 });
-  // In the upper half of the screen the panel opens below the button, so the two never overlap.
+  // The panel opens below the button when there is no room for it above.
   const [isPanelBelow, setIsPanelBelow] = useState(false);
+  const fabRef = useRef<HTMLButtonElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const updatePanelSide = () => {
+    const rect = fabRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    const rootStyle = getComputedStyle(document.body);
+    const top =
+      (Number.parseFloat(rootStyle.getPropertyValue('--webui-header-height')) ||
+        60) +
+      (Number.parseFloat(
+        rootStyle.getPropertyValue('--webui-titlebar-height'),
+      ) || 0);
+    const gap = 12;
+    // A hidden panel has no height; the fallback mirrors the CSS formula.
+    const panelHeight =
+      panelRef.current?.offsetHeight ||
+      Math.min(600, Math.max(320, window.innerHeight - top - 120));
+    const roomAbove = rect.top - top - gap;
+    const roomBelow = window.innerHeight - rect.bottom - gap;
+    setIsPanelBelow(roomAbove < panelHeight && roomBelow > roomAbove);
+  };
   const offsetStyle = {
     '--webui-assistant-dx': `${offset.x}px`,
     '--webui-assistant-dy': `${offset.y}px`,
@@ -127,12 +148,12 @@ const WebUIAssistantFloating: React.FC = () => {
       x: clamp(drag.origin.x + dx, drag.minX, drag.maxX),
       y: clamp(drag.origin.y + dy, drag.minY, drag.maxY),
     });
-    setIsPanelBelow(event.clientY < window.innerHeight / 2);
   };
   const onFabPointerUp = (event: React.PointerEvent<HTMLButtonElement>) => {
     if (dragRef.current?.pointerId !== event.pointerId) return;
     wasDraggedRef.current = dragRef.current.moved;
     dragRef.current = null;
+    updatePanelSide();
   };
   // No click follows a cancelled pointer, so nothing must be swallowed later.
   const onFabPointerCancel = (event: React.PointerEvent<HTMLButtonElement>) => {
@@ -140,6 +161,13 @@ const WebUIAssistantFloating: React.FC = () => {
     wasDraggedRef.current = false;
     dragRef.current = null;
   };
+
+  const onResize = useEffectEvent(() => updatePanelSide());
+  useEffect(() => {
+    if (!isPanelShown) return;
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, [isPanelShown]);
 
   useEffect(() => {
     if (!isOpen || isConnectOpen) return;
@@ -165,6 +193,7 @@ const WebUIAssistantFloating: React.FC = () => {
       <BAIFlex
         direction="column"
         align="stretch"
+        ref={panelRef}
         className="webui-assistant-panel"
         data-below={isPanelBelow || undefined}
         // BAIFlex's inline `position`/`display` would beat the class and `hidden`.
@@ -236,6 +265,7 @@ const WebUIAssistantFloating: React.FC = () => {
           ))}
       </BAIFlex>
       <IconButton
+        ref={fabRef}
         className="webui-assistant-fab"
         data-testid="webui-assistant-fab"
         variant="primary"
@@ -250,12 +280,12 @@ const WebUIAssistantFloating: React.FC = () => {
         onPointerMove={onFabPointerMove}
         onPointerUp={onFabPointerUp}
         onPointerCancel={onFabPointerCancel}
-        onClick={() => {
-          // The click that ends a drag does not toggle the panel.
-          if (wasDraggedRef.current) {
-            wasDraggedRef.current = false;
-            return;
-          }
+        onClick={(event) => {
+          // The click that ends a drag does not toggle the panel; a keyboard click (detail 0) always does.
+          const wasDragged = wasDraggedRef.current && event.detail !== 0;
+          wasDraggedRef.current = false;
+          if (wasDragged) return;
+          updatePanelSide();
           // Without a connection the button asks for one; the chat opens once it is saved.
           if (!isConnected) {
             setIsConnectOpen(true);
