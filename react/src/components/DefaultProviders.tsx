@@ -383,7 +383,7 @@ export const DefaultProvidersForReactRoot: React.FC<{
                       <Suspense>
                         {/* <BrowserRouter> */}
                         {/* <RoutingEventHandler /> */}
-                        {/* WebMCP tool gate, ADR 0025; the assistant's page registry, ADR 0038. */}
+                        {/* WebMCP tool gate, ADR 0025; the assistant's page registry, ADR 0040. */}
                         <BAIWebMCPProvider
                           enabled={enableWebMCP}
                           pageRegistry={

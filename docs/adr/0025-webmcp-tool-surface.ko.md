@@ -1,6 +1,6 @@
 # 0025 — WebMCP tool surface
 
-> 1절과 2절은 [ADR 0038](0038-webui-assistant-calls-page-webmcp-tools.ko.md)이 넓힌다. tool은 WebUI Assistant가 읽는 page registry에도 등록되고, active check는 두 대상 중 하나만 있어도 true다.
+> 1절과 2절은 [ADR 0040](0040-webui-assistant-calls-page-webmcp-tools.ko.md)이 넓힌다. tool은 WebUI Assistant가 읽는 page registry에도 등록되고, active check는 두 대상 중 하나만 있어도 true다.
 
 ## Summary
 
