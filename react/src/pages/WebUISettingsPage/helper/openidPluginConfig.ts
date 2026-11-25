@@ -170,7 +170,7 @@ export const openIDFormInitialValues = (
   ...stored.values,
   private_key: stored.secrets.private_key ? OPENID_SECRET_MASK : undefined,
   client_secret: stored.secrets.client_secret ? OPENID_SECRET_MASK : undefined,
-  secret: stored.secrets.secret === 'unset' ? undefined : OPENID_SECRET_MASK,
+  secret: stored.secrets.secret === 'set' ? OPENID_SECRET_MASK : undefined,
 });
 
 const normalizeRows = (rows: ReadonlyArray<OpenIDGroupMappingRow>) =>

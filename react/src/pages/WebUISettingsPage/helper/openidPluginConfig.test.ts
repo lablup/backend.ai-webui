@@ -280,3 +280,21 @@ describe('masked secret fields', () => {
     expect(change.remove).toEqual([]);
   });
 });
+
+describe('mismatched token signing secret', () => {
+  const stored = readOpenIDStoredConfig(storedWebapp, { secret: 'other' });
+
+  it('leaves the field empty so a new value is required', () => {
+    expect(stored.secrets.secret).toBe('mismatch');
+    expect(openIDFormInitialValues(stored).secret).toBeUndefined();
+  });
+
+  it('writes the new value to both the webapp and the hook', () => {
+    const change = buildOpenIDConfigChange(
+      { ...openIDFormInitialValues(stored), secret: 'new-secret' },
+      stored,
+    );
+    expect(change.set['webapp/openid/secret']).toBe('new-secret');
+    expect(change.set['hook/openid/secret']).toBe('new-secret');
+  });
+});
