@@ -330,42 +330,21 @@ const LoginView: React.FC<{
     }
   }
 
-  // Load the login plugin once the account form is on screen, so a plugin that
-  // injects into it finds it; served from `/dist/plugins/`, never bundled.
-  const isEndpointStepOpen = endpointStep.isStepOpen;
-  // A module runs once per page and a failed fetch stays failed, so each URL
-  // is imported once; a load failure never replaces an error already shown.
-  const importedLoginPluginUrlRef = useRef<string | null>(null);
-  const onLoginPluginLoadFailed = useEffectEvent(() => {
-    setLoginError(
-      (prev) => prev ?? { message: t('error.LoginPluginLoadFailed') },
-    );
-  });
+  // Load the login plugin once config is ready; it is served from
+  // `/dist/plugins/` like page plugins, never bundled.
   useEffect(() => {
-    if (
-      !isConfigLoaded ||
-      !isLoginPanelOpen ||
-      isEndpointStepOpen ||
-      !loginPlugin
-    )
-      return;
+    if (!isConfigLoaded || !loginPlugin) return;
+
     const pluginUrl = resolvePluginScriptUrl(loginPlugin, apiEndpoint);
-    if (!pluginUrl || importedLoginPluginUrlRef.current === pluginUrl) return;
-    importedLoginPluginUrlRef.current = pluginUrl;
+    if (!pluginUrl) return;
 
     // `@vite-ignore` opts out of Vite's static analysis. The URL is an
     // absolute path (no relative `..` traversal), so esbuild's
     // optimizeDeps scanner does not treat it as a module specifier.
     import(/* @vite-ignore */ pluginUrl).catch(() => {
-      onLoginPluginLoadFailed();
+      setLoginError({ message: t('error.LoginPluginLoadFailed') });
     });
-  }, [
-    isConfigLoaded,
-    isLoginPanelOpen,
-    isEndpointStepOpen,
-    loginPlugin,
-    apiEndpoint,
-  ]);
+  }, [isConfigLoaded, loginPlugin, apiEndpoint, t]);
 
   // Keep configRef in sync
   useEffect(() => {
