@@ -899,6 +899,7 @@
       "NoFailures": "Brak błędów",
       "NoProject": "Wybierz projekt, aby zobaczyć tę kartę.",
       "NoResourceGroup": "Nie wybrano grupy zasobów.",
+      "NoResourceGroupAssigned": "Do tego projektu nie przypisano grupy zasobów.",
       "NoSchedulingFailures": "Brak błędów planowania",
       "NotTriedYet": "Jeszcze nie próbowano",
       "OtherTypes": "Inne typy",

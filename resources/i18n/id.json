@@ -899,6 +899,7 @@
       "NoFailures": "Tidak ada kegagalan",
       "NoProject": "Pilih proyek untuk melihat kartu ini.",
       "NoResourceGroup": "Tidak ada grup sumber daya yang dipilih.",
+      "NoResourceGroupAssigned": "Tidak ada grup sumber daya yang ditugaskan ke proyek ini.",
       "NoSchedulingFailures": "Tidak ada kegagalan penjadwalan",
       "NotTriedYet": "Belum dicoba",
       "OtherTypes": "Jenis lain",

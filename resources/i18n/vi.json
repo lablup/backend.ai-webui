@@ -899,6 +899,7 @@
       "NoFailures": "Không có lỗi",
       "NoProject": "Chọn một dự án để xem thẻ này.",
       "NoResourceGroup": "Chưa chọn nhóm tài nguyên.",
+      "NoResourceGroupAssigned": "Không có nhóm tài nguyên nào được gán cho dự án này.",
       "NoSchedulingFailures": "Không có lỗi lập lịch",
       "NotTriedYet": "Chưa thử",
       "OtherTypes": "Loại khác",

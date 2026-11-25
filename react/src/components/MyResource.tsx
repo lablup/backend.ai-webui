@@ -232,7 +232,11 @@ const MyTotalResourceStatisticsContent: React.FC<{
   if (groups.value != null && groupEdges.length === 0) {
     // No resource group reaches the project: the siblings' "no resource group" text.
     // A null, denied or failed read falls through to the fallback below, not this claim.
-    return <Text type="supporting">{t('dashboard.card.NoResourceGroup')}</Text>;
+    return (
+      <Text type="supporting">
+        {t('dashboard.card.NoResourceGroupAssigned')}
+      </Text>
+    );
   }
   // Only the slots some group of the project offers; the allocation lists every slot the manager knows.
   const groupSlots = _.compact(

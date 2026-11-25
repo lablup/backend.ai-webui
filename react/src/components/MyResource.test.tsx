@@ -115,7 +115,7 @@ describe('MyResource', () => {
     });
 
     expect(
-      await screen.findByText('dashboard.card.NoResourceGroup'),
+      await screen.findByText('dashboard.card.NoResourceGroupAssigned'),
     ).toBeInTheDocument();
   });
 

@@ -899,6 +899,7 @@
       "NoFailures": "Nessun errore",
       "NoProject": "Seleziona un progetto per vedere questa scheda.",
       "NoResourceGroup": "Nessun gruppo di risorse selezionato.",
+      "NoResourceGroupAssigned": "Nessun gruppo di risorse è assegnato a questo progetto.",
       "NoSchedulingFailures": "Nessun errore di pianificazione",
       "NotTriedYet": "Non ancora tentato",
       "OtherTypes": "Altri tipi",

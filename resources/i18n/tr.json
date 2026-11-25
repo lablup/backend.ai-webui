@@ -899,6 +899,7 @@
       "NoFailures": "Hata yok",
       "NoProject": "Bu kartı görmek için bir proje seçin.",
       "NoResourceGroup": "Kaynak grubu seçilmedi.",
+      "NoResourceGroupAssigned": "Bu projeye atanmış bir kaynak grubu yok.",
       "NoSchedulingFailures": "Zamanlama hatası yok",
       "NotTriedYet": "Henüz denenmedi",
       "OtherTypes": "Diğer türler",

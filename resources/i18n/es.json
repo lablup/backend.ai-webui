@@ -899,6 +899,7 @@
       "NoFailures": "Sin fallos",
       "NoProject": "Seleccione un proyecto para ver esta tarjeta.",
       "NoResourceGroup": "No hay ningún grupo de recursos seleccionado.",
+      "NoResourceGroupAssigned": "No hay ningún grupo de recursos asignado a este proyecto.",
       "NoSchedulingFailures": "Sin fallos de programación",
       "NotTriedYet": "Aún no intentado",
       "OtherTypes": "Otros tipos",

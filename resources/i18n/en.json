@@ -886,6 +886,7 @@
       "NoFailures": "No failures",
       "NoProject": "Select a project to see this card.",
       "NoResourceGroup": "No resource group is selected.",
+      "NoResourceGroupAssigned": "No resource group is assigned to this project.",
       "NoSchedulingFailures": "No scheduling failures",
       "NotTriedYet": "Not tried yet",
       "OtherTypes": "Other types",

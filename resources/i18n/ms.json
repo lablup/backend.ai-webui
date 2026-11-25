@@ -899,6 +899,7 @@
       "NoFailures": "Tiada kegagalan",
       "NoProject": "Pilih projek untuk melihat kad ini.",
       "NoResourceGroup": "Tiada kumpulan sumber dipilih.",
+      "NoResourceGroupAssigned": "Tiada kumpulan sumber yang ditugaskan kepada projek ini.",
       "NoSchedulingFailures": "Tiada kegagalan penjadualan",
       "NotTriedYet": "Belum dicuba",
       "OtherTypes": "Jenis lain",
