@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<33781d727c8a0f41a235f5fc7c99b32f>>
+ * @generated SignedSource<<15c1508291972817e855d5f4ea49e5aa>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -21,7 +21,6 @@ export type SharedFolderPermissionInfoModalV2ProjectSharesQuery$data = {
     readonly edges: ReadonlyArray<{
       readonly node: {
         readonly entityId: string;
-        readonly recipientEntityId: string | null | undefined;
         readonly targetEntityType: string;
       };
     }>;
@@ -71,7 +70,7 @@ v2 = [
   {
     "kind": "Literal",
     "name": "limit",
-    "value": 100
+    "value": 1
   },
   {
     "fields": [
@@ -97,13 +96,6 @@ v4 = {
   "args": null,
   "kind": "ScalarField",
   "name": "targetEntityType",
-  "storageKey": null
-},
-v5 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "recipientEntityId",
   "storageKey": null
 };
 return {
@@ -141,8 +133,7 @@ return {
                 "plural": false,
                 "selections": [
                   (v3/*: any*/),
-                  (v4/*: any*/),
-                  (v5/*: any*/)
+                  (v4/*: any*/)
                 ],
                 "storageKey": null
               }
@@ -191,7 +182,6 @@ return {
                 "selections": [
                   (v3/*: any*/),
                   (v4/*: any*/),
-                  (v5/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -211,16 +201,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "1d7ddc215e9b102b4c9e6e2befceddbb",
+    "cacheID": "764a3316c3c436bf4a3bdc37db30330f",
     "id": null,
     "metadata": {},
     "name": "SharedFolderPermissionInfoModalV2ProjectSharesQuery",
     "operationKind": "query",
-    "text": "query SharedFolderPermissionInfoModalV2ProjectSharesQuery(\n  $projects: [UUIDScope!]!\n  $folderId: UUID!\n) {\n  entityShares(scope: {recipientProject: $projects}, filter: {targetEntityId: {equals: $folderId}, status: {equals: ACCEPTED}}, limit: 100) {\n    edges {\n      node {\n        entityId\n        targetEntityType\n        recipientEntityId\n        id\n      }\n    }\n  }\n}\n"
+    "text": "query SharedFolderPermissionInfoModalV2ProjectSharesQuery(\n  $projects: [UUIDScope!]!\n  $folderId: UUID!\n) {\n  entityShares(scope: {recipientProject: $projects}, filter: {targetEntityId: {equals: $folderId}, status: {equals: ACCEPTED}}, limit: 1) {\n    edges {\n      node {\n        entityId\n        targetEntityType\n        id\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "566b308f883768b74c2e4680baa5a55e";
+(node as any).hash = "8e827d90d6941fa5449b5774976f6b34";
 
 export default node;

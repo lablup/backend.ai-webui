@@ -42,8 +42,6 @@ import {
 } from 'react-relay';
 
 const VFOLDER_ENTITY_TYPE = 'vfolder';
-// `myAtomicBulkScopePermissions` refuses more than 100 targets.
-const MAX_PERMISSION_TARGETS = 100;
 
 type LeavableShare =
   | { shareId: string; isProjectShare: false }
@@ -53,11 +51,16 @@ type LeavableShare =
 const isFolderShare = (share: { targetEntityType: string }) =>
   share.targetEntityType.toLowerCase() === VFOLDER_ENTITY_TYPE;
 
+// Relay resolves a response whose nullable root field errored with that field null: treat it as a failure.
+const requireField = <T,>(value: T | null | undefined, field: string): T => {
+  if (value == null) throw new Error(`Could not read ${field}.`);
+  return value;
+};
+
 /**
- * The accepted share of the folder the caller may leave: their own, else one
- * addressed to a project where they hold `soft-delete` on `entity_share`
+ * The accepted share of the folder the caller may leave: their own, else the
+ * page project's, when they hold `soft-delete` on `entity_share` there
  * (lablup/backend.ai#17162; `myEntityShares` never lists project shares).
- * With a page project, only that project's share is a candidate.
  */
 const findLeavableShare = async (
   environment: Environment,
@@ -83,35 +86,17 @@ const findLeavableShare = async (
             }
           }
         }
-        myUserV2 {
-          projects(filter: { isActive: true }, limit: 100) {
-            edges {
-              node {
-                entityId
-                basicInfo {
-                  name
-                }
-              }
-            }
-          }
-        }
       }
     `,
     { folderId },
     { fetchPolicy: 'network-only' },
   ).toPromise();
-  const own = mine?.myEntityShares?.edges.find(({ node }) =>
-    isFolderShare(node),
+  const own = requireField(mine?.myEntityShares, 'myEntityShares').edges.find(
+    ({ node }) => isFolderShare(node),
   )?.node;
   if (own) return { shareId: own.entityId, isProjectShare: false };
+  if (!project) return null;
 
-  const projects = project
-    ? [{ entityId: project.id, basicInfo: { name: project.name } }]
-    : _.map(mine?.myUserV2?.projects?.edges, 'node').slice(
-        0,
-        MAX_PERMISSION_TARGETS,
-      );
-  if (_.isEmpty(projects)) return null;
   const permissions =
     await fetchQuery<SharedFolderPermissionInfoModalV2ProjectLeaversQuery>(
       environment,
@@ -128,23 +113,27 @@ const findLeavableShare = async (
         }
       `,
       {
-        targets: _.map(projects, (project) => ({
-          scopeType: 'project',
-          scopeId: project.entityId,
-          entityType: 'entity_share',
-        })),
+        targets: [
+          {
+            scopeType: 'project',
+            scopeId: project.id,
+            entityType: 'entity_share',
+          },
+        ],
       },
       { fetchPolicy: 'network-only' },
     ).toPromise();
   // Leaving takes `SOFT_DELETE`, not the `UPDATE` accepting takes: a role may hold one bit only.
-  const leavableIds = _.map(
-    _.filter(permissions?.myAtomicBulkScopePermissions?.items, (item) =>
+  const canLeave = _.some(
+    requireField(
+      permissions?.myAtomicBulkScopePermissions,
+      'myAtomicBulkScopePermissions',
+    ).items,
+    (item) =>
+      item.scopeId === project.id &&
       _.includes(item.permissions, 'SOFT_DELETE'),
-    ),
-    'scopeId',
   );
-  if (_.isEmpty(leavableIds)) return null;
-  // The read authorizes every scope it names: one refused scope fails it, which means no share to leave.
+  if (!canLeave) return null;
   const shares =
     await fetchQuery<SharedFolderPermissionInfoModalV2ProjectSharesQuery>(
       environment,
@@ -159,38 +148,29 @@ const findLeavableShare = async (
               targetEntityId: { equals: $folderId }
               status: { equals: ACCEPTED }
             }
-            limit: 100
+            limit: 1
           ) {
             edges {
               node {
                 entityId
                 targetEntityType
-                recipientEntityId
               }
             }
           }
         }
       `,
-      {
-        projects: _.map(leavableIds, (value) => ({ value })),
-        folderId,
-      },
+      { projects: [{ value: project.id }], folderId },
       { fetchPolicy: 'network-only' },
-    )
-      .toPromise()
-      .catch(() => null);
-  const projectShare = shares?.entityShares?.edges.find(({ node }) =>
-    isFolderShare(node),
-  )?.node;
+    ).toPromise();
+  const projectShare = requireField(
+    shares?.entityShares,
+    'entityShares',
+  ).edges.find(({ node }) => isFolderShare(node))?.node;
   if (!projectShare) return null;
   return {
     shareId: projectShare.entityId,
     isProjectShare: true,
-    projectName:
-      _.find(projects, { entityId: projectShare.recipientEntityId ?? '' })
-        ?.basicInfo.name ??
-      projectShare.recipientEntityId ??
-      '',
+    projectName: project.name,
   };
 };
 
@@ -201,7 +181,7 @@ interface SharedFolderPermissionInfoModalV2Props extends Omit<
   /** App-level contract, kept: consumers outside this area use it. */
   open?: boolean;
   vfolderFrgmt: SharedFolderPermissionInfoModalV2Fragment$key | null;
-  /** The page's project (ADR-0001); `null` considers every project of the caller. */
+  /** The page's project (ADR-0001); `null` offers only the caller's own share. */
   project: ProjectContextOrNull;
   onLeaveFolder?: (folderId: string) => void;
   onRequestClose: (success?: boolean) => void;
@@ -222,6 +202,7 @@ const SharedFolderPermissionInfoModalV2: React.FC<
   const { getErrorMessage } = useErrorMessageResolver();
   const [currentUser] = useCurrentUserInfo();
   const relayEnvironment = useRelayEnvironment();
+  const [isProjectLeaveOpen, setIsProjectLeaveOpen] = useState(false);
 
   const vfolder = useFragment(
     graphql`
@@ -276,7 +257,6 @@ const SharedFolderPermissionInfoModalV2: React.FC<
     gcTime: 0,
   });
   const share = leavableShare.data;
-  const [isProjectLeaveOpen, setIsProjectLeaveOpen] = useState(false);
 
   const leaveFolder = useTanMutation({
     mutationFn: ({ shareId }: { shareId: string }) =>
@@ -285,7 +265,7 @@ const SharedFolderPermissionInfoModalV2: React.FC<
 
   const leave = () => {
     const globalId = vfolder?.id;
-    if (!share || !globalId) return Promise.resolve();
+    if (!share || !globalId || leaveFolder.isPending) return Promise.resolve();
     return leaveFolder
       .mutateAsync({ shareId: share.shareId })
       .then(() => {
@@ -430,6 +410,7 @@ const SharedFolderPermissionInfoModalV2: React.FC<
           ]}
           confirmText={vfolder?.metadata?.name ?? ''}
           requireConfirmInput
+          confirmLoading={leaveFolder.isPending}
           okText={t('data.invitation.LeaveSharedFolder')}
           onOk={() => leave().finally(() => setIsProjectLeaveOpen(false))}
           onCancel={() => setIsProjectLeaveOpen(false)}
