@@ -10,6 +10,7 @@ import ResourcePresetSettingModal from './ResourcePresetSettingModal';
 import '@testing-library/jest-dom';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { BAIUnmountAfterClose } from 'backend.ai-ui';
 import { Suspense } from 'react';
 import {
   graphql,
@@ -276,14 +277,15 @@ const SharedModalHost = ({ mode }: { mode: 'edit' | 'create' | null }) => {
     {},
   );
   return (
-    <ResourcePresetSettingModal
-      open={mode !== null}
-      unmountOnClose
-      resourcePresetFrgmt={
-        mode === 'edit' ? data.resource_presets?.[0] : undefined
-      }
-      onRequestClose={vi.fn()}
-    />
+    <BAIUnmountAfterClose>
+      <ResourcePresetSettingModal
+        open={mode !== null}
+        resourcePresetFrgmt={
+          mode === 'edit' ? data.resource_presets?.[0] : undefined
+        }
+        onRequestClose={vi.fn()}
+      />
+    </BAIUnmountAfterClose>
   );
 };
 

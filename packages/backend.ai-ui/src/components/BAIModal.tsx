@@ -25,7 +25,7 @@
  | `title` / `subtitle` / `closable` / `type` | `ModalHeader` in the adapter's `Layout` |
  | `footer` / `onOk` / `okText` / `okType` / `okButtonProps` / `confirmLoading` / `cancelText` / `cancelButtonProps` | `LayoutFooter` in the adapter's `Layout` |
  | `loading`                              | `BAISkeleton` in place of the body     |
- | anything else `ModalProps` declares (`zIndex`, `unmountOnClose`, `ref`, …) | forwarded as is |
+ | anything else `ModalProps` declares (`zIndex`, `ref`, …) except `unmountOnClose` | forwarded as is |
 
  Accepted and ignored (antd mechanisms with no destination): `centered`,
  `draggable`, `stickyTitle`, `forceRender`, `getContainer`, `wrapClassName`,
@@ -187,7 +187,10 @@ type BAIModalOwnedModalProps =
   | 'actionButtonProps'
   | 'cancelLabel'
   | 'hasCancelButton'
-  | 'isLoading';
+  | 'isLoading'
+  // It unmounts only the children, not the component that renders BAIModal:
+  // wrap that component in BAIUnmountAfterClose instead.
+  | 'unmountOnClose';
 
 export interface BAIModalProps extends Omit<
   ModalProps,

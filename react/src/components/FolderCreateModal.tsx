@@ -42,6 +42,7 @@ import {
   BAIRadioListItem,
   BAISwitch,
   BAITextInput,
+  BAIUnmountAfterClose,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { Suspense, useEffect, useEffectEvent, useRef, useState } from 'react';
@@ -109,7 +110,7 @@ export interface FolderCreateModalProps extends Omit<
   alertMessage?: React.ReactNode;
 }
 
-const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
+const FolderCreateModalContent: React.FC<FolderCreateModalProps> = ({
   onRequestClose,
   project,
   initialValidate = false,
@@ -363,7 +364,6 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
         }}
         title={t('data.CreateANewStorageFolder')}
         maskClosable={false}
-        unmountOnClose
         footer={
           <HStack justify="end" gap={2}>
             <Button
@@ -398,9 +398,6 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
         {...modalProps}
         afterOpenChange={(nowOpen) => {
           if (!nowOpen) return;
-          // The modal is destroyed on close, which clears the form; keep the
-          // tracked in-modal project selection in sync with it.
-          setSelectedProject(null);
           if (initialValidate) {
             formRef.current?.validateFields();
           }
@@ -652,7 +649,6 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
         title={t('data.CreateANewStorageFolder')}
         okText={t('data.Create')}
         confirmLoading={isConfirmPending}
-        unmountOnClose
         onCancel={() => {
           setIsSharedConfirmOpen(false);
           setDontAskAgain(false);
@@ -738,5 +734,12 @@ const FolderCreatePermissionCheck: React.FC<
 
   return null;
 };
+
+// Unmounted after close so the form and every query it runs start fresh.
+const FolderCreateModal: React.FC<FolderCreateModalProps> = (props) => (
+  <BAIUnmountAfterClose>
+    <FolderCreateModalContent {...props} />
+  </BAIUnmountAfterClose>
+);
 
 export default FolderCreateModal;

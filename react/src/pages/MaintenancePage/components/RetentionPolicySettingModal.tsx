@@ -223,7 +223,6 @@ const RetentionPolicySettingModal: React.FC<
     <BAIModal
       {...baiModalProps}
       centered
-      unmountOnClose
       title={
         policy
           ? t('retentionPolicy.EditPolicy')
