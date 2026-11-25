@@ -7,7 +7,7 @@ import jsoncParser from 'jsonc-eslint-parser';
 // Shared base for `no-restricted-imports` so the per-file allowlist blocks
 // below can re-declare the rule (flat-config rule configs replace, not merge)
 // without duplicating these entries.
-const restrictedImportPatterns = [
+const baseRestrictedImportPatterns = [
   // `locale` and `theme` are published subpath exports, not deep reaches into internals.
   {
     group: ['backend.ai-ui/*', '!backend.ai-ui/locale', '!backend.ai-ui/theme'],
@@ -28,7 +28,24 @@ const restrictedImportPatterns = [
       'Page-local modules are private to their page folder; move the module to react/src (or BUI / ui-common) once shared code needs it (ADR 0024).',
   },
 ];
+const restrictedImportPatterns = [
+  ...baseRestrictedImportPatterns,
+  {
+    group: ['posthog-js', 'posthog-js/*'],
+    message:
+      'posthog-js is imported only by src/components/ProductAnalytics.tsx, which routes.tsx loads only when domainConfig.analytics is set (ADR 0039).',
+  },
+];
 // `no-restricted-imports` sees only static imports and re-exports.
+const posthogDynamicImportBan = [
+  'ImportExpression[source.value=/^posthog-js/]',
+  'ImportExpression > TemplateLiteral.source[quasis.0.value.cooked=/^posthog-js/]',
+  "CallExpression[callee.name='require'][arguments.0.value=/^posthog-js/]",
+].map((selector) => ({
+  selector,
+  message:
+    'posthog-js is imported only by src/components/ProductAnalytics.tsx, statically (ADR 0039).',
+}));
 const astryxDynamicImportBan = [
   'ImportExpression[source.value=/^@astryxdesign\\u002F/]',
   'ImportExpression > TemplateLiteral.source[quasis.0.value.cooked=/^@astryxdesign\\u002F/]',
@@ -161,6 +178,7 @@ export default [
             'Direct <style> elements are forbidden (CSP nonce safety). Import a co-located .css file instead, and drive runtime-variable values through CSS custom properties.',
         },
         ...astryxDynamicImportBan,
+        ...posthogDynamicImportBan,
         bailinkEllipsisRestriction,
       ],
     },
@@ -260,6 +278,19 @@ export default [
         'error',
         {
           patterns: restrictedImportPatterns,
+          paths: restrictedImportPaths,
+        },
+      ],
+    },
+  },
+
+  {
+    files: ['src/components/ProductAnalytics.tsx'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [...baseRestrictedImportPatterns, setCurrentProjectBan],
           paths: restrictedImportPaths,
         },
       ],

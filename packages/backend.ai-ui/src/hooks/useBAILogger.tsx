@@ -72,7 +72,7 @@ class Logger {
   }
 
   private logging(level: LogLevel, ...args: any[]) {
-    if (!this.enabled) return;
+    if (!this.enabled && this.plugins.length === 0) return;
 
     let context: LogContext = {
       level,
@@ -82,7 +82,6 @@ class Logger {
     };
 
     try {
-      // Before hooks
       for (const plugin of this.plugins) {
         const result = plugin.beforeLog?.(context);
         if (result === null) return;
@@ -91,27 +90,26 @@ class Logger {
         }
       }
 
-      // Actual log output
-      const consoleMethods = [
-        // eslint-disable-next-line no-console
-        console.log,
-        // eslint-disable-next-line no-console
-        console.debug,
-        // eslint-disable-next-line no-console
-        console.info,
-        // eslint-disable-next-line no-console
-        console.warn,
-        // eslint-disable-next-line no-console
-        console.error,
-      ];
-      consoleMethods[level](...context.args);
+      if (this.enabled) {
+        const consoleMethods = [
+          // eslint-disable-next-line no-console
+          console.log,
+          // eslint-disable-next-line no-console
+          console.debug,
+          // eslint-disable-next-line no-console
+          console.info,
+          // eslint-disable-next-line no-console
+          console.warn,
+          // eslint-disable-next-line no-console
+          console.error,
+        ];
+        consoleMethods[level](...context.args);
+      }
 
-      // After hooks
       for (const plugin of this.plugins) {
         plugin.afterLog?.(context);
       }
     } catch (error) {
-      // Plugin error handling
       for (const plugin of this.plugins) {
         plugin.onError?.(error as Error, context);
       }
