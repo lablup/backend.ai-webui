@@ -88,21 +88,22 @@ export interface LoginConfigState {
   openPortToPublic: boolean;
   allowPreferredPort: boolean;
   allowNonAuthTCP: boolean;
-  /** The per-session caps (`max*PerContainer`); unset means no cap. Memory and shared memory are in GiB. */
-  maxCPUCoresPerContainer?: number;
-  maxMemoryPerContainer?: number;
-  maxCUDADevicesPerContainer?: number;
-  maxCUDASharesPerContainer?: number;
-  maxROCMDevicesPerContainer?: number;
-  maxTPUDevicesPerContainer?: number;
-  maxIPUDevicesPerContainer?: number;
-  maxATOMDevicesPerContainer?: number;
-  maxGaudi2DevicesPerContainer?: number;
-  maxWarboyDevicesPerContainer?: number;
-  maxRNGDDevicesPerContainer?: number;
-  maxATOMPLUSDevicesPerContainer?: number;
+  maxCPUCoresPerContainer: number;
+  maxMemoryPerContainer: number;
+  maxCUDADevicesPerContainer: number;
+  maxCUDASharesPerContainer: number;
+  maxROCMDevicesPerContainer: number;
+  maxTPUDevicesPerContainer: number;
+  maxIPUDevicesPerContainer: number;
+  maxATOMDevicesPerContainer: number;
+  maxGaudi2DevicesPerContainer: number;
+  maxWarboyDevicesPerContainer: number;
+  maxRNGDDevicesPerContainer: number;
+  maxATOMPLUSDevicesPerContainer: number;
+  /** Unset unless a document names it, so the launcher falls back to the CUDA cap. */
   maxHyperaccelLPUDevicesPerContainer?: number;
-  maxShmPerContainer?: number;
+  /** GiB; 0 means no cap, so shared memory is bounded only by the session memory. */
+  maxShmPerContainer: number;
   maxFileUploadSize: number;
   /** MiB; 0 picks the chunk size from the file size. */
   fileUploadChunkSize: number;
@@ -163,20 +164,20 @@ export function getDefaultLoginConfig(): LoginConfigState {
     openPortToPublic: false,
     allowPreferredPort: false,
     allowNonAuthTCP: false,
-    maxCPUCoresPerContainer: undefined,
-    maxMemoryPerContainer: undefined,
-    maxCUDADevicesPerContainer: undefined,
-    maxCUDASharesPerContainer: undefined,
-    maxROCMDevicesPerContainer: undefined,
-    maxTPUDevicesPerContainer: undefined,
-    maxIPUDevicesPerContainer: undefined,
-    maxATOMDevicesPerContainer: undefined,
-    maxGaudi2DevicesPerContainer: undefined,
-    maxWarboyDevicesPerContainer: undefined,
-    maxRNGDDevicesPerContainer: undefined,
-    maxATOMPLUSDevicesPerContainer: undefined,
+    maxCPUCoresPerContainer: 64,
+    maxMemoryPerContainer: 64,
+    maxCUDADevicesPerContainer: 16,
+    maxCUDASharesPerContainer: 16,
+    maxROCMDevicesPerContainer: 10,
+    maxTPUDevicesPerContainer: 8,
+    maxIPUDevicesPerContainer: 8,
+    maxATOMDevicesPerContainer: 8,
+    maxGaudi2DevicesPerContainer: 8,
+    maxWarboyDevicesPerContainer: 8,
+    maxRNGDDevicesPerContainer: 8,
+    maxATOMPLUSDevicesPerContainer: 8,
     maxHyperaccelLPUDevicesPerContainer: undefined,
-    maxShmPerContainer: undefined,
+    maxShmPerContainer: 0,
     maxFileUploadSize: -1,
     fileUploadChunkSize: 0,
     storageWarningThreshold: 90,

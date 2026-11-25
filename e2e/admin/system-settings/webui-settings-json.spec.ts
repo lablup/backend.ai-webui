@@ -86,12 +86,12 @@ test.describe(
       await test.step('the editor holds the public and domain documents', async () => {
         const json = JSON.parse(await readEditorText(page));
         expect(Object.keys(json).sort()).toEqual(['domain', 'public']);
-        // An unsaved cap row is Unlimited: the key is absent from the JSON.
-        if (cpuBefore) {
-          expect(json.domain.maxCPUCoresPerContainer).toBe(Number(cpuBefore));
-        } else {
-          expect(json.domain).not.toHaveProperty('maxCPUCoresPerContainer');
-        }
+        // An unsaved number row shows its default as the placeholder.
+        const cpuShown =
+          cpuBefore ||
+          (await rowInput(cpuRow).getAttribute('placeholder')) ||
+          '';
+        expect(json.domain.maxCPUCoresPerContainer).toBe(Number(cpuShown));
       });
 
       await test.step('Cancel closes the dialog and leaves the page as it was', async () => {
