@@ -172,9 +172,16 @@ check 'offline, the PR comes from the cache dev.mjs wrote' '{"number":11350,"tit
   "$(lookup_with 1 '')"
 check 'a cached PR wins over a retitle gh would report' '{"number":11350,"title":"cached"} 0' \
   "$(lookup_with 0 '{"number":11350,"title":"renamed"}') $( (cat "$TMP/gh-calls" 2>/dev/null) | wc -l | tr -d ' ')"
-printf '%s' '{"title":"no number"}' >"$CACHE"
-check 'a cache without a number is a miss' '{"number":11350,"title":"net"}' \
-  "$(lookup_with 0 '{"number":11350,"title":"net"}')"
+# Each of these is a miss for dev.mjs's `JSON.parse` + `pr?.number`.
+for bad in '{"title":"no number"}' '{"number":0}' '{"number":""}' '[{"number":1}]' \
+           '{"number":1}{"number":2}' '{"number":11350,"title":"ab"}"}'; do
+  printf '%s' "$bad" >"$CACHE"
+  check "a cache dev.mjs cannot use is a miss: $bad" '{"number":11350,"title":"net"}' \
+    "$(lookup_with 0 '{"number":11350,"title":"net"}')"
+done
+rm -f "$CACHE"
+check 'a gh that fails after printing is neither used nor cached' 'null absent' \
+  "$(lookup_with 124 '{"number":11350,"title":"late"}') $([ -e "$CACHE" ] && echo written || echo absent)"
 rm -f "$CACHE"
 check 'no cache and no gh answer is null' 'null' "$(lookup_with 1 '')"
 check 'and writes no cache' 'absent' "$([ -e "$CACHE" ] && echo written || echo absent)"

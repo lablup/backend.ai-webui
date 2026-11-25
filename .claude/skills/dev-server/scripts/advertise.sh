@@ -211,10 +211,19 @@ pr_cache_path() {
   '
 }
 
-# read_pr_cache <file> — the cached PR as one JSON line, or nothing. Like dev.mjs's
-# `readCachedPr`, content without a `number` is a miss.
+# one_pr [file] — the PR as one JSON line, or nothing and non-zero. As dev.mjs's
+# `JSON.parse` + `pr?.number`: exactly one value, an object, `number` JS-truthy.
+one_pr() {
+  local pr
+  pr=$(jq -cse 'select(length == 1) | .[0]
+    | select(type == "object" and (.number | . != null and . != false and . != 0 and . != ""))' \
+    "$@" 2>/dev/null) || return 1
+  printf '%s\n' "$pr"
+}
+
+# read_pr_cache <file> — dev.mjs's `readCachedPr`: a missing or unusable file is a miss.
 read_pr_cache() {
-  [ -f "$1" ] && jq -ce 'select(.number)' "$1" 2>/dev/null
+  [ -f "$1" ] && one_pr "$1"
 }
 
 # write_pr_cache <file> <json> — dev.mjs's `writeCachedPr`: gh's own JSON, compact,
@@ -315,22 +324,23 @@ exact_mode() {
 # a function of the PR it returns, and a name that differs from the one dev.mjs
 # claims points BAI_REVIEW_BOOT_RECORD and the probe at a server that is not there.
 # So: the same on-disk cache first, and only on a miss `gh pr view <branch>`
-# (any PR state, not just open) with a 4s budget, whose answer is cached for dev.mjs.
+# (any PR state, not just open) with a 4s budget, whose exit-0 answer is cached for dev.mjs.
 lookup_pr() {
-  local branch=$1 out cache
+  local branch=$1 out pr cache rc=0
   { [ -n "$branch" ] && [ -z "${PORTLESS_SKIP_PR_LOOKUP:-}" ]; } || { printf 'null'; return; }
   cache=$(pr_cache_path "$branch")
   read_pr_cache "$cache" && return
   if command -v timeout >/dev/null 2>&1; then
-    out=$(timeout 4 gh pr view "$branch" --json number,title 2>/dev/null || true)
+    out=$(timeout 4 gh pr view "$branch" --json number,title 2>/dev/null) || rc=$?
   else
-    out=$(gh pr view "$branch" --json number,title 2>/dev/null || true)
+    out=$(gh pr view "$branch" --json number,title 2>/dev/null) || rc=$?
   fi
-  if [ -n "$out" ] && jq -e '.number' <<<"$out" >/dev/null 2>&1; then
-    write_pr_cache "$cache" "$out"
-    jq -c . <<<"$out"; return
+  if [ "$rc" -eq 0 ] && pr=$(one_pr <<<"$out"); then
+    write_pr_cache "$cache" "$pr"
+    printf '%s\n' "$pr"; return
   fi
-  printf 'null'
+  # dev.mjs re-reads the cache here; another dev.mjs may have refreshed it meanwhile.
+  read_pr_cache "$cache" || printf 'null'
 }
 
 # The name `pnpm dev` will claim, resolved with the very module dev.mjs uses so
