@@ -187,6 +187,28 @@ const DeploymentRevisionCompareDrawer: React.FC<
     modelDefinition: t('modelService.ModelDefinition'),
   };
 
+  // The add-revision modal's own labels, so a field reads the same in both places.
+  const healthCheckLabels: Record<string, string> = {
+    enable: t('modelService.EnableHealthCheck'),
+    path: t('modelService.HealthCheck'),
+    interval: t('modelService.Interval'),
+    maxRetries: t('modelService.MaxRetries'),
+    maxWaitTime: t('modelService.MaxWaitTime'),
+    expectedStatusCode: t('modelService.ExpectedStatusCode'),
+    initialDelay: t('modelService.InitialDelay'),
+  };
+  // A model's name is its own row; it tags the other rows only when there are several.
+  const hasSeveralModels =
+    rows.filter((row) => row.field === 'modelName').length > 1;
+  const MODEL_FIELDS = new Set([
+    'modelPath',
+    'command',
+    'shell',
+    'port',
+    'healthCheck',
+    'preStartActions',
+  ]);
+
   const fieldLabel = (row: RevisionDiffRow): string => {
     switch (row.field) {
       case 'image':
@@ -220,17 +242,19 @@ const DeploymentRevisionCompareDrawer: React.FC<
       case 'modelName':
         return t('modelStore.ModelName');
       case 'modelPath':
-        return `${row.name} · ${t('modelStore.ModelPath')}`;
+        return t('modelStore.ModelPath');
       case 'command':
-        return `${row.name} · ${t('modelService.StartCommand')}`;
+        return t('modelService.StartCommand');
       case 'shell':
-        return `${row.name} · ${t('modelService.Shell')}`;
+        return t('modelService.Shell');
       case 'port':
-        return `${row.name} · ${t('modelService.Port')}`;
+        return t('modelService.Port');
       case 'healthCheck':
-        return `${row.name} · ${t('adminDeploymentPreset.SectionHealthCheck')} · ${row.path}`;
+        return row.path && healthCheckLabels[row.path]
+          ? healthCheckLabels[row.path]
+          : `${t('adminDeploymentPreset.SectionHealthCheck')} ${row.path ?? ''}`;
       case 'preStartActions':
-        return `${row.name} · ${t('modelService.PreStartActions')}`;
+        return t('modelService.PreStartActions');
       case 'inferenceRuntimeConfig':
         return row.name || t('modelService.RuntimeConfiguration');
       default:
@@ -328,9 +352,12 @@ const DeploymentRevisionCompareDrawer: React.FC<
       render: (_value, row) => (
         <BAIFlex gap="xs" align="center" wrap="nowrap">
           {statusMarker(row)}
-          <BAIText style={{ wordBreak: 'break-all' }}>
-            {fieldLabel(row)}
-          </BAIText>
+          <BAIText ellipsis={{ tooltip: true }}>{fieldLabel(row)}</BAIText>
+          {hasSeveralModels && MODEL_FIELDS.has(row.field) ? (
+            <BAIText type="secondary" ellipsis={{ tooltip: true }}>
+              {row.name}
+            </BAIText>
+          ) : null}
         </BAIFlex>
       ),
     },
@@ -412,7 +439,6 @@ const DeploymentRevisionCompareDrawer: React.FC<
                 size="small"
                 rowKey="key"
                 pagination={false}
-                resizable={false}
                 dataSource={groupedRows[group]}
                 columns={columns}
               />
