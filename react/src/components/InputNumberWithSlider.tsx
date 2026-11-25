@@ -19,7 +19,10 @@ import React, { useEffect } from 'react';
 import type { CSSProperties, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 
-/** antd-shaped position-keyed marks map — frozen for the call sites. */
+/**
+ * antd-shaped position-keyed marks map — frozen for the call sites. A mark's
+ * `style` reaches only a node label; string and number labels ignore it.
+ */
 type SliderMarks = Record<
   string | number,
   ReactNode | { style?: CSSProperties; label?: ReactNode }
@@ -167,8 +170,7 @@ const InputNumberWithSlider: React.FC<InputNumberWithSliderProps> = ({
     ? []
     : _.filter(
         normalizeMarks(sliderProps?.marks),
-        (mark) =>
-          mark.value >= sliderMin && (!_.isNumber(max) || mark.value <= max),
+        (mark) => mark.value >= sliderMin && mark.value <= sliderMax,
       );
   // Astryx draws every tick; it renders only the labels it can (strings).
   const astryxMarks = _.map(marks, (mark) => ({
