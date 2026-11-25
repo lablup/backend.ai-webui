@@ -738,18 +738,24 @@ const FolderCreatePermissionCheck: React.FC<
 
 // Unmounted after close so the form and every query it runs start fresh; the
 // content mounts on open, so its suspending hooks need their own boundary.
-const FolderCreateModal: React.FC<FolderCreateModalProps> = (props) => (
-  <BAIUnmountAfterClose>
-    <SuspendedFolderCreateModal {...props} />
-  </BAIUnmountAfterClose>
-);
+const FolderCreateModal: React.FC<FolderCreateModalProps> = (props) => {
+  'use memo';
+  return (
+    <BAIUnmountAfterClose>
+      <SuspendedFolderCreateModal {...props} />
+    </BAIUnmountAfterClose>
+  );
+};
 
 const SuspendedFolderCreateModal: React.FC<FolderCreateModalProps> = (
   props,
-) => (
-  <Suspense fallback={null}>
-    <FolderCreateModalContent {...props} />
-  </Suspense>
-);
+) => {
+  'use memo';
+  return (
+    <Suspense fallback={null}>
+      <FolderCreateModalContent {...props} />
+    </Suspense>
+  );
+};
 
 export default FolderCreateModal;
