@@ -397,6 +397,7 @@ const FolderCreateModalContent: React.FC<FolderCreateModalProps> = ({
         width={MODAL_WIDTH}
         {...modalProps}
         afterOpenChange={(nowOpen) => {
+          modalProps.afterOpenChange?.(nowOpen);
           if (!nowOpen) return;
           if (initialValidate) {
             formRef.current?.validateFields();
@@ -735,11 +736,20 @@ const FolderCreatePermissionCheck: React.FC<
   return null;
 };
 
-// Unmounted after close so the form and every query it runs start fresh.
+// Unmounted after close so the form and every query it runs start fresh; the
+// content mounts on open, so its suspending hooks need their own boundary.
 const FolderCreateModal: React.FC<FolderCreateModalProps> = (props) => (
   <BAIUnmountAfterClose>
-    <FolderCreateModalContent {...props} />
+    <SuspendedFolderCreateModal {...props} />
   </BAIUnmountAfterClose>
+);
+
+const SuspendedFolderCreateModal: React.FC<FolderCreateModalProps> = (
+  props,
+) => (
+  <Suspense fallback={null}>
+    <FolderCreateModalContent {...props} />
+  </Suspense>
 );
 
 export default FolderCreateModal;

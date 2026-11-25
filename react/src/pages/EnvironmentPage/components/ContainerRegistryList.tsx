@@ -634,12 +634,10 @@ const ContainerRegistryList: React.FC<{
       />
       {editingRegistry ? (
         <Suspense fallback={null}>
-          <BAIUnmountAfterClose>
-            <EditingRegistryModal
-              entityId={editingRegistry.entityId}
-              {...editorModalProps}
-            />
-          </BAIUnmountAfterClose>
+          <EditingRegistryModal
+            entityId={editingRegistry.entityId}
+            {...editorModalProps}
+          />
         </Suspense>
       ) : (
         <BAIUnmountAfterClose>
