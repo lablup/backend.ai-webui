@@ -1,8 +1,8 @@
 {
   "base": "main",
   "head": "chore/gh-11373-adr-pr-preview",
-  "baseSha": "4f6f76f8891c9f94be5bfe3f7056f5cf42cc18be",
-  "headSha": "26d219f06317ba052db1545c6e22c5715750ec34",
+  "baseSha": "bf561bc34a4f1d86b32e44d63fa3cf9fa7568f02",
+  "headSha": "006432609d0436c4264aaa6ec8cb643aee09df66",
   "adrs": [],
   "architecture": {
     "en": "unchanged",

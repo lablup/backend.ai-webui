@@ -2073,7 +2073,7 @@
       async function fetchText(path) {
         const r = await fetch(
           srcUrl(path),
-          ref ? { cache: "no-cache" } : undefined,
+          viewRef ? { cache: "no-cache" } : undefined,
         );
         if (!r.ok)
           throw new Error(
@@ -2190,8 +2190,11 @@
           const own = fileOf(c, lang);
           const e = entries.find((x) => x.id === c.id);
           if (e) {
-            if (own?.status === "removed")
-              Object.assign(e, { file: own.path.slice(4), gone: true });
+            if (own?.status === "removed" || own?.status === "renamed")
+              Object.assign(e, {
+                file: own.path.slice(4),
+                gone: own.status === "removed",
+              });
             continue;
           }
           const f = own || c.files.en || c.files.ko;
@@ -2322,7 +2325,8 @@
         }
         return ops;
       }
-      const blockKey = (t) => t.raw.replace(/\s+/g, " ").trim();
+      const blockKey = (t) =>
+        t.type === "code" ? t.raw.trimEnd() : t.raw.replace(/\s+/g, " ").trim();
       const leadH1 = (ts) =>
         ts[0]?.type === "heading" && ts[0].depth === 1 ? ts[0] : null;
 
