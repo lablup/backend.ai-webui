@@ -1299,6 +1299,7 @@
       "InvitationCanceled": "Приглашение отменено",
       "InvitationError": "Приглашение не прошло. Пользователь уже может быть приглашен.",
       "Invited": "Успешно приглашен",
+      "LeaveProjectSharedFolderDesc": "Папка ‘{{folderName}}’ будет удалена у всех участников проекта ‘{{projectName}}’. Выйти из неё?",
       "LeaveSharedFolder": "Оставьте общую папку",
       "LeaveSharedFolderDesc": "Вы хотите оставить общую папку ‘{{foldername}}’?",
       "NoMoreInvitation": "Приглашений к просмотру нет.",

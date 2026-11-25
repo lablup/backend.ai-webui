@@ -1299,6 +1299,7 @@
       "InvitationCanceled": "Invitation annulée",
       "InvitationError": "L'invitation a échoué. L'utilisateur est peut-être déjà invité.",
       "Invited": "Invité avec succès",
+      "LeaveProjectSharedFolderDesc": "‘{{folderName}}’ quittera le projet ‘{{projectName}}’ pour tous ses membres. Voulez-vous le quitter ?",
       "LeaveSharedFolder": "Laissez le dossier partagé",
       "LeaveSharedFolderDesc": "Voulez-vous quitter le dossier partagé «{{FolderName}}»?",
       "NoMoreInvitation": "Il n’y a aucune invitation à réviser.",

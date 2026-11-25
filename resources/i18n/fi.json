@@ -1299,6 +1299,7 @@
       "InvitationCanceled": "Kutsu peruutettu",
       "InvitationError": "Kutsu epäonnistui. Käyttäjä on ehkä jo kutsuttu.",
       "Invited": "Kutsuttu onnistuneesti",
+      "LeaveProjectSharedFolderDesc": "‘{{folderName}}’ poistuu projektin ‘{{projectName}}’ kaikilta jäseniltä. Haluatko poistua?",
       "LeaveSharedFolder": "Jätä jaettu kansio",
       "LeaveSharedFolderDesc": "Haluatko jättää jaetun kansion '{{Folderinimi}}'?",
       "NoMoreInvitation": "Arvostelukutsuja ei ole.",

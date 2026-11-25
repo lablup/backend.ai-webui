@@ -1299,6 +1299,7 @@
       "InvitationCanceled": "Einladung abgebrochen",
       "InvitationError": "Einladung fehlgeschlagen. Der Benutzer ist möglicherweise bereits eingeladen.",
       "Invited": "Erfolgreich eingeladen",
+      "LeaveProjectSharedFolderDesc": "‘{{folderName}}’ wird für alle Mitglieder des Projekts ‘{{projectName}}’ entfernt. Möchten Sie den Ordner verlassen?",
       "LeaveSharedFolder": "Lassen Sie den gemeinsam genutzten Ordner",
       "LeaveSharedFolderDesc": "Möchten Sie den freigegebenen Ordner \"{{Ordnername}}\" verlassen?",
       "NoMoreInvitation": "Es gibt keine Einladungen zur Rezension.",

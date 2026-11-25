@@ -1299,6 +1299,7 @@
       "InvitationCanceled": "Η πρόσκληση ακυρώθηκε",
       "InvitationError": "Η πρόσκληση απέτυχε. Ο χρήστης μπορεί να έχει ήδη προσκληθεί.",
       "Invited": "Προσκλήθηκε επιτυχώς",
+      "LeaveProjectSharedFolderDesc": "Ο φάκελος ‘{{folderName}}’ θα αφαιρεθεί από όλα τα μέλη του έργου ‘{{projectName}}’. Θέλετε να αποχωρήσετε;",
       "LeaveSharedFolder": "Αφήστε το κοινόχρηστο φάκελο",
       "LeaveSharedFolderDesc": "Θέλετε να αφήσετε τον κοινόχρηστο φάκελο '{{foldername}}';",
       "NoMoreInvitation": "Δεν υπάρχουν προσκλήσεις για αξιολόγηση.",

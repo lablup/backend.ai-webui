@@ -1286,6 +1286,7 @@
       "InvitationCanceled": "Invitation canceled",
       "InvitationError": "Invitation failed. User may already be invited.",
       "Invited": "Successfully invited",
+      "LeaveProjectSharedFolderDesc": "‘{{folderName}}’ will leave the project ‘{{projectName}}’ for all its members. Do you want to leave it?",
       "LeaveSharedFolder": "Leave the shared folder",
       "LeaveSharedFolderDesc": "Do you want to leave the shared folder ‘{{folderName}}’?",
       "NoMoreInvitation": "There are no invitations to review.",

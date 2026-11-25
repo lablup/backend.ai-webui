@@ -1299,6 +1299,7 @@
       "InvitationCanceled": "Урилгыг цуцаллаа",
       "InvitationError": "Урилга амжилтгүй боллоо. Хэрэглэгчийг аль хэдийн урьсан байж магадгүй.",
       "Invited": "Амжилттай урилаа",
+      "LeaveProjectSharedFolderDesc": "‘{{folderName}}’ хавтас ‘{{projectName}}’ төслийн бүх гишүүдээс хасагдана. Гарах уу?",
       "LeaveSharedFolder": "Хуваалцсан фолдерыг орхи",
       "LeaveSharedFolderDesc": "Та хуваалцсан фолдерын хавтасыг орхихыг хүсч байна уу? {{Undername}}} '?",
       "NoMoreInvitation": "Хянах урилга байхгүй байна.",

@@ -1295,6 +1295,7 @@
       "InvitationCanceled": "ยกเลิกคำเชิญแล้ว",
       "InvitationError": "การเชิญล้มเหลว ผู้ใช้อาจได้รับเชิญแล้ว",
       "Invited": "เชิญสำเร็จแล้ว",
+      "LeaveProjectSharedFolderDesc": "‘{{folderName}}’ จะออกจากโปรเจกต์ ‘{{projectName}}’ สำหรับสมาชิกทุกคน ต้องการออกหรือไม่?",
       "LeaveSharedFolder": "ออกจากโฟลเดอร์ที่ใช้ร่วมกัน",
       "LeaveSharedFolderDesc": "คุณต้องการออกจากโฟลเดอร์ที่ใช้ร่วมกัน ‘{{folderName}}’ หรือไม่?",
       "NoMoreInvitation": "ไม่มีคำเชิญให้ตรวจสอบ",

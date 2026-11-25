@@ -1299,6 +1299,7 @@
       "InvitationCanceled": "招待を取り消しました",
       "InvitationError": "招待に失敗しました。ユーザーはすでに招待されている可能性があります。",
       "Invited": "招待に成功",
+      "LeaveProjectSharedFolderDesc": "フォルダー「{{folderName}}」はプロジェクト「{{projectName}}」のすべてのメンバーから外れます。退出しますか？",
       "LeaveSharedFolder": "共有フォルダーを残します",
       "LeaveSharedFolderDesc": "共有フォルダー「{{foldername}}」を残しますか？",
       "NoMoreInvitation": "レビューへの招待はありません。",

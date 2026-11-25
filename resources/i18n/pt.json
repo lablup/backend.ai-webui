@@ -1299,6 +1299,7 @@
       "InvitationCanceled": "Convite cancelado",
       "InvitationError": "O convite falhou. O usuário já pode ter sido convidado.",
       "Invited": "Convidado com sucesso",
+      "LeaveProjectSharedFolderDesc": "‘{{folderName}}’ sairá do projeto ‘{{projectName}}’ para todos os membros. Deseja sair?",
       "LeaveSharedFolder": "Deixe a pasta compartilhada",
       "LeaveSharedFolderDesc": "Deseja deixar a pasta compartilhada '{{FolderName}}'?",
       "NoMoreInvitation": "Não há convites para revisão.",

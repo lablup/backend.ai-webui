@@ -1299,6 +1299,7 @@
       "InvitationCanceled": "Đã hủy lời mời",
       "InvitationError": "Lời mời không thành công. Người dùng có thể đã được mời.",
       "Invited": "Đã mời thành công",
+      "LeaveProjectSharedFolderDesc": "‘{{folderName}}’ sẽ rời khỏi dự án ‘{{projectName}}’ đối với mọi thành viên. Bạn có muốn rời không?",
       "LeaveSharedFolder": "Để lại thư mục chia sẻ",
       "LeaveSharedFolderDesc": "Bạn có muốn để lại thư mục được chia sẻ ‘{{furderName}}?",
       "NoMoreInvitation": "Không có lời mời để xem xét.",

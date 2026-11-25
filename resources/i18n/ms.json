@@ -1299,6 +1299,7 @@
       "InvitationCanceled": "Jemputan dibatalkan",
       "InvitationError": "Jemputan gagal. Pengguna mungkin sudah dijemput.",
       "Invited": "Berjaya dijemput",
+      "LeaveProjectSharedFolderDesc": "‘{{folderName}}’ akan keluar daripada projek ‘{{projectName}}’ untuk semua ahlinya. Adakah anda mahu keluar?",
       "LeaveSharedFolder": "Tinggalkan folder kongsi",
       "LeaveSharedFolderDesc": "Adakah anda mahu meninggalkan folder kongsi '{{folderName}}'?",
       "NoMoreInvitation": "Tiada jemputan untuk dikaji semula.",

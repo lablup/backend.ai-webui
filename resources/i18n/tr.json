@@ -1299,6 +1299,7 @@
       "InvitationCanceled": "Davet iptal edildi",
       "InvitationError": "Davet başarısız oldu. Kullanıcı zaten davet edilmiş olabilir.",
       "Invited": "Başarıyla davet edildi",
+      "LeaveProjectSharedFolderDesc": "‘{{folderName}}’, ‘{{projectName}}’ projesinin tüm üyeleri için kaldırılacak. Ayrılmak istiyor musunuz?",
       "LeaveSharedFolder": "Paylaşılan klasörü bırakın",
       "LeaveSharedFolderDesc": "Paylaşılan klasörden ayrılmak ister misiniz?",
       "NoMoreInvitation": "İncelemeye davet yok.",

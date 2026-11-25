@@ -1299,6 +1299,7 @@
       "InvitationCanceled": "Undangan dibatalkan",
       "InvitationError": "Undangan gagal. Pengguna mungkin sudah diundang.",
       "Invited": "Berhasil diundang",
+      "LeaveProjectSharedFolderDesc": "‘{{folderName}}’ akan keluar dari proyek ‘{{projectName}}’ untuk semua anggotanya. Apakah Anda ingin keluar?",
       "LeaveSharedFolder": "Tinggalkan folder bersama",
       "LeaveSharedFolderDesc": "Apakah Anda ingin meninggalkan folder bersama ‘{{folderName}}’?",
       "NoMoreInvitation": "Tidak ada undangan untuk meninjau.",

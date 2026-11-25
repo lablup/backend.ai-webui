@@ -1300,6 +1300,7 @@
       "InvitationCanceled": "邀請已取消",
       "InvitationError": "邀請失敗。用戶可能已被邀請。",
       "Invited": "已成功邀請",
+      "LeaveProjectSharedFolderDesc": "資料夾「{{folderName}}」將從專案「{{projectName}}」的所有成員中移除。要退出嗎？",
       "LeaveSharedFolder": "留下共享文件夾",
       "LeaveSharedFolderDesc": "您要留下共享文件夾“ {{foldername}}”？",
       "NoMoreInvitation": "沒有審查邀請。",

@@ -1299,6 +1299,7 @@
       "InvitationCanceled": "邀请已取消",
       "InvitationError": "邀请失败。用户可能已被邀请。",
       "Invited": "已成功邀请",
+      "LeaveProjectSharedFolderDesc": "文件夹“{{folderName}}”将从项目“{{projectName}}”的所有成员中移除。要退出吗？",
       "LeaveSharedFolder": "留下共享文件夹",
       "LeaveSharedFolderDesc": "您要留下共享文件夹“ {{foldername}}”？",
       "NoMoreInvitation": "没有审查邀请。",

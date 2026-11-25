@@ -1299,6 +1299,7 @@
       "InvitationCanceled": "초대를 취소했습니다",
       "InvitationError": "초대가 실패했습니다. 이미 초대된 사용자일 수 있습니다.",
       "Invited": "초대장을 보냈습니다",
+      "LeaveProjectSharedFolderDesc": "‘{{folderName}}’ 폴더가 ‘{{projectName}}’ 프로젝트의 모든 구성원에게서 빠집니다. 나가시겠습니까?",
       "LeaveSharedFolder": "공유 폴더 나가기",
       "LeaveSharedFolderDesc": "공유받은 ‘{{folderName}}’ 폴더에서 나가시겠습니까?",
       "NoMoreInvitation": "확인해야 할 초대장이 없습니다.",

@@ -1299,6 +1299,7 @@
       "InvitationCanceled": "Zaproszenie anulowane",
       "InvitationError": "Zaproszenie nie powiodło się. Użytkownik może już zostać zaproszony.",
       "Invited": "Pomyślnie zaproszono",
+      "LeaveProjectSharedFolderDesc": "‘{{folderName}}’ zostanie usunięty z projektu ‘{{projectName}}’ dla wszystkich jego członków. Czy chcesz go opuścić?",
       "LeaveSharedFolder": "Zostaw wspólny folder",
       "LeaveSharedFolderDesc": "Czy chcesz zostawić udostępniony folder „{{foldername}}”?",
       "NoMoreInvitation": "Brak zaproszeń do recenzji.",
