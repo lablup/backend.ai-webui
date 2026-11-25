@@ -227,9 +227,7 @@ describe('diffRevisions', () => {
       right: 'vllm serve --port 8000',
     });
     for (const field of ['shell', 'healthCheck', 'preStartActions']) {
-      expect(rowOf(rows, `modelDefinition:${field}:0`)?.status).toBe(
-        'added',
-      );
+      expect(rowOf(rows, `modelDefinition:${field}:0`)?.status).toBe('added');
     }
   });
 
