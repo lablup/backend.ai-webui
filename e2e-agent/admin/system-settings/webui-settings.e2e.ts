@@ -45,7 +45,7 @@ test(
   async ({ app, agent }) => {
     await app.open("/admin/system-settings");
     await agent.act(
-      'Untick "Unlimited" on "Maximum CPU cores per session", type a new value and press Enter',
+      'Type a new value into "Maximum CPU cores per session" and press Enter',
     );
     await agent.act('Reset the "Maximum CPU cores per session" row');
   },
@@ -68,9 +68,7 @@ test(
   async ({ app, agent }) => {
     await app.open("/admin/system-settings");
     await agent.act('Turn off "Hide agents"');
-    await agent.act(
-      'Untick "Unlimited" on "Maximum CPU cores per session", type a value and press Enter',
-    );
+    await agent.act('Change "Maximum CPU cores per session" and press Enter');
     await agent.act("Reload the page and read both rows");
     await agent.act("Reset both rows and reload the page");
   },
@@ -187,24 +185,8 @@ test(
   draft,
   async ({ app, agent }) => {
     await app.open("/admin/system-settings");
-    await agent.act(
-      'Untick "Unlimited" on "Maximum CPU cores per session", type a low value and press Enter',
-    );
+    await agent.act('Lower "Maximum CPU cores per session" and press Enter');
     await agent.act("Open the session launcher and read the CPU limit");
-  },
-);
-
-test(
-  "the per-session resource caps default to Unlimited and the launcher applies no WebUI cap",
-  draft,
-  async ({ app, agent }) => {
-    await app.open("/admin/system-settings");
-    await agent.act(
-      'Read the "Unlimited" checkboxes of the "Maximum CPU cores per session", "Maximum memory per session" and "Maximum CUDA GPUs per session" rows',
-    );
-    await agent.act(
-      "Open the session launcher and read the CPU, memory and GPU limits",
-    );
   },
 );
 

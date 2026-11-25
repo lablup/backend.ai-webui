@@ -8,7 +8,6 @@ import {
   toSizeString,
   toStoredSize,
 } from '../helper/sizeSetting';
-import { useUnsetUnlimitedToggle } from '../hooks/useUnsetUnlimitedToggle';
 import {
   BAICheckboxInput,
   BAIDynamicUnitInputNumber,
@@ -22,42 +21,35 @@ interface WebUISettingSizeInputProps {
   label: string;
   /** The saved number; `undefined` when unset, which shows `defaultValue` as the placeholder. */
   value: number | undefined;
-  defaultValue: number | undefined;
+  defaultValue: number;
   size: WebUISizeSetting;
-  /** An Unlimited toggle that removes the key (`WebUISettingDefinition.isUnlimitedWhenUnset`). */
-  isUnlimitedWhenUnset?: boolean;
   width: number;
   /** `undefined` when the field is cleared, which resets the row. */
   onChange: (value: number | undefined) => void;
 }
 
-/** A stored size number edited as `"<n><unit>"`, with an optional server-limit, Automatic or Unlimited toggle. */
+/** A stored size number edited as `"<n><unit>"`, with an optional server-limit or Automatic toggle. */
 const WebUISettingSizeInput: React.FC<WebUISettingSizeInputProps> = ({
   label,
   value: savedValue,
   defaultValue,
   size,
-  isUnlimitedWhenUnset = false,
   width,
   onChange,
 }) => {
   'use memo';
   const { t } = useTranslation();
   const value = savedValue ?? defaultValue;
-  // Unticking a toggle stores nothing until a size is entered.
+  // Unticking Unlimited stores nothing until a size is entered.
   const [isEnteringLimit, setIsEnteringLimit] = useState(false);
   const [prevValue, setPrevValue] = useState(value);
   if (prevValue !== value) {
     setPrevValue(value);
     setIsEnteringLimit(false);
   }
-  const hasValueToggle =
-    size.unlimitedValue !== undefined && !!size.toggleLabel;
-  const unset = useUnsetUnlimitedToggle(isUnlimitedWhenUnset, value);
-  const hasToggle = hasValueToggle || isUnlimitedWhenUnset;
-  const isUnlimited = isUnlimitedWhenUnset
-    ? unset.isUnlimited
-    : hasValueToggle && value === size.unlimitedValue && !isEnteringLimit;
+  const hasToggle = size.unlimitedValue !== undefined && !!size.toggleLabel;
+  const isUnlimited =
+    hasToggle && value === size.unlimitedValue && !isEnteringLimit;
 
   return (
     <BAIFlex direction="column" align="start" gap="xs">
@@ -66,18 +58,11 @@ const WebUISettingSizeInput: React.FC<WebUISettingSizeInputProps> = ({
           size="sm"
           value={isUnlimited}
           onChange={(checked) => {
-            if (isUnlimitedWhenUnset) {
-              unset.toggle(checked);
-              if (checked) onChange(undefined);
-              return;
-            }
             setIsEnteringLimit(!checked);
             if (checked) onChange(size.unlimitedValue as number);
           }}
         >
-          {t(
-            `webuiSettings.${isUnlimitedWhenUnset ? 'Unlimited' : size.toggleLabel}`,
-          )}
+          {t(`webuiSettings.${size.toggleLabel}`)}
         </BAICheckboxInput>
       )}
       <BAIDynamicUnitInputNumber
@@ -92,25 +77,19 @@ const WebUISettingSizeInput: React.FC<WebUISettingSizeInputProps> = ({
         value={
           savedValue === undefined ||
           isUnlimited ||
-          (hasValueToggle && value === size.unlimitedValue)
+          (hasToggle && value === size.unlimitedValue)
             ? null
-            : toSizeString(savedValue, size)
+            : toSizeString(value, size)
         }
         placeholder={
-          defaultValue === undefined ||
-          (hasValueToggle && defaultValue === size.unlimitedValue)
+          hasToggle && defaultValue === size.unlimitedValue
             ? undefined
             : toPlaceholder(defaultValue, size)
         }
         onChange={(next) => {
           const stored = toStoredSize(next, size);
-          if (stored > 0) {
-            onChange(stored);
-            return;
-          }
-          // A commit that stores nothing ends the entry.
-          unset.endEntry();
-          if (_.isEmpty(next)) onChange(undefined);
+          if (stored > 0) onChange(stored);
+          else if (_.isEmpty(next)) onChange(undefined);
         }}
       />
     </BAIFlex>
