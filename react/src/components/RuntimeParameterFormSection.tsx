@@ -416,10 +416,7 @@ const ParameterControl: React.FC<ParameterControlProps> = ({
             sliderProps={{
               marks: {
                 [min]: min,
-                [max]: {
-                  style: { color: token('--color-text-secondary') },
-                  label: max,
-                },
+                [max]: max,
               },
             }}
           />
