@@ -25,15 +25,17 @@ const AutomaticShmemSwitch: React.FC<{
   autoLabel: string;
   manualLabel: string;
   onToggle?: (checked: boolean) => void;
+  disabled?: boolean;
   /** Injected by `Form.Item valuePropName="checked"`. */
   checked?: boolean;
   /** Injected by `Form.Item`. */
   onChange?: (value: boolean) => void;
-}> = ({ autoLabel, manualLabel, onToggle, checked, onChange }) => {
+}> = ({ autoLabel, manualLabel, onToggle, disabled, checked, onChange }) => {
   'use memo';
   return (
     <BAISwitch
       size="sm"
+      disabled={disabled}
       value={checked ?? false}
       onChange={(next) => {
         onChange?.(next);
@@ -56,6 +58,7 @@ interface SharedMemoryFormItemsProps {
    * only the antd TYPE import is gone (P15).
    */
   onChangeAutomaticShmem?: (checked: boolean) => void;
+  disabled?: boolean;
 }
 
 const SharedMemoryFormItems: React.FC<SharedMemoryFormItemsProps> = ({
@@ -63,6 +66,7 @@ const SharedMemoryFormItems: React.FC<SharedMemoryFormItemsProps> = ({
   max,
   onChangeResourceShmem,
   onChangeAutomaticShmem,
+  disabled,
 }) => {
   'use memo';
   const { t } = useTranslation();
@@ -250,6 +254,7 @@ const SharedMemoryFormItems: React.FC<SharedMemoryFormItemsProps> = ({
                   ]}
                 >
                   <BAIDynamicUnitInputNumber
+                    disabled={disabled}
                     defaultUnit="g"
                     min={min}
                     size="small"
@@ -279,6 +284,7 @@ const SharedMemoryFormItems: React.FC<SharedMemoryFormItemsProps> = ({
                       autoLabel={t('general.Auto')}
                       manualLabel={t('general.Manual')}
                       onToggle={onChangeAutomaticShmem}
+                      disabled={disabled}
                     />
                   </Form.Item>
                   <BAIQuestionIconWithTooltip

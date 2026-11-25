@@ -168,6 +168,7 @@ describe('WebUISettingList', () => {
       'maxCUDADevicesPerContainer',
       'maxCUDASharesPerContainer',
       'maxRNGDDevicesPerContainer',
+      'maxHyperaccelLPUDevicesPerContainer',
     ]) {
       const row = within(screen.getByTestId(`webui-setting-${key}`));
       expect(
@@ -179,7 +180,16 @@ describe('WebUISettingList', () => {
     }
   });
 
-  it('stores a CPU cap after unticking Unlimited, and 0 when ticked again', async () => {
+  it('shows an unset row without a toggle empty, with its default as the placeholder', () => {
+    renderList();
+    const input = within(
+      screen.getByTestId('webui-setting-storageWarningThreshold'),
+    ).getByRole('spinbutton');
+    expect(input).toHaveValue('');
+    expect(input).toHaveAttribute('placeholder', '90');
+  });
+
+  it('stores a CPU cap after unticking Unlimited, and removes the key when ticked again', async () => {
     domainWrite.mockResolvedValue();
     renderList();
     const row = within(
@@ -201,9 +211,10 @@ describe('WebUISettingList', () => {
       fireEvent.click(unlimited());
     });
     expect(unlimited()).toBeChecked();
-    expect(writtenDoc(domainWrite, domainWrite.mock.calls.length - 1)).toEqual({
-      maxCPUCoresPerContainer: 0,
-    });
+    // The only saved key is gone, so the settings document is removed.
+    expect(
+      writtenDoc(domainWrite, domainWrite.mock.calls.length - 1),
+    ).toBeUndefined();
   });
 
   it('stores a memory cap in GiB after unticking Unlimited', async () => {

@@ -375,8 +375,9 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
             <WebUISettingSizeInput
               label={label.title}
               value={definition.key in values ? (current as number) : undefined}
-              defaultValue={rowDefault as number}
+              defaultValue={rowDefault as number | undefined}
               size={definition.size}
+              isUnlimitedWhenUnset={definition.isUnlimitedWhenUnset}
               width={CONTROL_WIDTH}
               onChange={(value) => setValue(definition, value)}
             />

@@ -203,8 +203,7 @@ describe('isValidWebUISetting', () => {
     const cpu = byKey('maxCPUCoresPerContainer');
     expect(isValidWebUISetting(cpu, 1)).toBe(true);
     expect(isValidWebUISetting(cpu, 8192)).toBe(true);
-    // 0 is the Unlimited value.
-    expect(isValidWebUISetting(cpu, 0)).toBe(true);
+    expect(isValidWebUISetting(cpu, 0)).toBe(false);
     expect(isValidWebUISetting(cpu, -4)).toBe(false);
     expect(isValidWebUISetting(byKey('maxFileUploadSize'), -1)).toBe(true);
     expect(isValidWebUISetting(byKey('maxFileUploadSize'), -2)).toBe(false);

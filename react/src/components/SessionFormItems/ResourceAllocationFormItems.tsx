@@ -17,6 +17,7 @@ import {
 import { useCurrentKeyPairResourcePolicyLazyLoadQuery } from '../../hooks/hooksUsingRelay';
 import {
   MergedResourceLimits,
+  ResourceAvailability,
   ResourcePreset,
   useResourceLimitAndRemaining,
 } from '../../hooks/useResourceLimitAndRemaining';
@@ -58,6 +59,8 @@ import { useTheme } from '@lablup/ui-common/theme';
 import { spacingVars } from '@lablup/ui-common/theme/tokens.stylex';
 import * as stylex from '@stylexjs/stylex';
 import {
+  BAIAlert,
+  BAIButton,
   BAIDynamicUnitInputNumberWithSlider,
   BAIFlex,
   BAIQuestionIconWithTooltip,
@@ -67,6 +70,7 @@ import {
   useUpdatableState,
   BAISegmentedControl,
 } from 'backend.ai-ui';
+import type { TFunction } from 'i18next';
 import * as _ from 'lodash-es';
 import { RotateCw } from 'lucide-react';
 import React, {
@@ -225,6 +229,14 @@ const ClusterModeSegmented: React.FC<{
   );
 };
 
+const resourceAvailabilityMessage = (
+  availability: ResourceAvailability,
+  t: TFunction,
+) =>
+  availability === 'loadFailed'
+    ? t('session.launcher.FailedToLoadResourceInformation')
+    : t('session.launcher.NoAvailableResources');
+
 const ResourceAllocationFormItems: React.FC<
   ResourceAllocationFormItemsProps
 > = ({
@@ -310,14 +322,17 @@ const ResourceAllocationFormItems: React.FC<
   // The preset check suspends per resource group; deferring the group keeps the
   // launcher on screen while a group's first check loads, not a page fallback.
   const deferredResourceGroup = useDeferredValue(currentResourceGroupInForm);
-  const [{ currentImageMinM, remaining, resourceLimits }] =
-    useResourceLimitAndRemaining({
-      currentProjectName: project.name,
-      currentResourceGroup: deferredResourceGroup || undefined, // global currentResourceGroup can be null
-      currentResourceGroupFrgmtForLimit: currentResourceGroupInfo,
-      currentImage: currentImage,
-      accessibleResourceGroupNames,
-    });
+  const [
+    { currentImageMinM, remaining, resourceLimits, resourceAvailability },
+    { refetch: refetchResourceLimits },
+  ] = useResourceLimitAndRemaining({
+    currentProjectName: project.name,
+    currentResourceGroup: deferredResourceGroup || undefined, // global currentResourceGroup can be null
+    currentResourceGroupFrgmtForLimit: currentResourceGroupInfo,
+    currentImage: currentImage,
+    accessibleResourceGroupNames,
+  });
+  const isResourceUnavailable = resourceAvailability !== 'available';
   // Shares its request with `ResourcePresetSelect`, which reads the same query.
   const sessionPresets = useSessionResourcePresets({
     projectId: project.id,
@@ -455,6 +470,15 @@ const ResourceAllocationFormItems: React.FC<
           {
             required: true,
           },
+          {
+            validator: async () => {
+              if (resourceAvailability !== 'available') {
+                throw new Error(
+                  resourceAvailabilityMessage(resourceAvailability, t),
+                );
+              }
+            },
+          },
         ]}
       >
         <BAIProjectResourceGroupSelect
@@ -548,6 +572,7 @@ const ResourceAllocationFormItems: React.FC<
           ]}
         >
           <ResourcePresetSelect
+            disabled={isResourceUnavailable}
             showCustom={loginConfig.allowCustomResourceAllocation}
             showMinimumRequired={loginConfig.allowCustomResourceAllocation}
             onChange={(value) => {
@@ -568,6 +593,27 @@ const ResourceAllocationFormItems: React.FC<
           call site passes no `title`/`extra`/`tabList`, so nothing needs
           composing around it — only the bottom margin, which stays. */}
       <Card style={{ marginBottom: token('--spacing-4') }}>
+        {isResourceUnavailable && (
+          <BAIAlert
+            type={resourceAvailability === 'loadFailed' ? 'error' : 'warning'}
+            showIcon
+            title={resourceAvailabilityMessage(resourceAvailability, t)}
+            style={{ marginBottom: token('--spacing-4') }}
+            action={
+              resourceAvailability === 'loadFailed' ? (
+                <BAIButton
+                  size="small"
+                  icon={<RotateCw size="1em" />}
+                  action={async () => {
+                    await refetchResourceLimits();
+                  }}
+                >
+                  {t('button.Retry')}
+                </BAIButton>
+              ) : undefined
+            }
+          />
+        )}
         <Form.Item
           shouldUpdate={(prev, cur) =>
             prev.allocationPreset !== cur.allocationPreset
@@ -639,6 +685,7 @@ const ResourceAllocationFormItems: React.FC<
                     ]}
                   >
                     <InputNumberWithSlider
+                      disabled={isResourceUnavailable}
                       inputNumberProps={{
                         suffix:
                           mergedResourceSlots?.cpu?.display_unit ||
@@ -825,6 +872,7 @@ const ResourceAllocationFormItems: React.FC<
                             ]}
                           >
                             <BAIDynamicUnitInputNumberWithSlider
+                              disabled={isResourceUnavailable}
                               defaultUnit="g"
                               max={resourceLimits.mem?.max}
                               min={resourceLimits.mem?.min}
@@ -855,6 +903,7 @@ const ResourceAllocationFormItems: React.FC<
                       }}
                     </Form.Item>
                     <SharedMemoryFormItems
+                      disabled={isResourceUnavailable}
                       min={resourceLimits.shmem?.min}
                       max={resourceLimits.shmem?.max}
                       onChangeResourceShmem={(value) => {
@@ -1170,6 +1219,7 @@ const ResourceAllocationFormItems: React.FC<
                             },
                           }}
                           disabled={
+                            isResourceUnavailable ||
                             supportedAcceleratorTypesInRGByImage?.length === 0
                           }
                           disableMode={isUnifiedType ? 'empty' : 'normal'}
@@ -1242,6 +1292,7 @@ const ResourceAllocationFormItems: React.FC<
                                       maxWidth: 100,
                                     }}
                                     autoSelectOption
+                                    disabled={isResourceUnavailable}
                                     tabIndex={-1}
                                     suffixIcon={
                                       _.size(acceleratorSlotsInRG) > 1

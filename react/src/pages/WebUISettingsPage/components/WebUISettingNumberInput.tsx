@@ -3,8 +3,8 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import type { WebUISettingDefinition } from '../../../helper/webuiSettings';
+import { useUnsetUnlimitedToggle } from '../hooks/useUnsetUnlimitedToggle';
 import { BAICheckboxInput, BAIFlex, BAINumberInput } from 'backend.ai-ui';
-import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface WebUISettingNumberInputProps {
@@ -18,7 +18,7 @@ interface WebUISettingNumberInputProps {
   onChange: (value: number | undefined) => void;
 }
 
-/** A plain number setting, with an Unlimited toggle when the definition has `unlimitedValue`. */
+/** A plain number setting, with an Unlimited toggle when the definition has `isUnlimitedWhenUnset`. */
 const WebUISettingNumberInput: React.FC<WebUISettingNumberInputProps> = ({
   label,
   value: savedValue,
@@ -29,18 +29,12 @@ const WebUISettingNumberInput: React.FC<WebUISettingNumberInputProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { unlimitedValue } = definition;
-  const hasToggle = unlimitedValue !== undefined;
+  const hasToggle = !!definition.isUnlimitedWhenUnset;
   const value = savedValue ?? defaultValue;
-  // Unticking Unlimited stores nothing until a number is entered.
-  const [isEnteringLimit, setIsEnteringLimit] = useState(false);
-  const [prevValue, setPrevValue] = useState(value);
-  if (prevValue !== value) {
-    setPrevValue(value);
-    setIsEnteringLimit(false);
-  }
-  const isUnlimited = hasToggle && value === unlimitedValue && !isEnteringLimit;
-  const isDefaultUnlimited = hasToggle && defaultValue === unlimitedValue;
+  const { isUnlimited, toggle, endEntry } = useUnsetUnlimitedToggle(
+    hasToggle,
+    value,
+  );
 
   return (
     <BAIFlex direction="column" align="start" gap="xs">
@@ -49,8 +43,8 @@ const WebUISettingNumberInput: React.FC<WebUISettingNumberInputProps> = ({
           size="sm"
           value={isUnlimited}
           onChange={(checked) => {
-            setIsEnteringLimit(!checked);
-            if (checked) onChange(unlimitedValue);
+            toggle(checked);
+            if (checked) onChange(undefined);
           }}
         >
           {t('webuiSettings.Unlimited')}
@@ -62,30 +56,16 @@ const WebUISettingNumberInput: React.FC<WebUISettingNumberInputProps> = ({
         aria-label={label}
         width={width}
         disabled={isUnlimited}
-        value={
-          savedValue === undefined ||
-          isUnlimited ||
-          (hasToggle && value === unlimitedValue)
-            ? null
-            : savedValue
-        }
+        value={savedValue === undefined || isUnlimited ? null : savedValue}
         placeholder={
-          isDefaultUnlimited ? undefined : String(defaultValue ?? '')
+          defaultValue === undefined ? undefined : String(defaultValue)
         }
-        min={
-          // Unlimited is reached only through the checkbox on a whole-number row.
-          hasToggle && definition.isInteger && definition.min === unlimitedValue
-            ? definition.min + 1
-            : definition.min
-        }
+        min={definition.min}
         max={definition.max}
         isIntegerOnly={definition.isInteger}
         units={definition.unit}
         onChange={(next) => {
-          // A commit that leaves the stored value as it is still ends the entry.
-          if (next === null || next === unlimitedValue) {
-            setIsEnteringLimit(false);
-          }
+          if (next === null) endEntry();
           onChange(next === null ? undefined : next);
         }}
       />

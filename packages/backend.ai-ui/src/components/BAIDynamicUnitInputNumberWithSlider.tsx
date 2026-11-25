@@ -227,7 +227,7 @@ const BAIDynamicUnitInputNumberWithSlider: React.FC<
             // Most of case, it's not a good idea to set the different value to the control value,
             // but in this case, it's okay to hide all information and disabled the slider.
             value={isMinOversMaxValue ? 0 : (valueGiB?.number ?? 0)}
-            disabled={isMinOversMaxValue}
+            disabled={isMinOversMaxValue || otherProps.disabled}
             valueDisplay={isMinOversMaxValue ? 'none' : 'tooltip'}
             formatValue={(sliderValue = 0) =>
               sliderValue < 1

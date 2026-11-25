@@ -31,9 +31,9 @@ export const isMatchingMaxPerContainer = (configName: string, key: string) => {
   }
   return false;
 };
-/** A `max*PerContainer` value as a cap; 0 or less, or a non-number, is no cap. */
+/** A `max*PerContainer` value as a cap; unset (or a non-number) is no cap. */
 export const toPerContainerCap = (value: unknown): number | undefined =>
-  _.isFinite(value) && (value as number) > 0 ? (value as number) : undefined;
+  _.isFinite(value) ? (value as number) : undefined;
 
 /**
  * The shmem cap in `g` from `maxShmPerContainer` (GiB); 0 or less, or a
@@ -42,10 +42,29 @@ export const toPerContainerCap = (value: unknown): number | undefined =>
  */
 export const getShmemMaxLimit = (
   maxShmPerContainer: unknown,
-): string | undefined => {
-  const cap = toPerContainerCap(maxShmPerContainer);
-  return cap === undefined ? undefined : `${cap}g`;
-};
+): string | undefined =>
+  _.isFinite(maxShmPerContainer) && (maxShmPerContainer as number) > 0
+    ? `${maxShmPerContainer}g`
+    : undefined;
+
+/** Whether the launcher can allocate in the current resource group at all. */
+export type ResourceAvailability = 'available' | 'empty' | 'loadFailed';
+
+/**
+ * `checkPresetInfo` is null when the preset check failed; a resource group
+ * whose total CPU or memory (using + remaining) is 0 has nothing to allocate.
+ */
+export const getResourceAvailability = (
+  checkPresetInfo: ResourceAllocation | null | undefined,
+  resourceGroupCPU: number | undefined,
+  resourceGroupMemGiB: number | undefined,
+): ResourceAvailability =>
+  checkPresetInfo === null
+    ? 'loadFailed'
+    : (_.isNumber(resourceGroupCPU) && resourceGroupCPU <= 0) ||
+        (_.isNumber(resourceGroupMemGiB) && resourceGroupMemGiB <= 0)
+      ? 'empty'
+      : 'available';
 
 export interface MergedResourceLimits {
   accelerators: {
@@ -305,7 +324,9 @@ export const useResourceLimitAndRemaining = ({
               includeResourceGroupLimits
                 ? limitParser(currentResourceGroupSlotLimits.cpu)
                 : undefined,
-              // resourceGroupResourceSize?.cpu,
+              includeResourceGroupLimits
+                ? resourceGroupResourceSize.cpu
+                : undefined,
             ]),
           },
     mem:
@@ -347,9 +368,10 @@ export const useResourceLimitAndRemaining = ({
                       'g',
                     )?.number
                   : undefined,
-                // scaling group all mem (using + remaining), string type
-                // resourceGroupResourceSize?.mem &&
-                //   iSizeToSize(resourceGroupResourceSize?.mem + '', 'g')?.number,
+                includeResourceGroupLimits && resourceGroupResourceSize.mem
+                  ? convertToBinaryUnit(resourceGroupResourceSize.mem, 'g')
+                      ?.number
+                  : undefined,
               ]);
               return minValue !== undefined ? minValue + 'g' : undefined;
             })(),
@@ -357,10 +379,11 @@ export const useResourceLimitAndRemaining = ({
     accelerators: _.reduce(
       acceleratorSlots,
       (result, _value, key) => {
-        const perContainerLimit =
-          _.find(perContainerConfigs, (_configValue, configName) => {
-            return isMatchingMaxPerContainer(configName, key);
-          }) ?? loginConfig.maxCUDADevicesPerContainer; // NOTE: Fallback to maxCUDADevicesPerContainer if no specific config found
+        const perContainerLimit = _.find(
+          perContainerConfigs,
+          (_configValue, configName) =>
+            isMatchingMaxPerContainer(configName, key),
+        );
 
         result[key] = {
           min: parseInt(
@@ -384,8 +407,9 @@ export const useResourceLimitAndRemaining = ({
                   currentResourceGroupSlotLimits[key as ResourceSlotName],
                 )
               : undefined,
-            // scaling group all cpu (using + remaining), string type
-            // resourceGroupResourceSize.accelerators[key],
+            includeResourceGroupLimits
+              ? resourceGroupResourceSize.accelerators[key]
+              : undefined,
           ]),
         };
         return result;
@@ -450,6 +474,15 @@ export const useResourceLimitAndRemaining = ({
 
   const remaining = createRemainingSlots(true);
 
+  const resourceGroupMemSize = resourceGroupResourceSize.mem
+    ? convertToBinaryUnit(resourceGroupResourceSize.mem, 'g')?.number
+    : undefined;
+  const resourceAvailability = getResourceAvailability(
+    checkPresetInfo,
+    resourceGroupResourceSize.cpu,
+    resourceGroupMemSize,
+  );
+
   const remainingWithoutResourceGroup = createRemainingSlots(false);
 
   return [
@@ -462,6 +495,7 @@ export const useResourceLimitAndRemaining = ({
       currentImageMinM,
       isRefetching,
       checkPresetInfo,
+      resourceAvailability,
     },
     {
       refetch,
