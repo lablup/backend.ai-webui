@@ -442,6 +442,8 @@ const ResourceAllocationFormItems: React.FC<
       names.push(['resource', 'accelerator']);
     }
     if (label) names.push('allocationPreset');
+    // Its availability rule follows the deferred group's preset check.
+    if (form.getFieldValue('resourceGroup')) names.push('resourceGroup');
     if (names.length > 0) form.validateFields(names).catch(() => {});
   });
   // The preset validator's data follows the deferred group; re-validate once it lands.
@@ -458,6 +460,7 @@ const ResourceAllocationFormItems: React.FC<
     resourceKey,
     enableResourcePresets,
     mode,
+    resourceAvailability,
   ]);
 
   return (
@@ -598,7 +601,7 @@ const ResourceAllocationFormItems: React.FC<
             type={resourceAvailability === 'loadFailed' ? 'error' : 'warning'}
             showIcon
             title={resourceAvailabilityMessage(resourceAvailability, t)}
-            style={{ marginBottom: token('--spacing-4') }}
+            style={{ marginBottom: 'var(--spacing-4)' }}
             action={
               resourceAvailability === 'loadFailed' ? (
                 <BAIButton

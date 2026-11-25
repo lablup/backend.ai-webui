@@ -104,11 +104,13 @@ const WebUISettingSizeInput: React.FC<WebUISettingSizeInputProps> = ({
         }
         onChange={(next) => {
           const stored = toStoredSize(next, size);
-          if (stored > 0) onChange(stored);
-          else if (_.isEmpty(next)) {
-            unset.endEntry();
-            onChange(undefined);
+          if (stored > 0) {
+            onChange(stored);
+            return;
           }
+          // A commit that stores nothing ends the entry.
+          unset.endEntry();
+          if (_.isEmpty(next)) onChange(undefined);
         }}
       />
     </BAIFlex>

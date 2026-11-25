@@ -295,6 +295,18 @@ export const useResourceLimitAndRemaining = ({
       },
     ),
   };
+  // From the byte sum: `resourceGroupResourceSize.mem` is rounded to 2 decimals.
+  const currentGroupSize =
+    checkPresetInfo?.scaling_groups[currentResourceGroup];
+  const resourceGroupMemGiB =
+    !_.isEmpty(currentGroupSize?.using?.mem) &&
+    !_.isEmpty(currentGroupSize?.remaining?.mem)
+      ? convertToBinaryUnit(
+          _.toNumber(currentGroupSize?.using.mem) +
+            _.toNumber(currentGroupSize?.remaining.mem),
+          'g',
+        )?.number
+      : undefined;
   const perContainerConfigs = _.omitBy(loginConfig, (_value, key) => {
     return !maxPerContainerRegex.test(key);
   }) as {
@@ -368,10 +380,7 @@ export const useResourceLimitAndRemaining = ({
                       'g',
                     )?.number
                   : undefined,
-                includeResourceGroupLimits && resourceGroupResourceSize.mem
-                  ? convertToBinaryUnit(resourceGroupResourceSize.mem, 'g')
-                      ?.number
-                  : undefined,
+                includeResourceGroupLimits ? resourceGroupMemGiB : undefined,
               ]);
               return minValue !== undefined ? minValue + 'g' : undefined;
             })(),
@@ -474,13 +483,10 @@ export const useResourceLimitAndRemaining = ({
 
   const remaining = createRemainingSlots(true);
 
-  const resourceGroupMemSize = resourceGroupResourceSize.mem
-    ? convertToBinaryUnit(resourceGroupResourceSize.mem, 'g')?.number
-    : undefined;
   const resourceAvailability = getResourceAvailability(
     checkPresetInfo,
     resourceGroupResourceSize.cpu,
-    resourceGroupMemSize,
+    resourceGroupMemGiB,
   );
 
   const remainingWithoutResourceGroup = createRemainingSlots(false);
