@@ -1,4 +1,4 @@
-# 0036 — Build-time opt-in PostHog analytics
+# 0039 — Build-time opt-in PostHog analytics
 
 ## Summary
 

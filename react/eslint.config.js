@@ -33,7 +33,7 @@ const restrictedImportPatterns = [
   {
     group: ['posthog-js', 'posthog-js/*'],
     message:
-      'posthog-js is imported only by src/components/ProductAnalytics.tsx, which routes.tsx loads behind VITE_ANALYTICS_BUILD (ADR 0036).',
+      'posthog-js is imported only by src/components/ProductAnalytics.tsx, which routes.tsx loads behind VITE_ANALYTICS_BUILD (ADR 0039).',
   },
 ];
 // `no-restricted-imports` sees only static imports and re-exports.
@@ -44,7 +44,7 @@ const posthogDynamicImportBan = [
 ].map((selector) => ({
   selector,
   message:
-    'posthog-js is imported only by src/components/ProductAnalytics.tsx, statically (ADR 0036).',
+    'posthog-js is imported only by src/components/ProductAnalytics.tsx, statically (ADR 0039).',
 }));
 const astryxDynamicImportBan = [
   'ImportExpression[source.value=/^@astryxdesign\\u002F/]',

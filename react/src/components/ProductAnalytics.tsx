@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-// Build flag, domainConfig.analytics and privacy defaults: docs/adr/0036-opt-in-posthog-analytics-build.md
+// Build flag, domainConfig.analytics and privacy defaults: docs/adr/0039-opt-in-posthog-analytics-build.md
 import { getActAsTarget } from '../helper/actAs';
 import type { UserRole } from '../helper/userRole';
 import { useMyAppConfig } from '../hooks/useAppConfig';
@@ -77,7 +77,7 @@ const registerPlatform = () => {
   posthog.register({ platform: globalThis.isElectron ? 'electron' : 'web' });
 };
 
-// Account identifiers stay in the browser; only the role is registered (ADR 0036).
+// Account identifiers stay in the browser; only the role is registered (ADR 0039).
 const syncUserRoleProperty = () => {
   const client = globalThis.backendaiclient;
   if (!client?.user_uuid) {

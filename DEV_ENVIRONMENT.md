@@ -191,7 +191,7 @@ The build emits the overlay client as one chunk at `/review-overlay.js` and inje
 
 ## Product analytics in a build (`VITE_ANALYTICS_BUILD`)
 
-**Opt-in, off by default.** `VITE_ANALYTICS_BUILD=1` (or `true`) compiles the PostHog analytics component (`react/src/components/ProductAnalytics.tsx`) and `posthog-js` into the bundle as a lazily loaded chunk. Without it the build contains neither, and the output has no trace of PostHog (ADR 0036):
+**Opt-in, off by default.** `VITE_ANALYTICS_BUILD=1` (or `true`) compiles the PostHog analytics component (`react/src/components/ProductAnalytics.tsx`) and `posthog-js` into the bundle as a lazily loaded chunk. Without it the build contains neither, and the output has no trace of PostHog (ADR 0039):
 
 ```bash
 pnpm run build:react-only
@@ -204,7 +204,7 @@ An analytics build still sends nothing until the signed-in domain's app config h
 { "analytics": { "posthogKey": "<project API key>", "posthogHost": "https://posthog.example.com" } }
 ```
 
-With either value missing, the app neither initialises the SDK nor sends a request, and screens before sign-in are never collected. A change applies at the next sign-in or page load. The SDK posts events to `posthogHost` and loads its replay and exception-capture scripts from it, so the CSP of the server that hosts an analytics build must allow that host in `connect-src` (and in `script-src` unless the policy uses `'strict-dynamic'`). The Electron app reuses the web bundle, so it follows the same flag. What is collected and what is stripped is in ADR 0036.
+With either value missing, the app neither initialises the SDK nor sends a request, and screens before sign-in are never collected. A change applies at the next sign-in or page load. The SDK posts events to `posthogHost` and loads its replay and exception-capture scripts from it, so the CSP of the server that hosts an analytics build must allow that host in `connect-src` (and in `script-src` unless the policy uses `'strict-dynamic'`). The Electron app reuses the web bundle, so it follows the same flag. What is collected and what is stripped is in ADR 0039.
 
 ## CLI login (`/cli-login`)
 
