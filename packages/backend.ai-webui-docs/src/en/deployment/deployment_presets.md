@@ -173,12 +173,11 @@ Deleting a deployment preset is **irreversible**. The preset itself is removed, 
 The **Runtime Parameters** tab on the Admin Deployments page (`/admin/deployments`) defines the individual parameters that a runtime exposes. Each entry describes one parameter — the key it is passed to the container as, its value type, its default, and how it is rendered — and together they make up the **Runtime Parameters** tabs that users fill in when they add a deployment revision (see [Runtime parameters](#runtime-parameters) on the Deployments page).
 
 ![](../images/runtime_variant_preset_list.png)
-<!-- TODO(screenshot): recaptured 2026-08-28 — UI Type and Default Value are now shown. The capture server runs manager 26.8.0rc1, which does not serve the runtime variant field, so the column appears in its bare-ID fallback form; recapture on a server that serves it to show the qualified "Runtime Variant (ID)" form. -->
 
 Above the table sit a property filter (**Name**, **Runtime**), a refresh button, and the **Create Parameter** button. The **Runtime** value is chosen from a dropdown of the runtimes defined on this server instead of being typed as an ID, and the resulting filter tag shows the runtime's name. The following columns are shown by default:
 
 - **Name**: The parameter's name. This column also carries the per-row edit and delete buttons.
-- **Runtime Variant (ID)**: The runtime the parameter belongs to, shown as the runtime's name followed by its ID in parentheses. The ID has a copy button next to it. On a server that does not serve the runtime variant name, the column is titled **Runtime Variant ID** and shows the ID on its own.
+- **Runtime Variant (ID)**: The runtime the parameter belongs to, shown as the runtime's name followed by its ID in parentheses. The ID has a copy button next to it.
 - **Parameter Target**: How the value reaches the container — **Environment Variable** or **Command-line Argument**.
 - **Value Type**: **String**, **Integer**, **Float**, **Boolean**, or **Flag**.
 - **UI Type**: The control this parameter is rendered with in the deployment form — **Text Input**, **Number Input**, **Checkbox**, **Select**, or **Slider**. A control that this version of the WebUI does not recognize is shown as its stored value, and `-` means no control is configured. In the deployment form, a parameter whose configured control cannot render its value type falls back to a plain text input.
@@ -194,7 +193,7 @@ Above the table sit a property filter (**Name**, **Runtime**), a refresh button,
 
 Click **Create Parameter** above the table to open the **Create Parameter** modal, or the edit button on a row to open **Edit Parameter** with the current values pre-filled. The runtime variant of an existing parameter cannot be changed.
 
-<!-- TODO(screenshot): /admin/deployments -> Runtime Parameters tab -> Create Parameter modal, showing the UI Type selector and its Choices rows. Still blocked as of 2026-08-28: every reachable server runs manager 26.8.0rc1 or 26.8.1, and these fields require 26.9.0. -->
+![=520px](../images/deployment_create_parameter_modal.png)
 
 The modal contains the following fields, in the order they appear:
 

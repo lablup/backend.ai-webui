@@ -172,12 +172,11 @@
 **관리자 배포** 페이지(`/admin/deployments`)의 **런타임 파라미터** 탭에서는 런타임이 제공하는 개별 파라미터를 정의합니다. 각 항목은 파라미터 하나를 설명하며, 컨테이너에 전달될 키, 값 유형, 기본값, 그리고 화면에 표시되는 방식을 담습니다. 이렇게 정의한 항목들이 모여, 사용자가 배포 리비전을 추가할 때 입력하는 **런타임 파라미터** 탭을 구성합니다(배포 페이지의 [런타임 파라미터](#runtime-parameters) 참고).
 
 ![](../images/runtime_variant_preset_list.png)
-<!-- TODO(screenshot): recaptured 2026-08-28 — UI Type and Default Value are now shown. The capture server runs manager 26.8.0rc1, which does not serve the runtime variant field, so the column appears in its bare-ID fallback form; recapture on a server that serves it to show the qualified "Runtime Variant (ID)" form. -->
 
 표 위에는 속성 필터(**이름**, **런타임**)와 새로 고침 버튼, **파라미터 생성** 버튼이 있습니다. **런타임** 값은 ID를 직접 입력하는 대신 이 서버에 정의된 런타임 목록에서 선택하며, 적용된 필터 태그에는 런타임 이름이 표시됩니다. 기본으로 표시되는 컬럼은 다음과 같습니다.
 
 - **이름**: 파라미터의 이름입니다. 이 컬럼에는 행별 편집/삭제 버튼도 함께 표시됩니다.
-- **런타임 (ID)**: 파라미터가 속한 런타임입니다. 런타임 이름 뒤에 괄호로 ID가 함께 표시되며, ID 옆에는 복사 버튼이 있습니다. 런타임 이름을 제공하지 않는 서버에서는 컬럼 제목이 **런타임 ID** 로 표시되고 ID만 나타납니다.
+- **런타임 (ID)**: 파라미터가 속한 런타임입니다. 런타임 이름 뒤에 괄호로 ID가 함께 표시되며, ID 옆에는 복사 버튼이 있습니다.
 - **파라미터 대상**: 값이 컨테이너에 전달되는 방식으로, **환경 변수** 또는 **커맨드라인 인자** 입니다.
 - **값 유형**: **문자열**, **정수**, **실수**, **bool 자료형(Boolean)**, **플래그** 중 하나입니다.
 - **UI 유형**: 배포 폼에서 이 파라미터를 표시할 때 사용하는 컨트롤로, **텍스트 입력**, **숫자 입력**, **체크박스**, **셀렉트**, **슬라이더** 중 하나입니다. 현재 버전의 WebUI가 인식하지 못하는 컨트롤은 저장된 값이 그대로 표시되며, `-` 는 지정된 컨트롤이 없다는 뜻입니다. 배포 폼에서는 지정된 컨트롤이 해당 값 유형을 표시할 수 없는 경우 일반 텍스트 입력으로 대체됩니다.
@@ -193,7 +192,7 @@
 
 표 위의 **파라미터 생성** 버튼을 클릭하면 **파라미터 생성** 모달이 열리고, 행의 편집 버튼을 클릭하면 현재 값이 채워진 **파라미터 편집** 모달이 열립니다. 이미 생성된 파라미터의 런타임은 변경할 수 없습니다.
 
-<!-- TODO(screenshot): /admin/deployments -> Runtime Parameters tab -> Create Parameter modal, showing the UI Type selector and its Choices rows. Still blocked as of 2026-08-28: every reachable server runs manager 26.8.0rc1 or 26.8.1, and these fields require 26.9.0. -->
+![=520px](../images/deployment_create_parameter_modal.png)
 
 모달에는 다음 필드가 나타나는 순서대로 표시됩니다.
 
