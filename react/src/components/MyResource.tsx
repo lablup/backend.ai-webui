@@ -8,11 +8,11 @@ import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import ResourceUsageStatistics from './DashboardPanels/memberCards/ResourceUsageStatistics';
 import {
   offeredSlotsOf,
+  shownSlotsOf,
   toUsageRows,
 } from './DashboardPanels/memberCards/memberCardData';
 import { readPrimary, readSecondary } from './DashboardPanels/panelPermission';
 import { Heading } from '@lablup/ui-common/Heading';
-import { Text } from '@lablup/ui-common/Text';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIBoardItemTitle,
@@ -175,7 +175,6 @@ const MyTotalResourceStatisticsContent: React.FC<{
   notesOf?: (resourceType: string) => React.ReactNode;
 }> = ({ queryRef, notesOf }) => {
   'use memo';
-  const { t } = useTranslation();
   // Fields a plain project member can read; the user's figures count every keypair.
   const data = useFragment(
     graphql`
@@ -227,27 +226,18 @@ const MyTotalResourceStatisticsContent: React.FC<{
   const user = readPrimary(data.myUserResourceAllocationV2)?.user;
   const project = readSecondary(data.projectResourceAllocationV2).value
     ?.project;
-  const groups = readSecondary(data.scopedResourceGroups);
-  const groupEdges = groups.value?.edges ?? [];
-  if (groups.value != null && groupEdges.length === 0) {
-    // No resource group reaches the project: the siblings' "no resource group" text.
-    // A null, denied or failed read falls through to the fallback below, not this claim.
-    return (
-      <Text type="supporting">
-        {t('dashboard.card.NoResourceGroupAssigned')}
-      </Text>
-    );
-  }
-  // Only the slots some group of the project offers; the allocation lists every slot the manager knows.
+  // The allocation lists every slot the manager knows; keep the offered ones and those in use.
   const groupSlots = _.compact(
-    _.map(groupEdges, (edge) =>
+    _.map(readSecondary(data.scopedResourceGroups).value?.edges, (edge) =>
       offeredSlotsOf(edge?.node?.resourceInfo?.capacity.entries),
     ),
   );
-  // No capacity report from any group: keep CPU/RAM instead of the manager's whole slot list.
-  const slots = groupSlots.length
-    ? new Set(groupSlots.flatMap((offered) => [...offered]))
-    : new Set(['cpu', 'mem']);
+  const slots = shownSlotsOf(
+    groupSlots.length
+      ? new Set(groupSlots.flatMap((offered) => [...offered]))
+      : null,
+    user?.used ?? [],
+  );
 
   return (
     <ResourceUsageStatistics

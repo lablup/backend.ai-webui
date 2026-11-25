@@ -899,7 +899,6 @@
       "NoFailures": "Нет сбоев",
       "NoProject": "Выберите проект, чтобы увидеть эту карточку.",
       "NoResourceGroup": "Группа ресурсов не выбрана.",
-      "NoResourceGroupAssigned": "Этому проекту не назначена группа ресурсов.",
       "NoSchedulingFailures": "Нет сбоев планирования",
       "NotTriedYet": "Еще не было попыток",
       "OtherTypes": "Другие типы",

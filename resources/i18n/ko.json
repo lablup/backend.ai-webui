@@ -899,7 +899,6 @@
       "NoFailures": "실패 없음",
       "NoProject": "이 카드를 보려면 프로젝트를 선택하세요.",
       "NoResourceGroup": "선택한 자원 그룹이 없습니다.",
-      "NoResourceGroupAssigned": "이 프로젝트에 할당된 자원 그룹이 없습니다.",
       "NoSchedulingFailures": "스케줄링 실패 없음",
       "NotTriedYet": "아직 시도하지 않음",
       "OtherTypes": "기타 유형",

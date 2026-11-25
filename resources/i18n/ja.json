@@ -899,7 +899,6 @@
       "NoFailures": "失敗なし",
       "NoProject": "このカードを表示するにはプロジェクトを選択してください。",
       "NoResourceGroup": "リソースグループが選択されていません。",
-      "NoResourceGroupAssigned": "このプロジェクトに割り当てられたリソースグループはありません。",
       "NoSchedulingFailures": "スケジューリングの失敗なし",
       "NotTriedYet": "未試行",
       "OtherTypes": "その他のタイプ",
