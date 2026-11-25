@@ -4456,7 +4456,6 @@
     "ConnectionRejected": "L'endpoint ha rifiutato il token o la chiave API.",
     "CustomEndpoint": "Endpoint personalizzato",
     "Deployment": "Deployment",
-    "DragToMove": "trascina per spostare",
     "EmptyState": "Chiedi come fare qualcosa nella WebUI. Le risposte provengono dal manuale utente.",
     "Endpoint": "Endpoint del modello",
     "EndpointUnreachable": "Impossibile raggiungere {{url}}.",

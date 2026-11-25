@@ -4456,7 +4456,6 @@
     "ConnectionRejected": "Το endpoint απέρριψε το διακριτικό ή το κλειδί API.",
     "CustomEndpoint": "Προσαρμοσμένο τελικό σημείο",
     "Deployment": "Ανάπτυξη",
-    "DragToMove": "σύρετε για μετακίνηση",
     "EmptyState": "Ρωτήστε πώς να κάνετε κάτι στο WebUI. Οι απαντήσεις προέρχονται από το εγχειρίδιο χρήστη.",
     "Endpoint": "Endpoint μοντέλου",
     "EndpointUnreachable": "Δεν είναι δυνατή η πρόσβαση στο {{url}}.",

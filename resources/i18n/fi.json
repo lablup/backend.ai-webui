@@ -4457,7 +4457,6 @@
     "ConnectionRejected": "Päätepiste hylkäsi tunnuksen tai API-avaimen.",
     "CustomEndpoint": "Mukautettu päätepiste",
     "Deployment": "Käyttöönotto",
-    "DragToMove": "siirrä vetämällä",
     "EmptyState": "Kysy, miten jotain tehdään WebUI:ssa. Vastaukset perustuvat käyttöoppaaseen.",
     "Endpoint": "Mallin päätepiste",
     "EndpointUnreachable": "Kohteeseen {{url}} ei saada yhteyttä.",

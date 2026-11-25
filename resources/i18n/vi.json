@@ -4458,7 +4458,6 @@
     "ConnectionRejected": "Endpoint đã từ chối token hoặc khóa API.",
     "CustomEndpoint": "Endpoint tùy chỉnh",
     "Deployment": "Bản triển khai",
-    "DragToMove": "kéo để di chuyển",
     "EmptyState": "Hãy hỏi cách thực hiện một việc trong WebUI. Câu trả lời dựa trên hướng dẫn sử dụng.",
     "Endpoint": "Endpoint của mô hình",
     "EndpointUnreachable": "Không thể kết nối tới {{url}}.",

@@ -4460,7 +4460,6 @@
     "ConnectionRejected": "端點拒絕了權杖或 API 金鑰。",
     "CustomEndpoint": "自訂端點",
     "Deployment": "部署",
-    "DragToMove": "拖曳以移動",
     "EmptyState": "詢問如何在 WebUI 中完成操作。回答以使用者手冊為依據。",
     "Endpoint": "模型端點",
     "EndpointUnreachable": "無法連線到 {{url}}。",

@@ -227,11 +227,7 @@ const WebUIAssistantFloating: React.FC = () => {
         elevation="med"
         icon={isPanelShown ? <X /> : <MessageCircle />}
         label={isPanelShown ? t('button.Close') : t('webuiAssistant.Open')}
-        tooltip={
-          isPanelShown
-            ? undefined
-            : `${title} · ${t('webuiAssistant.DragToMove')}`
-        }
+        tooltip={isPanelShown ? undefined : title}
         aria-expanded={isPanelShown}
         style={offsetStyle}
         onPointerDown={onFabPointerDown}

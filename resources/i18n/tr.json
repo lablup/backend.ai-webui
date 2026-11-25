@@ -4456,7 +4456,6 @@
     "ConnectionRejected": "Uç nokta, belirteci veya API anahtarını reddetti.",
     "CustomEndpoint": "Özel uç nokta",
     "Deployment": "Dağıtım",
-    "DragToMove": "taşımak için sürükleyin",
     "EmptyState": "WebUI'de bir şeyi nasıl yapacağınızı sorun. Yanıtlar kullanıcı kılavuzuna dayanır.",
     "Endpoint": "Model uç noktası",
     "EndpointUnreachable": "{{url}} adresine ulaşılamıyor.",

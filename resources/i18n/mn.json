@@ -4458,7 +4458,6 @@
     "ConnectionRejected": "Endpoint токен эсвэл API түлхүүрийг татгалзлаа.",
     "CustomEndpoint": "Захиалгат төгсгөлийн цэг",
     "Deployment": "Байршуулалт",
-    "DragToMove": "чирж зөөнө",
     "EmptyState": "WebUI дээр ямар нэг зүйлийг хэрхэн хийхийг асуугаарай. Хариулт нь хэрэглэгчийн гарын авлагад үндэслэнэ.",
     "Endpoint": "Загварын endpoint",
     "EndpointUnreachable": "{{url}}-д холбогдож чадсангүй.",
