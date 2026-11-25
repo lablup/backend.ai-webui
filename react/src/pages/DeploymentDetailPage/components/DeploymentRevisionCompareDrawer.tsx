@@ -217,6 +217,8 @@ const DeploymentRevisionCompareDrawer: React.FC<
         return t('deployment.ModelDefinitionPath');
       case 'subpath':
         return t('modelService.Subpath');
+      case 'modelName':
+        return t('modelStore.ModelName');
       case 'modelPath':
         return `${row.name} · ${t('modelStore.ModelPath')}`;
       case 'command':

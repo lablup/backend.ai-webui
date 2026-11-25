@@ -206,6 +206,7 @@ const extraMountMap = (revision: Maybe<RevisionDiffInput>) => {
 };
 
 const MODEL_FIELDS = [
+  'modelName',
   'modelPath',
   'command',
   'shell',
@@ -215,15 +216,18 @@ const MODEL_FIELDS = [
 ] as const;
 type ModelField = (typeof MODEL_FIELDS)[number];
 
+// Keyed by position: the add-revision modal renames the model, so a name would
+// pair nothing across that edit.
 const modelMap = (revision: Maybe<RevisionDiffInput>) => {
-  const map = new Map<string, Record<ModelField, string | null>>();
+  const map = new Map<number, Record<ModelField, string | null>>();
   (revision?.modelDefinition?.models ?? []).forEach((model, index) => {
     const service = model.service;
     // Same fallback as the revision detail view: the deprecated token list.
     const command =
       service?.command ||
       (service?.startCommand ? formatShellCommand(service.startCommand) : null);
-    map.set(model.name || `#${index + 1}`, {
+    map.set(index, {
+      modelName: toText(model.name),
       modelPath: toText(model.modelPath),
       command: toText(command),
       shell: toText(service?.shell),
@@ -411,13 +415,14 @@ export const diffRevisions = (
 
   const leftModels = modelMap(left);
   const rightModels = modelMap(right);
-  for (const modelName of unionKeys(leftModels, rightModels)) {
-    const l = leftModels.get(modelName);
-    const r = rightModels.get(modelName);
+  for (const index of unionKeys(leftModels, rightModels)) {
+    const l = leftModels.get(index);
+    const r = rightModels.get(index);
+    const label = r?.modelName ?? l?.modelName ?? `#${index + 1}`;
     for (const field of MODEL_FIELDS) {
       push('modelDefinition', field, l?.[field] ?? null, r?.[field] ?? null, {
-        name: modelName,
-        keySuffix: modelName,
+        name: label,
+        keySuffix: String(index),
       });
     }
   }
