@@ -4,7 +4,7 @@
 
  Manager plugin configuration in etcd (`config/plugins/<group>/<name>/…`),
  read and written through the superadmin `/config/get|set|delete` API.
- The contract every provider editor follows is ADR 0038.
+ The contract every provider editor follows is ADR 0039.
  */
 
 /** A prefix read: every leaf is a string, keys are already unquoted. */
