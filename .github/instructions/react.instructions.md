@@ -154,11 +154,12 @@ interfaces, enum members.
   re-exporting a whole upstream props type.
 - Jotai for global state, Relay for GraphQL-backed state, React Context only for simple
   non-persisted UI state. Compose instead of drilling props 3+ levels.
-- Change the existing component before adding one. A new wrapper, a split-out sibling or a
-  second component for the same rule needs a reason the existing one cannot take; keep the
-  structure and swap only what changed (#10050, #10051, #11268). Keep a new component's API
-  to the props call sites pass (`columns`, `onAdd`, `onRemove`), not pass-through bags like
-  `formItemProps` / `renderInput` (#10444).
+- When a change fits an existing component, change that component: swap only what changed
+  and keep its structure, instead of adding a wrapper or splitting out a sibling that does
+  the same job (#10050, #10051, #11268). A new component is right when it has a job no
+  existing one has: a different user task, a different data source, or a piece several
+  places will share. Keep its API to the props call sites pass (`columns`, `onAdd`,
+  `onRemove`), not pass-through bags like `formItemProps` / `renderInput` (#10444).
 - Reuse what exists before writing it: domain and project hooks (`useCurrentDomainValue`,
   `useCurrentProjectValue`), Relay-generated types and existing option types
   (`SelectorOptionData['disabled']`), and globals such as `globalThis.isElectron`
@@ -241,8 +242,10 @@ templates — copy the nearest one and adapt.
       component's props via `Omit<>` with `...rest` forwarded.
 - [ ] Relay: orchestrator/fragment split, `queryRef` / `{typeName}Frgmt` naming, `$key`
       types, colocated fragments, single pagination mode.
-- [ ] No new component, wrapper or type where an existing one fits; data hooks return raw
-      data and take explicit options; no gate or fallback at or below the manager floor.
+- [ ] A change that fits an existing component, hook or type extends it rather than
+      wrapping or duplicating it; a new one has a job of its own (see Composition).
+- [ ] Data hooks return raw data and take explicit options; no gate or fallback at or
+      below the manager floor.
 - [ ] `BAIButton action` for async work; `useFetchKey` where refetch is needed;
       `BAIUnmountAfterClose` around form-bearing modals/drawers.
 - [ ] i18n: correct hook for the package (`useTranslation` vs `useBAIi18n`), no hard-coded
