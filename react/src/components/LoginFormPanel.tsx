@@ -50,6 +50,7 @@ import {
   useBAILogger,
   BAIUnmountAfterClose,
   BAISegmentedControl,
+  BAIPasswordInput,
   BAISegmentedControlItem,
   BAITextInput,
 } from 'backend.ai-ui';
@@ -360,8 +361,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
                   name="password"
                   style={{ marginBottom: token('--spacing-3') }}
                 >
-                  <BAITextInput
-                    type="password"
+                  <BAIPasswordInput
                     aria-label={t('login.Password', { postProcess: [] })}
                     placeholder={t('login.Password', { postProcess: [] })}
                     autoComplete="current-password"

@@ -51,6 +51,7 @@ const formControlImportBans = [
   ['FileInput'],
   ['MultiSelector'],
   ['NumberInput'],
+  ['PasswordInput'],
   ['RadioList', 'RadioListItem'],
   ['SegmentedControl', 'SegmentedControlItem'],
   ['Selector'],
@@ -81,6 +82,12 @@ formControlImportBans.push({
   name: '@lablup/ui-common/components/DateTimeRangeInput',
   importNames: ['DateTimeRangeInput'],
   message: "Import BAIDateTimeRangeInput from 'backend.ai-ui' (ADR 0014).",
+});
+// PasswordInput is reachable under components/ as well as its top-level subpath.
+formControlImportBans.push({
+  name: '@lablup/ui-common/components/PasswordInput',
+  importNames: ['PasswordInput'],
+  message: "Import BAIPasswordInput from 'backend.ai-ui' (ADR 0014).",
 });
 // FR-3428: the URL owns the current project on `/project/:projectName/*`
 // routes (FR-3055). Components switch projects through `useSwitchProject`; the
