@@ -1009,7 +1009,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
         },
       },
       {
-        path: 'notifications',
+        path: 'integrations',
         element: (
           <Suspense fallback={<BAISkeleton rows={4} />}>
             <AdminNotificationPage />
@@ -1017,9 +1017,9 @@ export const mainLayoutChildRoutes: RouteObject[] = [
         ),
         handle: {
           scope: 'admin',
-          menuKey: 'notifications',
+          menuKey: 'integrations',
           access: 'superadmin',
-          labelKey: 'webui.menu.ExternalNotifications',
+          labelKey: 'webui.menu.Integrations',
         },
       },
       {

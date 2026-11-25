@@ -94,7 +94,7 @@ export const VALID_MENU_KEYS = [
   'diagnostics',
   'branding',
   'rbac',
-  'notifications',
+  'integrations',
   'information',
   'system-settings',
 ] as const;
@@ -124,7 +124,7 @@ const ALL_ADMIN_PAGE_KEYS: ReadonlySet<string> = new Set([
   'diagnostics',
   'branding',
   'rbac',
-  'notifications',
+  'integrations',
   'information',
   'system-settings',
 ]);
@@ -372,7 +372,7 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
       ),
     // --- System group (superadmin only) ---
     isSuperAdmin && createAdminMenuItem('rbac', 'admin-system'),
-    isSuperAdmin && createAdminMenuItem('notifications', 'admin-system'),
+    isSuperAdmin && createAdminMenuItem('integrations', 'admin-system'),
     isSuperAdmin &&
       !isThemePreviewMode &&
       createAdminMenuItem('branding', 'admin-system'),

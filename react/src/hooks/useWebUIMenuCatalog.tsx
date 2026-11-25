@@ -250,8 +250,8 @@ export const useWebUIMenuCatalog = (): ReadonlyArray<WebUIMenuCatalogEntry> => {
       'admin',
     ),
     entry(
-      'notifications',
-      t('webui.menu.ExternalNotifications'),
+      'integrations',
+      t('webui.menu.Integrations'),
       <BellRing style={admin} size="1em" />,
       'admin',
     ),

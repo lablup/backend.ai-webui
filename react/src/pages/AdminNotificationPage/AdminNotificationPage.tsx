@@ -21,7 +21,12 @@ const AdminNotificationPage: React.FC = () => {
     <BAICard
       activeTabKey={currentTab}
       onTabChange={onTabChange}
-      tabList={[{ key: 'channels', label: t('externalNotification.Channels') }]}
+      tabList={[
+        {
+          key: 'channels',
+          label: t('externalNotification.NotificationChannels'),
+        },
+      ]}
     >
       <Suspense fallback={<BAISkeleton />}>
         {currentTab === 'channels' && (
