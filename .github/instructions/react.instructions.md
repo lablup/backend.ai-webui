@@ -154,6 +154,23 @@ interfaces, enum members.
   re-exporting a whole upstream props type.
 - Jotai for global state, Relay for GraphQL-backed state, React Context only for simple
   non-persisted UI state. Compose instead of drilling props 3+ levels.
+- Change the existing component before adding one. A new wrapper, a split-out sibling or a
+  second component for the same rule needs a reason the existing one cannot take; keep the
+  structure and swap only what changed (#10050, #10051, #11268). Keep a new component's API
+  to the props call sites pass (`columns`, `onAdd`, `onRemove`), not pass-through bags like
+  `formItemProps` / `renderInput` (#10444).
+- Reuse what exists before writing it: domain and project hooks (`useCurrentDomainValue`,
+  `useCurrentProjectValue`), Relay-generated types and existing option types
+  (`SelectorOptionData['disabled']`), and globals such as `globalThis.isElectron`
+  (#10050, #10309, #10496, #9752).
+- A data hook returns the response as it came and takes explicit options (`skip`, a boolean
+  flag). Callers do the formatting (lower-casing, mapping), and the hook does not decide on
+  its own when to skip (#10278, #10279, #10496).
+- Remove what no supported manager reaches: a version gate at or below the floor goes with
+  its fallback branch (ADR 0010), and so does a path for a value the server no longer sends
+  (#10046, #10051). Do not add an `@since` gate or keep a legacy fallback for a field the
+  floor already has, even when a review bot asks for one; floor and gate list come from
+  `pnpm run dev-env compat` (ADR 0011).
 
 ## Async actions and refetching
 
@@ -224,6 +241,8 @@ templates — copy the nearest one and adapt.
       component's props via `Omit<>` with `...rest` forwarded.
 - [ ] Relay: orchestrator/fragment split, `queryRef` / `{typeName}Frgmt` naming, `$key`
       types, colocated fragments, single pagination mode.
+- [ ] No new component, wrapper or type where an existing one fits; data hooks return raw
+      data and take explicit options; no gate or fallback at or below the manager floor.
 - [ ] `BAIButton action` for async work; `useFetchKey` where refetch is needed;
       `BAIUnmountAfterClose` around form-bearing modals/drawers.
 - [ ] i18n: correct hook for the package (`useTranslation` vs `useBAIi18n`), no hard-coded
