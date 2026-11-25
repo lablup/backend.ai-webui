@@ -222,15 +222,57 @@ describe('diffRevisions', () => {
       left: 'gpu-a',
       right: 'gpu-b',
     });
-    expect(rowOf(rows, 'modelDefinition:command:llama')).toMatchObject({
+    expect(rowOf(rows, 'modelDefinition:command:0')).toMatchObject({
       status: 'changed',
       right: 'vllm serve --port 8000',
     });
     for (const field of ['shell', 'healthCheck', 'preStartActions']) {
-      expect(rowOf(rows, `modelDefinition:${field}:llama`)?.status).toBe(
+      expect(rowOf(rows, `modelDefinition:${field}:0`)?.status).toBe(
         'added',
       );
     }
+  });
+
+  it('pairs a renamed model by position, so only real edits show', () => {
+    // Revisions #1 and #3 of a real deployment: the add-revision modal renamed
+    // the model, and the new revision changed only the health check delay.
+    const service = {
+      command: 'python3 /models/mock_openai_server.py',
+      shell: '/bin/bash',
+      port: 8000,
+      healthCheck: { enable: true, path: '/health', initialDelay: 5 },
+      preStartActions: [],
+    };
+    const rows = diffRevisions(
+      {
+        ...base,
+        modelDefinition: {
+          models: [{ name: 'mock-chat', modelPath: '/models', service }],
+        },
+      },
+      {
+        ...base,
+        modelDefinition: {
+          models: [
+            {
+              name: 'model',
+              modelPath: '/models',
+              service: {
+                ...service,
+                healthCheck: { ...service.healthCheck, initialDelay: 4 },
+              },
+            },
+          ],
+        },
+      },
+    );
+    const changed = rows.filter(
+      (row) => row.group === 'modelDefinition' && row.status !== 'same',
+    );
+    expect(changed.map((row) => [row.field, row.status])).toEqual([
+      ['modelName', 'changed'],
+      ['healthCheck', 'changed'],
+    ]);
   });
 
   it('treats a missing revision side as all added', () => {
