@@ -35,17 +35,19 @@ import {
   BAISwitch,
   BAITextArea,
   BAITextInput,
+  useMutationWithPromise,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { Ellipsis } from 'lucide-react';
-import React, { Suspense, useEffect, useEffectEvent, useRef } from 'react';
+import React, {
+  Suspense,
+  useEffect,
+  useEffectEvent,
+  useRef,
+  useState,
+} from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  graphql,
-  useFragment,
-  useLazyLoadQuery,
-  useMutation,
-} from 'react-relay';
+import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
 
 type NotificationRuleFormValues = {
   name: string;
@@ -230,8 +232,9 @@ const NotificationRuleSettingModal: React.FC<
     ruleFrgmt ?? null,
   );
 
-  const [commitCreate, isInFlightCreate] =
-    useMutation<NotificationRuleSettingModalCreateMutation>(graphql`
+  const [isSaving, setIsSaving] = useState(false);
+  const commitCreate =
+    useMutationWithPromise<NotificationRuleSettingModalCreateMutation>(graphql`
       mutation NotificationRuleSettingModalCreateMutation(
         $input: CreateNotificationRuleInput!
       ) {
@@ -246,9 +249,8 @@ const NotificationRuleSettingModal: React.FC<
         }
       }
     `);
-
-  const [commitUpdate, isInFlightUpdate] =
-    useMutation<NotificationRuleSettingModalUpdateMutation>(graphql`
+  const commitUpdate =
+    useMutationWithPromise<NotificationRuleSettingModalUpdateMutation>(graphql`
       mutation NotificationRuleSettingModalUpdateMutation(
         $input: UpdateNotificationRuleInput!
       ) {
@@ -264,92 +266,64 @@ const NotificationRuleSettingModal: React.FC<
       }
     `);
 
-  const handleError = (error: Error) => {
-    message.error(error?.message || t('general.ErrorOccurred'));
-  };
-  // Resolves to false after showing the error, so callers only act on success.
-  const toResult = (
-    errors: ReadonlyArray<{ message: string }> | null,
-  ): boolean => {
-    if (errors && errors.length > 0) {
-      message.error(errors[0]?.message || t('general.ErrorOccurred'));
-      return false;
+  const validateValues = async () => {
+    const values = await formRef.current?.validateFields().catch(() => null);
+    if (!values) return null;
+    // These items mount once their queries load; until then validateFields skips them.
+    // An edit never sends the channel, so only a new rule needs it.
+    if (!rule && !values.channelId) {
+      message.error(t('externalNotification.ChannelRequired'));
+      return null;
     }
-    return true;
+    if (!_.trim(values.messageTemplate ?? '')) {
+      message.error(t('externalNotification.MessageTemplateRequired'));
+      return null;
+    }
+    return values;
   };
-
-  const validateValues = () =>
-    formRef.current
-      ?.validateFields()
-      .then((values) => {
-        // These items mount once their queries load; until then validateFields skips them.
-        // An edit never sends the channel, so only a new rule needs it.
-        if (!rule && !values.channelId) {
-          message.error(t('externalNotification.ChannelRequired'));
-          return null;
-        }
-        if (!_.trim(values.messageTemplate ?? '')) {
-          message.error(t('externalNotification.MessageTemplateRequired'));
-          return null;
-        }
-        return values;
-      })
-      .catch(() => null) ?? Promise.resolve(null);
-
-  const toCommonInput = (values: NotificationRuleFormValues) => ({
-    name: _.trim(values.name),
-    description: _.trim(values.description ?? '') || null,
-    messageTemplate: values.messageTemplate,
-    enabled: values.enabled,
-  });
-
-  const saveEdit = (values: NotificationRuleFormValues, ruleId: string) =>
-    new Promise<boolean>((resolve) => {
-      commitUpdate({
-        variables: { input: { id: ruleId, ...toCommonInput(values) } },
-        onCompleted: (_res, errors) => resolve(toResult(errors)),
-        onError: (error) => {
-          handleError(error);
-          resolve(false);
-        },
-      });
-    });
 
   // With `andTest`, an edit keeps the modal open under the test; a new rule closes it.
   const handleOk = async (andTest = false) => {
     const values = await validateValues();
     if (!values) return;
-    if (rule) {
-      if (!(await saveEdit(values, rule.entityId))) return;
-      message.success(t('externalNotification.RuleSaved'));
-      if (andTest) onRequestTest?.();
-      else onRequestClose(true);
-      return;
-    }
-    commitCreate({
-      variables: {
+    const common = {
+      name: _.trim(values.name),
+      description: _.trim(values.description ?? '') || null,
+      messageTemplate: values.messageTemplate,
+      enabled: values.enabled,
+    };
+    setIsSaving(true);
+    try {
+      if (rule) {
+        await commitUpdate({ input: { id: rule.entityId, ...common } });
+        message.success(t('externalNotification.RuleSaved'));
+        if (andTest) onRequestTest?.();
+        else onRequestClose(true);
+        return;
+      }
+      const res = await commitCreate({
         input: {
-          ...toCommonInput(values),
+          ...common,
           ruleType: values.ruleType,
           channelId: values.channelId,
         },
-      },
-      onCompleted: (res, errors) => {
-        if (!toResult(errors)) return;
-        message.success(t('externalNotification.RuleSaved'));
-        onRequestClose(true);
-        const created = res.adminCreateNotificationRule?.rule;
-        if (andTest && created) {
-          onRequestTest?.({
-            entityId: created.entityId,
-            name: _.trim(values.name),
-            ruleType: values.ruleType,
-            channelName: created.channel.name,
-          });
-        }
-      },
-      onError: handleError,
-    });
+      });
+      message.success(t('externalNotification.RuleSaved'));
+      onRequestClose(true);
+      const created = res.adminCreateNotificationRule?.rule;
+      if (andTest && created) {
+        onRequestTest?.({
+          entityId: created.entityId,
+          name: common.name,
+          ruleType: values.ruleType,
+          channelName: created.channel.name,
+        });
+      }
+    } catch (error) {
+      message.error((error as Error)?.message || t('general.ErrorOccurred'));
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const sendTestLabel = rule
@@ -380,7 +354,7 @@ const NotificationRuleSettingModal: React.FC<
             <Button
               variant="primary"
               label={rule ? t('button.Save') : t('button.Create')}
-              isLoading={isInFlightCreate || isInFlightUpdate}
+              isLoading={isSaving}
               onClick={() => handleOk()}
             />
             <DropdownMenu
@@ -389,7 +363,7 @@ const NotificationRuleSettingModal: React.FC<
                 variant: 'primary',
                 icon: <Ellipsis size="1em" />,
                 isIconOnly: true,
-                isDisabled: isInFlightCreate || isInFlightUpdate,
+                isDisabled: isSaving,
                 label: sendTestLabel,
               }}
               items={[{ label: sendTestLabel, onClick: () => handleOk(true) }]}
