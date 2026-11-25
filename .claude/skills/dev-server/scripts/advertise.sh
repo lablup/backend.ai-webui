@@ -211,14 +211,15 @@ pr_cache_path() {
   '
 }
 
-# one_pr [file] — the PR as one JSON line, or nothing and non-zero. As dev.mjs's
-# `JSON.parse` + `pr?.number`: exactly one value, an object, `number` JS-truthy.
+# one_pr [file] — the PR as one JSON line, or non-zero: dev.mjs's own
+# `JSON.parse` + `pr?.number`, so both sides accept exactly the same input.
 one_pr() {
-  local pr
-  pr=$(jq -cse 'select(length == 1) | .[0]
-    | select(type == "object" and (.number | . != null and . != false and . != 0 and . != ""))' \
-    "$@" 2>/dev/null) || return 1
-  printf '%s\n' "$pr"
+  node -e '
+    let pr;
+    try { pr = JSON.parse(require("fs").readFileSync(process.argv[1] ?? 0, "utf8")); } catch { process.exit(1); }
+    if (!pr?.number) process.exit(1);
+    console.log(JSON.stringify(pr));
+  ' "$@" 2>/dev/null
 }
 
 # read_pr_cache <file> — dev.mjs's `readCachedPr`: a missing or unusable file is a miss.
@@ -226,13 +227,13 @@ read_pr_cache() {
   [ -f "$1" ] && one_pr "$1"
 }
 
-# write_pr_cache <file> <json> — dev.mjs's `writeCachedPr`: gh's own JSON, compact,
-# no trailing newline. Best-effort, and atomic so dev.mjs never reads half a file.
+# write_pr_cache <file> <json> — dev.mjs's `writeCachedPr` (JSON.stringify, no newline),
+# best-effort and atomic so dev.mjs never reads half a file.
 write_pr_cache() {
   local tmp
   mkdir -p "$(dirname "$1")" 2>/dev/null || return 0
   tmp=$(mktemp "$1.XXXXXX" 2>/dev/null) || return 0
-  if jq -cj . <<<"$2" >"$tmp" 2>/dev/null && mv -f "$tmp" "$1" 2>/dev/null; then return 0; fi
+  if printf '%s' "$2" >"$tmp" 2>/dev/null && mv -f "$tmp" "$1" 2>/dev/null; then return 0; fi
   rm -f "$tmp"
 }
 
@@ -320,11 +321,8 @@ exact_mode() {
   [ -n "$v" ]
 }
 
-# lookup_pr <branch> — dev.mjs's `lookupPr`, in shell. It MUST match: the name is
-# a function of the PR it returns, and a name that differs from the one dev.mjs
-# claims points BAI_REVIEW_BOOT_RECORD and the probe at a server that is not there.
-# So: the same on-disk cache first, and only on a miss `gh pr view <branch>`
-# (any PR state, not just open) with a 4s budget, whose exit-0 answer is cached for dev.mjs.
+# lookup_pr <branch> — dev.mjs's `lookupPr` in shell; it MUST return the same PR, or
+# the predicted app name differs from the one dev.mjs claims.
 lookup_pr() {
   local branch=$1 out pr cache rc=0
   { [ -n "$branch" ] && [ -z "${PORTLESS_SKIP_PR_LOOKUP:-}" ]; } || { printf 'null'; return; }
@@ -339,7 +337,6 @@ lookup_pr() {
     write_pr_cache "$cache" "$pr"
     printf '%s\n' "$pr"; return
   fi
-  # dev.mjs re-reads the cache here; another dev.mjs may have refreshed it meanwhile.
   read_pr_cache "$cache" || printf 'null'
 }
 

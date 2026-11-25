@@ -174,7 +174,8 @@ check 'a cached PR wins over a retitle gh would report' '{"number":11350,"title"
   "$(lookup_with 0 '{"number":11350,"title":"renamed"}') $( (cat "$TMP/gh-calls" 2>/dev/null) | wc -l | tr -d ' ')"
 # Each of these is a miss for dev.mjs's `JSON.parse` + `pr?.number`.
 for bad in '{"title":"no number"}' '{"number":0}' '{"number":""}' '[{"number":1}]' \
-           '{"number":1}{"number":2}' '{"number":11350,"title":"ab"}"}'; do
+           '{"number":1}{"number":2}' '{"number":11350,"title":"ab"}"}' \
+           $'\xef\xbb\xbf{"number":11350}' '{"number":NaN}' '{"number":1e-400}'; do
   printf '%s' "$bad" >"$CACHE"
   check "a cache dev.mjs cannot use is a miss: $bad" '{"number":11350,"title":"net"}' \
     "$(lookup_with 0 '{"number":11350,"title":"net"}')"
@@ -185,6 +186,11 @@ check 'a gh that fails after printing is neither used nor cached' 'null absent' 
 rm -f "$CACHE"
 check 'no cache and no gh answer is null' 'null' "$(lookup_with 1 '')"
 check 'and writes no cache' 'absent' "$([ -e "$CACHE" ] && echo written || echo absent)"
+check 'a failed gh falls back to a cache written meanwhile, as dev.mjs does' '{"number":11352}' \
+  "$( HOME="$TMP"; timeout() { shift; "$@"; }
+      gh() { printf '%s' '{"number":11352}' >"$CACHE"; return 1; }
+      lookup_pr feat/gh-11346-x )"
+rm -f "$CACHE"
 rm -f "$TMP/gh-calls"
 lookup_with 0 '{"number":11351,"title":"fresh"}' >/dev/null
 check 'a gh answer is cached where dev.mjs reads it, as dev.mjs writes it' \
