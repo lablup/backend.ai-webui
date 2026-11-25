@@ -7,7 +7,11 @@ import type { ResourceAllocationPanelProjectQuery } from '../../../__generated__
 import { useDashboardResourceGroups } from '../DashboardResourceGroups';
 import type { CardScope } from '../cardScope';
 import ResourceUsageStatistics from '../memberCards/ResourceUsageStatistics';
-import { toLimitUsageRows, type UsageRow } from '../memberCards/memberCardData';
+import {
+  shownSlotsOf,
+  toLimitUsageRows,
+  type UsageRow,
+} from '../memberCards/memberCardData';
 import { readPrimary } from '../panelPermission';
 import type { PanelComponentProps } from '../types';
 import ScopedCard from './ScopedCard';
@@ -15,17 +19,16 @@ import React, { useDeferredValue } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
-/** Only the slots the scope's resource groups offer, drawn like the resource group totals. */
+/** The slots the scope's resource groups offer plus those in use, drawn like the resource group totals. */
 const ScopeUsage: React.FC<{ rows: ReadonlyArray<UsageRow> }> = ({ rows }) => {
   'use memo';
-  const offeredSlots = useDashboardResourceGroups()?.offeredSlots;
+  const slots = shownSlotsOf(
+    useDashboardResourceGroups()?.offeredSlots,
+    rows.map((row) => ({ resourceType: row.resourceType, quantity: row.used })),
+  );
   return (
     <ResourceUsageStatistics
-      rows={
-        offeredSlots
-          ? rows.filter((row) => offeredSlots.has(row.resourceType))
-          : rows
-      }
+      rows={rows.filter((row) => slots.has(row.resourceType))}
     />
   );
 };
