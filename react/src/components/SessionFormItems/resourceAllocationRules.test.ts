@@ -203,6 +203,27 @@ describe('applyRule — user events', () => {
     ).toEqual({});
   });
 
+  it('a value edit with no preset chosen reads custom in free mode only', () => {
+    // A form prefilled with `resource` (Add Revision) starts with no label.
+    const values = makeValues({ allocationPreset: undefined });
+    const event = { type: 'user.setResource', field: 'cpu', value: 3 } as const;
+    expect(applyRule(values, event, makeCtx())).toEqual({
+      allocationPreset: 'custom',
+    });
+    expect(applyRule(values, event, presetOnly())).toEqual({});
+    // Not before the group's slots are known, and not without a value edit.
+    expect(applyRule(values, event, makeCtx({ slotsInRG: undefined }))).toEqual(
+      {},
+    );
+    expect(
+      applyRule(
+        values,
+        { type: 'user.setResource', field: 'shmem', value: '1g' },
+        makeCtx(),
+      ),
+    ).toEqual({});
+  });
+
   it('a value edit off the image minimum relabels minimum-required custom', () => {
     const values = makeValues({
       resource: { ...gpuImageMinimum, shmem: '64m', cpu: 2 },
