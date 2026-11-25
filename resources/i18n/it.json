@@ -1292,7 +1292,6 @@
     },
     "invitation": {
       "Accepted": "Accettato",
-      "AcceptedShareNotFound": "Nessuna condivisione accettata di questa cartella è stata trovata per il tuo account.",
       "FailedToAcceptInvitation": "Impossibile accettare l'invito",
       "FailedToDeclineInvitation": "Non ha rifiutato l'invito",
       "FolderSharingNotAvailableToUser": "La condivisione delle cartelle non è disponibile per gli utenti richiesti.",

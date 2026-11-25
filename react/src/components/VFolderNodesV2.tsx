@@ -932,6 +932,7 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
       </BAIUnmountAfterClose>
       <SharedFolderPermissionInfoModalV2
         vfolderFrgmt={currentSharedVFolder}
+        project={project}
         open={!!currentSharedVFolder}
         onLeaveFolder={(id) => {
           onRemoveRow?.(id);

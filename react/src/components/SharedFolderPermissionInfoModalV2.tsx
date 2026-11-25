@@ -10,14 +10,16 @@ import { SharedFolderPermissionInfoModalV2ProjectSharesQuery } from '../__genera
 import { App } from '../app-shim';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanMutation, useTanQuery } from '../hooks/reactQueryAlias';
+import type { ProjectContextOrNull } from '../types/projectContext';
 import VFolderPermissionCellV2 from './VFolderPermissionCellV2';
 import { Banner } from '@lablup/ui-common/Banner';
 import { IconButton } from '@lablup/ui-common/IconButton';
 import { MetadataListItem } from '@lablup/ui-common/MetadataList';
 import { HStack, VStack } from '@lablup/ui-common/Stack';
 import { Heading, Text } from '@lablup/ui-common/Text';
-import { BAIPopconfirm } from 'backend.ai-ui';
 import {
+  BAIDeleteConfirmModal,
+  BAIPopconfirm,
   filterOutNullAndUndefined,
   BAITable,
   BAIMetadataList,
@@ -29,6 +31,7 @@ import {
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { UserIcon, UsersIcon, LogOutIcon } from 'lucide-react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   type Environment,
@@ -42,21 +45,24 @@ const VFOLDER_ENTITY_TYPE = 'vfolder';
 // `myAtomicBulkScopePermissions` refuses more than 100 targets.
 const MAX_PERMISSION_TARGETS = 100;
 
-interface LeavableShare {
-  /** The share's `entityId`: what `leaveEntityShare` takes. */
-  shareId: string;
-  /** Set when the share is addressed to a project: leaving it takes the folder from the whole project. */
-  projectName?: string;
-}
+type LeavableShare =
+  | { shareId: string; isProjectShare: false }
+  /** Leaving a project's share takes the folder from the whole project. */
+  | { shareId: string; isProjectShare: true; projectName: string };
+
+const isFolderShare = (share: { targetEntityType: string }) =>
+  share.targetEntityType.toLowerCase() === VFOLDER_ENTITY_TYPE;
 
 /**
  * The accepted share of the folder the caller may leave: their own, else one
  * addressed to a project where they hold `soft-delete` on `entity_share`
  * (lablup/backend.ai#17162; `myEntityShares` never lists project shares).
+ * With a page project, only that project's share is a candidate.
  */
 const findLeavableShare = async (
   environment: Environment,
   folderId: string,
+  project: ProjectContextOrNull,
 ): Promise<LeavableShare | null> => {
   const mine = await fetchQuery<SharedFolderPermissionInfoModalV2MySharesQuery>(
     environment,
@@ -94,15 +100,17 @@ const findLeavableShare = async (
     { folderId },
     { fetchPolicy: 'network-only' },
   ).toPromise();
-  const own = mine?.myEntityShares?.edges.find(
-    ({ node }) => node.targetEntityType === VFOLDER_ENTITY_TYPE,
+  const own = mine?.myEntityShares?.edges.find(({ node }) =>
+    isFolderShare(node),
   )?.node;
-  if (own) return { shareId: own.entityId };
+  if (own) return { shareId: own.entityId, isProjectShare: false };
 
-  const projects = _.map(mine?.myUserV2?.projects?.edges, 'node').slice(
-    0,
-    MAX_PERMISSION_TARGETS,
-  );
+  const projects = project
+    ? [{ entityId: project.id, basicInfo: { name: project.name } }]
+    : _.map(mine?.myUserV2?.projects?.edges, 'node').slice(
+        0,
+        MAX_PERMISSION_TARGETS,
+      );
   if (_.isEmpty(projects)) return null;
   const permissions =
     await fetchQuery<SharedFolderPermissionInfoModalV2ProjectLeaversQuery>(
@@ -136,6 +144,7 @@ const findLeavableShare = async (
     'scopeId',
   );
   if (_.isEmpty(leavableIds)) return null;
+  // The read authorizes every scope it names: one refused scope fails it, which means no share to leave.
   const shares =
     await fetchQuery<SharedFolderPermissionInfoModalV2ProjectSharesQuery>(
       environment,
@@ -167,18 +176,21 @@ const findLeavableShare = async (
         folderId,
       },
       { fetchPolicy: 'network-only' },
-    ).toPromise();
-  const projectShare = shares?.entityShares?.edges.find(
-    ({ node }) => node.targetEntityType === VFOLDER_ENTITY_TYPE,
+    )
+      .toPromise()
+      .catch(() => null);
+  const projectShare = shares?.entityShares?.edges.find(({ node }) =>
+    isFolderShare(node),
   )?.node;
   if (!projectShare) return null;
   return {
     shareId: projectShare.entityId,
+    isProjectShare: true,
     projectName:
       _.find(projects, { entityId: projectShare.recipientEntityId ?? '' })
         ?.basicInfo.name ??
       projectShare.recipientEntityId ??
-      undefined,
+      '',
   };
 };
 
@@ -189,13 +201,21 @@ interface SharedFolderPermissionInfoModalV2Props extends Omit<
   /** App-level contract, kept: consumers outside this area use it. */
   open?: boolean;
   vfolderFrgmt: SharedFolderPermissionInfoModalV2Fragment$key | null;
+  /** The page's project (ADR-0001); `null` considers every project of the caller. */
+  project: ProjectContextOrNull;
   onLeaveFolder?: (folderId: string) => void;
   onRequestClose: (success?: boolean) => void;
 }
 
 const SharedFolderPermissionInfoModalV2: React.FC<
   SharedFolderPermissionInfoModalV2Props
-> = ({ vfolderFrgmt, onRequestClose, onLeaveFolder, ...modalProps }) => {
+> = ({
+  vfolderFrgmt,
+  project,
+  onRequestClose,
+  onLeaveFolder,
+  ...modalProps
+}) => {
   'use memo';
   const { t } = useTranslation();
   const { message } = App.useApp();
@@ -242,21 +262,62 @@ const SharedFolderPermissionInfoModalV2: React.FC<
       `,
     );
 
+  const isUserOwned = vfolder?.accessControl?.ownershipType === 'USER';
   const folderId = vfolder?.entityId;
   const leavableShare = useTanQuery({
-    queryKey: ['SharedFolderPermissionInfoModalV2.leavableShare', folderId],
-    queryFn: () => findLeavableShare(relayEnvironment, folderId ?? ''),
-    enabled: !!modalProps.open && !!folderId,
+    queryKey: [
+      'SharedFolderPermissionInfoModalV2.leavableShare',
+      folderId,
+      project?.id ?? null,
+    ],
+    queryFn: () => findLeavableShare(relayEnvironment, folderId ?? '', project),
+    enabled: !!modalProps.open && !!folderId && isUserOwned,
     staleTime: 0,
+    gcTime: 0,
   });
   const share = leavableShare.data;
+  const [isProjectLeaveOpen, setIsProjectLeaveOpen] = useState(false);
 
   const leaveFolder = useTanMutation({
     mutationFn: ({ shareId }: { shareId: string }) =>
       leaveShare({ id: shareId }),
   });
 
-  const isUserOwned = vfolder?.accessControl?.ownershipType === 'USER';
+  const leave = () => {
+    const globalId = vfolder?.id;
+    if (!share || !globalId) return Promise.resolve();
+    return leaveFolder
+      .mutateAsync({ shareId: share.shareId })
+      .then(() => {
+        onLeaveFolder?.(globalId);
+        message.success(t('data.invitation.SuccessfullyLeftSharedFolder'));
+        onRequestClose(true);
+      })
+      .catch((err) => {
+        message.error(getErrorMessage(err));
+        onRequestClose();
+      });
+  };
+
+  const leaveButton = (
+    <IconButton
+      label={t('data.invitation.LeaveSharedFolder')}
+      tooltip={
+        leavableShare.isError
+          ? getErrorMessage(leavableShare.error)
+          : t('data.invitation.LeaveSharedFolder')
+      }
+      size="sm"
+      variant="ghost"
+      icon={<LogOutIcon />}
+      className="bai-name-action-cell-danger"
+      isLoading={leavableShare.isLoading || leaveFolder.isPending}
+      isDisabled={leavableShare.isError}
+      onClick={
+        share?.isProjectShare ? () => setIsProjectLeaveOpen(true) : undefined
+      }
+    />
+  );
 
   return (
     <BAIModal
@@ -322,62 +383,27 @@ const SharedFolderPermissionInfoModalV2: React.FC<
                     return <VFolderPermissionCellV2 vfolderFrgmt={vfolder} />;
                   },
                 },
-                ...(share
+                // Hidden only once the lookup found nothing the caller may leave.
+                ...(share || leavableShare.isLoading || leavableShare.isError
                   ? [
                       {
                         key: 'control',
                         title: t('data.folders.Control'),
-                        render: (_value: unknown, data: typeof vfolder) => (
+                        render: () => (
                           <HStack justify="center">
-                            <BAIPopconfirm
-                              title={
-                                share.projectName
-                                  ? t(
-                                      'data.invitation.LeaveProjectSharedFolderDesc',
-                                      {
-                                        folderName: data?.metadata?.name,
-                                        projectName: share.projectName,
-                                      },
-                                    )
-                                  : t('data.invitation.LeaveSharedFolderDesc', {
-                                      folderName: data?.metadata?.name,
-                                    })
-                              }
-                              onConfirm={() => {
-                                const globalId = data?.id;
-                                if (globalId) {
-                                  leaveFolder.mutate(
-                                    {
-                                      shareId: share.shareId,
-                                    },
-                                    {
-                                      onSuccess: () => {
-                                        onLeaveFolder?.(globalId);
-                                        message.success(
-                                          t(
-                                            'data.invitation.SuccessfullyLeftSharedFolder',
-                                          ),
-                                        );
-                                        onRequestClose(true);
-                                      },
-                                      onError: (err) => {
-                                        message.error(getErrorMessage(err));
-                                        onRequestClose();
-                                      },
-                                    },
-                                  );
-                                }
-                              }}
-                            >
-                              <IconButton
-                                label={t('data.invitation.LeaveSharedFolder')}
-                                tooltip={t('data.invitation.LeaveSharedFolder')}
-                                size="sm"
-                                variant="ghost"
-                                icon={<LogOutIcon />}
-                                className="bai-name-action-cell-danger"
-                              />
-                            </BAIPopconfirm>
+                            {share && !share.isProjectShare ? (
+                              <BAIPopconfirm
+                                title={t(
+                                  'data.invitation.LeaveSharedFolderDesc',
+                                  { folderName: vfolder?.metadata?.name },
+                                )}
+                                onConfirm={leave}
+                              >
+                                {leaveButton}
+                              </BAIPopconfirm>
+                            ) : (
+                              leaveButton
+                            )}
                           </HStack>
                         ),
                       },
@@ -388,6 +414,27 @@ const SharedFolderPermissionInfoModalV2: React.FC<
           </VStack>
         ) : null}
       </VStack>
+      {share?.isProjectShare ? (
+        <BAIDeleteConfirmModal
+          open={isProjectLeaveOpen}
+          title={t('data.invitation.LeaveSharedFolder')}
+          description={t('data.invitation.LeaveProjectSharedFolderDesc', {
+            folderName: vfolder?.metadata?.name,
+            projectName: share.projectName,
+          })}
+          items={[
+            {
+              key: share.shareId,
+              label: vfolder?.metadata?.name ?? '',
+            },
+          ]}
+          confirmText={vfolder?.metadata?.name ?? ''}
+          requireConfirmInput
+          okText={t('data.invitation.LeaveSharedFolder')}
+          onOk={() => leave().finally(() => setIsProjectLeaveOpen(false))}
+          onCancel={() => setIsProjectLeaveOpen(false)}
+        />
+      ) : null}
     </BAIModal>
   );
 };
