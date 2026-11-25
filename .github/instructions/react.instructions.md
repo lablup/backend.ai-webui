@@ -1,5 +1,5 @@
 ---
-applyTo: "react/**/*.tsx,react/**/*.ts"
+applyTo: "react/**/*.tsx,react/**/*.ts,packages/backend.ai-ui/src/**/*.tsx,packages/backend.ai-ui/src/**/*.ts"
 ---
 
 # React Guidelines for Backend.AI WebUI

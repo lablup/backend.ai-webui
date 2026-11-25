@@ -40,6 +40,11 @@ Report these. Each points at the rule that defines it; cite the rule in the find
   server data), a user-controlled URL passed to `window.open`, an `href` or a redirect, or a
   credential or token written to a log, a URL or the PR body. The gate runs `/security-review`
   only on High-tier PRs, so a Medium-tier reviewer checks these themselves.
+- **A layer the change did not need.** A new component, wrapper or hook doing an existing one's
+  job, a hook or type rewritten when one exists, a data hook that reformats its response or
+  decides on its own to skip, or a path no manager in the supported range reaches. Report these
+  even though behaviour does not change. (`.github/instructions/react.instructions.md` —
+  Composition.)
 - **A decision that contradicts an ADR in force** without a superseding ADR in the same PR.
   (`.claude/rules/adr.md`.)
 
@@ -51,8 +56,8 @@ name ("this looks like it might…") is not a finding. If you cannot point at th
 
 ## What not to post
 
-1. Style, naming, formatting, "consider …", and cleanup that changes no behaviour. Lint and
-   Prettier already ran (`scripts/verify.sh`).
+1. Style, naming, formatting, "consider …", and cleanup that changes no behaviour, except a
+   layer the change did not need (above). Lint and Prettier already ran (`scripts/verify.sh`).
 2. Requests to comment self-explanatory code. Comment density follows
    `.claude/rules/comment-density.md`.
 3. Anything already answered, fixed in a later commit, or raised by another reviewer in the

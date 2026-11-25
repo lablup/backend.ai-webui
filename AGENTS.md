@@ -134,7 +134,7 @@ When terms disagree, precedence is: (1) the live UI i18n label in `resources/i18
 
 ### Auto-Applied Instructions (loaded when editing matching files)
 
-- `react.instructions.md` → `react/**/*.tsx,react/**/*.ts`
+- `react.instructions.md` → `react/**/*.tsx,react/**/*.ts,packages/backend.ai-ui/src/**/*.tsx,packages/backend.ai-ui/src/**/*.ts`
 - `storybook.instructions.md` → `packages/backend.ai-ui/**/*.stories.tsx,packages/backend.ai-ui/**/*.stories.ts`
 - `i18n.instructions.md` → `resources/i18n/**/*.json,packages/backend.ai-ui/src/locale/**/*.json` (use `i18n-patterns` skill for tsx/ts context)
 - `e2e.instructions.md` → `e2e/**/*.ts`
