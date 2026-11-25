@@ -15,7 +15,6 @@ navTitle: プロジェクト管理者機能
 ヘッダーのプロジェクトドロップダウンを開くと、プロジェクト管理者ロールを持つプロジェクトには名前の横に盾の形のバッジが表示されます。バッジにカーソルを合わせると **プロジェクト管理者** ツールチップが表示され、このプロジェクトを選択すると以下で説明するプロジェクト管理者向けサイドバー項目が表示されることが確認できます。
 
 ![=300px](../images/header_project_selector_with_admin_badge.png)
-<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
 
 ヘッダーのプロジェクトセレクターで別のプロジェクトに切り替えると、ユーザーのロールが再評価されます。同じユーザーが同一のログインセッション内で、あるプロジェクトではプロジェクト管理者として、別のプロジェクトでは一般ユーザーとして振る舞うことがあります。プロジェクト管理者ロールの付与と取り消しの方法については、RBAC管理章の[プロジェクト管理者権限の付与](#grant-project-admin)セクションを参照してください。
 
@@ -24,7 +23,6 @@ navTitle: プロジェクト管理者機能
 :::
 
 ![](../images/forbidden_page.png)
-<!-- TODO(screenshot): recapture while logged in as a user who lacks project-admin rights on the requested project. This image was captured with the superadmin account. -->
 
 <a id="set-project-admin"></a>
 
@@ -35,10 +33,6 @@ navTitle: プロジェクト管理者機能
 各プロジェクト行で**プロジェクト管理者を設定**ボタンをクリックしてモーダルを開きます。
 
 ![](../images/project_admin_set_admin_action.png)
-
-:::note
-**プロジェクト管理者を設定**アクションは、**マネージャー26.8.0以降**のスーパー管理者が利用できます。それより古いマネージャーでは表示されず、モデルストアプロジェクトでは無効になります。
-:::
 
 このモーダルは以下を提供します:
 
@@ -68,12 +62,10 @@ navTitle: プロジェクト管理者機能
 - **デプロイメント** — 現在のプロジェクトが所有するモデルデプロイメント
 
 ![=240px](../images/project_admin_sidebar.png)
-<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
 
 プロジェクト管理者ページでは、上部のプロジェクトセレクターで選択したプロジェクト配下の項目のみが表示されます。この内容はページ上部のバナーで確認できます。
 
 ![](../images/project_admin_scope_alert.png)
-<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
 
 <a id="refreshing-project-admin-pages"></a>
 
@@ -84,7 +76,6 @@ navTitle: プロジェクト管理者機能
 更新ボタンの横のドロップダウンボタンをクリックすると **自動更新** メニューが開き、自動更新の間隔を選択できます。
 
 ![=94px](../images/project_admin_auto_refresh_menu.png)
-<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
 
 <a id="users"></a>
 
@@ -93,7 +84,6 @@ navTitle: プロジェクト管理者機能
 **ユーザー** ページには、現在選択されているプロジェクトに所属するすべてのユーザーが表示されます。このページを使用して、プロジェクトのメンバーを一目で確認できます。例えば、プロジェクトのリソースにアクセスできるユーザーを確認したり、非アクティブなアカウントを特定したりできます。
 
 ![](../images/project_admin_users_page.png)
-<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
 
 このページには以下のコントロールが用意されています:
 
@@ -109,7 +99,6 @@ navTitle: プロジェクト管理者機能
 **データ** ページには、現在選択されているプロジェクトが所有するストレージフォルダ（vfolder）が表示されます。このページから、プロジェクト共有フォルダの作成、誤って削除されたフォルダの復元、保持の必要がなくなったフォルダの完全削除を行えます。
 
 ![](../images/project_admin_data_page.png)
-<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
 
 このページには以下のコントロールが用意されています:
 
@@ -129,7 +118,6 @@ navTitle: プロジェクト管理者機能
 3. **作成** をクリックしてフォルダを作成します。
 
 ![=650px](../images/project_admin_create_folder_modal.png)
-<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
 
 :::info
 プロジェクト管理者用データページで作成したフォルダは、常に**プロジェクトフォルダ**です。作成モーダルにはフォルダタイプを選択する項目がなく、これを明示する次のメッセージが表示されます:
@@ -147,7 +135,6 @@ navTitle: プロジェクト管理者機能
 - **完全削除**: 選択したフォルダを完全に削除します。この操作は取り消せず、確認のためにフォルダ名を入力する必要があります。
 
 ![](../images/project_admin_data_deleted_tab.png)
-<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
 
 :::danger
 ストレージフォルダを完全削除すると、すべてのコンテンツが削除され、取り消すことはできません。確認モーダルでは、削除ボタンが有効になる前にフォルダ名を正確に入力する必要があります。
@@ -160,7 +147,7 @@ navTitle: プロジェクト管理者機能
 **セッション** ページには、現在選択されているプロジェクトのユーザーが所有するコンピュートセッションが表示されます。このページから、アクティブなワークロードの監視、長時間実行されているセッションの特定、不要になったセッションの終了を行えます。
 
 ![](../images/project_admin_sessions_page.png)
-<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
+<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; project-admin on 10.82.1.201 has no sessions, 2026-11-24. -->
 
 このページには以下のコントロールが用意されています:
 
@@ -178,7 +165,7 @@ navTitle: プロジェクト管理者機能
 5. 確認ボタンをクリックしてセッションを終了します。
 
 ![=520px](../images/project_admin_terminate_session_modal.png)
-<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
+<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; project-admin on 10.82.1.201 has no sessions, 2026-11-24. -->
 
 :::warning
 **強制終了** は、セッションがハングして状態が不当に長時間変化しない場合にのみ使用してください。強制終了はエージェント上の実際のコンテナを削除しないため、その後に手動でのクリーンアップが必要になる場合があります。
@@ -195,7 +182,7 @@ navTitle: プロジェクト管理者機能
 **デプロイメント** ページには、現在選択されているプロジェクトが所有するモデルデプロイメントが表示されます。このページから、推論エンドポイントの管理、デプロイメント設定の編集、使用しなくなったデプロイメントの削除を行えます。
 
 ![](../images/project_admin_deployments_page.png)
-<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
+<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; project-admin on 10.82.1.201 has no deployments, 2026-11-24. -->
 
 このページには以下のコントロールが用意されています:
 
@@ -216,6 +203,6 @@ navTitle: プロジェクト管理者機能
 - **ゴミ箱アイコン**をクリックすると、デプロイメントを削除できます。削除を実行するには、確認モーダルでデプロイメント名を入力する必要があります。
 
 ![](../images/project_admin_deployment_detail.png)
-<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
+<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; project-admin on 10.82.1.201 has no deployments, 2026-11-24. -->
 
 デプロイメントのリビジョン、レプリカ、トラフィックルーティングの詳細については、[デプロイ](#model-serving)章を参照してください。
