@@ -2025,7 +2025,7 @@
     "RulesDescription": "Aturan mengirim pesan ke saluran saat suatu peristiwa terjadi. Pesan adalah templat Jinja2 yang diisi dengan data peristiwa.",
     "SampleEventData": "Contoh data peristiwa",
     "SampleEventDataExtra": "Data peristiwa yang diteruskan ke templat. Ubah nilainya sebelum mengirim.",
-    "SaveBeforeTest": "Simpan templat terlebih dahulu. Pengujian mengirim pesan yang tersimpan.",
+    "SaveAndSendTest": "Simpan dan Kirim Uji",
     "Seconds": "detik",
     "SelectChannel": "Pilih saluran",
     "SelectEvent": "Pilih peristiwa",

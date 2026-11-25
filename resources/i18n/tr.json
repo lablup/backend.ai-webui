@@ -2024,7 +2024,7 @@
     "RulesDescription": "Kural, bir olay gerçekleştiğinde bir kanala mesaj gönderir. Mesaj, olay verileriyle doldurulan bir Jinja2 şablonudur.",
     "SampleEventData": "Örnek olay verisi",
     "SampleEventDataExtra": "Şablona aktarılan olay verisi. Göndermeden önce değerleri düzenleyin.",
-    "SaveBeforeTest": "Önce şablonu kaydedin. Test, kaydedilen mesajı gönderir.",
+    "SaveAndSendTest": "Kaydet ve test gönder",
     "Seconds": "saniye",
     "SelectChannel": "Kanal seçin",
     "SelectEvent": "Olay seçin",

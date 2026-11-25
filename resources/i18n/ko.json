@@ -2024,7 +2024,7 @@
     "RulesDescription": "규칙은 이벤트가 일어나면 채널로 메시지를 보냅니다. 메시지는 이벤트 데이터로 채우는 Jinja2 템플릿입니다.",
     "SampleEventData": "샘플 이벤트 데이터",
     "SampleEventDataExtra": "템플릿에 전달할 이벤트 데이터입니다. 보내기 전에 값을 바꿀 수 있습니다.",
-    "SaveBeforeTest": "템플릿을 먼저 저장하세요. 테스트는 저장된 메시지를 보냅니다.",
+    "SaveAndSendTest": "저장 후 테스트 보내기",
     "Seconds": "초",
     "SelectChannel": "채널 선택",
     "SelectEvent": "이벤트 선택",

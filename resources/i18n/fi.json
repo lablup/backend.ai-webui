@@ -2024,7 +2024,7 @@
     "RulesDescription": "Sääntö lähettää viestin kanavalle, kun tapahtuma sattuu. Viesti on Jinja2-pohja, joka täytetään tapahtuman tiedoilla.",
     "SampleEventData": "Esimerkkitapahtuman tiedot",
     "SampleEventDataExtra": "Pohjalle välitettävät tapahtumatiedot. Muokkaa arvoja ennen lähettämistä.",
-    "SaveBeforeTest": "Tallenna mallipohja ensin. Testi lähettää tallennetun viestin.",
+    "SaveAndSendTest": "Tallenna ja lähetä testi",
     "Seconds": "sekuntia",
     "SelectChannel": "Valitse kanava",
     "SelectEvent": "Valitse tapahtuma",

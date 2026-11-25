@@ -2024,7 +2024,7 @@
     "RulesDescription": "ルールはイベントが発生したときにチャンネルへメッセージを送ります。メッセージはイベントのデータで埋める Jinja2 テンプレートです。",
     "SampleEventData": "サンプルイベントデータ",
     "SampleEventDataExtra": "テンプレートに渡すイベントデータです。送信前に値を編集できます。",
-    "SaveBeforeTest": "先にテンプレートを保存してください。テストでは保存済みのメッセージが送信されます。",
+    "SaveAndSendTest": "保存してテスト送信",
     "Seconds": "秒",
     "SelectChannel": "チャンネルを選択",
     "SelectEvent": "イベントを選択",

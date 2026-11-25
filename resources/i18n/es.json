@@ -2024,7 +2024,7 @@
     "RulesDescription": "Una regla envía un mensaje a un canal cuando ocurre un evento. El mensaje es una plantilla Jinja2 que se rellena con los datos del evento.",
     "SampleEventData": "Datos de evento de ejemplo",
     "SampleEventDataExtra": "Datos del evento que se pasan a la plantilla. Edite los valores antes de enviar.",
-    "SaveBeforeTest": "Guarde primero la plantilla. La prueba envía el mensaje guardado.",
+    "SaveAndSendTest": "Guardar y enviar prueba",
     "Seconds": "segundos",
     "SelectChannel": "Seleccionar canal",
     "SelectEvent": "Seleccionar evento",

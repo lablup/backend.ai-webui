@@ -2024,7 +2024,7 @@
     "RulesDescription": "规则会在事件发生时向渠道发送消息。消息是用事件数据填充的 Jinja2 模板。",
     "SampleEventData": "示例事件数据",
     "SampleEventDataExtra": "传给模板的事件数据。发送前可修改其中的值。",
-    "SaveBeforeTest": "请先保存模板。测试会发送已保存的消息。",
+    "SaveAndSendTest": "保存并发送测试",
     "Seconds": "秒",
     "SelectChannel": "选择渠道",
     "SelectEvent": "选择事件",

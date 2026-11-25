@@ -20,10 +20,10 @@ import {
   toTemplateExpression,
 } from '../helper/notificationRuleTemplate';
 import NotificationChannelSelect from './NotificationChannelSelect';
-import { Button } from '@lablup/ui-common/Button';
 import { Token } from '@lablup/ui-common/Token';
 import { Tooltip } from '@lablup/ui-common/Tooltip';
 import {
+  BAIButton,
   BAIFlex,
   BAIModal,
   BAIModalProps,
@@ -185,11 +185,12 @@ const MessageTemplateFormItem: React.FC<{
   );
 };
 
-// The test sends the saved template, so an unsaved template edit blocks it.
+// The test sends the saved template, so an unsaved template edit is saved first.
 const SendTestButton: React.FC<{
   savedTemplate: string;
-  onClick: () => void;
-}> = ({ savedTemplate, onClick }) => {
+  onSend: () => void;
+  onSaveAndSend: () => Promise<void>;
+}> = ({ savedTemplate, onSend, onSaveAndSend }) => {
   'use memo';
   const { t } = useTranslation();
   const form = Form.useFormInstance<NotificationRuleFormValues>();
@@ -198,17 +199,14 @@ const SendTestButton: React.FC<{
     template !== undefined && template !== savedTemplate;
   return (
     <BAIFlex justify="end">
-      <Button
+      <BAIButton
         icon={<SendIcon size="1em" />}
-        label={t('externalNotification.SendTestNotification')}
-        isDisabled={isTemplateChanged}
-        tooltip={
-          isTemplateChanged
-            ? t('externalNotification.SaveBeforeTest')
-            : undefined
-        }
-        onClick={onClick}
-      />
+        action={isTemplateChanged ? onSaveAndSend : async () => onSend()}
+      >
+        {isTemplateChanged
+          ? t('externalNotification.SaveAndSendTest')
+          : t('externalNotification.SendTestNotification')}
+      </BAIButton>
     </BAIFlex>
   );
 };
@@ -287,19 +285,21 @@ const NotificationRuleSettingModal: React.FC<
       }
     `);
 
-  const handleResult = (errors: ReadonlyArray<{ message: string }> | null) => {
-    if (errors && errors.length > 0) {
-      message.error(errors[0]?.message || t('general.ErrorOccurred'));
-      return;
-    }
-    message.success(t('externalNotification.RuleSaved'));
-    onRequestClose(true);
-  };
   const handleError = (error: Error) => {
     message.error(error?.message || t('general.ErrorOccurred'));
   };
+  // Resolves to false after showing the error, so callers only act on success.
+  const toResult = (
+    errors: ReadonlyArray<{ message: string }> | null,
+  ): boolean => {
+    if (errors && errors.length > 0) {
+      message.error(errors[0]?.message || t('general.ErrorOccurred'));
+      return false;
+    }
+    return true;
+  };
 
-  const handleOk = () =>
+  const validateValues = () =>
     formRef.current
       ?.validateFields()
       .then((values) => {
@@ -307,39 +307,71 @@ const NotificationRuleSettingModal: React.FC<
         // An edit never sends the channel, so only a new rule needs it.
         if (!rule && !values.channelId) {
           message.error(t('externalNotification.ChannelRequired'));
-          return;
+          return null;
         }
         if (!_.trim(values.messageTemplate ?? '')) {
           message.error(t('externalNotification.MessageTemplateRequired'));
-          return;
+          return null;
         }
-        const common = {
-          name: _.trim(values.name),
-          description: _.trim(values.description ?? '') || null,
-          messageTemplate: values.messageTemplate,
-          enabled: values.enabled,
-        };
-        if (rule) {
-          commitUpdate({
-            variables: { input: { id: rule.entityId, ...common } },
-            onCompleted: (_res, errors) => handleResult(errors),
-            onError: handleError,
-          });
-          return;
-        }
-        commitCreate({
-          variables: {
-            input: {
-              ...common,
-              ruleType: values.ruleType,
-              channelId: values.channelId,
-            },
-          },
-          onCompleted: (_res, errors) => handleResult(errors),
-          onError: handleError,
-        });
+        return values;
       })
-      .catch(() => {});
+      .catch(() => null) ?? Promise.resolve(null);
+
+  const toCommonInput = (values: NotificationRuleFormValues) => ({
+    name: _.trim(values.name),
+    description: _.trim(values.description ?? '') || null,
+    messageTemplate: values.messageTemplate,
+    enabled: values.enabled,
+  });
+
+  const saveEdit = (values: NotificationRuleFormValues, ruleId: string) =>
+    new Promise<boolean>((resolve) => {
+      commitUpdate({
+        variables: { input: { id: ruleId, ...toCommonInput(values) } },
+        onCompleted: (_res, errors) => resolve(toResult(errors)),
+        onError: (error) => {
+          handleError(error);
+          resolve(false);
+        },
+      });
+    });
+
+  const handleOk = async () => {
+    const values = await validateValues();
+    if (!values) return;
+    if (rule) {
+      if (await saveEdit(values, rule.entityId)) {
+        message.success(t('externalNotification.RuleSaved'));
+        onRequestClose(true);
+      }
+      return;
+    }
+    commitCreate({
+      variables: {
+        input: {
+          ...toCommonInput(values),
+          ruleType: values.ruleType,
+          channelId: values.channelId,
+        },
+      },
+      onCompleted: (_res, errors) => {
+        if (!toResult(errors)) return;
+        message.success(t('externalNotification.RuleSaved'));
+        onRequestClose(true);
+      },
+      onError: handleError,
+    });
+  };
+
+  // Keeps the modal open: the test opens over it once the save lands.
+  const saveAndSendTest = async () => {
+    if (!rule) return;
+    const values = await validateValues();
+    if (!values) return;
+    if (!(await saveEdit(values, rule.entityId))) return;
+    message.success(t('externalNotification.RuleSaved'));
+    onRequestTest?.();
+  };
 
   return (
     <BAIModal
@@ -430,7 +462,8 @@ const NotificationRuleSettingModal: React.FC<
         ) : onRequestTest ? (
           <SendTestButton
             savedTemplate={rule.messageTemplate ?? ''}
-            onClick={onRequestTest}
+            onSend={onRequestTest}
+            onSaveAndSend={saveAndSendTest}
           />
         ) : null}
       </Form>

@@ -2025,7 +2025,7 @@
     "RulesDescription": "規則會在事件發生時向頻道傳送訊息。訊息是以事件資料填入的 Jinja2 範本。",
     "SampleEventData": "範例事件資料",
     "SampleEventDataExtra": "傳給範本的事件資料。傳送前可修改其中的值。",
-    "SaveBeforeTest": "請先儲存範本。測試會傳送已儲存的訊息。",
+    "SaveAndSendTest": "儲存並傳送測試",
     "Seconds": "秒",
     "SelectChannel": "選擇頻道",
     "SelectEvent": "選擇事件",

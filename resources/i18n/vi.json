@@ -2024,7 +2024,7 @@
     "RulesDescription": "Quy tắc gửi tin nhắn đến kênh khi một sự kiện xảy ra. Tin nhắn là mẫu Jinja2 được điền bằng dữ liệu của sự kiện.",
     "SampleEventData": "Dữ liệu sự kiện mẫu",
     "SampleEventDataExtra": "Dữ liệu sự kiện truyền vào mẫu. Sửa giá trị trước khi gửi.",
-    "SaveBeforeTest": "Hãy lưu mẫu trước. Bài thử gửi tin nhắn đã lưu.",
+    "SaveAndSendTest": "Lưu và gửi thử",
     "Seconds": "giây",
     "SelectChannel": "Chọn kênh",
     "SelectEvent": "Chọn sự kiện",

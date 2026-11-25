@@ -2025,7 +2025,7 @@
     "RulesDescription": "Reguła wysyła wiadomość do kanału, gdy wystąpi zdarzenie. Wiadomość to szablon Jinja2 wypełniany danymi zdarzenia.",
     "SampleEventData": "Przykładowe dane zdarzenia",
     "SampleEventDataExtra": "Dane zdarzenia przekazywane do szablonu. Zmień wartości przed wysłaniem.",
-    "SaveBeforeTest": "Najpierw zapisz szablon. Test wysyła zapisaną wiadomość.",
+    "SaveAndSendTest": "Zapisz i wyślij test",
     "Seconds": "sekund",
     "SelectChannel": "Wybierz kanał",
     "SelectEvent": "Wybierz zdarzenie",

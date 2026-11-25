@@ -2024,7 +2024,7 @@
     "RulesDescription": "Eine Regel sendet eine Nachricht an einen Kanal, wenn ein Ereignis eintritt. Die Nachricht ist eine Jinja2-Vorlage, die mit den Ereignisdaten gefüllt wird.",
     "SampleEventData": "Beispiel-Ereignisdaten",
     "SampleEventDataExtra": "Ereignisdaten, die an die Vorlage übergeben werden. Ändern Sie die Werte vor dem Senden.",
-    "SaveBeforeTest": "Speichern Sie zuerst die Vorlage. Der Test sendet die gespeicherte Nachricht.",
+    "SaveAndSendTest": "Speichern und Test senden",
     "Seconds": "Sekunden",
     "SelectChannel": "Kanal auswählen",
     "SelectEvent": "Ereignis auswählen",

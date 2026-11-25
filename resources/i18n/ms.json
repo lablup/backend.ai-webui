@@ -2024,7 +2024,7 @@
     "RulesDescription": "Peraturan menghantar mesej ke saluran apabila sesuatu peristiwa berlaku. Mesej ialah templat Jinja2 yang diisi dengan data peristiwa.",
     "SampleEventData": "Data peristiwa contoh",
     "SampleEventDataExtra": "Data peristiwa yang dihantar ke templat. Ubah nilai sebelum menghantar.",
-    "SaveBeforeTest": "Simpan templat dahulu. Ujian menghantar mesej yang disimpan.",
+    "SaveAndSendTest": "Simpan dan Hantar Ujian",
     "Seconds": "saat",
     "SelectChannel": "Pilih saluran",
     "SelectEvent": "Pilih peristiwa",

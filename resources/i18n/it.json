@@ -2024,7 +2024,7 @@
     "RulesDescription": "Una regola invia un messaggio a un canale quando si verifica un evento. Il messaggio è un modello Jinja2 compilato con i dati dell'evento.",
     "SampleEventData": "Dati evento di esempio",
     "SampleEventDataExtra": "Dati dell'evento passati al modello. Modifica i valori prima dell'invio.",
-    "SaveBeforeTest": "Salva prima il modello. La prova invia il messaggio salvato.",
+    "SaveAndSendTest": "Salva e invia prova",
     "Seconds": "secondi",
     "SelectChannel": "Seleziona canale",
     "SelectEvent": "Seleziona evento",

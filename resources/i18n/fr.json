@@ -2025,7 +2025,7 @@
     "RulesDescription": "Une règle envoie un message à un canal lorsqu'un événement se produit. Le message est un modèle Jinja2 rempli avec les données de l'événement.",
     "SampleEventData": "Données d'événement d'exemple",
     "SampleEventDataExtra": "Données d'événement transmises au modèle. Modifiez les valeurs avant l'envoi.",
-    "SaveBeforeTest": "Enregistrez d'abord le modèle. Le test envoie le message enregistré.",
+    "SaveAndSendTest": "Enregistrer et envoyer un test",
     "Seconds": "secondes",
     "SelectChannel": "Sélectionner un canal",
     "SelectEvent": "Sélectionner un événement",

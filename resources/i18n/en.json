@@ -2011,7 +2011,7 @@
     "RulesDescription": "A rule sends a message to a channel when an event happens. The message is a Jinja2 template filled with the event's data.",
     "SampleEventData": "Sample event data",
     "SampleEventDataExtra": "Event data passed to the template. Edit the values before sending.",
-    "SaveBeforeTest": "Save the template first. The test sends the saved message.",
+    "SaveAndSendTest": "Save and Send Test",
     "Seconds": "seconds",
     "SelectChannel": "Select a channel",
     "SelectEvent": "Select an event",
