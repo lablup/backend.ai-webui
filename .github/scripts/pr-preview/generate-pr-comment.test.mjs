@@ -350,6 +350,31 @@ test("a ko-only edit links to the ko document", () => {
   );
 });
 
+test("a move from en to ko links to the added ko document", () => {
+  const body = render([
+    ["meta", "pr-meta.json", META],
+    [
+      "adr",
+      "changes.json",
+      {
+        ...ADR_CHANGES,
+        adrs: [
+          {
+            id: "0002",
+            status: "modified",
+            title: "Second",
+            files: {
+              en: { path: "adr/0002-s.md", status: "removed" },
+              ko: { path: "adr/0002-s.ko.md", status: "added" },
+            },
+          },
+        ],
+      },
+    ],
+  ]);
+  assert.match(body, /#\/0002\?view=diff&lang=ko\)/);
+});
+
 test("an ADR preview with no ADR change says so", () => {
   const body = render([
     ["meta", "pr-meta.json", META],

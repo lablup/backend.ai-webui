@@ -2325,8 +2325,10 @@
         }
         return ops;
       }
+      const hasCode = (t) =>
+        t.type === "code" || (t.tokens ?? t.items ?? []).some(hasCode);
       const blockKey = (t) =>
-        t.type === "code" ? t.raw.trimEnd() : t.raw.replace(/\s+/g, " ").trim();
+        hasCode(t) ? t.raw.trimEnd() : t.raw.replace(/\s+/g, " ").trim();
       const leadH1 = (ts) =>
         ts[0]?.type === "heading" && ts[0].depth === 1 ? ts[0] : null;
 
