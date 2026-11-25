@@ -50,7 +50,6 @@ project**, select the project, set **Share permission**, and click **Invite**;
 the project's members mount the folder at its **Default mount permission**.
 
 ![=720px](../images/send_vfolder_invitation.png)
-<!-- TODO(screenshot): /data -> Share Folder modal of an owned folder - the Invite User section with the Share with user / Share with project control. Not captured: the capture backend was unreachable this run. -->
 
 Switch back to User B's account and go to the Data page. When invitations are
 waiting for a response, a **Pending invitations** link appears at the top right

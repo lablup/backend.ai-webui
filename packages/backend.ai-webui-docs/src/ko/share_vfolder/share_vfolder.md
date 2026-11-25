@@ -36,7 +36,6 @@ navTitle: 스토리지 폴더 공유
 폴더를 프로젝트 전체에 공유할 수도 있습니다. **프로젝트로 공유**를 선택하고 프로젝트를 선택한 뒤 **공유 권한**을 설정하고 **초대**를 클릭하면, 프로젝트 구성원은 폴더의 **기본 마운트 권한**으로 해당 폴더를 마운트합니다.
 
 ![=720px](../images/send_vfolder_invitation.png)
-<!-- TODO(screenshot): /data -> Share Folder modal of an owned folder - the Invite User section with the Share with user / Share with project control. Not captured: the capture backend was unreachable this run. -->
 
 사용자 B의 계정으로 전환한 후 데이터 페이지로 이동합니다. 응답을 기다리는 초대가 있으면 폴더 목록 상단 오른쪽의 **응답 대기 중인 초대** 링크가 표시되며, 대기 중인 초대 개수가 표시됩니다.
 

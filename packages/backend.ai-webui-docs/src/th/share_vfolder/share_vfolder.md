@@ -35,7 +35,6 @@ navTitle: การแชร์โฟลเดอร์จัดเก็บ
 คุณยังสามารถแชร์โฟลเดอร์ให้ทั้งโปรเจกต์ได้ โดยเลือก **แชร์ให้โปรเจกต์** เลือกโปรเจกต์ กำหนด **สิทธิ์การแชร์** แล้วคลิก **เชิญ** สมาชิกของโปรเจกต์จะเมานต์โฟลเดอร์ด้วย**สิทธิ์การเมานต์เริ่มต้น**ของโฟลเดอร์
 
 ![=720px](../images/send_vfolder_invitation.png)
-<!-- TODO(screenshot): /data -> Share Folder modal of an owned folder - the Invite User section with the Share with user / Share with project control. Not captured: the capture backend was unreachable this run. -->
 
 สลับกลับไปที่บัญชีผู้ใช้ B แล้วไปที่หน้า Data หากมีคำเชิญที่รอการตอบกลับ ลิงก์ **คำเชิญที่รอดำเนินการ** จะปรากฏที่ด้านขวาบนของรายการโฟลเดอร์ และแสดงจำนวนคำเชิญที่รอดำเนินการ
 
