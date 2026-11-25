@@ -271,6 +271,11 @@ describe('diffRevisions', () => {
       ['modelName', 'changed'],
       ['healthCheck', 'changed'],
     ]);
+    expect(changed[1]).toMatchObject({
+      path: 'initialDelay',
+      left: '5',
+      right: '4',
+    });
   });
 
   it('treats a missing revision side as all added', () => {
