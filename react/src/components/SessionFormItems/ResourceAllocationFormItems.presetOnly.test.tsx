@@ -45,13 +45,31 @@ vi.mock('react-i18next', async () => {
 });
 
 let allowCustomResourceAllocation = false;
+// A group with capacity, as check-presets reports it.
+const presetCheckOf = (cpu: string, mem: string) => ({
+  keypair_limits: {},
+  keypair_using: {},
+  keypair_remaining: {},
+  scaling_group_remaining: {},
+  scaling_groups: {
+    'mock-rg': { using: { cpu: '0', mem: '0' }, remaining: { cpu, mem } },
+  },
+  presets: [],
+  group_limits: {},
+  group_using: {},
+  group_remaining: {},
+});
+const AVAILABLE_CHECK = presetCheckOf('8', String(32 * 1024 ** 3));
+// `null` is what the hook makes of a failed check.
+let presetCheckResult: unknown = AVAILABLE_CHECK;
+const presetCheck = vi.fn(() => Promise.resolve(presetCheckResult));
 vi.mock('../../hooks', async (importOriginal) => {
   const originalModule = await importOriginal<typeof import('../../hooks')>();
   return {
     ...originalModule,
     useSuspendedBackendaiClient: () => ({
       _config: {},
-      resourcePreset: { check: vi.fn().mockResolvedValue(null) },
+      resourcePreset: { check: presetCheck },
     }),
   };
 });
@@ -420,5 +438,64 @@ describe('caller accelerator rules (extraAcceleratorRules)', () => {
 
     await setTp('1');
     await waitFor(() => expect(screen.queryByText(WARNING)).toBeNull());
+  });
+});
+
+describe('the resource allocation card when the group cannot allocate', () => {
+  beforeEach(() => {
+    allowCustomResourceAllocation = true;
+    presetCheck.mockClear();
+  });
+  afterEach(() => {
+    presetCheckResult = AVAILABLE_CHECK;
+  });
+
+  it('shows no alert for a group with capacity', async () => {
+    renderRestored({ label: 'custom', image: rocmOrTpuImage });
+    await screen.findByTestId('mock-resource-group-select');
+    await waitFor(() => expect(presetCheck).toHaveBeenCalled());
+    expect(
+      screen.queryByText('session.launcher.NoAvailableResources'),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByText('session.launcher.FailedToLoadResourceInformation'),
+    ).not.toBeInTheDocument();
+  });
+
+  it('says no resources are available for a group without CPU or memory', async () => {
+    presetCheckResult = presetCheckOf('0', '0');
+    const form = renderRestored({ label: 'custom', image: rocmOrTpuImage });
+    expect(
+      await screen.findAllByText('session.launcher.NoAvailableResources'),
+    ).not.toHaveLength(0);
+    await act(async () => {
+      await form.validateFields(['resourceGroup']).catch(() => {});
+    });
+    expect(form.getFieldError('resourceGroup')).toEqual([
+      'session.launcher.NoAvailableResources',
+    ]);
+  });
+
+  it('offers a retry when the preset check fails, and drops the alert once it succeeds', async () => {
+    presetCheckResult = null;
+    renderRestored({ label: 'custom', image: rocmOrTpuImage });
+    const retry = await screen.findByRole('button', { name: /button.Retry/ });
+    expect(
+      screen.getAllByText('session.launcher.FailedToLoadResourceInformation'),
+    ).not.toHaveLength(0);
+
+    presetCheckResult = AVAILABLE_CHECK;
+    const calls = presetCheck.mock.calls.length;
+    await act(async () => {
+      fireEvent.click(retry);
+    });
+    await waitFor(() =>
+      expect(presetCheck.mock.calls.length).toBeGreaterThan(calls),
+    );
+    await waitFor(() =>
+      expect(
+        screen.queryByText('session.launcher.FailedToLoadResourceInformation'),
+      ).not.toBeInTheDocument(),
+    );
   });
 });

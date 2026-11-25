@@ -31,6 +31,10 @@ export const isMatchingMaxPerContainer = (configName: string, key: string) => {
   }
   return false;
 };
+/** A `max*PerContainer` value as a cap; unset (or a non-number) is no cap. */
+export const toPerContainerCap = (value: unknown): number | undefined =>
+  _.isFinite(value) ? (value as number) : undefined;
+
 /**
  * The shmem cap in `g` from `maxShmPerContainer` (GiB); 0 or less, or a
  * non-number, sets no cap. The memory bound is the current `mem`, applied by
@@ -42,6 +46,25 @@ export const getShmemMaxLimit = (
   _.isFinite(maxShmPerContainer) && (maxShmPerContainer as number) > 0
     ? `${maxShmPerContainer}g`
     : undefined;
+
+/** Whether the launcher can allocate in the current resource group at all. */
+export type ResourceAvailability = 'available' | 'empty' | 'loadFailed';
+
+/**
+ * `checkPresetInfo` is null when the preset check failed; a resource group
+ * whose total CPU or memory (using + remaining) is 0 has nothing to allocate.
+ */
+export const getResourceAvailability = (
+  checkPresetInfo: ResourceAllocation | null | undefined,
+  resourceGroupCPU: number | undefined,
+  resourceGroupMemGiB: number | undefined,
+): ResourceAvailability =>
+  checkPresetInfo === null
+    ? 'loadFailed'
+    : (_.isNumber(resourceGroupCPU) && resourceGroupCPU <= 0) ||
+        (_.isNumber(resourceGroupMemGiB) && resourceGroupMemGiB <= 0)
+      ? 'empty'
+      : 'available';
 
 export interface MergedResourceLimits {
   accelerators: {
@@ -272,6 +295,18 @@ export const useResourceLimitAndRemaining = ({
       },
     ),
   };
+  // From the byte sum: `resourceGroupResourceSize.mem` is rounded to 2 decimals.
+  const currentGroupSize =
+    checkPresetInfo?.scaling_groups[currentResourceGroup];
+  const resourceGroupMemGiB =
+    !_.isEmpty(currentGroupSize?.using?.mem) &&
+    !_.isEmpty(currentGroupSize?.remaining?.mem)
+      ? convertToBinaryUnit(
+          _.toNumber(currentGroupSize?.using.mem) +
+            _.toNumber(currentGroupSize?.remaining.mem),
+          'g',
+        )?.number
+      : undefined;
   const perContainerConfigs = _.omitBy(loginConfig, (_value, key) => {
     return !maxPerContainerRegex.test(key);
   }) as {
@@ -295,13 +330,15 @@ export const useResourceLimitAndRemaining = ({
             max: _.min([
               ignorePerContainerConfig
                 ? undefined
-                : loginConfig.maxCPUCoresPerContainer,
+                : toPerContainerCap(loginConfig.maxCPUCoresPerContainer),
               limitParser(checkPresetInfo?.keypair_limits.cpu),
               limitParser(checkPresetInfo?.group_limits.cpu),
               includeResourceGroupLimits
                 ? limitParser(currentResourceGroupSlotLimits.cpu)
                 : undefined,
-              // resourceGroupResourceSize?.cpu,
+              includeResourceGroupLimits
+                ? resourceGroupResourceSize.cpu
+                : undefined,
             ]),
           },
     mem:
@@ -325,7 +362,7 @@ export const useResourceLimitAndRemaining = ({
               const minValue = _.min([
                 ignorePerContainerConfig
                   ? undefined
-                  : loginConfig.maxMemoryPerContainer,
+                  : toPerContainerCap(loginConfig.maxMemoryPerContainer),
                 limitParser(checkPresetInfo?.keypair_limits.mem) &&
                   convertToBinaryUnit(
                     limitParser(checkPresetInfo?.keypair_limits.mem) + '',
@@ -343,9 +380,7 @@ export const useResourceLimitAndRemaining = ({
                       'g',
                     )?.number
                   : undefined,
-                // scaling group all mem (using + remaining), string type
-                // resourceGroupResourceSize?.mem &&
-                //   iSizeToSize(resourceGroupResourceSize?.mem + '', 'g')?.number,
+                includeResourceGroupLimits ? resourceGroupMemGiB : undefined,
               ]);
               return minValue !== undefined ? minValue + 'g' : undefined;
             })(),
@@ -353,10 +388,11 @@ export const useResourceLimitAndRemaining = ({
     accelerators: _.reduce(
       acceleratorSlots,
       (result, _value, key) => {
-        const perContainerLimit =
-          _.find(perContainerConfigs, (_configValue, configName) => {
-            return isMatchingMaxPerContainer(configName, key);
-          }) ?? loginConfig.maxCUDADevicesPerContainer; // NOTE: Fallback to maxCUDADevicesPerContainer if no specific config found
+        const perContainerLimit = _.find(
+          perContainerConfigs,
+          (_configValue, configName) =>
+            isMatchingMaxPerContainer(configName, key),
+        );
 
         result[key] = {
           min: parseInt(
@@ -368,7 +404,9 @@ export const useResourceLimitAndRemaining = ({
             )?.min || '0',
           ),
           max: _.min([
-            ignorePerContainerConfig ? undefined : perContainerLimit || 8,
+            ignorePerContainerConfig
+              ? undefined
+              : toPerContainerCap(perContainerLimit),
             limitParser(
               checkPresetInfo?.keypair_limits[key as ResourceSlotName],
             ),
@@ -378,8 +416,9 @@ export const useResourceLimitAndRemaining = ({
                   currentResourceGroupSlotLimits[key as ResourceSlotName],
                 )
               : undefined,
-            // scaling group all cpu (using + remaining), string type
-            // resourceGroupResourceSize.accelerators[key],
+            includeResourceGroupLimits
+              ? resourceGroupResourceSize.accelerators[key]
+              : undefined,
           ]),
         };
         return result;
@@ -444,6 +483,12 @@ export const useResourceLimitAndRemaining = ({
 
   const remaining = createRemainingSlots(true);
 
+  const resourceAvailability = getResourceAvailability(
+    checkPresetInfo,
+    resourceGroupResourceSize.cpu,
+    resourceGroupMemGiB,
+  );
+
   const remainingWithoutResourceGroup = createRemainingSlots(false);
 
   return [
@@ -456,6 +501,7 @@ export const useResourceLimitAndRemaining = ({
       currentImageMinM,
       isRefetching,
       checkPresetInfo,
+      resourceAvailability,
     },
     {
       refetch,

@@ -51,6 +51,8 @@ export interface WebUISettingDefinition {
   max?: number;
   /** For a `number`: only whole numbers are valid (counts, cores, bytes, MiB). */
   isInteger?: boolean;
+  /** An Unlimited toggle that removes the key: the setting is a cap, and unset means no cap. */
+  isUnlimitedWhenUnset?: boolean;
   /** For a size `number`: edited with a unit picker and an Unlimited toggle. */
   size?: WebUISizeSetting;
 }
@@ -60,8 +62,8 @@ export interface WebUISizeSetting {
   storedUnit: '' | 'm' | 'g';
   /** The value stored when the toggle is on; no toggle without it. */
   unlimitedValue?: number;
-  /** What the toggle means: the server's limit applies, the WebUI picks a size, or no cap. */
-  toggleLabel?: 'ServerLimit' | 'Automatic' | 'Unlimited';
+  /** What the toggle means: the server's limit applies, or the WebUI picks a size. */
+  toggleLabel?: 'ServerLimit' | 'Automatic';
   units: Array<'m' | 'g' | 't' | 'p'>;
   defaultUnit: 'm' | 'g' | 't';
   /** The input's bounds in size notation (`"100g"`). */
@@ -152,6 +154,7 @@ export const WEBUI_SETTING_DEFINITIONS: ReadonlyArray<WebUISettingDefinition> =
     {
       ...def('maxCPUCoresPerContainer', 'domain', 'number', 'session'),
       min: 1,
+      isUnlimitedWhenUnset: true,
       max: MAX_CPU_QUOTA,
       isInteger: true,
     },
@@ -160,6 +163,7 @@ export const WEBUI_SETTING_DEFINITIONS: ReadonlyArray<WebUISettingDefinition> =
       min: 1,
       max: MAX_MEMORY_QUOTA_GIB,
       unit: 'GiB',
+      isUnlimitedWhenUnset: true,
       size: {
         storedUnit: 'g',
         units: ['g', 't', 'p'],
@@ -173,10 +177,9 @@ export const WEBUI_SETTING_DEFINITIONS: ReadonlyArray<WebUISettingDefinition> =
       min: 0,
       max: MAX_MEMORY_QUOTA_GIB,
       unit: 'GiB',
+      isUnlimitedWhenUnset: true,
       size: {
         storedUnit: 'g',
-        unlimitedValue: 0,
-        toggleLabel: 'Unlimited',
         units: ['m', 'g', 't', 'p'],
         defaultUnit: 'g',
         min: '1m',
@@ -186,59 +189,69 @@ export const WEBUI_SETTING_DEFINITIONS: ReadonlyArray<WebUISettingDefinition> =
     {
       ...def('maxCUDADevicesPerContainer', 'domain', 'number', 'session'),
       min: 0,
+      isUnlimitedWhenUnset: true,
       max: MAX_CPU_QUOTA,
       isInteger: true,
     },
     {
       ...def('maxCUDASharesPerContainer', 'domain', 'number', 'session'),
       min: 0,
+      isUnlimitedWhenUnset: true,
       max: MAX_CPU_QUOTA,
     },
     {
       ...def('maxROCMDevicesPerContainer', 'domain', 'number', 'session'),
       min: 0,
+      isUnlimitedWhenUnset: true,
       max: MAX_CPU_QUOTA,
       isInteger: true,
     },
     {
       ...def('maxTPUDevicesPerContainer', 'domain', 'number', 'session'),
       min: 0,
+      isUnlimitedWhenUnset: true,
       max: MAX_CPU_QUOTA,
       isInteger: true,
     },
     {
       ...def('maxIPUDevicesPerContainer', 'domain', 'number', 'session'),
       min: 0,
+      isUnlimitedWhenUnset: true,
       max: MAX_CPU_QUOTA,
       isInteger: true,
     },
     {
       ...def('maxATOMDevicesPerContainer', 'domain', 'number', 'session'),
       min: 0,
+      isUnlimitedWhenUnset: true,
       max: MAX_CPU_QUOTA,
       isInteger: true,
     },
     {
       ...def('maxATOMPLUSDevicesPerContainer', 'domain', 'number', 'session'),
       min: 0,
+      isUnlimitedWhenUnset: true,
       max: MAX_CPU_QUOTA,
       isInteger: true,
     },
     {
       ...def('maxGaudi2DevicesPerContainer', 'domain', 'number', 'session'),
       min: 0,
+      isUnlimitedWhenUnset: true,
       max: MAX_CPU_QUOTA,
       isInteger: true,
     },
     {
       ...def('maxWarboyDevicesPerContainer', 'domain', 'number', 'session'),
       min: 0,
+      isUnlimitedWhenUnset: true,
       max: MAX_CPU_QUOTA,
       isInteger: true,
     },
     {
       ...def('maxRNGDDevicesPerContainer', 'domain', 'number', 'session'),
       min: 0,
+      isUnlimitedWhenUnset: true,
       max: MAX_CPU_QUOTA,
       isInteger: true,
     },
@@ -250,6 +263,7 @@ export const WEBUI_SETTING_DEFINITIONS: ReadonlyArray<WebUISettingDefinition> =
         'session',
       ),
       min: 0,
+      isUnlimitedWhenUnset: true,
       max: MAX_CPU_QUOTA,
       isInteger: true,
     },

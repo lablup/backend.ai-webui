@@ -4,8 +4,10 @@
  */
 import '../../__test__/matchMedia.mock.js';
 import {
+  getResourceAvailability,
   getShmemMaxLimit,
   isMatchingMaxPerContainer,
+  toPerContainerCap,
 } from './useResourceLimitAndRemaining';
 
 describe('getConfigName', () => {
@@ -69,5 +71,39 @@ describe('getShmemMaxLimit', () => {
     expect(getShmemMaxLimit(0)).toBeUndefined();
     expect(getShmemMaxLimit(-1)).toBeUndefined();
     expect(getShmemMaxLimit('4')).toBeUndefined();
+  });
+});
+
+describe('toPerContainerCap', () => {
+  test('a number is the cap, 0 included', () => {
+    expect(toPerContainerCap(64)).toBe(64);
+    expect(toPerContainerCap(0.5)).toBe(0.5);
+    expect(toPerContainerCap(0)).toBe(0);
+  });
+
+  test('an unset or non-numeric value sets no cap', () => {
+    expect(toPerContainerCap(undefined)).toBeUndefined();
+    expect(toPerContainerCap('8')).toBeUndefined();
+    expect(toPerContainerCap(NaN)).toBeUndefined();
+  });
+});
+
+describe('getResourceAvailability', () => {
+  const info = {} as Parameters<typeof getResourceAvailability>[0];
+
+  test('a failed preset check is loadFailed', () => {
+    expect(getResourceAvailability(null, 8, 32)).toBe('loadFailed');
+  });
+
+  test('a resource group without CPU or memory is empty', () => {
+    expect(getResourceAvailability(info, 0, 32)).toBe('empty');
+    expect(getResourceAvailability(info, 8, 0)).toBe('empty');
+  });
+
+  test('a resource group with capacity, or an unknown one, is available', () => {
+    expect(getResourceAvailability(info, 8, 32)).toBe('available');
+    expect(getResourceAvailability(info, undefined, undefined)).toBe(
+      'available',
+    );
   });
 });
