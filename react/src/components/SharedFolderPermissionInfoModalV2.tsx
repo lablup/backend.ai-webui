@@ -123,15 +123,16 @@ const findLeavableShare = async (
       },
       { fetchPolicy: 'network-only' },
     ).toPromise();
-  // Leaving takes `SOFT_DELETE`, not the `UPDATE` accepting takes: a role may hold one bit only.
+  // Leaving takes `SOFT_DELETE`, not the `UPDATE` accepting takes, and finding the share takes
+  // `READ`: a role may hold one bit only.
   const canLeave = _.some(
     requireField(
       permissions?.myAtomicBulkScopePermissions,
       'myAtomicBulkScopePermissions',
     ).items,
     (item) =>
-      item.scopeId === project.id &&
-      _.includes(item.permissions, 'SOFT_DELETE'),
+      _.includes(item.permissions, 'SOFT_DELETE') &&
+      _.includes(item.permissions, 'READ'),
   );
   if (!canLeave) return null;
   const shares =
@@ -265,7 +266,7 @@ const SharedFolderPermissionInfoModalV2: React.FC<
 
   const leave = () => {
     const globalId = vfolder?.id;
-    if (!share || !globalId || leaveFolder.isPending) return Promise.resolve();
+    if (!share || !globalId) return Promise.resolve();
     return leaveFolder
       .mutateAsync({ shareId: share.shareId })
       .then(() => {
