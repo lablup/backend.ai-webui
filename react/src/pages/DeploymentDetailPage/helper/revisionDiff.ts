@@ -86,6 +86,8 @@ export interface RevisionDiffRow {
   key: string;
   field: string;
   name?: string;
+  /** The JSON path inside a structured setting, such as a health check. */
+  path?: string;
   left: string | null;
   right: string | null;
   status: RevisionDiffStatus;
@@ -211,7 +213,6 @@ const MODEL_FIELDS = [
   'command',
   'shell',
   'port',
-  'healthCheck',
   'preStartActions',
 ] as const;
 type ModelField = (typeof MODEL_FIELDS)[number];
@@ -232,7 +233,6 @@ const modelMap = (revision: Maybe<RevisionDiffInput>) => {
       command: toText(command),
       shell: toText(service?.shell),
       port: toText(service?.port),
-      healthCheck: toText(service?.healthCheck),
       preStartActions:
         Array.isArray(service?.preStartActions) &&
         service.preStartActions.length > 0
@@ -265,13 +265,19 @@ export const diffRevisions = (
     field: string,
     l: string | null,
     r: string | null,
-    extra: { name?: string; keySuffix?: string; isSecret?: boolean } = {},
+    extra: {
+      name?: string;
+      path?: string;
+      keySuffix?: string;
+      isSecret?: boolean;
+    } = {},
   ) => {
     rows.push({
       group,
       key: `${group}:${field}${extra.keySuffix ? `:${extra.keySuffix}` : ''}`,
       field,
       name: extra.name,
+      ...(extra.path ? { path: extra.path } : {}),
       left: l,
       right: r,
       status: statusOf(l, r),
@@ -424,6 +430,19 @@ export const diffRevisions = (
         name: label,
         keySuffix: String(index),
       });
+    }
+    const leftModel = left?.modelDefinition?.models?.[index];
+    const rightModel = right?.modelDefinition?.models?.[index];
+    const leftCheck = flattenJson(leftModel?.service?.healthCheck);
+    const rightCheck = flattenJson(rightModel?.service?.healthCheck);
+    for (const path of unionKeys(leftCheck, rightCheck)) {
+      push(
+        'modelDefinition',
+        'healthCheck',
+        leftCheck.get(path) ?? null,
+        rightCheck.get(path) ?? null,
+        { name: label, path, keySuffix: `${index}:${path}` },
+      );
     }
   }
 

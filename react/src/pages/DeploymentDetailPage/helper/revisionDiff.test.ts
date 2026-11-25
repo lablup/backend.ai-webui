@@ -226,9 +226,17 @@ describe('diffRevisions', () => {
       status: 'changed',
       right: 'vllm serve --port 8000',
     });
-    for (const field of ['shell', 'healthCheck', 'preStartActions']) {
+    for (const field of ['shell', 'preStartActions']) {
       expect(rowOf(rows, `modelDefinition:${field}:0`)?.status).toBe('added');
     }
+    expect(
+      rows
+        .filter((row) => row.field === 'healthCheck')
+        .map((row) => [row.path, row.right, row.status]),
+    ).toEqual([
+      ['enable', 'true', 'added'],
+      ['path', '/health', 'added'],
+    ]);
   });
 
   it('pairs a renamed model by position, so only real edits show', () => {

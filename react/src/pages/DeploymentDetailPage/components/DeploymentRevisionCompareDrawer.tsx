@@ -228,7 +228,7 @@ const DeploymentRevisionCompareDrawer: React.FC<
       case 'port':
         return `${row.name} · ${t('modelService.Port')}`;
       case 'healthCheck':
-        return `${row.name} · ${t('adminDeploymentPreset.SectionHealthCheck')}`;
+        return `${row.name} · ${t('adminDeploymentPreset.SectionHealthCheck')} · ${row.path}`;
       case 'preStartActions':
         return `${row.name} · ${t('modelService.PreStartActions')}`;
       case 'inferenceRuntimeConfig':
