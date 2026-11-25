@@ -45,6 +45,10 @@ the folder, and **Mount Permission** is how the folder is mounted into the
 user's sessions. An address that does not have an account yet is invited with
 **Invite by e-mail**.
 
+A folder can also be shared with a whole project — choose **Share with
+project**, select the project, set **Share permission**, and click **Invite**;
+the project's members mount the folder at its **Default mount permission**.
+
 ![=720px](../images/send_vfolder_invitation.png)
 
 Switch back to User B's account and go to the Data page. When invitations are

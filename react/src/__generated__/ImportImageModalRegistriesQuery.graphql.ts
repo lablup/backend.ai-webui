@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<428b06c5afdae2d699cadae664ffe481>>
+ * @generated SignedSource<<4b8972b54e4a780dd9da13c4e8788056>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,29 +9,31 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
+export type ContainerRegistryType = "DOCKER" | "ECR" | "ECR_PUB" | "GITHUB" | "GITLAB" | "HARBOR" | "HARBOR2" | "LOCAL" | "OCP" | "%future added value";
 export type ImportImageModalRegistriesQuery$variables = {
   after?: string | null | undefined;
-  domain?: string | null | undefined;
+  domainName: string;
   first?: number | null | undefined;
 };
 export type ImportImageModalRegistriesQuery$data = {
-  readonly container_registry_nodes: {
+  readonly adminContainerRegistriesV2: {
     readonly edges: ReadonlyArray<{
       readonly node: {
+        readonly currentDomain: {
+          readonly count: number;
+        } | null | undefined;
+        readonly entityId: string;
         readonly id: string;
         readonly project: string | null | undefined;
-        readonly registry_name: string;
-        readonly type: any;
+        readonly registryName: string;
+        readonly type: ContainerRegistryType;
         readonly url: string;
-      } | null | undefined;
-    } | null | undefined>;
+      };
+    }>;
     readonly pageInfo: {
       readonly endCursor: string | null | undefined;
       readonly hasNextPage: boolean;
     };
-  } | null | undefined;
-  readonly domain: {
-    readonly allowed_docker_registries: ReadonlyArray<string | null | undefined> | null | undefined;
   } | null | undefined;
 };
 export type ImportImageModalRegistriesQuery = {
@@ -48,7 +50,7 @@ var v0 = {
 v1 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "domain"
+  "name": "domainName"
 },
 v2 = {
   "defaultValue": null,
@@ -56,30 +58,6 @@ v2 = {
   "name": "first"
 },
 v3 = [
-  {
-    "alias": null,
-    "args": [
-      {
-        "kind": "Variable",
-        "name": "name",
-        "variableName": "domain"
-      }
-    ],
-    "concreteType": "Domain",
-    "kind": "LinkedField",
-    "name": "domain",
-    "plural": false,
-    "selections": [
-      {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "allowed_docker_registries",
-        "storageKey": null
-      }
-    ],
-    "storageKey": null
-  },
   {
     "alias": null,
     "args": [
@@ -94,15 +72,15 @@ v3 = [
         "variableName": "first"
       }
     ],
-    "concreteType": "ContainerRegistryConnection",
+    "concreteType": "ContainerRegistryV2Connection",
     "kind": "LinkedField",
-    "name": "container_registry_nodes",
+    "name": "adminContainerRegistriesV2",
     "plural": false,
     "selections": [
       {
         "alias": null,
         "args": null,
-        "concreteType": "ContainerRegistryEdge",
+        "concreteType": "ContainerRegistryV2Edge",
         "kind": "LinkedField",
         "name": "edges",
         "plural": true,
@@ -110,7 +88,7 @@ v3 = [
           {
             "alias": null,
             "args": null,
-            "concreteType": "ContainerRegistryNode",
+            "concreteType": "ContainerRegistryV2",
             "kind": "LinkedField",
             "name": "node",
             "plural": false,
@@ -126,7 +104,14 @@ v3 = [
                 "alias": null,
                 "args": null,
                 "kind": "ScalarField",
-                "name": "registry_name",
+                "name": "entityId",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "registryName",
                 "storageKey": null
               },
               {
@@ -148,6 +133,42 @@ v3 = [
                 "args": null,
                 "kind": "ScalarField",
                 "name": "type",
+                "storageKey": null
+              },
+              {
+                "alias": "currentDomain",
+                "args": [
+                  {
+                    "fields": [
+                      {
+                        "fields": [
+                          {
+                            "kind": "Variable",
+                            "name": "equals",
+                            "variableName": "domainName"
+                          }
+                        ],
+                        "kind": "ObjectValue",
+                        "name": "name"
+                      }
+                    ],
+                    "kind": "ObjectValue",
+                    "name": "filter"
+                  }
+                ],
+                "concreteType": "DomainV2Connection",
+                "kind": "LinkedField",
+                "name": "domains",
+                "plural": false,
+                "selections": [
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "count",
+                    "storageKey": null
+                  }
+                ],
                 "storageKey": null
               }
             ],
@@ -211,16 +232,16 @@ return {
     "selections": (v3/*: any*/)
   },
   "params": {
-    "cacheID": "fa10b4e07f503629972f5f359f1c370b",
+    "cacheID": "dcf26c924993dff59e860f05ecd8950e",
     "id": null,
     "metadata": {},
     "name": "ImportImageModalRegistriesQuery",
     "operationKind": "query",
-    "text": "query ImportImageModalRegistriesQuery(\n  $first: Int\n  $after: String\n  $domain: String\n) {\n  domain(name: $domain) {\n    allowed_docker_registries\n  }\n  container_registry_nodes(first: $first, after: $after) @since(version: \"24.09.0\") {\n    edges {\n      node {\n        id\n        registry_name\n        project\n        url\n        type\n      }\n    }\n    pageInfo {\n      hasNextPage\n      endCursor\n    }\n  }\n}\n"
+    "text": "query ImportImageModalRegistriesQuery(\n  $first: Int\n  $after: String\n  $domainName: String!\n) {\n  adminContainerRegistriesV2(first: $first, after: $after) {\n    edges {\n      node {\n        id\n        entityId\n        registryName\n        project\n        url\n        type\n        currentDomain: domains(filter: {name: {equals: $domainName}}) {\n          count\n        }\n      }\n    }\n    pageInfo {\n      hasNextPage\n      endCursor\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "7e6b2763b618a4248747cfe7dd38c9c3";
+(node as any).hash = "23a5a86a2aa41f00d3e32349764177d2";
 
 export default node;

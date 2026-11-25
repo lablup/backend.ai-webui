@@ -8,7 +8,7 @@
 - `react/src/helper/userSettingsAppConfig.ts`의 `isAccountUserSetting`이 이 [account setting](#용어) 목록을 정한다. `UserSettings`의 나머지 키는 [device-local setting](#용어)으로 브라우저 localStorage에만 남는다.
 - 로그인 뒤 account setting은 `myAppConfigState`의 `userConfig.settings`에서 바로 읽는다([ADR 0033](0033-scoped-and-merged-app-config-hooks.ko.md)). 로그인이 첫 render 전에 이 atom을 채우며, localStorage에서는 읽지 않는다. `useBAISettingUserState`는 여전히 값을 동기적으로 돌려주고 API도 바뀌지 않는다.
 - 로그인 시 `setMyAppConfigs` 바로 뒤에 `startAccountUserSettingsSync`(`react/src/helper/accountUserSettingsSync.ts`)가 write queue를 시작한다. 계정에 `settings` 문서가 아직 없으면, 이 결정 이전에 이 브라우저가 localStorage에 저장한 값을 한 번 복사해 넣고 localStorage에서 지운다.
-- account setting을 바꾸면 `myAppConfigState`에 즉시 보이고, debounce된 write queue를 거쳐 서버로 보낸다. 쓰기가 실패하면 되돌린다. act-as 탭은 아무것도 보내지 않는다.
+- account setting을 바꾸면 `myAppConfigState`에 즉시 보이고, debounce된 write queue를 거쳐 서버로 보낸다. 쓰기가 실패하면 되돌린다. act-as 탭은 대상 계정에 저장하고, super admin의 localStorage를 대상의 app config와 섞지 않는다.
 
 ## Context
 
@@ -91,10 +91,15 @@ flowchart LR
 - **Lifetime**: `startAccountUserSettingsSync`가 queue를 시작하기 전에는 queue가 아무것도 보내지 않는다. 로그인이 `setMyAppConfigs` 뒤에 이 함수를 부르고, 두 번째 로그인은 앞의 sync를 먼저 멈추며, 다른 서버에 접속하면 멈춘다(`stopAccountUserSettingsSync`). 탭이 숨겨질 때와 `pagehide` 때 queue를 flush하고, `useLogout`은 로그아웃과 Electron 창 닫기에서 client를 지우기 전에 최대 3초까지 기다리며 flush한다.
 - **Failure**: 실패한 쓰기는 `[user settings]` 접두어를 붙여 `console.error`로 기록한다. `sendMyUserConfig`는 그 쓰기가 실어 보낸 경로 중 그 뒤에 바뀌지 않은 경로를 되돌리므로, 설정은 이전 값을 다시 보여 준다.
 
-### 6. An act-as tab saves nothing
+### 6. An act-as tab writes the target's app config, not the super admin's localStorage
 
-- **Read**: act-as 탭(`getActAsTarget()`이 대상을 돌려줌)에서는 `myAppConfigState`가 대상 사용자의 `userConfig`를 담으므로, 그 탭은 그 사용자의 선택을 보여 준다. localStorage에서는 아무것도 복사하지 않는다.
-- **Write**: `startAccountUserSettingsSync`가 writer를 시작하지 않으므로, 그 탭의 변경은 그 탭에만 보인다. 그 탭의 다른 `userConfig` 쓰기(예: 대시보드 편집)는 그 변경을 대상 계정에 함께 싣는다. act-as 탭이 보낼 수 있는 쓰기는 #11293에서 정한다.
+- **Read**: act-as 탭(`getActAsTarget()`이 대상을 돌려줌)에서는 `myAppConfigState`가 대상 사용자의 `userConfig`를 담으므로, 그 탭은 그 사용자의 선택을 보여 준다.
+- **Write**: `startAccountUserSettingsSync`가 writer를 시작하므로, 그 탭의 변경은 다른 `userConfig` 쓰기(대시보드 보드, 세션 기록, 테마 패밀리)와 같이 대상 계정에 저장된다. act-as는 "이 사용자로 사용"이고 super admin만 열 수 있다(#11293).
+- **localStorage**: 이 탭은 super admin의 다른 탭과 localStorage를 공유하므로, app config 값을 거기서 가져오지도 거기에 두지도 않는다. `startAccountUserSettingsSync`는 로컬 값을 올리지도 지우지도 않고, 세션 기록(`useRecentSessionHistory`)은 로컬 기록을 보여 주지도 옮기지도 않는다.
+- **Still device-local**: app config에 없던 설정은 act-as 탭에서도 localStorage를 쓴다. device-local `UserSettings` 키(언어, 데스크톱 알림, 마지막 프로젝트, 최근 검색)와 라이트/다크 `themeMode`가 그렇다.
+- **Leaving act-as**: 배너의 Exit과 로그아웃 메뉴는 `exitActAs`가 탭을 닫기 전에 대기 중인 설정을 최대 3초까지 기다리며 flush한다.
+- **Overwrites**: act-as 탭의 쓰기는 그 탭이 읽어 온 `userConfig` 전체를 보내므로, 탭을 연 뒤 대상이 자기 브라우저에서 바꾼 내용을 덮어쓴다(ADR 0033, "Lost concurrent edits"). 여기서는 다른 쓰는 쪽이 다른 사람이고, 투어 플래그 같은 account setting 변경 하나로도 쓰기가 일어난다.
+- **Theme family mirror**: `userConfig.themeFamily`의 FOUC mirror는 act-as 탭에서 같은 키로 그 탭의 `sessionStorage`에 둔다(`useCustomThemeConfig`, `index.html`). 그래서 대상의 패밀리가 super admin의 다른 탭으로 가지 않는다.
 
 ## 대안과 기각 사유
 

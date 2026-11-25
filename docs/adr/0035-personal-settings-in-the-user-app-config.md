@@ -8,7 +8,7 @@
 - `isAccountUserSetting` in `react/src/helper/userSettingsAppConfig.ts` lists these [account settings](#glossary). Every other key of `UserSettings` stays in browser localStorage only, as a [device-local setting](#glossary).
 - After sign-in the account settings are read straight from `userConfig.settings` in `myAppConfigState` ([ADR 0033](0033-scoped-and-merged-app-config-hooks.md)), which sign-in fills before the first render, and never from localStorage. `useBAISettingUserState` still returns a value synchronously and its API does not change.
 - At sign-in, right after `setMyAppConfigs`, `startAccountUserSettingsSync` (`react/src/helper/accountUserSettingsSync.ts`) starts the write queue. When the account has no `settings` document yet, it copies the values this browser stored in localStorage before this decision into it once, then removes them from localStorage.
-- A change to an account setting shows in `myAppConfigState` at once and is sent to the server through a debounced write queue; a failed write rolls it back. An act-as tab sends nothing.
+- A change to an account setting shows in `myAppConfigState` at once and is sent to the server through a debounced write queue; a failed write rolls it back. An act-as tab saves to the target's account and keeps the super admin's localStorage out of the target's app config.
 
 ## Context
 
@@ -91,10 +91,15 @@ flowchart LR
 - **Lifetime**: The queue sends nothing before `startAccountUserSettingsSync` started it. Sign-in starts it after `setMyAppConfigs`, a second sign-in stops the previous one first, and joining another server stops it (`stopAccountUserSettingsSync`). It flushes the queue when the tab is hidden and on `pagehide`, and `useLogout` flushes it before it clears the client, on logout and on an Electron window close, waiting at most 3 seconds.
 - **Failure**: A failed write is logged with `console.error` under a `[user settings]` prefix, and `sendMyUserConfig` rolls back the paths it carried that nothing changed since, so the setting shows its previous value again.
 
-### 6. An act-as tab saves nothing
+### 6. An act-as tab writes the target's app config, not the super admin's localStorage
 
-- **Read**: In an act-as tab (`getActAsTarget()` returns a target), `myAppConfigState` holds the target user's `userConfig`, so the tab shows that user's choices. Nothing is copied from localStorage.
-- **Write**: `startAccountUserSettingsSync` does not start the writer, so a change in that tab shows only in that tab. Another `userConfig` write from that tab, such as a dashboard edit, carries it to the target's account; which writes an act-as tab may send is #11293.
+- **Read**: In an act-as tab (`getActAsTarget()` returns a target), `myAppConfigState` holds the target user's `userConfig`, so the tab shows that user's choices.
+- **Write**: `startAccountUserSettingsSync` starts the writer, so a change in that tab is saved to the target's account like any other `userConfig` write (dashboard boards, session history, the theme family). Act-as is "use as this user", and only a super admin can open it (#11293).
+- **localStorage**: The tab shares localStorage with the super admin's other tabs, so app config values neither come from it nor go to it. `startAccountUserSettingsSync` neither copies local values up nor removes them, and session history (`useRecentSessionHistory`) neither shows nor moves the local history.
+- **Still device-local**: Settings that were never in app config keep using localStorage in an act-as tab: the device-local `UserSettings` keys (language, desktop notifications, the last project, recent searches) and the light/dark `themeMode`.
+- **Leaving act-as**: The banner's Exit and the logout menu flush the queued settings, waiting at most 3 seconds, before `exitActAs` closes the tab.
+- **Overwrites**: A write from the act-as tab sends the whole `userConfig` it loaded, so it overwrites what the target changed in their own browser after the tab opened (ADR 0033, "Lost concurrent edits"); here the other writer is another person, and an account-setting change such as a tour flag is enough to trigger it.
+- **Theme family mirror**: The FOUC mirror of `userConfig.themeFamily` lives in the act-as tab's `sessionStorage` under the same key (`useCustomThemeConfig`, `index.html`), so the target's family never reaches the super admin's other tabs.
 
 ## Rejected alternatives
 

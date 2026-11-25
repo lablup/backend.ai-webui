@@ -87,8 +87,20 @@ window.supportedBrowserMinimums = {
   for (var name in minimums) {
     labels.push(name + ' ' + minimums[name].join('.') + '+');
   }
+  function hasAcceptedUnsupportedBrowser() {
+    try {
+      return window.sessionStorage.getItem(window.unsupportedBrowserAcceptedKey) === '1';
+    } catch (e) {
+      return false;
+    }
+  }
+
   window.supportedBrowsersText = labels.join(', ');
-  window.isUnsupportedBrowser = !isElectron() &&
+  window.unsupportedBrowserAcceptedKey = 'backendaiwebui.unsupportedBrowserAccepted';
+  window.isBrowserBelowSupportedRange = !isElectron() &&
     (isUserAgentBelowSupportedRange() || lacksRequiredBrowserFeatures());
+  // ADR 0038: "Use anyway" on the block screen lifts the block for this tab's session.
+  window.isUnsupportedBrowser = window.isBrowserBelowSupportedRange &&
+    !hasAcceptedUnsupportedBrowser();
 })();
 window.iOSSafari = iOS && webkit && !ua.match(/CriOS/i);

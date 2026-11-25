@@ -14,8 +14,7 @@ A **Project Admin** is a user who has been granted administrative authority over
 
 When you open the project dropdown in the header, projects in which you have the project-admin role are marked with a shield-shaped badge next to the project name. Hovering the badge displays a **Project Admin** tooltip, confirming that selecting this project will reveal the project-admin sidebar entries described below.
 
-![=260px](../images/header_project_selector_with_admin_badge.png)
-<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; the project-admin fixture account cannot load the WebUI on the capture backend (the manager denies it `app_config` read). -->
+![=262px](../images/header_project_selector_with_admin_badge.png)
 
 Switching to a different project from the header's project selector re-evaluates the user's role: the same user may act as a project admin in one project and as a regular user in another within the same login session. To learn how project-admin roles are granted and revoked, see [Grant Project Admin Authority](#grant-project-admin) in the RBAC Management chapter.
 
@@ -24,7 +23,6 @@ Because project-admin authority is re-evaluated per selected project, the pages 
 :::
 
 ![](../images/forbidden_page.png)
-<!-- TODO(screenshot): recapture while logged in as a user who lacks project-admin rights on the requested project. This image was captured with the superadmin account. -->
 
 <a id="set-project-admin"></a>
 
@@ -72,7 +70,7 @@ When you select a project in which you are a project admin, the sidebar shows a 
 On the project-admin pages, only the items under the project selected with the project selector at the top are shown. You can check this through the banner at the top of the page.
 
 ![](../images/project_admin_scope_alert.png)
-<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; the project-admin fixture account cannot load the WebUI on the capture backend (the manager denies it `app_config` read). -->
+<!-- TODO(screenshot): recapture while logged in as a Project Admin; this image still shows the superadmin account. 2026-11-24: the capture run for this image failed against the capture backend (manager 26.10.0a11) and was deferred. -->
 
 <a id="project-admin-dashboard"></a>
 
@@ -84,17 +82,6 @@ The **Dashboard** entry opens a board of cards scoped to the selected project: *
 
 Boards, card settings and the refresh control work as they do on the user [Dashboard](#dashboard).
 
-<a id="refreshing-project-admin-pages"></a>
-
-## Refreshing project-admin pages
-
-The project-admin pages provide the same refresh button. Click the refresh button to refresh the table list.
-
-The dropdown button next to the refresh button opens the **Auto Refresh** menu, where you can choose the auto-refresh interval.
-
-![=86px](../images/project_admin_auto_refresh_menu.png)
-<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; the project-admin fixture account cannot load the WebUI on the capture backend (the manager denies it `app_config` read). -->
-
 <a id="users"></a>
 
 ## Users
@@ -102,7 +89,7 @@ The dropdown button next to the refresh button opens the **Auto Refresh** menu, 
 The **Users** page lists every user who belongs to the currently selected project. Use this page to review project membership at a glance — for example, to confirm who has access to the project's resources or to identify inactive accounts.
 
 ![](../images/project_admin_users_page.png)
-<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; the project-admin fixture account cannot load the WebUI on the capture backend (the manager denies it `app_config` read). -->
+<!-- TODO(screenshot): recapture while logged in as a Project Admin; this image still shows the superadmin account. 2026-11-24: the capture run for this image failed against the capture backend (manager 26.10.0a11) and was deferred. -->
 
 The page provides the following controls:
 
@@ -124,7 +111,7 @@ A project's storage folders are managed from the **Data** page while that projec
 The **Sessions** page lists the compute sessions owned by users in the currently selected project. Use this page to monitor active workloads, identify long-running sessions, or terminate sessions that are no longer needed.
 
 ![](../images/project_admin_sessions_page.png)
-<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; the project-admin fixture account cannot load the WebUI on the capture backend (the manager denies it `app_config` read). -->
+<!-- TODO(screenshot): recapture while logged in as a Project Admin; this image still shows the superadmin account. 2026-11-24: the capture run for this image failed against the capture backend (manager 26.10.0a11) and was deferred. -->
 
 The page provides the following controls:
 
@@ -144,7 +131,7 @@ To terminate one or more sessions:
 5. Click the confirm button to terminate the sessions.
 
 ![=520px](../images/project_admin_terminate_session_modal.png)
-<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; the project-admin fixture account cannot load the WebUI on the capture backend (the manager denies it `app_config` read). -->
+<!-- TODO(screenshot): recapture while logged in as a Project Admin; this image still shows the superadmin account. 2026-11-24: the capture run for this image failed against the capture backend (manager 26.10.0a11) and was deferred. -->
 
 :::warning
 Use **Force Terminate** only when a session is stuck and its state does not change for an unreasonably long time. Force terminate does not delete the actual containers on the agent(s), so manual cleanup may be required afterward.
@@ -161,7 +148,7 @@ Clicking a session name on the project-admin Sessions page does not currently op
 The **Deployments** page lists the model deployments owned by the currently selected project. Use this page to oversee inference endpoints, edit deployment settings, or remove deployments that are no longer in use.
 
 ![](../images/project_admin_deployments_page.png)
-<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; the project-admin fixture account cannot load the WebUI on the capture backend (the manager denies it `app_config` read). -->
+<!-- TODO(screenshot): recapture while logged in as a Project Admin; this image still shows the superadmin account. 2026-11-24: the capture run for this image failed against the capture backend (manager 26.10.0a11) and was deferred. -->
 
 The page provides the following controls:
 
@@ -183,6 +170,6 @@ The following actions are available on each deployment row:
 - Click the **trash icon** to delete the deployment. The confirmation modal requires you to type the deployment's name before the deletion is performed.
 
 ![](../images/project_admin_deployment_detail.png)
-<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; the project-admin fixture account cannot load the WebUI on the capture backend (the manager denies it `app_config` read). -->
+<!-- TODO(screenshot): recapture while logged in as a Project Admin; this image still shows the superadmin account. 2026-11-24: the capture run for this image failed against the capture backend (manager 26.10.0a11) and was deferred. -->
 
 For details about deployment revisions, replicas, and traffic routing, see the [Deployments](#model-serving) chapter.

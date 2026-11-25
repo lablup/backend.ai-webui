@@ -5,6 +5,8 @@
 import { backendaiClientPromise } from '.';
 import { RelayEnvironment } from '../RelayEnvironment';
 import { useVFolderInvitationsAcceptMutation } from '../__generated__/useVFolderInvitationsAcceptMutation.graphql';
+import { useVFolderInvitationsProjectAnswerersQuery } from '../__generated__/useVFolderInvitationsProjectAnswerersQuery.graphql';
+import { useVFolderInvitationsProjectSharesQuery } from '../__generated__/useVFolderInvitationsProjectSharesQuery.graphql';
 import { useVFolderInvitationsQuery } from '../__generated__/useVFolderInvitationsQuery.graphql';
 import { useVFolderInvitationsRejectMutation } from '../__generated__/useVFolderInvitationsRejectMutation.graphql';
 import { mutationOptions } from './backendai';
@@ -16,8 +18,11 @@ import * as _ from 'lodash-es';
 import { fetchQuery, graphql } from 'react-relay';
 
 const VFOLDER_ENTITY_TYPE = 'vfolder';
+const PROJECT_ENTITY_TYPE = 'project';
+// `myAtomicBulkScopePermissions` refuses more than 100 targets.
+const MAX_PERMISSION_TARGETS = 100;
 
-/** A pending folder share offered to the current user. */
+/** A pending folder share offered to the current user or to a project they answer for. */
 export interface InvitationItem {
   /** The share's `entityId`: what accept and reject take. */
   id: string;
@@ -29,6 +34,8 @@ export interface InvitationItem {
   /** The entity share's permission cap. */
   permissions: ReadonlyArray<string>;
   createdAt: string;
+  /** Set when the share is addressed to a project: accepting it answers for the project. */
+  recipientProjectName?: string;
 }
 
 export interface RecipientShare {
@@ -38,26 +45,54 @@ export interface RecipientShare {
   targetEntityType: string;
   targetEntityId: string;
   createdAt: string;
-  sharer?: { basicInfo: { email: string } } | null;
+  recipientEntityType?: string | null;
+  recipientEntityId?: string | null;
+  recipientEntity?:
+    | { __typename: 'ProjectV2'; basicInfo: { name: string } }
+    | { __typename: string }
+    | null;
+  sharer?: { entityId?: string; basicInfo: { email: string } } | null;
   targetEntity?:
     | { __typename: 'VFolder'; metadata: { name: string } }
     | { __typename: string }
     | null;
 }
 
-/** The pending folder shares among the caller's received shares, newest first. */
+const isEntityType = (value: string | null | undefined, type: string) =>
+  value?.toLowerCase() === type;
+
+/**
+ * The pending folder shares among the caller's received shares, newest first.
+ * `projectNames` names a project share whose `recipientEntity` the caller may not read;
+ * a project share `selfUserId` sent is the caller's own offer, not an invitation.
+ */
 export const toInvitationItems = (
   shares: ReadonlyArray<RecipientShare>,
+  {
+    projectNames = {},
+    selfUserId,
+  }: {
+    projectNames?: Readonly<Record<string, string>>;
+    selfUserId?: string | null;
+  } = {},
 ): InvitationItem[] =>
   _.orderBy(
     _.map(
-      _.filter(
-        shares,
-        (share) =>
-          share.status === 'PENDING' &&
-          share.targetEntityType === VFOLDER_ENTITY_TYPE,
+      _.uniqBy(
+        _.filter(
+          shares,
+          (share) =>
+            share.status === 'PENDING' &&
+            isEntityType(share.targetEntityType, VFOLDER_ENTITY_TYPE) &&
+            !(
+              selfUserId &&
+              isEntityType(share.recipientEntityType, PROJECT_ENTITY_TYPE) &&
+              share.sharer?.entityId === selfUserId
+            ),
+        ),
+        'entityId',
       ),
-      (share) => ({
+      (share): InvitationItem => ({
         id: share.entityId,
         vfolderId: share.targetEntityId,
         vfolderName:
@@ -68,6 +103,16 @@ export const toInvitationItems = (
         sharerEmail: share.sharer?.basicInfo.email ?? null,
         permissions: share.permissions,
         createdAt: share.createdAt,
+        ...(isEntityType(share.recipientEntityType, PROJECT_ENTITY_TYPE) && {
+          recipientProjectName:
+            (share.recipientEntity?.__typename === 'ProjectV2' &&
+            'basicInfo' in share.recipientEntity
+              ? share.recipientEntity.basicInfo.name
+              : undefined) ??
+            projectNames[share.recipientEntityId ?? ''] ??
+            share.recipientEntityId ??
+            undefined,
+        }),
       }),
     ),
     'createdAt',
@@ -92,7 +137,84 @@ const invitationsQuery = graphql`
           targetEntityType
           targetEntityId
           createdAt
+          recipientEntityType
+          recipientEntityId
           sharer {
+            entityId
+            basicInfo {
+              email
+            }
+          }
+          targetEntity {
+            __typename
+            ... on VFolder {
+              metadata {
+                name
+              }
+            }
+          }
+        }
+      }
+    }
+    myUserV2 {
+      entityId
+      projects(filter: { isActive: true }, limit: 100) {
+        edges {
+          node {
+            entityId
+            basicInfo {
+              name
+            }
+          }
+        }
+      }
+    }
+  }
+`;
+
+// Answering a project's share takes `update` on `entity_share` in that project
+// (lablup/backend.ai#17162); `myEntityShares` never lists project shares.
+const projectAnswerersQuery = graphql`
+  query useVFolderInvitationsProjectAnswerersQuery(
+    $targets: [PermissionTarget!]!
+  ) {
+    myAtomicBulkScopePermissions(input: { targets: $targets }) {
+      items {
+        scopeId
+        permissions
+      }
+    }
+  }
+`;
+
+const projectSharesQuery = graphql`
+  query useVFolderInvitationsProjectSharesQuery($projects: [UUIDScope!]!) {
+    entityShares(
+      scope: { recipientProject: $projects }
+      filter: { status: { equals: PENDING } }
+      orderBy: [{ field: CREATED_AT, direction: "DESC" }]
+      limit: 100
+    ) {
+      edges {
+        node {
+          entityId
+          status
+          permissions
+          targetEntityType
+          targetEntityId
+          createdAt
+          recipientEntityType
+          recipientEntityId
+          recipientEntity @catch(to: NULL) {
+            __typename
+            ... on ProjectV2 {
+              basicInfo {
+                name
+              }
+            }
+          }
+          sharer {
+            entityId
             basicInfo {
               email
             }
@@ -111,6 +233,39 @@ const invitationsQuery = graphql`
   }
 `;
 
+const loadProjectShares = async (
+  projectIds: ReadonlyArray<string>,
+): Promise<RecipientShare[]> => {
+  if (_.isEmpty(projectIds)) return [];
+  const permissions =
+    await fetchQuery<useVFolderInvitationsProjectAnswerersQuery>(
+      RelayEnvironment,
+      projectAnswerersQuery,
+      {
+        targets: _.map(projectIds, (scopeId) => ({
+          scopeType: PROJECT_ENTITY_TYPE,
+          scopeId,
+          entityType: 'entity_share',
+        })),
+      },
+      { fetchPolicy: 'network-only' },
+    ).toPromise();
+  const answerableIds = _.map(
+    _.filter(permissions?.myAtomicBulkScopePermissions?.items, (item) =>
+      _.includes(item.permissions, 'UPDATE'),
+    ),
+    'scopeId',
+  );
+  if (_.isEmpty(answerableIds)) return [];
+  const data = await fetchQuery<useVFolderInvitationsProjectSharesQuery>(
+    RelayEnvironment,
+    projectSharesQuery,
+    { projects: _.map(answerableIds, (value) => ({ value })) },
+    { fetchPolicy: 'network-only' },
+  ).toPromise();
+  return _.map(data?.entityShares?.edges, (edge) => edge.node);
+};
+
 const loadInvitations = async (): Promise<InvitationItem[]> => {
   const data = await fetchQuery<useVFolderInvitationsQuery>(
     RelayEnvironment,
@@ -118,8 +273,25 @@ const loadInvitations = async (): Promise<InvitationItem[]> => {
     {},
     { fetchPolicy: 'network-only' },
   ).toPromise();
+  const projects = _.map(data?.myUserV2?.projects?.edges, (edge) => edge.node);
+  // A project's shares are an addition: failing to read them keeps the caller's own.
+  const projectShares = await loadProjectShares(
+    _.map(projects, 'entityId').slice(0, MAX_PERMISSION_TARGETS),
+  ).catch(() => []);
   return toInvitationItems(
-    _.map(data?.myEntityShares?.edges, (edge) => edge.node),
+    [
+      ..._.map(data?.myEntityShares?.edges, (edge) => edge.node),
+      ...projectShares,
+    ],
+    {
+      projectNames: _.fromPairs(
+        _.map(projects, (project) => [
+          project.entityId,
+          project.basicInfo.name,
+        ]),
+      ),
+      selfUserId: data?.myUserV2?.entityId,
+    },
   );
 };
 
