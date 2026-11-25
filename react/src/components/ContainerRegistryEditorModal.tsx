@@ -50,6 +50,10 @@ export type ContainerRegistryEditorModalResult = {
   type?: string;
 };
 
+/** `ContainerRegistryV2.type` (`HARBOR2`) as the legacy string the form's type options use (`harbor2`). */
+export const toLegacyRegistryType = (type: string): string =>
+  type === 'ECR_PUB' ? 'ecr-public' : _.toLower(type);
+
 /** The mutation nodes carry form-only fields (`password`, …); hand `onOk` only the result shape. */
 const toResult = (
   node?: {

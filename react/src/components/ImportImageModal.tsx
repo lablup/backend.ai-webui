@@ -18,7 +18,9 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
 import { usePainKiller } from '../hooks/usePainKiller';
 import { BAIFormItemVisual } from './BAIFormItem';
-import ContainerRegistryEditorModal from './ContainerRegistryEditorModal';
+import ContainerRegistryEditorModal, {
+  toLegacyRegistryType,
+} from './ContainerRegistryEditorModal';
 import { Button } from '@lablup/ui-common/Button';
 import { Center } from '@lablup/ui-common/Center';
 import { Link } from '@lablup/ui-common/Link';
@@ -83,30 +85,19 @@ const registriesQuery = graphql`
     $after: String
     $domainName: String!
   ) {
-    # The allowed registries are tracked per registry ID (26.10.0), not by
-    # name: same-named registries are independent.
-    domainV2(domainName: $domainName) {
-      containerRegistries(first: 1000)
-        @since(version: "26.10.0")
-        @catch(to: NULL) {
-        count
-        edges {
-          node {
-            entityId
-          }
-        }
-      }
-    }
-    container_registry_nodes(first: $first, after: $after)
-      @since(version: "24.09.0") {
+    adminContainerRegistriesV2(first: $first, after: $after) {
       edges {
         node {
           id
-          row_id
-          registry_name
+          entityId
+          registryName
           project
           url
           type
+          # Enabled in this domain = related to it.
+          currentDomain: domains(filter: { name: { equals: $domainName } }) {
+            count
+          }
         }
       }
       pageInfo {
@@ -118,7 +109,7 @@ const registriesQuery = graphql`
 `;
 
 type RegistryConnection = NonNullable<
-  ImportImageModalRegistriesQuery['response']['container_registry_nodes']
+  ImportImageModalRegistriesQuery['response']['adminContainerRegistriesV2']
 >;
 type RegistryNode = NonNullable<RegistryConnection['edges']>[number];
 
@@ -174,14 +165,8 @@ const REGISTRY_PAGE_LIMIT = 100;
 const fetchAllRegistries = async (
   environment: IEnvironment,
   domainName: string,
-): Promise<{
-  nodes: Array<RegistryNode>;
-  /** The registry IDs the domain is allowed to use. `null` when the manager
-   * does not carry the ID-based read (26.10.0) yet; treated as unknown. */
-  allowedRegistryIds: ReadonlyArray<string> | null;
-}> => {
+): Promise<{ nodes: Array<RegistryNode> }> => {
   const nodes: Array<RegistryNode> = [];
-  let allowedRegistryIds: ReadonlyArray<string> | null = null;
   let after: string | null = null;
   for (let page = 0; page < REGISTRY_PAGE_LIMIT; page++) {
     // Annotated: `after` is written from this very result, so an inferred
@@ -193,18 +178,8 @@ const fetchAllRegistries = async (
         { first: REGISTRY_PAGE_SIZE, after, domainName },
         { fetchPolicy: 'network-only' },
       ).toPromise();
-    if (page === 0) {
-      allowedRegistryIds =
-        data?.domainV2?.containerRegistries == null
-          ? null
-          : _.compact(
-              data.domainV2.containerRegistries.edges.map(
-                (edge) => edge?.node?.entityId,
-              ),
-            );
-    }
     const connection: RegistryConnection | null | undefined =
-      data?.container_registry_nodes;
+      data?.adminContainerRegistriesV2;
     nodes.push(..._.map(connection?.edges, (edge) => edge));
     if (
       !connection?.pageInfo?.hasNextPage ||
@@ -214,7 +189,7 @@ const fetchAllRegistries = async (
     }
     after = connection.pageInfo.endCursor;
   }
-  return { nodes, allowedRegistryIds };
+  return { nodes };
 };
 
 export interface ImportImageModalProps extends Omit<BAIModalProps, 'onOk'> {
@@ -319,17 +294,19 @@ const ImportImageModalContent: React.FC<{
 
   const registryNodes = filterOutNullAndUndefined(
     _.map(registryData.nodes, (edge) => edge?.node),
-  ).filter((node) => !!node.registry_name);
-  const { allowedRegistryIds } = registryData;
+  ).filter((node) => !!node.registryName);
+  const enabledRegistryIds = new Set(
+    registryNodes
+      .filter((node) => (node.currentDomain?.count ?? 0) > 0)
+      .map((node) => node.entityId),
+  );
   // Images of a registry the domain does not allow register fine but stay out
-  // of the domain's image list (manager `ImageAccessCriteria`). `null` means
-  // the manager does not carry the ID-based read yet; treated as unknown.
+  // of the domain's image list (manager `ImageAccessCriteria`).
   const isEnabledInDomain = (
-    registryRow: RegistryRow & { row_id?: string | null },
+    registryRow: RegistryRow & { entityId?: string | null },
   ) =>
-    allowedRegistryIds === null ||
-    (registryRow.row_id != null &&
-      allowedRegistryIds.includes(registryRow.row_id));
+    registryRow.entityId != null &&
+    enabledRegistryIds.has(registryRow.entityId);
 
   const [commitEnableRegistry, isInFlightEnableRegistry] =
     useMutation<ImportImageModalEnableRegistryMutation>(enableRegistryMutation);
@@ -338,16 +315,16 @@ const ImportImageModalContent: React.FC<{
   // Same write as the Enabled switch on the Registries tab: one relation pair,
   // not a rewrite of the whole list.
   const enableInDomain = (
-    registryRow: RegistryRow & { row_id?: string | null },
+    registryRow: RegistryRow & { entityId?: string | null },
   ) => {
-    if (isEnabledInDomain(registryRow) || registryRow.row_id == null) {
+    if (isEnabledInDomain(registryRow) || registryRow.entityId == null) {
       refreshRegistries();
       return;
     }
     commitEnableRegistry({
       variables: {
         domainId,
-        containerRegistryId: registryRow.row_id,
+        containerRegistryId: registryRow.entityId,
       },
       onCompleted: (_res, errors) => {
         if (errors && errors.length > 0) {
@@ -369,22 +346,22 @@ const ImportImageModalContent: React.FC<{
       },
     });
   };
-  const registries: Array<RegistryRow & { row_id?: string | null }> =
+  const registries: Array<RegistryRow & { entityId: string }> =
     registryNodes.map((node) => ({
-      registry_name: node.registry_name as string,
+      registry_name: node.registryName,
       project: node.project ?? null,
-      row_id: node.row_id ?? null,
+      entityId: node.entityId,
     }));
 
   // A host already registered under a different project fixes the URL and the
   // type of the row we are about to create; only the project differs.
   const prefillForHost = (host: string, project?: string) => {
-    const sibling = registryNodes.find((node) => node.registry_name === host);
+    const sibling = registryNodes.find((node) => node.registryName === host);
     return {
       registry_name: host,
       project,
       url: sibling?.url ?? `https://${host}`,
-      type: sibling?.type ?? undefined,
+      type: sibling ? toLegacyRegistryType(sibling.type) : undefined,
     };
   };
 
@@ -895,7 +872,7 @@ const ImportImageModalContent: React.FC<{
               // Enabled here too, or its images would import into a list that
               // cannot show them; the refresh re-resolves every line it names.
               if (registry?.row_id) {
-                enableInDomain(registry);
+                enableInDomain({ ...registry, entityId: registry.row_id });
               } else {
                 refreshRegistries();
               }

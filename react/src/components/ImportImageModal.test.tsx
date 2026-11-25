@@ -142,9 +142,12 @@ vi.mock('../app-shim', async (importOriginal) => {
 // whole contract the "registry not registered" branch depends on.
 const mockRegistryEditorRender = vi.fn();
 
-vi.mock('./ContainerRegistryEditorModal', async () => {
+vi.mock('./ContainerRegistryEditorModal', async (importOriginal) => {
   const React = await import('react');
+  const originalModule =
+    await importOriginal<typeof import('./ContainerRegistryEditorModal')>();
   return {
+    toLegacyRegistryType: originalModule.toLegacyRegistryType,
     default: (props: any) => {
       mockRegistryEditorRender(props);
       return props.open
@@ -263,8 +266,8 @@ let registryPageFetchCount = 0;
 const queueRegistryPages = (
   environment: ReturnType<typeof createMockEnvironment>,
   registryPages: Array<Array<RegistryNodeShape>>,
-  /** The registry IDs the domain allows; `null`, or omitting it, means not reported. */
-  allowedRegistryIds?: Array<string> | null,
+  /** The registry IDs related to the current domain; omitting it relates every row. */
+  allowedRegistryIds?: Array<string>,
 ) => {
   registryPages.forEach((nodes, index) => {
     const hasNextPage = index < registryPages.length - 1;
@@ -272,19 +275,24 @@ const queueRegistryPages = (
       registryPageFetchCount += 1;
       return {
         data: {
-          domainV2:
-            allowedRegistryIds == null
-              ? null
-              : {
-                  containerRegistries: {
-                    count: allowedRegistryIds.length,
-                    edges: allowedRegistryIds.map((entityId) => ({
-                      node: { entityId },
-                    })),
-                  },
+          adminContainerRegistriesV2: {
+            edges: nodes.map((node) => ({
+              node: {
+                id: node.id,
+                entityId: node.row_id,
+                registryName: node.registry_name,
+                project: node.project,
+                url: node.url,
+                type: node.type.toUpperCase(),
+                currentDomain: {
+                  count:
+                    allowedRegistryIds === undefined ||
+                    allowedRegistryIds.includes(node.row_id)
+                      ? 1
+                      : 0,
                 },
-          container_registry_nodes: {
-            edges: nodes.map((node) => ({ node })),
+              },
+            })),
             pageInfo: {
               hasNextPage,
               endCursor: hasNextPage ? `cursor-${index}` : null,
@@ -446,9 +454,7 @@ describe('ImportImageModal (FR-3940 review round)', () => {
     ).toBeInTheDocument();
   });
 
-  it('treats an empty allow-list as no registry allowed, not as unknown', async () => {
-    // `[]` and `null` are different states: an empty allow-list gates every
-    // registry, a missing report gates none.
+  it('treats a domain related to no registry as allowing none', async () => {
     const environment = createMockEnvironment();
     queueRegistryPages(environment, [[REGISTRY, NGC_REGISTRY]], []);
     render(
@@ -658,8 +664,11 @@ describe('ImportImageModal (FR-3940 review round)', () => {
         content: 'registry.RegistrySuccessfullyAdded',
       }),
     );
-    // The domain did not report its allowed list, so nothing is written.
-    expect(mockEnableRequest).not.toHaveBeenCalled();
+    // A new registry is related to no domain yet, so it is enabled here.
+    expect(mockEnableRequest).toHaveBeenCalledWith({
+      domainId: 'domain-uuid',
+      containerRegistryId: 'registry-created-row-id',
+    });
     await waitFor(() =>
       expect(
         screen.getByText(/environment\.ImportImageReady/),
