@@ -1,43 +1,39 @@
-# 0039 — Build-time opt-in PostHog analytics
+# 0039 — PostHog analytics behind the domain app config
 
 ## Summary
 
 > 낯선 용어는 문서 맨 아래 [용어](#용어)에 모아 두었다.
 
-- WebUI는 사용 흐름(화면별 체류, 클릭, 이탈)과 오류를 PostHog로 보낼 수 있다. 이 코드는 build가 `VITE_ANALYTICS_BUILD=1`(또는 `true`)을 줄 때만 bundle에 들어간다.
-- flag가 없는 기본 build의 output에는 analytics component도 `posthog-js`도 없고, `grep -rli posthog react/build`가 아무것도 찾지 않는다.
-- [analytics build](#용어)에서는 로그인한 domain의 app config `domainConfig.analytics`에 `posthogKey`와 `posthogHost`가 둘 다 있을 때만 `ProductAnalytics`가 `posthog.init`을 부른다. build 자체는 key도 host도 담지 않는다.
+- WebUI는 사용 흐름(화면별 체류, 클릭, 이탈)과 오류를 PostHog로 보낼 수 있다. 모든 build가 이 코드를 lazy chunk인 [analytics chunk](#용어)로 담고, build flag는 없다.
+- 로그인한 domain의 app config `domainConfig.analytics`에 문자열 `posthogKey`와 `https:` `posthogHost`가 있을 때만 chunk를 받고 `posthog.init`을 부른다. 그 값이 없는 domain은 chunk를 받지 않고 아무것도 보내지 않는다. build는 key도 host도 담지 않는다.
 - 새 runtime dependency는 `react/package.json`의 `posthog-js`이고, ESLint `no-restricted-imports`가 `react/src/components/ProductAnalytics.tsx` 밖에서의 import를 막는다.
 - `useBAILogger`는 production build에서도 [logger plugin](#용어)을 부르고, `ProductAnalytics`의 plugin이 ERROR log를 PostHog error tracking으로 보낸다.
 
 ## Context
 
 - **No usage data**: 지금 WebUI는 사용자가 session launcher에서 app 실행까지 가는지, 어느 단계에서 멈추는지 아무 데이터도 남기지 않는다. 오류도 사용자가 보고해야만 팀이 안다.
-- **Self-hosted customers**: 팀은 self-hosted·air-gapped 고객에게도 같은 source로 build한 WebUI를 배포한다. 그 build에는 tracking code가 아예 없어야 한다.
-- **Per-domain choice**: analytics build 하나가 여러 배포와 domain을 맡을 수 있고, 각각이 수집 여부와 event를 보낼 곳을 따로 정한다. manager app config는 WebUI가 로그인할 때 읽는 domain별 문서를 가진다(ADR 0033).
+- **One build for every deployment**: 팀은 SaaS와 self-hosted·air-gapped 고객에게 같은 build를 배포한다. analytics용 build를 따로 두면 build, test, release할 것이 두 배가 된다.
+- **Per-domain choice**: build 하나가 여러 배포와 domain을 맡을 수 있고, 각각이 수집 여부와 event를 보낼 곳을 따로 정한다. manager app config는 WebUI가 로그인할 때 읽는 domain별 문서를 가진다(ADR 0033).
 - **Electron**: Electron app은 web bundle을 그대로 쓰고 page를 `file://app/index.html`에서 연다. 그 origin에서는 cookie가 동작하지 않는다.
 - **Silent production logger**: `useBAILogger`의 `Logger`는 production에서 `enabled`가 `false`이고, 이전의 `logging()`은 plugin을 부르기 전에 return했다. 그래서 production에서는 `logger.use()`로 붙인 plugin이 아무 log도 받지 못했다.
-- **Precedent**: `react/src/routes.tsx`의 `VITE_REVIEW_OVERLAY_BUILD`가 같은 방식의 build-time opt-in이다.
 
 ## 설계도
 
 ```mermaid
 flowchart TD
-  env["build env<br/>VITE_ANALYTICS_BUILD"]
-  routes["react/src/routes.tsx<br/>root route element"]
-  lazy["React.lazy chunk<br/>ErrorBoundaryWithNullFallback + Suspense"]
   atom["myAppConfigState<br/>domainConfig.analytics"]
+  gate["ProductAnalyticsGate<br/>react/src/routes.tsx"]
+  lazy["React.lazy chunk<br/>Suspense"]
   pa["ProductAnalytics.tsx<br/>side effect: posthog.init, document listeners, logger.use"]
   sdk["posthog-js<br/>before_send: URL strip, exception dedupe"]
   logger["useBAILogger Logger<br/>plugins always run"]
   boundary["BAIErrorBoundary"]
   doc["document events"]
   server["PostHog server"]
-  env -- "Vite가 literal로 치환" --> routes
-  routes -- "flag가 literal '1' 또는 'true'일 때만" --> lazy
-  lazy -- "dynamic import" --> pa
-  atom -- "useMyAppConfig로 posthogKey, posthogHost" --> pa
-  pa -- "둘 다 있을 때만 init" --> sdk
+  atom -- "useMyAppConfig로 posthogKey, posthogHost" --> gate
+  gate -- "문자열 key와 https: host일 때만" --> lazy
+  lazy -- "dynamic import, apiKey·apiHost prop" --> pa
+  pa -- "init" --> sdk
   boundary -- "error, metadata.context.errorBoundary.componentStack" --> logger
   logger -- "afterLog(context)" --> pa
   doc -- "backend-ai-connected, backend-ai-logout" --> pa
@@ -47,12 +43,11 @@ flowchart TD
 
 ## Decision
 
-### 1. Build flag
+### 1. Lazy chunk behind the app config
 
-- **Literal comparison**: `react/src/routes.tsx`는 module 최상위에서 `import.meta.env.VITE_ANALYTICS_BUILD === '1' || import.meta.env.VITE_ANALYTICS_BUILD === 'true'`일 때만 `React.lazy(() => import('./components/ProductAnalytics'))`를 만들고, 아니면 `null`을 둔다. Vite가 값을 literal로 바꿔야 Rollup이 dynamic import를 지우므로, 비교는 helper 없이 inline으로 적는다.
-- **Mount point**: path `/` route의 element가 `ProductAnalytics`를 `ErrorBoundaryWithNullFallback`과 `Suspense fallback={null}` 안에 mount한다. component는 app config를 기다리므로(2절) 로그인 화면을 포함해 로그인 전 화면은 수집하지 않는다.
+- **Gate**: `react/src/routes.tsx`의 `ProductAnalyticsGate`가 `domainConfig.analytics`를 읽고, 값이 2절을 통과할 때만 `React.lazy(() => import('./components/ProductAnalytics'))`를 그리며 그 값을 `apiKey`·`apiHost` prop으로 넘긴다. 아니면 `null`을 그리고, browser는 chunk를 요청하지 않는다.
+- **Mount point**: path `/` route의 element가 gate를 `ErrorBoundaryWithNullFallback` 안에 mount하고, gate는 lazy component를 `Suspense fallback={null}`로 감싼다. 로그인 전에는 app config가 비어 있으므로 로그인 화면을 포함해 로그인 전 화면은 수집하지 않는다.
 - **Failure isolation**: `ProductAnalytics`는 `null`을 render한다. chunk load나 init이 실패하면 `ErrorBoundaryWithNullFallback`이 그 자리만 비운다.
-- **Neutral file name**: 기본 build의 source map은 `routes.tsx`의 source를 담는다. 그래서 analytics component의 파일 이름과 symbol은 `posthog`를 포함하지 않는 `ProductAnalytics`다.
 
 ### 2. Connection settings
 
@@ -61,15 +56,15 @@ flowchart TD
 | `domainConfig.analytics.posthogKey`  | PostHog project API key                             |
 | `domainConfig.analytics.posthogHost` | PostHog API host, 예: `https://posthog.example.com` |
 
-- **Read location**: `ProductAnalytics`는 로그인이 `myAppConfigState`에 넣은 merged `domainConfig`를 `useMyAppConfig('domainConfig', 'analytics')`로 읽는다(ADR 0033). 따로 query를 보내지 않는다.
-- **Missing value**: 둘 중 하나라도 비어 있는 동안 `ProductAnalytics`는 `posthog.init`을 부르지 않고, SDK는 요청을 보내지 않는다. 로그인 전과 app config 읽기가 실패했을 때도 같다.
-- **Act-as tab**: act-as 탭(`getActAsTarget()`이 있음)도 SDK를 시작하지 않는다. ADR 0035에서 act-as 탭이 아무것도 저장하지 않는 것과 같아, super admin의 act-as 사용은 세지 않고 act-as를 나가도 다른 탭이 공유하는 distinct id를 reset하지 않는다.
+- **Read location**: `ProductAnalyticsGate`는 로그인이 `myAppConfigState`에 넣은 merged `domainConfig`를 `useMyAppConfig('domainConfig', 'analytics')`로 읽는다(ADR 0033). 따로 query를 보내지 않는다.
+- **Missing value**: 둘 중 하나라도 없는 동안 gate는 아무것도 그리지 않으므로 chunk를 받지 않고, `posthog.init`을 부르지 않으며, 요청도 보내지 않는다. 로그인 전과 app config 읽기가 실패했을 때도 같다.
+- **Act-as tab**: act-as 탭(`getActAsTarget()`이 있음)에서는 `ProductAnalytics`가 SDK를 시작하지 않는다. ADR 0035에서 act-as 탭이 아무것도 저장하지 않는 것과 같아, super admin의 act-as 사용은 세지 않고 act-as를 나가도 다른 탭이 공유하는 distinct id를 reset하지 않는다.
 - **Accepted values**: `posthogKey`는 문자열, `posthogHost`는 `https:` URL이어야 하고, 다른 값은 없는 것으로 본다.
 - **Script execution**: `posthog-js`는 `posthogHost`에서 script를 받아 WebUI origin에서 실행하고, production CSP의 `'strict-dynamic'`은 어떤 host든 허용한다. 그래서 `domainConfig.analytics`를 쓸 수 있는 권한은 그 domain의 모든 session에서 script를 실행할 수 있는 권한과 같다.
 - **Who sets it**: `analytics`를 고치는 WebUI 화면은 없다. superadmin이 manager의 app config API나 CLI로 domain의 `domainConfig`에 쓴다. `WebUISettingsPage`는 `domainConfig` 쓰기를 raw 문서 위에 만들므로 이 key를 지우지 않는다.
 - **Readable by every user**: `myAppConfigs`는 모든 role에 `domainConfig`를 돌려주므로 domain의 모든 사용자가 key와 host를 읽을 수 있다. PostHog project API key는 쓰기 전용 공개 수집 key라 이를 받아들이고, `analytics`에는 다른 secret을 넣지 않는다.
 - **No secrets in the repository**: 저장소는 공개이므로 어떤 tracked 파일도 실제 key나 host를 기본값·예시로 담지 않는다.
-- **CSP**: `posthog-js`는 event를 `posthogHost`로 보내고, replay와 exception autocapture 확장 script를 같은 host에서 받는다. analytics build를 배포하는 server의 CSP는 `connect-src`에 그 host를 허용해야 하고, `'strict-dynamic'`을 쓰지 않으면 `script-src`에도 허용해야 한다.
+- **CSP**: `posthog-js`는 event를 `posthogHost`로 보내고, replay와 exception autocapture 확장 script를 같은 host에서 받는다. domain이 `analytics`를 설정한 server의 CSP는 `connect-src`에 그 host를 허용해야 하고, `'strict-dynamic'`을 쓰지 않으면 `script-src`에도 허용해야 한다.
 
 ### 3. Import guard
 
@@ -119,19 +114,19 @@ flowchart TD
 
 ## 대안과 기각 사유
 
-- **Runtime flag only**: 모든 build에 SDK를 넣고 설정으로만 켜는 방식은 build를 하나로 유지한다. self-hosted build에 tracking code가 남으므로 기각했다.
+- **Build flag** (`VITE_ANALYTICS_BUILD`, 2026-11-25까지의 결정): flag를 준 build만 analytics code를 담아 기본 build에는 PostHog 흔적이 전혀 없었다. build를 하나 더 만들고 release해야 했고, app config가 이미 domain마다 무엇을 받을지 정하므로 flag를 없앴다.
 - **Build-time key and host**: build 때 읽는 `VITE_POSTHOG_KEY`와 `VITE_POSTHOG_HOST`는 로그인 화면도 수집한다. 그러면 모든 배포와 domain이 build의 project 하나를 같이 쓰고 바꾸려면 다시 build해야 하므로, 2026-11-22에 domain app config로 바꿨다.
 - **`publicConfigByDomain`**: public 문서는 로그인 전에도 읽을 수 있어 로그인 화면을 수집할 수 있다. 결정 단위가 domain이고 domain 자신의 설정은 domain 문서에 있으므로 public 문서는 고르지 않았다.
-- **Static import behind the flag**: `ProductAnalytics`를 정적으로 import하고 JSX만 flag로 감싸는 방식은 코드가 짧다. Rollup이 module을 남길 수 있고 초기 bundle이 커지므로 기각했다.
+- **Static import behind the app config**: `ProductAnalytics`를 정적으로 import하고 render만 app config로 막는 방식은 코드가 짧다. 그러면 모든 배포의 초기 bundle에 `posthog-js`가 들어가므로 기각했다.
 - **Identify by user UUID**: `posthog.identify(user_uuid, { role, domain })`는 기기를 넘나드는 사용자별 분석을 가능하게 한다. account UUID와 domain이 browser를 떠나므로 기각했다.
 - **Bundled SDK extensions**: `posthog-js/dist/module.full.no-external`은 replay와 exception 확장을 bundle에 넣어 외부 script를 받지 않는다. 문서화된 entry가 아니고 chunk가 두 배 이상 커져 기각했다.
 
 ## Consequences
 
-- **Zero trace by default**: 기본 build는 PostHog code와 문자열을 담지 않으므로 기존 배포는 바뀌지 않는다.
-- **No rebuild to configure**: key나 host를 바꾸는 것은 app config 쓰기이고, 다음 로그인이나 page load부터 적용된다. `analytics`가 없는 domain은 analytics build에서도 아무것도 보내지 않는다.
+- **PostHog code in every build**: 모든 build output에 `posthog-js`를 담은 analytics chunk(약 333 KB)와 `posthog` 문자열이 있다. domain이 `analytics`를 설정하지 않은 배포는 이 chunk를 받지 않으므로 사용자가 더 받는 것은 없다.
+- **No rebuild to configure**: key나 host를 바꾸는 것은 app config 쓰기이고, 다음 로그인이나 page load부터 적용된다. `analytics`가 없는 domain은 아무것도 받거나 보내지 않는다.
 - **Login screen not collected**: event는 로그인 뒤에 시작하므로 로그인 화면에서 시작하는 funnel은 측정할 수 없다.
-- **Plugin cost in production**: plugin이 하나라도 붙으면 production에서도 모든 log 호출이 `LogContext`를 만든다. plugin이 없는 기본 build에서 `logging()`의 비용은 이전과 같다.
+- **Plugin cost in production**: plugin이 하나라도 붙으면 production에서도 모든 log 호출이 `LogContext`를 만든다. analytics chunk가 없는 session에는 plugin이 붙지 않으므로 `logging()`의 비용은 이전과 같다.
 - **Duplicate dev console line**: 개발 환경에서는 `BAIErrorBoundary`가 잡은 render error를 React와 `useBAILogger`가 한 번씩 console에 찍는다.
 - **Anonymous users only**: 같은 사람도 browser가 다르면 다른 user로 세고, 기기를 넘나드는 사용자별 funnel은 만들 수 없다. 로그아웃도 distinct id를 새로 만들므로 같은 browser에서 다시 로그인하면 다른 user로 센다. person property와 cohort는 쓸 수 없고, role별 분석은 event property로 한다.
 - **Rendered values can still be captured**: autocapture의 `$el_text`와 `$elements_chain`(text, `href`, `data-row-key` 같은 attribute), error message에는 화면이나 서버 응답에 있는 email, domain, UUID가 실릴 수 있다. `identify`를 없앤 것만으로는 막지 못하므로 별도 조치가 필요하다.
@@ -142,14 +137,14 @@ flowchart TD
 
 - GitHub: #10567.
 - PostHog [JavaScript library config](https://posthog.com/docs/libraries/js/config), [self-host](https://posthog.com/docs/self-host).
-- 결정일: 2026-10-27. 익명 identity로 변경: 2026-11-01. key와 host를 domain app config로 옮김: 2026-11-22.
-- 관련: [ADR 0033](0033-scoped-and-merged-app-config-hooks.ko.md), `DEV_ENVIRONMENT.md`의 "Review overlay in a build (`VITE_REVIEW_OVERLAY_BUILD`)" 절(같은 방식의 build-time opt-in).
+- 결정일: 2026-10-27. 익명 identity로 변경: 2026-11-01. key와 host를 domain app config로 옮김: 2026-11-22. build flag 제거: 2026-11-25.
+- 관련: [ADR 0033](0033-scoped-and-merged-app-config-hooks.ko.md), [ADR 0035](0035-personal-settings-in-the-user-app-config.ko.md).
 
 ## 용어
 
 | 용어            | 뜻                                                                                                                                              |
 | --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
-| analytics build | `VITE_ANALYTICS_BUILD`를 `1` 또는 `true`로 주고 만든 build로, `ProductAnalytics` chunk와 `posthog-js`를 담는다.                                 |
+| analytics chunk | `react/src/components/ProductAnalytics.tsx`와 `posthog-js`를 담은 lazy chunk로, `ProductAnalyticsGate`만 요청한다. |
 | logger plugin   | `useBAILogger`의 `LoggerPlugin` interface를 구현해 `logger.use()`로 붙이는 객체로, 모든 log 호출마다 `beforeLog`·`afterLog`·`onError`를 받는다. |
 | super property  | `posthog.register()`로 등록해 이후 모든 event에 자동으로 붙는 property다.                                                                       |
 | autocapture     | PostHog SDK가 click, form submit 같은 DOM event를 코드 없이 event로 남기는 기능이다.                                                            |

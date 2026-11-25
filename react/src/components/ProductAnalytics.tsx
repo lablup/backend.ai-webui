@@ -2,10 +2,9 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-// Build flag, domainConfig.analytics and privacy defaults: docs/adr/0039-opt-in-posthog-analytics-build.md
+// domainConfig.analytics and privacy defaults: docs/adr/0039-posthog-analytics-behind-the-domain-app-config.md
 import { getActAsTarget } from '../helper/actAs';
 import type { UserRole } from '../helper/userRole';
-import { useMyAppConfig } from '../hooks/useAppConfig';
 import { LogLevel, useBAILogger } from 'backend.ai-ui';
 import posthog, { type CaptureResult, type Properties } from 'posthog-js';
 import { useEffect, useEffectEvent } from 'react';
@@ -92,37 +91,15 @@ const syncUserRoleProperty = () => {
   posthog.register({ role });
 };
 
-type AnalyticsConfig = {
-  posthogKey?: unknown;
-  posthogHost?: unknown;
-};
-
-const isHttpsUrl = (value: unknown): value is string => {
-  if (typeof value !== 'string') return false;
-  try {
-    return new URL(value).protocol === 'https:';
-  } catch {
-    return false;
-  }
-};
-
-const ProductAnalytics: React.FC = () => {
+const ProductAnalytics: React.FC<{ apiKey: string; apiHost: string }> = ({
+  apiKey,
+  apiHost,
+}) => {
   'use memo';
   const { logger } = useBAILogger();
-  const [analyticsConfig] = useMyAppConfig<AnalyticsConfig>(
-    'domainConfig',
-    'analytics',
-  );
-  const apiKey =
-    typeof analyticsConfig?.posthogKey === 'string'
-      ? analyticsConfig.posthogKey
-      : undefined;
-  const apiHost = isHttpsUrl(analyticsConfig?.posthogHost)
-    ? analyticsConfig.posthogHost
-    : undefined;
 
   const start = useEffectEvent(() => {
-    if (isStarted || !apiKey || !apiHost || getActAsTarget()) return;
+    if (isStarted || getActAsTarget()) return;
     isStarted = true;
 
     posthog.init(apiKey, {

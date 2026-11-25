@@ -1,43 +1,39 @@
-# 0039 — Build-time opt-in PostHog analytics
+# 0039 — PostHog analytics behind the domain app config
 
 ## Summary
 
 > Unfamiliar terms are collected in the [Glossary](#glossary) at the end.
 
-- The WebUI can send usage flows (time on each screen, clicks, exits) and errors to PostHog. That code is in the bundle only when the build sets `VITE_ANALYTICS_BUILD=1` (or `true`).
-- A default build without the flag contains neither the analytics component nor `posthog-js`, and `grep -rli posthog react/build` finds nothing.
-- In an [analytics build](#glossary), `ProductAnalytics` calls `posthog.init` only when the signed-in domain's app config `domainConfig.analytics` holds both `posthogKey` and `posthogHost`. The build itself carries no key and no host.
+- The WebUI can send usage flows (time on each screen, clicks, exits) and errors to PostHog. Every build carries that code as a lazily loaded chunk, the [analytics chunk](#glossary); there is no build flag.
+- The chunk is loaded, and `posthog.init` called, only when the signed-in domain's app config `domainConfig.analytics` holds a string `posthogKey` and an `https:` `posthogHost`. A domain without them never downloads the chunk and sends nothing. The build carries no key and no host.
 - The new runtime dependency is `posthog-js` in `react/package.json`, and ESLint `no-restricted-imports` blocks importing it outside `react/src/components/ProductAnalytics.tsx`.
 - `useBAILogger` calls its [logger plugins](#glossary) in production builds too, and the plugin in `ProductAnalytics` sends ERROR logs to PostHog error tracking.
 
 ## Context
 
 - **No usage data**: the WebUI records nothing about whether users get from the session launcher to running an app, or at which step they stop. The team learns of errors only when a user reports them.
-- **Self-hosted customers**: the team ships a WebUI built from the same source to self-hosted and air-gapped customers. Those builds must not contain tracking code at all.
-- **Per-domain choice**: one analytics build can serve several deployments and domains, and each decides on its own whether it is measured and where events go. The manager app config holds per-domain documents that the WebUI reads at sign-in (ADR 0033).
+- **One build for every deployment**: the team ships the same build to SaaS and to self-hosted and air-gapped customers. A second build for analytics doubles what has to be built, tested and released.
+- **Per-domain choice**: one build can serve several deployments and domains, and each decides on its own whether it is measured and where events go. The manager app config holds per-domain documents that the WebUI reads at sign-in (ADR 0033).
 - **Electron**: the Electron app reuses the web bundle and opens the page from `file://app/index.html`. Cookies do not work on that origin.
 - **Silent production logger**: `useBAILogger`'s `Logger` has `enabled` set to `false` in production, and the previous `logging()` returned before calling any plugin. In production a plugin attached with `logger.use()` therefore received no logs.
-- **Precedent**: `VITE_REVIEW_OVERLAY_BUILD` in `react/src/routes.tsx` is a build-time opt-in of the same shape.
 
 ## Diagram
 
 ```mermaid
 flowchart TD
-  env["build env<br/>VITE_ANALYTICS_BUILD"]
-  routes["react/src/routes.tsx<br/>root route element"]
-  lazy["React.lazy chunk<br/>ErrorBoundaryWithNullFallback + Suspense"]
   atom["myAppConfigState<br/>domainConfig.analytics"]
+  gate["ProductAnalyticsGate<br/>react/src/routes.tsx"]
+  lazy["React.lazy chunk<br/>Suspense"]
   pa["ProductAnalytics.tsx<br/>side effect: posthog.init, document listeners, logger.use"]
   sdk["posthog-js<br/>before_send: URL strip, exception dedupe"]
   logger["useBAILogger Logger<br/>plugins always run"]
   boundary["BAIErrorBoundary"]
   doc["document events"]
   server["PostHog server"]
-  env -- "Vite substitutes a literal" --> routes
-  routes -- "only when the flag is the literal '1' or 'true'" --> lazy
-  lazy -- "dynamic import" --> pa
-  atom -- "posthogKey, posthogHost via useMyAppConfig" --> pa
-  pa -- "init only when both are set" --> sdk
+  atom -- "posthogKey, posthogHost via useMyAppConfig" --> gate
+  gate -- "only a string key and an https: host" --> lazy
+  lazy -- "dynamic import, apiKey and apiHost props" --> pa
+  pa -- "init" --> sdk
   boundary -- "error, metadata.context.errorBoundary.componentStack" --> logger
   logger -- "afterLog(context)" --> pa
   doc -- "backend-ai-connected, backend-ai-logout" --> pa
@@ -47,12 +43,11 @@ flowchart TD
 
 ## Decision
 
-### 1. Build flag
+### 1. Lazy chunk behind the app config
 
-- **Literal comparison**: at module scope, `react/src/routes.tsx` creates `React.lazy(() => import('./components/ProductAnalytics'))` only when `import.meta.env.VITE_ANALYTICS_BUILD === '1' || import.meta.env.VITE_ANALYTICS_BUILD === 'true'`, and `null` otherwise. Rollup drops the dynamic import only when Vite has replaced the value with a literal, so the comparison is written inline, without a helper.
-- **Mount point**: the element of the `/` route mounts `ProductAnalytics` inside `ErrorBoundaryWithNullFallback` and `Suspense fallback={null}`. The component waits for the app config (section 2), so screens before sign-in, the login screen included, are not collected.
+- **Gate**: `ProductAnalyticsGate` in `react/src/routes.tsx` reads `domainConfig.analytics` and renders `React.lazy(() => import('./components/ProductAnalytics'))` only when the values pass section 2, passing them as the `apiKey` and `apiHost` props. Otherwise it renders `null`, and the browser never requests the chunk.
+- **Mount point**: the element of the `/` route mounts the gate inside `ErrorBoundaryWithNullFallback`, and the gate wraps the lazy component in `Suspense fallback={null}`. The app config is empty before sign-in, so screens before sign-in, the login screen included, are not collected.
 - **Failure isolation**: `ProductAnalytics` renders `null`. When the chunk fails to load or init throws, `ErrorBoundaryWithNullFallback` empties only that spot.
-- **Neutral file name**: the default build's source maps embed the source of `routes.tsx`. The analytics component's file name and symbol are therefore `ProductAnalytics`, which does not contain `posthog`.
 
 ### 2. Connection settings
 
@@ -61,15 +56,15 @@ flowchart TD
 | `domainConfig.analytics.posthogKey`  | PostHog project API key                             |
 | `domainConfig.analytics.posthogHost` | PostHog API host, for example `https://posthog.example.com` |
 
-- **Read location**: `ProductAnalytics` reads `useMyAppConfig('domainConfig', 'analytics')`, the merged `domainConfig` that sign-in stores in `myAppConfigState` (ADR 0033). It sends no query of its own.
-- **Missing value**: while either value is empty, `ProductAnalytics` does not call `posthog.init`, and the SDK sends no request. This also holds before sign-in and when the app config read failed.
-- **Act-as tab**: an act-as tab (`getActAsTarget()` is set) does not start the SDK either, as an act-as tab saves nothing in ADR 0035, so a super admin's impersonation is not counted and leaving act-as does not reset the distinct id the other tabs share.
+- **Read location**: `ProductAnalyticsGate` reads `useMyAppConfig('domainConfig', 'analytics')`, the merged `domainConfig` that sign-in stores in `myAppConfigState` (ADR 0033). It sends no query of its own.
+- **Missing value**: while either value is missing, the gate renders nothing, so the chunk is not loaded, `posthog.init` is not called and no request is sent. This also holds before sign-in and when the app config read failed.
+- **Act-as tab**: in an act-as tab (`getActAsTarget()` is set) `ProductAnalytics` does not start the SDK, as an act-as tab saves nothing in ADR 0035, so a super admin's impersonation is not counted and leaving act-as does not reset the distinct id the other tabs share.
 - **Accepted values**: `posthogKey` must be a string and `posthogHost` an `https:` URL; any other value counts as missing.
 - **Script execution**: `posthog-js` loads and runs scripts from `posthogHost` in the WebUI origin, and the production CSP's `'strict-dynamic'` allows any host. Write access to `domainConfig.analytics` therefore amounts to running script in every session of the domain.
 - **Who sets it**: no WebUI page edits `analytics`. A superadmin writes it into the domain's `domainConfig` through the manager's app config API or CLI. `WebUISettingsPage` builds its `domainConfig` write on the raw document, so it keeps the key.
 - **Readable by every user**: `myAppConfigs` answers `domainConfig` for every role, so every user of the domain can read the key and the host. A PostHog project API key is a public, write-only ingestion key, so this is acceptable; no other secret goes into `analytics`.
 - **No secrets in the repository**: the repository is public, so no tracked file carries a real key or host as a default or an example.
-- **CSP**: `posthog-js` sends events to `posthogHost` and loads its replay and exception-autocapture extension scripts from the same host. The CSP of the server that hosts an analytics build must allow that host in `connect-src`, and in `script-src` unless the policy uses `'strict-dynamic'`.
+- **CSP**: `posthog-js` sends events to `posthogHost` and loads its replay and exception-autocapture extension scripts from the same host. The CSP of a server whose domains set `analytics` must allow that host in `connect-src`, and in `script-src` unless the policy uses `'strict-dynamic'`.
 
 ### 3. Import guard
 
@@ -119,19 +114,19 @@ flowchart TD
 
 ## Rejected alternatives
 
-- **Runtime flag only**: putting the SDK in every build and turning it on only through config keeps a single build. Self-hosted builds would keep tracking code, so this was rejected.
+- **Build flag** (`VITE_ANALYTICS_BUILD`, the decision until 2026-11-25): only a build that set the flag held the analytics code, so a default build had no PostHog trace at all. It meant a second build to produce and release, and the app config already decides per domain whether anything loads, so the flag was dropped.
 - **Build-time key and host**: `VITE_POSTHOG_KEY` and `VITE_POSTHOG_HOST` read at build time would also cover the login screen. Every deployment and domain would then share the build's one project, and changing it would need a rebuild, so they were replaced by the domain app config on 2026-11-22.
 - **`publicConfigByDomain`**: the public document is readable before sign-in and would cover the login screen. The decision is per domain, and the domain document is the place a domain's own config lives, so the public one was not chosen.
-- **Static import behind the flag**: importing `ProductAnalytics` statically and wrapping only the JSX in the flag is shorter. Rollup may keep the module and the initial bundle grows, so this was rejected.
+- **Static import behind the app config**: importing `ProductAnalytics` statically and gating only its render is shorter. `posthog-js` would then be in the initial bundle of every deployment, so this was rejected.
 - **Identify by user UUID**: `posthog.identify(user_uuid, { role, domain })` would allow per-user analysis across devices. The account UUID and the domain would leave the browser, so this was rejected.
 - **Bundled SDK extensions**: `posthog-js/dist/module.full.no-external` bundles the replay and exception extensions so no external script is loaded. It is not a documented entry and more than doubles the chunk, so it was rejected.
 
 ## Consequences
 
-- **Zero trace by default**: a default build holds no PostHog code or strings, so existing deployments do not change.
-- **No rebuild to configure**: changing the key or the host is an app config write, applied at the next sign-in or page load. A domain without `analytics` sends nothing from an analytics build.
+- **PostHog code in every build**: every build output holds the analytics chunk with `posthog-js` (about 333 KB) and the `posthog` string. A deployment whose domains set no `analytics` never loads it, so its users download nothing extra.
+- **No rebuild to configure**: changing the key or the host is an app config write, applied at the next sign-in or page load. A domain without `analytics` loads and sends nothing.
 - **Login screen not collected**: events start after sign-in, so funnels that begin on the login screen cannot be measured.
-- **Plugin cost in production**: once any plugin is attached, every log call builds a `LogContext` in production too. In a default build without plugins, `logging()` costs what it did before.
+- **Plugin cost in production**: once any plugin is attached, every log call builds a `LogContext` in production too. In a session without the analytics chunk, no plugin is attached and `logging()` costs what it did before.
 - **Duplicate dev console line**: in development, a render error `BAIErrorBoundary` catches is printed to the console once by React and once by `useBAILogger`.
 - **Anonymous users only**: the same person on two browsers counts as two users, and per-user funnels across devices are not possible. Logging out also creates a new distinct id, so signing in again on the same browser counts as another user. Person properties and cohorts are unavailable, and analysis by role uses the event property.
 - **Rendered values can still be captured**: autocapture's `$el_text` and `$elements_chain` (text and attributes such as `href` and `data-row-key`), and error messages can carry an email, a domain or a UUID shown on screen or returned by the server. Dropping `identify` does not prevent this; it needs separate measures.
@@ -142,14 +137,14 @@ flowchart TD
 
 - GitHub: #10567.
 - PostHog [JavaScript library config](https://posthog.com/docs/libraries/js/config), [self-host](https://posthog.com/docs/self-host).
-- Decided 2026-10-27. Anonymous identity: 2026-11-01. Key and host moved to the domain app config: 2026-11-22.
-- Related: [ADR 0033](0033-scoped-and-merged-app-config-hooks.md); the "Review overlay in a build (`VITE_REVIEW_OVERLAY_BUILD`)" section of `DEV_ENVIRONMENT.md` (a build-time opt-in of the same shape).
+- Decided 2026-10-27. Anonymous identity: 2026-11-01. Key and host moved to the domain app config: 2026-11-22. Build flag dropped: 2026-11-25.
+- Related: [ADR 0033](0033-scoped-and-merged-app-config-hooks.md), [ADR 0035](0035-personal-settings-in-the-user-app-config.md).
 
 ## Glossary
 
 | term            | meaning                                                                                                                                                        |
 | --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| analytics build | A build made with `VITE_ANALYTICS_BUILD` set to `1` or `true`. It holds the `ProductAnalytics` chunk and `posthog-js`.                                          |
+| analytics chunk | The lazily loaded chunk of `react/src/components/ProductAnalytics.tsx` and `posthog-js`, requested only by `ProductAnalyticsGate`.                              |
 | logger plugin   | An object implementing `useBAILogger`'s `LoggerPlugin` interface, attached with `logger.use()`. It receives `beforeLog`, `afterLog` and `onError` for every log call. |
 | super property  | A property registered with `posthog.register()` that is attached to every later event.                                                                        |
 | autocapture     | The PostHog SDK feature that records DOM events such as clicks and form submits as events without code.                                                        |
