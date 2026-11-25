@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { MAX_CPU_QUOTA } from './const-vars';
 import { getDefaultLoginConfig, type LoginConfigState } from './loginConfig';
 import * as _ from 'lodash-es';
 
@@ -59,14 +60,18 @@ export interface WebUISizeSetting {
   storedUnit: '' | 'm' | 'g';
   /** The value stored when the toggle is on; no toggle without it. */
   unlimitedValue?: number;
-  /** What the toggle means: the server's limit applies, or the WebUI picks a size. */
-  toggleLabel?: 'ServerLimit' | 'Automatic';
-  units: Array<'m' | 'g' | 't'>;
+  /** What the toggle means: the server's limit applies, the WebUI picks a size, or no cap. */
+  toggleLabel?: 'ServerLimit' | 'Automatic' | 'Unlimited';
+  units: Array<'m' | 'g' | 't' | 'p'>;
   defaultUnit: 'm' | 'g' | 't';
   /** The input's bounds in size notation (`"100g"`). */
   min: string;
   max: string;
 }
+
+/** The keypair resource policy's memory bound (`BAIDynamicUnitInputNumber`'s default max). */
+const MAX_MEMORY_QUOTA = '300p';
+const MAX_MEMORY_QUOTA_GIB = 300 * 1024 * 1024;
 
 /** The agent `live_stat.node` keys `showAgentNetworkStats` turns off. */
 export const AGENT_NETWORK_STAT_KEYS: ReadonlyArray<string> = [
@@ -147,92 +152,94 @@ export const WEBUI_SETTING_DEFINITIONS: ReadonlyArray<WebUISettingDefinition> =
     {
       ...def('maxCPUCoresPerContainer', 'domain', 'number', 'session'),
       min: 1,
-      max: 8192,
+      max: MAX_CPU_QUOTA,
       isInteger: true,
     },
     {
       ...def('maxMemoryPerContainer', 'domain', 'number', 'session'),
       min: 1,
-      max: 16384,
+      max: MAX_MEMORY_QUOTA_GIB,
       unit: 'GiB',
       size: {
         storedUnit: 'g',
-        units: ['g', 't'],
+        units: ['g', 't', 'p'],
         defaultUnit: 'g',
         min: '1g',
-        max: '16t',
+        max: MAX_MEMORY_QUOTA,
       },
     },
     {
       ...def('maxShmPerContainer', 'domain', 'number', 'session'),
       min: 0,
-      max: 16384,
+      max: MAX_MEMORY_QUOTA_GIB,
       unit: 'GiB',
       size: {
         storedUnit: 'g',
-        units: ['m', 'g', 't'],
+        unlimitedValue: 0,
+        toggleLabel: 'Unlimited',
+        units: ['m', 'g', 't', 'p'],
         defaultUnit: 'g',
         min: '1m',
-        max: '16t',
+        max: MAX_MEMORY_QUOTA,
       },
     },
     {
       ...def('maxCUDADevicesPerContainer', 'domain', 'number', 'session'),
       min: 0,
-      max: 64,
+      max: MAX_CPU_QUOTA,
       isInteger: true,
     },
     {
       ...def('maxCUDASharesPerContainer', 'domain', 'number', 'session'),
       min: 0,
-      max: 64,
+      max: MAX_CPU_QUOTA,
     },
     {
       ...def('maxROCMDevicesPerContainer', 'domain', 'number', 'session'),
       min: 0,
-      max: 64,
+      max: MAX_CPU_QUOTA,
       isInteger: true,
     },
     {
       ...def('maxTPUDevicesPerContainer', 'domain', 'number', 'session'),
       min: 0,
-      max: 64,
+      max: MAX_CPU_QUOTA,
       isInteger: true,
     },
     {
       ...def('maxIPUDevicesPerContainer', 'domain', 'number', 'session'),
       min: 0,
-      max: 64,
+      max: MAX_CPU_QUOTA,
       isInteger: true,
     },
     {
       ...def('maxATOMDevicesPerContainer', 'domain', 'number', 'session'),
       min: 0,
-      max: 64,
+      max: MAX_CPU_QUOTA,
       isInteger: true,
     },
     {
       ...def('maxATOMPLUSDevicesPerContainer', 'domain', 'number', 'session'),
       min: 0,
-      max: 64,
+      max: MAX_CPU_QUOTA,
       isInteger: true,
     },
     {
       ...def('maxGaudi2DevicesPerContainer', 'domain', 'number', 'session'),
       min: 0,
-      max: 64,
+      max: MAX_CPU_QUOTA,
       isInteger: true,
     },
     {
       ...def('maxWarboyDevicesPerContainer', 'domain', 'number', 'session'),
       min: 0,
-      max: 64,
+      max: MAX_CPU_QUOTA,
       isInteger: true,
     },
     {
       ...def('maxRNGDDevicesPerContainer', 'domain', 'number', 'session'),
       min: 0,
-      max: 64,
+      max: MAX_CPU_QUOTA,
       isInteger: true,
     },
     {
@@ -243,7 +250,7 @@ export const WEBUI_SETTING_DEFINITIONS: ReadonlyArray<WebUISettingDefinition> =
         'session',
       ),
       min: 0,
-      max: 64,
+      max: MAX_CPU_QUOTA,
       isInteger: true,
     },
     def('showNonInstalledImages', 'domain', 'boolean', 'session'),

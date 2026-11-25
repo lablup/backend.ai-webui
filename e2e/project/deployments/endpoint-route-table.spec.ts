@@ -688,27 +688,6 @@ test.describe(
       ).toBeVisible();
     });
 
-    // TODO(needs-backend): Re-enable when BAIRouteNodes exposes the Traffic Ratio
-    // column. It is currently commented out in BAIRouteNodes.tsx pending backend
-    // support for per-route traffic ratio.
-    test.fixme('7.2 Admin can sort routes by Traffic Ratio column', async ({
-      page,
-      request,
-    }) => {
-      await setupAndNavigateToDetail(page, request);
-
-      const card = getRoutesInfoCard(page);
-
-      const trafficRatioHeader = card.getByRole('columnheader', {
-        name: 'Traffic Ratio',
-      });
-      await trafficRatioHeader.click();
-
-      await expect(
-        trafficRatioHeader.locator('.ant-table-column-sorter'),
-      ).toBeVisible();
-    });
-
     test('7.3 Session ID column header does not have a sorter', async ({
       page,
       request,

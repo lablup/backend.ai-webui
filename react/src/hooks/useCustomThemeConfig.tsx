@@ -2,14 +2,15 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { getActAsTarget } from '../helper/actAs';
 import {
   BAIAppearanceConfig,
   getCustomTheme,
   subscribeCustomTheme,
 } from '../helper/customThemeConfig';
 import { useBAISettingUserState } from './useBAISetting';
-import { useLocalStorageGlobalState } from './useLocalStorageGlobalState';
-import { useSessionStorageState } from 'backend.ai-ui';
+import { createGlobalStorageStateHook } from './useLocalStorageGlobalState';
+import { createUseStorageState, useSessionStorageState } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { useEffect, useSyncExternalStore } from 'react';
 
@@ -22,12 +23,20 @@ import { useEffect, useSyncExternalStore } from 'react';
 export const DEFAULT_THEME_FAMILY = 'default';
 
 /**
- * localStorage key of the selected family. Mirrors `themeMode` (NOT under
- * the `.user.` namespace) because the FOUC bootstrap in `index.html` reads it
- * before paint. The authoritative store is the server-side
+ * Storage key of the selected family (localStorage; sessionStorage in an act-as
+ * tab), NOT under the `.user.` namespace because the FOUC bootstrap in
+ * `index.html` reads it before paint. The authoritative store is the server-side
  * `userConfig.themeFamily`; this key is its FOUC mirror, synced after login.
  */
 export const THEME_FAMILY_STORAGE_KEY = 'backendaiwebui.settings.themeFamily';
+
+// An act-as tab mirrors the target's family in its own sessionStorage: localStorage is the
+// super admin's. `index.html` reads the same key from the same place.
+const useThemeFamilyGlobalState = createGlobalStorageStateHook(
+  createUseStorageState(() =>
+    getActAsTarget() ? sessionStorage : localStorage,
+  ),
+);
 
 /**
  * Returns the raw, operator-provided appearance document: the current
@@ -123,7 +132,7 @@ export type UseCustomThemeConfigResult = {
 export const useCustomThemeConfig = (): UseCustomThemeConfigResult => {
   'use memo';
   const rawThemeConfig = useRawCustomThemeConfig();
-  const [storedFamily, setStoredFamily] = useLocalStorageGlobalState<
+  const [storedFamily, setStoredFamily] = useThemeFamilyGlobalState<
     string | undefined
   >(THEME_FAMILY_STORAGE_KEY, undefined);
   const [isThemePreviewMode] = useSessionStorageState('isThemePreviewMode', {

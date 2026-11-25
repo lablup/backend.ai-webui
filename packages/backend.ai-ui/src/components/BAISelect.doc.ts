@@ -197,6 +197,13 @@ export const docs = {
             'Badges shown before "+N". Only meaningful with triggerDisplay="badges".',
         },
         {
+          name: 'showSelectedOptionsTooltip',
+          type: 'boolean',
+          description:
+            'Multiple/tags mode only: passed to ui-common MultiSelector, which lists every selected label in a tooltip on the trigger. Pass it where the trigger cuts the selection off and the user needs to read all of it.',
+          default: 'false',
+        },
+        {
           name: 'optionLabelProp',
           type: 'string',
           description:

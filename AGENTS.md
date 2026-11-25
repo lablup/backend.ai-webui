@@ -106,6 +106,13 @@ read `package.json` / `pnpm-workspace.yaml` / `ls` rather than expecting a list 
 - Architecture-level decisions live in `docs/adr/`, indexed by `docs/ARCHITECTURE.md`. A decision on `main` is in force: read the ADRs covering an area before changing it, and never implement against one.
 - A change that makes a new decision other code must follow records an ADR in the same PR and proceeds; the PR is where a human reviews it. A reversal of an ADR in force is flagged to a human before landing.
 
+### Unit Tests (detail: `docs/adr/0036-component-unit-test-conventions.md`)
+
+- Applies to Vitest unit tests of components and hooks under `react/src` and `packages/backend.ai-ui/src`.
+- Mock every API and network boundary, for example Relay through `createMockEnvironment`, the Backend.AI client through a `vi.mock` of the hook that returns it, `fetch` through `vi.stubGlobal`; the ADR lists the other paths. No unit test reaches a manager: the setup files make an unstubbed `fetch` throw.
+- Hooks beside the client hook in `react/src/hooks` (`useCurrentDomainValue`, …) call the real client hook: replace each one the component calls in the same `vi.mock`.
+- Test what the component is meant to do, with props its type allows. Do not add cases for misuse (forbidden props, `@ts-expect-error` input, missing providers); add one only with the fix for a bug it caused.
+
 ### On-Demand Skills (loaded only when needed)
 
 - **Storybook**: `storybook-patterns` skill (fw plugin; CSF 3, meta config, story patterns, checklists)
@@ -158,7 +165,7 @@ When reviewing PRs (especially agent-generated ones), check:
 - No hardcoded strings, magic numbers, or debug artifacts left behind
 
 <!-- UI-COMMON:START -->
-@lablup/ui-common v0.2.0-alpha.21.canary-20261111033103-c445de1bd · Astryx v0.7.11 · 174 components
+@lablup/ui-common v0.2.0-alpha.21.canary-20261124060612-1eb7ebf38 · Astryx v0.7.11 · 174 components
 CLI: run every command as `pnpm exec ui-common <cmd>` (shown below as `ui-common ...`).
 
 SETUP (once, first in your entry stylesheet) — without these, components render unstyled:
@@ -191,7 +198,7 @@ RULES:
   docs authoring     build an integration package, and every field it holds
   upgrade --from <old version> --apply   run after a dependency bump
 
-UI-COMMON (@lablup/ui-common v0.2.0-alpha.21.canary-20261111033103-c445de1bd wraps Astryx v0.7.11):
+UI-COMMON (@lablup/ui-common v0.2.0-alpha.21.canary-20261124060612-1eb7ebf38 wraps Astryx v0.7.11):
 - Import only from @lablup/ui-common: the root, or the same subpath Astryx uses (@lablup/ui-common/Button, /theme/tokens.stylex, /lab). Never import @astryxdesign/* directly.
 - Layers: declare `@layer reset, theme, base, astryx-base, astryx-theme, ui-common, components, utilities;` once, first, in the entry stylesheet. ui-common's styles sit in `ui-common`; yours go in `components` / `utilities`.
 - Use AlertModal (@lablup/ui-common/AlertModal), not AlertDialog: ui-common hides AlertDialog.
@@ -205,7 +212,7 @@ UI-COMMON (@lablup/ui-common v0.2.0-alpha.21.canary-20261111033103-c445de1bd wra
 - Form controls (CheckboxInput, CheckboxList, DateInput, DateRangeInput, DateTimeInput, FileInput, MultiSelector, NumberInput, RadioList, SegmentedControl, Selector, Slider, Switch, TextArea, TextInput, TimeInput, Tokenizer, Typeahead) are ui-common's Form.Item wrappers at Astryx's import paths: no label, description, isRequired or status message props. Use them inside Form.Item, which owns label, extra, rules and help; `status` is "error" | "warning" for the border only.
 - Theme: <Theme theme={lablupTheme}> with lablupTheme from @lablup/ui-common/theme/lablup/built, plus @lablup/ui-common/theme/lablup/theme.css. A product palette is its own defineTheme over lablupTheme.
 - Strings: every built-in string is a prop; defaults come from ui-common's catalog. Pass uiCommonMessages from @lablup/ui-common/i18n-catalog to Astryx's InternationalizationProvider. Never a product i18n runtime.
-- ui-common's own components: AlertModal, Board, BoardItemTitle, BooleanToken, BulkEditFormItem, BulkErrorModal, ColorPicker, ConfirmPopover, CountBadge, CountdownBorder, DataGrid, DateTimeRangeInput, TimeRangeInput, DeleteConfirmModal, DigitPopIn, DividedRow, DoubleBadge, DoubleToken, ErrorState, Form, IconWithTooltip, ImageWithFallback, ListBanner, Modal, NotificationItem, NotificationStack, OverlayScrollbar, PageHeader, PageLayout, PagedSelector, ProgressWithLabel, SelectionLabel, SkeletonCard, SkeletonChart, SkeletonRow, SkeletonText, SmoothHeight, StatCard, Statistic, StepNumberInput, TagsInput, TextHighlighter, TokenList, TokenRow, UncontrolledInput, UnitGrid. `pnpm exec ui-common docs ui-common` explains them.
+- ui-common's own components: AlertModal, Board, BoardItemTitle, BooleanToken, BulkEditFormItem, BulkErrorModal, ColorPicker, ConfirmPopover, CountBadge, CountdownBorder, DataGrid, DateTimeRangeInput, TimeRangeInput, DeleteConfirmModal, DigitPopIn, DividedRow, DoubleBadge, DoubleToken, ErrorState, Form, IconWithTooltip, ImageWithFallback, ListBanner, Modal, NotificationItem, NotificationStack, OverlayScrollbar, PageHeader, PageLayout, PagedSelector, PasswordInput, ProgressWithLabel, SelectionLabel, SkeletonCard, SkeletonChart, SkeletonRow, SkeletonText, SmoothHeight, StatCard, Statistic, StepNumberInput, TagsInput, TextHighlighter, TokenList, TokenRow, UncontrolledInput, UnitGrid. `pnpm exec ui-common docs ui-common` explains them.
 - Templates are ui-common's own: create-modal, dashboard-board, detail-drawer, info-modal, list-page, list-toolbar, settings-page, tabbed-page. They import only @lablup/ui-common, react and lucide-react. Astryx's templates are not offered (they import @astryxdesign/* directly).
 - The `ui-common` bin is @lablup/ui-common-cli, a devDependency pinned to the same version as @lablup/ui-common; bump both together. Without it installed, `pnpm dlx @lablup/ui-common-cli@next <cmd>` (or `npx @lablup/ui-common-cli@next <cmd>`); drop `@next` once 0.2.0 is published.
 - After bumping @lablup/ui-common and @lablup/ui-common-cli: `pnpm exec ui-common upgrade --from <old version>`, then read ui-common-upgrade-report.md.

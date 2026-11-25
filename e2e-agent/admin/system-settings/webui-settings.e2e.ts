@@ -360,3 +360,17 @@ for (const enabled of [true, false]) {
     },
   );
 }
+
+test(
+  "maxShmPerContainer from the domain document caps the launcher shared memory",
+  draft,
+  async ({ app, agent }) => {
+    await app.open("/admin/system-settings");
+    await agent.act(
+      'Turn on "Custom resource allocation", set "Maximum shared memory per session" to 1 and press Enter',
+    );
+    await agent.act(
+      "Open the session launcher, choose a custom allocation with 4 GiB memory, turn off automatic shared memory and read the largest Shared Memory value",
+    );
+  },
+);

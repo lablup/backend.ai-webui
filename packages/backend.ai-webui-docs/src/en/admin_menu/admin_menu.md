@@ -16,7 +16,7 @@ Superadmins land on the administration pages right after logging in, and move be
 
 ## Dashboard
 
-Superadmins have a **Dashboard** entry in the administration sidebar, showing a board of system-wide cards: **Session Status**, **Pending Sessions and Reasons**, **Session Launches**, **Agents**, **Agent Statistics**, **Deployments**, **Audit Log: Top Failure Causes**, **Failures by Entity Type**, **Audit Log**, **Total Resources in Resource Group**, **Sessions Created**, and **Folders by Usage Mode**. More cards, such as **Scheduling Failures**, **Resource Policies**, **Failed sign-ins**, **Container Registries**, and **Sessions by Status**, can be added from the edit sidebar.
+Superadmins have a **Dashboard** entry in the administration sidebar, showing a board of system-wide cards: **Session Status**, **Pending Sessions and Reasons**, **Session Launches**, **Agents**, **Agent Statistics**, **Deployments**, **Audit Log: Top Failure Causes**, **Failures by Entity Type**, **Audit Log**, **Total Resources in Resource Group**, **Sessions Created**, and **Folders by Usage Mode**. More cards, such as **Scheduling Failures**, **Resource Policies**, **Failed sign-ins**, **Container Registries**, **Sessions by Status**, and **Resource Allocation by Project**, can be added from the edit sidebar.
 
 Boards, card settings, and the refresh control work the same way as on the user [Dashboard](#dashboard).
 
@@ -1187,7 +1187,6 @@ After selecting a domain, the Project step displays a table of projects with the
 column structure as the Domain step. Click a project name to drill into the User step.
 
 ![](../images/fair_share_project_page.png)
-<!-- TODO(screenshot): refresh /scheduler (Fair Share Setting, Project step) — capture must show the Status column. Not recaptured on 2026-09-15: the capture backend currently lists no project fair share rows for the default domain, and replacing the populated image with an empty table would be a regression. -->
 
 The same bulk operations (Usage Graph and Bulk Edit) are available when rows are selected.
 
@@ -1791,9 +1790,9 @@ everyone on the server. The page has two tabs: **System Settings** and **Configu
 
 On the **System Settings** tab, superadmins set the options the WebUI offers to every user in
 the domain, such as the available sign-in options, session creation options, and sidebar menus.
-Click **Apply** to save the changed values; **Reset** deletes every value saved for the domain,
-returning each setting to its default. **JSON Config** shows the current settings as JSON, and
-can export them to a file or import one.
+A value you change is saved right away and applies to every user; **Reset** deletes every value
+saved for the domain, returning each setting to its default. **JSON Config** shows the current
+settings as JSON, and can export them to a file or import one.
 
 ![](../images/system_settings_page.png)
 
@@ -2029,7 +2028,6 @@ activate, and purge them. Each row also carries a shortcut for granting Project 
 
 The list excludes personal projects by default; remove the pre-applied **Type** filter to include them.
 
-<!-- TODO(screenshot): /project (Admin Settings > Projects) - recapture the default view showing the pre-applied Type filter and no personal projects; the capture backend runs manager 26.9.0-alpha, where the `group-nodes-type-filter` flag is off and the old unfiltered list is rendered. -->
 ![](../images/projects_page.png)
 
 The **Active** and **Inactive** buttons above the list choose which projects are listed, and the property
@@ -2107,6 +2105,7 @@ The diagnostics are organized into the following collapsible sections, each show
 - **Storage Proxy**: Checks the storage volume list together with the storage proxy's reachability and usage metrics.
 - **Endpoint Connectivity**: Validates that the API endpoint is reachable and that a connection can be established.
 - **Web Server Configuration**: Validates the web server settings — the values in **System Settings** and the remaining `config.toml` entries — including URL formatting, SSL/protocol consistency, and connection mode.
+- **App Config**: Checks that the app config entries registered on the server match what the WebUI expects. **Repair App Config** registers the missing entries, corrects wrong ranks, and purges unexpected entries together with the settings saved under them.
 
 When **Show only failed items** is enabled and every check passes, the page does not go blank: it shows a
 placeholder reading `No failed items. All diagnostics passed.`, so a clean result is unmistakable.

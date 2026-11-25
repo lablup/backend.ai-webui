@@ -7,16 +7,10 @@
  but not the CSS top layer (tours paint over notices), and stopping below the
  app header (FR-3829), whose height the host bridges as
  `--webui-header-height` (`MainLayout` -> `CSSTokenVariables`).
-`--bai-notification-stack-inset-bottom` lifts the stack over a host control
-pinned to the bottom-right corner (the WebUI Assistant button).
 */
 @layer components {
   .bai-notification-stack {
     --notification-stack-z: var(--bai-z-notification);
-    --notification-stack-inset-top: calc(
-      var(--webui-header-height, 60px) +
-        var(--bai-notification-stack-inset-bottom, 0px)
-    );
-    inset-block-end: var(--bai-notification-stack-inset-bottom, 0px);
+    --notification-stack-inset-top: var(--webui-header-height, 60px);
   }
 }

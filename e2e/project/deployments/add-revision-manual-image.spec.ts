@@ -1,21 +1,12 @@
-// FR-3278: Regression test for adding a model-serving revision using a
-// manually entered image name.
-//
-// Bug: In the "Add Revision" modal (Advanced/Custom mode), typing an image
-// reference into the "Image Name (Manual)" field raised `Image is required.`
-// and blocked submission. Root cause was entirely client-side: the revision
-// mutation references an image only by id (`ImageInput.id`), the manual field
-// populates only a string, and the modal required `environments.image.id`. The
-// fix resolves the manual reference to a registered image id via the
-// `image(reference:)` query before committing.
-//
-// These tests drive the real flow against a live backend on an existing
-// deployment that already has a current revision:
-//   1. a registered image typed manually is accepted and the mutation is
-//      dispatched with the resolved image id;
-//   2. an unregistered manual image name is rejected with a not-found error
-//      shown on the "Image Name (Manual)" field (no mutation dispatched).
-import { createAdminApiContext, gqlAdmin } from '../../utils/admin-api';
+// FR-3278: adding a revision with a manually entered image name must resolve
+// it to a registered image id instead of failing with "Image is required.".
+import {
+  createAdminApiContext,
+  createDeploymentWithRevisionViaApi,
+  createModelVFolderViaApi,
+  deleteDeploymentViaApi,
+  purgeVFoldersByNameViaApi,
+} from '../../utils/admin-api';
 import { cleanupVFolderSafely } from '../../utils/cleanup-util';
 import {
   cleanupDeploymentFixtures,
@@ -25,12 +16,18 @@ import {
   provisionDeploymentModelFolder,
   selectRevisionModalOption,
 } from '../../utils/deployment-fixtures';
+import {
+  getE2EDomainName,
+  getE2EProjectName,
+  getE2EVFolderHost,
+} from '../../utils/e2e-scope';
 import { skipUnlessManagerVersion } from '../../utils/feature-gate-util';
 import {
   createVFolderAndVerify,
   loginAsAdmin,
   modifyConfigToml,
   navigateTo,
+  userInfo,
 } from '../../utils/test-util';
 import { getFormItemControlByLabel } from '../../utils/test-util-antd';
 import {
@@ -46,74 +43,6 @@ const UUID_RE =
 
 // A reference that does not match any registered image on the backend.
 const UNREGISTERED_IMAGE = 'cr.backend.ai/nonexistent/nope-fr3278:0.0.0@x86_64';
-
-interface ServableDeployment {
-  /** Decoded local UUID used by the `/deployments/:id` route. */
-  deploymentId: string;
-  /**
-   * The current revision's own image, formatted as
-   * `registry/namespace:tag@architecture`. We re-enter this exact image via the
-   * manual field so the rest of the (already valid) revision config is reused
-   * unchanged — isolating the manual-image entry as the only variable.
-   */
-  imageReference: string;
-}
-
-/**
- * Finds a deployment whose current revision can be reused as a starting point.
- * Prefers a READY deployment, falling back to any deployment that has a current
- * revision. Returns null when the backend has none.
- */
-async function findServableDeployment(): Promise<ServableDeployment | null> {
-  type Node = {
-    id: string;
-    metadata: { status: string };
-    currentRevision: {
-      imageV2: { identity: { canonicalName: string; architecture?: string } };
-    } | null;
-  };
-  const api = await createAdminApiContext();
-  try {
-    const data = await gqlAdmin<{
-      myDeployments: { edges: Array<{ node: Node }> };
-    }>(
-      api,
-      `query {
-        myDeployments(limit: 200, offset: 0) {
-          edges {
-            node {
-              id
-              metadata { status }
-              currentRevision {
-                imageV2 { identity { canonicalName architecture } }
-              }
-            }
-          }
-        }
-      }`,
-    );
-    const nodes = (data?.myDeployments?.edges ?? [])
-      .map((e) => e.node)
-      .filter((n) => n?.currentRevision?.imageV2?.identity?.canonicalName);
-    const node = nodes.find((n) => n.metadata.status === 'READY') ?? nodes[0];
-    if (!node) return null;
-
-    const { canonicalName, architecture } =
-      node.currentRevision!.imageV2.identity;
-    // Global id is base64 of "ModelDeployment:<uuid>"; the detail route uses
-    // the decoded local UUID.
-    const deploymentId =
-      Buffer.from(node.id, 'base64').toString('utf8').split(':')[1] ?? '';
-    return {
-      deploymentId,
-      imageReference: architecture
-        ? `${canonicalName}@${architecture}`
-        : canonicalName,
-    };
-  } finally {
-    await api.dispose();
-  }
-}
 
 /**
  * Opens the Add Revision modal on a deployment, switches it to Advanced mode by
@@ -138,22 +67,25 @@ async function openAdvancedAddRevisionWithManualImage(
     .first()
     .click();
 
-  const modal = page.locator('.ant-modal');
-  await modal.waitFor({ state: 'visible' });
+  const modal = page.getByRole('dialog', { name: /Add Revision/ });
+  await expect(modal).toBeVisible({ timeout: 20_000 });
 
-  // Load the current revision as a starting point: switches to Advanced mode and
-  // prefills every required field. Wait for the "loaded" toast so the async
-  // prefill has been applied.
+  // Switches to Advanced mode and prefills every required field.
   await modal.getByRole('button', { name: 'Load current revision' }).click();
   await expect(
     page.getByText('Current revision configuration loaded'),
   ).toBeVisible({ timeout: 15_000 });
 
-  // The resource section (`ResourceAllocationFormItems`) loads its presets under
-  // a Suspense boundary; its `resource.*` / cluster fields only register once it
-  // mounts. Wait for the CPU field to appear with the prefilled value so the
-  // submitted form actually carries the resource configuration.
-  const cpuSpin = modal.getByRole('spinbutton').first();
+  // The resource fields mount under Suspense; wait for the prefilled CPU value
+  // so the submitted form carries the resource configuration.
+  const cpuSpin = modal
+    .locator('.uic-form-item')
+    .filter({
+      has: page.locator('.uic-form-item__label', { hasText: /^CPU$/ }),
+    })
+    .locator('.uic-form-item__control-input')
+    .getByRole('spinbutton')
+    .first();
   await expect(cpuSpin).toBeVisible({ timeout: 30_000 });
   await expect(cpuSpin).toHaveValue(/\d/, { timeout: 30_000 });
 
@@ -171,87 +103,130 @@ async function openAdvancedAddRevisionWithManualImage(
   return { modal, manualImageInput };
 }
 
-test.describe('Model Serving — Add Revision with manual image name (FR-3278)', () => {
-  test('a manually entered image is accepted and submitted as a resolved image', async ({
-    page,
-    request,
-  }) => {
-    const servable = await findServableDeployment();
-    test.skip(
-      !servable,
-      'No deployment with a current revision is available on this backend',
-    );
-    const { deploymentId, imageReference } = servable!;
+test.describe(
+  'Model Serving — Add Revision with manual image name (FR-3278)',
+  { tag: ['@serving', '@deploy', '@functional', '@regression'] },
+  () => {
+    // A zero-replica `e2e-gh11213-*` deployment with a current revision, so
+    // "Load current revision" has something to prefill and nothing is scheduled.
+    let deployment: { id: string; imageReference: string } | undefined;
+    let deploymentId: string | undefined;
+    let folderName: string | undefined;
 
-    const { modal, manualImageInput } =
-      await openAdvancedAddRevisionWithManualImage(page, request, deploymentId);
+    test.beforeAll(async () => {
+      test.setTimeout(180_000);
+      const api = await createAdminApiContext();
+      try {
+        const suffix = `${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
+        folderName = `e2e-gh11213-model-${suffix}`;
+        const modelFolderId = await createModelVFolderViaApi(
+          api,
+          folderName,
+          await getE2EVFolderHost(userInfo.admin),
+        );
+        deployment = await createDeploymentWithRevisionViaApi(api, {
+          name: `e2e-gh11213-manual-image-${suffix}`,
+          domainName: await getE2EDomainName(api),
+          projectName: await getE2EProjectName(api),
+          modelFolderId,
+          onCreated: (id) => (deploymentId = id),
+        });
+      } finally {
+        await api.dispose();
+      }
+    });
 
-    // Replace the dropdown-selected image with a manually typed reference.
-    // Typing into the manual field clears the dropdown image selection, so the
-    // only image the form carries is the manual string — the exact scenario
-    // that used to fail with "Image is required.".
-    await manualImageInput.fill(imageReference);
+    test.afterAll(async () => {
+      if (deploymentId) {
+        const api = await createAdminApiContext();
+        try {
+          if (!(await deleteDeploymentViaApi(api, deploymentId))) {
+            throw new Error(`Could not delete deployment ${deploymentId}`);
+          }
+        } finally {
+          await api.dispose();
+        }
+      }
+      // The soft-deleted deployment can hold the mount for a moment; retry.
+      if (folderName) {
+        await expect(() => purgeVFoldersByNameViaApi([folderName!])).toPass({
+          timeout: 60_000,
+        });
+      }
+    });
 
-    // Submitting must dispatch the revision mutation carrying an image id
-    // resolved from the manual reference — proving the manual entry is treated
-    // as a real image rather than being blocked at validation.
-    const addRevisionRequest = page.waitForRequest(
-      (req) =>
-        req.url().includes('/admin/gql') &&
-        req.method() === 'POST' &&
-        (req.postData() ?? '').includes('addModelRevision'),
-      { timeout: 30_000 },
-    );
-    await modal
-      .getByRole('button', { name: 'Add Revision', exact: true })
-      .click();
+    test('a manually entered image is accepted and submitted as a resolved image', async ({
+      page,
+      request,
+    }) => {
+      const { id, imageReference } = deployment!;
+      const { modal, manualImageInput } =
+        await openAdvancedAddRevisionWithManualImage(page, request, id);
 
-    // The manual image never trips the false "Image is required." validation.
-    await expect(modal.getByText('Image is required.')).toHaveCount(0);
+      // Replace the dropdown-selected image with a manually typed reference.
+      // Typing into the manual field clears the dropdown image selection, so the
+      // only image the form carries is the manual string — the exact scenario
+      // that used to fail with "Image is required.".
+      await manualImageInput.fill(imageReference);
 
-    // The dispatched mutation carries a resolved image id (a real UUID).
-    const req = await addRevisionRequest;
-    const sentImageId = JSON.parse(req.postData() ?? '{}')?.variables?.input
-      ?.image?.id;
-    expect(
-      sentImageId,
-      'addModelRevision must carry a resolved image id',
-    ).toMatch(UUID_RE);
-  });
+      // Submitting must dispatch the revision mutation carrying an image id
+      // resolved from the manual reference — proving the manual entry is treated
+      // as a real image rather than being blocked at validation.
+      const addRevisionRequest = page.waitForRequest(
+        (req) =>
+          req.url().includes('/admin/gql') &&
+          req.method() === 'POST' &&
+          (req.postData() ?? '').includes('addModelRevision'),
+        { timeout: 30_000 },
+      );
+      await modal
+        .getByRole('button', { name: 'Add Revision', exact: true })
+        .click();
 
-  test('an unregistered manual image name shows a not-found error on the manual field', async ({
-    page,
-    request,
-  }) => {
-    const servable = await findServableDeployment();
-    test.skip(
-      !servable,
-      'No deployment with a current revision is available on this backend',
-    );
-    const { deploymentId } = servable!;
+      // The manual image never trips the false "Image is required." validation.
+      await expect(modal.getByText('Image is required.')).toHaveCount(0);
 
-    const { modal, manualImageInput } =
-      await openAdvancedAddRevisionWithManualImage(page, request, deploymentId);
+      // The dispatched mutation carries a resolved image id (a real UUID).
+      const req = await addRevisionRequest;
+      const sentImageId = JSON.parse(req.postData() ?? '{}')?.variables?.input
+        ?.image?.id;
+      expect(
+        sentImageId,
+        'addModelRevision must carry a resolved image id',
+      ).toMatch(UUID_RE);
+    });
 
-    await manualImageInput.fill(UNREGISTERED_IMAGE);
-    await modal
-      .getByRole('button', { name: 'Add Revision', exact: true })
-      .click();
+    test('an unregistered manual image name shows a not-found error on the manual field', async ({
+      page,
+      request,
+    }) => {
+      const { modal, manualImageInput } =
+        await openAdvancedAddRevisionWithManualImage(
+          page,
+          request,
+          deployment!.id,
+        );
 
-    // The not-found error is surfaced on the "Image Name (Manual)" form item
-    // (not the version dropdown, and not a generic toast): the manual field's
-    // Form.Item shows the error in its own explain-error slot.
-    const manualFormItem = modal
-      .locator('.uic-form-item')
-      .filter({ hasText: 'Image Name (Manual)' });
-    await expect(
-      manualFormItem.locator('.uic-form-item__explain-error'),
-    ).toContainText('could not be found', { timeout: 15_000 });
+      await manualImageInput.fill(UNREGISTERED_IMAGE);
+      await modal
+        .getByRole('button', { name: 'Add Revision', exact: true })
+        .click();
 
-    // No revision is created for an unresolved image.
-    await expect(page.getByText('Revision has been added.')).toHaveCount(0);
-  });
-});
+      // The not-found error is surfaced on the "Image Name (Manual)" form item
+      // (not the version dropdown, and not a generic toast): the manual field's
+      // Form.Item shows the error in its own explain-error slot.
+      const manualFormItem = modal
+        .locator('.uic-form-item')
+        .filter({ hasText: 'Image Name (Manual)' });
+      await expect(
+        manualFormItem.locator('.uic-form-item__explain-error'),
+      ).toContainText('could not be found', { timeout: 15_000 });
+
+      // No revision is created for an unresolved image.
+      await expect(page.getByText('Revision has been added.')).toHaveCount(0);
+    });
+  },
+);
 
 // #10038: the Advanced Mode "Additional Mounts" field is a paged folder select
 // (BAIVFolderMountConfigInput) instead of the old VFolderTable. A real revision
