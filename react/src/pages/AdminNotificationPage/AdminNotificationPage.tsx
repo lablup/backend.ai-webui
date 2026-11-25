@@ -25,6 +25,7 @@ const AdminNotificationPage: React.FC = () => {
         {
           key: 'channels',
           label: t('externalNotification.NotificationChannels'),
+          tooltip: t('externalNotification.ChannelsDescription'),
         },
       ]}
     >

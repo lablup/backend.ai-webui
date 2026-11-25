@@ -19,7 +19,6 @@ import NotificationChannelSettingModal from './NotificationChannelSettingModal';
 import NotificationChannelTestModal from './NotificationChannelTestModal';
 import { Token } from '@lablup/ui-common/Token';
 import {
-  BAIAlert,
   BAIButton,
   BAIDeleteConfirmModal,
   BAIFetchKeyButton,
@@ -293,10 +292,6 @@ const NotificationChannelList: React.FC = () => {
 
   return (
     <BAIFlex direction="column" align="stretch" gap="sm">
-      <BAIAlert
-        type="info"
-        description={t('externalNotification.ChannelsDescription')}
-      />
       <BAIFlex justify="between" align="start" wrap="wrap" gap="sm">
         <BAIGraphQLPropertyFilter<GraphQLFilter>
           style={{ flex: 1 }}
