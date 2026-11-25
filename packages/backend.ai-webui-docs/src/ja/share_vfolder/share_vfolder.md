@@ -35,7 +35,6 @@ navTitle: ストレージフォルダの共有
 フォルダはプロジェクト全体に共有することもできます。**プロジェクトに共有**を選択し、プロジェクトを選んで**共有権限**を設定して**招待**をクリックすると、プロジェクトのメンバーはフォルダの**デフォルトのマウント権限**でそのフォルダをマウントします。
 
 ![=720px](../images/send_vfolder_invitation.png)
-<!-- TODO(screenshot): /data -> Share Folder modal of an owned folder - the Invite User section with the Share with user / Share with project control. Not captured: the capture backend was unreachable this run. -->
 
 ユーザーBのアカウントに切り替え、データページに移動します。応答待ちの招待がある場合、フォルダリスト上部の右側に**保留中の招待**リンクが表示され、保留中の招待の件数が表示されます。
 
