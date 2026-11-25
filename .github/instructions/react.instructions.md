@@ -167,11 +167,10 @@ interfaces, enum members.
 - A data hook returns the response as it came and takes explicit options (`skip`, a boolean
   flag). Callers do the formatting (lower-casing, mapping), and the hook does not decide on
   its own when to skip (#10278, #10279, #10496).
-- Remove what no supported manager reaches: a version gate at or below the floor goes with
-  its fallback branch (ADR 0010), and so does a path for a value the server no longer sends
-  (#10046, #10051). Do not add an `@since` gate or keep a legacy fallback for a field the
-  floor already has, even when a review bot asks for one; floor and gate list come from
-  `pnpm run dev-env compat` (ADR 0011).
+- Remove a path for a value the server no longer sends, or a query the code no longer
+  needs (#10046, #10051). Whether a version gate is added, kept or removed follows ADR 0010
+  and ADR 0011 (`pnpm run dev-env compat` lists the removable ones); a review bot asking
+  for a gate or a legacy fallback is checked against them, not followed as is.
 
 ## Async actions and refetching
 
@@ -244,8 +243,8 @@ templates — copy the nearest one and adapt.
       types, colocated fragments, single pagination mode.
 - [ ] A change that fits an existing component, hook or type extends it rather than
       wrapping or duplicating it; a new one has a job of its own (see Composition).
-- [ ] Data hooks return raw data and take explicit options; no gate or fallback at or
-      below the manager floor.
+- [ ] Data hooks return raw data and take explicit options; version gates follow
+      ADR 0010 / ADR 0011.
 - [ ] `BAIButton action` for async work; `useFetchKey` where refetch is needed;
       `BAIUnmountAfterClose` around form-bearing modals/drawers.
 - [ ] i18n: correct hook for the package (`useTranslation` vs `useBAIi18n`), no hard-coded
