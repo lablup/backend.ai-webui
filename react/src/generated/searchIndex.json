@@ -2044,7 +2044,7 @@
         {
           "param": "tab",
           "key": "rules",
-          "labelKey": "externalNotification.Rules"
+          "labelKey": "externalNotification.NotificationRules"
         }
       ],
       "settings": [],
