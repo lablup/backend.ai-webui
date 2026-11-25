@@ -55,24 +55,3 @@ export const resolvePluginScriptUrl = (
     ? `${apiEndpoint}/dist/plugins/${path}.js`
     : `/dist/plugins/${path}.js`;
 };
-
-/**
- * The login plugin's script URL once config is loaded and the account form is
- * on screen (panel open, endpoint step closed), else `undefined` (#11231).
- */
-export const resolveLoginPluginScriptUrl = ({
-  path,
-  apiEndpoint,
-  isConfigLoaded,
-  isPanelOpen,
-  isEndpointStepOpen,
-}: {
-  path: string;
-  apiEndpoint?: string | null;
-  isConfigLoaded: boolean;
-  isPanelOpen: boolean;
-  isEndpointStepOpen: boolean;
-}): string | undefined =>
-  isConfigLoaded && isPanelOpen && !isEndpointStepOpen && path
-    ? resolvePluginScriptUrl(path, apiEndpoint)
-    : undefined;

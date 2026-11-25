@@ -56,7 +56,7 @@ import {
   loginWithSAML,
   probeManager,
 } from '../helper/loginSessionAuth';
-import { resolveLoginPluginScriptUrl } from '../helper/pluginPath';
+import { resolvePluginScriptUrl } from '../helper/pluginPath';
 import { resolveInitialLanguage } from '../helper/resolveInitialLanguage';
 import { useElectronEndpointStep } from '../hooks/useElectronEndpointStep';
 import { useLoginOrchestration } from '../hooks/useLoginOrchestration';
@@ -342,13 +342,14 @@ const LoginView: React.FC<{
     );
   });
   useEffect(() => {
-    const pluginUrl = resolveLoginPluginScriptUrl({
-      path: loginPlugin,
-      apiEndpoint,
-      isConfigLoaded,
-      isPanelOpen: isLoginPanelOpen,
-      isEndpointStepOpen,
-    });
+    if (
+      !isConfigLoaded ||
+      !isLoginPanelOpen ||
+      isEndpointStepOpen ||
+      !loginPlugin
+    )
+      return;
+    const pluginUrl = resolvePluginScriptUrl(loginPlugin, apiEndpoint);
     if (!pluginUrl || importedLoginPluginUrlRef.current === pluginUrl) return;
     importedLoginPluginUrlRef.current = pluginUrl;
 

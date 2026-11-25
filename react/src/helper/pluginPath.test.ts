@@ -7,7 +7,6 @@ import {
   joinPluginPath,
   parsePluginPathList,
   pluginPathName,
-  resolveLoginPluginScriptUrl,
   resolvePluginScriptUrl,
   splitPluginPath,
 } from './pluginPath';
@@ -91,42 +90,5 @@ describe('parsePluginPathList', () => {
   it('drops empty entries', () => {
     expect(parsePluginPathList('a,, b ,')).toEqual(['a', 'b']);
     expect(parsePluginPathList('  ')).toEqual([]);
-  });
-});
-
-describe('resolveLoginPluginScriptUrl', () => {
-  const base = {
-    path: 'backend-ai-homepage-link',
-    isConfigLoaded: true,
-    isPanelOpen: true,
-    isEndpointStepOpen: false,
-  };
-
-  it('resolves once config is loaded and the account form is shown', () => {
-    expect(resolveLoginPluginScriptUrl(base)).toBe(
-      '/dist/plugins/backend-ai-homepage-link.js',
-    );
-  });
-
-  it('waits while the endpoint step replaces the account form', () => {
-    expect(
-      resolveLoginPluginScriptUrl({ ...base, isEndpointStepOpen: true }),
-    ).toBeUndefined();
-  });
-
-  it('waits for the login panel to open (pinned endpoint, silent login)', () => {
-    expect(
-      resolveLoginPluginScriptUrl({ ...base, isPanelOpen: false }),
-    ).toBeUndefined();
-  });
-
-  it('waits for config and skips an unset or invalid path', () => {
-    expect(
-      resolveLoginPluginScriptUrl({ ...base, isConfigLoaded: false }),
-    ).toBeUndefined();
-    expect(resolveLoginPluginScriptUrl({ ...base, path: '' })).toBeUndefined();
-    expect(
-      resolveLoginPluginScriptUrl({ ...base, path: '../x' }),
-    ).toBeUndefined();
   });
 });
