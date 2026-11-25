@@ -442,8 +442,9 @@ const NotificationRuleList: React.FC = () => {
       <NotificationRuleSettingModal
         open={isOpenSettingModal}
         ruleFrgmt={editingRule}
-        onRequestTest={() => {
-          if (editingRule) setTestingRule(toTestRule(editingRule));
+        onRequestTest={(createdRule) => {
+          if (createdRule) setTestingRule(createdRule);
+          else if (editingRule) setTestingRule(toTestRule(editingRule));
         }}
         onRequestClose={(success) => {
           setIsOpenSettingModal(false);

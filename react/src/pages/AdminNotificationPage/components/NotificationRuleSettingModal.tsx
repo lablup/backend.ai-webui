@@ -20,22 +20,24 @@ import {
   toTemplateExpression,
 } from '../helper/notificationRuleTemplate';
 import NotificationChannelSelect from './NotificationChannelSelect';
+import { TestRule } from './NotificationRuleTestModal';
+import { Button } from '@lablup/ui-common/Button';
+import { ButtonGroup } from '@lablup/ui-common/ButtonGroup';
+import { DropdownMenu } from '@lablup/ui-common/DropdownMenu';
 import { Token } from '@lablup/ui-common/Token';
 import { Tooltip } from '@lablup/ui-common/Tooltip';
 import {
-  BAIButton,
   BAIFlex,
   BAIModal,
   BAIModalProps,
   BAISelect,
   BAISkeleton,
   BAISwitch,
-  BAIText,
   BAITextArea,
   BAITextInput,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { SendIcon } from 'lucide-react';
+import { Ellipsis } from 'lucide-react';
 import React, { Suspense, useEffect, useEffectEvent, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -59,8 +61,8 @@ interface NotificationRuleSettingModalProps extends Omit<
   'onOk' | 'onCancel'
 > {
   ruleFrgmt?: NotificationRuleSettingModalFragment$key | null;
-  /** Opens the test for the saved rule; only an edited rule shows the button. */
-  onRequestTest?: () => void;
+  /** Opens the test after a save; a new rule passes itself, an edited one nothing. */
+  onRequestTest?: (createdRule?: TestRule) => void;
   onRequestClose: (success?: boolean) => void;
 }
 
@@ -185,32 +187,6 @@ const MessageTemplateFormItem: React.FC<{
   );
 };
 
-// The test sends the saved template, so an unsaved template edit is saved first.
-const SendTestButton: React.FC<{
-  savedTemplate: string;
-  onSend: () => void;
-  onSaveAndSend: () => Promise<void>;
-}> = ({ savedTemplate, onSend, onSaveAndSend }) => {
-  'use memo';
-  const { t } = useTranslation();
-  const form = Form.useFormInstance<NotificationRuleFormValues>();
-  const template = Form.useWatch('messageTemplate', form);
-  const isTemplateChanged =
-    template !== undefined && template !== savedTemplate;
-  return (
-    <BAIFlex justify="end">
-      <BAIButton
-        icon={<SendIcon size="1em" />}
-        action={isTemplateChanged ? onSaveAndSend : async () => onSend()}
-      >
-        {isTemplateChanged
-          ? t('externalNotification.SaveAndSendTest')
-          : t('externalNotification.SendTestNotification')}
-      </BAIButton>
-    </BAIFlex>
-  );
-};
-
 const RuleTypeDependentItems: React.FC = () => {
   'use memo';
   const form = Form.useFormInstance<NotificationRuleFormValues>();
@@ -263,6 +239,9 @@ const NotificationRuleSettingModal: React.FC<
           rule {
             id
             entityId
+            channel {
+              name
+            }
           }
         }
       }
@@ -336,14 +315,15 @@ const NotificationRuleSettingModal: React.FC<
       });
     });
 
-  const handleOk = async () => {
+  // With `andTest`, an edit keeps the modal open under the test; a new rule closes it.
+  const handleOk = async (andTest = false) => {
     const values = await validateValues();
     if (!values) return;
     if (rule) {
-      if (await saveEdit(values, rule.entityId)) {
-        message.success(t('externalNotification.RuleSaved'));
-        onRequestClose(true);
-      }
+      if (!(await saveEdit(values, rule.entityId))) return;
+      message.success(t('externalNotification.RuleSaved'));
+      if (andTest) onRequestTest?.();
+      else onRequestClose(true);
       return;
     }
     commitCreate({
@@ -354,24 +334,27 @@ const NotificationRuleSettingModal: React.FC<
           channelId: values.channelId,
         },
       },
-      onCompleted: (_res, errors) => {
+      onCompleted: (res, errors) => {
         if (!toResult(errors)) return;
         message.success(t('externalNotification.RuleSaved'));
         onRequestClose(true);
+        const created = res.adminCreateNotificationRule?.rule;
+        if (andTest && created) {
+          onRequestTest?.({
+            entityId: created.entityId,
+            name: _.trim(values.name),
+            ruleType: values.ruleType,
+            channelName: created.channel.name,
+          });
+        }
       },
       onError: handleError,
     });
   };
 
-  // Keeps the modal open: the test opens over it once the save lands.
-  const saveAndSendTest = async () => {
-    if (!rule) return;
-    const values = await validateValues();
-    if (!values) return;
-    if (!(await saveEdit(values, rule.entityId))) return;
-    message.success(t('externalNotification.RuleSaved'));
-    onRequestTest?.();
-  };
+  const sendTestLabel = rule
+    ? t('externalNotification.SaveAndSendTest')
+    : t('externalNotification.CreateAndSendTest');
 
   return (
     <BAIModal
@@ -384,10 +367,36 @@ const NotificationRuleSettingModal: React.FC<
           ? t('externalNotification.EditRule')
           : t('externalNotification.CreateRule')
       }
-      okText={rule ? t('button.Save') : t('button.Create')}
-      confirmLoading={isInFlightCreate || isInFlightUpdate}
-      onOk={handleOk}
       onCancel={() => onRequestClose(false)}
+      footer={
+        <BAIFlex justify="end" gap="xs" align="center">
+          <Button
+            variant="secondary"
+            label={t('button.Cancel')}
+            onClick={() => onRequestClose(false)}
+          />
+          {/* Split button as the announcement editor's Publish. */}
+          <ButtonGroup label={rule ? t('button.Save') : t('button.Create')}>
+            <Button
+              variant="primary"
+              label={rule ? t('button.Save') : t('button.Create')}
+              isLoading={isInFlightCreate || isInFlightUpdate}
+              onClick={() => handleOk()}
+            />
+            <DropdownMenu
+              hasChevron={false}
+              button={{
+                variant: 'primary',
+                icon: <Ellipsis size="1em" />,
+                isIconOnly: true,
+                isDisabled: isInFlightCreate || isInFlightUpdate,
+                label: sendTestLabel,
+              }}
+              items={[{ label: sendTestLabel, onClick: () => handleOk(true) }]}
+            />
+          </ButtonGroup>
+        </BAIFlex>
+      }
     >
       <Form
         ref={formRef}
@@ -455,17 +464,6 @@ const NotificationRuleSettingModal: React.FC<
           <BAISwitch aria-label={t('externalNotification.Enabled')} />
         </Form.Item>
         <RuleTypeDependentItems />
-        {!rule ? (
-          <BAIText type="secondary">
-            {t('externalNotification.TestAfterSave')}
-          </BAIText>
-        ) : onRequestTest ? (
-          <SendTestButton
-            savedTemplate={rule.messageTemplate ?? ''}
-            onSend={onRequestTest}
-            onSaveAndSend={saveAndSendTest}
-          />
-        ) : null}
       </Form>
     </BAIModal>
   );

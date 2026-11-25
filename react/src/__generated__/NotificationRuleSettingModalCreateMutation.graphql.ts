@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<4d6705693f0d1b1796e40fecfe5d9d81>>
+ * @generated SignedSource<<1f10f7a0d46ff42e015d95860f4e6b0a>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -24,6 +24,9 @@ export type NotificationRuleSettingModalCreateMutation$variables = {
 export type NotificationRuleSettingModalCreateMutation$data = {
   readonly adminCreateNotificationRule: {
     readonly rule: {
+      readonly channel: {
+        readonly name: string;
+      };
       readonly entityId: string;
       readonly id: string;
     };
@@ -44,55 +47,76 @@ var v0 = [
 ],
 v1 = [
   {
-    "alias": null,
-    "args": [
-      {
-        "kind": "Variable",
-        "name": "input",
-        "variableName": "input"
-      }
-    ],
-    "concreteType": "CreateNotificationRulePayload",
-    "kind": "LinkedField",
-    "name": "adminCreateNotificationRule",
-    "plural": false,
-    "selections": [
-      {
-        "alias": null,
-        "args": null,
-        "concreteType": "NotificationRule",
-        "kind": "LinkedField",
-        "name": "rule",
-        "plural": false,
-        "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "id",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "entityId",
-            "storageKey": null
-          }
-        ],
-        "storageKey": null
-      }
-    ],
-    "storageKey": null
+    "kind": "Variable",
+    "name": "input",
+    "variableName": "input"
   }
-];
+],
+v2 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "id",
+  "storageKey": null
+},
+v3 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "entityId",
+  "storageKey": null
+},
+v4 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "name",
+  "storageKey": null
+};
 return {
   "fragment": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
     "name": "NotificationRuleSettingModalCreateMutation",
-    "selections": (v1/*: any*/),
+    "selections": [
+      {
+        "alias": null,
+        "args": (v1/*: any*/),
+        "concreteType": "CreateNotificationRulePayload",
+        "kind": "LinkedField",
+        "name": "adminCreateNotificationRule",
+        "plural": false,
+        "selections": [
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "NotificationRule",
+            "kind": "LinkedField",
+            "name": "rule",
+            "plural": false,
+            "selections": [
+              (v2/*: any*/),
+              (v3/*: any*/),
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "NotificationChannel",
+                "kind": "LinkedField",
+                "name": "channel",
+                "plural": false,
+                "selections": [
+                  (v4/*: any*/)
+                ],
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
+          }
+        ],
+        "storageKey": null
+      }
+    ],
     "type": "Mutation",
     "abstractKey": null
   },
@@ -101,19 +125,57 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "NotificationRuleSettingModalCreateMutation",
-    "selections": (v1/*: any*/)
+    "selections": [
+      {
+        "alias": null,
+        "args": (v1/*: any*/),
+        "concreteType": "CreateNotificationRulePayload",
+        "kind": "LinkedField",
+        "name": "adminCreateNotificationRule",
+        "plural": false,
+        "selections": [
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "NotificationRule",
+            "kind": "LinkedField",
+            "name": "rule",
+            "plural": false,
+            "selections": [
+              (v2/*: any*/),
+              (v3/*: any*/),
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "NotificationChannel",
+                "kind": "LinkedField",
+                "name": "channel",
+                "plural": false,
+                "selections": [
+                  (v4/*: any*/),
+                  (v2/*: any*/)
+                ],
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
+          }
+        ],
+        "storageKey": null
+      }
+    ]
   },
   "params": {
-    "cacheID": "73e296a3f21f1f6699ba1ba88e829b57",
+    "cacheID": "c9cf15e39596d35f0b83a5ae6ab7497b",
     "id": null,
     "metadata": {},
     "name": "NotificationRuleSettingModalCreateMutation",
     "operationKind": "mutation",
-    "text": "mutation NotificationRuleSettingModalCreateMutation(\n  $input: CreateNotificationRuleInput!\n) {\n  adminCreateNotificationRule(input: $input) {\n    rule {\n      id\n      entityId\n    }\n  }\n}\n"
+    "text": "mutation NotificationRuleSettingModalCreateMutation(\n  $input: CreateNotificationRuleInput!\n) {\n  adminCreateNotificationRule(input: $input) {\n    rule {\n      id\n      entityId\n      channel {\n        name\n        id\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "ab51ee9321dadf4b12da66e3323f8db5";
+(node as any).hash = "49c6cd1a063d2583dba55f4e4f5df393";
 
 export default node;
