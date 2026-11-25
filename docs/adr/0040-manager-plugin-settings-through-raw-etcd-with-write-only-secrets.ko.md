@@ -1,4 +1,4 @@
-# 0039 — Manager plugin settings through raw etcd with write-only secrets
+# 0040 — Manager plugin settings through raw etcd with write-only secrets
 
 ## Summary
 
