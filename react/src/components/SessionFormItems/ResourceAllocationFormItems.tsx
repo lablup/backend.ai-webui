@@ -660,12 +660,8 @@ const ResourceAllocationFormItems: React.FC<
                             : {}),
                           ...(resourceLimits.cpu?.max
                             ? {
-                                [resourceLimits.cpu?.max]: {
-                                  style: {
-                                    color: token('--color-text-secondary'),
-                                  },
-                                  label: resourceLimits.cpu?.max,
-                                },
+                                [resourceLimits.cpu?.max]:
+                                  resourceLimits.cpu?.max,
                               }
                             : {}),
                         },

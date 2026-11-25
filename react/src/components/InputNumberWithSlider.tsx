@@ -161,13 +161,14 @@ const InputNumberWithSlider: React.FC<InputNumberWithSliderProps> = ({
   const sliderMin = min ?? 0;
   const sliderMax = max ?? 100;
 
-  // Marks above `max` are dropped (a remaining-marker can outrun a lowered
-  // limit); empty mode shows none at all.
+  // Astryx does not clamp mark positions, so marks outside the rail are
+  // dropped; empty mode shows none at all.
   const marks = isEmptyMode
     ? []
     : _.filter(
         normalizeMarks(sliderProps?.marks),
-        (mark) => !_.isNumber(max) || mark.value <= max,
+        (mark) =>
+          mark.value >= sliderMin && (!_.isNumber(max) || mark.value <= max),
       );
   // Astryx draws every tick; it renders only the labels it can (strings).
   const astryxMarks = _.map(marks, (mark) => ({
