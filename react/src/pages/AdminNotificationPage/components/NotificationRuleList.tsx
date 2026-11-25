@@ -24,7 +24,6 @@ import NotificationRuleTestModal, {
 } from './NotificationRuleTestModal';
 import { Token } from '@lablup/ui-common/Token';
 import {
-  BAIAlert,
   BAIButton,
   BAIDeleteConfirmModal,
   BAIFetchKeyButton,
@@ -361,10 +360,6 @@ const NotificationRuleList: React.FC = () => {
 
   return (
     <BAIFlex direction="column" align="stretch" gap="sm">
-      <BAIAlert
-        type="info"
-        description={t('externalNotification.RulesDescription')}
-      />
       <BAIFlex justify="between" align="start" wrap="wrap" gap="sm">
         <BAIGraphQLPropertyFilter<GraphQLFilter>
           style={{ flex: 1 }}

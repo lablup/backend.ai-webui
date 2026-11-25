@@ -25,7 +25,11 @@ const AdminNotificationPage: React.FC = () => {
       activeTabKey={currentTab}
       onTabChange={onTabChange}
       tabList={[
-        { key: 'rules', label: t('externalNotification.NotificationRules') },
+        {
+          key: 'rules',
+          label: t('externalNotification.NotificationRules'),
+          tooltip: t('externalNotification.RulesDescription'),
+        },
         {
           key: 'channels',
           label: t('externalNotification.NotificationChannels'),
