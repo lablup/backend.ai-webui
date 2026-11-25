@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { App } from '../app-shim';
+import { getActAsTarget } from '../helper/actAs';
 import { useMyAppConfig } from './useAppConfig';
 import { SessionHistory, useBAISettingUserState } from './useBAISetting';
 import {
@@ -21,7 +22,8 @@ const migratingKeys = new Set<SessionHistoryKey>();
 /**
  * Session history lives in the user's server-side `userConfig` so it follows
  * the user across browsers. A history this browser kept in localStorage moves
- * there once, and leaves localStorage only when that write succeeded.
+ * there once, and leaves localStorage only when that write succeeded. An
+ * act-as tab uses only the target's `userConfig`: that localStorage is the super admin's.
  */
 const useSessionHistoryStore = (key: SessionHistoryKey) => {
   'use memo';
@@ -32,6 +34,7 @@ const useSessionHistoryStore = (key: SessionHistoryKey) => {
   >('userConfig', key);
   // Without a loaded userConfig, `undefined` does not mean the server has no history.
   const isUserConfigLoaded = userConfigStatus === 'loaded';
+  const isActingAs = !!getActAsTarget();
   const [localValue, setLocalValue] = useBAISettingUserState(key);
   // Shows the written value while the write is in flight.
   const [pending, setPending] = useState<{ value: Array<SessionHistory> }>();
@@ -58,6 +61,7 @@ const useSessionHistoryStore = (key: SessionHistoryKey) => {
 
   const migrateLocalHistory = useEffectEvent(() => {
     if (
+      isActingAs ||
       !isUserConfigLoaded ||
       migratingKeys.has(key) ||
       serverValue !== undefined ||
@@ -76,7 +80,10 @@ const useSessionHistoryStore = (key: SessionHistoryKey) => {
     migrateLocalHistory();
   }, [serverValue, localValue]);
 
-  return [pending?.value ?? serverValue ?? localValue, setValue] as const;
+  return [
+    pending?.value ?? serverValue ?? (isActingAs ? undefined : localValue),
+    setValue,
+  ] as const;
 };
 
 export const useRecentSessionHistory = () => {

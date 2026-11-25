@@ -8,7 +8,7 @@ import {
   resolveThemeFamilyCatalog,
   useCustomThemeConfig,
 } from './useCustomThemeConfig';
-import { renderHook } from '@testing-library/react';
+import { act, renderHook } from '@testing-library/react';
 
 // Avoid importing the real useBAISetting (which pulls in DefaultProviders and
 // the whole app graph). Mirror its localStorage layout so tests can seed
@@ -87,6 +87,28 @@ describe('useCustomThemeConfig', () => {
     setStored('themeFamily', 'glass');
     const { result } = renderHook(() => useCustomThemeConfig());
     expect(result.current.activeThemeFamily).toBe('glass');
+  });
+
+  it("keeps an act-as tab's family in sessionStorage, away from the super admin's localStorage", () => {
+    sessionStorage.setItem(
+      'backendaiwebui.actAs',
+      JSON.stringify({ userId: 'u', email: 'x@y', name: 'x' }),
+    );
+    setStored('themeFamily', 'stained');
+    const { result } = renderHook(() => useCustomThemeConfig());
+    expect(result.current.activeThemeFamily).toBe(DEFAULT_THEME_FAMILY);
+    act(() => result.current.setActiveThemeFamily('glass'));
+    expect(result.current.activeThemeFamily).toBe('glass');
+    expect(
+      JSON.parse(
+        sessionStorage.getItem('backendaiwebui.settings.themeFamily') ?? 'null',
+      ),
+    ).toBe('glass');
+    expect(
+      JSON.parse(
+        localStorage.getItem('backendaiwebui.settings.themeFamily') ?? 'null',
+      ),
+    ).toBe('stained');
   });
 
   it('falls back to default when the selected family is absent', () => {

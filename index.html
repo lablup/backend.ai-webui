@@ -138,7 +138,17 @@
     // attribute keys resources/theme-families.css (glass/stained header effects)
     // on the first render. Mirrors the themeMode read above; useCustomThemeConfig owns
     // this attribute once React mounts.
-    var storedThemeFamily = localStorage.getItem('backendaiwebui.settings.themeFamily');
+    // An act-as tab keeps its family in sessionStorage. The key names come from
+    // SESSION_KEY, ACT_AS_HANDOFF_PARAM and HANDOFF_KEY_PREFIX in react/src/helper/actAs.ts;
+    // a hand-off actAs.ts later rejects (expired, bad target) paints the default family until React mounts.
+    var isActAsTab = false;
+    try {
+      var actAsState = JSON.parse(sessionStorage.getItem('backendaiwebui.actAs') || 'null');
+      var actAsNonce = new URLSearchParams(location.search).get('actAsHandoff');
+      isActAsTab = !!(actAsState && typeof actAsState.userId === 'string' && actAsState.userId) ||
+        (!!actAsNonce && localStorage.getItem('backendaiwebui.actAs.handoff.' + actAsNonce) !== null);
+    } catch(e) { isActAsTab = false; }
+    var storedThemeFamily = (isActAsTab ? sessionStorage : localStorage).getItem('backendaiwebui.settings.themeFamily');
     var parsedThemeFamily;
     try { parsedThemeFamily = storedThemeFamily ? JSON.parse(storedThemeFamily) : null; } catch(e) { parsedThemeFamily = null; }
     document.body.setAttribute('data-theme-family', parsedThemeFamily || 'default');
