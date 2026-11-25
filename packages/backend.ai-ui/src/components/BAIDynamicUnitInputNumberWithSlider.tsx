@@ -13,7 +13,8 @@
  translated inside.** antd `SliderMarks` is a `{[position]: ReactNode | {label,
  style}}` map; Astryx wants `{value: number, label?: string}[]` — an ARRAY, and
  the label is a plain STRING. The prop type stays antd-shaped (restated
- locally, no antd import) and `toAstryxMarks` flattens each label with
+ locally, no antd import) so call sites keep passing the position-keyed map,
+ and `toAstryxMarks` flattens each label with
  `nodeToAccessibleLabel` — a JSX label degrades to its text, or to an unlabelled
  tick when it has none (P2: casting the node `as string` would have printed
  `[object Object]` on the rail).
