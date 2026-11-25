@@ -86,6 +86,8 @@ flowchart TD
 | `session_recording.maskTextSelector` | `'*'`                                        | replay에서 모든 text를 가린다. 일부 화면은 secret을 text로 보여준다 |
 | `session_recording.maskAllElementAttributes` | `true`                               | replay에서 element attribute(`title`, `href`, `aria-label`, `data-*`)를 가린다 |
 | `session_recording.maskCapturedNetworkRequestFn` | `name`에서 `?`·`#` 뒤를 지움       | replay의 page 주소와 기록된 request URL에서 query와 fragment를 지운다 |
+| `session_recording.recordBody`, `recordHeaders` | `false`                              | 직접 준 `maskCapturedNetworkRequestFn`은 posthog-js의 본문 정리를 건너뛰므로, project 설정과 상관없이 요청·응답 본문(비밀번호, 새 key, token)과 header를 녹화하지 않는다 |
+| `enable_recording_console_log` | `false`                                         | replay가 console 출력을 녹화하지 않는다                |
 | `before_send`                     | URL query·fragment 제거, `$exception` 중복 제거 | 5절과 7절                                           |
 
 - **Platform property**: `ProductAnalytics`는 `globalThis.isElectron`으로 super property `platform`(`web` 또는 `electron`)을 등록한다.

@@ -114,10 +114,13 @@ const ProductAnalytics: React.FC<{ apiKey: string; apiHost: string }> = ({
         capture_unhandled_rejections: true,
         capture_console_errors: false,
       },
+      enable_recording_console_log: false,
       session_recording: {
         maskAllInputs: true,
         maskTextSelector: '*',
         maskAllElementAttributes: true,
+        recordBody: false,
+        recordHeaders: false,
         maskCapturedNetworkRequestFn: (request) => ({
           ...request,
           name: request.name.split(/[?#]/)[0],

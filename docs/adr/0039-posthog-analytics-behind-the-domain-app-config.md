@@ -86,6 +86,8 @@ flowchart TD
 | `session_recording.maskTextSelector` | `'*'`                                                | every text node is masked in replay; some screens show secrets as text |
 | `session_recording.maskAllElementAttributes` | `true`                                       | element attributes (`title`, `href`, `aria-label`, `data-*`) are masked in replay |
 | `session_recording.maskCapturedNetworkRequestFn` | strips `?` and `#` from `name`             | replay page addresses and recorded request URLs lose their query and fragment |
+| `session_recording.recordBody`, `recordHeaders` | `false`                                      | a custom `maskCapturedNetworkRequestFn` skips posthog-js's body scrubbing, so request and response bodies (passwords, new keys, tokens) and headers are never recorded, whatever the project setting |
+| `enable_recording_console_log` | `false`                                                 | replay does not record console output                    |
 | `before_send`                     | URL query and fragment removal, `$exception` dedupe     | sections 5 and 7                                 |
 
 - **Platform property**: `ProductAnalytics` registers the super property `platform` (`web` or `electron`) from `globalThis.isElectron`.
