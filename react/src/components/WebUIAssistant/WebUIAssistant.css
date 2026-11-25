@@ -86,7 +86,8 @@
       clamp(
         calc(
           var(--webui-assistant-panel-height) +
-            var(--webui-assistant-panel-bottom) - 100dvh
+            var(--webui-assistant-panel-bottom) +
+            var(--webui-header-height, 60px) - 100dvh
         ),
         var(--webui-assistant-dy),
         var(--webui-assistant-panel-bottom)
@@ -96,6 +97,28 @@
     border: 1px solid var(--color-border);
     border-radius: var(--radius-container);
     box-shadow: var(--shadow-high);
+  }
+
+  /* Below the button: its top sits a gap under the button's bottom edge, under the header. */
+  .webui-assistant-panel[data-below] {
+    inset-block-start: 0;
+    inset-block-end: auto;
+    translate: clamp(
+        calc(
+          var(--webui-assistant-panel-width) + var(--webui-assistant-inset) -
+            100vw
+        ),
+        var(--webui-assistant-dx),
+        var(--webui-assistant-inset)
+      )
+      clamp(
+        var(--webui-header-height, 60px),
+        calc(
+          100dvh - var(--webui-assistant-inset) + var(--webui-assistant-dy) +
+            var(--spacing-3)
+        ),
+        calc(100dvh - var(--webui-assistant-panel-height))
+      );
   }
 
   /* Layout (flex, padding, border) is inline: BAIFlex's inline style beats classes. */

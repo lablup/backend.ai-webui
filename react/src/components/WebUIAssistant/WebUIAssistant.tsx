@@ -83,6 +83,8 @@ const WebUIAssistantFloating: React.FC = () => {
   const wasDraggedRef = useRef(false);
   // How far the user dragged the button from its corner; the panel follows it.
   const [offset, setOffset] = useState({ x: 0, y: 0 });
+  // In the upper half of the screen the panel opens below the button, so the two never overlap.
+  const [isPanelBelow, setIsPanelBelow] = useState(false);
   const offsetStyle = {
     '--webui-assistant-dx': `${offset.x}px`,
     '--webui-assistant-dy': `${offset.y}px`,
@@ -90,19 +92,24 @@ const WebUIAssistantFloating: React.FC = () => {
 
   const onFabPointerDown = (event: React.PointerEvent<HTMLButtonElement>) => {
     if (event.button !== 0) return;
-    const rect = event.currentTarget.getBoundingClientRect();
-    event.currentTarget.setPointerCapture(event.pointerId);
+    const button = event.currentTarget;
+    const rect = button.getBoundingClientRect();
+    // Start from where the CSS clamp drew the button, which differs from `offset` after a resize.
+    const [drawnX = 0, drawnY = 0] = getComputedStyle(button)
+      .translate.split(' ')
+      .map((part) => Number.parseFloat(part) || 0);
+    const origin = { x: drawnX, y: drawnY };
+    button.setPointerCapture(event.pointerId);
     wasDraggedRef.current = false;
-    // Keeps the button inside the viewport; the CSS clamps the panel the same way.
     dragRef.current = {
       pointerId: event.pointerId,
       startX: event.clientX,
       startY: event.clientY,
-      minX: offset.x - rect.left,
-      maxX: offset.x + window.innerWidth - rect.right,
-      minY: offset.y - rect.top,
-      maxY: offset.y + window.innerHeight - rect.bottom,
-      origin: offset,
+      minX: origin.x - rect.left,
+      maxX: origin.x + window.innerWidth - rect.right,
+      minY: origin.y - rect.top,
+      maxY: origin.y + window.innerHeight - rect.bottom,
+      origin,
       moved: false,
     };
   };
@@ -120,9 +127,17 @@ const WebUIAssistantFloating: React.FC = () => {
       x: clamp(drag.origin.x + dx, drag.minX, drag.maxX),
       y: clamp(drag.origin.y + dy, drag.minY, drag.maxY),
     });
+    setIsPanelBelow(event.clientY < window.innerHeight / 2);
   };
-  const onFabPointerEnd = () => {
-    wasDraggedRef.current = !!dragRef.current?.moved;
+  const onFabPointerUp = (event: React.PointerEvent<HTMLButtonElement>) => {
+    if (dragRef.current?.pointerId !== event.pointerId) return;
+    wasDraggedRef.current = dragRef.current.moved;
+    dragRef.current = null;
+  };
+  // No click follows a cancelled pointer, so nothing must be swallowed later.
+  const onFabPointerCancel = (event: React.PointerEvent<HTMLButtonElement>) => {
+    if (dragRef.current?.pointerId !== event.pointerId) return;
+    wasDraggedRef.current = false;
     dragRef.current = null;
   };
 
@@ -151,6 +166,7 @@ const WebUIAssistantFloating: React.FC = () => {
         direction="column"
         align="stretch"
         className="webui-assistant-panel"
+        data-below={isPanelBelow || undefined}
         // BAIFlex's inline `position`/`display` would beat the class and `hidden`.
         style={{
           position: 'fixed',
@@ -232,8 +248,8 @@ const WebUIAssistantFloating: React.FC = () => {
         style={offsetStyle}
         onPointerDown={onFabPointerDown}
         onPointerMove={onFabPointerMove}
-        onPointerUp={onFabPointerEnd}
-        onPointerCancel={onFabPointerEnd}
+        onPointerUp={onFabPointerUp}
+        onPointerCancel={onFabPointerCancel}
         onClick={() => {
           // The click that ends a drag does not toggle the panel.
           if (wasDraggedRef.current) {
