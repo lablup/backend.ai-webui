@@ -158,17 +158,23 @@ interfaces, enum members.
   and keep its structure, instead of adding a wrapper or splitting out a sibling that does
   the same job (#10050, #10051, #11268). A new component is right when it has a job no
   existing one has: a different user task, a different data source, or a piece several
-  places will share. Keep its API to the props call sites pass (`columns`, `onAdd`,
-  `onRemove`), not pass-through bags like `formItemProps` / `renderInput` (#10444).
-- Reuse what exists before writing it: domain and project hooks (`useCurrentDomainValue`,
-  `useCurrentProjectValue`), Relay-generated types and existing option types
-  (`SelectorOptionData['disabled']`), and globals such as `globalThis.isElectron`
-  (#10050, #10309, #10496, #9752).
+  places will share. A `BAI*` adapter over a ui-common or Astryx component is such a case
+  (`.claude/rules/bui-component-home.md`), and a ui-common defect is fixed upstream. The
+  props a new component adds are the ones call sites need (`columns`, `addButton`); it does
+  not re-expose what it renders inside, such as the `Form.List` and `formItemProps` that
+  #10444 was asked to drop. Base props and `...rest` follow `component-props-extension.md`.
+- Reuse what exists before writing it: the current-domain hooks (`useCurrentDomain().id`
+  for the domain id scoped V2 queries take, `useCurrentDomainValue` for its name),
+  Relay-generated types and existing option types (`SelectorOptionData['disabled']`), and
+  globals such as `globalThis.isElectron` (#10050, #10309, #10496, #9752). The current
+  project is not one of them: leaf components take it as a `project` prop (ADR 0001).
 - A data hook returns the response as it came and takes explicit options (`skip`, a boolean
-  flag). Callers do the formatting (lower-casing, mapping), and the hook does not decide on
-  its own when to skip (#10278, #10279, #10496).
-- Remove a path for a value the server no longer sends, or a query the code no longer
-  needs (#10046, #10051). Whether a version gate is added, kept or removed follows ADR 0010
+  flag). Callers do the formatting (lower-casing, mapping), and a caller's reason to skip
+  comes in as an option instead of being inferred inside the hook (#10278, #10279,
+  #10496). A manager version check stays in the hook that uses the field (ADR 0010).
+- Remove a path for a value no manager in the supported range sends any more, or a query
+  the code no longer needs (#10046, #10051); the range runs from the floor to the branch's
+  own line (ADR 0011). Whether a version gate is added, kept or removed follows ADR 0010
   and ADR 0011 (`pnpm run dev-env compat` lists the removable ones); a review bot asking
   for a gate or a legacy fallback is checked against them, not followed as is.
 
@@ -242,7 +248,8 @@ templates — copy the nearest one and adapt.
 - [ ] Relay: orchestrator/fragment split, `queryRef` / `{typeName}Frgmt` naming, `$key`
       types, colocated fragments, single pagination mode.
 - [ ] A change that fits an existing component, hook or type extends it rather than
-      wrapping or duplicating it; a new one has a job of its own (see Composition).
+      duplicating it; a new one, a `BAI*` adapter over ui-common included, has a job of
+      its own (see Composition).
 - [ ] Data hooks return raw data and take explicit options; version gates follow
       ADR 0010 / ADR 0011.
 - [ ] `BAIButton action` for async work; `useFetchKey` where refetch is needed;
