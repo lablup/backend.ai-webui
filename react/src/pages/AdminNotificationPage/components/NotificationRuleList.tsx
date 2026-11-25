@@ -11,7 +11,6 @@ import {
   NotificationRuleListQuery$data,
   NotificationRuleOrderBy,
 } from '../../../__generated__/NotificationRuleListQuery.graphql';
-import { NotificationRuleSettingModalFragment$key } from '../../../__generated__/NotificationRuleSettingModalFragment.graphql';
 import { App } from '../../../app-shim';
 import { convertToOrderBy } from '../../../helper';
 import { useBAIPaginationOptionStateOnSearchParam } from '../../../hooks/reactPaginationQueryOptions';
@@ -72,8 +71,9 @@ const NotificationRuleList: React.FC = () => {
   const ruleTypeLabel = useRuleTypeLabel();
   const [fetchKey, updateFetchKey] = useFetchKey();
   const [isOpenSettingModal, setIsOpenSettingModal] = useState(false);
-  const [editingRule, setEditingRule] =
-    useState<NotificationRuleSettingModalFragment$key | null>(null);
+  const [editingRule, setEditingRule] = useState<NotificationRuleNode | null>(
+    null,
+  );
   const [testingRule, setTestingRule] = useState<TestRule | null>(null);
   const [deletingRule, setDeletingRule] = useState<NotificationRuleNode | null>(
     null,
@@ -222,6 +222,12 @@ const NotificationRuleList: React.FC = () => {
     filterOutNullAndUndefined(_.map(ruleChannels?.edges, (edge) => edge?.node)),
     'entityId',
   );
+  const toTestRule = (rule: NotificationRuleNode): TestRule => ({
+    entityId: rule.entityId,
+    name: rule.name,
+    ruleType: rule.ruleType,
+    channelName: channelById[rule.channelId]?.name ?? rule.channelId,
+  });
 
   // Never rejects: the Switch runs this in a transition without a catch, so a rejection
   // would reach the page's error boundary. Its optimistic value reverts on its own.
@@ -278,14 +284,7 @@ const NotificationRuleList: React.FC = () => {
               key: 'test',
               title: t('externalNotification.SendTestNotification'),
               icon: <SendIcon />,
-              onClick: () =>
-                setTestingRule({
-                  entityId: row.entityId,
-                  name: row.name,
-                  ruleType: row.ruleType,
-                  channelName:
-                    channelById[row.channelId]?.name ?? row.channelId,
-                }),
+              onClick: () => setTestingRule(toTestRule(row)),
             },
             {
               key: 'delete',
@@ -443,6 +442,9 @@ const NotificationRuleList: React.FC = () => {
       <NotificationRuleSettingModal
         open={isOpenSettingModal}
         ruleFrgmt={editingRule}
+        onRequestTest={() => {
+          if (editingRule) setTestingRule(toTestRule(editingRule));
+        }}
         onRequestClose={(success) => {
           setIsOpenSettingModal(false);
           if (success && editingRule === null) {

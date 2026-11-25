@@ -20,6 +20,7 @@ import {
   toTemplateExpression,
 } from '../helper/notificationRuleTemplate';
 import NotificationChannelSelect from './NotificationChannelSelect';
+import { Button } from '@lablup/ui-common/Button';
 import { Token } from '@lablup/ui-common/Token';
 import { Tooltip } from '@lablup/ui-common/Tooltip';
 import {
@@ -34,6 +35,7 @@ import {
   BAITextInput,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
+import { SendIcon } from 'lucide-react';
 import React, { Suspense, useEffect, useEffectEvent, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -57,6 +59,8 @@ interface NotificationRuleSettingModalProps extends Omit<
   'onOk' | 'onCancel'
 > {
   ruleFrgmt?: NotificationRuleSettingModalFragment$key | null;
+  /** Opens the test for the saved rule; only an edited rule shows the button. */
+  onRequestTest?: () => void;
   onRequestClose: (success?: boolean) => void;
 }
 
@@ -181,6 +185,34 @@ const MessageTemplateFormItem: React.FC<{
   );
 };
 
+// The test sends the saved template, so an unsaved template edit blocks it.
+const SendTestButton: React.FC<{
+  savedTemplate: string;
+  onClick: () => void;
+}> = ({ savedTemplate, onClick }) => {
+  'use memo';
+  const { t } = useTranslation();
+  const form = Form.useFormInstance<NotificationRuleFormValues>();
+  const template = Form.useWatch('messageTemplate', form);
+  const isTemplateChanged =
+    template !== undefined && template !== savedTemplate;
+  return (
+    <BAIFlex justify="end">
+      <Button
+        icon={<SendIcon size="1em" />}
+        label={t('externalNotification.SendTestNotification')}
+        isDisabled={isTemplateChanged}
+        tooltip={
+          isTemplateChanged
+            ? t('externalNotification.SaveBeforeTest')
+            : undefined
+        }
+        onClick={onClick}
+      />
+    </BAIFlex>
+  );
+};
+
 const RuleTypeDependentItems: React.FC = () => {
   'use memo';
   const form = Form.useFormInstance<NotificationRuleFormValues>();
@@ -201,7 +233,7 @@ const RuleTypeDependentItems: React.FC = () => {
 
 const NotificationRuleSettingModal: React.FC<
   NotificationRuleSettingModalProps
-> = ({ ruleFrgmt, onRequestClose, ...baiModalProps }) => {
+> = ({ ruleFrgmt, onRequestTest, onRequestClose, ...baiModalProps }) => {
   'use memo';
   const { t } = useTranslation();
   const { message } = App.useApp();
@@ -391,11 +423,16 @@ const NotificationRuleSettingModal: React.FC<
           <BAISwitch aria-label={t('externalNotification.Enabled')} />
         </Form.Item>
         <RuleTypeDependentItems />
-        {rule ? null : (
+        {!rule ? (
           <BAIText type="secondary">
             {t('externalNotification.TestAfterSave')}
           </BAIText>
-        )}
+        ) : onRequestTest ? (
+          <SendTestButton
+            savedTemplate={rule.messageTemplate ?? ''}
+            onClick={onRequestTest}
+          />
+        ) : null}
       </Form>
     </BAIModal>
   );

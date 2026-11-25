@@ -2088,6 +2088,7 @@
         "externalNotification.RulesDescription",
         "externalNotification.SampleEventData",
         "externalNotification.SampleEventDataExtra",
+        "externalNotification.SaveBeforeTest",
         "externalNotification.Seconds",
         "externalNotification.SelectChannel",
         "externalNotification.SelectEvent",
