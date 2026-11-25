@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Build and measure the bundle targets the plan calls for (ADR 0039).
+// Build and measure the bundle targets the plan calls for (ADR 0040).
 //
 // Usage: node run.mjs --plan plan.json [--cache-dir bundle-size-cache]
 //          [--out-dir bundle-size] [--base-dir "$RUNNER_TEMP/bundle-base"]

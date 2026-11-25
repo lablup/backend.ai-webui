@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Render bundle-size-report.md and bundle-size-report.json from the plan and
-// the measurement files (ADR 0039).
+// the measurement files (ADR 0040).
 //
 // Usage: node render.mjs --plan plan.json [--dir bundle-size] [--out-dir .]
 import { existsSync, readFileSync, realpathSync, writeFileSync } from "node:fs";

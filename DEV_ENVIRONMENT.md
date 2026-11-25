@@ -189,6 +189,16 @@ The build emits the overlay client as one chunk at `/review-overlay.js` and inje
 - **No `/__review/state`.** The build embeds the answer in the document instead, as `<script type="application/json" id="bai-review-state">`, with one extra field the endpoint never sends: `"host": "static"`. Blocks copied from such a build carry `pr=0` — a deployment is not a PR. (A fetch would not even have failed: Amplify rewrites every unknown path to `index.html` with a 200, so it would resolve to an HTML parse error on every boot.)
 - **No react-grab.** The app imports it behind `process.env.NODE_ENV === 'development'`, so a bundle has no fiber walk: pins carry no ⚛️ source stack, and the overlay's own hover/click picker takes over — bound to the same ⌘⌃C, and bound immediately rather than after the 20 s it otherwise spends waiting for react-grab to register. The anchor itself (selector, testid landmark, fractional rect, tag, text, note) is pure DOM and is unaffected, so pinning and deep-linking work exactly as they do in dev.
 
+## Product analytics (`domainConfig.analytics`)
+
+Every build carries the PostHog analytics component (`react/src/components/ProductAnalytics.tsx`) and `posthog-js` as a lazily loaded chunk, but the browser requests it only when the signed-in domain's app config holds a PostHog project key and an `https:` API host. A superadmin writes them into that domain's `domainConfig` through the manager's app config API or CLI; no WebUI page edits them:
+
+```json
+{ "analytics": { "posthogKey": "<project API key>", "posthogHost": "https://posthog.example.com" } }
+```
+
+With either value missing, the chunk is never loaded, no request is sent, and screens before sign-in are never collected. A change applies at the next sign-in or page load. The SDK posts events to `posthogHost` and loads its replay and exception-capture scripts from it, so the CSP of a server whose domains set `analytics` must allow that host in `connect-src` (and in `script-src` unless the policy uses `'strict-dynamic'`). The Electron app reuses the web bundle and behaves the same. What is collected and what is stripped is in ADR 0039.
+
 ## CLI login (`/cli-login`)
 
 `bai-agent login` (`packages/backend.ai-agent-cli`, the Backend.AI WebUI Agent CLI) hands the CLI the session this dev server is already logged in with, via the `/cli-login` page. The route is always mounted; it is not linked from any menu.

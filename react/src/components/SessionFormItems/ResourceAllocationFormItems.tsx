@@ -35,7 +35,6 @@ import ResourcePresetSelect, {
   presetUnavailableReasonText,
   getUnavailableSlotNames,
 } from '../ResourcePresetSelect';
-import RemainingMark from './RemainingMark';
 import SharedMemoryFormItems from './SharedMemoryFormItems';
 import {
   AllocationMode,
@@ -650,9 +649,7 @@ const ResourceAllocationFormItems: React.FC<
                           // remaining mark code should be located before max mark code to prevent overlapping when it is same value
                           ...(remaining.cpu && showRemainingWarning
                             ? {
-                                [remaining.cpu]: {
-                                  label: <RemainingMark />,
-                                },
+                                [remaining.cpu]: null,
                               }
                             : {}),
                           ...(resourceLimits.cpu?.min
@@ -663,12 +660,8 @@ const ResourceAllocationFormItems: React.FC<
                             : {}),
                           ...(resourceLimits.cpu?.max
                             ? {
-                                [resourceLimits.cpu?.max]: {
-                                  style: {
-                                    color: token('--color-text-secondary'),
-                                  },
-                                  label: resourceLimits.cpu?.max,
-                                },
+                                [resourceLimits.cpu?.max]:
+                                  resourceLimits.cpu?.max,
                               }
                             : {}),
                         },
@@ -835,9 +828,7 @@ const ResourceAllocationFormItems: React.FC<
                                         remaining.mem,
                                         'g',
                                         3,
-                                      )?.numberFixed]: {
-                                        label: <RemainingMark />,
-                                      },
+                                      )?.numberFixed]: null,
                                     }
                                   : {}),
                               }}
@@ -1135,9 +1126,7 @@ const ResourceAllocationFormItems: React.FC<
                               ...(adjustedRemainingMarkValue &&
                               showRemainingWarning
                                 ? {
-                                    [adjustedRemainingMarkValue]: {
-                                      label: <RemainingMark />,
-                                    },
+                                    [adjustedRemainingMarkValue]: null,
                                   }
                                 : {}),
                               ...(_.isNumber(
@@ -1499,9 +1488,7 @@ const ResourceAllocationFormItems: React.FC<
                             // remaining mark code should be located before max mark code to prevent overlapping when it is same value
                             ...(remainingMarkValue && showRemainingWarning
                               ? {
-                                  [remainingMarkValue]: {
-                                    label: <RemainingMark />,
-                                  },
+                                  [remainingMarkValue]: null,
                                 }
                               : {}),
                             ...(_.isNumber(derivedClusterSizeMaxLimit)

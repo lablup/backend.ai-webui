@@ -24,8 +24,10 @@ import StorageHostFetchErrorBoundary from './components/StorageHostFetchErrorBou
 import UserSettingsRouteRedirect from './components/UserSettingsRouteRedirect';
 import WebMCPGlobalTools from './components/WebMCPGlobalTools';
 import WebUINavigate from './components/WebUINavigate';
+import { getActAsTarget } from './helper/actAs';
 import { persistPostLoginState } from './helper/loginSessionAuth';
 import { useSuspendedBackendaiClient } from './hooks';
+import { useMyAppConfig } from './hooks/useAppConfig';
 import {
   diagnosticsBadgeSeverityAtom,
   useAutoDiagnostics,
@@ -140,6 +142,9 @@ const SessionDetailAndContainerLogOpenerLegacy = React.lazy(
   () => import('./components/SessionDetailAndContainerLogOpenerLegacy'),
 );
 const ProjectPage = React.lazy(() => import('./pages/ProjectPage/ProjectPage'));
+const ProductAnalytics = React.lazy(
+  () => import('./components/ProductAnalytics'),
+);
 
 const ChatPage = React.lazy(() => import('./pages/ChatPage/ChatPage'));
 
@@ -1479,6 +1484,39 @@ const AutoDiagnosticsEffect = () => {
   return isSuperAdmin ? <AutoDiagnosticsRunner /> : null;
 };
 
+const isHttpsUrl = (value: unknown): value is string => {
+  if (typeof value !== 'string') return false;
+  try {
+    return new URL(value).protocol === 'https:';
+  } catch {
+    return false;
+  }
+};
+
+const ProductAnalyticsGate = () => {
+  'use memo';
+  const [analyticsConfig] = useMyAppConfig<{
+    posthogKey?: unknown;
+    posthogHost?: unknown;
+  }>('domainConfig', 'analytics');
+  const apiKey = analyticsConfig?.posthogKey;
+  const apiHost = analyticsConfig?.posthogHost;
+
+  if (
+    typeof apiKey !== 'string' ||
+    !apiKey.trim() ||
+    !isHttpsUrl(apiHost) ||
+    getActAsTarget()
+  ) {
+    return null;
+  }
+  return (
+    <Suspense fallback={null}>
+      <ProductAnalytics apiKey={apiKey} apiHost={apiHost} />
+    </Suspense>
+  );
+};
+
 const AutoDiagnosticsRunner = () => {
   'use memo';
   useAutoDiagnostics();
@@ -1745,6 +1783,9 @@ export const routes: RouteObject[] = [
                 <DevReviewRouteLabel />
               </ErrorBoundaryWithNullFallback>
             ) : null}
+            <ErrorBoundaryWithNullFallback>
+              <ProductAnalyticsGate />
+            </ErrorBoundaryWithNullFallback>
             <Suspense>
               <ErrorBoundaryWithNullFallback>
                 <AutoDiagnosticsEffect />
