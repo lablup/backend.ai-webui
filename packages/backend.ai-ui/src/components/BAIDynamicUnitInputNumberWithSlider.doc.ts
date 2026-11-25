@@ -138,7 +138,7 @@ export const docs = {
   min={resourceLimits.mem?.min}
   max={resourceLimits.mem?.max}
   extraMarks={{
-    [remainingGiB]: { label: <RemainingMark /> },
+    [remainingGiB]: null,
   }}
   onChange={(nextValue) => {
     form.setFieldValue('allocationPreset', 'custom');

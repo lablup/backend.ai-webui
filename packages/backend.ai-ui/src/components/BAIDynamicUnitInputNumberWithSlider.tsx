@@ -12,10 +12,8 @@
  PILOT-DECISION — **`extraMarks` keeps its antd shape on the surface and is
  translated inside.** antd `SliderMarks` is a `{[position]: ReactNode | {label,
  style}}` map; Astryx wants `{value: number, label?: string}[]` — an ARRAY, and
- the label is a plain STRING. The one live consumer
- (`ResourceAllocationFormItems`) passes a JSX `<RemainingMark />` label, so per
- the frontier rule the prop type stays antd-shaped (restated locally, no antd
- import) and `toAstryxMarks` flattens each label with
+ the label is a plain STRING. The prop type stays antd-shaped (restated
+ locally, no antd import) and `toAstryxMarks` flattens each label with
  `nodeToAccessibleLabel` — a JSX label degrades to its text, or to an unlabelled
  tick when it has none (P2: casting the node `as string` would have printed
  `[object Object]` on the rail).
