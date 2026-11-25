@@ -24,6 +24,7 @@ import StorageHostFetchErrorBoundary from './components/StorageHostFetchErrorBou
 import UserSettingsRouteRedirect from './components/UserSettingsRouteRedirect';
 import WebMCPGlobalTools from './components/WebMCPGlobalTools';
 import WebUINavigate from './components/WebUINavigate';
+import { getActAsTarget } from './helper/actAs';
 import { persistPostLoginState } from './helper/loginSessionAuth';
 import { useSuspendedBackendaiClient } from './hooks';
 import { useMyAppConfig } from './hooks/useAppConfig';
@@ -1501,7 +1502,12 @@ const ProductAnalyticsGate = () => {
   const apiKey = analyticsConfig?.posthogKey;
   const apiHost = analyticsConfig?.posthogHost;
 
-  if (typeof apiKey !== 'string' || !apiKey || !isHttpsUrl(apiHost)) {
+  if (
+    typeof apiKey !== 'string' ||
+    !apiKey.trim() ||
+    !isHttpsUrl(apiHost) ||
+    getActAsTarget()
+  ) {
     return null;
   }
   return (

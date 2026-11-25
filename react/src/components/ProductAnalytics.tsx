@@ -3,7 +3,6 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 // domainConfig.analytics and privacy defaults: docs/adr/0039-posthog-analytics-behind-the-domain-app-config.md
-import { getActAsTarget } from '../helper/actAs';
 import type { UserRole } from '../helper/userRole';
 import { LogLevel, useBAILogger } from 'backend.ai-ui';
 import posthog, { type CaptureResult, type Properties } from 'posthog-js';
@@ -99,7 +98,7 @@ const ProductAnalytics: React.FC<{ apiKey: string; apiHost: string }> = ({
   const { logger } = useBAILogger();
 
   const start = useEffectEvent(() => {
-    if (isStarted || getActAsTarget()) return;
+    if (isStarted) return;
     isStarted = true;
 
     posthog.init(apiKey, {

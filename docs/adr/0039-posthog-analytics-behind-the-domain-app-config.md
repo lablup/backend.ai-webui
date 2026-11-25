@@ -58,7 +58,7 @@ flowchart TD
 
 - **Read location**: `ProductAnalyticsGate` reads `useMyAppConfig('domainConfig', 'analytics')`, the merged `domainConfig` that sign-in stores in `myAppConfigState` (ADR 0033). It sends no query of its own.
 - **Missing value**: while either value is missing, the gate renders nothing, so the chunk is not loaded, `posthog.init` is not called and no request is sent. This also holds before sign-in and when the app config read failed.
-- **Act-as tab**: in an act-as tab (`getActAsTarget()` is set) `ProductAnalytics` does not start the SDK, as an act-as tab saves nothing in ADR 0035, so a super admin's impersonation is not counted and leaving act-as does not reset the distinct id the other tabs share.
+- **Act-as tab**: in an act-as tab (`getActAsTarget()` is set) the gate renders nothing either, so the chunk is not loaded and the SDK does not start, as an act-as tab saves nothing in ADR 0035, so a super admin's impersonation is not counted and leaving act-as does not reset the distinct id the other tabs share.
 - **Accepted values**: `posthogKey` must be a string and `posthogHost` an `https:` URL; any other value counts as missing.
 - **Script execution**: `posthog-js` loads and runs scripts from `posthogHost` in the WebUI origin, and the production CSP's `'strict-dynamic'` allows any host. Write access to `domainConfig.analytics` therefore amounts to running script in every session of the domain.
 - **Who sets it**: no WebUI page edits `analytics`. A superadmin writes it into the domain's `domainConfig` through the manager's app config API or CLI. `WebUISettingsPage` builds its `domainConfig` write on the raw document, so it keeps the key.
@@ -124,7 +124,7 @@ flowchart TD
 ## Consequences
 
 - **PostHog code in every build**: every build output holds the analytics chunk with `posthog-js` (about 333 KB) and the `posthog` string. A deployment whose domains set no `analytics` never loads it, so its users download nothing extra.
-- **No rebuild to configure**: changing the key or the host is an app config write, applied at the next sign-in or page load. A domain without `analytics` loads and sends nothing.
+- **No rebuild to configure**: changing the key or the host is an app config write, applied at the next sign-in or page load. A domain without `analytics` loads and sends nothing; an SDK already started in an open page keeps its key and host until the page reloads.
 - **Login screen not collected**: events start after sign-in, so funnels that begin on the login screen cannot be measured.
 - **Plugin cost in production**: once any plugin is attached, every log call builds a `LogContext` in production too. In a session without the analytics chunk, no plugin is attached and `logging()` costs what it did before.
 - **Duplicate dev console line**: in development, a render error `BAIErrorBoundary` catches is printed to the console once by React and once by `useBAILogger`.

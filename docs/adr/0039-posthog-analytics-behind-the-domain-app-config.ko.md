@@ -58,7 +58,7 @@ flowchart TD
 
 - **Read location**: `ProductAnalyticsGate`는 로그인이 `myAppConfigState`에 넣은 merged `domainConfig`를 `useMyAppConfig('domainConfig', 'analytics')`로 읽는다(ADR 0033). 따로 query를 보내지 않는다.
 - **Missing value**: 둘 중 하나라도 없는 동안 gate는 아무것도 그리지 않으므로 chunk를 받지 않고, `posthog.init`을 부르지 않으며, 요청도 보내지 않는다. 로그인 전과 app config 읽기가 실패했을 때도 같다.
-- **Act-as tab**: act-as 탭(`getActAsTarget()`이 있음)에서는 `ProductAnalytics`가 SDK를 시작하지 않는다. ADR 0035에서 act-as 탭이 아무것도 저장하지 않는 것과 같아, super admin의 act-as 사용은 세지 않고 act-as를 나가도 다른 탭이 공유하는 distinct id를 reset하지 않는다.
+- **Act-as tab**: act-as 탭(`getActAsTarget()`이 있음)에서도 gate는 아무것도 그리지 않으므로 chunk를 받지 않고 SDK를 시작하지 않는다. ADR 0035에서 act-as 탭이 아무것도 저장하지 않는 것과 같아, super admin의 act-as 사용은 세지 않고 act-as를 나가도 다른 탭이 공유하는 distinct id를 reset하지 않는다.
 - **Accepted values**: `posthogKey`는 문자열, `posthogHost`는 `https:` URL이어야 하고, 다른 값은 없는 것으로 본다.
 - **Script execution**: `posthog-js`는 `posthogHost`에서 script를 받아 WebUI origin에서 실행하고, production CSP의 `'strict-dynamic'`은 어떤 host든 허용한다. 그래서 `domainConfig.analytics`를 쓸 수 있는 권한은 그 domain의 모든 session에서 script를 실행할 수 있는 권한과 같다.
 - **Who sets it**: `analytics`를 고치는 WebUI 화면은 없다. superadmin이 manager의 app config API나 CLI로 domain의 `domainConfig`에 쓴다. `WebUISettingsPage`는 `domainConfig` 쓰기를 raw 문서 위에 만들므로 이 key를 지우지 않는다.
@@ -124,7 +124,7 @@ flowchart TD
 ## Consequences
 
 - **PostHog code in every build**: 모든 build output에 `posthog-js`를 담은 analytics chunk(약 333 KB)와 `posthog` 문자열이 있다. domain이 `analytics`를 설정하지 않은 배포는 이 chunk를 받지 않으므로 사용자가 더 받는 것은 없다.
-- **No rebuild to configure**: key나 host를 바꾸는 것은 app config 쓰기이고, 다음 로그인이나 page load부터 적용된다. `analytics`가 없는 domain은 아무것도 받거나 보내지 않는다.
+- **No rebuild to configure**: key나 host를 바꾸는 것은 app config 쓰기이고, 다음 로그인이나 page load부터 적용된다. `analytics`가 없는 domain은 아무것도 받거나 보내지 않는다. 열린 page에서 이미 시작한 SDK는 page를 다시 불러올 때까지 그 key와 host를 그대로 쓴다.
 - **Login screen not collected**: event는 로그인 뒤에 시작하므로 로그인 화면에서 시작하는 funnel은 측정할 수 없다.
 - **Plugin cost in production**: plugin이 하나라도 붙으면 production에서도 모든 log 호출이 `LogContext`를 만든다. analytics chunk가 없는 session에는 plugin이 붙지 않으므로 `logging()`의 비용은 이전과 같다.
 - **Duplicate dev console line**: 개발 환경에서는 `BAIErrorBoundary`가 잡은 render error를 React와 `useBAILogger`가 한 번씩 console에 찍는다.
