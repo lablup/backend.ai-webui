@@ -425,6 +425,20 @@ async function submitLogin(
   await page.goto(webuiEndpoint);
   await removeDevServerOverlay(page);
   const before = await readLocalStorage(page);
+  // A server with baked credentials lands straight on the app shell and the
+  // form never shows: signed in as the requested account, the login is done.
+  const shell = page.getByTestId('user-dropdown-button');
+  if (await shell.isVisible().catch(() => false)) {
+    const email = await signedInEmail(page);
+    if (email && email.toLowerCase() === username.toLowerCase()) {
+      return before;
+    }
+    throw new Error(
+      `[login] the app boots signed in already (baked credentials) and no login form shows${
+        email ? `; the signed-in account is ${accountLabel(email)}` : ''
+      } — signing in as ${accountLabel(username)} is not possible on this server`,
+    );
+  }
   await fillLoginEndpoint(page, endpoint);
   await page.getByLabel('Email or Username').fill(username);
   await page.getByLabel('Password').fill(password);
