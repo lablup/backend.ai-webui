@@ -276,7 +276,7 @@ const SharedFolderPermissionInfoModalV2: React.FC<
     ],
     queryFn: () =>
       findLeavableShare(relayEnvironment, folderId ?? '', userId, project),
-    enabled: !!modalProps.open && !!folderId && !!userId && isUserOwned,
+    enabled: !!modalProps.open && !!folderId && !!userId,
     staleTime: 0,
     gcTime: 0,
   });
@@ -370,50 +370,48 @@ const SharedFolderPermissionInfoModalV2: React.FC<
           </MetadataListItem>
         </BAIMetadataList>
 
-        {isUserOwned ? (
-          <VStack align="stretch" gap={4}>
-            <Heading level={5}>{t('data.folders.Permission')}</Heading>
-            <BAITable
-              bordered
-              pagination={false}
-              dataSource={filterOutNullAndUndefined([vfolder])}
-              columns={[
-                {
-                  key: 'userName',
-                  title: t('general.E-Mail'),
-                  render: () => currentUser.email,
+        <VStack align="stretch" gap={4}>
+          <Heading level={5}>{t('data.folders.Permission')}</Heading>
+          <BAITable
+            bordered
+            pagination={false}
+            dataSource={filterOutNullAndUndefined([vfolder])}
+            columns={[
+              {
+                key: 'userName',
+                title: t('general.E-Mail'),
+                render: () => currentUser.email,
+              },
+              {
+                key: 'permissions',
+                title: t('data.folders.MountPermission'),
+                render: (_perm: string, vfolder) => {
+                  return <VFolderPermissionCellV2 vfolderFrgmt={vfolder} />;
                 },
-                {
-                  key: 'permissions',
-                  title: t('data.folders.MountPermission'),
-                  render: (_perm: string, vfolder) => {
-                    return <VFolderPermissionCellV2 vfolderFrgmt={vfolder} />;
-                  },
-                },
-                {
-                  key: 'control',
-                  title: t('data.folders.Control'),
-                  render: () => (
-                    <HStack justify="center">
-                      {share && !share.isProjectShare ? (
-                        <BAIPopconfirm
-                          title={t('data.invitation.LeaveSharedFolderDesc', {
-                            folderName: vfolder?.metadata?.name,
-                          })}
-                          onConfirm={leave}
-                        >
-                          {leaveButton}
-                        </BAIPopconfirm>
-                      ) : (
-                        leaveButton
-                      )}
-                    </HStack>
-                  ),
-                },
-              ]}
-            />
-          </VStack>
-        ) : null}
+              },
+              {
+                key: 'control',
+                title: t('data.folders.Control'),
+                render: () => (
+                  <HStack justify="center">
+                    {share && !share.isProjectShare ? (
+                      <BAIPopconfirm
+                        title={t('data.invitation.LeaveSharedFolderDesc', {
+                          folderName: vfolder?.metadata?.name,
+                        })}
+                        onConfirm={leave}
+                      >
+                        {leaveButton}
+                      </BAIPopconfirm>
+                    ) : (
+                      leaveButton
+                    )}
+                  </HStack>
+                ),
+              },
+            ]}
+          />
+        </VStack>
       </VStack>
       {share?.isProjectShare ? (
         <BAIDeleteConfirmModal
