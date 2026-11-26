@@ -1,0 +1,1 @@
+import{n as e}from"./rolldown-runtime-sJBDdmOt.js";import{l as t,u as n}from"./_MapCache-BO72uBjB.js";var r;function i(){return(i=e((()=>{n(),r=function(){try{var e=t(Object,`defineProperty`);return e({},``,{}),e}catch{}}()})))()}export{i as n,r as t};

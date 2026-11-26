@@ -1,0 +1,1 @@
+import{n as e}from"./rolldown-runtime-sJBDdmOt.js";import{n as t,t as n}from"./_baseFlatten-ChQBjdLq.js";import{n as r,t as i}from"./map-IIuwj5IU.js";function a(e,t){return n(r(e,t),1)}function o(){return(o=e((()=>{t(),i()})))()}export{o as n,a as t};
