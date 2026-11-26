@@ -1309,7 +1309,7 @@
       "NoValidEmails": "有効なメールが入力されていません",
       "Pending": "保留中",
       "PendingInvitations": "保留中の招待",
-      "PendingInvitationsNotice": "確認が必要なフォルダの招待があります。",
+      "PendingInvitationsNotice": "保留中のフォルダの招待があります。",
       "Shared": "グループフォルダを正常に共有しました",
       "SharingError": "共有に失敗しました。ユーザーはすでに共有されているか、適切なプロジェクトに属していない可能性があります。",
       "SharingStopped": "共有を停止しました",

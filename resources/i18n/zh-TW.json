@@ -1310,7 +1310,7 @@
       "NoValidEmails": "沒有輸入有效的電子郵件",
       "Pending": "待處理",
       "PendingInvitations": "待處理的邀請",
-      "PendingInvitationsNotice": "您有需要確認的資料夾邀請。",
+      "PendingInvitationsNotice": "您有待處理的資料夾邀請。",
       "Shared": "已成功共享群組文件夾",
       "SharingError": "分享失敗。用戶可能已被共享或不屬於適當的項目。",
       "SharingStopped": "已停止共用",

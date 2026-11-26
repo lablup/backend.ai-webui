@@ -1296,7 +1296,7 @@
       "NoValidEmails": "No valid emails were entered",
       "Pending": "Pending",
       "PendingInvitations": "Pending invitations",
-      "PendingInvitationsNotice": "You have folder invitations to review.",
+      "PendingInvitationsNotice": "You have pending folder invitations.",
       "Shared": "Successfully shared the group folder",
       "SharingError": "Sharing failed. User may already be shared or does not belong to appropriate project.",
       "SharingStopped": "Stopped sharing",

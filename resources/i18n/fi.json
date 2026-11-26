@@ -1309,7 +1309,7 @@
       "NoValidEmails": "Kelvollisia sähköposteja ei ole syötetty",
       "Pending": "Odottaa",
       "PendingInvitations": "Odottavat kutsut",
-      "PendingInvitationsNotice": "Sinulla on tarkistettavia kansiokutsuja.",
+      "PendingInvitationsNotice": "Sinulla on odottavia kansiokutsuja.",
       "Shared": "Ryhmäkansion jakaminen onnistui",
       "SharingError": "Jakaminen epäonnistui. Käyttäjä on ehkä jo jaettu tai ei kuulu asianmukaiseen projektiin.",
       "SharingStopped": "Jakaminen lopetettu",

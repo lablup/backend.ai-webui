@@ -1309,7 +1309,7 @@
       "NoValidEmails": "Geçerli e-posta girilmedi",
       "Pending": "Beklemede",
       "PendingInvitations": "Bekleyen davetler",
-      "PendingInvitationsNotice": "İncelemeniz gereken klasör davetleri var.",
+      "PendingInvitationsNotice": "Bekleyen klasör davetleriniz var.",
       "Shared": "Grup klasörü başarıyla paylaşıldı",
       "SharingError": "Paylaşım başarısız oldu. Kullanıcı zaten paylaşılmış olabilir veya uygun projeye ait değil.",
       "SharingStopped": "Paylaşım durduruldu",
