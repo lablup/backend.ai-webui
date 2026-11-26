@@ -153,7 +153,7 @@ Two conditions make this legitimate rather than the ❌ pattern above: the surfa
 
 ## Frozen antd-v6-shaped prop vocabulary
 
-Many BAI wrappers (`BAIAlert`, `BAICard`, `BAITable`, `BAIModal`, `BAISelect`, …)
+Many BAI wrappers (`BAIAlert`, `BAICard`, `BAITable`, `BAIModal`, …)
 were deliberately given an antd-**v6**-shaped prop surface, so the several
 hundred call sites carried over from the antd era needed no edit when their
 internals were rebuilt on Astryx — e.g. `BAIAlert` takes `title` (not
@@ -163,7 +163,8 @@ aligned to antd v6 specifically because v6 renamed the v5 names as
 
 **Do not rename these props to "modernize" them.** The vocabulary outlived the
 library on purpose — renaming would break every existing call site for no
-benefit. When a wrapper's props interface `Omit<>`s one of these names, target
+benefit. `BAISelect` is the exception: ADR 0042 moved it to ui-common
+`SelectorProps`, so it takes `hasClear`, `isLoading` and `hasSearch`. When a wrapper's props interface `Omit<>`s one of these names, target
 the **v6** name, not the v5 one. New props added to an antd-shaped wrapper
 should also follow the frozen v6 spelling rather than inventing a third one.
 

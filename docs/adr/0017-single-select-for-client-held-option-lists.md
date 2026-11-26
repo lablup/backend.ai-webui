@@ -2,6 +2,8 @@
 
 > This ADR replaces the `BAISelector` parts of ADR 0014: the `BAISelector` row of the table in section 1, the `BAISelect` part of "Existing antd-shaped wrappers stay" in section 2, and the `BAISelect` parts of "Antd-shaped wrappers included" and "Where the subpath stays" in section 3.
 
+> ADR 0042 replaces section 2 of this ADR, its Consequences items "Search default", "Clear value", "Controlled value", and "Upstream props", the sentence of "Naming exception" about `mode="multiple"`, and the two `mode` edges of the Diagram.
+
 ## Summary
 
 > Unfamiliar terms are collected in the [Glossary](#glossary) at the end.

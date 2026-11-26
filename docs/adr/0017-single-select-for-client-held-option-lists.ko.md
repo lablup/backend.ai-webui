@@ -2,6 +2,8 @@
 
 > ADR 0014의 `BAISelector` 부분을 대신한다: 1절 표의 `BAISelector` 행, 2절 "Existing antd-shaped wrappers stay"의 `BAISelect` 부분, 3절 "Antd-shaped wrappers included"와 "Where the subpath stays"의 `BAISelect` 부분.
 
+> 이 ADR의 2절, Consequences의 "Search default", "Clear value", "Controlled value", "Upstream props" 항목, "Naming exception"의 `mode="multiple"` 문장, Diagram의 `mode` 간선 두 개는 ADR 0042가 대신한다.
+
 ## Summary
 
 > 낯선 용어는 문서 맨 아래 [용어](#용어)에 모아 두었다.

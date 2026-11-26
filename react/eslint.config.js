@@ -57,8 +57,8 @@ const astryxDynamicImportBan = [
     'Import Astryx through @lablup/ui-common, dynamic imports and require() included (ADR 0009).',
 }));
 // ADR 0014: ui-common's form controls are imported as BAI* from backend.ai-ui.
-// Types and helpers on the same subpaths stay importable. `Selector` has only
-// the antd-shaped BAISelect (ADR 0017).
+// Types and helpers on the same subpaths stay importable. `Selector` is reached
+// only through BAISelect (ADR 0017, ADR 0042).
 const formControlImportBans = [
   ['CheckboxInput'],
   ['CheckboxList', 'CheckboxListItem'],

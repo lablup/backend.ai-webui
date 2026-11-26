@@ -77,8 +77,9 @@ the `../` depth to the file; the same specifiers exist on both sides of the work
 ### The antd-v6-shaped prop vocabulary is frozen deliberately
 
 antd is gone but its prop **names** survived on purpose: `BAIAlert`, `BAICard`, `BAIModal`,
-`BAISelect`, `BAITable`, … were given an antd-**v6**-shaped surface so the hundreds of
+`BAITable`, … were given an antd-**v6**-shaped surface so the hundreds of
 inherited call sites needed no edit when their internals were rebuilt on Astryx.
+`BAISelect` is the exception: its props are ui-common `SelectorProps` (ADR 0042).
 
 - Do **not** rename these props to Astryx spellings or invent a third one. `BAIAlert` takes
   `title` (not `message`); steps take `orientation` (not `direction`).
