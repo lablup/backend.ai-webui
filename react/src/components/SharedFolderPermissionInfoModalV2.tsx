@@ -10,6 +10,7 @@ import { SharedFolderPermissionInfoModalV2ProjectSharesQuery } from '../__genera
 import { App } from '../app-shim';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanMutation, useTanQuery } from '../hooks/reactQueryAlias';
+import { useIsPersonalProject } from '../hooks/useAccessibleProjects';
 import type { ProjectContextOrNull } from '../types/projectContext';
 import VFolderPermissionCellV2 from './VFolderPermissionCellV2';
 import { Banner } from '@lablup/ui-common/Banner';
@@ -61,68 +62,70 @@ const requireField = <T,>(value: T | null | undefined, field: string): T => {
 };
 
 /**
- * The accepted share of the folder the caller may leave: their own, else the
- * page project's (`myEntityShares` never lists project shares). Leaving takes
- * `SOFT_DELETE` on `entity_share` in the scope the share is addressed to
- * (lablup/backend.ai#17162); `null` when the caller holds no such share.
+ * The accepted share of the folder the caller may leave: `recipientProject`'s,
+ * or their own when it is null (`myEntityShares` never lists project shares).
+ * Leaving takes `SOFT_DELETE` on `entity_share` in the scope the share is
+ * addressed to (lablup/backend.ai#17162); `null` when there is no such share.
  */
 const findLeavableShare = async (
   environment: Environment,
   folderId: string,
   userId: string,
-  project: ProjectContextOrNull,
+  recipientProject: ProjectContextOrNull,
 ): Promise<LeavableShare | null> => {
-  const mine = await fetchQuery<SharedFolderPermissionInfoModalV2MySharesQuery>(
-    environment,
-    graphql`
-      query SharedFolderPermissionInfoModalV2MySharesQuery(
-        $folderId: UUID!
-        $userScope: PermissionTarget!
-      ) {
-        myEntityShares(
-          sides: [RECIPIENT]
-          filter: {
-            targetEntityId: { equals: $folderId }
-            status: { equals: ACCEPTED }
-          }
-          limit: 1
-        ) {
-          edges {
-            node {
-              entityId
-              targetEntityType
+  if (!recipientProject) {
+    const mine =
+      await fetchQuery<SharedFolderPermissionInfoModalV2MySharesQuery>(
+        environment,
+        graphql`
+          query SharedFolderPermissionInfoModalV2MySharesQuery(
+            $folderId: UUID!
+            $userScope: PermissionTarget!
+          ) {
+            myEntityShares(
+              sides: [RECIPIENT]
+              filter: {
+                targetEntityId: { equals: $folderId }
+                status: { equals: ACCEPTED }
+              }
+              limit: 1
+            ) {
+              edges {
+                node {
+                  entityId
+                  targetEntityType
+                }
+              }
+            }
+            myScopePermissions(input: { target: $userScope }) {
+              item {
+                permissions
+              }
             }
           }
-        }
-        myScopePermissions(input: { target: $userScope }) {
-          item {
-            permissions
-          }
-        }
-      }
-    `,
-    {
-      folderId,
-      userScope: {
-        scopeType: 'user',
-        scopeId: userId,
-        entityType: ENTITY_SHARE_ENTITY_TYPE,
-      },
-    },
-    { fetchPolicy: 'network-only' },
-  ).toPromise();
-  const own = requireField(mine?.myEntityShares, 'myEntityShares').edges.find(
-    ({ node }) => isFolderShare(node),
-  )?.node;
-  if (own) {
+        `,
+        {
+          folderId,
+          userScope: {
+            scopeType: 'user',
+            scopeId: userId,
+            entityType: ENTITY_SHARE_ENTITY_TYPE,
+          },
+        },
+        { fetchPolicy: 'network-only' },
+      ).toPromise();
+    const own = requireField(mine?.myEntityShares, 'myEntityShares').edges.find(
+      ({ node }) => isFolderShare(node),
+    )?.node;
     const canLeave = _.includes(
       requireField(mine?.myScopePermissions, 'myScopePermissions').item
         .permissions,
       'SOFT_DELETE',
     );
-    return canLeave ? { shareId: own.entityId, isProjectShare: false } : null;
+    return own && canLeave
+      ? { shareId: own.entityId, isProjectShare: false }
+      : null;
   }
-  if (!project) return null;
 
   const permissions =
     await fetchQuery<SharedFolderPermissionInfoModalV2ProjectLeaversQuery>(
@@ -141,7 +144,7 @@ const findLeavableShare = async (
       {
         projectScope: {
           scopeType: 'project',
-          scopeId: project.id,
+          scopeId: recipientProject.id,
           entityType: ENTITY_SHARE_ENTITY_TYPE,
         },
       },
@@ -182,7 +185,7 @@ const findLeavableShare = async (
           }
         }
       `,
-      { projects: [{ value: project.id }], folderId },
+      { projects: [{ value: recipientProject.id }], folderId },
       { fetchPolicy: 'network-only' },
     ).toPromise();
   const projectShare = requireField(
@@ -193,7 +196,7 @@ const findLeavableShare = async (
   return {
     shareId: projectShare.entityId,
     isProjectShare: true,
-    projectName: project.name,
+    projectName: recipientProject.name,
   };
 };
 
@@ -204,7 +207,7 @@ interface SharedFolderPermissionInfoModalV2Props extends Omit<
   /** App-level contract, kept: consumers outside this area use it. */
   open?: boolean;
   vfolderFrgmt: SharedFolderPermissionInfoModalV2Fragment$key | null;
-  /** The page's project (ADR-0001); `null` lets the caller leave only their own share. */
+  /** The page's project (ADR-0001): its share is the one shown and left; the caller's own on their personal project or with `null`. */
   project: ProjectContextOrNull;
   onLeaveFolder?: (folderId: string) => void;
   onRequestClose: (success?: boolean) => void;
@@ -269,15 +272,24 @@ const SharedFolderPermissionInfoModalV2: React.FC<
   const isUserOwned = vfolder?.accessControl?.ownershipType === 'USER';
   const folderId = vfolder?.entityId;
   const userId = currentUser.uuid;
+  // On the caller's personal project the folder is reached through their own
+  // share; on any other project, through that project's.
+  const isPersonalProject = useIsPersonalProject(project?.id);
+  const recipientProject = isPersonalProject ? null : project;
   const leavableShare = useTanQuery({
     queryKey: [
       'SharedFolderPermissionInfoModalV2.leavableShare',
       folderId,
       userId,
-      project?.id ?? null,
+      recipientProject?.id ?? null,
     ],
     queryFn: () =>
-      findLeavableShare(relayEnvironment, folderId ?? '', userId, project),
+      findLeavableShare(
+        relayEnvironment,
+        folderId ?? '',
+        userId,
+        recipientProject,
+      ),
     enabled: !!modalProps.open && !!folderId && !!userId,
     staleTime: 0,
     gcTime: 0,
@@ -384,21 +396,19 @@ const SharedFolderPermissionInfoModalV2: React.FC<
               pagination={false}
               dataSource={filterOutNullAndUndefined([vfolder])}
               columns={[
-                // A project's share is held by the project, not by the caller.
+                // Named by the page's project, so a caller who may not read the share sees it too.
                 {
                   key: 'shareType',
                   title: t('data.folders.ShareType'),
                   render: () =>
-                    share?.isProjectShare
-                      ? t('general.Project')
-                      : t('general.User'),
+                    recipientProject ? t('general.Project') : t('general.User'),
                 },
                 {
                   key: 'recipient',
                   title: t('data.folders.Recipient'),
                   render: () =>
-                    share?.isProjectShare
-                      ? share.projectName
+                    recipientProject
+                      ? recipientProject.name
                       : currentUser.email,
                 },
                 {
