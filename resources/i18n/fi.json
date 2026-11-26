@@ -1270,6 +1270,7 @@
       "Serve": "Malli, joka palvelee",
       "ShareFolder": "Jaa kansio",
       "SharePermission": "Jako-oikeus",
+      "ShareType": "Jakotyyppi",
       "ShareWithProject": "Jaa projektille",
       "ShareWithUser": "Jaa käyttäjälle",
       "SharedFolderAlertDesc": "Tämä on ulkoisesti jaettu kansio.",

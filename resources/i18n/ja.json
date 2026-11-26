@@ -1270,6 +1270,7 @@
       "Serve": "サービス",
       "ShareFolder": "フォルダの共有",
       "SharePermission": "共有権限",
+      "ShareType": "共有タイプ",
       "ShareWithProject": "プロジェクトに共有",
       "ShareWithUser": "ユーザーに共有",
       "SharedFolderAlertDesc": "これは外部共有フォルダーです。",

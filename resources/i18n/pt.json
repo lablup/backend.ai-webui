@@ -1270,6 +1270,7 @@
       "Serve": "Serviço de modelo",
       "ShareFolder": "Partilhar pasta",
       "SharePermission": "Permissão de partilha",
+      "ShareType": "Tipo de partilha",
       "ShareWithProject": "Partilhar com projeto",
       "ShareWithUser": "Partilhar com utilizador",
       "SharedFolderAlertDesc": "Esta é uma pasta compartilhada externamente.",

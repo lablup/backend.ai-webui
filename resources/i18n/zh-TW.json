@@ -1271,6 +1271,7 @@
       "Serve": "服务模式",
       "ShareFolder": "共享文件夹",
       "SharePermission": "共享權限",
+      "ShareType": "共用類型",
       "ShareWithProject": "共享給專案",
       "ShareWithUser": "共享給使用者",
       "SharedFolderAlertDesc": "這是一個外部共享的文件夾。",

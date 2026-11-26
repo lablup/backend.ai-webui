@@ -1270,6 +1270,7 @@
       "Serve": "Modelo de servicio",
       "ShareFolder": "Compartir carpeta",
       "SharePermission": "Permiso de uso compartido",
+      "ShareType": "Tipo de uso compartido",
       "ShareWithProject": "Compartir con proyecto",
       "ShareWithUser": "Compartir con usuario",
       "SharedFolderAlertDesc": "Esta es una carpeta compartida externamente.",

@@ -1270,6 +1270,7 @@
       "Serve": "Model obsługujący",
       "ShareFolder": "Folder udostępniony",
       "SharePermission": "Uprawnienie udostępniania",
+      "ShareType": "Typ udostępnienia",
       "ShareWithProject": "Udostępnij projektowi",
       "ShareWithUser": "Udostępnij użytkownikowi",
       "SharedFolderAlertDesc": "Jest to folder udostępniony zewnętrznie.",

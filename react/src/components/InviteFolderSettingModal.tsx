@@ -29,7 +29,6 @@ import { Button } from '@lablup/ui-common/Button';
 import { Field } from '@lablup/ui-common/Field';
 import { HStack, StackItem, VStack } from '@lablup/ui-common/Stack';
 import { Heading } from '@lablup/ui-common/Text';
-import { Token } from '@lablup/ui-common/Token';
 import { Tooltip } from '@lablup/ui-common/Tooltip';
 import * as stylex from '@stylexjs/stylex';
 import {
@@ -331,11 +330,15 @@ const ExistingShareNoticeModal: React.FC<{
           data-testid="existing-share-table"
           columns={[
             {
+              title: t('data.folders.ShareType'),
+              dataIndex: 'kind',
+              render: (kind: ShareRow['kind']) =>
+                kind === 'project' ? t('general.Project') : t('general.User'),
+            },
+            {
               title: t('data.folders.Recipient'),
               dataIndex: 'name',
-              render: (name: string, row) => (
-                <RecipientCell name={name} kind={row.kind} />
-              ),
+              render: (name: string) => <RecipientCell name={name} />,
             },
             {
               title: t('general.Status'),
@@ -372,25 +375,17 @@ const ExistingShareNoticeModal: React.FC<{
   );
 };
 
-// A recipient's name with a token saying whether it is a user or a project.
 const styles = stylex.create({
   recipientCell: { minWidth: 0 },
 });
 
-const RecipientCell: React.FC<{ name: string; kind: RecipientKind }> = ({
-  name,
-  kind,
-}) => {
+const RecipientCell: React.FC<{ name: string }> = ({ name }) => {
   'use memo';
-  const { t } = useTranslation();
   return (
     <HStack gap={2} align="center" xstyle={styles.recipientCell}>
       <StackItem size="fill">
         <BAIText ellipsis={{ tooltip: true }}>{name}</BAIText>
       </StackItem>
-      <Token
-        label={kind === 'project' ? t('general.Project') : t('general.User')}
-      />
     </HStack>
   );
 };
@@ -1221,12 +1216,18 @@ const SharedUserTable: React.FC<{
       rowKey="shareId"
       columns={[
         {
+          title: t('data.folders.ShareType'),
+          dataIndex: 'kind',
+          render: (kind: ShareRow['kind']) =>
+            kind === 'project' ? t('general.Project') : t('general.User'),
+        },
+        {
           title: t('data.folders.Recipient'),
           dataIndex: 'name',
           sorter: (a, b) => localeCompare(a.name, b.name),
           render: (name: string, row) => (
             <BAINameActionCell
-              title={<RecipientCell name={name} kind={row.kind} />}
+              title={<RecipientCell name={name} />}
               showActions="always"
               actions={rowActions(row)}
             />

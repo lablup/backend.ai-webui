@@ -1270,6 +1270,7 @@
       "Serve": "Modèle en service",
       "ShareFolder": "Dossier de partage",
       "SharePermission": "Autorisation de partage",
+      "ShareType": "Type de partage",
       "ShareWithProject": "Partager avec un projet",
       "ShareWithUser": "Partager avec un utilisateur",
       "SharedFolderAlertDesc": "Il s'agit d'un dossier partagé externe.",

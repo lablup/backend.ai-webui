@@ -1270,6 +1270,7 @@
       "Serve": "Das Modell dient",
       "ShareFolder": "Ordner teilen",
       "SharePermission": "Freigabeberechtigung",
+      "ShareType": "Freigabetyp",
       "ShareWithProject": "Mit Projekt teilen",
       "ShareWithUser": "Mit Benutzer teilen",
       "SharedFolderAlertDesc": "Dies ist ein extern geteilter Ordner.",

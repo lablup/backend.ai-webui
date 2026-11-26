@@ -1270,6 +1270,7 @@
       "Serve": "Modello di servizio",
       "ShareFolder": "Cartella di condivisione",
       "SharePermission": "Autorizzazione di condivisione",
+      "ShareType": "Tipo di condivisione",
       "ShareWithProject": "Condividi con progetto",
       "ShareWithUser": "Condividi con utente",
       "SharedFolderAlertDesc": "Questa è una cartella condivisa esternamente.",

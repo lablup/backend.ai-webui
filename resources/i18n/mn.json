@@ -1270,6 +1270,7 @@
       "Serve": "Загвар үйлчилгээ үзүүлдэг",
       "ShareFolder": "Фолдер хуваалцах",
       "SharePermission": "Хуваалцах эрх",
+      "ShareType": "Хуваалцах төрөл",
       "ShareWithProject": "Төсөлтэй хуваалцах",
       "ShareWithUser": "Хэрэглэгчтэй хуваалцах",
       "SharedFolderAlertDesc": "Энэ бол гаднаас хуваалцсан хавтас юм.",

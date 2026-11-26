@@ -1270,6 +1270,7 @@
       "Serve": "Model penyajian",
       "ShareFolder": "Folder berbagi",
       "SharePermission": "Izin berbagi",
+      "ShareType": "Jenis berbagi",
       "ShareWithProject": "Bagikan ke proyek",
       "ShareWithUser": "Bagikan ke pengguna",
       "SharedFolderAlertDesc": "Ini adalah folder bersama secara eksternal.",

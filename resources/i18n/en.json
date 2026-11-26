@@ -1257,6 +1257,7 @@
       "Serve": "Model serving",
       "ShareFolder": "Share Folder",
       "SharePermission": "Share permission",
+      "ShareType": "Share type",
       "ShareWithProject": "Share with project",
       "ShareWithUser": "Share with user",
       "SharedFolderAlertDesc": "This is an externally shared folder.",

@@ -1270,6 +1270,7 @@
       "Serve": "Model servis",
       "ShareFolder": "Paylaşım klasörü",
       "SharePermission": "Paylaşım izni",
+      "ShareType": "Paylaşım türü",
       "ShareWithProject": "Projeyle paylaş",
       "ShareWithUser": "Kullanıcıyla paylaş",
       "SharedFolderAlertDesc": "Bu harici olarak paylaşılan bir klasördür.",

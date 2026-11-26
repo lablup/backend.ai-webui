@@ -1270,6 +1270,7 @@
       "Serve": "서비스",
       "ShareFolder": "폴더 공유하기",
       "SharePermission": "공유 권한",
+      "ShareType": "공유 타입",
       "ShareWithProject": "프로젝트로 공유",
       "ShareWithUser": "사용자로 공유",
       "SharedFolderAlertDesc": "이 폴더는 다른 사용자가 공유한 폴더입니다.",

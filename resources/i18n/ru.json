@@ -1270,6 +1270,7 @@
       "Serve": "Модельная сервировка",
       "ShareFolder": "Папка общего доступа",
       "SharePermission": "Разрешение на общий доступ",
+      "ShareType": "Тип общего доступа",
       "ShareWithProject": "Поделиться с проектом",
       "ShareWithUser": "Поделиться с пользователем",
       "SharedFolderAlertDesc": "Это внешне общая папка.",

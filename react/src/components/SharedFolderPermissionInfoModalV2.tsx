@@ -24,6 +24,7 @@ import {
   BAITable,
   BAIMetadataList,
   BAIModal,
+  BAISkeleton,
   type BAIModalProps,
   BAIText,
   useErrorMessageResolver,
@@ -281,7 +282,7 @@ const SharedFolderPermissionInfoModalV2: React.FC<
     gcTime: 0,
   });
   const share = leavableShare.data;
-  const cannotLeave = !leavableShare.isLoading && !share;
+  const cannotLeave = !share;
 
   const leaveFolder = useTanMutation({
     mutationFn: ({ shareId }: { shareId: string }) =>
@@ -318,7 +319,7 @@ const SharedFolderPermissionInfoModalV2: React.FC<
       variant="ghost"
       icon={<LogOutIcon />}
       className="bai-name-action-cell-danger"
-      isLoading={leavableShare.isLoading || leaveFolder.isPending}
+      isLoading={leaveFolder.isPending}
       isDisabled={cannotLeave}
       onClick={
         share?.isProjectShare ? () => setIsProjectLeaveOpen(true) : undefined
@@ -337,91 +338,98 @@ const SharedFolderPermissionInfoModalV2: React.FC<
       footer={null}
       {...modalProps}
     >
-      <VStack align="stretch" gap={5}>
-        <Banner
-          role="status"
-          status="info"
-          title={
-            isUserOwned
-              ? t('data.folders.SharedFolderAlertDesc')
-              : t('data.folders.ProjectFolderAlertDesc')
-          }
-        />
-        <BAIMetadataList title={t('data.FolderInfo')} columns={2}>
-          <MetadataListItem label={t('data.folders.Name')}>
-            <BAIText copyable>{vfolder?.metadata?.name ?? ''}</BAIText>
-          </MetadataListItem>
-          <MetadataListItem label={t('data.folders.Type')}>
-            {isUserOwned ? (
-              <HStack gap={2} align="center">
-                <Text>{t('data.User')}</Text>
-                <UserIcon size="1em" />
-              </HStack>
-            ) : (
-              <HStack gap={2} align="center">
-                <Text>{t('data.Project')}</Text>
-                <UsersIcon size="1em" />
-              </HStack>
-            )}
-          </MetadataListItem>
-          <MetadataListItem label={t('data.folders.Owner')}>
-            {vfolder?.ownership?.creatorEmail ||
-              vfolder?.ownership?.user?.basicInfo?.email}
-          </MetadataListItem>
-        </BAIMetadataList>
-
-        <VStack align="stretch" gap={4}>
-          <Heading level={5}>{t('data.folders.Permission')}</Heading>
-          <BAITable
-            bordered
-            pagination={false}
-            dataSource={filterOutNullAndUndefined([vfolder])}
-            columns={[
-              {
-                key: 'recipient',
-                title: t('data.folders.Recipient'),
-                // A project's share is held by the project, not by the caller.
-                render: () =>
-                  share?.isProjectShare ? (
-                    <HStack gap={2} align="center">
-                      <UsersIcon size="1em" />
-                      <Text>{share.projectName}</Text>
-                    </HStack>
-                  ) : (
-                    currentUser.email
-                  ),
-              },
-              {
-                key: 'permissions',
-                title: t('data.folders.MountPermission'),
-                render: (_perm: string, vfolder) => {
-                  return <VFolderPermissionCellV2 vfolderFrgmt={vfolder} />;
-                },
-              },
-              {
-                key: 'control',
-                title: t('data.folders.Control'),
-                render: () => (
-                  <HStack justify="center">
-                    {share && !share.isProjectShare ? (
-                      <BAIPopconfirm
-                        title={t('data.invitation.LeaveSharedFolderDesc', {
-                          folderName: vfolder?.metadata?.name,
-                        })}
-                        onConfirm={leave}
-                      >
-                        {leaveButton}
-                      </BAIPopconfirm>
-                    ) : (
-                      leaveButton
-                    )}
-                  </HStack>
-                ),
-              },
-            ]}
+      {leavableShare.isLoading ? (
+        <BAISkeleton />
+      ) : (
+        <VStack align="stretch" gap={5}>
+          <Banner
+            role="status"
+            status="info"
+            title={
+              isUserOwned
+                ? t('data.folders.SharedFolderAlertDesc')
+                : t('data.folders.ProjectFolderAlertDesc')
+            }
           />
+          <BAIMetadataList title={t('data.FolderInfo')} columns={2}>
+            <MetadataListItem label={t('data.folders.Name')}>
+              <BAIText copyable>{vfolder?.metadata?.name ?? ''}</BAIText>
+            </MetadataListItem>
+            <MetadataListItem label={t('data.folders.Type')}>
+              {isUserOwned ? (
+                <HStack gap={2} align="center">
+                  <Text>{t('data.User')}</Text>
+                  <UserIcon size="1em" />
+                </HStack>
+              ) : (
+                <HStack gap={2} align="center">
+                  <Text>{t('data.Project')}</Text>
+                  <UsersIcon size="1em" />
+                </HStack>
+              )}
+            </MetadataListItem>
+            <MetadataListItem label={t('data.folders.Owner')}>
+              {vfolder?.ownership?.creatorEmail ||
+                vfolder?.ownership?.user?.basicInfo?.email}
+            </MetadataListItem>
+          </BAIMetadataList>
+
+          <VStack align="stretch" gap={4}>
+            <Heading level={5}>{t('data.folders.Permission')}</Heading>
+            <BAITable
+              bordered
+              pagination={false}
+              dataSource={filterOutNullAndUndefined([vfolder])}
+              columns={[
+                // A project's share is held by the project, not by the caller.
+                {
+                  key: 'shareType',
+                  title: t('data.folders.ShareType'),
+                  render: () =>
+                    share?.isProjectShare
+                      ? t('general.Project')
+                      : t('general.User'),
+                },
+                {
+                  key: 'recipient',
+                  title: t('data.folders.Recipient'),
+                  render: () =>
+                    share?.isProjectShare
+                      ? share.projectName
+                      : currentUser.email,
+                },
+                {
+                  key: 'permissions',
+                  title: t('data.folders.MountPermission'),
+                  render: (_perm: string, vfolder) => {
+                    return <VFolderPermissionCellV2 vfolderFrgmt={vfolder} />;
+                  },
+                },
+                {
+                  key: 'control',
+                  title: t('data.folders.Control'),
+                  render: () => (
+                    <HStack justify="center">
+                      {share && !share.isProjectShare ? (
+                        <BAIPopconfirm
+                          title={t('data.invitation.LeaveSharedFolderDesc', {
+                            folderName: vfolder?.metadata?.name,
+                          })}
+                          onConfirm={leave}
+                        >
+                          {leaveButton}
+                        </BAIPopconfirm>
+                      ) : (
+                        leaveButton
+                      )}
+                    </HStack>
+                  ),
+                },
+              ]}
+            />
+          </VStack>
         </VStack>
-      </VStack>
+      )}
       {share?.isProjectShare ? (
         <BAIDeleteConfirmModal
           open={isProjectLeaveOpen}
