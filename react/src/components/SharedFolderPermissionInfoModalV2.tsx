@@ -378,9 +378,18 @@ const SharedFolderPermissionInfoModalV2: React.FC<
             dataSource={filterOutNullAndUndefined([vfolder])}
             columns={[
               {
-                key: 'userName',
-                title: t('general.E-Mail'),
-                render: () => currentUser.email,
+                key: 'recipient',
+                title: t('data.folders.Recipient'),
+                // A project's share is held by the project, not by the caller.
+                render: () =>
+                  share?.isProjectShare ? (
+                    <HStack gap={2} align="center">
+                      <UsersIcon size="1em" />
+                      <Text>{share.projectName}</Text>
+                    </HStack>
+                  ) : (
+                    currentUser.email
+                  ),
               },
               {
                 key: 'permissions',
