@@ -140,7 +140,11 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
   const isPersonalProject = useIsPersonalProject(currentProject.id);
   const [currentUser] = useCurrentUserInfo();
   const loginConfig = useEffectiveLoginConfig();
-  const [invitations] = useVFolderInvitations(projectContext);
+  // Deferred, so a project's first invitation read does not suspend the page.
+  const invitationProjectId = useDeferredValue(projectContext?.id ?? null);
+  const [invitations] = useVFolderInvitations(
+    invitationProjectId ? { id: invitationProjectId } : null,
+  );
   const [, setInvitationOpen] = useQueryState(
     'invitation',
     parseAsString.withOptions({ history: 'replace' }),

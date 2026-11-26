@@ -54,8 +54,9 @@ const isFolderShare = (share: { targetEntityType: string }) =>
   share.targetEntityType.toLowerCase() === VFOLDER_ENTITY_TYPE;
 
 // Relay resolves a response whose nullable root field errored with that field null: treat it as a failure.
+class UnreadableFieldError extends Error {}
 const requireField = <T,>(value: T | null | undefined, field: string): T => {
-  if (value == null) throw new Error(`Could not read ${field}.`);
+  if (value == null) throw new UnreadableFieldError(field);
   return value;
 };
 
@@ -310,7 +311,9 @@ const SharedFolderPermissionInfoModalV2: React.FC<
       label={t('data.invitation.LeaveSharedFolder')}
       tooltip={
         leavableShare.isError
-          ? getErrorMessage(leavableShare.error)
+          ? leavableShare.error instanceof UnreadableFieldError
+            ? t('general.ErrorOccurred')
+            : getErrorMessage(leavableShare.error)
           : cannotLeave
             ? t('data.invitation.NoPermissionToLeaveSharedFolder')
             : t('data.invitation.LeaveSharedFolder')

@@ -924,9 +924,9 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
       <BAIUnmountAfterClose>
         <InviteFolderSettingModal
           onRequestClose={(sharingStopped) => {
+            // The folder may have left the list this page shows, and its selection with it.
+            if (sharingStopped) onRemoveRow?.(inviteVFolder?.id);
             setInviteVFolder(null);
-            // The folder may have left the list this page shows.
-            if (sharingStopped) onRemoveRow?.();
           }}
           vfolderFrgmt={inviteVFolder}
           open={!!inviteVFolder}
