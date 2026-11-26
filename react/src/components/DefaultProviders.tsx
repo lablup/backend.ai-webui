@@ -275,7 +275,7 @@ export const DefaultProviders: React.FC<{
   const { t } = useTranslation();
   const { token } = useTheme();
   const enableWebMCP = useLoginConfig()?.enableWebMCP ?? false;
-  // The system admin pages take the admin accent for the whole app (ADR 0043).
+  // The system admin pages take the admin accent for the whole app (ADR 0044).
   const themeRole = useRouteScope() === 'admin' ? 'admin' : 'brand';
 
   // Non-`en` locales are lazy chunks; `loadBuiLocale` caches one promise per

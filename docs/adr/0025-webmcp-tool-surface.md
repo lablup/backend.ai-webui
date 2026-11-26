@@ -27,7 +27,7 @@ flowchart LR
   toml["config.toml<br/>[general] enableWebMCP"]
   init["initializeConfigOnce<br/>useWebUIConfig.ts"]
   atom["loginConfigState<br/>jotai atom"]
-  root["DefaultProvidersForReactRoot"]
+  root["DefaultProviders"]
   provider["BAIWebMCPProvider"]
   owner["Component that owns the tool<br/>page or app shell"]
   hook["useWebMCPTool<br/>side effect: registration and abort"]
@@ -59,7 +59,7 @@ flowchart LR
 ### 2. Registration only when both the setting and feature detection are on
 
 - **Config key**: The setting is `[general] enableWebMCP` in `config.toml`, and its default is `true`. The Backend.AI webserver builds `/config.toml` from a fixed template and cannot pass this key, so the default must be on for tools to work in a webserver deployment as well. `refreshConfigFromToml` in `react/src/helper/loginConfig.ts` reads the value into `LoginConfigState.enableWebMCP`. A missing key or the boolean `true` turns it on; `false` and a quoted string turn it off. `applyConfigToClient` copies it to `baiClient._config.enableWebMCP` at login. `config.toml.sample` describes it.
-- **Provider**: `DefaultProvidersForReactRoot` passes `useLoginConfig()?.enableWebMCP` to the `enabled` prop of `BAIWebMCPProvider`. In a tree without the provider, `enabled` is `false`.
+- **Provider**: `DefaultProviders` passes `useLoginConfig()?.enableWebMCP` to the `enabled` prop of `BAIWebMCPProvider`. In a tree without the provider, `enabled` is `false`.
 - **Check order**: When `enabled` is `false`, `useWebMCPTool` does not read `document.modelContext`. When `enabled` is `true`, `useWebMCPTool` reads `document.modelContext` to check that the API exists, and registers nothing when it does not.
 - **Active check**: A component that must run a query or a computation to get the data a tool uses does not call that hook when `useBAIWebMCPActive()` is `false`. `useBAIWebMCPActive()` checks the two conditions above in the same order.
 

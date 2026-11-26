@@ -27,7 +27,7 @@ flowchart LR
   toml["config.toml<br/>[general] enableWebMCP"]
   init["initializeConfigOnce<br/>useWebUIConfig.ts"]
   atom["loginConfigState<br/>jotai atom"]
-  root["DefaultProvidersForReactRoot"]
+  root["DefaultProviders"]
   provider["BAIWebMCPProvider"]
   owner["tool을 가진 component<br/>page 또는 app shell"]
   hook["useWebMCPTool<br/>side effect: 등록과 abort"]
@@ -59,7 +59,7 @@ flowchart LR
 ### 2. 설정과 feature detection이 모두 켜져야 등록한다
 
 - **Config key**: 설정 이름은 `config.toml`의 `[general] enableWebMCP`이고 기본값은 `true`다. Backend.AI webserver는 고정 template으로 `/config.toml`을 만들어 이 key를 넘기지 못하므로, 기본을 켜 두어야 webserver 배포에서도 tool을 쓸 수 있다. `react/src/helper/loginConfig.ts`의 `refreshConfigFromToml`이 이 값을 `LoginConfigState.enableWebMCP`로 읽는다. key가 없거나 값이 boolean `true`이면 켜지고, `false`와 따옴표로 감싼 문자열은 꺼짐이다. `applyConfigToClient`가 로그인 때 `baiClient._config.enableWebMCP`에 복사한다. `config.toml.sample`에 설명이 있다.
-- **Provider**: `DefaultProvidersForReactRoot`가 `useLoginConfig()?.enableWebMCP`를 `BAIWebMCPProvider`의 `enabled` prop으로 넘긴다. provider가 없는 tree에서 `enabled`는 `false`다.
+- **Provider**: `DefaultProviders`가 `useLoginConfig()?.enableWebMCP`를 `BAIWebMCPProvider`의 `enabled` prop으로 넘긴다. provider가 없는 tree에서 `enabled`는 `false`다.
 - **Check order**: `useWebMCPTool`은 `enabled`가 `false`이면 `document.modelContext`를 읽지 않는다. `enabled`가 `true`이면 `document.modelContext`를 읽어 API가 있는지 확인하고, 없으면 아무것도 등록하지 않는다.
 - **Active check**: tool이 쓸 data를 얻으려고 query나 계산을 해야 하는 component는 `useBAIWebMCPActive()`가 `false`일 때 그 hook을 부르지 않는다. `useBAIWebMCPActive()`는 위 두 조건을 같은 순서로 확인한다.
 

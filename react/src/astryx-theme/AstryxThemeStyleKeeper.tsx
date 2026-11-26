@@ -15,7 +15,7 @@ const KEPT_ROLES = ['brand', 'admin'] as const;
  * other instances still use it. These instances never change theme (keyed by
  * name) and, as the first child of the app-level `<Theme>`, run their insertion
  * effect before every other one, so they own the CSS while the family is active.
- * Mechanism and measurements: #11437.
+ * ADR 0044.
  */
 const AstryxThemeStyleKeeper: React.FC = () => {
   'use memo';
