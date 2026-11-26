@@ -22,7 +22,6 @@ before you can log in with your account.
 
 ![=400px](../images/signup_dialog.png)
 
-
 :::note
 Depending on the server configuration and plugin settings, signing up by
 anonymous user may not be allowed. In that case, please contact the administrator
@@ -162,7 +161,6 @@ logged out when the timer expires. For details, see the
 [Login Session Timer](#login-session-timer) section in Top Bar Features.
 :::
 
-
 <a id="when-you-forgot-your-password"></a>
 
 ## When you forgot your password
@@ -178,14 +176,6 @@ instructions in the email to reset your password.
 Depending on the server configuration, the password change feature may not be
 available. In that case, contact your administrator.
 :::
-
-:::warning
-If login failure occurs more than 10 times consecutively, access
-to the endpoint is temporarily restricted for 20 minutes for security
-reasons. If the access restriction continues after 20 minutes, please contact
-your system administrator.
-:::
-
 
 <a id="sidebar-menus"></a>
 
@@ -214,7 +204,6 @@ Change the size of the sidebar via the buttons on the right side of the sidebar.
 Click it to significantly reduce the width of the sidebar, giving you a wider view of its contents.
 Clicking it again will return the sidebar to its original width.
 You can also use the shortcut key ( `[` ) to toggle between the narrow and original sidebar widths.
-
 
 ![=268px](../images/menu_collapse.png)
 
