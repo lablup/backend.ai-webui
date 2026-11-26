@@ -35,7 +35,7 @@ export interface BAISelectProps<
   /**
    * While no value is set, select the first option and report it through
    * `onChange`, so the enclosing Form.Item or the parent state receives it.
-   * Needs a controlled value: the `value` prop or an enclosing Form.Item.
+   * Needs a controlled value: the `value` prop, or an enclosing Form.Item with a `name`.
    */
   autoSelectOption?: boolean;
 }

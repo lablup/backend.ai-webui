@@ -68,9 +68,9 @@ const meta: Meta<typeof BAISelect> = {
       },
     },
     autoSelectOption: {
-      control: { type: 'boolean' },
+      control: false,
       description:
-        'While no value is set, select the first option and report it through onChange',
+        'While no value is set, select the first option and report it through onChange. Needs a controlled value, so it is shown in the AutoSelectOption story',
       table: {
         type: { summary: 'boolean' },
         defaultValue: { summary: 'false' },
@@ -196,7 +196,6 @@ export const Default: Story = {
     placeholder: 'Select an option',
     width: 200,
     ghost: false,
-    autoSelectOption: false,
   },
 };
 

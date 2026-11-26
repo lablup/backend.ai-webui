@@ -58,7 +58,7 @@ BAI가 더하는 prop 두 개:
 | Prop | Type | 동작 |
 |---|---|---|
 | `ghost` | `boolean` | `bai-select-ghost` class를 더한다. header의 brand band 위 select에 쓰는 on-dark 처리다(`BAISelect.css`). `Selector`의 `variant="ghost"`와는 관계없다. |
-| `autoSelectOption` | `boolean` | `value` prop을 받는 제어 select에만 적용된다(감싼 Form.Item이 넘겨 준다). 그 `value`가 `undefined`, `null`, `''` 중 하나이고 `defaultValue`가 `undefined`나 `null`인 동안, `BAISelect`는 첫 option의 값(section 안 포함, divider 제외)을 `value`로 넘기고, 그 첫 값이 바뀔 때마다 layout effect에서 그 값으로 `onChange`를 호출한다. 그러면 감싼 Form.Item이나 부모 state가 그 값을 갖는다. |
+| `autoSelectOption` | `boolean` | `value` prop을 받는 제어 select에만 적용된다(`name`이 있는 감싼 Form.Item이 넘겨 준다). 그 `value`가 `undefined`, `null`, `''` 중 하나이고 `defaultValue`가 `undefined`나 `null`인 동안, `BAISelect`는 첫 option의 값(section 안 포함, divider 제외)을 `value`로 넘기고, 그 첫 값이 바뀔 때마다 layout effect에서 그 값으로 `onChange`를 호출한다. 그러면 감싼 Form.Item이나 부모 state가 그 값을 갖는다. |
 
 ### 2. `BAISelect`의 project 기본값
 

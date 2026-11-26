@@ -113,7 +113,7 @@ export const docs = {
           name: 'autoSelectOption',
           type: 'boolean',
           description:
-            'BAI addition: while no value is set, selects the first option (sections included, dividers skipped) and reports it through onChange, so the enclosing Form.Item or the parent state receives it. Needs a controlled value — the `value` prop or an enclosing Form.Item; an uncontrolled select ignores it.',
+            'BAI addition: while no value is set, selects the first option (sections included, dividers skipped) and reports it through onChange, so the enclosing Form.Item or the parent state receives it. Needs a controlled value — the `value` prop, or an enclosing Form.Item with a `name`; an uncontrolled select ignores it.',
         },
       ],
     },

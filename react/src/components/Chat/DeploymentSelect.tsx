@@ -2,30 +2,10 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
- DeploymentSelect — ticket-27 Astryx sibling of `DeploymentSelect`
- (cn-oss-removal ticket 27, CONVERSION-BRIEF §2.A). Relay OFFSET pagination
- with scroll-driven `loadNext`, server-side search, `labelInValue`, single
- mode — the same recipe as `BAIUserSelect`, applied to an app-level
- (react/src) wrapper rather than a `backend.ai-ui` fragment.
-
- PILOT-DECISIONs:
-  - The antd original welded the select and an info ("go to detail page")
-    IconButton into one `Space.Compact`-style bordered control — already
-    noted as dissolved to a plain gapped row in the antd file's own
-    PILOT-DECISION comment, since `BAISelect` (BUI) isn't a native Astryx
-    element. That dissolution carries over unchanged here; the info button
-    is a sibling of `BAIComplexSelect` inside the same `BAIFlex` row, not
-    nested inside it.
-  - The antd original's `onChange` forwarded a second `option` argument
-    carrying a `{ name, deploymentId, url }` "deployment" side-channel
-    object (built from the option list). No real consumer reads it —
-    `ChatHeader.tsx` passes `onChange={(id) => onChangeDeployment?.(id)}`,
-    using only the plain id. `BAIComplexSelect`'s `onChange` only ever
-    reports the `labelInValue`-shaped selection (P26-3/P26-4: no
-    `optionRender`/arbitrary option passthrough), so that side-channel is
-    dropped here rather than reconstructed.
-  - P26-7 antd's `notFoundContent={<BAISkeleton variant="input".../>}`
-    first-load placeholder is dropped — shared "No results" text instead.
+ A single-value BAIComplexSelect over the deployments query: offset pagination
+ loaded on scroll, server-side search, and a `labelInValue` value. The button
+ that opens the deployment's detail page sits beside it in the same BAIFlex row,
+ and `onChange` reports only the selected id.
 */
 import { DeploymentSelectQuery } from '../../__generated__/DeploymentSelectQuery.graphql';
 import { DeploymentSelectValueQuery } from '../../__generated__/DeploymentSelectValueQuery.graphql';

@@ -13,7 +13,7 @@ import {
 import { RBACManagementPageScopeTypesQuery } from '../../__generated__/RBACManagementPageScopeTypesQuery.graphql';
 import { App } from '../../app-shim';
 import { convertToOrderBy } from '../../helper';
-import { rbacTypeI18nKey } from '../../helper/rbacElementTypes';
+import { rbacTypeLabel } from '../../helper/rbacElementTypes';
 import { useBAIPaginationOptionStateOnSearchParam } from '../../hooks/reactPaginationQueryOptions';
 import RoleDetailDrawerV2 from './components/RoleDetailDrawerV2';
 import RoleFormModal from './components/RoleFormModal';
@@ -48,7 +48,6 @@ import {
   entityLabelFilterProperties,
   useIsLabelableEntityType,
 } from 'backend.ai-ui';
-import type { TFunction } from 'i18next';
 import * as _ from 'lodash-es';
 import { Trash2, BanIcon, PlusIcon, UndoIcon } from 'lucide-react';
 import {
@@ -63,9 +62,6 @@ import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
 
 const statusFilterValues = ['ACTIVE', 'DELETED'] as const;
 const tabValues = ['roles', 'presets'] as const;
-
-const scopeTypeLabel = (t: TFunction, scopeType: string) =>
-  t(rbacTypeI18nKey(scopeType), { defaultValue: scopeType });
 
 // Since 26.9.0 scope types are lowercase names the manager lists, not an enum
 // the client could enumerate.
@@ -90,7 +86,7 @@ const ScopeTypeSelect: React.FC<Omit<BAISelectProps, 'options'>> = (props) => {
       aria-label={t('rbac.ScopeType')}
       width="100%"
       options={(rbacScopeEntityCombinations ?? []).map(({ scopeType }) => ({
-        label: scopeTypeLabel(t, scopeType),
+        label: rbacTypeLabel(t, scopeType),
         value: scopeType,
       }))}
       {...props}
@@ -372,7 +368,7 @@ const RoleListTab: React.FC = () => {
                         onChange={(next) =>
                           onAddCondition(
                             next ?? undefined,
-                            next ? scopeTypeLabel(t, next) : undefined,
+                            next ? rbacTypeLabel(t, next) : undefined,
                           )
                         }
                       />
