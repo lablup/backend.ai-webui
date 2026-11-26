@@ -55,7 +55,9 @@ const StorageStatusPanelCard: React.FC<StorageStatusPanelProps> = ({
     throw new Error('Project ID is required for StorageStatusPanelCard');
   }
   const deferredFetchKey = useDeferredValue(fetchKey);
-  const [invitations, { updateInvitations }] = useVFolderInvitations();
+  const [invitations, { updateInvitations }] = useVFolderInvitations({
+    id: currentProject.id,
+  });
   const invitationCount = invitations.length;
 
   useUpdateEffect(() => {
