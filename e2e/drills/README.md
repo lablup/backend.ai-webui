@@ -76,10 +76,11 @@ exists on a dedicated test server is out of scope for a drill.
   suffix (`e2e-drill-…`), and is declared in the shared registry
   (`e2e/utils/test-resources.ts`) so `cleanup()` removes it through the admin
   API — the same mechanism the specs use.
-- Teardown is registered in the drill's `afterAll`, so it also runs when a step
-  fails or the drill times out. A drill's own `teardown` (e.g. purging the
-  folder, which also drops its shares and invitations) runs before the
-  registry cleanup.
+- Teardown runs in the test body's `finally` (drill-test.ts), so it also runs
+  when the setup, a step or the drill itself fails or times out. A drill's own
+  `teardown` (e.g. purging the folder, which also drops its shares and
+  invitations) runs before the registry cleanup, and the `afterAll` sweeps any
+  registry a hard timeout cut short with a fresh budget.
 - A run that is killed outright can leave an `e2e-drill-*` folder behind. It is
   covered by the suite's existing prefix sweep; the same sweep can be run on
   its own, with the usual caution that it sweeps **every** `e2e-*` leftover on

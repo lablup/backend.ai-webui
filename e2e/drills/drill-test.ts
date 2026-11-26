@@ -6,6 +6,7 @@
  */
 import type { GraphQLMockMap } from '../mocks/session/graphql-interceptor';
 import { setupGraphQLMocks } from '../mocks/session/graphql-interceptor';
+import type { TestResources } from '../utils/test-resources';
 import { createTestResources } from '../utils/test-resources';
 import {
   loginAsAdmin,
@@ -55,12 +56,25 @@ export function registerDrill(drill: Drill): void {
       }
     });
 
-    // The last describe to finish writes every report collected so far.
+    // The last describe to finish writes every report collected so far, and
+    // sweeps any registry the body's `finally` could not reach (a timeout or
+    // an abort cut it short): `cleanup()` is idempotent, so this runs with a
+    // fresh budget and only removes what is still registered.
     test.afterAll(async () => {
+      const leftover: string[] = [];
+      for (const registry of runRegistries) {
+        const failed = await registry.cleanup();
+        if (failed.length > 0) leftover.push(...failed);
+      }
+      if (leftover.length > 0) {
+        console.warn(`[drill] could not remove: ${leftover.join(', ')}`);
+      }
       if (reports.length === 0) return;
       const written = writeReport(reports, reportLabel());
       console.log(`[drill] report: ${written.html}`);
     });
+
+    const runRegistries: TestResources[] = [];
 
     test(`[drill:${drill.id}] ${drill.title}`, async ({
       page,
@@ -72,6 +86,7 @@ export function registerDrill(drill: Drill): void {
       // Per run: `--repeat-each` reruns this test in one worker, and each run
       // must clean up its own registry.
       const resources = createTestResources();
+      runRegistries.push(resources);
       const report: DrillReport = {
         drillId: drill.id,
         title: drill.title,
@@ -162,27 +177,29 @@ export function registerDrill(drill: Drill): void {
         error: '',
       };
       report.setup = setupReport;
+      // One try around sign-in, setup and the steps: a failure at any of them
+      // still reaches the `finally` below, so cleanup never depends on how far
+      // the run got.
       try {
-        await ctx.as('user');
-      } catch (error) {
-        setupReport.status = 'failed';
-        setupReport.error = describeError(error);
-        throw error;
-      }
-      if (drill.setup) {
         try {
-          const observedSetup = await drill.setup(ctx);
-          if (typeof observedSetup === 'string') {
-            setupReport.observed = observedSetup;
-          }
+          await ctx.as('user');
         } catch (error) {
           setupReport.status = 'failed';
           setupReport.error = describeError(error);
           throw error;
         }
-      }
-
-      try {
+        if (drill.setup) {
+          try {
+            const observedSetup = await drill.setup(ctx);
+            if (typeof observedSetup === 'string') {
+              setupReport.observed = observedSetup;
+            }
+          } catch (error) {
+            setupReport.status = 'failed';
+            setupReport.error = describeError(error);
+            throw error;
+          }
+        }
         for (const [index, step] of drill.steps.entries()) {
           const stepReport = report.steps[index] as StepReport;
           const started = Date.now();
@@ -199,7 +216,11 @@ export function registerDrill(drill: Drill): void {
             } finally {
               stepReport.durationMs = Date.now() - started;
               try {
-                const name = screenshotName(drill.id, step.id);
+                // The run suffix keeps `--repeat-each` runs' screenshots apart.
+                const name = screenshotName(
+                  drill.id,
+                  `${runSuffix}-${step.id}`,
+                );
                 await ctx.activePage.screenshot({
                   path: path.join(dir, name),
                   fullPage: false,
