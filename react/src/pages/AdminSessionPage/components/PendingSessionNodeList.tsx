@@ -146,10 +146,8 @@ const PendingSessionNodeList: React.FC = () => {
         >
           <BAIResourceGroupSelect
             filter={{ isActive: true }}
-            style={{ minWidth: 100 }}
-            loading={currentResourceGroup !== deferredCurrentResourceGroup}
-            popupMatchSelectWidth={false}
-            tooltip={t('general.ResourceGroup')}
+            controlStyle={{ minWidth: 100 }}
+            isLoading={currentResourceGroup !== deferredCurrentResourceGroup}
             value={currentResourceGroup}
             onChange={(value) => {
               setSelectedResourceGroup(value ?? null);

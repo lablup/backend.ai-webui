@@ -4,6 +4,18 @@ import BAIText from './BAIText';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 
+/**
+ * BAISelect is ui-common `Selector` under the BAI name (ADR 0042): a single
+ * value from a list the client already holds.
+ *
+ * Key features:
+ * - Search on by default, with the translated search placeholder
+ * - An accessible name from the placeholder when neither `aria-label` nor the
+ *   enclosing Form.Item label names it
+ * - `ghost` for the header's brand band, `autoSelectOption` for a first-option default
+ *
+ * @see BAISelect.tsx for implementation details
+ */
 const meta: Meta<typeof BAISelect> = {
   title: 'Select/BAISelect',
   component: BAISelect,
@@ -13,30 +25,43 @@ const meta: Meta<typeof BAISelect> = {
     docs: {
       description: {
         component: `
-**BAISelect** extends [Ant Design Select](https://ant.design/components/select).
+**BAISelect** is ui-common \`Selector\` under the BAI name: its props are \`SelectorProps\` (run \`ui-common component Selector\` for the full list) plus \`ghost\` and \`autoSelectOption\`. A multi-value list uses **BAIMultiSelector**.
 
 ## BAI-Specific Props
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| \`ghost\` | \`boolean\` | \`false\` | Transparent background style |
-| \`autoSelectOption\` | \`boolean \\| (options) => value\` | - | Auto-select first option when empty |
-| \`tooltip\` | \`string\` | \`''\` | Tooltip text for the select |
-| \`footer\` | \`ReactNode \\| string\` | - | Custom footer in dropdown |
-| \`endReached\` | \`() => void\` | - | Callback when scroll reaches end |
-| \`searchAction\` | \`(value: string) => Promise<void>\` | - | Async search with transition |
-| \`atBottomThreshold\` | \`number\` | \`30\` | Threshold for bottom detection (px) |
-| \`atBottomStateChange\` | \`(atBottom: boolean) => void\` | - | Callback for bottom state changes |
+| \`ghost\` | \`boolean\` | \`false\` | The on-dark treatment for a select on the header's brand band |
+| \`autoSelectOption\` | \`boolean\` | \`false\` | While no value is set, select the first option and report it through \`onChange\` |
 
-For all other props, refer to [Ant Design Select](https://ant.design/components/select).
+## Selector props used most
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| \`options\` | \`SelectorOptionType[]\` | **required** | \`{ value, label }\` options, \`{ type: 'section', title, options }\` sections, \`{ type: 'divider' }\` |
+| \`value\` / \`onChange\` | \`string \\| null\` / \`(value: string \\| null) => void\` | - | The selected option value |
+| \`hasSearch\` | \`boolean\` | \`true\` | The search field in the listbox (on by default here) |
+| \`hasClear\` | \`boolean\` | \`false\` | A clear button while something is selected |
+| \`isLoading\` | \`boolean\` | \`false\` | The pending state of the trigger |
+| \`width\` | \`number \\| string\` | - | The trigger width |
+| \`showTooltipOnEllipsis\` | \`boolean\` | \`false\` | A tooltip with the full label while the trigger cuts it off |
+
+## Usage
+\`\`\`tsx
+<BAISelect
+  options={[{ value: 'a', label: 'Option A' }]}
+  placeholder="Select an option"
+  width={200}
+  onChange={(value) => setValue(value)}
+/>
+\`\`\`
         `,
       },
     },
   },
   argTypes: {
-    // BAI-specific props - document fully
     ghost: {
       control: { type: 'boolean' },
-      description: 'Transparent background style',
+      description:
+        "The on-dark treatment for a select on the header's brand band",
       table: {
         type: { summary: 'boolean' },
         defaultValue: { summary: 'false' },
@@ -44,59 +69,96 @@ For all other props, refer to [Ant Design Select](https://ant.design/components/
     },
     autoSelectOption: {
       control: { type: 'boolean' },
-      description: 'Auto-select first option when value is empty',
+      description:
+        'While no value is set, select the first option and report it through onChange',
       table: {
-        type: { summary: 'boolean | (options) => value' },
-        defaultValue: { summary: '-' },
+        type: { summary: 'boolean' },
+        defaultValue: { summary: 'false' },
       },
     },
-    tooltip: {
+    options: {
+      control: false,
+      description: 'Options, sections and dividers of the listbox',
+      table: {
+        type: { summary: 'SelectorOptionType[]' },
+      },
+    },
+    placeholder: {
       control: { type: 'text' },
-      description: 'Tooltip text displayed on hover',
+      description:
+        'Trigger text while nothing is selected; also the accessible name when nothing else gives one',
       table: {
         type: { summary: 'string' },
-        defaultValue: { summary: "''" },
       },
     },
-    footer: {
-      control: false,
-      description: 'Custom footer content in dropdown',
+    hasSearch: {
+      control: { type: 'boolean' },
+      description: 'The search field in the listbox',
       table: {
-        type: { summary: 'ReactNode | string' },
-        defaultValue: { summary: '-' },
+        type: { summary: 'boolean' },
+        defaultValue: { summary: 'true' },
       },
     },
-    endReached: {
-      control: false,
-      description: 'Callback when scroll reaches end (for infinite scroll)',
+    hasClear: {
+      control: { type: 'boolean' },
+      description: 'A clear button while something is selected',
       table: {
-        type: { summary: '() => void' },
-        defaultValue: { summary: '-' },
+        type: { summary: 'boolean' },
+        defaultValue: { summary: 'false' },
       },
     },
-    searchAction: {
-      control: false,
-      description: 'Async search action with React transition',
+    isLoading: {
+      control: { type: 'boolean' },
+      description: 'The pending state of the trigger',
       table: {
-        type: { summary: '(value: string) => Promise<void>' },
-        defaultValue: { summary: '-' },
+        type: { summary: 'boolean' },
+        defaultValue: { summary: 'false' },
       },
     },
-    atBottomThreshold: {
+    disabled: {
+      control: { type: 'boolean' },
+      description: 'Whether the select is disabled',
+      table: {
+        type: { summary: 'boolean' },
+        defaultValue: { summary: 'false' },
+      },
+    },
+    size: {
+      control: { type: 'radio' },
+      options: ['sm', 'md', 'lg'],
+      description: 'The trigger size',
+      table: {
+        type: { summary: "'sm' | 'md' | 'lg'" },
+        defaultValue: { summary: 'md' },
+      },
+    },
+    status: {
+      control: { type: 'select' },
+      options: ['', 'error', 'warning'],
+      description: 'The border state; inside a Form.Item it follows validation',
+      table: {
+        type: { summary: "'error' | 'warning' | ''" },
+      },
+    },
+    width: {
       control: { type: 'number' },
-      description: 'Threshold for bottom detection in pixels',
+      description: 'The trigger width',
       table: {
-        type: { summary: 'number' },
-        defaultValue: { summary: '30' },
+        type: { summary: 'number | string' },
       },
     },
-    atBottomStateChange: {
-      control: false,
-      description: 'Callback for bottom state changes',
+    showTooltipOnEllipsis: {
+      control: { type: 'boolean' },
+      description:
+        'A tooltip with the full selected label while the trigger cuts it off',
       table: {
-        type: { summary: '(atBottom: boolean) => void' },
-        defaultValue: { summary: '-' },
+        type: { summary: 'boolean' },
+        defaultValue: { summary: 'false' },
       },
+    },
+    onChange: {
+      action: 'changed',
+      description: 'Called with the selected option value, or null on clear',
     },
   },
 };
@@ -111,20 +173,42 @@ const sampleOptions = [
   { label: 'Option 4', value: 'option4' },
 ];
 
-// Default story with interactive controls
+const sampleLongLabelOptions = [
+  {
+    label: 'gpu-cluster-a100-80gb-high-memory-seoul',
+    value: 'gpu-a100-seoul',
+  },
+  { label: 'cpu-only', value: 'cpu-only' },
+];
+
 export const Default: Story = {
   name: 'Basic',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'A single select with four options. Search is on by default; use the controls to try the other props.',
+      },
+    },
+  },
   args: {
     options: sampleOptions,
     placeholder: 'Select an option',
-    style: { width: 200 },
+    width: 200,
     ghost: false,
     autoSelectOption: false,
   },
 };
 
-// Ghost style comparison
 export const GhostStyle: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`ghost` next to the default treatment on a brand-coloured band, as in the app header's project select.",
+      },
+    },
+  },
   render: () => (
     <BAIFlex
       direction="column"
@@ -137,7 +221,7 @@ export const GhostStyle: Story = {
           options={sampleOptions}
           placeholder="Select option"
           ghost={true}
-          style={{ width: 200 }}
+          width={200}
         />
       </BAIFlex>
       <BAIFlex direction="column" gap="xs">
@@ -146,18 +230,25 @@ export const GhostStyle: Story = {
           options={sampleOptions}
           placeholder="Select option"
           ghost={false}
-          style={{ width: 200 }}
+          width={200}
         />
       </BAIFlex>
     </BAIFlex>
   ),
 };
 
-// Auto-select option
 export const AutoSelectOption: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'With `autoSelectOption`, the first option is reported through `onChange` while no value is set; without it the select stays empty.',
+      },
+    },
+  },
   render: () => {
-    const [value1, setValue1] = useState<string>();
-    const [value2, setValue2] = useState<string>();
+    const [value1, setValue1] = useState<string | null>(null);
+    const [value2, setValue2] = useState<string | null>(null);
 
     return (
       <BAIFlex direction="column" gap="md">
@@ -169,7 +260,7 @@ export const AutoSelectOption: Story = {
             autoSelectOption={true}
             value={value1}
             onChange={setValue1}
-            style={{ width: 250 }}
+            width={250}
           />
           <BAIText type="secondary">Selected: {value1 || 'None'}</BAIText>
         </BAIFlex>
@@ -181,7 +272,7 @@ export const AutoSelectOption: Story = {
             autoSelectOption={false}
             value={value2}
             onChange={setValue2}
-            style={{ width: 250 }}
+            width={250}
           />
           <BAIText type="secondary">Selected: {value2 || 'None'}</BAIText>
         </BAIFlex>
@@ -190,166 +281,44 @@ export const AutoSelectOption: Story = {
   },
 };
 
-// Tooltip feature
-export const WithTooltip: Story = {
-  render: () => (
-    <BAIFlex direction="column" gap="md">
-      <BAIFlex direction="column" gap="xs">
-        <BAIText>Hover over the select to see tooltip</BAIText>
-        <BAISelect
-          options={sampleOptions}
-          placeholder="Select an option"
-          tooltip="This is a helpful tooltip message"
-          style={{ width: 250 }}
-        />
-      </BAIFlex>
-    </BAIFlex>
-  ),
-};
-
-export const MultipleSelectionTooltip: Story = {
-  name: 'MultipleSelectionTooltip',
+export const TooltipOnEllipsis: Story = {
   parameters: {
     docs: {
       description: {
         story:
-          'In multiple mode the trigger names three labels, then "+N". With `showSelectedOptionsTooltip`, hovering or focusing it lists every selected label; without it there is no tooltip.',
+          'A long selected label in a narrow trigger. With `showTooltipOnEllipsis`, hovering or focusing the trigger shows the full label; without it the label is only cut off.',
       },
     },
   },
   render: () => (
     <BAIFlex direction="column" gap="md">
       <BAISelect
-        mode="multiple"
         aria-label="With tooltip"
-        showSelectedOptionsTooltip
-        options={sampleOptions}
-        defaultValue={['option1', 'option2', 'option3', 'option4']}
-        style={{ width: 250 }}
+        showTooltipOnEllipsis
+        options={sampleLongLabelOptions}
+        defaultValue="gpu-a100-seoul"
+        width={160}
       />
       <BAISelect
-        mode="multiple"
         aria-label="Without tooltip"
-        options={sampleOptions}
-        defaultValue={['option1', 'option2', 'option3', 'option4']}
-        style={{ width: 250 }}
+        options={sampleLongLabelOptions}
+        defaultValue="gpu-a100-seoul"
+        width={160}
       />
     </BAIFlex>
   ),
-};
-
-// Footer in dropdown
-export const WithFooter: Story = {
-  render: () => (
-    <BAIFlex direction="column" gap="md">
-      <BAIFlex direction="column" gap="xs">
-        <BAIText>Select with custom footer (string)</BAIText>
-        <BAISelect
-          options={sampleOptions}
-          placeholder="Open dropdown to see footer"
-          footer="Total: 4 options"
-          style={{ width: 250 }}
-        />
-      </BAIFlex>
-      <BAIFlex direction="column" gap="xs">
-        <BAIText>Select with custom footer (ReactNode)</BAIText>
-        <BAISelect
-          options={sampleOptions}
-          placeholder="Open dropdown"
-          footer={
-            <BAIText type="secondary" style={{ fontSize: '12px' }}>
-              Custom footer content
-            </BAIText>
-          }
-          style={{ width: 250 }}
-        />
-      </BAIFlex>
-    </BAIFlex>
-  ),
-};
-
-// Infinite scroll with endReached
-export const InfiniteScroll: Story = {
-  render: () => {
-    const [options, setOptions] = useState(
-      Array.from({ length: 20 }, (_, i) => ({
-        label: `Option ${i + 1}`,
-        value: `option${i + 1}`,
-      })),
-    );
-    const [loading, setLoading] = useState(false);
-
-    const handleEndReached = () => {
-      if (loading) return;
-
-      setLoading(true);
-      // Simulate loading more options
-      setTimeout(() => {
-        const currentLength = options.length;
-        const newOptions = Array.from({ length: 10 }, (_, i) => ({
-          label: `Option ${currentLength + i + 1}`,
-          value: `option${currentLength + i + 1}`,
-        }));
-        setOptions([...options, ...newOptions]);
-        setLoading(false);
-      }, 1000);
-    };
-
-    return (
-      <BAIFlex direction="column" gap="xs">
-        <BAIText>Scroll to bottom to load more options</BAIText>
-        <BAISelect
-          options={options}
-          placeholder="Scroll down to load more"
-          endReached={handleEndReached}
-          loading={loading}
-          footer={
-            loading ? 'Loading more...' : `${options.length} options loaded`
-          }
-          style={{ width: 250 }}
-        />
-      </BAIFlex>
-    );
-  },
-};
-
-// Async search with searchAction
-export const AsyncSearch: Story = {
-  render: () => {
-    const [options, setOptions] = useState(sampleOptions);
-
-    const handleSearch = async (value: string) => {
-      // Simulate async search
-      await new Promise((resolve) => setTimeout(resolve, 500));
-
-      if (!value) {
-        setOptions(sampleOptions);
-      } else {
-        const filtered = sampleOptions.filter((opt) =>
-          opt.label.toLowerCase().includes(value.toLowerCase()),
-        );
-        setOptions(filtered);
-      }
-    };
-
-    return (
-      <BAIFlex direction="column" gap="xs">
-        <BAIText>Type to search with async action</BAIText>
-        <BAISelect
-          options={options}
-          placeholder="Type to search..."
-          searchAction={handleSearch}
-          showSearch
-          filterOption={false}
-          style={{ width: 250 }}
-        />
-      </BAIFlex>
-    );
-  },
 };
 
 export const DisabledOptionReason: Story = {
   name: 'Disabled Option With Reason',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'An option disabled with `{ reason }` cannot be picked, and hovering its row shows why.',
+      },
+    },
+  },
   args: {
     options: [
       { label: 'AK1A2B3C4D', value: 'ak1' },
@@ -361,6 +330,6 @@ export const DisabledOptionReason: Story = {
       { label: 'AK5E6F7G8H', value: 'ak3' },
     ],
     placeholder: 'Select an access key',
-    style: { width: 280 },
+    width: 280,
   },
 };

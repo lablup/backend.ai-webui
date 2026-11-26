@@ -60,7 +60,7 @@ const getSessionMonitorFilterProperties = (
       ? {
           ...owner,
           renderInput: ({ onAddCondition, value, isDisabled }) => (
-            <Suspense fallback={<BAISelect disabled loading />}>
+            <Suspense fallback={<BAISelect options={[]} disabled isLoading />}>
               <BAIScopedUserSelect
                 scope={{ domain: [{ value: domainId }] }}
                 label={t('session.Owner')}
@@ -163,9 +163,9 @@ const SessionMonitorSettingsPane: React.FC<{
       <BAIFlex direction="column" align="stretch" gap="xs">
         <Text>{t('sessionMonitor.settings.SortBy')}</Text>
         <BAISelect
-          showSearch={false}
+          hasSearch={false}
           aria-label={t('sessionMonitor.settings.SortBy')}
-          size="small"
+          size="sm"
           options={sortOptions}
           value={sort ?? 'deadline'}
           onChange={(value) => setSort(value as SessionMonitorSort)}
@@ -174,9 +174,9 @@ const SessionMonitorSettingsPane: React.FC<{
       <BAIFlex direction="column" align="stretch" gap="xs">
         <Text>{t('sessionMonitor.settings.RowsShown')}</Text>
         <BAISelect
-          showSearch={false}
+          hasSearch={false}
           aria-label={t('sessionMonitor.settings.RowsShown')}
-          size="small"
+          size="sm"
           options={SESSION_MONITOR_ROW_OPTIONS.map((n) => ({
             value: String(n),
             label: String(n),

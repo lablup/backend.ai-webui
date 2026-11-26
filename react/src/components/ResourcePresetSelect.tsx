@@ -14,7 +14,10 @@ import {
   type PresetAvailabilityV2,
   useSessionResourcePresets,
 } from '../hooks/useSessionResourcePresets';
-import type { SelectorOptionData } from '@lablup/ui-common/Selector';
+import type {
+  SelectorOptionData,
+  SelectorOptionType,
+} from '@lablup/ui-common/Selector';
 import { Token } from '@lablup/ui-common/Token';
 import { Tooltip } from '@lablup/ui-common/Tooltip';
 import { useTheme } from '@lablup/ui-common/theme';
@@ -25,7 +28,6 @@ import {
   useThrottleFn,
   useUpdatableState,
   BAISelect,
-  type BAISelectOption,
 } from 'backend.ai-ui';
 import type { TFunction } from 'i18next';
 import * as _ from 'lodash-es';
@@ -240,7 +242,7 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoSelectDefault, firstAvailablePresetId]);
 
-  // `label` stays the plain string; the rich row is `optionRender`.
+  // `label` stays the plain string; the rich row is `renderOption`.
   const presetOptions: PresetOptionType[] = _.map(
     resource_presets,
     (preset) => {
@@ -257,7 +259,7 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
     .sort((a, b) => (!!a.disabled === !!b.disabled ? 0 : a.disabled ? 1 : -1))
     .sort((a, b) => localeCompare(a.label, b.label));
 
-  const renderResourceRow = (option: BAISelectOption) => {
+  const renderResourceRow = (option: SelectorOptionData) => {
     if (option.value === 'minimum-required') {
       return (
         <BAIFlex gap={'xs'}>
@@ -340,7 +342,7 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
     );
   };
 
-  const options: BAISelectOption[] = [
+  const options: SelectorOptionType[] = [
     ...(showCustom
       ? [
           {
@@ -361,20 +363,22 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
     // `modelStore.Preset` is reused for the same word; give this group its own
     // key if the two ever need to differ.
     {
-      label: t('modelStore.Preset'),
-      options: presetOptions,
+      type: 'section',
+      title: t('modelStore.Preset'),
+      options: _.map(presetOptions, ({ preset: _preset, ...option }) => option),
     },
   ];
 
   return (
     <BAISelect
       aria-label={t('resourcePreset.ResourcePresets')}
-      loading={isPendingUpdate}
+      isLoading={isPendingUpdate}
       disabled={disabled}
-      style={{ width: '100%', ...style }}
+      width={style?.width ?? '100%'}
+      controlStyle={{ width: '100%', ...style }}
       options={options}
-      optionRender={({ data }) => renderResourceRow(data)}
-      labelRender={renderSelectedValue}
+      renderOption={renderResourceRow}
+      renderValue={renderSelectedValue}
       value={controllableValue ?? ''}
       onChange={(next) =>
         setControllableValue(

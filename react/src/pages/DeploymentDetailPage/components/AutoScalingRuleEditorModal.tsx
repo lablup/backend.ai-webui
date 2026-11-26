@@ -18,6 +18,7 @@ import {
   SIGNED_32BIT_MAX_INT,
 } from '../../../helper/const-vars';
 import { useCurrentUserRole } from '../../../hooks/backendai';
+import type { SelectorOptionType } from '@lablup/ui-common/Selector';
 import { Text } from '@lablup/ui-common/Text';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
@@ -25,7 +26,6 @@ import {
   BAISegmentedControl,
   BAISegmentedControlItem,
   BAISelect,
-  type BAISelectOption,
   BAITextInput,
   BAIFlex,
   BAIModal,
@@ -177,7 +177,7 @@ const AutoScalingRuleEditorModalContent: React.FC<{
 
   // Group presets by category name for optgroup display.
   // Presets without a category are shown in a flat list at the end.
-  const presetOptions: BAISelectOption[] = React.useMemo(() => {
+  const presetOptions: SelectorOptionType[] = React.useMemo(() => {
     const sorted = _.orderBy(presetNodes, ['rank'], ['asc']);
     const withCategory = sorted.filter((p) => p.category?.name);
     const withoutCategory = sorted.filter((p) => !p.category?.name);
@@ -189,7 +189,8 @@ const AutoScalingRuleEditorModalContent: React.FC<{
 
     const grouped = _.groupBy(withCategory, (p) => p.category!.name);
     const groupOptions = Object.entries(grouped).map(([catName, presets]) => ({
-      label: catName,
+      type: 'section' as const,
+      title: catName,
       options: presets.map(toOption),
     }));
 
@@ -253,7 +254,7 @@ const AutoScalingRuleEditorModalContent: React.FC<{
         rules={[{ required: true }]}
       >
         <BAISelect
-          showSearch={false}
+          hasSearch={false}
           aria-label={t('autoScalingRule.MetricSource')}
           onChange={(value) => {
             if (!value) return;
@@ -364,7 +365,7 @@ const AutoScalingRuleEditorModalContent: React.FC<{
               }}
               placeholder={t('autoScalingRule.SelectPrometheusPreset')}
               options={presetOptions}
-              allowClear
+              hasClear
             />
           </Form.Item>
         </>

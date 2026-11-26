@@ -108,16 +108,18 @@ const DashboardBoardSection: React.FC<DashboardBoardSectionProps> = ({
         />
       </BAIFlex>
       <BAISelect
-        size="small"
-        style={{ width: '100%' }}
-        showSearch={false}
+        size="sm"
+        width="100%"
+        hasSearch={false}
         aria-label={t('dashboard.boards.Boards')}
         options={config.boards.map((board) => ({
           value: board.id,
           label: titleOf(board),
         }))}
         value={activeBoard.id}
-        onChange={(id: string) => update((current) => selectBoard(current, id))}
+        onChange={(id) => {
+          if (id !== null) update((current) => selectBoard(current, id));
+        }}
         data-testid="dashboard-board-select"
       />
       <BAIFlex direction="column" align="stretch" gap="xxs">

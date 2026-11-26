@@ -144,8 +144,7 @@ const WebUIHeaderProjectSelect: React.FC = () => {
       <ProjectSelect
         data-testid="selector-project"
         ghost
-        popupMatchSelectWidth={false}
-        style={{
+        controlStyle={{
           minWidth: gridBreakpoint.sm ? 100 : 64,
           maxWidth: gridBreakpoint.lg ? undefined : 150,
           // Lands on the Selector TRIGGER, re-declaring the band wash the
@@ -153,10 +152,9 @@ const WebUIHeaderProjectSelect: React.FC = () => {
           // (FR-3505). Inline, so it wins there and only there.
           ...bandOverlays,
         }}
-        loading={isProjectChanging}
+        isLoading={isProjectChanging}
         disabled={isProjectChanging}
-        className="non-draggable"
-        showSearch
+        controlClassName="non-draggable"
         domain={currentDomainName}
         personalProject={personalProject}
         lockPersonalProject={false}
@@ -169,6 +167,8 @@ const WebUIHeaderProjectSelect: React.FC = () => {
               : currentProject?.id
         }
         onSelectProject={(projectInfo) => {
+          // The header select has no clear button, so a project always comes back.
+          if (!projectInfo) return;
           const isTargetProjectAdmin = projectAdminIds.includes(
             projectInfo.projectId,
           );

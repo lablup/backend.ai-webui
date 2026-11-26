@@ -28,7 +28,7 @@ export const docs = {
       {
         guidance: false,
         description:
-          'Pass `options`; the component always overrides them with the fetched domain list.',
+          'Look for an `options` prop — the props type omits it, and the list always comes from the domain query.',
       },
     ],
   },
@@ -42,27 +42,21 @@ export const docs = {
     },
     {
       name: 'value',
-      type: 'string',
+      type: 'string | null',
       description:
         'Selected domain name. Uncontrolled use through `defaultValue` is supported by useControllableValue.',
     },
     {
       name: 'onChange',
-      type: '(value: any, option?: any) => void',
+      type: '(value: string | null) => void',
       description:
-        'Fired with the selected domain name and the matching option, forwarded from BAISelect.',
+        'Fired with the selected domain name, or null when cleared, forwarded from BAISelect.',
     },
     {
       name: 'placeholder',
-      type: 'ReactNode',
+      type: 'string',
       description:
         'Empty-state text on the trigger. Defaults to the translated "Select domain"; passing a value replaces it.',
-    },
-    {
-      name: 'options',
-      type: 'Array<OptionType>',
-      description:
-        'Accepted and ignored — the options are built from the query result and applied after the incoming props are spread.',
     },
   ],
   examples: [

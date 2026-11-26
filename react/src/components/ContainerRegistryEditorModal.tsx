@@ -18,6 +18,7 @@ import {
   BAIFlex,
   BAIModal,
   BAIModalProps,
+  BAIMultiSelector,
   BAISelect,
   BAICheckboxInput,
   BAITextInput,
@@ -515,7 +516,7 @@ const ContainerRegistryEditorModal: React.FC<
           ]}
         >
           <BAISelect
-            showSearch={false}
+            hasSearch={false}
             aria-label={t('registry.RegistryType')}
             options={[
               'docker',
@@ -585,7 +586,7 @@ const ContainerRegistryEditorModal: React.FC<
               <Suspense
                 fallback={
                   <BAIFormItem label={t('registry.AllowedProjects')}>
-                    <BAISelect mode="multiple" loading disabled />
+                    <BAIMultiSelector isLoading disabled options={[]} />
                   </BAIFormItem>
                 }
               >

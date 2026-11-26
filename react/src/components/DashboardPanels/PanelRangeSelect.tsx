@@ -118,8 +118,8 @@ const PanelRangeSelect: React.FC<PanelRangeSelectProps> = ({
       (!!noPeriodLabel && range === NO_PERIOD);
     return (
       <BAISelect
-        showSearch={false}
-        size={inputProps.size === 'sm' ? 'small' : undefined}
+        hasSearch={false}
+        size={inputProps.size === 'sm' ? 'sm' : undefined}
         id={inputProps.id}
         aria-label={inputProps['aria-label']}
         disabled={inputProps.disabled || inputProps.isDisabled}

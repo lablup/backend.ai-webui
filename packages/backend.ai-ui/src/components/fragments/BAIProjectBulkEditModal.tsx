@@ -93,7 +93,7 @@ const BAIProjectBulkEditModal = ({
               <Form.Item
                 label={t('comp:BAIProjectBulkEditModal.ProjectResourcePolicy')}
               >
-                <BAISelect loading disabled />
+                <BAISelect isLoading disabled options={[]} />
               </Form.Item>
             }
           >

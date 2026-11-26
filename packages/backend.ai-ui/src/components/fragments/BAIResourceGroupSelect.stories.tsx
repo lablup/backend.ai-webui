@@ -43,7 +43,7 @@ const meta: Meta<typeof BAIResourceGroupSelect> = {
     docs: {
       description: {
         component: `
-**BAIResourceGroupSelect** extends [BAISelect](/?path=/docs/components-input-baiselect--docs) to fetch and display resource groups at admin scope.
+**BAIResourceGroupSelect** extends [BAISelect](/?path=/docs/select-baiselect--docs) to fetch and display resource groups at admin scope.
 
 ## Features
 - Fetches resource groups from GraphQL query \`BAIResourceGroupSelectQuery\` (\`adminResourceGroups\`, manager 26.2.0+)
@@ -78,7 +78,7 @@ query BAIResourceGroupSelectQuery($filter: ResourceGroupFilter) {
 />
 \`\`\`
 
-For all other props, refer to [BAISelect](/?path=/docs/components-input-baiselect--docs).
+For all other props, refer to [BAISelect](/?path=/docs/select-baiselect--docs).
         `,
       },
     },
@@ -102,7 +102,7 @@ For all other props, refer to [BAISelect](/?path=/docs/components-input-baiselec
         defaultValue: { summary: 'false' },
       },
     },
-    allowClear: {
+    hasClear: {
       control: { type: 'boolean' },
       description: 'Show clear button',
       table: {
@@ -142,7 +142,7 @@ export const Default: Story = {
         }),
       }}
     >
-      <BAIResourceGroupSelect {...args} style={{ width: '300px' }} />
+      <BAIResourceGroupSelect {...args} width={300} />
     </RelayResolver>
   ),
 };
@@ -168,7 +168,7 @@ export const Empty: Story = {
         }),
       }}
     >
-      <BAIResourceGroupSelect {...args} style={{ width: '300px' }} />
+      <BAIResourceGroupSelect {...args} width={300} />
     </RelayResolver>
   ),
 };
@@ -197,7 +197,7 @@ export const Disabled: Story = {
         }),
       }}
     >
-      <BAIResourceGroupSelect {...args} style={{ width: '300px' }} />
+      <BAIResourceGroupSelect {...args} width={300} />
     </RelayResolver>
   ),
 };
@@ -211,12 +211,12 @@ export const WithClearButton: Story = {
     docs: {
       description: {
         story:
-          'Select with allowClear enabled, allowing users to clear their selection.',
+          'Select with hasClear enabled, allowing users to clear their selection.',
       },
     },
   },
   args: {
-    allowClear: true,
+    hasClear: true,
   },
   render: (args) => (
     <RelayResolver
@@ -226,7 +226,7 @@ export const WithClearButton: Story = {
         }),
       }}
     >
-      <BAIResourceGroupSelect {...args} style={{ width: '300px' }} />
+      <BAIResourceGroupSelect {...args} width={300} />
     </RelayResolver>
   ),
 };
@@ -255,7 +255,7 @@ export const WithCustomPlaceholder: Story = {
         }),
       }}
     >
-      <BAIResourceGroupSelect {...args} style={{ width: '300px' }} />
+      <BAIResourceGroupSelect {...args} width={300} />
     </RelayResolver>
   ),
 };
@@ -274,7 +274,7 @@ export const ManyResourceGroups: Story = {
     },
   },
   args: {
-    allowClear: true,
+    hasClear: true,
   },
   render: (args) => (
     <RelayResolver
@@ -284,7 +284,7 @@ export const ManyResourceGroups: Story = {
         }),
       }}
     >
-      <BAIResourceGroupSelect {...args} style={{ width: '300px' }} />
+      <BAIResourceGroupSelect {...args} width={300} />
     </RelayResolver>
   ),
 };

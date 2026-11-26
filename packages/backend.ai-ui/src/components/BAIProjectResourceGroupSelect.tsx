@@ -1,10 +1,12 @@
 import { useControllableValue, useProjectResourceGroups } from '../hooks';
 import BAISelect, { BAISelectProps } from './BAISelect';
-import BAITextHighlighter from './BAITextHighlighter';
 import * as _ from 'lodash-es';
 import React, { useEffect, useState, useTransition } from 'react';
 
-interface BAIProjectResourceGroupSelectProps extends BAISelectProps {
+interface BAIProjectResourceGroupSelectProps extends Omit<
+  BAISelectProps,
+  'options'
+> {
   projectName: string;
   autoSelectDefault?: boolean;
   filter?: (resourceGroupName: string) => boolean;
@@ -22,18 +24,9 @@ const BAIProjectResourceGroupSelect: React.FC<
   autoSelectDefault,
   filter,
   includeSFTPResourceGroups,
-  showSearch,
-  loading,
+  isLoading,
   ...selectProps
 }) => {
-  const [controllableSearchValue, setControllableSearchValue] =
-    useControllableValue<string>({
-      value:
-        typeof showSearch === 'object' ? showSearch?.searchValue : undefined,
-      onChange:
-        typeof showSearch === 'object' ? showSearch?.onSearch : undefined,
-    });
-
   const [controllableValue, setControllableValueDoNotUseWithoutTransition] =
     useControllableValue(selectProps);
   const [isPendingChangeTransition, startChangeTransition] = useTransition();
@@ -95,28 +88,11 @@ const BAIProjectResourceGroupSelect: React.FC<
 
   return (
     <BAISelect
-      defaultActiveFirstOption
-      showSearch={
-        showSearch
-          ? {
-              searchValue: controllableSearchValue,
-              onSearch: setControllableSearchValue,
-            }
-          : undefined
-      }
-      defaultValue={autoSelectDefault ? autoSelectedOption : undefined}
-      loading={loading || isPendingChangeTransition}
+      isLoading={isLoading || isPendingChangeTransition}
       disabled={isPendingChangeTransition}
       options={_.map(resourceGroups, (resourceGroup) => {
         return { value: resourceGroup.name, label: resourceGroup.name };
       })}
-      optionRender={(option) => {
-        return (
-          <BAITextHighlighter keyword={controllableSearchValue}>
-            {option.data.value?.toString()}
-          </BAITextHighlighter>
-        );
-      }}
       {...selectProps}
       value={isPendingChangeTransition ? optimisticValue : controllableValue}
       onChange={setControllableValueWithTransition}

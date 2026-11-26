@@ -85,7 +85,7 @@ vi.mock('backend.ai-ui', async (importOriginal) => {
     BAIResourceGroupSelect: (props: any) =>
       React.createElement('button', {
         'data-testid': 'mock-admin-resource-group-select',
-        'data-allow-clear': String(!!props.allowClear),
+        'data-has-clear': String(!!props.hasClear),
         type: 'button',
         onClick: () => props.onChange?.('rg-from-admin-scope'),
       }),
@@ -140,7 +140,7 @@ describe('ResourcePresetSettingModal resource-group scope contract (ADR-0001, FR
     // group as global.
     expect(
       await screen.findByTestId('mock-admin-resource-group-select'),
-    ).toHaveAttribute('data-allow-clear', 'true');
+    ).toHaveAttribute('data-has-clear', 'true');
 
     await user.type(
       screen.getByLabelText('resourcePreset.PresetName'),

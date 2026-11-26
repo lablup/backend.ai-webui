@@ -10,13 +10,14 @@ export const docs = {
     'sftp proxy',
     'volume',
     'select',
+    'multi select',
     'dropdown',
     'combobox',
     'relay',
   ],
   usage: {
     description:
-      'The storage-proxy picker used by the resource-group settings forms. There is no dedicated proxy-list field on the API yet, so BAIStorageProxySelectQuery fetches one fixed page of up to 1000 storage volumes and the component derives the distinct, non-null proxy names from them; each name becomes an option that is both the label and the value. The query is a useLazyLoadQuery call, so the control suspends on first render — put the Suspense boundary around the enclosing form item rather than the select, or the form loses its value/onChange binding. Everything else is BAISelect: mode, allowClear, value, onChange, autoSelectOption, disabled and the rest of BAISelectProps pass straight through, with options removed from the props type because the component always supplies it.',
+      'The storage-proxy multi-select used by the resource-group settings forms: a BAIMultiSelector whose value is a list of proxy names (`string[]`). There is no dedicated proxy-list field on the API yet, so BAIStorageProxySelectQuery fetches one fixed page of up to 1000 storage volumes and the component derives the distinct, non-null proxy names from them; each name becomes an option that is both the label and the value. The query is a useLazyLoadQuery call, so the control suspends on first render — put the Suspense boundary around the enclosing form item rather than the select, or the form loses its value/onChange binding. Everything else is BAIMultiSelector: hasClear, value, onChange, disabled and the rest of BAIMultiSelectorProps pass straight through, with options removed from the props type because the component always supplies it.',
     bestPractices: [
       {
         guidance: true,
@@ -26,12 +27,7 @@ export const docs = {
       {
         guidance: true,
         description:
-          'Use mode="multiple" for the resource-group fields that store a list of SFTP proxies, so the form value shape matches the backend field.',
-      },
-      {
-        guidance: true,
-        description:
-          'Pair autoSelectOption with a real value/onChange pair — it only calls onChange and does not hold the selection itself.',
+          'Bind it to the resource-group fields that store a list of SFTP proxies — the value is always `string[]`, the shape the backend field takes.',
       },
       {
         guidance: false,
@@ -41,21 +37,21 @@ export const docs = {
       {
         guidance: false,
         description:
-          'Reach for it where the proxy names come from somewhere other than the volume list — use BAISelect with your own options there.',
+          'Reach for it where the proxy names come from somewhere other than the volume list — use BAIMultiSelector with your own options there.',
       },
     ],
   },
   props: [
     {
-      name: 'showSearch',
+      name: 'hasSearch',
       type: 'boolean',
       description:
-        'Whether the in-popup search box is shown. Enabled by the component and applied before the prop spread, so a call site can turn it off.',
+        'The search field in the listbox. Set by the component before the prop spread, so a call site can turn it off.',
       default: 'true',
     },
     {
       name: 'placeholder',
-      type: 'ReactNode',
+      type: 'string',
       description:
         'Trigger text while nothing is selected. Applied before the prop spread, so a call site can override the translated default.',
       default: "t('comp:BAIStorageProxySelect.SelectStorageProxy')",
@@ -70,17 +66,16 @@ export const docs = {
     label={t('storageProxy.SFTPStorageProxies')}
     tooltip={t('storageProxy.SFTPStorageProxiesDescription')}
   >
-    <BAIStorageProxySelect mode="multiple" allowClear />
+    <BAIStorageProxySelect hasClear />
   </BAIFormItem>
 </Suspense>`,
     },
     {
-      label: 'Single proxy, auto-selected once the options load',
+      label: 'Standalone, controlled list of proxies',
       code: `<BAIStorageProxySelect
-  autoSelectOption
-  style={{ width: 300 }}
-  value={proxy}
-  onChange={setProxy}
+  width={300}
+  value={proxies}
+  onChange={setProxies}
 />`,
     },
   ],

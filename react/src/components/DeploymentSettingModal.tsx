@@ -350,7 +350,7 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
               <BAIProjectResourceGroupSelect
                 projectName={project?.name ?? ''}
                 autoSelectDefault
-                style={{ width: '100%' }}
+                width="100%"
               />
             </BAIFormItem>
           )}

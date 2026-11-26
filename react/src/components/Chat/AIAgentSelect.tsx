@@ -20,7 +20,8 @@ function makeAgentOptions(agents: AIAgent[], filter?: string) {
     .map((agent) => ({
       label: agent.name,
       value: agent.id,
-      ...agent,
+      description: agent.description,
+      icon: agent.icon,
     }))
     .filter((agent) => {
       return agent.label.toLocaleLowerCase().includes(filter || '');
@@ -54,7 +55,7 @@ const AIAgentSelect: React.FC<ChatAgentSelectProps> = ({
               client-side search covers it. */}
           <BAISelect
             aria-label={t('chatui.SelectAgent')}
-            loading={isSearchPending || loading}
+            isLoading={isSearchPending || loading}
             options={makeAgentOptions(agents, searchAgent)}
             value={controllableValue ?? undefined}
             onChange={(v) => {

@@ -9,7 +9,7 @@ import {
 import { UpdateUsersModalFragment$key } from '../../../__generated__/UpdateUsersModalFragment.graphql';
 import { App } from '../../../app-shim';
 import BAIFormItem from '../../../components/BAIFormItem';
-import ProjectSelect from '../../../components/ProjectSelect';
+import { ProjectMultiSelect } from '../../../components/ProjectSelect';
 import { Form, FormInstance } from '../../../form-engine';
 import { SIGNED_32BIT_MAX_INT } from '../../../helper/const-vars';
 import { useCurrentDomainValue } from '../../../hooks';
@@ -246,16 +246,12 @@ const UpdateUsersModal = ({
           <Suspense
             fallback={
               <BAIFormItem label={t('credential.Projects')}>
-                <BAISelect loading disabled />
+                <BAISelect isLoading disabled options={[]} />
               </BAIFormItem>
             }
           >
             <BAIFormItem name="group_ids" label={t('credential.Projects')}>
-              <ProjectSelect
-                mode="multiple"
-                domain={currentDomain}
-                disableDefaultFilter
-              />
+              <ProjectMultiSelect domain={currentDomain} disableDefaultFilter />
             </BAIFormItem>
           </Suspense>
           <BAIFormItem name="status" label={t('credential.UserStatus')}>
@@ -283,7 +279,7 @@ const UpdateUsersModal = ({
           <Suspense
             fallback={
               <BAIFormItem label={t('resourcePolicy.ResourcePolicy')}>
-                <BAISelect loading disabled />
+                <BAISelect isLoading disabled options={[]} />
               </BAIFormItem>
             }
           >
@@ -291,7 +287,7 @@ const UpdateUsersModal = ({
               name="resource_policy"
               label={t('resourcePolicy.ResourcePolicy')}
             >
-              <UserResourcePolicySelect allowClear />
+              <UserResourcePolicySelect hasClear />
             </BAIFormItem>
           </Suspense>
           <BAIFormItem

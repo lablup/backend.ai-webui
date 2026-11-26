@@ -38,6 +38,7 @@ import {
   type PersistedPanel,
   type ResourceKey,
 } from './types';
+import type { SelectorOptionData } from '@lablup/ui-common/Selector';
 import { Text } from '@lablup/ui-common/Text';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
@@ -233,13 +234,14 @@ const DashboardPanelModal: React.FC<DashboardPanelModalProps> = ({
   const chartTypeOptions = chartTypesFor(resourceType, chart.groupBy);
   const chartTypeOption = (type: ChartType) => ({
     value: type,
-    label: (
-      <BAIFlex align="center" gap="xs">
-        {CHART_TYPE_LABELS[type].icon}
-        {t(CHART_TYPE_LABELS[type].labelKey)}
-      </BAIFlex>
-    ),
+    label: t(CHART_TYPE_LABELS[type].labelKey),
   });
+  const renderChartTypeOption = (option: SelectorOptionData) => (
+    <BAIFlex align="center" gap="xs">
+      {CHART_TYPE_LABELS[option.value as ChartType].icon}
+      {option.label}
+    </BAIFlex>
+  );
   // The preview's time buckets end at the modal's opening, so typing does not move them.
   const [previewNow] = useState(() => Date.now());
   const config = resourceRegistry[resourceType];
@@ -443,7 +445,7 @@ const DashboardPanelModal: React.FC<DashboardPanelModalProps> = ({
             style={{ flex: 1, minWidth: 180 }}
           >
             <BAISelect
-              showSearch={false}
+              hasSearch={false}
               aria-label={t('dashboard.panelModal.DataSource')}
               options={resourceOptions.map((key) => ({
                 value: key,
@@ -473,21 +475,24 @@ const DashboardPanelModal: React.FC<DashboardPanelModalProps> = ({
               style={{ flex: 1, minWidth: 180 }}
             >
               <BAISelect
-                showSearch={false}
+                hasSearch={false}
                 data-testid="dashboard-chart-type"
                 aria-label={t('dashboard.panelModal.ChartType')}
                 options={[
                   {
-                    label: t('dashboard.panelModal.CompareGroups'),
+                    type: 'section',
+                    title: t('dashboard.panelModal.CompareGroups'),
                     options: GROUP_CHART_TYPES.filter((type) =>
                       chartTypeOptions.includes(type),
                     ).map(chartTypeOption),
                   },
                   {
-                    label: t('dashboard.panelModal.CreatedOverTime'),
+                    type: 'section',
+                    title: t('dashboard.panelModal.CreatedOverTime'),
                     options: TIME_CHART_TYPES.map(chartTypeOption),
                   },
                 ]}
+                renderOption={renderChartTypeOption}
               />
             </Form.Item>
             {isTimeChartType(chart.type) ? null : (
@@ -498,7 +503,7 @@ const DashboardPanelModal: React.FC<DashboardPanelModalProps> = ({
                 style={{ flex: 1, minWidth: 180 }}
               >
                 <BAISelect
-                  showSearch={false}
+                  hasSearch={false}
                   aria-label={t('dashboard.panelModal.GroupBy')}
                   options={CHART_GROUPINGS[resourceType].map((grouping) => ({
                     value: grouping.key,

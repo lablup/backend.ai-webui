@@ -289,9 +289,10 @@ const WebUIAssistantConnectModal: React.FC<WebUIAssistantConnectModalProps> = ({
                     <BAISelect
                       aria-label={t('webuiAssistant.Token')}
                       placeholder={t('chatui.SelectToken')}
-                      loading
+                      isLoading
                       disabled
-                      style={{ width: '100%' }}
+                      width="100%"
+                      options={[]}
                     />
                   }
                 >

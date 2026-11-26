@@ -27,6 +27,7 @@ const sampleManyDomains = Array.from({ length: 15 }, (_, i) => ({
  * Key features:
  * - Automatic data fetching via GraphQL query
  * - Filter active/inactive domains
+ * - Search on by default (from BAISelect)
  * - Built-in internationalization
  *
  * @see BAIDomainSelect.tsx for implementation details
@@ -40,7 +41,7 @@ const meta: Meta<typeof BAIDomainSelect> = {
     docs: {
       description: {
         component: `
-**BAIDomainSelect** extends [Ant Design Select](https://ant.design/components/select) to fetch and display Backend.AI domains.
+**BAIDomainSelect** extends [BAISelect](/?path=/docs/select-baiselect--docs) to fetch and display Backend.AI domains.
 
 ## BAI-Specific Props
 
@@ -72,7 +73,7 @@ query BAIDomainSelectQuery($is_active: Boolean) {
 />
 \`\`\`
 
-For all other props, refer to [Ant Design Select](https://ant.design/components/select).
+For all other props, refer to [BAISelect](/?path=/docs/select-baiselect--docs).
         `,
       },
     },
@@ -101,7 +102,7 @@ For all other props, refer to [Ant Design Select](https://ant.design/components/
         defaultValue: { summary: 'false' },
       },
     },
-    allowClear: {
+    hasClear: {
       control: { type: 'boolean' },
       description: 'Show clear button',
       table: {
@@ -143,7 +144,7 @@ export const Default: Story = {
         }),
       }}
     >
-      <BAIDomainSelect {...args} style={{ width: '300px' }} />
+      <BAIDomainSelect {...args} width={300} />
     </RelayResolver>
   ),
 };
@@ -172,7 +173,7 @@ export const AllDomains: Story = {
         }),
       }}
     >
-      <BAIDomainSelect {...args} style={{ width: '300px' }} />
+      <BAIDomainSelect {...args} width={300} />
     </RelayResolver>
   ),
 };
@@ -197,7 +198,7 @@ export const Empty: Story = {
         }),
       }}
     >
-      <BAIDomainSelect {...args} style={{ width: '300px' }} />
+      <BAIDomainSelect {...args} width={300} />
     </RelayResolver>
   ),
 };
@@ -226,7 +227,7 @@ export const Disabled: Story = {
         }),
       }}
     >
-      <BAIDomainSelect {...args} style={{ width: '300px' }} />
+      <BAIDomainSelect {...args} width={300} />
     </RelayResolver>
   ),
 };
@@ -240,12 +241,12 @@ export const WithClearButton: Story = {
     docs: {
       description: {
         story:
-          'Select with allowClear enabled, allowing users to clear their selection.',
+          'Select with hasClear enabled, allowing users to clear their selection.',
       },
     },
   },
   args: {
-    allowClear: true,
+    hasClear: true,
   },
   render: (args) => (
     <RelayResolver
@@ -255,7 +256,7 @@ export const WithClearButton: Story = {
         }),
       }}
     >
-      <BAIDomainSelect {...args} style={{ width: '300px' }} />
+      <BAIDomainSelect {...args} width={300} />
     </RelayResolver>
   ),
 };
@@ -284,7 +285,7 @@ export const WithCustomPlaceholder: Story = {
         }),
       }}
     >
-      <BAIDomainSelect {...args} style={{ width: '300px' }} />
+      <BAIDomainSelect {...args} width={300} />
     </RelayResolver>
   ),
 };
@@ -298,13 +299,12 @@ export const ManyDomains: Story = {
     docs: {
       description: {
         story:
-          'Demonstrates the component with a large number of domains, showing scrollable dropdown behavior.',
+          'Demonstrates the component with a large number of domains, showing scrollable dropdown behavior with search.',
       },
     },
   },
   args: {
-    showSearch: true,
-    allowClear: true,
+    hasClear: true,
   },
   render: (args) => (
     <RelayResolver
@@ -314,7 +314,7 @@ export const ManyDomains: Story = {
         }),
       }}
     >
-      <BAIDomainSelect {...args} style={{ width: '300px' }} />
+      <BAIDomainSelect {...args} width={300} />
     </RelayResolver>
   ),
 };

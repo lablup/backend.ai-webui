@@ -253,8 +253,7 @@ const QuotaPerStorageVolumePanelCard: React.FC<
         }}
         autoSelectType={defaultVolumeInfo ? undefined : 'usage'}
         showUsageStatus
-        showSearch
-        style={{ alignSelf: 'flex-start', minWidth: 240 }}
+        controlStyle={{ alignSelf: 'flex-start', minWidth: 240 }}
       />
       {/* antd `Skeleton paragraph={{rows: 0}}` (title bar only) →
           `BAISkeleton rows={0}`; `active` is always-on behaviour. */}

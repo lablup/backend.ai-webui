@@ -199,7 +199,7 @@ const UserSettingsGeneralPane = () => {
                   label: config.label ?? _.startCase(key),
                   value: key,
                 })),
-                loading: !!pendingThemeFamily,
+                isLoading: !!pendingThemeFamily,
               },
               defaultValue: DEFAULT_THEME_FAMILY,
               value: pendingThemeFamily
@@ -277,7 +277,7 @@ const UserSettingsGeneralPane = () => {
                   }
                 : item,
             ),
-            showSearch: true,
+            hasSearch: true,
           },
           defaultValue: defaultLanguage,
           value: selectedLanguage || defaultLanguage,

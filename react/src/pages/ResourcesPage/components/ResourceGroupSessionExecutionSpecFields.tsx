@@ -209,12 +209,12 @@ const ImageSelectField: React.FC<{
     <Suspense
       fallback={
         <BAISelect
-          showSearch={false}
+          hasSearch={false}
           aria-label={t('general.Loading')}
           disabled
           options={[]}
           placeholder={t('general.Loading')}
-          style={{ width: '100%' }}
+          width="100%"
         />
       }
     >
@@ -511,7 +511,7 @@ export const SessionExecutionSpecFormFields: React.FC<{
         rules={[{ required: true }]}
       >
         <BAISelect
-          showSearch={false}
+          hasSearch={false}
           aria-label={t('session.ClusterMode')}
           options={[
             { label: t('session.launcher.SingleNode'), value: 'single-node' },
@@ -612,10 +612,10 @@ export const SessionExecutionSpecFormFields: React.FC<{
                 </Form.Item>
                 <Form.Item noStyle name={[name, 'batchTimeoutUnit']}>
                   <BAISelect
-                    showSearch={false}
+                    hasSearch={false}
                     aria-label={t('session.launcher.BatchJobTimeoutDuration')}
                     disabled={!batchTimeoutEnabled}
-                    style={{ width: 100 }}
+                    width={100}
                     options={[
                       { label: t('time.Sec'), value: 's' },
                       { label: t('time.Min'), value: 'm' },

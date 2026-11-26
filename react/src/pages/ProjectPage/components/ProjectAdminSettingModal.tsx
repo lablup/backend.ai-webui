@@ -19,7 +19,7 @@ import {
   BAIId,
   BAIModal,
   BAIModalProps,
-  BAISelect,
+  BAIMultiSelector,
   BAITable,
   BAIScopedUserSelect,
   filterOutNullAndUndefined,
@@ -491,7 +491,13 @@ const ProjectAdminSettingModal = ({
           <BAIFlex gap="xs" align="start">
             <Suspense
               fallback={
-                <BAISelect mode="multiple" loading style={{ flex: 1 }} />
+                <BAIMultiSelector
+                  options={[]}
+                  isLoading
+                  hasSearch
+                  aria-label={t('rbac.SelectUsers')}
+                  controlStyle={{ flex: 1 }}
+                />
               }
             >
               <Form.Item

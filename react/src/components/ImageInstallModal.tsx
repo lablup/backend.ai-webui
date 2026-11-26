@@ -359,8 +359,8 @@ const ImageInstallModal: React.FC<ImageInstallModalInterface> = ({
                 projectName={chosenProject?.name ?? ''}
                 disabled={!chosenProject}
                 value={chosenResourceGroup}
-                onChange={(value) => setChosenResourceGroup(value)}
-                style={{ width: '100%' }}
+                onChange={(value) => setChosenResourceGroup(value ?? undefined)}
+                width="100%"
               />
             </Suspense>
           </BAIFormItem>

@@ -83,10 +83,8 @@ const ScopeTypeSelect: React.FC<Omit<BAISelectProps, 'options'>> = (props) => {
 
   return (
     <BAISelect
-      showSearch
-      label={t('rbac.ScopeType')}
-      isLabelHidden
-      style={{ width: '100%' }}
+      aria-label={t('rbac.ScopeType')}
+      width="100%"
       options={(rbacScopeEntityCombinations ?? []).map(({ scopeType }) => ({
         label: t(rbacTypeI18nKey(scopeType), { defaultValue: scopeType }),
         value: scopeType,
@@ -322,7 +320,9 @@ const RoleListTab: React.FC = () => {
                   type: 'uuid',
                   fixedOperator: 'equals',
                   renderInput: ({ onAddCondition, value, isDisabled }) => (
-                    <Suspense fallback={<BAISelect disabled loading />}>
+                    <Suspense
+                      fallback={<BAISelect disabled isLoading options={[]} />}
+                    >
                       <BAIAdminUserV2Select
                         valuePropName="id"
                         value={value}
@@ -354,19 +354,24 @@ const RoleListTab: React.FC = () => {
                     <Suspense
                       fallback={
                         <BAISelect
-                          loading
+                          isLoading
                           disabled
-                          label={t('rbac.ScopeType')}
-                          isLabelHidden
-                          style={{ width: '100%' }}
+                          aria-label={t('rbac.ScopeType')}
+                          width="100%"
+                          options={[]}
                         />
                       }
                     >
                       <ScopeTypeSelect
                         value={value}
                         disabled={isDisabled}
-                        onChange={(next, option) =>
-                          onAddCondition(next, option?.label)
+                        onChange={(next) =>
+                          onAddCondition(
+                            next ?? undefined,
+                            next
+                              ? t(rbacTypeI18nKey(next), { defaultValue: next })
+                              : undefined,
+                          )
                         }
                       />
                     </Suspense>

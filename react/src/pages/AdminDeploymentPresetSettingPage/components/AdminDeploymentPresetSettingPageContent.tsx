@@ -146,8 +146,8 @@ const ImageSelectField: React.FC<{
           disabled
           options={[]}
           placeholder={t('general.Loading')}
-          style={{ width: '100%' }}
-          showSearch={false}
+          width="100%"
+          hasSearch={false}
         />
       }
     >
@@ -1131,7 +1131,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                 ]}
               >
                 <BAISelect
-                  showSearch={false}
+                  hasSearch={false}
                   aria-label={t('adminDeploymentPreset.ClusterMode')}
                   placeholder={t('adminDeploymentPreset.SelectClusterMode')}
                   options={[

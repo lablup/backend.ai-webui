@@ -725,10 +725,10 @@ const InviteFolderSettingModalBody: React.FC<{
                   status={recipientError ? { type: 'error' } : undefined}
                 >
                   <BAISelect
-                    showSearch={false}
+                    hasSearch={false}
                     id={projectInputId}
                     aria-label={t('general.Project')}
-                    style={{ width: '100%' }}
+                    width="100%"
                     options={projectOptions}
                     placeholder={t('data.folders.SelectProjectToShare')}
                     value={
@@ -824,10 +824,10 @@ const InviteFolderSettingModalBody: React.FC<{
                 isDisabled={mountsAtDefault}
               >
                 <BAISelect
-                  showSearch={false}
+                  hasSearch={false}
                   id={mountLevelInputId}
                   aria-label={t('data.folders.MountPermission')}
-                  style={{ width: 150 }}
+                  width={150}
                   options={mountLevelOptions}
                   // The disabled selector shows the folder default the
                   // recipient gets rather than the last pick.
@@ -1258,9 +1258,9 @@ const SharedUserTable: React.FC<{
               '-'
             ) : row.userId ? (
               <BAISelect
-                showSearch={false}
+                hasSearch={false}
                 aria-label={t('data.folders.MountPermission')}
-                style={{ width: 130 }}
+                width={130}
                 options={mountLevelOptions}
                 value={level}
                 onChange={(next) =>

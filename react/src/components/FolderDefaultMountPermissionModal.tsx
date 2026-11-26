@@ -125,10 +125,10 @@ const FolderDefaultMountPermissionModal: React.FC<
     >
       <Field label={t('data.folders.DefaultMountPermission')} inputID={inputId}>
         <BAISelect
-          showSearch={false}
+          hasSearch={false}
           id={inputId}
           aria-label={t('data.folders.DefaultMountPermission')}
-          style={{ width: '100%' }}
+          width="100%"
           options={[
             { value: 'ro', label: t('data.ReadOnly') },
             {

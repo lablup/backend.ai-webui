@@ -128,8 +128,8 @@ vi.mock('./TableColumnsSettingModal', () => ({ default: () => null }));
 
 // The selector is reduced to two buttons driving the same `onSelectProject`
 // surface the real component uses: picking a project, and CLEARING the filter.
-// antd reports a cleared single select as `onChange(undefined, undefined)`, so
-// the real `ProjectSelect` forwards `undefined` — reproduced faithfully here.
+// A cleared select reports `null`, and the real `ProjectSelect` forwards
+// `undefined` to `onSelectProject` — reproduced faithfully here.
 vi.mock('./ProjectSelectForAdminPage', async () => {
   const React = await import('react');
   return {
@@ -142,7 +142,7 @@ vi.mock('./ProjectSelectForAdminPage', async () => {
           {
             'data-testid': 'mock-project-select',
             'data-value': props.value ?? '',
-            'data-allow-clear': String(!!props.allowClear),
+            'data-has-clear': String(!!props.hasClear),
             'data-placeholder': props.placeholder ?? '',
             type: 'button',
             onClick: () =>
@@ -279,7 +279,7 @@ describe('ImageList project scope contract (ADR-0001, FR-3415)', () => {
     renderList(null, vi.fn(), { resolveQuery: true });
 
     const select = await screen.findByTestId('mock-project-select');
-    expect(select).toHaveAttribute('data-allow-clear', 'true');
+    expect(select).toHaveAttribute('data-has-clear', 'true');
     expect(select).toHaveAttribute(
       'data-placeholder',
       'environment.AllProjects',

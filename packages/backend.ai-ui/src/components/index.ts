@@ -74,17 +74,8 @@ export { default as BAIText } from './BAIText';
 export type { BAITextProps } from './BAIText';
 export { default as BAIId } from './BAIId';
 export type { BAIIdProps } from './BAIId';
-export {
-  default as BAISelect,
-  BAISelectOptionItem,
-  BAISelectOptionGroup,
-} from './BAISelect';
-export type {
-  BAISelectProps,
-  BAISelectOption,
-  BAISelectOptionProps,
-  BAISelectOptionGroupProps,
-} from './BAISelect';
+export { default as BAISelect } from './BAISelect';
+export type { BAISelectProps } from './BAISelect';
 export { default as BAIComplexSelect } from './BAIComplexSelect';
 export type {
   BAIComplexSelectProps,

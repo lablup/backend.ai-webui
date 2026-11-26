@@ -162,7 +162,9 @@ const UserFolderPermissionPanelV2: React.FC<
                   type: 'uuid',
                   fixedOperator: 'equals',
                   renderInput: ({ onAddCondition, value, isDisabled }) => (
-                    <Suspense fallback={<BAISelect disabled loading />}>
+                    <Suspense
+                      fallback={<BAISelect options={[]} disabled isLoading />}
+                    >
                       <BAIScopedUserSelect
                         scope={domainScope}
                         // The filter row already prints the property label.

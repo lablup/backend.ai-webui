@@ -44,7 +44,9 @@ import { graphql, useFragment, useMutation } from 'react-relay';
 const ResourceGroupSelect: React.FC<BAIResourceGroupSelectProps> = (props) => {
   'use memo';
   return (
-    <Suspense fallback={<BAISelect {...props} loading disabled />}>
+    <Suspense
+      fallback={<BAISelect {...props} options={[]} isLoading disabled />}
+    >
       <BAIResourceGroupSelect {...props} />
     </Suspense>
   );
@@ -237,7 +239,7 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
               label={t('general.ResourceGroup')}
               name="scaling_group_name"
             >
-              <BAISelect disabled />
+              <BAISelect options={[]} disabled />
             </BAIFormItem>
           )}
         >
@@ -247,7 +249,7 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
             label={t('general.ResourceGroup')}
             name="scaling_group_name"
           >
-            <ResourceGroupSelect allowClear popupMatchSelectWidth={false} />
+            <ResourceGroupSelect hasClear />
           </BAIFormItem>
         </ErrorBoundary>
         <BAIFormItem

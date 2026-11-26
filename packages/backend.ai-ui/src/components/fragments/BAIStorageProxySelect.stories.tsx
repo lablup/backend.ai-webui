@@ -1,7 +1,6 @@
 import RelayResolver from '../../tests/RelayResolver';
 import BAIStorageProxySelect from './BAIStorageProxySelect';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { useState } from 'react';
 
 // =============================================================================
 // Mock Data
@@ -31,14 +30,15 @@ const sampleManyVolumes = Array.from({ length: 15 }, (_, i) => ({
 }));
 
 /**
- * BAIStorageProxySelect is a specialized Select component that fetches storage
- * volumes and derives the distinct storage-proxy names from them using GraphQL.
+ * BAIStorageProxySelect is a multi-select (BAIMultiSelector) that fetches
+ * storage volumes and derives the distinct storage-proxy names from them using
+ * GraphQL.
  *
  * Key features:
  * - Automatic data fetching via GraphQL query
  * - Distinct proxy names are derived from the volume list and deduplicated
- * - Built-in search functionality
- * - Internationalized placeholder text
+ * - Several proxies at once: the value is a list of proxy names
+ * - Search on by default, internationalized placeholder text
  *
  * @see BAIStorageProxySelect.tsx for implementation details
  */
@@ -51,12 +51,12 @@ const meta: Meta<typeof BAIStorageProxySelect> = {
     docs: {
       description: {
         component: `
-**BAIStorageProxySelect** extends [BAISelect](/?path=/docs/components-input-baiselect--docs) to fetch storage volumes and present the distinct storage-proxy names.
+**BAIStorageProxySelect** is a [BAIMultiSelector](/?path=/docs/select-baimultiselector--docs) that fetches storage volumes and presents the distinct storage-proxy names. Its value is \`string[]\`.
 
 ## Features
 - Fetches volumes from GraphQL query \`BAIStorageProxySelectQuery\` and derives distinct proxy names
 - Automatically removes duplicate proxy names using \`_.uniq\` + \`_.compact\`
-- Built-in search functionality enabled by default
+- Search on by default (\`hasSearch\`)
 - Internationalized placeholder using \`comp:BAIStorageProxySelect.SelectStorageProxy\`
 - Uses the proxy name as both label and value
 
@@ -76,12 +76,12 @@ There is no dedicated storage-proxy list field yet, so proxies are derived from 
 ## Usage
 \`\`\`tsx
 <BAIStorageProxySelect
-  autoSelectOption
-  onChange={(value) => console.log(value)}
+  hasClear
+  onChange={(values) => setProxies(values)}
 />
 \`\`\`
 
-For all other props, refer to [BAISelect](/?path=/docs/components-input-baiselect--docs).
+Every other BAIMultiSelector prop except \`options\` passes through; see [BAIMultiSelector](/?path=/docs/select-baimultiselector--docs).
         `,
       },
     },
@@ -97,15 +97,6 @@ For all other props, refer to [BAISelect](/?path=/docs/components-input-baiselec
         },
       },
     },
-    autoSelectOption: {
-      control: { type: 'boolean' },
-      description:
-        'Auto-select the first option once options load and no value is set',
-      table: {
-        type: { summary: 'boolean | ((options) => value)' },
-        defaultValue: { summary: 'undefined' },
-      },
-    },
     disabled: {
       control: { type: 'boolean' },
       description: 'Whether the select is disabled',
@@ -114,7 +105,7 @@ For all other props, refer to [BAISelect](/?path=/docs/components-input-baiselec
         defaultValue: { summary: 'false' },
       },
     },
-    allowClear: {
+    hasClear: {
       control: { type: 'boolean' },
       description: 'Show clear button',
       table: {
@@ -122,9 +113,17 @@ For all other props, refer to [BAISelect](/?path=/docs/components-input-baiselec
         defaultValue: { summary: 'false' },
       },
     },
+    hasSearch: {
+      control: { type: 'boolean' },
+      description: 'The search field in the listbox',
+      table: {
+        type: { summary: 'boolean' },
+        defaultValue: { summary: 'true' },
+      },
+    },
     onChange: {
       action: 'changed',
-      description: 'Callback when selection changes',
+      description: 'Callback with the selected proxy names',
     },
   },
 };
@@ -154,7 +153,7 @@ export const Default: Story = {
         }),
       }}
     >
-      <BAIStorageProxySelect {...args} style={{ width: '300px' }} />
+      <BAIStorageProxySelect {...args} width={300} />
     </RelayResolver>
   ),
 };
@@ -180,7 +179,7 @@ export const Empty: Story = {
         }),
       }}
     >
-      <BAIStorageProxySelect {...args} style={{ width: '300px' }} />
+      <BAIStorageProxySelect {...args} width={300} />
     </RelayResolver>
   ),
 };
@@ -207,50 +206,13 @@ export const WithDuplicates: Story = {
         }),
       }}
     >
-      <BAIStorageProxySelect {...args} style={{ width: '300px' }} />
+      <BAIStorageProxySelect {...args} width={300} />
     </RelayResolver>
   ),
 };
 
 /**
- * Auto-select the first proxy once options load.
- */
-export const AutoSelectFirst: Story = {
-  name: 'AutoSelectFirstOption',
-  parameters: {
-    docs: {
-      description: {
-        story:
-          'With `autoSelectOption`, the first proxy is selected automatically once options load and no value is set — used by the SFTP Resource Group settings modal. This requires a controlled `value`/`onChange` pair (as a real consumer, e.g. an antd `Form.Item`, would provide) — `autoSelectOption` only *calls* `onChange`, it does not maintain the selection itself.',
-      },
-    },
-  },
-  args: {
-    autoSelectOption: true,
-  },
-  render: (args) => {
-    const [value, setValue] = useState<string>();
-    return (
-      <RelayResolver
-        mockResolvers={{
-          Query: () => ({
-            storage_volume_list: { items: sampleVolumes },
-          }),
-        }}
-      >
-        <BAIStorageProxySelect
-          {...args}
-          value={value}
-          onChange={setValue}
-          style={{ width: '300px' }}
-        />
-      </RelayResolver>
-    );
-  },
-};
-
-/**
- * Multiple selection mode, picking from existing proxy options.
+ * Several proxies selected at once, picking from existing proxy options.
  */
 export const MultiSelect: Story = {
   name: 'MultipleSelection',
@@ -258,12 +220,11 @@ export const MultiSelect: Story = {
     docs: {
       description: {
         story:
-          'With `mode="multiple"`, users can select several proxies from the existing options (as opposed to `mode="tags"`, which also allows free text entry).',
+          'Users select several proxies from the existing options; the trigger names the selected proxies and the value is a list of their names.',
       },
     },
   },
   args: {
-    mode: 'multiple',
     defaultValue: ['local', 'ceph-proxy'],
   },
   render: (args) => (
@@ -274,7 +235,7 @@ export const MultiSelect: Story = {
         }),
       }}
     >
-      <BAIStorageProxySelect {...args} style={{ width: '300px' }} />
+      <BAIStorageProxySelect {...args} width={300} />
     </RelayResolver>
   ),
 };
@@ -303,7 +264,7 @@ export const Disabled: Story = {
         }),
       }}
     >
-      <BAIStorageProxySelect {...args} style={{ width: '300px' }} />
+      <BAIStorageProxySelect {...args} width={300} />
     </RelayResolver>
   ),
 };
@@ -317,12 +278,12 @@ export const WithClearButton: Story = {
     docs: {
       description: {
         story:
-          'Select with allowClear enabled, allowing users to clear their selection.',
+          'Select with hasClear enabled, allowing users to clear their selection.',
       },
     },
   },
   args: {
-    allowClear: true,
+    hasClear: true,
   },
   render: (args) => (
     <RelayResolver
@@ -332,7 +293,7 @@ export const WithClearButton: Story = {
         }),
       }}
     >
-      <BAIStorageProxySelect {...args} style={{ width: '300px' }} />
+      <BAIStorageProxySelect {...args} width={300} />
     </RelayResolver>
   ),
 };
@@ -351,7 +312,7 @@ export const ManyProxies: Story = {
     },
   },
   args: {
-    allowClear: true,
+    hasClear: true,
   },
   render: (args) => (
     <RelayResolver
@@ -361,7 +322,7 @@ export const ManyProxies: Story = {
         }),
       }}
     >
-      <BAIStorageProxySelect {...args} style={{ width: '300px' }} />
+      <BAIStorageProxySelect {...args} width={300} />
     </RelayResolver>
   ),
 };

@@ -388,7 +388,7 @@ const KeypairResourcePolicyV2SettingModal: React.FC<
           name="default_for_unspecified"
         >
           <BAISelect
-            showSearch={false}
+            hasSearch={false}
             aria-label={t('resourcePolicy.DefaultForUnspecified')}
             options={[
               { label: 'UNLIMITED', value: 'UNLIMITED' },
@@ -540,7 +540,7 @@ const KeypairResourcePolicyV2SettingModal: React.FC<
               label={t('resourcePolicy.AllowedHosts')}
               name="allowed_vfolder_hosts"
             >
-              <BAIAllowedHostNamesSelect mode="multiple" />
+              <BAIAllowedHostNamesSelect />
             </BAIFormItem>
           </Card>
         </BAIFormItem>

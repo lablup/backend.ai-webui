@@ -247,6 +247,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
             }
             value={modelId}
             onChange={(modelId) => {
+              if (modelId === null) return;
               startTransition(() => {
                 onChangeModel(modelId);
               });

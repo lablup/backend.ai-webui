@@ -42,19 +42,19 @@ export const docs = {
     },
     {
       name: 'value',
-      type: 'string',
+      type: 'string | null',
       description:
         'Selected domain uuid — the local id, not the Relay global id. Uncontrolled use through `defaultValue` is supported by useControllableValue.',
     },
     {
       name: 'onChange',
-      type: '(value: any, option?: any) => void',
+      type: '(value: string | null) => void',
       description:
-        'Fired with the selected domain uuid and the matching option, forwarded from BAISelect.',
+        'Fired with the selected domain uuid, or null when cleared, forwarded from BAISelect.',
     },
     {
       name: 'placeholder',
-      type: 'ReactNode',
+      type: 'string',
       description:
         'Empty-state text on the trigger. Defaults to the same translated "Select domain" string BAIDomainSelect uses; passing a value replaces it.',
     },

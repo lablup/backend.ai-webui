@@ -9,6 +9,7 @@ import type {
 import { CATALOG_FETCH_LIMIT } from '../../helper/const-vars';
 import WebUILink from '../WebUILink';
 import { Code } from '@lablup/ui-common/Code';
+import type { SelectorOptionData } from '@lablup/ui-common/Selector';
 import { Text } from '@lablup/ui-common/Text';
 import {
   BAIFlex,
@@ -17,7 +18,6 @@ import {
   toGlobalId,
   useControllableValue,
   BAISelect,
-  type BAISelectOption,
   BAITextInput,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
@@ -122,12 +122,12 @@ const DeploymentTokenSelectWithQuery: React.FC<
   // native tooltip (FR-3341).
   const validTokens = getValidTokenOptions(deployment);
   const noExpirationLabel = t('deployment.accessToken.NoExpiration');
-  // `label` stays the plain searchable text; the rich row is `optionRender`.
-  const selectOptions: BAISelectOption[] = validTokens.map((item) => ({
+  // `label` stays the plain searchable text; the rich row is `renderOption`.
+  const selectOptions: SelectorOptionData[] = validTokens.map((item) => ({
     value: item.token,
     label: `…${item.token.slice(-6)}`,
   }));
-  const renderTokenOption = (option: BAISelectOption) => {
+  const renderTokenOption = (option: SelectorOptionData) => {
     const item = validTokens.find((v) => v.token === option.value);
     if (!item) return option.label;
     return (
@@ -163,19 +163,20 @@ const DeploymentTokenSelectWithQuery: React.FC<
   return (
     <BAIFlex gap="xs" align="center">
       <BAISelect
-        showSearch={false}
+        hasSearch={false}
         aria-label={t('chatui.SelectToken')}
         placeholder={t('chatui.SelectToken')}
         // Fixed width so the token field looks the same across panel sizes
         // instead of following CustomModelForm's responsive 100%/200px width,
         // while still shrinking to fit narrow screens (maxWidth + minWidth 0).
-        style={{ ...style, width: 220, minWidth: 0 }}
+        width={220}
+        controlStyle={{ ...style, width: 220, minWidth: 0 }}
         options={selectOptions}
-        optionRender={({ data }) => renderTokenOption(data)}
+        renderOption={renderTokenOption}
         value={controllableValue || undefined}
-        onChange={(v) => setControllableValue(v)}
+        onChange={(v) => setControllableValue(v ?? '')}
         disabled={props.disabled}
-        loading={loading}
+        isLoading={loading}
       />
       <WebUILink
         to={`/deployments/${deploymentId}#access-tokens`}

@@ -1,9 +1,3 @@
-/*
- to-astryx W2-D: antd `Select` -> `BAISelect`, which is now the Astryx-backed
- frontier wrapper (MAPPING §3.1 — static options, single value, so the
- `Selector` branch). The antd `SelectProps` type import goes with it, so this
- module carries no antd specifier (P15). The prop surface is unchanged.
-*/
 import { BAIDomainSelectQuery } from '../../__generated__/BAIDomainSelectQuery.graphql';
 import { useControllableValue } from '../../hooks';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
@@ -12,7 +6,7 @@ import * as _ from 'lodash-es';
 import React from 'react';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
-interface Props extends BAISelectProps {
+interface Props extends Omit<BAISelectProps, 'options'> {
   activeOnly?: boolean;
 }
 const BAIDomainSelect: React.FC<Props> = ({
@@ -40,12 +34,10 @@ const BAIDomainSelect: React.FC<Props> = ({
       placeholder={t('comp:BAIDomainSelect.SelectDomain')}
       {...selectProps}
       value={value}
-      onChange={(_value, option) => {
-        setValue(_value, option);
-      }}
-      options={_.map(domains, (domain) => ({
-        label: domain?.name,
-        value: domain?.name,
+      onChange={(next) => setValue(next)}
+      options={_.map(_.compact(_.map(domains, 'name')), (name) => ({
+        label: name,
+        value: name,
       }))}
     />
   );

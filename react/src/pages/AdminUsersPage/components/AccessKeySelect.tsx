@@ -9,7 +9,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
-export interface AccessKeySelectProps extends BAISelectProps {
+export interface AccessKeySelectProps extends Omit<BAISelectProps, 'options'> {
   userId: string;
   fetchKey?: string;
 }

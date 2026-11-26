@@ -277,9 +277,8 @@ const ShellScriptEditModal: React.FC<BootstrapScriptEditModalProps> = ({
           <Text>{t('userSettings.BootstrapScriptDescription')}</Text>
         )}
         {shellInfo === 'userconfig' && (
-          // Not a bound Form field (no `name` — the antd original didn't
-          // give it one either, driving `rcfileNames`/`script` state by
-          // hand); `BAIFormItem` here is purely the label layout.
+          // Not a bound Form field: `rcfileNames`/`script` state drives it,
+          // and `BAIFormItem` is only the label layout.
           <BAIFormItem
             style={{
               marginBottom: 0,
@@ -287,7 +286,7 @@ const ShellScriptEditModal: React.FC<BootstrapScriptEditModalProps> = ({
             label={t('userSettings.UserConfigScript')}
           >
             <BAISelect
-              showSearch={false}
+              hasSearch={false}
               aria-label={t('userSettings.UserConfigScript')}
               value={rcfileNames}
               options={[
@@ -298,13 +297,14 @@ const ShellScriptEditModal: React.FC<BootstrapScriptEditModalProps> = ({
                 '.Renviron',
               ].map((value) => ({ value, label: value }))}
               onChange={(value) => {
+                if (value === null) return;
                 const selectedScript = _.find(userConfigScript, {
                   path: value,
                 });
                 setScript(selectedScript?.data || '');
                 setRcfileNames(value);
               }}
-              style={{ width: 200 }}
+              width={200}
             />
           </BAIFormItem>
         )}

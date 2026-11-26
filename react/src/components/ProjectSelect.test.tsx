@@ -8,7 +8,7 @@
  */
 import '../../__test__/matchMedia.mock.js';
 import '../../__test__/resizeObserver.mock.js';
-import ProjectSelect from './ProjectSelect';
+import { ProjectMultiSelect } from './ProjectSelect';
 import '@testing-library/jest-dom';
 import { render } from '@testing-library/react';
 import type { ReactNode } from 'react';
@@ -58,7 +58,7 @@ vi.mock('backend.ai-ui', async (importOriginal) => {
   return {
     ...actual,
     // Capture the resolved option list; the real popup needs a live dropdown.
-    BAISelect: ({ options }: { options?: unknown }) => {
+    BAIMultiSelector: ({ options }: { options?: unknown }) => {
       captured.options = options;
       return null;
     },
@@ -74,8 +74,7 @@ const renderSelect = (props: {
   lockPersonalProject?: boolean;
 }) =>
   render(
-    <ProjectSelect
-      mode="multiple"
+    <ProjectMultiSelect
       domain="default"
       disableDefaultFilter
       onChange={() => {}}
@@ -84,11 +83,11 @@ const renderSelect = (props: {
   );
 
 const readGroups = () =>
-  captured.options as Array<{ label: string; options: Array<SelectOption> }>;
+  captured.options as Array<{ title: string; options: Array<SelectOption> }>;
 
 const personalProject = { id: 'project-personal', name: 'seungwon' };
 
-describe('ProjectSelect personalProject', () => {
+describe('ProjectMultiSelect personalProject', () => {
   it('shows the personal project by name, locked, under the Personal group', () => {
     renderSelect({
       value: ['project-general', 'project-personal'],
@@ -96,13 +95,13 @@ describe('ProjectSelect personalProject', () => {
     });
 
     const groupsJson = readGroups();
-    expect(groupsJson.map((group) => group.label)).toEqual([
+    expect(groupsJson.map((group) => group.title)).toEqual([
       'general.General',
       'data.ModelStore',
       'projectSelect.Personal',
     ]);
     const personalGroup = groupsJson.find(
-      (group) => group.label === 'projectSelect.Personal',
+      (group) => group.title === 'projectSelect.Personal',
     );
     expect(personalGroup?.options).toHaveLength(1);
     const personal = personalGroup?.options[0];
@@ -125,7 +124,7 @@ describe('ProjectSelect personalProject', () => {
     });
 
     const personal = readGroups().find(
-      (group) => group.label === 'projectSelect.Personal',
+      (group) => group.title === 'projectSelect.Personal',
     )?.options[0];
     expect(personal).toMatchObject({
       value: 'project-personal',
@@ -138,7 +137,7 @@ describe('ProjectSelect personalProject', () => {
     renderSelect({ value: ['project-general'] });
 
     const groups = readGroups();
-    expect(groups.map((group) => group.label)).not.toContain(
+    expect(groups.map((group) => group.title)).not.toContain(
       'projectSelect.Personal',
     );
     expect(

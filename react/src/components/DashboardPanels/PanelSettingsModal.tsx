@@ -102,7 +102,7 @@ const PanelSettingsModal: React.FC<PanelSettingsModalProps> = ({
             <Suspense
               fallback={
                 <BAIFormItem extra={resourceGroupsExtra}>
-                  <BAISelect loading disabled />
+                  <BAISelect isLoading disabled options={[]} />
                 </BAIFormItem>
               }
             >

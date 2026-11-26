@@ -492,11 +492,14 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
                 >
                   {/* The Suspense boundary swallows BAIFormItem's injected
                     props, so the field value is written explicitly. */}
-                  <Suspense fallback={<BAISelect loading disabled />}>
+                  <Suspense
+                    fallback={<BAISelect isLoading disabled options={[]} />}
+                  >
                     <ProjectSelectForAdminPage
                       data-testid="folder-create-project-select"
                       domain={baiClient._config.domainName}
                       onSelectProject={(projectInfo) => {
+                        if (!projectInfo) return;
                         setSelectedProject({
                           id: projectInfo.projectId,
                           name: projectInfo.projectName,
@@ -614,14 +617,15 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
               layout="horizontal"
               required
             >
-              <Suspense fallback={<BAISelect loading disabled />}>
+              <Suspense
+                fallback={<BAISelect isLoading disabled options={[]} />}
+              >
                 <StorageSelect
                   onChange={(value) => {
                     formRef.current?.setFieldValue('host', value);
                   }}
                   showUsageStatus
                   autoSelectType="usage"
-                  showSearch
                 />
               </Suspense>
             </BAIFormItem>

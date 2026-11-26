@@ -59,9 +59,7 @@ const BAIDomainSelectV2: React.FC<BAIDomainSelectV2Props> = ({
       placeholder={t('comp:BAIDomainSelect.SelectDomain')}
       {...selectProps}
       value={value}
-      onChange={(_value, option) => {
-        setValue(_value, option);
-      }}
+      onChange={(next) => setValue(next)}
       options={_.compact(
         _.map(adminDomainsV2?.edges, (edge) =>
           edge?.node

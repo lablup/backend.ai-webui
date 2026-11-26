@@ -266,11 +266,11 @@ export const ThreeMembers: Story = {
             value={domain}
             onChange={setDomain}
             options={sampleDomains}
-            style={{ width: '100%' }}
-            showSearch={false}
+            width="100%"
+            hasSearch={false}
             // Astryx renders the clear affordance INSIDE the field, which is
             // the nesting the stylesheet's button rule has to step around.
-            allowClear
+            hasClear
           />
         </BAICompactGroup>
       );

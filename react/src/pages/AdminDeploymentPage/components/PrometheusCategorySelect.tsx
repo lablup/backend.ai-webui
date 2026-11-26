@@ -9,16 +9,25 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
+interface PrometheusCategorySelectProps extends Omit<
+  BAISelectProps,
+  'options'
+> {
+  /** The chosen category, or `undefined` after a clear. */
+  onSelectCategory?: (
+    category: { id: string; name: string } | undefined,
+  ) => void;
+}
+
 /**
- * Category picker for the Prometheus query preset editor. Fetches the category
- * list itself via `useLazyLoadQuery`, so it suspends until the list resolves —
- * the caller owns the `<Suspense>` boundary (see `PrometheusQueryPresetEditorModal`)
- * so it can scope the fallback to just this field and keep the rest of the form
- * interactive. Owns the category-picker defaults (clearable, empty-state copy);
- * control props injected by the enclosing `Form.Item` flow through to the
- * underlying select, and callers can still override any default via props.
+ * Category picker for the Prometheus query preset editor. It suspends until the
+ * category list resolves, so the caller owns the `<Suspense>` boundary; props
+ * override its defaults (clearable, placeholder).
  */
-const PrometheusCategorySelect: React.FC<BAISelectProps> = (props) => {
+const PrometheusCategorySelect: React.FC<PrometheusCategorySelectProps> = ({
+  onSelectCategory,
+  ...props
+}) => {
   'use memo';
   const { t } = useTranslation();
   const { prometheusQueryPresetCategories } =
@@ -44,11 +53,16 @@ const PrometheusCategorySelect: React.FC<BAISelectProps> = (props) => {
 
   return (
     <BAISelect
-      allowClear
+      hasClear
       placeholder={t('prometheusQueryPreset.NoCategory')}
-      notFoundContent={t('prometheusQueryPreset.NoCategory')}
       options={options}
       {...props}
+      onChange={(next) => {
+        props.onChange?.(next);
+        onSelectCategory?.(
+          _.find(prometheusQueryPresetCategories, { id: next ?? '' }),
+        );
+      }}
     />
   );
 };

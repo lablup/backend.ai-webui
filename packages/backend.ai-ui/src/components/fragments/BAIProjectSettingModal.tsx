@@ -1,4 +1,4 @@
-import { BAIProjectResourcePolicySelect, BAIResourceGroupSelect } from '.';
+import { BAIProjectResourcePolicySelect } from '.';
 import {
   BAIAllowedHostNamesSelect,
   BAIDynamicUnitInputNumber,
@@ -16,11 +16,13 @@ import { useErrorMessageResolver } from '../../hooks';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import BAICheckbox from '../BAICheckbox';
 import BAIModal, { BAIModalProps } from '../BAIModal';
+import BAIMultiSelector, { BAIMultiSelectorProps } from '../BAIMultiSelector';
 import BAINumberInput from '../BAINumberInput';
 import BAITextArea from '../BAITextArea';
 import BAITextInput from '../BAITextInput';
 import { useBAIResourceSlots } from '../provider';
 import useConnectedBAIClient from '../provider/BAIClientProvider/hooks/useConnectedBAIClient';
+import { useResourceGroupNames } from './BAIResourceGroupSelect';
 import { HStack } from '@lablup/ui-common/Stack';
 import * as _ from 'lodash-es';
 import { useDeferredValue, useRef } from 'react';
@@ -56,6 +58,25 @@ interface FormValues {
 
 export type BAIProjectSettingModalFragmentKey =
   BAIProjectSettingModalFragment$key;
+
+const ResourceGroupMultiSelector = (
+  props: Omit<BAIMultiSelectorProps, 'options'>,
+) => {
+  'use memo';
+  const { t } = useBAIi18n();
+  const resourceGroupNames = useResourceGroupNames();
+  return (
+    <BAIMultiSelector
+      hasSearch
+      placeholder={t('comp:BAIResourceGroupSelect.SelectResourceGroup')}
+      {...props}
+      options={_.map(resourceGroupNames, (name) => ({
+        label: name,
+        value: name,
+      }))}
+    />
+  );
+};
 
 const BAIProjectSettingModal = ({
   projectFragment,
@@ -453,13 +474,13 @@ const BAIProjectSettingModal = ({
           label={t('comp:BAIProjectSettingModal.AllowedResourceGroups')}
           name="scaling_groups"
         >
-          <BAIResourceGroupSelect mode="tags" allowClear />
+          <ResourceGroupMultiSelector hasClear />
         </Form.Item>
         <Form.Item
           label={t('comp:BAIProjectSettingModal.AllowedFolderHosts')}
           name="allowedVfolderHostNames"
         >
-          <BAIAllowedHostNamesSelect mode="multiple" allowClear />
+          <BAIAllowedHostNamesSelect hasClear />
         </Form.Item>
         {_.map(_.chunk(_.keys(resourceSlots), 2), (resourceSlotKeys) => (
           <>

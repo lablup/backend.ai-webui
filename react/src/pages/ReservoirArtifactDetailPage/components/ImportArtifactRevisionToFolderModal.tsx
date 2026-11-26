@@ -107,7 +107,7 @@ const ImportArtifactRevisionToFolderModal = ({
   const modelStoreProjectOptions = _.map(
     _.filter(modelStoreProjects, (project) => !!project?.id),
     (project) => ({
-      label: project.name,
+      label: project.name || (project.id as string),
       value: project.id as string,
     }),
   );
@@ -278,16 +278,8 @@ const ImportArtifactRevisionToFolderModal = ({
                 status={
                   _.isEmpty(modelStoreProjectOptions) ? 'error' : undefined
                 }
-                tooltip={
-                  _.isEmpty(modelStoreProjectOptions)
-                    ? t(
-                        'importArtifactRevisionToFolderModal.FailedToRetrieveModelStoreProject',
-                      )
-                    : undefined
-                }
-                popupMatchSelectWidth={false}
                 onChange={(value) => {
-                  setPickedProjectId(value as string);
+                  setPickedProjectId(value ?? undefined);
                   // The folder list is scoped to the destination project;
                   // clear a selection made under the previous one.
                   formRef.current?.setFieldsValue({ vfolderId: undefined });

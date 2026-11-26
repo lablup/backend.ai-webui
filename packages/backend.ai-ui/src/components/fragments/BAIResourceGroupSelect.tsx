@@ -66,9 +66,7 @@ const BAIResourceGroupSelect = ({
       options={_.map(resourceGroupNames, (name) => ({
         label: name,
         value: name,
-        resourceGroup: name,
       }))}
-      showSearch
       placeholder={t('comp:BAIResourceGroupSelect.SelectResourceGroup')}
       {...selectProps}
     />

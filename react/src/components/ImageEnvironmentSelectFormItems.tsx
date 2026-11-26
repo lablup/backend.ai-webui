@@ -20,31 +20,29 @@ import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useThemeMode } from '../hooks/useThemeMode';
 import { useEffectiveLoginConfig } from '../hooks/useWebUIConfig';
 import { ImageMetaDivider, ImageTagTokens } from './ImageTags';
-import { Divider } from '@lablup/ui-common/Divider';
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
 } from '@lablup/ui-common/DropdownMenu';
+import type {
+  SelectorOptionData,
+  SelectorOptionType,
+} from '@lablup/ui-common/Selector';
 import { Token } from '@lablup/ui-common/Token';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
-  BAIDoubleToken,
   BAITextHighlighter,
   tokenColorForTagColor,
   BAIFlex,
   BAIImageMetaIcon,
   imageNodeTagFacts,
   BAISelect,
-  // BAISelect still accepts antd's children option API via BUI's render-null
-  // carriers; the rich JSX option rows below survive through `renderOption`.
-  BAISelectOptionItem as SelectOption,
-  BAISelectOptionGroup as SelectOptGroup,
   BAIText,
   BAITextInput,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { ArrowUpDown } from 'lucide-react';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
@@ -106,7 +104,6 @@ const ImageEnvironmentSelectFormItems: React.FC<
   const [environmentSearch, setEnvironmentSearch] = useState(
     searchPrefill ?? '',
   );
-  const [versionSearch, setVersionSearch] = useState('');
   const { t } = useTranslation();
   const [metadata, { getImageMeta, tagAlias }] = useBackendAIImageMetaData();
   const { token } = useTheme();
@@ -116,40 +113,11 @@ const ImageEnvironmentSelectFormItems: React.FC<
   // On until the user explicitly turns it off.
   const showDedicatedFirst = showDedicatedFirstSetting ?? true;
 
-  // antd `RefSelectProps` restated as the one method these two refs ever
-  // called. `BAISelect` accepts `ref` and never attaches it (P26-8 — Astryx's
-  // `Selector` exposes no imperative handle), so `.focus()` below has already
-  // been a no-op since wave 2; the optional-chained call keeps that harmless
-  // and the declarations keep compiling without antd.
-  type SelectFocusHandle = { focus: () => void };
-  const envSelectRef = useRef<SelectFocusHandle>(null);
-  const versionSelectRef = useRef<SelectFocusHandle>(null);
-  const [envSelectOpen, setEnvSelectOpen] = useState<boolean | undefined>(
-    searchPrefill ? true : undefined,
-  );
-
   const [prevSearchPrefill, setPrevSearchPrefill] = useState(searchPrefill);
   if (prevSearchPrefill !== searchPrefill) {
     setPrevSearchPrefill(searchPrefill);
-    if (searchPrefill) {
-      setEnvironmentSearch(searchPrefill);
-      setEnvSelectOpen(true);
-    } else {
-      setEnvironmentSearch('');
-      setEnvSelectOpen(undefined);
-    }
+    setEnvironmentSearch(searchPrefill ?? '');
   }
-
-  useEffect(
-    function focusEnvironmentSelectOnPrefill() {
-      if (searchPrefill) {
-        queueMicrotask(() => {
-          envSelectRef.current?.focus();
-        });
-      }
-    },
-    [searchPrefill],
-  );
 
   const imageEnvironmentSelectFormItemsVariables =
     loginConfig.showNonInstalledImages ? {} : { installed: true };
@@ -437,7 +405,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
 
   const renderAcceleratorTokens = (
     accelerators: string[],
-    highlightKeyword: string,
+    highlightKeyword?: string,
   ) =>
     _.map(accelerators, (accelerator) => (
       <Token
@@ -460,10 +428,15 @@ const ImageEnvironmentSelectFormItems: React.FC<
     (environmentGroup) => environmentGroup.displayName,
   );
 
-  const renderEnvironmentOption = (
+  // The rich rows by option value; the select draws them in the list and on the trigger.
+  const optionRows = new Map<string, React.ReactNode>();
+  const renderOptionRow = (option: SelectorOptionData) =>
+    optionRows.get(option.value) ?? option.label ?? option.value;
+
+  const toEnvironmentOption = (
     environmentGroup: ImageGroup['environmentGroups'][0],
     optionValue: string,
-  ) => {
+  ): SelectorOptionData => {
     const firstImage = environmentGroup.images[0];
     const currentMetaImageInfo =
       metadata?.imageInfo[environmentGroup.environmentName.split('/')?.[2]];
@@ -514,55 +487,108 @@ const ImageEnvironmentSelectFormItems: React.FC<
       },
     );
     extraFilterValues.push(...environmentGroup.dedicatedAccelerators);
-    return (
-      <SelectOption
-        key={optionValue}
-        value={optionValue}
-        // The prefix/meta token texts live in Token props, so
-        // the accessible/search label restates them (FR-3544).
-        label={_.compact([
-          environmentGroup.displayName,
-          ...extraFilterValues,
-        ]).join(' | ')}
-        filterValue={
-          environmentGroup.displayName + '\t' + extraFilterValues.join('\t')
-        }
-      >
-        <BAIFlex direction="row" justify="between">
-          <BAIFlex direction="row" align="center" gap="xs">
-            <BAIImageMetaIcon
-              image={getImageFullName(firstImage) || ''}
-              style={{
-                width: 15,
-                height: 15,
-              }}
-            />
-            <BAITextHighlighter keyword={environmentSearch}>
-              {environmentGroup.displayName}
-            </BAITextHighlighter>
-          </BAIFlex>
-          <BAIFlex
-            direction="row"
-            // set specific class name to handle flex wrap using css
-            className={isDarkMode ? 'tag-wrap-dark' : 'tag-wrap-light'}
-            // style={{ flex: 1 }}
+    optionRows.set(
+      optionValue,
+      <BAIFlex direction="row" justify="between">
+        <BAIFlex direction="row" align="center" gap="xs">
+          <BAIImageMetaIcon
+            image={getImageFullName(firstImage) || ''}
             style={{
-              marginLeft: token('--spacing-2'),
-              flexShrink: 1,
+              width: 15,
+              height: 15,
             }}
-            gap="xs"
-          >
-            {environmentPrefixTag}
-            {tagsFromMetaImageInfoLabel}
-            {renderAcceleratorTokens(
-              environmentGroup.dedicatedAccelerators,
-              environmentSearch,
-            )}
-          </BAIFlex>
+          />
+          <BAITextHighlighter keyword={environmentSearch}>
+            {environmentGroup.displayName}
+          </BAITextHighlighter>
         </BAIFlex>
-      </SelectOption>
+        <BAIFlex
+          direction="row"
+          // set specific class name to handle flex wrap using css
+          className={isDarkMode ? 'tag-wrap-dark' : 'tag-wrap-light'}
+          // style={{ flex: 1 }}
+          style={{
+            marginLeft: token('--spacing-2'),
+            flexShrink: 1,
+          }}
+          gap="xs"
+        >
+          {environmentPrefixTag}
+          {tagsFromMetaImageInfoLabel}
+          {renderAcceleratorTokens(
+            environmentGroup.dedicatedAccelerators,
+            environmentSearch,
+          )}
+        </BAIFlex>
+      </BAIFlex>,
     );
+    return {
+      value: optionValue,
+      // The prefix/meta token texts live in Token props, so
+      // the accessible/search label restates them (FR-3544).
+      label: _.compact([
+        environmentGroup.displayName,
+        ...extraFilterValues,
+      ]).join(' | '),
+    };
   };
+
+  if (fullNameMatchedImage) {
+    optionRows.set(
+      fullNameMatchedImage.namespace ?? '',
+      <BAIFlex
+        direction="row"
+        align="center"
+        gap="xs"
+        style={{ display: 'inline-flex' }}
+      >
+        <BAIImageMetaIcon
+          image={getImageFullName(fullNameMatchedImage) || ''}
+          style={{
+            width: 15,
+            height: 15,
+          }}
+        />
+        {getImageFullName(fullNameMatchedImage)}
+      </BAIFlex>,
+    );
+  }
+  const environmentOptions: SelectorOptionType[] = fullNameMatchedImage
+    ? [
+        {
+          value: fullNameMatchedImage.namespace ?? '',
+          label:
+            getImageFullName(fullNameMatchedImage) ||
+            (fullNameMatchedImage.namespace ?? ''),
+        },
+      ]
+    : [
+        ...(showDedicatedFirst && !_.isEmpty(dedicatedEnvironmentGroups)
+          ? [
+              {
+                type: 'section' as const,
+                title: t('session.launcher.AcceleratorDedicatedImages'),
+                options: _.map(dedicatedEnvironmentGroups, (environmentGroup) =>
+                  toEnvironmentOption(
+                    environmentGroup,
+                    DEDICATED_OPTION_VALUE_PREFIX +
+                      environmentGroup.environmentName,
+                  ),
+                ),
+              },
+            ]
+          : []),
+        ..._.map(imageGroups, (group) => ({
+          type: 'section' as const,
+          title: group.groupName,
+          options: _.map(group.environmentGroups, (environmentGroup) =>
+            toEnvironmentOption(
+              environmentGroup,
+              environmentGroup.environmentName,
+            ),
+          ),
+        })),
+      ];
 
   return (
     <>
@@ -625,22 +651,9 @@ const ImageEnvironmentSelectFormItems: React.FC<
           ]}
         >
           <BAISelect
-            ref={envSelectRef}
-            optionLabelProp="children"
-            open={envSelectOpen}
-            onOpenChange={(visible) => {
-              // Return to uncontrolled mode once the user interacts
-              if (!visible) {
-                setEnvSelectOpen(undefined);
-              }
-            }}
-            showSearch={{
-              searchValue: environmentSearch,
-              onSearch: setEnvironmentSearch,
-              optionFilterProp: 'filterValue',
-            }}
-            popupMatchSelectWidth={false}
-            defaultActiveFirstOption={true}
+            options={environmentOptions}
+            renderOption={renderOptionRow}
+            renderValue={renderOptionRow}
             onChange={(selectedValue) => {
               const value =
                 _.isString(selectedValue) &&
@@ -693,57 +706,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
               loginConfig.allow_manual_image_name_for_session &&
               !_.isEmpty(environments?.manual)
             }
-          >
-            {fullNameMatchedImage ? (
-              <SelectOption
-                value={fullNameMatchedImage?.namespace}
-                filterValue={getImageFullName(fullNameMatchedImage)}
-              >
-                <BAIFlex
-                  direction="row"
-                  align="center"
-                  gap="xs"
-                  style={{ display: 'inline-flex' }}
-                >
-                  <BAIImageMetaIcon
-                    image={getImageFullName(fullNameMatchedImage) || ''}
-                    style={{
-                      width: 15,
-                      height: 15,
-                    }}
-                  />
-                  {getImageFullName(fullNameMatchedImage)}
-                </BAIFlex>
-              </SelectOption>
-            ) : (
-              [
-                showDedicatedFirst && !_.isEmpty(dedicatedEnvironmentGroups) ? (
-                  <SelectOptGroup
-                    key={DEDICATED_OPTION_VALUE_PREFIX}
-                    label={t('session.launcher.AcceleratorDedicatedImages')}
-                  >
-                    {_.map(dedicatedEnvironmentGroups, (environmentGroup) =>
-                      renderEnvironmentOption(
-                        environmentGroup,
-                        DEDICATED_OPTION_VALUE_PREFIX +
-                          environmentGroup.environmentName,
-                      ),
-                    )}
-                  </SelectOptGroup>
-                ) : null,
-                ..._.map(imageGroups, (group) => (
-                  <SelectOptGroup key={group.groupName} label={group.groupName}>
-                    {_.map(group.environmentGroups, (environmentGroup) =>
-                      renderEnvironmentOption(
-                        environmentGroup,
-                        environmentGroup.environmentName,
-                      ),
-                    )}
-                  </SelectOptGroup>
-                )),
-              ]
-            )}
-          </BAISelect>
+          />
         </Form.Item>
         <Form.Item
           noStyle
@@ -767,6 +730,54 @@ const ImageEnvironmentSelectFormItems: React.FC<
                 }
               });
             });
+            const versionRows = new Map<string, React.ReactNode>();
+            const renderVersionRow = (option: SelectorOptionData) =>
+              versionRows.get(option.value) ?? option.label ?? option.value;
+            const versionOptions: SelectorOptionData[] = _.map(
+              _.uniqBy(selectedEnvironmentGroup?.images, 'id'),
+              (image) => {
+                const imageFullName = getImageFullName(image);
+                // Compute each tag's display facts once, then derive both the
+                // trigger text and the option row from them.
+                const tagFacts = imageNodeTagFacts(
+                  image?.tags as Array<{ key: string; value: string }>,
+                  image?.labels as Array<{ key: string; value: string }>,
+                  tagAlias,
+                );
+                const dedicatedAccelerators = getDedicatedAccelerators(image);
+                const selectedLabel = _.compact([
+                  image?.version,
+                  image?.architecture,
+                  ..._.map(tagFacts, (fact) =>
+                    fact.isDouble
+                      ? _.trim(`${fact.keyAlias ?? ''} ${fact.value ?? ''}`)
+                      : fact.aliasedTag,
+                  ),
+                  ...dedicatedAccelerators,
+                ]).join(' | ');
+                versionRows.set(
+                  imageFullName ?? '',
+                  <BAIFlex direction="row" wrap="wrap" gap="xxs">
+                    {image?.version}
+                    <ImageMetaDivider />
+                    {image?.architecture}
+                    {!_.isEmpty(tagFacts) ? (
+                      <>
+                        <ImageMetaDivider />
+                        <ImageTagTokens facts={tagFacts} />
+                      </>
+                    ) : null}
+                    {!_.isEmpty(dedicatedAccelerators) ? (
+                      <>
+                        <ImageMetaDivider />
+                        {renderAcceleratorTokens(dedicatedAccelerators)}
+                      </>
+                    ) : null}
+                  </BAIFlex>,
+                );
+                return { value: imageFullName ?? '', label: selectedLabel };
+              },
+            );
             return (
               <Form.Item
                 className="image-environment-select-form-item"
@@ -781,9 +792,9 @@ const ImageEnvironmentSelectFormItems: React.FC<
                 ]}
               >
                 <BAISelect
-                  ref={versionSelectRef}
-                  optionLabelProp="children"
-                  popupMatchSelectWidth={false}
+                  options={versionOptions}
+                  renderOption={renderVersionRow}
+                  renderValue={renderVersionRow}
                   onChange={(value) => {
                     const selectedImage = _.find(images, (image) => {
                       return getImageFullName(image) === value;
@@ -793,184 +804,11 @@ const ImageEnvironmentSelectFormItems: React.FC<
                       selectedImage,
                     );
                   }}
-                  showSearch={{
-                    searchValue: versionSearch,
-                    onSearch: setVersionSearch,
-                    optionFilterProp: 'filterValue',
-                  }}
-                  popupRender={(menu) => (
-                    <>
-                      <BAIFlex
-                        style={{
-                          fontWeight: token('--font-weight-semibold'),
-                          paddingLeft: token('--spacing-3'),
-                        }}
-                      >
-                        {t('session.launcher.Version')}
-                        <Divider orientation="vertical" />
-                        {t('session.launcher.Architecture')}
-                        <Divider orientation="vertical" />
-                        {t('session.launcher.Tags')}
-                      </BAIFlex>
-                      <Divider style={{ margin: '8px 0' }} />
-                      {menu}
-                    </>
-                  )}
                   disabled={
                     loginConfig.allow_manual_image_name_for_session &&
                     !_.isEmpty(environments?.manual)
                   }
-                >
-                  {_.map(
-                    _.uniqBy(selectedEnvironmentGroup?.images, 'id'),
-
-                    (image) => {
-                      const imageFullName = getImageFullName(image);
-                      const [version, tag, ...requirements] = image?.tag?.split(
-                        '-',
-                      ) || ['', '', ''];
-
-                      let metadataTagAlias = metadata?.tagAlias[tag];
-                      if (!metadataTagAlias) {
-                        for (const [key, replaceString] of Object.entries(
-                          metadata?.tagReplace || {},
-                        )) {
-                          const pattern = new RegExp(key);
-                          if (pattern.test(tag)) {
-                            metadataTagAlias = tag?.replace(
-                              pattern,
-                              replaceString,
-                            );
-                          }
-                        }
-                        if (!metadataTagAlias) {
-                          metadataTagAlias = tag;
-                        }
-                      }
-
-                      const extraFilterValues: string[] = [];
-                      const requirementTags = _.map(
-                        _.filter(
-                          requirements,
-                          (requirement) =>
-                            !requirement.startsWith('customized_'),
-                        ),
-                        (requirement, idx) => (
-                          <BAIDoubleToken
-                            key={idx}
-                            highlightKeyword={versionSearch}
-                            values={_.split(
-                              metadata?.tagAlias[requirement] || requirement,
-                              ':',
-                            ).map((str) => {
-                              extraFilterValues.push(str);
-                              return { label: str, color: 'default' as const };
-                            })}
-                          />
-                        ),
-                      );
-                      const imageLabels = image?.labels;
-                      if (imageLabels) {
-                        const customizedImageNameLabelIdx = _.findIndex(
-                          imageLabels,
-                          (item) =>
-                            item !== null &&
-                            item?.key === 'ai.backend.customized-image.name',
-                        );
-                        if (
-                          customizedImageNameLabelIdx &&
-                          imageLabels[customizedImageNameLabelIdx]
-                        ) {
-                          const tag =
-                            imageLabels[customizedImageNameLabelIdx]?.value ||
-                            '';
-                          extraFilterValues.push('Customized');
-                          extraFilterValues.push(tag);
-                          requirementTags.push(
-                            <BAIDoubleToken
-                              key={requirementTags.length + 1}
-                              highlightKeyword={versionSearch}
-                              values={[
-                                {
-                                  label: 'Customized',
-                                  color: 'cyan',
-                                },
-                                {
-                                  label: tag ?? '',
-                                  color: 'cyan',
-                                },
-                              ]}
-                            />,
-                          );
-                        }
-                      }
-                      // The closed trigger renders a plain string (BAISelect
-                      // FR-3544): compute each tag's display facts once, then
-                      // derive both the trigger text and the option row from them.
-                      const tagFacts = imageNodeTagFacts(
-                        image?.tags as Array<{ key: string; value: string }>,
-                        image?.labels as Array<{ key: string; value: string }>,
-                        tagAlias,
-                      );
-                      const dedicatedAccelerators =
-                        getDedicatedAccelerators(image);
-                      const selectedLabel = _.compact([
-                        image?.version,
-                        image?.architecture,
-                        ..._.map(tagFacts, (fact) =>
-                          fact.isDouble
-                            ? _.trim(
-                                `${fact.keyAlias ?? ''} ${fact.value ?? ''}`,
-                              )
-                            : fact.aliasedTag,
-                        ),
-                        ...dedicatedAccelerators,
-                      ]).join(' | ');
-                      return (
-                        <SelectOption
-                          key={image?.id}
-                          value={imageFullName}
-                          label={selectedLabel}
-                          filterValue={[
-                            version,
-                            metadataTagAlias,
-                            image?.architecture,
-                            ...extraFilterValues,
-                            ...dedicatedAccelerators,
-                          ].join('\t')}
-                        >
-                          <BAIFlex direction="row" wrap="wrap" gap="xxs">
-                            <BAITextHighlighter keyword={versionSearch}>
-                              {image?.version}
-                            </BAITextHighlighter>
-                            <ImageMetaDivider />
-                            <BAITextHighlighter keyword={versionSearch}>
-                              {image?.architecture}
-                            </BAITextHighlighter>
-                            {!_.isEmpty(tagFacts) ? (
-                              <>
-                                <ImageMetaDivider />
-                                <ImageTagTokens
-                                  facts={tagFacts}
-                                  highlightKeyword={versionSearch}
-                                />
-                              </>
-                            ) : null}
-                            {!_.isEmpty(dedicatedAccelerators) ? (
-                              <>
-                                <ImageMetaDivider />
-                                {renderAcceleratorTokens(
-                                  dedicatedAccelerators,
-                                  versionSearch,
-                                )}
-                              </>
-                            ) : null}
-                          </BAIFlex>
-                        </SelectOption>
-                      );
-                    },
-                  )}
-                </BAISelect>
+                />
               </Form.Item>
             );
           }}

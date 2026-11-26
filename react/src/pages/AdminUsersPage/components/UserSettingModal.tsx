@@ -13,7 +13,7 @@ import { UserSettingModalFragment$key } from '../../../__generated__/UserSetting
 import { UserSettingModalUpdateMutation } from '../../../__generated__/UserSettingModalUpdateMutation.graphql';
 import { App } from '../../../app-shim';
 import BAIFormItem from '../../../components/BAIFormItem';
-import ProjectSelect from '../../../components/ProjectSelect';
+import { ProjectMultiSelect } from '../../../components/ProjectSelect';
 import TOTPActivateModal from '../../../components/TOTPActivateModalLazy';
 import { Form, FormInstance } from '../../../form-engine';
 import { isValidIPOrCidr } from '../../../helper';
@@ -981,7 +981,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
           </BAIFormItem>
           <BAIFormItem name="status" label={t('credential.UserStatus')}>
             <BAISelect
-              showSearch={false}
+              hasSearch={false}
               aria-label={t('credential.UserStatus')}
               options={[
                 {
@@ -1007,7 +1007,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
             currentUserRole in permissionRangeOfRoleChanges && (
               <BAIFormItem name="role" label={t('credential.Role')}>
                 <BAISelect
-                  showSearch={false}
+                  hasSearch={false}
                   aria-label={t('credential.Role')}
                   options={_.map(
                     permissionRangeOfRoleChanges[currentUserRole],
@@ -1107,7 +1107,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
           <Suspense
             fallback={
               <BAIFormItem label={t('credential.Projects')}>
-                <BAISelect loading disabled style={{ width: '100%' }} />
+                <BAISelect isLoading disabled width="100%" options={[]} />
               </BAIFormItem>
             }
           >
@@ -1119,8 +1119,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                 value: _.isArray(value) ? value : projectMembershipIds,
               })}
             >
-              <ProjectSelect
-                mode="multiple"
+              <ProjectMultiSelect
                 domain={user?.organization.domainName ?? currentDomainName}
                 disableDefaultFilter
                 lockedProjectTypes={!user ? ['MODEL_STORE'] : undefined}
@@ -1276,7 +1275,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
             <Suspense
               fallback={
                 <BAIFormItem label={t('credential.MainAccessKey')}>
-                  <BAISelect loading disabled style={{ width: '100%' }} />
+                  <BAISelect isLoading disabled width="100%" options={[]} />
                 </BAIFormItem>
               }
             >

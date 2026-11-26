@@ -989,12 +989,12 @@ const SessionLauncherPageContent: React.FC<{
                                                 group's own label: there is no
                                                 localized "Unit" string (P8). */}
                                           <BAISelect
-                                            showSearch={false}
+                                            hasSearch={false}
                                             aria-label={t(
                                               'session.launcher.BatchJobTimeoutDuration',
                                             )}
                                             disabled={disabled}
-                                            style={{ width: 100 }}
+                                            width={100}
                                             options={[
                                               {
                                                 label: t('time.Sec'),
@@ -1046,7 +1046,7 @@ const SessionLauncherPageContent: React.FC<{
                       {/* Optionless placeholder left behind when the model
                           folder select was removed from this step. */}
                       <BAISelect
-                        showSearch={false}
+                        hasSearch={false}
                         aria-label={t('session.launcher.ModelStorageToMount')}
                         options={[]}
                       />

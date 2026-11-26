@@ -477,9 +477,9 @@ const ParameterControl: React.FC<ParameterControlProps> = ({
           getValueFromEvent={touchOnChange}
         >
           <BAISelect
-            showSearch={false}
+            hasSearch={false}
             aria-label={label}
-            allowClear
+            hasClear
             placeholder={
               param.choices?.items.find(
                 (opt) => opt.value === param.defaultValue,

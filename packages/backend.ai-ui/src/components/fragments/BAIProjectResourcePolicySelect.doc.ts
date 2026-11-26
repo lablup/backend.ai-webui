@@ -16,7 +16,7 @@ export const docs = {
   ],
   usage: {
     description:
-      'The project resource policy picker for project creation and settings forms. BAIProjectResourcePolicySelectQuery fetches every project_resource_policies row in one request, sorts them alphabetically by name, and turns each into an option whose label and value are both the policy name — so the selected value is the name the project mutation expects, not an id. The query is a useLazyLoadQuery call, so the control suspends on first render; put the Suspense boundary around the enclosing form item rather than the select, or the form loses its value/onChange binding. Everything else is BAISelect: value, onChange, placeholder, allowClear, disabled and the rest of BAISelectProps pass straight through, with options removed from the props type because the component always supplies it.',
+      'The project resource policy picker for project creation and settings forms. BAIProjectResourcePolicySelectQuery fetches every project_resource_policies row in one request, sorts them alphabetically by name, and turns each into an option whose label and value are both the policy name — so the selected value is the name the project mutation expects, not an id. The query is a useLazyLoadQuery call, so the control suspends on first render; put the Suspense boundary around the enclosing form item rather than the select, or the form loses its value/onChange binding. Everything else is BAISelect, search on by default included: value, onChange, placeholder, hasClear, disabled and the rest of BAISelectProps pass straight through, with options removed from the props type because the component always supplies it.',
     bestPractices: [
       {
         guidance: true,
@@ -47,11 +47,10 @@ export const docs = {
   },
   props: [
     {
-      name: 'showSearch',
-      type: 'boolean',
+      name: 'value',
+      type: 'string | null',
       description:
-        'Whether the in-popup search box is shown. Enabled by the component and applied before the prop spread, so a call site can turn it off.',
-      default: 'true',
+        'The selected policy name — each option value is the policy name, the field the project mutation takes, not an id.',
     },
   ],
   examples: [
@@ -69,8 +68,8 @@ export const docs = {
     {
       label: 'Standalone, with a placeholder and clear button',
       code: `<BAIProjectResourcePolicySelect
-  allowClear
-  style={{ width: 300 }}
+  hasClear
+  width={300}
   placeholder={t('resourcePolicy.SelectPolicy')}
   value={policyName}
   onChange={setPolicyName}

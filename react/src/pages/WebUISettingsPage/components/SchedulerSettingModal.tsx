@@ -121,9 +121,9 @@ const SchedulerSettingModal = ({
           }
         >
           <BAISelect
-            showSearch={false}
+            hasSearch={false}
             aria-label={t('settings.Scheduler')}
-            loading={isUpdatingSchedulerOptions}
+            isLoading={isUpdatingSchedulerOptions}
             onChange={(value) => {
               if (value !== null) {
                 setIsUpdatingSchedulerOptions(true);

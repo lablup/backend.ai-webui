@@ -10,22 +10,24 @@ import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
 /**
- * PILOT-DECISION: the props no longer `extend SelectProps` (antd); they are
- * the union of what the three call sites pass (UpdateUsersModal,
- * UserSettingModal, BulkCreateUserFromCSVModal) plus what `Form.Item` injects.
+ * What the three call sites pass (UpdateUsersModal, UserSettingModal,
+ * BulkCreateUserFromCSVModal) plus what `Form.Item` injects.
  */
 interface Props {
   /** Injected by `Form.Item`. */
   value?: string;
   /** Injected by `Form.Item`. */
   onChange?: (value: string | undefined) => void;
-  allowClear?: boolean;
+  hasClear?: boolean;
   placeholder?: string;
   disabled?: boolean;
-  style?: React.CSSProperties;
+  width?: number | string;
 }
 
-const UserResourcePolicySelect: React.FC<Props> = (selectProps) => {
+const UserResourcePolicySelect: React.FC<Props> = ({
+  onChange,
+  ...selectProps
+}) => {
   'use memo';
   const { t } = useTranslation();
   const { user_resource_policies } =
@@ -64,6 +66,7 @@ const UserResourcePolicySelect: React.FC<Props> = (selectProps) => {
           label: policy?.name ?? '',
         };
       }).sort((a, b) => localeCompare(a?.label, b?.label))}
+      onChange={(value) => onChange?.(value ?? undefined)}
       {...selectProps}
     />
   );

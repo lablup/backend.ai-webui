@@ -35,7 +35,7 @@ const meta: Meta<typeof BAIProjectResourcePolicySelect> = {
     docs: {
       description: {
         component: `
-**BAIProjectResourcePolicySelect** extends [BAISelect](/?path=/docs/components-input-baiselect--docs) to fetch and display project resource policies.
+**BAIProjectResourcePolicySelect** extends [BAISelect](/?path=/docs/select-baiselect--docs) to fetch and display project resource policies.
 
 ## Features
 - Fetches project resource policies from GraphQL query \`BAIProjectResourcePolicySelectQuery\`
@@ -61,7 +61,7 @@ query BAIProjectResourcePolicySelectQuery {
 />
 \`\`\`
 
-For all other props, refer to [BAISelect](/?path=/docs/components-input-baiselect--docs).
+For all other props, refer to [BAISelect](/?path=/docs/select-baiselect--docs).
         `,
       },
     },
@@ -82,7 +82,7 @@ For all other props, refer to [BAISelect](/?path=/docs/components-input-baiselec
         defaultValue: { summary: 'false' },
       },
     },
-    allowClear: {
+    hasClear: {
       control: { type: 'boolean' },
       description: 'Show clear button',
       table: {
@@ -122,7 +122,7 @@ export const Default: Story = {
         }),
       }}
     >
-      <BAIProjectResourcePolicySelect {...args} style={{ width: '300px' }} />
+      <BAIProjectResourcePolicySelect {...args} width={300} />
     </RelayResolver>
   ),
 };
@@ -149,7 +149,7 @@ export const Empty: Story = {
         }),
       }}
     >
-      <BAIProjectResourcePolicySelect {...args} style={{ width: '300px' }} />
+      <BAIProjectResourcePolicySelect {...args} width={300} />
     </RelayResolver>
   ),
 };
@@ -178,7 +178,7 @@ export const Disabled: Story = {
         }),
       }}
     >
-      <BAIProjectResourcePolicySelect {...args} style={{ width: '300px' }} />
+      <BAIProjectResourcePolicySelect {...args} width={300} />
     </RelayResolver>
   ),
 };
@@ -192,12 +192,12 @@ export const WithClearButton: Story = {
     docs: {
       description: {
         story:
-          'Select with allowClear enabled, allowing users to clear their selection.',
+          'Select with hasClear enabled, allowing users to clear their selection.',
       },
     },
   },
   args: {
-    allowClear: true,
+    hasClear: true,
   },
   render: (args) => (
     <RelayResolver
@@ -207,7 +207,7 @@ export const WithClearButton: Story = {
         }),
       }}
     >
-      <BAIProjectResourcePolicySelect {...args} style={{ width: '300px' }} />
+      <BAIProjectResourcePolicySelect {...args} width={300} />
     </RelayResolver>
   ),
 };
@@ -235,7 +235,7 @@ export const WithCustomPlaceholder: Story = {
         }),
       }}
     >
-      <BAIProjectResourcePolicySelect {...args} style={{ width: '300px' }} />
+      <BAIProjectResourcePolicySelect {...args} width={300} />
     </RelayResolver>
   ),
 };
@@ -254,7 +254,7 @@ export const ManyPolicies: Story = {
     },
   },
   args: {
-    allowClear: true,
+    hasClear: true,
   },
   render: (args) => (
     <RelayResolver
@@ -264,7 +264,7 @@ export const ManyPolicies: Story = {
         }),
       }}
     >
-      <BAIProjectResourcePolicySelect {...args} style={{ width: '300px' }} />
+      <BAIProjectResourcePolicySelect {...args} width={300} />
     </RelayResolver>
   ),
 };

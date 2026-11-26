@@ -71,12 +71,13 @@ const StoryProvider = ({
 // =============================================================================
 
 /**
- * BAIAllowedHostNamesSelect is a specialized Select component that displays
- * allowed host names from the Backend.AI vfolder API.
+ * BAIAllowedHostNamesSelect is a multi-select (BAIMultiSelector) of the
+ * storage hosts the current user is allowed to use, from the Backend.AI
+ * vfolder API.
  *
  * Key features:
  * - Automatic data fetching via useAllowedHostNames hook
- * - Built on Ant Design Select with full feature support
+ * - Search on by default; the value is a list of host names
  * - Suspense-based loading with TanStack Query
  *
  * @see BAIAllowedHostNamesSelect.tsx for implementation details
@@ -90,32 +91,33 @@ const meta: Meta<typeof BAIAllowedHostNamesSelect> = {
     docs: {
       description: {
         component: `
-**BAIAllowedHostNamesSelect** is a specialized Select component that fetches and displays allowed host names from the Backend.AI vfolder API.
+**BAIAllowedHostNamesSelect** is a [BAIMultiSelector](/?path=/docs/select-baimultiselector--docs) that fetches and lists the allowed host names from the Backend.AI vfolder API.
 
 ## Features
 - Automatic data fetching using \`useAllowedHostNames\` hook
 - TanStack Query integration with Suspense
-- Extends Ant Design Select with full feature support
-- Customizable placeholder and selection behavior
+- Several hosts at once: the value is \`string[]\`
+- Search on by default (\`hasSearch\`)
 
 ## Usage
 \`\`\`tsx
 <BAIAllowedHostNamesSelect
-  placeholder="Select a host"
-  onChange={(value) => console.log(value)}
+  placeholder="Select hosts"
+  onChange={(values) => setHosts(values)}
 />
 \`\`\`
 
 ## Props
-This component extends all Ant Design SelectProps. Common props include:
+Every BAIMultiSelector prop except \`options\`, which the component builds from the host list. Common props include:
 
 | Name | Type | Default | Description |
 |------|------|---------|-------------|
 | placeholder | \`string\` | - | Placeholder text when no value is selected |
-| onChange | \`(value: string) => void\` | - | Callback when selection changes |
+| value | \`string[]\` | - | The selected host names |
+| onChange | \`(values: string[]) => void\` | - | Callback when selection changes |
 | disabled | \`boolean\` | \`false\` | Whether the select is disabled |
-| allowClear | \`boolean\` | \`false\` | Show clear button |
-| mode | \`'multiple' \\| 'tags'\` | - | Set mode of Select |
+| hasClear | \`boolean\` | \`false\` | Show clear button |
+| hasSearch | \`boolean\` | \`true\` | The search field in the listbox |
         `,
       },
     },
@@ -136,7 +138,7 @@ This component extends all Ant Design SelectProps. Common props include:
         defaultValue: { summary: 'false' },
       },
     },
-    allowClear: {
+    hasClear: {
       control: { type: 'boolean' },
       description: 'Show clear button',
       table: {
@@ -144,17 +146,17 @@ This component extends all Ant Design SelectProps. Common props include:
         defaultValue: { summary: 'false' },
       },
     },
-    mode: {
-      control: { type: 'select' },
-      options: [undefined, 'multiple', 'tags'],
-      description: 'Set mode of Select',
+    hasSearch: {
+      control: { type: 'boolean' },
+      description: 'The search field in the listbox',
       table: {
-        type: { summary: "'multiple' | 'tags'" },
+        type: { summary: 'boolean' },
+        defaultValue: { summary: 'true' },
       },
     },
     onChange: {
       action: 'changed',
-      description: 'Callback when selection changes',
+      description: 'Callback with the selected host names',
     },
   },
 };
@@ -170,7 +172,7 @@ export const Default: Story = {
     docs: {
       description: {
         story:
-          'Basic usage showing a select with 5 allowed host names. The component automatically fetches and displays available hosts.',
+          'Basic usage showing a multi-select with 5 allowed host names. The component automatically fetches and displays available hosts.',
       },
     },
   },
@@ -179,7 +181,7 @@ export const Default: Story = {
   },
   render: (args) => (
     <StoryProvider>
-      <BAIAllowedHostNamesSelect {...args} style={{ width: 300 }} />
+      <BAIAllowedHostNamesSelect {...args} width={300} />
     </StoryProvider>
   ),
 };
@@ -193,17 +195,17 @@ export const WithClearButton: Story = {
     docs: {
       description: {
         story:
-          'Select with allowClear enabled, allowing users to clear their selection.',
+          'Select with hasClear enabled, allowing users to clear their selection.',
       },
     },
   },
   args: {
     placeholder: 'Select a host',
-    allowClear: true,
+    hasClear: true,
   },
   render: (args) => (
     <StoryProvider>
-      <BAIAllowedHostNamesSelect {...args} style={{ width: 300 }} />
+      <BAIAllowedHostNamesSelect {...args} width={300} />
     </StoryProvider>
   ),
 };
@@ -227,13 +229,13 @@ export const Disabled: Story = {
   },
   render: (args) => (
     <StoryProvider>
-      <BAIAllowedHostNamesSelect {...args} style={{ width: 300 }} />
+      <BAIAllowedHostNamesSelect {...args} width={300} />
     </StoryProvider>
   ),
 };
 
 /**
- * Multiple selection mode.
+ * Several hosts selected at once.
  */
 export const MultipleSelection: Story = {
   name: 'MultipleMode',
@@ -241,18 +243,18 @@ export const MultipleSelection: Story = {
     docs: {
       description: {
         story:
-          'Allows users to select multiple hosts at once. Selected hosts appear as tags.',
+          'Users select several hosts at once; the trigger names the selected hosts.',
       },
     },
   },
   args: {
     placeholder: 'Select hosts',
-    mode: 'multiple' as const,
-    allowClear: true,
+    defaultValue: ['host1.example.com', 'gpu-cluster.example.com'],
+    hasClear: true,
   },
   render: (args) => (
     <StoryProvider>
-      <BAIAllowedHostNamesSelect {...args} style={{ width: 400 }} />
+      <BAIAllowedHostNamesSelect {...args} width={400} />
     </StoryProvider>
   ),
 };
@@ -275,7 +277,7 @@ export const Empty: Story = {
   },
   render: (args) => (
     <StoryProvider allowed={[]}>
-      <BAIAllowedHostNamesSelect {...args} style={{ width: 300 }} />
+      <BAIAllowedHostNamesSelect {...args} width={300} />
     </StoryProvider>
   ),
 };
@@ -295,12 +297,11 @@ export const ManyHosts: Story = {
   },
   args: {
     placeholder: 'Select from 20 hosts',
-    showSearch: true,
-    allowClear: true,
+    hasClear: true,
   },
   render: (args) => (
     <StoryProvider allowed={sampleManyHosts}>
-      <BAIAllowedHostNamesSelect {...args} style={{ width: 300 }} />
+      <BAIAllowedHostNamesSelect {...args} width={300} />
     </StoryProvider>
   ),
 };
@@ -314,18 +315,18 @@ export const WithSearch: Story = {
     docs: {
       description: {
         story:
-          'Enables search functionality to filter hosts by name. Useful when there are many options.',
+          'Search filters hosts by name. The component turns `hasSearch` on by default; pass `hasSearch={false}` to hide it.',
       },
     },
   },
   args: {
     placeholder: 'Search and select a host',
-    showSearch: true,
-    allowClear: true,
+    hasSearch: true,
+    hasClear: true,
   },
   render: (args) => (
     <StoryProvider>
-      <BAIAllowedHostNamesSelect {...args} style={{ width: 300 }} />
+      <BAIAllowedHostNamesSelect {...args} width={300} />
     </StoryProvider>
   ),
 };

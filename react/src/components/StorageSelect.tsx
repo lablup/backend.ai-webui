@@ -11,7 +11,6 @@ import {
   BAISelect,
   BAISelectProps,
   StorageUsageBadge,
-  BAITextHighlighter,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { useEffect } from 'react';
@@ -38,7 +37,7 @@ interface VHostInfo {
   };
 }
 
-interface Props extends Omit<BAISelectProps, 'value' | 'onChange'> {
+interface Props extends Omit<BAISelectProps, 'value' | 'onChange' | 'options'> {
   autoSelectType?: 'usage' | 'default';
   showUsageStatus?: boolean;
   value?: string;
@@ -51,7 +50,6 @@ const StorageSelect: React.FC<Props> = ({
   value,
   onChange,
   defaultValue,
-  showSearch,
   ...partialSelectProps
 }) => {
   const { t } = useTranslation();
@@ -72,13 +70,6 @@ const StorageSelect: React.FC<Props> = ({
       onChange,
       defaultValue,
     });
-  const [controllableSearchValue, setControllableSearchValue] =
-    useControllableState_deprecated({
-      value:
-        typeof showSearch === 'boolean' ? undefined : showSearch?.searchValue,
-      onChange:
-        typeof showSearch === 'boolean' ? undefined : showSearch?.onSearch,
-    });
   useEffect(() => {
     if (!autoSelectType || !vhostInfo) return; // Return early if vhostInfo is null
     let nextHost = vhostInfo?.default ?? vhostInfo?.allowed[0] ?? '';
@@ -98,66 +89,54 @@ const StorageSelect: React.FC<Props> = ({
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [vhostInfo]);
+  const renderHost = (host: string) => {
+    const usagePercent = vhostInfo?.volume_info?.[host]?.usage?.percentage;
+    const usageLabel =
+      usagePercent === undefined
+        ? t('data.usage.Unknown')
+        : usagePercent < 70
+          ? t('data.usage.Adequate')
+          : usagePercent < 90
+            ? t('data.usage.Caution')
+            : t('data.usage.Insufficient');
+    return (
+      <BAIFlex align="center">
+        {vhostInfo?.volume_info?.[host]?.usage && (
+          <Tooltip
+            content={t('data.usage.HostStatusTooltip', {
+              status: usageLabel,
+            })}
+          >
+            <StorageUsageBadge percent={usagePercent} />
+            {/* Use &nbsp; instead of Flex gap to fix Tooltip  */}
+            &nbsp;&nbsp;
+          </Tooltip>
+        )}
+        {host}
+        {/* TODO: uncomment after implementing click action */}
+        {/* <Button type="link" size="small" icon={<InfoCircleOutlined />} /> */}
+      </BAIFlex>
+    );
+  };
+
   return (
     <BAISelect
       placeholder={t('data.SelectStorageHost')}
-      loading={isLoadingVhostInfo}
-      popupMatchSelectWidth={false}
+      isLoading={isLoadingVhostInfo}
       value={controllableState}
       onChange={(host) => {
-        setControllableState(host, {
-          id: host,
-          ...(vhostInfo?.volume_info?.[host] || {}),
+        const nextHost = host ?? undefined;
+        setControllableState(nextHost, {
+          id: nextHost,
+          ...((nextHost && vhostInfo?.volume_info?.[nextHost]) || {}),
         });
       }}
-      showSearch={
-        showSearch === false
-          ? false
-          : {
-              ...(typeof showSearch === 'object' ? showSearch : {}),
-              searchValue: controllableSearchValue,
-              onSearch: setControllableSearchValue,
-              filterOption: true,
-            }
-      }
-      // BAISelect renders the rich option node on the trigger only for 'children'.
-      optionLabelProp={showUsageStatus ? 'children' : 'value'}
-      options={_.map(vhostInfo?.allowed, (host) => {
-        const usagePercent = vhostInfo?.volume_info?.[host]?.usage?.percentage;
-        const usageLabel =
-          usagePercent === undefined
-            ? t('data.usage.Unknown')
-            : usagePercent < 70
-              ? t('data.usage.Adequate')
-              : usagePercent < 90
-                ? t('data.usage.Caution')
-                : t('data.usage.Insufficient');
-        return {
-          label: showUsageStatus ? (
-            <BAIFlex align="center">
-              {vhostInfo?.volume_info?.[host]?.usage && (
-                <Tooltip
-                  content={t('data.usage.HostStatusTooltip', {
-                    status: usageLabel,
-                  })}
-                >
-                  <StorageUsageBadge percent={usagePercent} />
-                  {/* Use &nbsp; instead of Flex gap to fix Tooltip  */}
-                  &nbsp;&nbsp;
-                </Tooltip>
-              )}
-              <BAITextHighlighter keyword={controllableSearchValue}>
-                {host}
-              </BAITextHighlighter>
-              {/* TODO: uncomment after implementing click action */}
-              {/* <Button type="link" size="small" icon={<InfoCircleOutlined />} /> */}
-            </BAIFlex>
-          ) : (
-            host
-          ),
-          value: host,
-        };
-      })}
+      renderOption={showUsageStatus ? (o) => renderHost(o.value) : undefined}
+      renderValue={showUsageStatus ? (o) => renderHost(o.value) : undefined}
+      options={_.map(vhostInfo?.allowed, (host) => ({
+        label: host,
+        value: host,
+      }))}
       {...partialSelectProps}
     />
   );

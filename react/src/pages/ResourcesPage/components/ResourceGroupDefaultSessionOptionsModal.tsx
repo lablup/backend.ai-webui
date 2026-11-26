@@ -289,7 +289,7 @@ const ResourceGroupDefaultSessionOptionsModal: React.FC<
                   style={{ marginBottom: 0 }}
                 >
                   <BAISelect
-                    showSearch={false}
+                    hasSearch={false}
                     aria-label={t('resourceGroup.FailurePolicy')}
                     options={[
                       {
@@ -319,7 +319,7 @@ const ResourceGroupDefaultSessionOptionsModal: React.FC<
                   style={{ marginBottom: 0 }}
                 >
                   <BAISelect
-                    showSearch={false}
+                    hasSearch={false}
                     aria-label={t('resourceGroup.AgentSelectionPolicy')}
                     options={[
                       {

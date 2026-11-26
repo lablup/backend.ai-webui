@@ -62,9 +62,9 @@ type SelectSettingItemProps = BaseSettingItemProps & {
   // The `BAISelectProps` fields this area's call sites pass.
   selectProps?: {
     options: SettingSelectOption[];
-    showSearch?: boolean;
+    hasSearch?: boolean;
     disabled?: boolean;
-    loading?: boolean;
+    isLoading?: boolean;
   };
   checkboxProps?: never;
 };
@@ -226,12 +226,12 @@ const SettingItem: React.FC<SettingItemProps> = ({
           <BAISelect
             aria-label={title}
             options={selectProps?.options ?? []}
-            showSearch={!!selectProps?.showSearch}
+            hasSearch={!!selectProps?.hasSearch}
             disabled={selectProps?.disabled}
-            loading={selectProps?.loading}
+            isLoading={selectProps?.isLoading}
             value={value}
-            style={{ width: 'fit-content' }}
-            onChange={(nextValue) => onChange?.(nextValue)}
+            width="fit-content"
+            onChange={(nextValue) => onChange?.(nextValue ?? undefined)}
           />
         </BAIFlex>
       )}

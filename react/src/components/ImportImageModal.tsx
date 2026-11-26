@@ -679,13 +679,14 @@ const ImportImageModalContent: React.FC<{
         style={{ marginBottom: 0 }}
       >
         <BAISelect
-          label={t('environment.Architecture')}
-          isLabelHidden
+          aria-label={t('environment.Architecture')}
           value={architecture}
           // One architecture is sent with every line, so it cannot change once
           // part of the batch is registered.
           disabled={isSubmitting || addedCanonicals.length > 0}
-          onChange={(value) => setArchitecture(value)}
+          onChange={(value) => {
+            if (value !== null) setArchitecture(value);
+          }}
           options={ARCHITECTURES.map((value) => ({ label: value, value }))}
         />
       </BAIFormItemVisual>

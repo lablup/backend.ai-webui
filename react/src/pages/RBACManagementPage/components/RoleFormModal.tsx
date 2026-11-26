@@ -133,10 +133,10 @@ export const ScopeIdSelect: React.FC<ScopeIdSelectProps> = ({
   };
   const fallback = (
     <BAISelect
-      showSearch={false}
+      hasSearch={false}
       aria-label={t('rbac.ScopeId')}
       placeholder={selectProps.placeholder}
-      loading
+      isLoading
       disabled
       options={[]}
     />
@@ -217,7 +217,7 @@ export const ScopeIdSelect: React.FC<ScopeIdSelectProps> = ({
           aria-label={branchProps.label}
           placeholder={branchProps.placeholder}
           value={branchProps.value}
-          onChange={branchProps.onChange}
+          onChange={(next) => branchProps.onChange?.(next ?? undefined)}
           disabled={branchProps.isDisabled}
         />
       </Suspense>
@@ -233,7 +233,7 @@ export const ScopeIdSelect: React.FC<ScopeIdSelectProps> = ({
   // No scope type picked yet: an inert, empty field.
   return (
     <BAISelect
-      showSearch={false}
+      hasSearch={false}
       aria-label={t('rbac.ScopeId')}
       placeholder={selectProps.placeholder}
       value={selectProps.value}
@@ -516,7 +516,6 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
               ]}
             >
               <BAISelect
-                showSearch
                 placeholder={t('rbac.ScopeType')}
                 options={scopeTypeOptions}
                 onChange={() => form.setFieldsValue({ scopeId: undefined })}

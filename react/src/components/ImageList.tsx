@@ -182,10 +182,11 @@ const ImageList: React.FC<ImageListProps> = ({
       <Suspense
         fallback={
           <BAISelect
-            loading
+            isLoading
             disabled
             placeholder={t('environment.AllProjects')}
-            style={{ minWidth: 180 }}
+            controlStyle={{ minWidth: 180 }}
+            options={[]}
           />
         }
       >
@@ -197,9 +198,9 @@ const ImageList: React.FC<ImageListProps> = ({
           value={project?.id ?? null}
           // An optional FILTER: clearing it calls `onSelectProject` with no
           // option, which puts the list back on the domain-wide default.
-          allowClear
+          hasClear
           placeholder={t('environment.AllProjects')}
-          style={{ minWidth: 180 }}
+          controlStyle={{ minWidth: 180 }}
           onSelectProject={(projectInfo) => {
             onChangeProject(
               projectInfo

@@ -3,7 +3,8 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 /**
- * What BAISelect took over from the removed BAISelector re-export (ADR 0017).
+ * BAISelect is ui-common `Selector` under the BAI name (ADR 0042): its props
+ * reach `Selector` unchanged, plus the project defaults and `autoSelectOption`.
  */
 import BAISelect from './BAISelect';
 import { render, screen, waitFor } from '@testing-library/react';
@@ -36,7 +37,7 @@ describe('BAISelect as the single select', () => {
     render(
       <BAISelect
         aria-label="Permission"
-        showSearch={false}
+        hasSearch={false}
         options={[
           { label: 'Read only', value: 'ro', description: 'Cannot write' },
         ]}
@@ -46,70 +47,149 @@ describe('BAISelect as the single select', () => {
     expect(await screen.findByText('Cannot write')).toBeInTheDocument();
   });
 
-  it.each([
-    ['single', undefined],
-    ['multiple', 'multiple'],
-  ] as const)(
-    'reports popup open and close in %s mode',
-    async (_name, mode) => {
-      const onOpenChange = vi.fn();
-      render(
-        <BAISelect
-          aria-label="Scheduler"
-          mode={mode}
-          showSearch={false}
-          onOpenChange={onOpenChange}
-          options={[{ label: 'FIFO', value: 'fifo' }]}
-        />,
-      );
-      expect(onOpenChange).not.toHaveBeenCalled();
+  it('has search on unless hasSearch is false', async () => {
+    const { unmount } = render(
+      <BAISelect
+        aria-label="Scheduler"
+        options={[{ label: 'FIFO', value: 'fifo' }]}
+      />,
+    );
+    await userEvent.click(trigger()!);
+    await screen.findByRole('listbox');
+    expect(document.querySelector('input')).not.toBeNull();
+    unmount();
 
-      await userEvent.click(trigger()!);
-      await waitFor(() => expect(onOpenChange).toHaveBeenLastCalledWith(true));
+    render(
+      <BAISelect
+        aria-label="Scheduler"
+        hasSearch={false}
+        options={[{ label: 'FIFO', value: 'fifo' }]}
+      />,
+    );
+    await userEvent.click(trigger()!);
+    await screen.findByRole('listbox');
+    expect(document.querySelector('input')).toBeNull();
+  });
 
-      await userEvent.keyboard('{Escape}');
-      await waitFor(() => expect(onOpenChange).toHaveBeenLastCalledWith(false));
-      expect(onOpenChange).toHaveBeenCalledTimes(2);
-    },
-  );
+  it('reports popup open and close', async () => {
+    const onOpenChange = vi.fn();
+    render(
+      <BAISelect
+        aria-label="Scheduler"
+        hasSearch={false}
+        onOpenChange={onOpenChange}
+        options={[{ label: 'FIFO', value: 'fifo' }]}
+      />,
+    );
+    expect(onOpenChange).not.toHaveBeenCalled();
 
-  it('renders labelRender on the closed trigger', () => {
+    await userEvent.click(trigger()!);
+    await waitFor(() => expect(onOpenChange).toHaveBeenLastCalledWith(true));
+
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() => expect(onOpenChange).toHaveBeenLastCalledWith(false));
+    expect(onOpenChange).toHaveBeenCalledTimes(2);
+  });
+
+  it('renders renderValue on the closed trigger', () => {
     render(
       <BAISelect
         aria-label="Preset"
         value="a"
         options={[{ label: 'Alpha', value: 'a' }]}
-        labelRender={(option) => <strong>{`Chosen ${option.label}`}</strong>}
+        renderValue={(option) => <strong>{`Chosen ${option.label}`}</strong>}
       />,
     );
     expect(screen.getByText('Chosen Alpha')).toBeInTheDocument();
   });
 
-  it('emits undefined when the value is cleared', async () => {
+  it('selects an option inside a section and reports its value', async () => {
+    const onChange = vi.fn();
+    render(
+      <BAISelect
+        aria-label="Environments"
+        hasSearch={false}
+        value="pytorch"
+        onChange={onChange}
+        options={[
+          {
+            type: 'section',
+            title: 'Stable',
+            options: [
+              { label: 'PyTorch', value: 'pytorch' },
+              { label: 'TensorFlow', value: 'tensorflow' },
+            ],
+          },
+        ]}
+      />,
+    );
+    await userEvent.click(trigger()!);
+    await userEvent.click(
+      await screen.findByRole('option', { name: 'TensorFlow' }),
+    );
+    expect(onChange).toHaveBeenCalledWith('tensorflow');
+  });
+
+  it('emits null when the value is cleared', async () => {
     const onChange = vi.fn();
     render(
       <BAISelect
         aria-label="Policy"
-        allowClear
+        hasClear
         value="a"
         onChange={onChange}
         options={[{ label: 'Alpha', value: 'a' }]}
       />,
     );
     await userEvent.click(screen.getByRole('button', { name: /clear/i }));
-    expect(onChange).toHaveBeenCalledWith(undefined, undefined);
+    expect(onChange).toHaveBeenCalledWith(null);
   });
 
-  it('shows no clear button while nothing is selected', () => {
+  it.each([undefined, ''])(
+    'shows no clear button while the value is %j',
+    (value) => {
+      render(
+        <BAISelect
+          aria-label="Policy"
+          hasClear
+          value={value}
+          options={[{ label: 'Alpha', value: 'a' }]}
+        />,
+      );
+      expect(
+        screen.queryByRole('button', { name: /clear/i }),
+      ).not.toBeInTheDocument();
+    },
+  );
+
+  it('reports the first option once with autoSelectOption', async () => {
+    const onChange = vi.fn();
     render(
       <BAISelect
-        aria-label="Policy"
-        allowClear
-        options={[{ label: 'Alpha', value: 'a' }]}
+        aria-label="Kernel"
+        autoSelectOption
+        onChange={onChange}
+        options={[
+          { type: 'section', title: 'Main', options: [{ value: 'k1' }] },
+          { value: 'k2' },
+        ]}
       />,
     );
-    expect(
-      screen.queryByRole('button', { name: /clear/i }),
-    ).not.toBeInTheDocument();
+    await waitFor(() => expect(onChange).toHaveBeenCalledWith('k1'));
+    expect(onChange).toHaveBeenCalledTimes(1);
+  });
+
+  it('leaves a set value alone with autoSelectOption', () => {
+    const onChange = vi.fn();
+    render(
+      <BAISelect
+        aria-label="Kernel"
+        autoSelectOption
+        value="k2"
+        onChange={onChange}
+        options={[{ value: 'k1' }, { value: 'k2' }]}
+      />,
+    );
+    expect(onChange).not.toHaveBeenCalled();
   });
 });

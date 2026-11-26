@@ -2,15 +2,8 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
- antd `Select` → Astryx `Selector` (MAPPING §3.1, "everything else" branch:
- static options, `showSearch`, no `mode`, no scroll source).
-
- PILOT-DECISION: the `extends SelectProps` prop surface is gone. P1 says never
- narrow a wrapper's interface from memory, so the replacement was grepped: the
- component has exactly ONE call site (`KeypairSettingModal`, inside a
- `BAIFormItem`) and it passes NO props at all — the Form injects `value` and
- `onChange`. The interface below is that measured surface plus the antd
- spellings the adapter layer uses elsewhere.
+ Its one call site (`KeypairSettingModal`, inside a `BAIFormItem`) passes no
+ props: the Form injects `value` and `onChange`.
 */
 import { KeypairResourcePolicySelectQuery } from '../../../__generated__/KeypairResourcePolicySelectQuery.graphql';
 import { localeCompare } from '../../../helper';
@@ -28,13 +21,13 @@ interface KeypairResourcePolicySelectProps {
   /** Injected by `Form.Item`. */
   onChange?: (value: string) => void;
   disabled?: boolean;
-  loading?: boolean;
-  style?: CSSProperties;
+  isLoading?: boolean;
+  controlStyle?: CSSProperties;
 }
 
 const KeypairResourcePolicySelect: React.FC<
   KeypairResourcePolicySelectProps
-> = ({ disabled, loading, style, ...selectProps }) => {
+> = ({ disabled, isLoading, controlStyle, ...selectProps }) => {
   const { t } = useTranslation();
   const [value, setValue] = useControllableState_deprecated<string>({
     value: selectProps.value,
@@ -68,10 +61,13 @@ const KeypairResourcePolicySelect: React.FC<
       placeholder={t('credential.SelectPolicy')}
       options={options}
       value={value ?? ''}
-      onChange={(next) => setValue(next)}
+      onChange={(next) => {
+        if (next !== null) setValue(next);
+      }}
       disabled={disabled}
-      loading={loading}
-      style={{ width: '100%', ...style }}
+      isLoading={isLoading}
+      width="100%"
+      controlStyle={controlStyle}
     />
   );
 };

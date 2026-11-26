@@ -442,7 +442,7 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
                   initialValue={currentSftpProxies}
                   tooltip={t('storageProxy.SFTPStorageProxiesDescription')}
                 >
-                  <BAIStorageProxySelect mode="multiple" allowClear />
+                  <BAIStorageProxySelect hasClear />
                 </BAIFormItem>
               </Suspense>
             )
@@ -479,7 +479,7 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
             ]}
           >
             <BAISelect
-              showSearch={false}
+              hasSearch={false}
               aria-label={t('resourceGroup.Scheduler')}
               options={[
                 {

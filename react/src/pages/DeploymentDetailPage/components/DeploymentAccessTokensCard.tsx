@@ -643,9 +643,9 @@ const CreateAccessTokenModal: React.FC<CreateAccessTokenModalProps> = ({
           rules={[{ required: true }]}
         >
           <BAISelect
-            showSearch={false}
+            hasSearch={false}
             aria-label={t('deployment.accessToken.Expiration')}
-            style={{ width: 200 }}
+            width={200}
             options={options}
             onChange={(value) => {
               const days = Number(value);

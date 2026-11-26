@@ -15,7 +15,7 @@ export const docs = {
   ],
   usage: {
     description:
-      'The picker for the resource group (scaling group) a session, deployment or folder operation should run in. It renders BAISelect and owns the option list itself: `useProjectResourceGroups(projectName)` fetches the groups the given project is allowed to use — minus the SFTP-designated ones, which only `includeSFTPResourceGroups` brings back — and each one becomes a `{ value, label }` option whose row is rendered through BAITextHighlighter so the in-popup search term is highlighted. It also keeps the selection honest — once a NON-EMPTY list has loaded, a value absent from it is reset to undefined; an empty list is read as "not fetched yet" and leaves a pre-filled value alone, so a project with no allowed groups keeps showing one. Every change is committed inside a transition, with the control disabled and an optimistic value shown while that transition is pending. It suspends while the groups load, so wrap it in a Suspense boundary. Everything not listed below is forwarded to BAISelect.',
+      'The picker for the resource group (scaling group) a session, deployment or folder operation should run in. It renders BAISelect and owns the option list itself: `useProjectResourceGroups(projectName)` fetches the groups the given project is allowed to use — minus the SFTP-designated ones, which only `includeSFTPResourceGroups` brings back — and each one becomes a `{ value, label }` option, filtered by BAISelect’s search field (on by default). It also keeps the selection honest — once a NON-EMPTY list has loaded, a value absent from it is reset to undefined; an empty list is read as "not fetched yet" and leaves a pre-filled value alone, so a project with no allowed groups keeps showing one. Every change is committed inside a transition, with the control disabled and an optimistic value shown while that transition is pending. It suspends while the groups load, so wrap it in a Suspense boundary. Everything not listed below is forwarded to BAISelect.',
     bestPractices: [
       {
         guidance: true,
@@ -40,7 +40,7 @@ export const docs = {
       {
         guidance: false,
         description:
-          'Pass `options` — the component derives them from the project’s allowed resource groups, and supplying your own defeats the permission scoping.',
+          'Look for an `options` prop — the props type omits it, because the list must stay the project’s permission-scoped resource groups.',
       },
       {
         guidance: false,
@@ -77,33 +77,21 @@ export const docs = {
     },
     {
       name: 'value',
-      type: 'string',
+      type: 'string | null',
       description:
         'Controlled selection. While a change transition is pending the optimistic value is displayed instead, so the trigger updates immediately.',
     },
     {
       name: 'onChange',
-      type: '(value: any, option?: any) => void',
+      type: '(value: string | null) => void',
       description:
         'Fired with the chosen group name, and also when auto-select resolves a value or an invalid value is reset to undefined.',
     },
     {
-      name: 'showSearch',
-      type: 'boolean | { searchValue?: string; onSearch?: (value: string) => void }',
-      description:
-        'Enables the in-popup search box. The component keeps the search term controllable so BAITextHighlighter can highlight the match in every option row.',
-    },
-    {
-      name: 'loading',
+      name: 'isLoading',
       type: 'boolean',
       description:
         'External pending state. It is combined with the internal change transition — the trigger reads as pending while either is true.',
-    },
-    {
-      name: 'options',
-      type: 'Array<{ value: string; label: string }>',
-      description:
-        'Owned by the component and built from the project’s resource groups. Listed only because it is part of the inherited BAISelect surface; overriding it bypasses the permission-scoped list.',
     },
   ],
   examples: [
@@ -116,7 +104,7 @@ export const docs = {
     disabled={!chosenProject}
     value={chosenResourceGroup}
     onChange={(value) => setChosenResourceGroup(value)}
-    style={{ width: '100%' }}
+    width="100%"
   />
 </Suspense>`,
     },
@@ -130,7 +118,7 @@ export const docs = {
   <BAIProjectResourceGroupSelect
     projectName={project.name}
     autoSelectDefault
-    style={{ width: '100%' }}
+    width="100%"
   />
 </Form.Item>`,
     },

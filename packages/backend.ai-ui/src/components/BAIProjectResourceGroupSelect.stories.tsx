@@ -128,7 +128,7 @@ const meta: Meta<typeof BAIProjectResourceGroupSelect> = {
     docs: {
       description: {
         component: `
-**BAIProjectResourceGroupSelect** extends [BAISelect](/?path=/docs/components-input-baiselect--docs) to fetch and display resource groups for a project.
+**BAIProjectResourceGroupSelect** extends [BAISelect](/?path=/docs/select-baiselect--docs) to fetch and display resource groups for a project.
 
 ## BAI-Specific Props
 
@@ -143,7 +143,7 @@ const meta: Meta<typeof BAIProjectResourceGroupSelect> = {
 - Fetches volume info from \`/folders/_/hosts\`
 - Automatically filters out SFTP-only resource groups
 - Auto-selection with \`autoSelectDefault\` prop
-- Built-in search with text highlighting
+- Built-in search, on by default
 - TanStack Query integration with 5-minute cache
 
 ## Usage
@@ -156,7 +156,7 @@ const meta: Meta<typeof BAIProjectResourceGroupSelect> = {
 />
 \`\`\`
 
-For all other props, refer to [BAISelect](/?path=/docs/components-input-baiselect--docs).
+For all other props, refer to [BAISelect](/?path=/docs/select-baiselect--docs).
         `,
       },
     },
@@ -192,12 +192,12 @@ For all other props, refer to [BAISelect](/?path=/docs/components-input-baiselec
         type: { summary: 'string' },
       },
     },
-    showSearch: {
+    hasSearch: {
       control: { type: 'boolean' },
-      description: 'Enable search functionality',
+      description: 'The search field in the listbox',
       table: {
         type: { summary: 'boolean' },
-        defaultValue: { summary: 'false' },
+        defaultValue: { summary: 'true' },
       },
     },
     onChange: {
@@ -228,7 +228,7 @@ export const Default: Story = {
   },
   render: (args) => (
     <StoryProvider>
-      <BAIProjectResourceGroupSelect {...args} style={{ width: 300 }} />
+      <BAIProjectResourceGroupSelect {...args} width={300} />
     </StoryProvider>
   ),
 };
@@ -253,13 +253,13 @@ export const AutoSelectDefault: Story = {
   },
   render: (args) => (
     <StoryProvider>
-      <BAIProjectResourceGroupSelect {...args} style={{ width: 300 }} />
+      <BAIProjectResourceGroupSelect {...args} width={300} />
     </StoryProvider>
   ),
 };
 
 /**
- * Shows search functionality with text highlighting.
+ * Shows the search field filtering resource groups.
  */
 export const WithSearch: Story = {
   name: 'SearchEnabled',
@@ -267,18 +267,18 @@ export const WithSearch: Story = {
     docs: {
       description: {
         story:
-          'Enables search functionality to filter resource groups by name. Matching text is highlighted in options.',
+          'Search filters resource groups by name. BAISelect turns `hasSearch` on by default; pass `hasSearch={false}` to hide it.',
       },
     },
   },
   args: {
     projectName: 'test-project',
     placeholder: 'Search resource groups',
-    showSearch: true,
+    hasSearch: true,
   },
   render: (args) => (
     <StoryProvider>
-      <BAIProjectResourceGroupSelect {...args} style={{ width: 300 }} />
+      <BAIProjectResourceGroupSelect {...args} width={300} />
     </StoryProvider>
   ),
 };
@@ -302,7 +302,7 @@ export const Empty: Story = {
   },
   render: (args) => (
     <StoryProvider scalingGroups={[]}>
-      <BAIProjectResourceGroupSelect {...args} style={{ width: 300 }} />
+      <BAIProjectResourceGroupSelect {...args} width={300} />
     </StoryProvider>
   ),
 };
@@ -329,7 +329,7 @@ export const AutoSelectWithoutDefault: Story = {
     <StoryProvider
       scalingGroups={[{ name: 'gpu-cluster' }, { name: 'cpu-only' }]}
     >
-      <BAIProjectResourceGroupSelect {...args} style={{ width: 300 }} />
+      <BAIProjectResourceGroupSelect {...args} width={300} />
     </StoryProvider>
   ),
 };
@@ -354,7 +354,7 @@ export const WithCustomFilter: Story = {
   },
   render: (args) => (
     <StoryProvider>
-      <BAIProjectResourceGroupSelect {...args} style={{ width: 300 }} />
+      <BAIProjectResourceGroupSelect {...args} width={300} />
     </StoryProvider>
   ),
 };
@@ -375,11 +375,10 @@ export const ManyOptions: Story = {
   args: {
     projectName: 'test-project',
     placeholder: 'Select from 15 resource groups',
-    showSearch: true,
   },
   render: (args) => (
     <StoryProvider scalingGroups={sampleManyGroups}>
-      <BAIProjectResourceGroupSelect {...args} style={{ width: 300 }} />
+      <BAIProjectResourceGroupSelect {...args} width={300} />
     </StoryProvider>
   ),
 };

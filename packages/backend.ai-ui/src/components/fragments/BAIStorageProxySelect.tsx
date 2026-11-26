@@ -1,11 +1,13 @@
 import { BAIStorageProxySelectQuery } from '../../__generated__/BAIStorageProxySelectQuery.graphql';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
-import BAISelect, { BAISelectProps } from '../BAISelect';
+import BAIMultiSelector, {
+  type BAIMultiSelectorProps,
+} from '../BAIMultiSelector';
 import * as _ from 'lodash-es';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
 export interface BAIStorageProxySelectProps extends Omit<
-  BAISelectProps,
+  BAIMultiSelectorProps,
   'options'
 > {}
 
@@ -39,9 +41,9 @@ const BAIStorageProxySelect = (selectProps: BAIStorageProxySelectProps) => {
   );
 
   return (
-    <BAISelect
+    <BAIMultiSelector
+      hasSearch
       options={_.map(proxies, (proxy) => ({ label: proxy, value: proxy }))}
-      showSearch
       placeholder={t('comp:BAIStorageProxySelect.SelectStorageProxy')}
       {...selectProps}
     />

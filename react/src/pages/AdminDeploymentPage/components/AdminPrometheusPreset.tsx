@@ -155,21 +155,20 @@ const AdminPrometheusPreset = ({
                 <Suspense
                   fallback={
                     <BAISelect
-                      loading
-                      label={t('prometheusQueryPreset.Category')}
-                      isLabelHidden
-                      style={{ width: '100%' }}
+                      options={[]}
+                      isLoading
+                      aria-label={t('prometheusQueryPreset.Category')}
+                      width="100%"
                     />
                   }
                 >
                   <PrometheusCategorySelect
-                    label={t('prometheusQueryPreset.Category')}
-                    isLabelHidden
+                    aria-label={t('prometheusQueryPreset.Category')}
                     value={value}
                     disabled={isDisabled}
-                    style={{ width: '100%' }}
-                    onChange={(next, option) =>
-                      onAddCondition(next ?? undefined, option?.label)
+                    width="100%"
+                    onSelectCategory={(category) =>
+                      onAddCondition(category?.id, category?.name)
                     }
                   />
                 </Suspense>

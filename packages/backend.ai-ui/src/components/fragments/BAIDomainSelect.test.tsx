@@ -28,11 +28,7 @@ describe.skip('DomainSelect', () => {
     const { asFragment } = render(
       <RelayEnvironmentProvider environment={environment}>
         <Suspense fallback="loading...">
-          <BAIDomainSelect
-            title="hello"
-            placeholder="Please select domain"
-            autoFocus={true}
-          />
+          <BAIDomainSelect placeholder="Please select domain" />
         </Suspense>
       </RelayEnvironmentProvider>,
     );

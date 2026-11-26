@@ -8,28 +8,20 @@ export const docs = {
   name: 'BAISelect',
   displayName: 'BAI Select',
   category: 'Data Input',
-  keywords: [
-    'select',
-    'dropdown',
-    'combobox',
-    'picker',
-    'selector',
-    'multiselect',
-    'listbox',
-  ],
+  keywords: ['select', 'dropdown', 'combobox', 'picker', 'selector', 'listbox'],
   usage: {
     description:
-      'The one select of webui and backend.ai-ui for a list the client already holds; ui-common Selector has no other BAI name (ADR 0017). It renders ui-common Selector, or MultiSelector when mode is "multiple" or "tags", and adds what those primitives do not carry on their own: ReactNode option labels (the flattened text becomes the accessible name and search key while the original node is restored through renderOption), an accessible name taken from the enclosing Form.Item label or placeholder when no label is given, section headers and footers built on the native option model, and a labels-first multi-select trigger instead of the "N selected" count. It also accepts the Select.Option / Select.OptGroup children form through BAISelectOptionItem and BAISelectOptionGroup. The prop surface is antd-Select-shaped so the components that extend BAISelectProps keep compiling; several of those props are accepted and inert because Astryx owns the mechanism internally — they are marked below.',
+      'The single select of webui and backend.ai-ui for a list the client already holds: ui-common Selector under the BAI name (ADR 0042). Its props are SelectorProps (run `ui-common component Selector` for the full list), with value / onChange typed as the clearable branch (`string | null`) so one interface covers both, plus two BAI additions: ghost and autoSelectOption. The wrapper sets the project defaults only — search on, the translated search placeholder, and an accessible name from the placeholder when neither aria-label nor the enclosing Form.Item label names it. A multi-value list uses BAIMultiSelector.',
     bestPractices: [
       {
         guidance: true,
         description:
-          'Pass a placeholder on every instance — it is what the accessible name falls back to when no label, aria-label or Form.Item label is present.',
+          'Give options as data with a string label — the label is the search key and the trigger text — and draw rich rows with renderOption (and renderValue when the trigger shows the row too), looking the extra data up by option value.',
       },
       {
         guidance: true,
         description:
-          'Supply options as data and use optionRender for rich rows, so the trigger and the search index keep a plain-text label.',
+          'Keep option values strings. When a form stores a number, convert on the Form.Item with getValueProps / getValueFromEvent so what the form submits does not change.',
       },
       {
         guidance: true,
@@ -39,12 +31,7 @@ export const docs = {
       {
         guidance: false,
         description:
-          'Rely on filterOption, optionFilterProp, searchAction, endReached, or maxTagCount — they are accepted for source compatibility and have no effect.',
-      },
-      {
-        guidance: false,
-        description:
-          'Pass a ReactNode as header or footer; only the string form survives, since it becomes a real section title or a trailing disabled option.',
+          'Use BAISelect for several values — BAIMultiSelector is the multi-value select.',
       },
     ],
   },
@@ -53,361 +40,80 @@ export const docs = {
       name: 'BAISelect',
       displayName: 'BAI Select',
       description:
-        'The select control itself. Renders Astryx Selector, or MultiSelector in multiple/tags mode.',
+        'The select control. Every prop not listed here is ui-common Selector’s and reaches it unchanged.',
       props: [
         {
           name: 'options',
-          type: 'Array<OptionType>',
+          type: 'SelectorOptionType[]',
           description:
-            'Option data. Each entry carries value, label (string or node), disabled (true, or { reason } to say why), description and icon for the default row, and any extra keys the call site reads back in optionRender. An entry with its own options array is a group. Plain strings are not options.',
+            'Options, `{ type: "section", title, options }` sections and `{ type: "divider" }` entries, as ui-common Selector takes them.',
+          required: true,
         },
         {
           name: 'value',
-          type: 'ValueType',
+          type: 'string | null',
           description:
-            'Controlled selection. An array in multiple/tags mode, a single value otherwise.',
+            'The selected value. `null` and `""` both mean nothing is selected.',
         },
         {
           name: 'defaultValue',
-          type: 'ValueType',
-          description: 'Initial selection for the uncontrolled case.',
+          type: 'string | null',
+          description: 'The starting value when `value` is not set.',
         },
         {
           name: 'onChange',
-          type: '(value: any, option?: any) => void',
+          type: '(value: string | null) => void',
           description:
-            'Fired with the new selection. The second argument carries the matching option only in single mode — multiple and tags mode pass an array of original values and undefined. autoSelectOption also emits through it, from a layout effect keyed on the resolved value, so it fires again whenever that value changes rather than once on mount.',
+            'Called with the chosen value, or `null` when the clear button empties it.',
         },
         {
-          name: 'onSelect',
-          type: '(value: any, option?: any) => void',
-          description:
-            'Fired alongside onChange when an option is picked, in single mode only. Multiple and tags mode never call it, so a multi-select consumer must use onChange.',
-        },
-        {
-          name: 'placeholder',
-          type: 'ReactNode',
-          description:
-            'Empty-state text on the trigger. Doubles as the accessible name when no label, aria-label or Form.Item label is given.',
-        },
-        {
-          name: 'mode',
-          type: "'multiple' | 'tags'",
-          description:
-            'Switches to MultiSelector. "tags" routes there too, so free entry of values outside the option list is not available — use a Tokenizer for that.',
-        },
-        {
-          name: 'disabled',
+          name: 'hasSearch',
           type: 'boolean',
-          description: 'Blocks interaction; maps to Astryx isDisabled.',
+          default: 'true',
+          description:
+            'Type-to-filter in the open panel. On by default here (Selector’s own default is off); pass `false` for short fixed lists.',
         },
         {
-          name: 'disabledMessage',
+          name: 'searchPlaceholder',
           type: 'string',
           description:
-            'Tooltip on the trigger while it is disabled, saying why.',
+            'Placeholder of the search field. Defaults to the translated `general.Search`.',
         },
         {
-          name: 'loading',
+          name: 'hasClear',
           type: 'boolean',
           description:
-            'Shows the pending state on the trigger; maps to Astryx isLoading.',
-        },
-        {
-          name: 'allowClear',
-          type: 'boolean',
-          description:
-            'Adds the clear affordance; maps to Astryx hasClear. Clearing emits undefined through onChange.',
-        },
-        {
-          name: 'showSearch',
-          type: 'boolean | { searchValue?: string; onSearch?: (value: string) => void; filterOption?: boolean | ((input: string, option?: any) => boolean); optionFilterProp?: string }',
-          description:
-            'The in-popup search box, on unless this is false. The object form is accepted, but filterOption and optionFilterProp are inert — Selector filters on the option label it renders.',
-        },
-        {
-          name: 'status',
-          type: "'error' | 'warning' | ''",
-          description:
-            'Validation state on the trigger. "error" maps to the Astryx error status.',
-        },
-        {
-          name: 'size',
-          type: "'small' | 'middle' | 'large'",
-          description: 'Control height, in the antd sizing vocabulary.',
-        },
-        {
-          name: 'variant',
-          type: "'outlined' | 'filled' | 'borderless'",
-          description:
-            'Trigger style, in the antd vocabulary: `filled` maps to the secondary trigger and `borderless` to the ghost one.',
-        },
-        {
-          name: 'open',
-          type: 'boolean',
-          description:
-            'Accepted and inert — Astryx Selector owns its popup visibility.',
-        },
-        {
-          name: 'onOpenChange',
-          type: '(open: boolean) => void',
-          description:
-            'Called with the new state whenever the popup opens or closes, whether by the trigger, the keyboard, choosing an option, a light dismiss or Escape.',
-        },
-        {
-          name: 'optionRender',
-          type: '(option: { data: BAISelectOption; label?: ReactNode; value?: string | number | null }) => ReactNode',
-          description:
-            'Custom option row. Receives the original option data, so a node label can be rebuilt in full inside the popup.',
-        },
-        {
-          name: 'label',
-          type: 'string',
-          description:
-            'Accessible name. Falls back to aria-label, the enclosing Form.Item label, the flattened placeholder, then a translated generic.',
+            'Shows a clear button while a value is selected. A `""` value counts as nothing selected, so no button shows for it.',
         },
         {
           name: 'aria-label',
           type: 'string',
           description:
-            'Same as label, for a call site that names the control the DOM way.',
+            'Accessible name. Without one (or with a blank one) the enclosing Form.Item label names the control; outside a labelled Form.Item the placeholder does, then the translated `general.Select`.',
         },
         {
-          name: 'id',
-          type: 'string',
-          description: 'The trigger id, for a label outside a Form.Item.',
-        },
-        {
-          name: 'isLabelHidden',
-          type: 'boolean',
-          description:
-            'Whether the label is visually hidden. Hidden by default, since no call site renders a visible one.',
-        },
-        {
-          name: 'triggerDisplay',
-          type: "'count' | 'labels' | 'badges'",
-          description:
-            'How the closed multi-select trigger summarizes the selection: the first three labels comma-joined plus "+N", a plain count, or Badge chips.',
-          default: "'labels'",
-        },
-        {
-          name: 'maxBadges',
-          type: 'number',
-          description:
-            'Badges shown before "+N". Only meaningful with triggerDisplay="badges".',
-        },
-        {
-          name: 'showSelectedOptionsTooltip',
-          type: 'boolean',
-          description:
-            'Multiple/tags mode only: passed to ui-common MultiSelector, which lists every selected label in a tooltip on the trigger. Pass it where the trigger cuts the selection off and the user needs to read all of it.',
-          default: 'false',
-        },
-        {
-          name: 'optionLabelProp',
+          name: 'placeholder',
           type: 'string',
           description:
-            'Set to "children" to render the selected option’s rich node on the closed trigger. Any other value falls back to the flattened text.',
+            'Shown while nothing is selected, and the accessible-name fallback.',
         },
         {
-          name: 'autoSelectOption',
-          type: 'boolean | ((options: Array<OptionType> | undefined) => ValueType)',
+          name: 'controlClassName',
+          type: 'string',
           description:
-            'Selects an option when nothing is chosen — the first one, or the value the function returns — and reports it through onChange so the enclosing form actually receives it. The emission is a layout effect keyed on the resolved value, so it repeats whenever that value changes, not only on mount.',
-        },
-        {
-          name: 'header',
-          type: 'ReactNode',
-          description:
-            'Leading popup slot. A string becomes a native section title; a node is dropped.',
-        },
-        {
-          name: 'footer',
-          type: 'ReactNode',
-          description:
-            'Trailing popup slot. A string becomes a divider plus a disabled option; a node is dropped.',
+            'Class names for the control box, next to BAISelect’s own `bai-select` class.',
         },
         {
           name: 'ghost',
           type: 'boolean',
           description:
-            'On-dark treatment for the select that sits on the header’s brand-accent band. The colour follows the band’s polarity by default; a host whose band does not flip with the scheme sets `--bai-select-ghost-on-band` on an ancestor.',
+            'BAI addition: the on-dark treatment for the select that sits on the header’s brand-accent band (BAISelect.css). A host whose band does not flip with the scheme sets `--bai-select-ghost-on-band`.',
         },
         {
-          name: 'tooltip',
-          type: 'string',
-          description: 'Hover description for the control.',
-        },
-        {
-          name: 'children',
-          type: 'ReactNode',
-          description:
-            'The element form of the option list — BAISelectOptionItem and BAISelectOptionGroup. Read only when options is undefined.',
-        },
-        {
-          name: 'className',
-          type: 'string',
-          description: 'Class applied to the control wrapper.',
-        },
-        {
-          name: 'style',
-          type: 'CSSProperties',
-          description:
-            'Inline style on the wrapper; a width here is forwarded to the Astryx width prop.',
-        },
-        {
-          name: 'autoFocus',
+          name: 'autoSelectOption',
           type: 'boolean',
-          description: 'Focuses the trigger on mount.',
-        },
-        {
-          name: 'tabIndex',
-          type: 'number',
-          description: 'Tab order of the trigger.',
-        },
-        {
-          name: 'notFoundContent',
-          type: 'ReactNode',
           description:
-            'Accepted and inert — Astryx Selector renders its own empty state.',
-        },
-        {
-          name: 'suffixIcon',
-          type: 'ReactNode',
-          description:
-            'Accepted and inert — the trigger affordance is owned by Astryx.',
-        },
-        {
-          name: 'popupRender',
-          type: '(menu: ReactNode) => ReactNode',
-          description:
-            'Accepted and inert — there is no arbitrary popup-body escape hatch; use header and footer.',
-        },
-        {
-          name: 'popupMatchSelectWidth',
-          type: 'boolean | number',
-          description: 'Accepted and inert — popup sizing is owned by Astryx.',
-        },
-        {
-          name: 'maxTagCount',
-          type: "number | 'responsive'",
-          description:
-            'Accepted and inert — the multi-select overflow policy is fixed at three labels then "+N".',
-        },
-        {
-          name: 'maxTagPlaceholder',
-          type: 'ReactNode | ((omitted: Array<any>) => ReactNode)',
-          description: 'Accepted and inert, alongside maxTagCount.',
-        },
-        {
-          name: 'labelRender',
-          type: '(option: SelectorOptionData) => ReactNode',
-          description:
-            'The closed trigger’s content in single mode, from the selected Selector option. Maps to Astryx renderValue.',
-        },
-        {
-          name: 'searchAction',
-          type: '(value: string) => Promise<void>',
-          description:
-            'Accepted and inert — server-driven search belongs to BAIComplexSelect, not Selector.',
-        },
-        {
-          name: 'endReached',
-          type: '() => void',
-          description:
-            'Accepted and inert — Astryx owns the popup and emits no scroll event. Paginated lists use BAIComplexSelect.',
-        },
-        {
-          name: 'atBottomStateChange',
-          type: '(atBottom: boolean) => void',
-          description: 'Accepted and inert, alongside endReached.',
-        },
-        {
-          name: 'atBottomThreshold',
-          type: 'number',
-          description: 'Accepted and inert, alongside endReached.',
-        },
-        {
-          name: 'bottomLoading',
-          type: 'boolean',
-          description: 'Accepted and inert, alongside endReached.',
-        },
-        {
-          name: 'filterOption',
-          type: 'boolean | ((input: string, option?: any) => boolean)',
-          description:
-            'Accepted and inert — Selector filters on the visible option label.',
-        },
-        {
-          name: 'defaultActiveFirstOption',
-          type: 'boolean',
-          description: 'Accepted and inert.',
-        },
-        {
-          name: 'title',
-          type: 'string',
-          description: 'Accepted and inert.',
-        },
-        {
-          name: 'ref',
-          type: 'React.Ref<any>',
-          description:
-            'Accepted and inert — Astryx Selector exposes no imperative focus/blur handle.',
-        },
-      ],
-    },
-    {
-      name: 'BAISelectOptionItem',
-      displayName: 'BAI Select Option Item',
-      description:
-        'A carrier element for the children form of the option list. It renders nothing; BAISelect walks the element tree and flattens it into the Astryx option model.',
-      props: [
-        {
-          name: 'value',
-          type: 'string | number | null',
-          description: 'Value emitted when this option is selected.',
-        },
-        {
-          name: 'label',
-          type: 'string',
-          description:
-            'Text shown on the closed trigger and matched by search when children is rich JSX whose key facts the text flattener cannot reach.',
-        },
-        {
-          name: 'disabled',
-          type: 'boolean',
-          description: 'Makes the option unselectable.',
-        },
-        {
-          name: 'filterValue',
-          type: 'string',
-          description:
-            'Accepted and ignored — a synthetic search key would leak onto the trigger, since Astryx renders the option label there too.',
-        },
-        {
-          name: 'children',
-          type: 'ReactNode',
-          description:
-            'The option row. Rich JSX survives, restored through renderOption.',
-        },
-      ],
-    },
-    {
-      name: 'BAISelectOptionGroup',
-      displayName: 'BAI Select Option Group',
-      description:
-        'A carrier element that groups BAISelectOptionItem children under a heading. It renders nothing; BAISelect turns it into a native Astryx option section.',
-      props: [
-        {
-          name: 'label',
-          type: 'ReactNode',
-          description:
-            'Section heading, flattened to a string for the accessible name.',
-        },
-        {
-          name: 'children',
-          type: 'ReactNode',
-          description: 'The BAISelectOptionItem elements in this group.',
+            'BAI addition: while no value is set, selects the first option (sections included, dividers skipped) and reports it through onChange, so the enclosing Form.Item or the parent state receives it.',
         },
       ],
     },
@@ -417,6 +123,7 @@ export const docs = {
       label: 'Single select in a form',
       code: `<BAIFormItem name="status" label={t('credential.Status')}>
   <BAISelect
+    hasSearch={false}
     placeholder={t('credential.SelectStatus')}
     options={[
       { value: 'active', label: t('general.Active') },
@@ -426,14 +133,23 @@ export const docs = {
 </BAIFormItem>`,
     },
     {
-      label: 'Multiple select',
-      code: `<BAISelect
-  mode="multiple"
-  allowClear
-  style={{ width: '100%' }}
-  placeholder={t('rbac.SelectUsers')}
-  options={userOptions}
-  onChange={(value: string[]) => setUserIds(value)}
+      label: 'Rich rows with sections',
+      code: `const rows = new Map(projects.map((p) => [p.id, <ProjectRow project={p} />]));
+const renderRow = (option: SelectorOptionData) =>
+  rows.get(option.value) ?? option.label;
+
+<BAISelect
+  aria-label={t('general.Project')}
+  width="100%"
+  hasClear
+  options={[
+    { type: 'section', title: t('general.General'), options: generalOptions },
+    { type: 'section', title: t('data.ModelStore'), options: modelStoreOptions },
+  ]}
+  renderOption={renderRow}
+  renderValue={renderRow}
+  value={projectId}
+  onChange={setProjectId}
 />`,
     },
   ],

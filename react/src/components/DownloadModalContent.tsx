@@ -44,7 +44,7 @@ const DesktopAppDownloadTab: React.FC = () => {
     <BAIMetadataList columns="single">
       <MetadataListItem label={t('summary.OS')}>
         <BAISelect
-          showSearch={false}
+          hasSearch={false}
           aria-label={t('summary.OS')}
           value={selectedOS}
           onChange={(value) => setSelectedOS(value as typeof selectedOS)}
@@ -153,7 +153,7 @@ const CLIDownloadTab: React.FC = () => {
             <BAIMetadataList columns="single">
               <MetadataListItem label={t('summary.OS')}>
                 <BAISelect
-                  showSearch={false}
+                  hasSearch={false}
                   aria-label={t('summary.OS')}
                   value={selectedOS}
                   onChange={(value) =>

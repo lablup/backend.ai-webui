@@ -601,10 +601,10 @@ const SessionResourceGrid = ({
             </>
           ) : (
             <BAISelect
-              showSearch={false}
+              hasSearch={false}
               aria-label={t('session.resourceGrid.Metric')}
-              size="small"
-              style={{ width: 180 }}
+              size="sm"
+              width={180}
               options={metricOptions.map((value) => ({ value, label: value }))}
               value={metric}
               placeholder={t('session.resourceGrid.NoLiveMetrics')}

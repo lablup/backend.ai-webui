@@ -91,7 +91,7 @@ const StorageHostSettingsPanel: React.FC<StorageHostSettingsPanelProps> = ({
           // valuePropName="id" makes the picked value the user's id (used as
           // the quota scope entity id), not the email.
           <Suspense
-            fallback={<BAISelect disabled loading style={{ width: 240 }} />}
+            fallback={<BAISelect disabled isLoading width={240} options={[]} />}
           >
             <BAIScopedUserSelect
               scope={domainScope}

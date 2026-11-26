@@ -496,7 +496,7 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
               ]}
             >
               <BAISelect
-                showSearch={false}
+                hasSearch={false}
                 aria-label={t('adminModelCard.AccessLevel')}
                 options={[
                   {

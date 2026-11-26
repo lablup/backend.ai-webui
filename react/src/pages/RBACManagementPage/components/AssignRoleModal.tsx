@@ -12,7 +12,7 @@ import {
   BAIBulkErrorModal,
   BAIModal,
   BAIModalProps,
-  BAISelect,
+  BAIMultiSelector,
   useBAILogger,
   useMutationWithPromise,
   type BAIColumnsType,
@@ -212,7 +212,7 @@ const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
         <Suspense
           fallback={
             <Form.Item label={t('credential.Users')}>
-              <BAISelect mode="multiple" disabled loading />
+              <BAIMultiSelector disabled isLoading options={[]} />
             </Form.Item>
           }
         >

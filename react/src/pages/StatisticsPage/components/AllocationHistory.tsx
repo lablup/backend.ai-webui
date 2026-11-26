@@ -57,13 +57,8 @@ const AllocationHistory: React.FC = () => {
           label={t('statistics.SelectPeriod')}
           style={{ marginBottom: 0 }}
         >
-          {/* antd `Select` (2 static options, no form binding) -> Astryx
-              `Selector`. `label` is required and `isLabelHidden` keeps the
-              `Form.Item` label the only one rendered (flip recipe).
-              `popupMatchSelectWidth={false}` has no destination — Astryx sizes
-              its popup to the trigger. */}
           <BAISelect
-            showSearch={false}
+            hasSearch={false}
             aria-label={t('statistics.SelectPeriod')}
             options={periodOptions}
             value={selectedPeriod}

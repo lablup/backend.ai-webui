@@ -369,7 +369,7 @@ const VFolderDeployModal: React.FC<VFolderDeployModalProps> = ({
           <BAIProjectResourceGroupSelect
             projectName={project.name}
             autoSelectDefault
-            style={{ width: '100%' }}
+            width="100%"
             disabled={noAvailablePresets}
           />
         </Form.Item>

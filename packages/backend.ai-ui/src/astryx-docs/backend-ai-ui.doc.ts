@@ -159,7 +159,7 @@ export const docs = {
         },
         {
           type: 'prose',
-          text: 'One doc per component FILE — discovery keys a component on the doc file\'s stem, so a file that exports several components (BAISelect and its option markers, BAIMetadataList and its item) documents them under `components: [...]` instead of `props`. Such a doc must OMIT the `type: "component"` stamp: the stamped schema requires a top-level `props` array and has no multi-component variant, so a stamped multi doc fails validation while an unstamped one is shape-sniffed and accepted.',
+          text: 'One doc per component FILE — discovery keys a component on the doc file\'s stem, so a file that exports several components (BAIMetadataList and its item) documents them under `components: [...]` instead of `props`. Such a doc must OMIT the `type: "component"` stamp: the stamped schema requires a top-level `props` array and has no multi-component variant, so a stamped multi doc fails validation while an unstamped one is shape-sniffed and accepted.',
         },
       ],
     },

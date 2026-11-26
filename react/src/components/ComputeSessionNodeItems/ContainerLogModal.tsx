@@ -138,6 +138,18 @@ const ContainerLogModal: React.FC<ContainerLogModalProps> = ({
   const { t } = useTranslation();
   const { getErrorMessage } = useErrorMessageResolver();
 
+  const kernelOptions = _.map(
+    _.sortBy(
+      session?.kernel_nodes?.edges,
+      (e) => `${e?.node?.cluster_role} ${e?.node?.cluster_idx}`,
+    ),
+    (e) => ({
+      value: e?.node?.row_id ?? '',
+      hostname: e?.node?.cluster_hostname ?? '',
+      shortId: (e?.node?.row_id || '').substring(0, 5),
+    }),
+  );
+
   return (
     <BAIModal
       title={
@@ -206,25 +218,23 @@ const ContainerLogModal: React.FC<ContainerLogModalProps> = ({
               setHeldError(null);
             }}
             autoSelectOption
-            options={_.map(
-              _.sortBy(
-                session?.kernel_nodes?.edges,
-                (e) => `${e?.node?.cluster_role} ${e?.node?.cluster_idx}`,
-              ),
-              (e) => {
-                return {
-                  label: (
-                    <>
-                      {e?.node?.cluster_hostname}
-                      <Text type="code" color="secondary" size="sm">
-                        ({(e?.node?.row_id || '').substring(0, 5)})
-                      </Text>
-                    </>
-                  ),
-                  value: e?.node?.row_id,
-                };
-              },
-            )}
+            options={kernelOptions.map(({ value, hostname, shortId }) => ({
+              value,
+              label: `${hostname} (${shortId})`.trim(),
+            }))}
+            renderOption={(option) => {
+              const kernel = _.find(kernelOptions, { value: option.value });
+              return kernel ? (
+                <>
+                  {kernel.hostname}
+                  <Text type="code" color="secondary" size="sm">
+                    ({kernel.shortId})
+                  </Text>
+                </>
+              ) : (
+                option.label
+              );
+            }}
           />
           <Divider orientation="vertical" />
           <IconButton

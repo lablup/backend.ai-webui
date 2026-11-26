@@ -343,7 +343,7 @@ const ModelCardDeployModal: React.FC<ModelCardDeployModalProps> = ({
           <BAIProjectResourceGroupSelect
             projectName={projectName ?? ''}
             autoSelectDefault
-            style={{ width: '100%' }}
+            width="100%"
             disabled={noAvailablePresets}
           />
         </Form.Item>

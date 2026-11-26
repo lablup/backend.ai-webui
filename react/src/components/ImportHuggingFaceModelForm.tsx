@@ -410,7 +410,14 @@ const ImportHuggingFaceModelForm: React.FC<ImportHuggingFaceModelFormProps> = ({
         >
           <BAIFlex direction="row" gap="xs">
             <Suspense
-              fallback={<BAISelect loading disabled style={{ flex: 1 }} />}
+              fallback={
+                <BAISelect
+                  isLoading
+                  disabled
+                  controlStyle={{ flex: 1 }}
+                  options={[]}
+                />
+              }
             >
               <Form.Item
                 name="vfolderId"

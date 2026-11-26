@@ -227,7 +227,9 @@ const ProjectAdminSessionContent: React.FC<ProjectAdminSessionContentProps> = ({
                 propertyLabel: t('session.Owner'),
                 type: 'uuid',
                 renderInput: ({ onAddCondition, value, isDisabled }) => (
-                  <Suspense fallback={<BAISelect disabled loading />}>
+                  <Suspense
+                    fallback={<BAISelect disabled isLoading options={[]} />}
+                  >
                     <BAIScopedUserSelect
                       scope={{ project: [{ value: projectId }] }}
                       valuePropName="id"

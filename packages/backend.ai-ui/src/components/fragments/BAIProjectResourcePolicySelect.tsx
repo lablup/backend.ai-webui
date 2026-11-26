@@ -27,13 +27,10 @@ const BAIProjectResourcePolicySelect = ({
 
   return (
     <BAISelect
-      options={_.map(_.sortBy(project_resource_policies, 'name'), (policy) => {
-        return {
-          label: policy?.name,
-          value: policy?.name,
-        };
-      })}
-      showSearch
+      options={_.map(
+        _.compact(_.map(_.sortBy(project_resource_policies, 'name'), 'name')),
+        (name) => ({ label: name, value: name }),
+      )}
       {...selectProps}
     />
   );

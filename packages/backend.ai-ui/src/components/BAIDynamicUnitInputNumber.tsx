@@ -286,7 +286,7 @@ const BAIDynamicUnitInputNumber: React.FC<BAIDynamicUnitInputNumberProps> = ({
           that with `suffixIcon={null} open={false}` on a Select. */}
       {units.length > 1 ? (
         <BAISelect
-          showSearch={false}
+          hasSearch={false}
           aria-label={t('general.Unit')}
           value={unit}
           options={units.map((u) => ({
@@ -296,10 +296,9 @@ const BAIDynamicUnitInputNumber: React.FC<BAIDynamicUnitInputNumberProps> = ({
           onChange={(newUnit) => setValue(`${numValue ?? 0}${newUnit}`)}
           disabled={disabled}
           // Measured: in a group the trigger resolves to `width: 100%`, so it
-          // claims the whole row and the number field shrinks to its flex basis.
-          // Size the unit to its own content and let the number field take the
-          // rest — antd's `Select` in a `Space.Compact` behaved this way.
-          style={{ flex: '0 0 auto', width: 'auto' }}
+          // claims the whole row; size the unit to its content instead.
+          width="auto"
+          controlStyle={{ flex: '0 0 auto', width: 'auto' }}
         />
       ) : (
         <InputGroupText>{`${unit.toUpperCase()}iB`}</InputGroupText>

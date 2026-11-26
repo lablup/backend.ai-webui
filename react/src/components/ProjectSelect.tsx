@@ -5,28 +5,30 @@
 import { useAccessibleProjects } from '../hooks/useAccessibleProjects';
 import useControllableState_deprecated from '../hooks/useControllableState';
 import { useCurrentUserProjectRoles } from '../hooks/useCurrentUserProjectRoles';
+import type { SelectorOptionType } from '@lablup/ui-common/Selector';
 import {
   BAIFlex,
   BAIIconWithTooltip,
+  BAIMultiSelector,
   BAISelect,
-  BAISelectProps,
+  type BAIMultiSelectorProps,
+  type BAISelectProps,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { Info, ShieldUser } from 'lucide-react';
+import { ShieldUser } from 'lucide-react';
 import React, { useEffect, useEffectEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 
 type ProjectInfo = {
   label: React.ReactNode;
-  value: string | number;
+  value: string;
   projectId: string;
   projectResourcePolicy: any; // Replace 'any' with the actual type
   projectName: string;
 };
-export interface ProjectSelectProps extends BAISelectProps {
-  onSelectProject?: (projectInfo: ProjectInfo) => void;
+
+interface ProjectOptionsInput {
   domain: string;
-  autoSelectDefault?: boolean;
   disableDefaultFilter?: boolean;
   lockedProjectTypes?: string[];
   /** The user's personal project, which the domain's option list never
@@ -37,24 +39,19 @@ export interface ProjectSelectProps extends BAISelectProps {
   /** Label the personal project "My Project" instead of its name; only for
    * the signed-in user's own personal project. */
   labelPersonalProjectAsMine?: boolean;
-  'aria-label'?: string;
 }
 
-const ProjectSelect: React.FC<ProjectSelectProps> = ({
-  onSelectProject,
+/** The project options both selects list, grouped by project type. */
+const useProjectOptions = ({
   domain,
   disableDefaultFilter,
   lockedProjectTypes,
   personalProject,
   lockPersonalProject = true,
   labelPersonalProjectAsMine,
-  'aria-label': ariaLabel,
-  ...selectProps
-}) => {
+}: ProjectOptionsInput) => {
   'use memo';
   const { t } = useTranslation();
-
-  const [value, setValue] = useControllableState_deprecated(selectProps);
   const { projectAdminIds } = useCurrentUserProjectRoles();
   // Shared accessible-project source (FR-3388): the same hook backs
   // `useUrlProjectValidity`, so the selector and URL validation cannot
@@ -92,10 +89,167 @@ const ProjectSelect: React.FC<ProjectSelectProps> = ({
         ),
       ) as string[]);
 
+  const getLabel = (key: string) =>
+    ({
+      GENERAL: t('general.General'),
+      MODEL_STORE: t('data.ModelStore'),
+      PERSONAL: t('projectSelect.Personal'),
+    })[key] || key;
+
+  const projectInfoByValue = new Map<string, ProjectInfo>();
+  // Rows that carry the Project Admin shield; every other row is its label.
+  const rowByValue = new Map<string, React.ReactNode>();
+  const sections = _.map(_.groupBy(optionProjects, 'type'), (value, key) => ({
+    type: 'section' as const,
+    title: getLabel(key),
+    options: _.map(_.sortBy(value, 'name'), (project) => {
+      const projectId = project?.id ?? '';
+      const isAdmin = !!projectId && projectAdminIds.includes(projectId);
+      const isPersonal = !!personalProject && projectId === personalProject.id;
+      const isLockedPersonal = lockPersonalProject && isPersonal;
+      const displayName =
+        labelPersonalProjectAsMine && isPersonal
+          ? t('projectSelect.MyProject')
+          : (project?.name ?? '');
+      const row = isAdmin ? (
+        <BAIFlex gap="xs" align="center">
+          <span>{displayName}</span>
+          <BAIIconWithTooltip
+            content={t('projectSelect.ProjectAdminBadge')}
+            focusable={false}
+            icon={<ShieldUser />}
+            // The icon's Text uses `--color-text-secondary`; follow the name's color instead.
+            style={
+              {
+                '--color-text-secondary': 'currentColor',
+              } as React.CSSProperties
+            }
+          />
+        </BAIFlex>
+      ) : undefined;
+      if (row) rowByValue.set(projectId, row);
+      projectInfoByValue.set(projectId, {
+        label: row ?? displayName,
+        value: projectId,
+        projectId,
+        projectResourcePolicy: project?.resource_policy,
+        projectName: project?.name ?? '',
+      });
+      return {
+        label: displayName,
+        value: projectId,
+        disabled: isLockedPersonal
+          ? { reason: t('projectSelect.PersonalProjectCannotBeRemoved') }
+          : lockedProjectIds.includes(projectId)
+            ? { reason: t('projectSelect.LockedProjectCannotBeRemoved') }
+            : false,
+      };
+    }),
+  }));
+
+  const options: SelectorOptionType[] =
+    sections.length > 1 ? sections : (sections[0]?.options ?? []);
+
+  const renderRow = (option: { value: string; label?: string }) =>
+    rowByValue.get(option.value) ?? option.label ?? option.value;
+
+  return {
+    options,
+    projectInfoByValue,
+    renderRow,
+    lockedProjectIds,
+    isEmpty: !optionProjects.length,
+  };
+};
+
+export interface ProjectSelectProps
+  extends Omit<BAISelectProps, 'options'>, ProjectOptionsInput {
+  /** The chosen project, or `undefined` after a clear. */
+  onSelectProject?: (projectInfo: ProjectInfo | undefined) => void;
+  autoSelectDefault?: boolean;
+}
+
+const ProjectSelect: React.FC<ProjectSelectProps> = ({
+  onSelectProject,
+  domain,
+  disableDefaultFilter,
+  lockedProjectTypes,
+  personalProject,
+  lockPersonalProject,
+  labelPersonalProjectAsMine,
+  ...selectProps
+}) => {
+  'use memo';
+  const { t } = useTranslation();
+
+  const [value, setValue] = useControllableState_deprecated(selectProps);
+  const { options, projectInfoByValue, renderRow, isEmpty } = useProjectOptions(
+    {
+      domain,
+      disableDefaultFilter,
+      lockedProjectTypes,
+      personalProject,
+      lockPersonalProject,
+      labelPersonalProjectAsMine,
+    },
+  );
+
+  const showNoProjectError =
+    isEmpty && !selectProps.disabled && !selectProps.isLoading;
+
+  return (
+    <BAISelect
+      placeholder={t('storageHost.quotaSettings.SelectProject')}
+      renderOption={renderRow}
+      // The Project Admin shield shows on the closed trigger too.
+      renderValue={renderRow}
+      {...selectProps}
+      value={value}
+      onChange={(next) => {
+        setValue(next);
+        onSelectProject?.(next ? projectInfoByValue.get(next) : undefined);
+      }}
+      options={options}
+      status={showNoProjectError ? 'error' : selectProps.status}
+      aria-label={
+        showNoProjectError
+          ? t('projectSelect.NoAccessibleProjects')
+          : selectProps['aria-label']
+      }
+    />
+  );
+};
+
+export interface ProjectMultiSelectProps
+  extends Omit<BAIMultiSelectorProps, 'options'>, ProjectOptionsInput {}
+
+export const ProjectMultiSelect: React.FC<ProjectMultiSelectProps> = ({
+  domain,
+  disableDefaultFilter,
+  lockedProjectTypes,
+  personalProject,
+  lockPersonalProject,
+  labelPersonalProjectAsMine,
+  ...multiSelectorProps
+}) => {
+  'use memo';
+  const { t } = useTranslation();
+
+  const [value, setValue] =
+    useControllableState_deprecated<string[]>(multiSelectorProps);
+  const { options, renderRow, lockedProjectIds, isEmpty } = useProjectOptions({
+    domain,
+    disableDefaultFilter,
+    lockedProjectTypes,
+    personalProject,
+    lockPersonalProject,
+    labelPersonalProjectAsMine,
+  });
+
   // Auto-select locked projects when they become available
   const autoSelectLockedProjects = useEffectEvent(() => {
     if (lockedProjectIds.length > 0) {
-      const currentVal = _.isArray(value) ? (value as string[]) : [];
+      const currentVal = _.isArray(value) ? value : [];
       const missing = lockedProjectIds.filter((id) => !currentVal.includes(id));
       if (missing.length > 0) {
         setValue([...currentVal, ...missing]);
@@ -108,105 +262,24 @@ const ProjectSelect: React.FC<ProjectSelectProps> = ({
     autoSelectLockedProjects();
   }, [lockedProjectIdsKey]);
 
-  const getLabel = (key: string) =>
-    ({
-      GENERAL: t('general.General'),
-      MODEL_STORE: t('data.ModelStore'),
-      PERSONAL: t('projectSelect.Personal'),
-    })[key] || key;
-
-  const groupOptions = _.map(
-    _.groupBy(optionProjects, 'type'),
-    (value, key) => {
-      return {
-        label: getLabel(key),
-        title: key,
-        options: _.map(_.sortBy(value, 'name'), (project) => {
-          const isAdmin = !!project?.id && projectAdminIds.includes(project.id);
-          const isPersonal =
-            !!personalProject && project?.id === personalProject.id;
-          const isLockedPersonal = lockPersonalProject && isPersonal;
-          const displayName =
-            labelPersonalProjectAsMine && isPersonal
-              ? t('projectSelect.MyProject')
-              : project?.name;
-          const row = (
-            <BAIFlex gap="xs" align="center">
-              <span>{displayName}</span>
-              {isAdmin && (
-                <BAIIconWithTooltip
-                  content={t('projectSelect.ProjectAdminBadge')}
-                  focusable={false}
-                  icon={<ShieldUser />}
-                  // The icon's Text uses `--color-text-secondary`; follow the name's color instead.
-                  style={
-                    {
-                      '--color-text-secondary': 'currentColor',
-                    } as React.CSSProperties
-                  }
-                />
-              )}
-            </BAIFlex>
-          );
-          return {
-            label: isAdmin ? row : displayName,
-            value: project?.id,
-            projectId: project?.id,
-            projectResourcePolicy: project?.resource_policy,
-            projectName: project?.name,
-            disabled: isLockedPersonal
-              ? { reason: t('projectSelect.PersonalProjectCannotBeRemoved') }
-              : lockedProjectIds.includes(project?.id ?? '')
-                ? { reason: t('projectSelect.LockedProjectCannotBeRemoved') }
-                : false,
-          };
-        }),
-      };
-    },
-  );
-
   const showNoProjectError =
-    !optionProjects.length && !selectProps.disabled && !selectProps.loading;
-
-  const noAccessibleProjectsMessage = t('projectSelect.NoAccessibleProjects');
+    isEmpty && !multiSelectorProps.disabled && !multiSelectorProps.isLoading;
 
   return (
-    <BAISelect
-      onChange={(value, option) => {
-        setValue(value);
-        onSelectProject?.(option as ProjectInfo);
-      }}
+    <BAIMultiSelector
+      hasSearch
       placeholder={t('storageHost.quotaSettings.SelectProject')}
-      popupMatchSelectWidth={false}
-      // Renders a rich option row (e.g. the Project Admin shield) on the closed trigger too.
-      optionLabelProp="children"
-      {...selectProps}
-      value={value}
-      showSearch={{
-        optionFilterProp: 'projectName',
-      }}
-      options={
-        _.size(groupOptions) > 1 ? groupOptions : groupOptions[0]?.options
+      renderOption={renderRow}
+      {...multiSelectorProps}
+      value={value ?? []}
+      onChange={(next) => setValue(next)}
+      options={options}
+      status={showNoProjectError ? 'error' : multiSelectorProps.status}
+      aria-label={
+        showNoProjectError
+          ? t('projectSelect.NoAccessibleProjects')
+          : multiSelectorProps['aria-label']
       }
-      status={showNoProjectError ? 'error' : selectProps.status}
-      // Surface the empty-state reason on the focusable control itself,
-      // not only on the non-focusable suffix icon. `tooltip` wraps the
-      // whole BAISelect in an antd Tooltip (hover over the entire control,
-      // not just the tiny icon), and `aria-label` gives keyboard /
-      // screen-reader users a persistent accessible description that does
-      // not depend on the tooltip being open.
-      tooltip={
-        showNoProjectError ? noAccessibleProjectsMessage : selectProps.tooltip
-      }
-      aria-label={showNoProjectError ? noAccessibleProjectsMessage : ariaLabel}
-      suffixIcon={
-        showNoProjectError ? <Info size="1em" /> : selectProps.suffixIcon
-      }
-      // Prevent the dropdown from opening in the empty-error state so it
-      // does not visually overlap the explanation tooltip. The tooltip
-      // alone communicates why the control is unusable; an empty popup
-      // beneath it just looks broken.
-      open={showNoProjectError ? false : selectProps.open}
     />
   );
 };

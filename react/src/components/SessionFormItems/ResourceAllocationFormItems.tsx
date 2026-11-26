@@ -460,7 +460,6 @@ const ResourceAllocationFormItems: React.FC<
           projectName={project.name}
           autoSelectDefault={autoSelectFirstResourceGroup}
           includeSFTPResourceGroups={includeSFTPResourceGroups}
-          showSearch
         />
       </Form.Item>
 
@@ -1224,19 +1223,14 @@ const ResourceAllocationFormItems: React.FC<
                                     // In an InputGroup the trigger resolves to
                                     // width:100%; size it to content, bounded,
                                     // so the number field keeps the row.
-                                    style={{
+                                    width="auto"
+                                    controlStyle={{
                                       flex: '0 0 auto',
                                       width: 'auto',
                                       maxWidth: 100,
                                     }}
                                     autoSelectOption
                                     tabIndex={-1}
-                                    suffixIcon={
-                                      _.size(acceleratorSlotsInRG) > 1
-                                        ? undefined
-                                        : null
-                                    }
-                                    popupMatchSelectWidth={false}
                                     options={_.map(
                                       acceleratorSlotsInRG,
                                       (_value, name) => {
@@ -1258,7 +1252,8 @@ const ResourceAllocationFormItems: React.FC<
                                         };
                                       },
                                     )}
-                                    onChange={(nextType: string) => {
+                                    onChange={(nextType) => {
+                                      if (nextType === null) return;
                                       runRule({
                                         type: 'user.setAcceleratorType',
                                         next: nextType,

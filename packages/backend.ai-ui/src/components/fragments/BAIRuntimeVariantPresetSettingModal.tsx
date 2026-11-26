@@ -615,7 +615,7 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
                 },
               ]}
             >
-              <BAISelect loading disabled />
+              <BAISelect isLoading disabled options={[]} />
             </Form.Item>
           }
         >
@@ -820,7 +820,7 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
               ]}
             >
               <BAISelect
-                allowClear
+                hasClear
                 options={uiTypeOptions.map((option) => ({
                   ...option,
                   disabled: isUITypeAllowed(option.value)

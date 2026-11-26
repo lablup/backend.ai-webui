@@ -16,7 +16,7 @@ import { App } from '../../../app-shim';
 import BAIFormItem from '../../../components/BAIFormItem';
 import BAIPanelItem from '../../../components/BAIPanelItem';
 import { passwordPattern } from '../../../components/LoginFormPanel';
-import ProjectSelect from '../../../components/ProjectSelect';
+import { ProjectMultiSelect } from '../../../components/ProjectSelect';
 import { Form } from '../../../form-engine';
 import {
   CanonicalUserColumn,
@@ -1147,8 +1147,7 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
               style={{ marginBottom: token('--spacing-3') }}
             >
               <Suspense fallback={<BAISkeleton />}>
-                <ProjectSelect
-                  mode="multiple"
+                <ProjectMultiSelect
                   domain={currentDomainName}
                   disableDefaultFilter
                   lockedProjectTypes={['MODEL_STORE']}
@@ -1158,13 +1157,10 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
                       : []
                   }
                   onChange={(v) =>
-                    setGlobalDefaults((prev) => ({
-                      ...prev,
-                      groupIds: Array.isArray(v) ? (v as string[]) : [],
-                    }))
+                    setGlobalDefaults((prev) => ({ ...prev, groupIds: v }))
                   }
                   placeholder={t('credential.NoDefaultPlaceholder')}
-                  style={{ width: '100%' }}
+                  width="100%"
                 />
               </Suspense>
             </BAIFormItem>
@@ -1185,7 +1181,7 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
                     }))
                   }
                   placeholder={t('credential.NoDefaultPlaceholder')}
-                  style={{ width: '100%' }}
+                  width="100%"
                 />
               </Suspense>
             </BAIFormItem>

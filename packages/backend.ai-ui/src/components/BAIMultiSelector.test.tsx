@@ -3,7 +3,6 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import BAIMultiSelector from './BAIMultiSelector';
-import BAISelect from './BAISelect';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -52,32 +51,6 @@ describe('multi-select trigger tooltip (#10951)', () => {
 
     render(
       <BAIMultiSelector
-        aria-label="Session types"
-        showSelectedOptionsTooltip
-        options={options}
-        value={allValues}
-      />,
-    );
-    hoverTrigger('Session types');
-    expect(screen.getByRole('tooltip')).toHaveTextContent(allLabels);
-  });
-
-  it('BAISelect mode="multiple" passes showSelectedOptionsTooltip through', () => {
-    const { unmount } = render(
-      <BAISelect
-        mode="multiple"
-        aria-label="Session types"
-        options={options}
-        value={allValues}
-      />,
-    );
-    hoverTrigger('Session types');
-    expect(screen.queryByRole('tooltip')).toBeNull();
-    unmount();
-
-    render(
-      <BAISelect
-        mode="multiple"
         aria-label="Session types"
         showSelectedOptionsTooltip
         options={options}

@@ -482,10 +482,12 @@ const ModelStoreListPageV2: React.FC = () => {
             ]}
           />
           <BAISelect
-            style={{ minWidth: 180 }}
+            controlStyle={{ minWidth: 180 }}
             value={queryParams.sort}
             onChange={(value) => {
-              setQueryParams({ sort: value });
+              setQueryParams({
+                sort: value as (typeof SORT_VALUES)[number] | null,
+              });
               setTablePaginationOption({ current: 1 });
             }}
             options={sortOptions}

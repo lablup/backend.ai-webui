@@ -106,7 +106,7 @@ export const docs = {
     {
       label: 'Result filter options',
       code: `<BAISelect
-  allowClear
+  hasClear
   placeholder={t('loginHistory.Result')}
   options={loginResultFilterOptions}
   onChange={(value) => setResultFilter(value)}

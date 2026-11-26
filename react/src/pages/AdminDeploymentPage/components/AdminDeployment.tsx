@@ -267,7 +267,7 @@ const AdminDeployment = ({
       fixedOperator: 'equals' as const,
       rule: uuidRule,
       renderInput: ({ onAddCondition, value, isDisabled }) => (
-        <Suspense fallback={<BAISelect disabled loading />}>
+        <Suspense fallback={<BAISelect disabled isLoading options={[]} />}>
           <BAIScopedUserSelect
             scope={domainScope}
             valuePropName="id"

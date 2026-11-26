@@ -173,7 +173,7 @@ const UpdateResourceGroupsModal: React.FC<UpdateResourceGroupsModalProps> = ({
               label={t('storageProxy.SFTPStorageProxies')}
               tooltip={t('storageProxy.SFTPStorageProxiesDescription')}
             >
-              <BAIStorageProxySelect mode="multiple" allowClear />
+              <BAIStorageProxySelect hasClear />
             </BAIFormItem>
           </Suspense>
         </Form>

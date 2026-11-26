@@ -316,7 +316,9 @@ const KeypairResourcePolicyV2 = ({
               type: 'uuid',
               fixedOperator: 'equals',
               renderInput: ({ onAddCondition, value, isDisabled }) => (
-                <Suspense fallback={<BAISelect disabled loading />}>
+                <Suspense
+                  fallback={<BAISelect options={[]} disabled isLoading />}
+                >
                   <BAIScopedUserSelect
                     scope={domainScope}
                     valuePropName="id"
