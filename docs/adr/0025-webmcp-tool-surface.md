@@ -1,6 +1,6 @@
 # 0025 — WebMCP tool surface
 
-> Sections 1 and 2 are extended by [ADR 0040](0040-webui-assistant-calls-page-webmcp-tools.md): tools also register with the page registry the WebUI Assistant reads, and the active check is true when either target exists.
+> Sections 1 and 2 are extended by [ADR 0041](0041-webui-assistant-calls-page-webmcp-tools.md): tools also register with the page registry the WebUI Assistant reads, and the active check is true when either target exists.
 
 ## Summary
 

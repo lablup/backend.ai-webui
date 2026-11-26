@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
  Covers the marks SPLIT (string labels go to Astryx, node labels to the
- overlay, marks above `max` are dropped from both) and the number input's
+ overlay, marks outside `min`–`max` are dropped from both) and the number input's
  built-in steppers.
 
  The overlay's *position* is asserted as the percentage it writes, which is
@@ -55,6 +55,14 @@ describe('InputNumberWithSlider marks', () => {
   it('drops marks above max from both layers', () => {
     renderSlider();
     expect(screen.queryByText('9-above-max')).toBeNull();
+  });
+
+  it('drops marks below min so no tick lands left of the rail', () => {
+    renderSlider({ min: 2 });
+    const ticks = screen
+      .getAllByTestId('slider-mark')
+      .map((el) => el.dataset.markValue);
+    expect(ticks).toEqual(['3', '7']);
   });
 
   it('renders a node label in the overlay, not as an Astryx label', () => {

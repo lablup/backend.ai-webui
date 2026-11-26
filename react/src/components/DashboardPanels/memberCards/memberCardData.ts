@@ -121,6 +121,21 @@ export const offeredSlotsOf = (
       ])
     : null;
 
+/**
+ * The slots a usage card shows: the offered slots, cpu and mem when no group
+ * offered any, and every slot in use whichever group it runs in.
+ */
+export const shownSlotsOf = (
+  offered: ReadonlySet<string> | null | undefined,
+  used: ReadonlyArray<QuantityEntry>,
+): Set<string> =>
+  new Set([
+    ...(offered ?? ['cpu', 'mem']),
+    ...used
+      .filter((entry) => toNumber(entry.quantity) > 0)
+      .map((entry) => entry.resourceType),
+  ]);
+
 /** A resource group's free amounts as limits, for {@link toUsageRows}. */
 export const freeAsLimits = (
   free: ReadonlyArray<QuantityEntry> | null | undefined,

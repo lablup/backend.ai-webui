@@ -1,4 +1,4 @@
-# 0040 — WebUI Assistant tool calls through the page's WebMCP tools
+# 0041 — WebUI Assistant tool calls through the page's WebMCP tools
 
 ## Summary
 

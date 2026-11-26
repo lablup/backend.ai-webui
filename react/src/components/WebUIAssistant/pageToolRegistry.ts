@@ -4,7 +4,7 @@
  */
 import type { WebMCPModelContext, WebMCPToolDescriptor } from 'backend.ai-ui';
 
-/** The WebMCP tools the page has registered, for the WebUI Assistant's tool calls (ADR 0040). */
+/** The WebMCP tools the page has registered, for the WebUI Assistant's tool calls (ADR 0041). */
 export interface PageToolRegistry extends WebMCPModelContext {
   list: () => ReadonlyArray<WebMCPToolDescriptor>;
   get: (name: string) => WebMCPToolDescriptor | undefined;

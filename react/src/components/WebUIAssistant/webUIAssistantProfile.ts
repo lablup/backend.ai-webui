@@ -29,7 +29,7 @@ export const DASHBOARD_AGENT_PROFILE = {
     'Copy ids exactly from the lists. Match what the user names by its title, in any language; "it" or "that" means the panel or card changed last. Check the state first: never show a card that is already on board or hide one that is not. If nothing fits, return "actions":[] and say why in "reply".',
 };
 
-/** The assistant's instructions when the endpoint takes tool calls (ADR 0040). */
+/** The assistant's instructions when the endpoint takes tool calls (ADR 0041). */
 export const WEBUI_ASSISTANT_TOOL_PROFILE = {
   systemPrompt: [
     'You are the Backend.AI WebUI Assistant, running inside the WebUI tab the user is looking at. You answer questions and act on the page through tools.',
