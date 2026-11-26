@@ -4,7 +4,10 @@
  */
 import '../../__test__/matchMedia.mock.js';
 import '../../__test__/resizeObserver.mock.js';
-import type { InvitationItem } from '../hooks/useVFolderInvitations';
+import {
+  type InvitationItem,
+  useVFolderInvitations,
+} from '../hooks/useVFolderInvitations';
 import FolderInvitationResponseModal from './FolderInvitationResponseModal';
 import '@testing-library/jest-dom';
 import { render, screen } from '@testing-library/react';
@@ -38,15 +41,17 @@ const { invitations } = vi.hoisted(() => ({
 }));
 
 vi.mock('../hooks/useVFolderInvitations', () => ({
-  useVFolderInvitations: () => [
+  useVFolderInvitations: vi.fn(() => [
     invitations,
     {
       acceptInvitation: vi.fn(),
       rejectInvitation: vi.fn(),
       updateInvitations: vi.fn(),
     },
-  ],
+  ]),
 }));
+
+const PROJECT = { id: 'p-1', name: 'research' };
 
 const invitation = (overrides: Partial<InvitationItem>): InvitationItem => ({
   id: 'share-1',
@@ -69,7 +74,7 @@ describe('FolderInvitationResponseModal (#10329)', () => {
         permissions: ['READ', 'UPDATE', 'CREATE', 'SOFT_DELETE', 'HARD_DELETE'],
       }),
     );
-    render(<FolderInvitationResponseModal open />);
+    render(<FolderInvitationResponseModal open project={PROJECT} />);
 
     // The folder name is a labeled line like the rest, not an icon heading.
     expect(screen.getByText('data.Foldername')).toBeInTheDocument();
@@ -89,7 +94,7 @@ describe('FolderInvitationResponseModal (#10329)', () => {
     invitations.push(
       invitation({ id: 'share-2', sharerEmail: null, permissions: ['READ'] }),
     );
-    render(<FolderInvitationResponseModal open />);
+    render(<FolderInvitationResponseModal open project={PROJECT} />);
 
     expect(screen.getByText('data.invitation.UnknownUser')).toBeInTheDocument();
     expect(
@@ -99,21 +104,15 @@ describe('FolderInvitationResponseModal (#10329)', () => {
 
   it('names the folder by its id when the caller may not read it', () => {
     invitations.push(invitation({ id: 'share-3', vfolderName: null }));
-    render(<FolderInvitationResponseModal open />);
+    render(<FolderInvitationResponseModal open project={PROJECT} />);
 
     expect(screen.getByText('vf-1')).toBeInTheDocument();
   });
 
-  it('names the project a project share is addressed to (#10659)', () => {
-    invitations.push(invitation({ recipientProjectName: 'research' }));
-    render(<FolderInvitationResponseModal open />);
-    expect(screen.getByText('general.Project')).toBeInTheDocument();
-    expect(screen.getByText('research')).toBeInTheDocument();
-  });
-
-  it('shows no project line for a share addressed to the user', () => {
+  it('lists the folder, the sharer and the share permission only', () => {
     invitations.push(invitation({}));
-    render(<FolderInvitationResponseModal open />);
+    render(<FolderInvitationResponseModal open project={PROJECT} />);
     expect(screen.queryByText('general.Project')).not.toBeInTheDocument();
+    expect(useVFolderInvitations).toHaveBeenLastCalledWith(PROJECT);
   });
 });

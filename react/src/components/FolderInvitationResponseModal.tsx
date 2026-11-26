@@ -12,6 +12,7 @@ import {
   InvitationItem,
   useVFolderInvitations,
 } from '../hooks/useVFolderInvitations';
+import type { ProjectContextOrNull } from '../types/projectContext';
 import { Button } from '@lablup/ui-common/Button';
 import { Divider } from '@lablup/ui-common/Divider';
 import { EmptyState } from '@lablup/ui-common/EmptyState';
@@ -43,19 +44,21 @@ interface FolderInvitationResponseModalProps extends Omit<
 > {
   /** App-level contract, kept: the opener passes `open` + `onCancel`. */
   open?: boolean;
+  /** The page's project (ADR-0001): the invitations listed are the ones addressed to it. */
+  project: ProjectContextOrNull;
   onCancel?: () => void;
 }
 
 const FolderInvitationResponseModal: React.FC<
   FolderInvitationResponseModalProps
-> = ({ onCancel, ...baiModalProps }) => {
+> = ({ project, onCancel, ...baiModalProps }) => {
   'use memo';
   const { message } = App.useApp();
   const { t } = useTranslation();
   const [
     invitations,
     { acceptInvitation, rejectInvitation, updateInvitations },
-  ] = useVFolderInvitations();
+  ] = useVFolderInvitations(project);
   const { getErrorMessage } = useErrorMessageResolver();
   const { upsertNotification } = useSetBAINotification();
   const { summary: sharePermissionSummary } = useEntitySharePermissionLabels();
@@ -77,11 +80,6 @@ const FolderInvitationResponseModal: React.FC<
           <MetadataListItem label={t('data.Foldername')}>
             {folderName}
           </MetadataListItem>
-          {item.recipientProjectName && (
-            <MetadataListItem label={t('general.Project')}>
-              {item.recipientProjectName}
-            </MetadataListItem>
-          )}
           <MetadataListItem label={t('data.From')}>
             {item.sharerEmail || t('data.invitation.UnknownUser')}
           </MetadataListItem>

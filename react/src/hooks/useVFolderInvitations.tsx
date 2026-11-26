@@ -9,20 +9,21 @@ import { useVFolderInvitationsProjectAnswerersQuery } from '../__generated__/use
 import { useVFolderInvitationsProjectSharesQuery } from '../__generated__/useVFolderInvitationsProjectSharesQuery.graphql';
 import { useVFolderInvitationsQuery } from '../__generated__/useVFolderInvitationsQuery.graphql';
 import { useVFolderInvitationsRejectMutation } from '../__generated__/useVFolderInvitationsRejectMutation.graphql';
+import type { ProjectContext } from '../types/projectContext';
 import { mutationOptions } from './backendai';
 import { useTanMutation } from './reactQueryAlias';
+import { useIsPersonalProject } from './useAccessibleProjects';
 import { useMutationWithPromise } from 'backend.ai-ui';
 import { useAtom } from 'jotai';
+import { atomFamily } from 'jotai-family';
 import { atomWithDefault } from 'jotai/utils';
 import * as _ from 'lodash-es';
 import { fetchQuery, graphql } from 'react-relay';
 
 const VFOLDER_ENTITY_TYPE = 'vfolder';
 const PROJECT_ENTITY_TYPE = 'project';
-// `myAtomicBulkScopePermissions` refuses more than 100 targets.
-const MAX_PERMISSION_TARGETS = 100;
 
-/** A pending folder share offered to the current user or to a project they answer for. */
+/** A pending folder share offered to the current user or to the project the page is on. */
 export interface InvitationItem {
   /** The share's `entityId`: what accept and reject take. */
   id: string;
@@ -34,8 +35,6 @@ export interface InvitationItem {
   /** The entity share's permission cap. */
   permissions: ReadonlyArray<string>;
   createdAt: string;
-  /** Set when the share is addressed to a project: accepting it answers for the project. */
-  recipientProjectName?: string;
 }
 
 export interface RecipientShare {
@@ -45,13 +44,7 @@ export interface RecipientShare {
   targetEntityType: string;
   targetEntityId: string;
   createdAt: string;
-  recipientEntityType?: string | null;
-  recipientEntityId?: string | null;
-  recipientEntity?:
-    | { __typename: 'ProjectV2'; basicInfo: { name: string } }
-    | { __typename: string }
-    | null;
-  sharer?: { entityId?: string; basicInfo: { email: string } } | null;
+  sharer?: { basicInfo: { email: string } } | null;
   targetEntity?:
     | { __typename: 'VFolder'; metadata: { name: string } }
     | { __typename: string }
@@ -61,17 +54,9 @@ export interface RecipientShare {
 const isEntityType = (value: string | null | undefined, type: string) =>
   value?.toLowerCase() === type;
 
-/**
- * The pending folder shares among the caller's received shares, newest first.
- * `projectNames` names a project share whose `recipientEntity` the caller may not read.
- */
+/** The pending folder shares among `shares`, newest first. */
 export const toInvitationItems = (
   shares: ReadonlyArray<RecipientShare>,
-  {
-    projectNames = {},
-  }: {
-    projectNames?: Readonly<Record<string, string>>;
-  } = {},
 ): InvitationItem[] =>
   _.orderBy(
     _.map(
@@ -95,16 +80,6 @@ export const toInvitationItems = (
         sharerEmail: share.sharer?.basicInfo.email ?? null,
         permissions: share.permissions,
         createdAt: share.createdAt,
-        ...(isEntityType(share.recipientEntityType, PROJECT_ENTITY_TYPE) && {
-          recipientProjectName:
-            (share.recipientEntity?.__typename === 'ProjectV2' &&
-            'basicInfo' in share.recipientEntity
-              ? share.recipientEntity.basicInfo.name
-              : undefined) ??
-            projectNames[share.recipientEntityId ?? ''] ??
-            share.recipientEntityId ??
-            undefined,
-        }),
       }),
     ),
     'createdAt',
@@ -129,10 +104,7 @@ const invitationsQuery = graphql`
           targetEntityType
           targetEntityId
           createdAt
-          recipientEntityType
-          recipientEntityId
           sharer {
-            entityId
             basicInfo {
               email
             }
@@ -143,19 +115,6 @@ const invitationsQuery = graphql`
               metadata {
                 name
               }
-            }
-          }
-        }
-      }
-    }
-    myUserV2 {
-      entityId
-      projects(filter: { isActive: true }, limit: 100) {
-        edges {
-          node {
-            entityId
-            basicInfo {
-              name
             }
           }
         }
@@ -195,18 +154,7 @@ const projectSharesQuery = graphql`
           targetEntityType
           targetEntityId
           createdAt
-          recipientEntityType
-          recipientEntityId
-          recipientEntity @catch(to: NULL) {
-            __typename
-            ... on ProjectV2 {
-              basicInfo {
-                name
-              }
-            }
-          }
           sharer {
-            entityId
             basicInfo {
               email
             }
@@ -225,81 +173,92 @@ const projectSharesQuery = graphql`
   }
 `;
 
+/** The pending shares addressed to `projectId`; none when the caller may not answer for it. */
 const loadProjectShares = async (
-  projectIds: ReadonlyArray<string>,
+  projectId: string,
 ): Promise<RecipientShare[]> => {
-  if (_.isEmpty(projectIds)) return [];
   const permissions =
     await fetchQuery<useVFolderInvitationsProjectAnswerersQuery>(
       RelayEnvironment,
       projectAnswerersQuery,
       {
-        targets: _.map(projectIds, (scopeId) => ({
-          scopeType: PROJECT_ENTITY_TYPE,
-          scopeId,
-          entityType: 'entity_share',
-        })),
+        targets: [
+          {
+            scopeType: PROJECT_ENTITY_TYPE,
+            scopeId: projectId,
+            entityType: 'entity_share',
+          },
+        ],
       },
       { fetchPolicy: 'network-only' },
     ).toPromise();
-  const answerableIds = _.map(
-    _.filter(permissions?.myAtomicBulkScopePermissions?.items, (item) =>
-      _.includes(item.permissions, 'UPDATE'),
-    ),
-    'scopeId',
+  const canAnswer = _.some(
+    permissions?.myAtomicBulkScopePermissions?.items,
+    (item) => _.includes(item.permissions, 'UPDATE'),
   );
-  if (_.isEmpty(answerableIds)) return [];
+  if (!canAnswer) return [];
   const data = await fetchQuery<useVFolderInvitationsProjectSharesQuery>(
     RelayEnvironment,
     projectSharesQuery,
-    { projects: _.map(answerableIds, (value) => ({ value })) },
+    { projects: [{ value: projectId }] },
     { fetchPolicy: 'network-only' },
   ).toPromise();
   return _.map(data?.entityShares?.edges, (edge) => edge.node);
 };
 
-const loadInvitations = async (): Promise<InvitationItem[]> => {
-  const data = await fetchQuery<useVFolderInvitationsQuery>(
-    RelayEnvironment,
-    invitationsQuery,
-    {},
-    { fetchPolicy: 'network-only' },
-  ).toPromise();
-  const projects = _.map(data?.myUserV2?.projects?.edges, (edge) => edge.node);
-  // A project's shares are an addition: failing to read them keeps the caller's own.
-  const projectShares = await loadProjectShares(
-    _.map(projects, 'entityId').slice(0, MAX_PERMISSION_TARGETS),
-  ).catch(() => []);
+/** Whose invitations a page shows: the caller's own, one project's, or none. */
+type InvitationScope = 'personal' | `project:${string}` | 'none';
+
+const loadInvitations = async (
+  scope: InvitationScope,
+): Promise<InvitationItem[]> => {
+  if (scope === 'none') return [];
+  if (scope === 'personal') {
+    const data = await fetchQuery<useVFolderInvitationsQuery>(
+      RelayEnvironment,
+      invitationsQuery,
+      {},
+      { fetchPolicy: 'network-only' },
+    ).toPromise();
+    return toInvitationItems(
+      _.map(data?.myEntityShares?.edges, (edge) => edge.node),
+    );
+  }
+  // A project whose shares cannot be read shows none rather than failing the page.
   return toInvitationItems(
-    [
-      ..._.map(data?.myEntityShares?.edges, (edge) => edge.node),
-      ...projectShares,
-    ],
-    {
-      projectNames: _.fromPairs(
-        _.map(projects, (project) => [
-          project.entityId,
-          project.basicInfo.name,
-        ]),
-      ),
-    },
+    await loadProjectShares(scope.slice('project:'.length)).catch(() => []),
   );
 };
 
-const vFolderInvitationsAtom = atomWithDefault<
-  InvitationItem[] | Promise<InvitationItem[]>
->(async () => {
-  // The Relay environment signs requests with the client, so wait for its login.
-  await backendaiClientPromise;
-  return loadInvitations();
-});
+const vFolderInvitationsAtomFamily = atomFamily((scope: InvitationScope) =>
+  atomWithDefault<InvitationItem[] | Promise<InvitationItem[]>>(async () => {
+    // The Relay environment signs requests with the client, so wait for its login.
+    await backendaiClientPromise;
+    return loadInvitations(scope);
+  }),
+);
 
-export const useVFolderInvitations = () => {
+/**
+ * The pending folder invitations of the page's project: the caller's own on
+ * their personal project (an accepted share lands there), that project's on
+ * any other, none without a project.
+ */
+export const useVFolderInvitations = (
+  project: Pick<ProjectContext, 'id'> | null,
+) => {
   'use memo';
-  const [vFolderInvitations, setInvitations] = useAtom(vFolderInvitationsAtom);
+  const isPersonalProject = useIsPersonalProject(project?.id);
+  const scope: InvitationScope = !project
+    ? 'none'
+    : isPersonalProject
+      ? 'personal'
+      : `project:${project.id}`;
+  const [vFolderInvitations, setInvitations] = useAtom(
+    vFolderInvitationsAtomFamily(scope),
+  );
 
   const updateInvitations = async () => {
-    setInvitations(await loadInvitations());
+    setInvitations(await loadInvitations(scope));
   };
 
   const acceptShare =

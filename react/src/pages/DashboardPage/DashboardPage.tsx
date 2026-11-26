@@ -36,7 +36,7 @@ const DashboardPage: React.FC = () => {
       <StartFromURLDeepLinkOpener />
       <ErrorBoundaryWithNullFallback>
         <Suspense fallback={null}>
-          <FolderInvitationNotifier />
+          <FolderInvitationNotifier project={project} />
         </Suspense>
       </ErrorBoundaryWithNullFallback>
     </DashboardRefreshProvider>

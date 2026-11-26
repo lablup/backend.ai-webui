@@ -140,7 +140,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
   const isPersonalProject = useIsPersonalProject(currentProject.id);
   const [currentUser] = useCurrentUserInfo();
   const loginConfig = useEffectiveLoginConfig();
-  const [invitations] = useVFolderInvitations();
+  const [invitations] = useVFolderInvitations(projectContext);
   const [, setInvitationOpen] = useQueryState(
     'invitation',
     parseAsString.withOptions({ history: 'replace' }),
