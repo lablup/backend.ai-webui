@@ -23,7 +23,6 @@ import {
   notDeletedVFolderFilter,
   useBAILogger,
   useToggle,
-  BAIUnmountAfterClose,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { PlusIcon } from 'lucide-react';
@@ -347,23 +346,23 @@ const ImportArtifactRevisionToFolderModal = ({
           </BAIFlex>
         </Form>
       </BAIModal>
-      <BAIUnmountAfterClose>
-        <FolderCreateModal
-          open={isOpenCreateModal}
-          project={toProjectContext(destinationProject ?? {})}
-          initialValidate={true}
-          folderType="model_project"
-          onRequestClose={(result) => {
-            toggleIsOpenCreateModal();
-            if (result) {
-              formRef.current?.setFieldsValue({
-                vfolderId: result.entityId,
-              });
-              vfolderSelectRef.current?.refetch();
-            }
-          }}
-        />
-      </BAIUnmountAfterClose>
+      <FolderCreateModal
+        open={isOpenCreateModal}
+        // ADR-0001: the new folder lands in the model-store project the user
+        // picked above — the same project the folder list is filtered by.
+        project={toProjectContext(destinationProject ?? {})}
+        initialValidate={true}
+        folderType="model_project"
+        onRequestClose={(result) => {
+          toggleIsOpenCreateModal();
+          if (result) {
+            formRef.current?.setFieldsValue({
+              vfolderId: result.entityId,
+            });
+            vfolderSelectRef.current?.refetch();
+          }
+        }}
+      />
     </>
   );
 };

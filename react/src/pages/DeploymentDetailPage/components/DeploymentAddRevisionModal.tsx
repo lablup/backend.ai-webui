@@ -118,7 +118,6 @@ import {
   useVFolderMountConfigFormRule,
   type VFolderFilter,
   type VFolderMountConfigValue,
-  BAIUnmountAfterClose,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { FolderOpenIcon, Info, PlusIcon, RotateCw } from 'lucide-react';
@@ -2742,33 +2741,36 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
           />
         </Suspense>
       ) : null}
-      <BAIUnmountAfterClose>
-        <FolderCreateModal
-          open={isModelFolderCreateModalOpen && !!deploymentProject}
-          project={deploymentProject}
-          initialValues={{ usage_mode: 'model' }}
-          onRequestClose={(result) => {
-            setIsModelFolderCreateModalOpen(false);
-            if (result?.entityId) {
-              const newFolderGlobalId = toGlobalId(
-                'VirtualFolderNode',
-                result.entityId,
-              );
-              const activeForm =
-                effectiveMode === 'preset' ? presetForm : customForm;
-              const activeRef =
-                effectiveMode === 'preset'
-                  ? presetVFolderSelectRef
-                  : customVFolderSelectRef;
-              activeForm.setFieldValue('modelFolderId', newFolderGlobalId);
-              customForm.setFieldValue('modelSubpath', undefined);
-              startTransition(() => {
-                activeRef.current?.refetch();
-              });
-            }
-          }}
-        />
-      </BAIUnmountAfterClose>
+      <FolderCreateModal
+        // Never reach the `project={null}` tier from here: `onRequestClose`
+        // would write back a folder this revision cannot mount.
+        open={isModelFolderCreateModalOpen && !!deploymentProject}
+        project={deploymentProject}
+        initialValues={{ usage_mode: 'model' }}
+        onRequestClose={(result) => {
+          setIsModelFolderCreateModalOpen(false);
+          if (result?.entityId) {
+            // The form holds the `VirtualFolderNode` global ID.
+            const newFolderGlobalId = toGlobalId(
+              'VirtualFolderNode',
+              result.entityId,
+            );
+            const activeForm =
+              effectiveMode === 'preset' ? presetForm : customForm;
+            const activeRef =
+              effectiveMode === 'preset'
+                ? presetVFolderSelectRef
+                : customVFolderSelectRef;
+            activeForm.setFieldValue('modelFolderId', newFolderGlobalId);
+            // Programmatic setFieldValue skips the select's onChange, so drop
+            // any subpath picked from the previously selected folder here.
+            customForm.setFieldValue('modelSubpath', undefined);
+            startTransition(() => {
+              activeRef.current?.refetch();
+            });
+          }
+        }}
+      />
     </BAIModal>
   );
 };

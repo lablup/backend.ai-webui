@@ -16,7 +16,7 @@ export const docs = {
   ],
   usage: {
     description:
-      'The application modal, an adapter over ui-common Modal (a portalled dialog surface) that keeps the antd-shaped prop vocabulary and adds the controller behaviour the bare surface does not provide: a header with title, subtitle and close button, a generated OK and Cancel footer with loading and danger states, backdrop and Escape dismissal policy, a skeleton loading state, an afterClose lifecycle, optional window controls (minimize, maximize, fullscreen) and a close guard that can veto a dismissal. Use it for any modal surface in the app; reaching for ui-common Modal directly means rebuilding the header, footer and dismissal wiring by hand. Children mount on the first open and stay mounted while closed; wrap the component that renders the modal in BAIUnmountAfterClose to drop it and its state, queries included, on close (unmountOnClose is not accepted: it would drop only the children), and the built-in labels are translated through useBAIi18n.',
+      'The application modal, an adapter over ui-common Modal (a portalled dialog surface) that keeps the antd-shaped prop vocabulary and adds the controller behaviour the bare surface does not provide: a header with title, subtitle and close button, a generated OK and Cancel footer with loading and danger states, backdrop and Escape dismissal policy, a skeleton loading state, an afterClose lifecycle, optional window controls (minimize, maximize, fullscreen) and a close guard that can veto a dismissal. Use it for any modal surface in the app; reaching for ui-common Modal directly means rebuilding the header, footer and dismissal wiring by hand. Children mount on the first open and stay mounted while closed; wrap the component that renders the modal in BAIUnmountAfterClose to drop it and its state on close, or pass unmountOnClose only when that component must stay mounted and dropping the children is enough, and the built-in labels are translated through useBAIi18n.',
     bestPractices: [
       {
         guidance: true,
@@ -272,6 +272,12 @@ export const docs = {
       type: 'number',
       description:
         'Forwarded to ui-common Modal as a request inside the modal band: a modal opened later still stacks above, and a value outside the band is ignored.',
+    },
+    {
+      name: 'unmountOnClose',
+      type: 'boolean',
+      description:
+        'Forwarded to ui-common Modal: unmounts only the content (children) when the modal closes; the component that renders BAIModal stays mounted with its state and queries. Use it only when the modal itself needs to stay mounted. To unmount the modal component too, wrap it in BAIUnmountAfterClose instead.',
     },
     {
       name: 'ref',

@@ -18,7 +18,6 @@ import {
   type BAIVFolderMountConfigInputRef,
   useSuspendedAutoMountedVFolders,
   useVFolderMountConfigFormRule,
-  BAIUnmountAfterClose,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { useRef, useState } from 'react';
@@ -65,32 +64,30 @@ const SessionLauncherStorageStep: React.FC<{
           />
         </Form.Item>
       </Form.Item>
-      <BAIUnmountAfterClose>
-        <FolderCreateModal
-          open={isCreateModalOpen}
-          project={project}
-          allowAutoMount={isPersonalProject}
-          onRequestClose={(response) => {
-            setIsCreateModalOpen(false);
-            if (!response) return;
-            mountConfigInputRef.current?.refetch();
-            if (isAutoMountFolderName(response.metadata.name)) return;
-            const vfolderId = response.entityId;
-            const mounts = form.getFieldValue('vfolderMounts') ?? [];
-            if (_.some(mounts, (mount) => mount.vfolderId === vfolderId))
-              return;
-            form.setFieldValue('vfolderMounts', [
-              ...mounts,
-              {
-                vfolderId,
-                name: response.metadata.name,
-                mountDestination: '',
-                subpath: '',
-              },
-            ]);
-          }}
-        />
-      </BAIUnmountAfterClose>
+      <FolderCreateModal
+        open={isCreateModalOpen}
+        project={project}
+        allowAutoMount={isPersonalProject}
+        onRequestClose={(response) => {
+          setIsCreateModalOpen(false);
+          if (!response) return;
+          mountConfigInputRef.current?.refetch();
+          // A dotfile folder is auto-mounted by the session, never selected.
+          if (isAutoMountFolderName(response.metadata.name)) return;
+          const vfolderId = response.entityId;
+          const mounts = form.getFieldValue('vfolderMounts') ?? [];
+          if (_.some(mounts, (mount) => mount.vfolderId === vfolderId)) return;
+          form.setFieldValue('vfolderMounts', [
+            ...mounts,
+            {
+              vfolderId,
+              name: response.metadata.name,
+              mountDestination: '',
+              subpath: '',
+            },
+          ]);
+        }}
+      />
     </>
   );
 };

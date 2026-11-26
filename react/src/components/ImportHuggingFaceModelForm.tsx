@@ -32,7 +32,6 @@ import {
   useFetchKey,
   useErrorMessageResolver,
   BAITextInput,
-  BAIUnmountAfterClose,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import {
@@ -510,33 +509,31 @@ const ImportHuggingFaceModelForm: React.FC<ImportHuggingFaceModelFormProps> = ({
           </BAIButton>
         </Form.Item>
       </Form>
-      <BAIUnmountAfterClose>
-        <FolderCreateModal
-          open={isFolderCreateModalOpen}
-          project={toProjectContext(currentProject)}
-          initialValues={{ usage_mode: 'model' }}
-          onRequestClose={(result) => {
-            setIsFolderCreateModalOpen(false);
-            if (result?.accessControl?.permission === 'READ_ONLY') {
-              app.message.warning(t('import.CreatedFolderIsReadOnly'));
-              return;
+      <FolderCreateModal
+        open={isFolderCreateModalOpen}
+        project={toProjectContext(currentProject)}
+        initialValues={{ usage_mode: 'model' }}
+        onRequestClose={(result) => {
+          setIsFolderCreateModalOpen(false);
+          if (result?.accessControl?.permission === 'READ_ONLY') {
+            app.message.warning(t('import.CreatedFolderIsReadOnly'));
+            return;
+          }
+          if (result?.entityId) {
+            const newFolderId = result.entityId;
+            if (result.metadata?.name) {
+              setFolderNameMap((prev) => ({
+                ...prev,
+                [newFolderId]: result.metadata.name,
+              }));
             }
-            if (result?.entityId) {
-              const newFolderId = result.entityId;
-              if (result.metadata?.name) {
-                setFolderNameMap((prev) => ({
-                  ...prev,
-                  [newFolderId]: result.metadata.name,
-                }));
-              }
-              formRef.current?.setFieldValue('vfolderId', newFolderId);
-              startTransition(() => {
-                vfolderSelectRef.current?.refetch();
-              });
-            }
-          }}
-        />
-      </BAIUnmountAfterClose>
+            formRef.current?.setFieldValue('vfolderId', newFolderId);
+            startTransition(() => {
+              vfolderSelectRef.current?.refetch();
+            });
+          }
+        }}
+      />
     </>
   );
 };

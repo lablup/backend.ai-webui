@@ -363,6 +363,7 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
         }}
         title={t('data.CreateANewStorageFolder')}
         maskClosable={false}
+        unmountOnClose
         footer={
           <HStack justify="end" gap={2}>
             <Button
@@ -396,8 +397,10 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
         width={MODAL_WIDTH}
         {...modalProps}
         afterOpenChange={(nowOpen) => {
-          modalProps.afterOpenChange?.(nowOpen);
           if (!nowOpen) return;
+          // The modal is destroyed on close, which clears the form; keep the
+          // tracked in-modal project selection in sync with it.
+          setSelectedProject(null);
           if (initialValidate) {
             formRef.current?.validateFields();
           }
@@ -649,6 +652,7 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
         title={t('data.CreateANewStorageFolder')}
         okText={t('data.Create')}
         confirmLoading={isConfirmPending}
+        unmountOnClose
         onCancel={() => {
           setIsSharedConfirmOpen(false);
           setDontAskAgain(false);
