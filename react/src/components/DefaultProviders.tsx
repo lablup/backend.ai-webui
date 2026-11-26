@@ -3,9 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { RelayEnvironment } from '../RelayEnvironment';
-// antd `App.useApp()` drop-in backed by Astryx (to-astryx ticket 04). It used
-// to sit INSIDE antd's own <App> so a partially-migrated tree kept working;
-// with the final switch it is the ONLY message/modal/notification host left.
+// The app's only message/modal/notification host (`App.useApp()`).
 import { BAIAppProvider } from '../app-shim';
 import AstryxBrandTheme from '../astryx-theme/AstryxBrandTheme';
 import { FormConfigProvider } from '../form-engine';
@@ -22,6 +20,7 @@ import {
   useWebUINavigate,
 } from '../hooks';
 import { useDeviceMetaData, useImageMetaData } from '../hooks/backendai';
+import { useRouteScope } from '../hooks/useRouteScope';
 import { useLoginConfig } from '../hooks/useWebUIConfig';
 import '../index.css';
 import I18nKeyMarkers, { appendI18nKeyMarker } from './I18nKeyMarkers';
@@ -265,13 +264,19 @@ export const RoutingEventHandler = () => {
   return null;
 };
 
-export const DefaultProvidersForReactRoot: React.FC<{
+/**
+ * The app providers. Mounted once, by the root layout route in `routes.tsx`
+ * (ADR 0043), so every route renders under them.
+ */
+export const DefaultProviders: React.FC<{
   children?: React.ReactNode;
 }> = ({ children }) => {
   const [lang] = useCurrentLanguage();
   const { t } = useTranslation();
   const { token } = useTheme();
   const enableWebMCP = useLoginConfig()?.enableWebMCP ?? false;
+  // The system admin pages take the admin accent for the whole app (ADR 0043).
+  const themeRole = useRouteScope() === 'admin' ? 'admin' : 'brand';
 
   // Non-`en` locales are lazy chunks; `loadBuiLocale` caches one promise per
   // language, so `use` suspends on the same object across renders.
@@ -282,48 +287,19 @@ export const DefaultProvidersForReactRoot: React.FC<{
       {RelayEnvironment && (
         <RelayEnvironmentProvider environment={RelayEnvironment}>
           <QueryClientProvider client={queryClient}>
-            {/* to-astryx ticket 24 — the app-wide Astryx `<Theme>`, and
-                since the final switch the app's ONLY theme provider.
-
-                It was introduced wrapping an antd `ConfigProvider` because
-                the two libraries' dark switches were independent (MAPPING §5:
-                antd's `algorithm` vs Astryx's `data-astryx-theme` /
-                `data-theme`), so both had to be driven from one source of
-                truth or converted regions painted light inside a dark page.
-                The antd half is now gone — `ConfigProvider`'s `theme`,
-                `algorithm`, `csp`, `modal`, `drawer` and `tag` props all
-                configured antd components that no longer exist. `mode` still
-                comes from `useThemeMode`, which remains the source of truth
-                and is what `<Theme>` syncs onto `<html>`. */}
-            <AstryxBrandTheme>
-              {/* Now a pure locale + client provider: Astryx's
-                    `InternationalizationProvider`, BUI's i18next instance,
-                    dayjs's locale and the Backend.AI client context. Its antd
-                    `ConfigProvider` leg — and with it the `theme`, `csp`,
-                    `modal`, `drawer` and `tag` props this call site used to
-                    pass through — went away with the final switch. */}
+            {/* The app's only app-level `<Theme>`. `mode` comes from
+                `useThemeMode`, which `<Theme>` syncs onto `<html>`. */}
+            <AstryxBrandTheme role={themeRole}>
+              {/* Locale + client: Astryx's `InternationalizationProvider`, BUI's
+                    i18next instance, dayjs's locale, the Backend.AI client. */}
               <BAIConfigProvider
                 locale={currentLocale}
                 clientPromise={backendaiClientPromise}
                 anonymousClientFactory={createAnonymousBackendaiClient}
               >
-                {/* to-astryx tickets 34 + 35 — form configuration lives on
-                      the self-hosted engine's own provider, which is now the
-                      only form runtime in the tree.
-
-                      - `validateMessages` is NOT passed. FormConfigProvider
-                        defaults it to BUI's own localized table, read from
-                        `form.validateMessages` in the BUI locale catalogs via
-                        BUI's i18next instance — the same strings antd shipped
-                        (ported, MIT), now with no antd locale bundle in the
-                        path. It re-resolves on language change like the antd
-                        `locale` prop used to.
-                      - `requiredMark` as a FUNCTION suppresses the asterisk
-                        entirely (antd's rule, reproduced in the engine) and
-                        appends "(Optional)" to non-required labels instead.
-                        That inversion is deliberate product behaviour, not a
-                        default — dropping it would put an asterisk on every
-                        required field across the app. */}
+                {/* `validateMessages` is left to the provider's localized default.
+                      `requiredMark` as a function drops the asterisk and marks
+                      non-required labels "(Optional)": deliberate product behaviour. */}
                 <FormConfigProvider
                   requiredMark={(label, { required }) => (
                     <>
@@ -339,15 +315,8 @@ export const DefaultProvidersForReactRoot: React.FC<{
                     </>
                   )}
                 >
-                  {/*
-                   * No <I18nextProvider> wrap needed here. BUI components
-                   * resolve their translations via `useBAIi18n()` which calls
-                   * `useTranslation(undefined, { i18n: buiI18n })` — explicit
-                   * instance binding bypasses React Context entirely, so the
-                   * host's i18n Context flows through to host components
-                   * unchanged. See FR-2986 / packages/backend.ai-ui/src/hooks/
-                   * useBAIi18n.ts.
-                   */}
+                  {/* No <I18nextProvider>: BUI binds its own i18next instance
+                        through `useBAIi18n()` (FR-2986). */}
                   <BAIAppProvider message={messageConfig} toast={toastConfig}>
                     <BAIMetaDataProviderWrapper>
                       {/* Single app-wide notification renderer. Lives outside
@@ -357,32 +326,11 @@ export const DefaultProvidersForReactRoot: React.FC<{
                       {process.env.NODE_ENV === 'development' && (
                         <I18nKeyMarkers />
                       )}
-                      {/*
-                       * to-astryx ticket 33 removed the emotion plumbing that
-                       * used to wrap this Suspense: an @emotion/react
-                       * <CacheProvider> (nonce for `createGlobalStyle`) inside
-                       * antd-style's <StyleProvider nonce> (nonce for
-                       * `createStyles`). With the last antd-style call site
-                       * gone, no style engine injects <style> at runtime on
-                       * our behalf — the replacement rules ship as bundled
-                       * same-origin stylesheets, which `style-src 'self'`
-                       * already covers.
-                       *
-                       * The final switch closed the last gap in that story:
-                       * antd's cssinjs — the one runtime style injector left,
-                       * fed the nonce via `<ConfigProvider csp>` — is gone
-                       * too, so NOTHING injects <style> at runtime any more
-                       * and `globalThis.baiNonce` has no remaining consumer
-                       * in the React tree.
-                       */}
                       <Suspense>
-                        {/* <BrowserRouter> */}
-                        {/* <RoutingEventHandler /> */}
                         {/* WebMCP tool gate, ADR 0025. */}
                         <BAIWebMCPProvider enabled={enableWebMCP}>
                           {children}
                         </BAIWebMCPProvider>
-                        {/* </BrowserRouter> */}
                       </Suspense>
                     </BAIMetaDataProviderWrapper>
                   </BAIAppProvider>

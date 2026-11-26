@@ -12,7 +12,7 @@ import React, { useEffect, useEffectEvent } from 'react';
 /**
  * Single, always-mounted notification host for the whole app.
  *
- * Mounted once inside antd's `<App>` in `DefaultProvidersForReactRoot`, so it
+ * Mounted once in `DefaultProviders`, so it
  * is alive on every route (login screen, interactive-login, edu-applauncher,
  * authenticated main layout, ...) regardless of authentication state. It is
  * the ONLY place that subscribes to the `add-bai-notification` DOM event, and
