@@ -1,7 +1,0 @@
-import{n as e}from"./rolldown-runtime-sJBDdmOt.js";import{n as t,t as n}from"./compact-C9OPbfhP.js";import{n as r,t as i}from"./map-IIuwj5IU.js";import{n as a,t as o}from"./sortBy-GrT22zdd.js";import{t as s}from"./jsx-runtime-MKhVqBIO.js";import{t as c}from"./react-relay-CDKBZFrB.js";import{n as l,t as u}from"./BAISelect-COE914ai.js";var d;function f(){return(f=e((()=>{d=(function(){var e=[{alias:null,args:null,concreteType:`ProjectResourcePolicy`,kind:`LinkedField`,name:`project_resource_policies`,plural:!0,selections:[{alias:null,args:null,kind:`ScalarField`,name:`id`,storageKey:null},{alias:null,args:null,kind:`ScalarField`,name:`name`,storageKey:null}],storageKey:null}];return{fragment:{argumentDefinitions:[],kind:`Fragment`,metadata:null,name:`BAIProjectResourcePolicySelectQuery`,selections:e,type:`Query`,abstractKey:null},kind:`Request`,operation:{argumentDefinitions:[],kind:`Operation`,name:`BAIProjectResourcePolicySelectQuery`,selections:e},params:{cacheID:`39cc27464533ff3c069e6a09e9c9f6d7`,id:null,metadata:{},name:`BAIProjectResourcePolicySelectQuery`,operationKind:`query`,text:`query BAIProjectResourcePolicySelectQuery {
-  project_resource_policies {
-    id
-    name
-  }
-}
-`}}})(),d.hash=`14c444e2cf01f37216116304c1d4efa1`})))()}var p,m,h;function g(){return(g=e((()=>{f(),l(),i(),t(),o(),p=c(),m=s(),h=({...e})=>{let{project_resource_policies:t}=(0,p.useLazyLoadQuery)(d,{},{});return(0,m.jsx)(u,{options:r(n(r(a(t,`name`),`name`)),e=>({label:e,value:e})),...e})}})))()}export{g as n,h as t};
