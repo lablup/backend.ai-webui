@@ -1309,7 +1309,7 @@
       "NoValidEmails": "Non sono state inserite email valide",
       "Pending": "In attesa",
       "PendingInvitations": "Inviti in sospeso",
-      "PendingInvitationsNotice": "Hai inviti a cartelle da esaminare. Fai clic per controllarli.",
+      "PendingInvitationsNotice": "Hai inviti a cartelle da esaminare.",
       "Shared": "Condivisione riuscita della cartella del gruppo",
       "SharingError": "Condivisione non riuscita. L'utente potrebbe essere già condiviso o non appartenere al progetto appropriato.",
       "SharingStopped": "Condivisione interrotta",

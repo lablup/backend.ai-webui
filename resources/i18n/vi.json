@@ -1309,7 +1309,7 @@
       "NoValidEmails": "Không có email hợp lệ nào được nhập",
       "Pending": "Đang chờ",
       "PendingInvitations": "Lời mời đang chờ",
-      "PendingInvitationsNotice": "Bạn có lời mời thư mục cần xem xét. Nhấp để kiểm tra.",
+      "PendingInvitationsNotice": "Bạn có lời mời thư mục cần xem xét.",
       "Shared": "Đã chia sẻ thành công thư mục nhóm",
       "SharingError": "Chia sẻ không thành công. Người dùng có thể đã được chia sẻ hoặc không thuộc dự án thích hợp.",
       "SharingStopped": "Đã dừng chia sẻ",
