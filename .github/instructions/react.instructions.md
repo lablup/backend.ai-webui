@@ -92,39 +92,52 @@ inherited call sites needed no edit when their internals were rebuilt on Astryx.
   comments follow `.claude/rules/comment-density.md`: only what the code cannot say, ≤2
   lines by default, with the reasoning in the commit body and the PR instead.
 
-## Forms — let the `Form` own its store
+## Forms — let the `Form` own its store (ADR 0040)
 
-Reach a form through a **ref** by default. Call `Form.useForm()` only when the component
-that declares the form reads the instance **while it renders**. Decide this first when you
-write a form, and again when you change one.
+Reach a form through a **ref** by default. Keep `Form.useForm()` only for the cases in rule 2.
+Decide this first when you write a form, and again when you change one.
 
 Why: whoever creates the form store owns it. With no `form` prop, `<Form>` creates the store
 in its own state, so unmounting the `<Form>` drops it and the next mount starts from
-`initialValues` again. With `form={form}` from `Form.useForm()`, the store lives in the
-component that called the hook and survives the `<Form>` unmounting. Then a modal or drawer
-that remounts its content (`BAIUnmountAfterClose`) shows the previous input again, and new
-`initialValues` are not applied. Most of our forms only need the instance in event handlers,
-and a ref covers that.
+`initialValues`. With `form={form}` from `Form.useForm()`, the store lives in the component
+that called the hook. When that component stays mounted while the `<Form>` below it remounts
+(a modal body, a drawer, a wizard step), the store keeps the previous input, and every key it
+already holds ignores the new `initialValues`. A hook inside the content that
+`BAIUnmountAfterClose` unmounts is dropped with it; the stale case is a hook above that
+boundary.
 
-1. **Default: a ref.** Declare `const formRef = useRef<FormInstance<Values>>(null)` and render
-   `<Form ref={formRef}>`. In handlers and effects call `formRef.current?.validateFields()`,
-   `getFieldsValue()`, `setFieldValue()` or `resetFields()`. `FormInstance` comes from
-   `../form-engine`, like `Form` (example: `FolderCreateModal.tsx`).
-2. **`Form.useForm()` only for a render-time read in the declaring component.** That means
-   `Form.useWatch(name, form)` there, or passing the instance to a child that reads it while
-   rendering (example: `VFolderDeployModal.tsx`, where the watched resource group drives a
-   query outside the form).
-3. **Before you reach for rule 2, try to keep the instance out of the parent:**
-   - a `Form.Item` render function with `shouldUpdate` / `dependencies`
-     (`{({ getFieldValue }) => …}`);
-   - a child rendered inside the `<Form>` that calls `Form.useWatch(name)` with no form
-     argument. It reads the form from context.
-4. **A kept `Form.useForm()` owns its lifetime.** If its `<Form>` unmounts while the hook's
-   component stays mounted (a modal, a drawer, a step), you have two options:
-   - reset the form where it opens;
-   - move the hook into the child that unmounts, together with its `<Form>`.
+1. **Default: a ref.** `const formRef = useRef<FormInstance<Values>>(null)` and
+   `<Form ref={formRef}>`; import `FormInstance` from the same `form-engine` specifier as
+   `Form`, at the file's `../` depth (example: `FolderCreateModal.tsx`).
+   - Use the ref in handlers that run while the `<Form>` is mounted (submit, `onOk`, a field's
+     `onChange`). It is `null` while the `<Form>` is not mounted, so `formRef.current?.…` then
+     does nothing, and `await formRef.current?.validateFields()` resolves `undefined`.
+   - Data that arrives later goes in through `initialValues`, or through `setFieldsValue` from
+     a component rendered inside the `<Form>` (`Form.useFormInstance()`), not from a parent
+     effect that can run before the `<Form>` mounts.
+2. **Keep `Form.useForm()` only when the instance must sit outside or outlive the `<Form>`:**
+   - the declaring component reads it during render, outside the `<Form>`'s context:
+     `Form.useWatch(name, form)` there (example: `VFolderDeployModal.tsx`, where the watched
+     resource group sets the Deploy button's `disabled`);
+   - a child rendered **outside** the `<Form>` reads it while rendering;
+   - the input must survive the `<Form>` unmounting for a moment: a `BAIModal` whose `loading`
+     swaps the body for `BAISkeleton`, a Suspense boundary that re-suspends, wizard steps
+     rendered one at a time.
+3. **A read inside the `<Form>` needs no parent instance:**
+   - a `Form.Item` with a `shouldUpdate` **comparator**,
+     `shouldUpdate={(prev, cur) => prev.type !== cur.type}`. A bare `shouldUpdate` re-renders on
+     every store change. `dependencies` alone does not replace `Form.useWatch`: an unnamed item
+     with only `dependencies` re-renders on user input but not on `setFieldValue` /
+     `setFieldsValue`;
+   - a child rendered inside the `<Form>` that calls `Form.useWatch(name)` (no form argument)
+     or `Form.useFormInstance()`. Both read the form from context, so do not pass a `form` prop
+     into such a child.
+4. **A kept `Form.useForm()` owns its lifetime.** If its `<Form>` remounts and must start fresh,
+   set `clearOnDestroy` on the `<Form>`, or move the hook into the child that unmounts together
+   with its `<Form>`. Do not call `form.resetFields()` before the `<Form>` mounts: it restores
+   the previous mount's `initialValues`.
 5. Do not convert existing `Form.useForm()` call sites in a sweep. Apply this rule to the form
-   you are writing or already changing.
+   you are writing or already changing. It applies to `packages/backend.ai-ui/src` too.
 
 ```tsx
 // ❌ The parent owns the store, though nothing reads it during render
@@ -135,7 +148,7 @@ const [form] = Form.useForm<Values>();
 const formRef = useRef<FormInstance<Values>>(null);
 <Form ref={formRef} initialValues={initialValues}>
   <Form.Item name="type">…</Form.Item>
-  <Form.Item noStyle dependencies={['type']}>
+  <Form.Item noStyle shouldUpdate={(prev, cur) => prev.type !== cur.type}>
     {({ getFieldValue }) => (getFieldValue('type') === 'custom' ? <CustomFields /> : null)}
   </Form.Item>
 </Form>;
@@ -275,8 +288,9 @@ templates — copy the nearest one and adapt.
       types, colocated fragments, single pagination mode.
 - [ ] `BAIButton action` for async work; `useFetchKey` where refetch is needed;
       `BAIUnmountAfterClose` around form-bearing modals/drawers.
-- [ ] Forms: `<Form ref={formRef}>` by default. Every new `Form.useForm()` has a render-time
-      read of the instance (`Form.useWatch(…, form)`) in the same component.
+- [ ] Forms (ADR 0040): `<Form ref={formRef}>` by default. Every new `Form.useForm()` is one
+      of the Forms section's rule 2 cases (render-time read outside the `<Form>`, or input that
+      must survive a brief unmount).
 - [ ] i18n: correct hook for the package (`useTranslation` vs `useBAIi18n`), no hard-coded
       user-facing strings.
 - [ ] `useBAILogger` instead of `console.*`; no empty catch; pre-defined error boundaries.

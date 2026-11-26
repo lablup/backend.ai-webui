@@ -99,7 +99,7 @@ read `package.json` / `pnpm-workspace.yaml` / `ls` rather than expecting a list 
 - Fragment prop naming: `queryRef` for Query types, `{typeName}Frgmt` for others.
 - Use `useBAILogger` instead of `console.log`. Use pre-defined error boundaries (`BAIErrorBoundary`, `ErrorBoundaryWithNullFallback`).
 - Use Jotai for global state, Relay for GraphQL state.
-- Forms: reach the instance through `<Form ref={formRef}>` so the `Form` owns its store and resets on unmount. Use `Form.useForm()` only when the declaring component reads the instance during render (`Form.useWatch(name, form)`). See the Forms section of `react.instructions.md`.
+- Forms (ADR 0040, `react/src` and BUI): reach the instance through `<Form ref={formRef}>` so the `Form` owns its store and starts from `initialValues` on remount. Keep `Form.useForm()` only when the instance is read during render outside the `<Form>` (`Form.useWatch(name, form)`) or the input must survive a brief unmount. Inside the `<Form>`, use a `shouldUpdate` comparator, `Form.useWatch(name)` or `Form.useFormInstance()`. Details: the Forms section of `react.instructions.md`.
 - Comment only what the code cannot say — ≤2 lines by default; the reasoning behind a change goes in the commit body and the PR, not the source file (`.claude/rules/comment-density.md`). The long justification blocks already in the tree are migration-era history: trim a file's blocks when you edit it, don't sweep.
 
 ### Architecture Decision Records (detail: `.claude/rules/adr.md`, auto-loaded)
