@@ -92,6 +92,55 @@ inherited call sites needed no edit when their internals were rebuilt on Astryx.
   comments follow `.claude/rules/comment-density.md`: only what the code cannot say, ≤2
   lines by default, with the reasoning in the commit body and the PR instead.
 
+## Forms — let the `Form` own its store
+
+Reach a form through a **ref** by default. Call `Form.useForm()` only when the component
+that declares the form reads the instance **while it renders**. Decide this first when you
+write a form, and again when you change one.
+
+Why: whoever creates the form store owns it. With no `form` prop, `<Form>` creates the store
+in its own state, so unmounting the `<Form>` drops it and the next mount starts from
+`initialValues` again. With `form={form}` from `Form.useForm()`, the store lives in the
+component that called the hook and survives the `<Form>` unmounting. Then a modal or drawer
+that remounts its content (`BAIUnmountAfterClose`) shows the previous input again, and new
+`initialValues` are not applied. Most of our forms only need the instance in event handlers,
+and a ref covers that.
+
+1. **Default: a ref.** Declare `const formRef = useRef<FormInstance<Values>>(null)` and render
+   `<Form ref={formRef}>`. In handlers and effects call `formRef.current?.validateFields()`,
+   `getFieldsValue()`, `setFieldValue()` or `resetFields()`. `FormInstance` comes from
+   `../form-engine`, like `Form` (example: `FolderCreateModal.tsx`).
+2. **`Form.useForm()` only for a render-time read in the declaring component.** That means
+   `Form.useWatch(name, form)` there, or passing the instance to a child that reads it while
+   rendering (example: `VFolderDeployModal.tsx`, where the watched resource group drives a
+   query outside the form).
+3. **Before you reach for rule 2, try to keep the instance out of the parent:**
+   - a `Form.Item` render function with `shouldUpdate` / `dependencies`
+     (`{({ getFieldValue }) => …}`);
+   - a child rendered inside the `<Form>` that calls `Form.useWatch(name)` with no form
+     argument. It reads the form from context.
+4. **A kept `Form.useForm()` owns its lifetime.** If its `<Form>` unmounts while the hook's
+   component stays mounted (a modal, a drawer, a step), you have two options:
+   - reset the form where it opens;
+   - move the hook into the child that unmounts, together with its `<Form>`.
+5. Do not convert existing `Form.useForm()` call sites in a sweep. Apply this rule to the form
+   you are writing or already changing.
+
+```tsx
+// ❌ The parent owns the store, though nothing reads it during render
+const [form] = Form.useForm<Values>();
+<Form form={form} initialValues={initialValues}>…</Form>;
+
+// ✅ The Form owns the store; handlers reach it through the ref
+const formRef = useRef<FormInstance<Values>>(null);
+<Form ref={formRef} initialValues={initialValues}>
+  <Form.Item name="type">…</Form.Item>
+  <Form.Item noStyle dependencies={['type']}>
+    {({ getFieldValue }) => (getFieldValue('type') === 'custom' ? <CustomFields /> : null)}
+  </Form.Item>
+</Form>;
+```
+
 ## Relay
 
 - **Architecture**: split the query orchestrator (`useLazyLoadQuery`, owns fetch policy and
@@ -226,6 +275,8 @@ templates — copy the nearest one and adapt.
       types, colocated fragments, single pagination mode.
 - [ ] `BAIButton action` for async work; `useFetchKey` where refetch is needed;
       `BAIUnmountAfterClose` around form-bearing modals/drawers.
+- [ ] Forms: `<Form ref={formRef}>` by default. Every new `Form.useForm()` has a render-time
+      read of the instance (`Form.useWatch(…, form)`) in the same component.
 - [ ] i18n: correct hook for the package (`useTranslation` vs `useBAIi18n`), no hard-coded
       user-facing strings.
 - [ ] `useBAILogger` instead of `console.*`; no empty catch; pre-defined error boundaries.
