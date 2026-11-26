@@ -1304,6 +1304,7 @@
       "NoMoreInvitation": "Không có lời mời để xem xét.",
       "NoOneWasInvited": "Không ai được mời vì lời mời đã tồn tại",
       "NoOneWasShared": "Không chia sẻ được thư mục nhóm",
+      "NoPermissionToLeaveSharedFolder": "Bạn không có quyền rời khỏi thư mục được chia sẻ này.",
       "NoValidEmails": "Không có email hợp lệ nào được nhập",
       "Pending": "Đang chờ",
       "PendingInvitations": "Lời mời đang chờ",

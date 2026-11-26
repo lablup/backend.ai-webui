@@ -1300,6 +1300,7 @@
       "NoMoreInvitation": "ไม่มีคำเชิญให้ตรวจสอบ",
       "NoOneWasInvited": "ไม่มีใครได้รับเชิญเนื่องจากมีคำเชิญอยู่แล้ว",
       "NoOneWasShared": "ไม่สามารถแชร์โฟลเดอร์กลุ่ม",
+      "NoPermissionToLeaveSharedFolder": "คุณไม่มีสิทธิ์ออกจากโฟลเดอร์ที่แชร์นี้",
       "NoValidEmails": "ไม่มีอีเมลที่ถูกต้องถูกป้อน",
       "Pending": "รอดำเนินการ",
       "PendingInvitations": "คำเชิญที่รอดำเนินการ",

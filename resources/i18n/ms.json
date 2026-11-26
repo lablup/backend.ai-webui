@@ -1304,6 +1304,7 @@
       "NoMoreInvitation": "Tiada jemputan untuk dikaji semula.",
       "NoOneWasInvited": "Tidak ada yang dijemput kerana jemputan sudah ada",
       "NoOneWasShared": "Gagal berkongsi folder kumpulan",
+      "NoPermissionToLeaveSharedFolder": "Anda tidak mempunyai kebenaran untuk meninggalkan folder kongsi ini.",
       "NoValidEmails": "Tidak ada e-mel yang sah dimasukkan",
       "Pending": "Menunggu",
       "PendingInvitations": "Jemputan tertunda",

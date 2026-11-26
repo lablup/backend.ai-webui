@@ -1291,6 +1291,7 @@
       "NoMoreInvitation": "There are no invitations to review.",
       "NoOneWasInvited": "No one invited since invitation already exists",
       "NoOneWasShared": "Failed to share the group folder",
+      "NoPermissionToLeaveSharedFolder": "You do not have permission to leave this shared folder.",
       "NoValidEmails": "No valid emails were entered",
       "Pending": "Pending",
       "PendingInvitations": "Pending invitations",

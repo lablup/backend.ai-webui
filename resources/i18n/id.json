@@ -1304,6 +1304,7 @@
       "NoMoreInvitation": "Tidak ada undangan untuk meninjau.",
       "NoOneWasInvited": "Tidak ada yang diundang karena undangan sudah ada",
       "NoOneWasShared": "Gagal membagikan folder grup",
+      "NoPermissionToLeaveSharedFolder": "Anda tidak memiliki izin untuk keluar dari folder bersama ini.",
       "NoValidEmails": "Tidak ada email valid yang dimasukkan",
       "Pending": "Tertunda",
       "PendingInvitations": "Undangan tertunda",

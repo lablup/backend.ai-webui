@@ -1304,6 +1304,7 @@
       "NoMoreInvitation": "Não há convites para revisão.",
       "NoOneWasInvited": "Ninguém foi convidado porque o convite já existe",
       "NoOneWasShared": "Falha ao compartilhar a pasta do grupo",
+      "NoPermissionToLeaveSharedFolder": "Não tem permissão para sair desta pasta partilhada.",
       "NoValidEmails": "Nenhum e-mail válido foi inserido",
       "Pending": "Pendente",
       "PendingInvitations": "Convites pendentes",

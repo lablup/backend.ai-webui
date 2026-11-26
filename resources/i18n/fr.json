@@ -1304,6 +1304,7 @@
       "NoMoreInvitation": "Il n’y a aucune invitation à réviser.",
       "NoOneWasInvited": "Personne n'a été invité car l'invitation existe déjà",
       "NoOneWasShared": "Échec du partage du dossier de groupe",
+      "NoPermissionToLeaveSharedFolder": "Vous n'avez pas l'autorisation de quitter ce dossier partagé.",
       "NoValidEmails": "Aucun e-mail valide n'a été saisi",
       "Pending": "En attente",
       "PendingInvitations": "Invitations en attente",

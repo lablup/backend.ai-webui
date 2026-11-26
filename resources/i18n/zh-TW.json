@@ -1305,6 +1305,7 @@
       "NoMoreInvitation": "沒有審查邀請。",
       "NoOneWasInvited": "沒有人被邀請，因為邀請已經存在",
       "NoOneWasShared": "無法共享群組文件夾",
+      "NoPermissionToLeaveSharedFolder": "您沒有退出此共用資料夾的權限。",
       "NoValidEmails": "沒有輸入有效的電子郵件",
       "Pending": "待處理",
       "PendingInvitations": "待處理的邀請",

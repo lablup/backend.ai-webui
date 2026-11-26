@@ -1304,6 +1304,7 @@
       "NoMoreInvitation": "Brak zaproszeń do recenzji.",
       "NoOneWasInvited": "Nikt nie został zaproszony, ponieważ zaproszenie już istnieje",
       "NoOneWasShared": "Nie udało się udostępnić folderu grupy",
+      "NoPermissionToLeaveSharedFolder": "Nie masz uprawnień do opuszczenia tego folderu współdzielonego.",
       "NoValidEmails": "Nie wprowadzono poprawnych adresów e-mail",
       "Pending": "Oczekujące",
       "PendingInvitations": "Oczekujące zaproszenia",

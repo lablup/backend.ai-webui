@@ -42,6 +42,7 @@ import {
 } from 'react-relay';
 
 const VFOLDER_ENTITY_TYPE = 'vfolder';
+const ENTITY_SHARE_ENTITY_TYPE = 'entity_share';
 
 type LeavableShare =
   | { shareId: string; isProjectShare: false }
@@ -59,18 +60,23 @@ const requireField = <T,>(value: T | null | undefined, field: string): T => {
 
 /**
  * The accepted share of the folder the caller may leave: their own, else the
- * page project's, when they hold `soft-delete` on `entity_share` there
- * (lablup/backend.ai#17162; `myEntityShares` never lists project shares).
+ * page project's (`myEntityShares` never lists project shares). Leaving takes
+ * `SOFT_DELETE` on `entity_share` in the scope the share is addressed to
+ * (lablup/backend.ai#17162); `null` when the caller holds no such share.
  */
 const findLeavableShare = async (
   environment: Environment,
   folderId: string,
+  userId: string,
   project: ProjectContextOrNull,
 ): Promise<LeavableShare | null> => {
   const mine = await fetchQuery<SharedFolderPermissionInfoModalV2MySharesQuery>(
     environment,
     graphql`
-      query SharedFolderPermissionInfoModalV2MySharesQuery($folderId: UUID!) {
+      query SharedFolderPermissionInfoModalV2MySharesQuery(
+        $folderId: UUID!
+        $userScope: PermissionTarget!
+      ) {
         myEntityShares(
           sides: [RECIPIENT]
           filter: {
@@ -86,15 +92,34 @@ const findLeavableShare = async (
             }
           }
         }
+        myScopePermissions(input: { target: $userScope }) {
+          item {
+            permissions
+          }
+        }
       }
     `,
-    { folderId },
+    {
+      folderId,
+      userScope: {
+        scopeType: 'user',
+        scopeId: userId,
+        entityType: ENTITY_SHARE_ENTITY_TYPE,
+      },
+    },
     { fetchPolicy: 'network-only' },
   ).toPromise();
   const own = requireField(mine?.myEntityShares, 'myEntityShares').edges.find(
     ({ node }) => isFolderShare(node),
   )?.node;
-  if (own) return { shareId: own.entityId, isProjectShare: false };
+  if (own) {
+    const canLeave = _.includes(
+      requireField(mine?.myScopePermissions, 'myScopePermissions').item
+        .permissions,
+      'SOFT_DELETE',
+    );
+    return canLeave ? { shareId: own.entityId, isProjectShare: false } : null;
+  }
   if (!project) return null;
 
   const permissions =
@@ -102,39 +127,34 @@ const findLeavableShare = async (
       environment,
       graphql`
         query SharedFolderPermissionInfoModalV2ProjectLeaversQuery(
-          $targets: [PermissionTarget!]!
+          $projectScope: PermissionTarget!
         ) {
-          myAtomicBulkScopePermissions(input: { targets: $targets }) {
-            items {
-              scopeId
+          myScopePermissions(input: { target: $projectScope }) {
+            item {
               permissions
             }
           }
         }
       `,
       {
-        targets: [
-          {
-            scopeType: 'project',
-            scopeId: project.id,
-            entityType: 'entity_share',
-          },
-        ],
+        projectScope: {
+          scopeType: 'project',
+          scopeId: project.id,
+          entityType: ENTITY_SHARE_ENTITY_TYPE,
+        },
       },
       { fetchPolicy: 'network-only' },
     ).toPromise();
-  // Leaving takes `SOFT_DELETE`, not the `UPDATE` accepting takes, and finding the share takes
-  // `READ`: a role may hold one bit only.
-  const canLeave = _.some(
-    requireField(
-      permissions?.myAtomicBulkScopePermissions,
-      'myAtomicBulkScopePermissions',
-    ).items,
-    (item) =>
-      _.includes(item.permissions, 'SOFT_DELETE') &&
-      _.includes(item.permissions, 'READ'),
-  );
-  if (!canLeave) return null;
+  // Finding the project's share takes `READ` next to the `SOFT_DELETE` leaving takes.
+  const projectBits = requireField(
+    permissions?.myScopePermissions,
+    'myScopePermissions',
+  ).item.permissions;
+  if (
+    !_.includes(projectBits, 'SOFT_DELETE') ||
+    !_.includes(projectBits, 'READ')
+  )
+    return null;
   const shares =
     await fetchQuery<SharedFolderPermissionInfoModalV2ProjectSharesQuery>(
       environment,
@@ -182,7 +202,7 @@ interface SharedFolderPermissionInfoModalV2Props extends Omit<
   /** App-level contract, kept: consumers outside this area use it. */
   open?: boolean;
   vfolderFrgmt: SharedFolderPermissionInfoModalV2Fragment$key | null;
-  /** The page's project (ADR-0001); `null` offers only the caller's own share. */
+  /** The page's project (ADR-0001); `null` lets the caller leave only their own share. */
   project: ProjectContextOrNull;
   onLeaveFolder?: (folderId: string) => void;
   onRequestClose: (success?: boolean) => void;
@@ -246,18 +266,22 @@ const SharedFolderPermissionInfoModalV2: React.FC<
 
   const isUserOwned = vfolder?.accessControl?.ownershipType === 'USER';
   const folderId = vfolder?.entityId;
+  const userId = currentUser.uuid;
   const leavableShare = useTanQuery({
     queryKey: [
       'SharedFolderPermissionInfoModalV2.leavableShare',
       folderId,
+      userId,
       project?.id ?? null,
     ],
-    queryFn: () => findLeavableShare(relayEnvironment, folderId ?? '', project),
-    enabled: !!modalProps.open && !!folderId && isUserOwned,
+    queryFn: () =>
+      findLeavableShare(relayEnvironment, folderId ?? '', userId, project),
+    enabled: !!modalProps.open && !!folderId && !!userId && isUserOwned,
     staleTime: 0,
     gcTime: 0,
   });
   const share = leavableShare.data;
+  const cannotLeave = !leavableShare.isLoading && !share;
 
   const leaveFolder = useTanMutation({
     mutationFn: ({ shareId }: { shareId: string }) =>
@@ -286,14 +310,16 @@ const SharedFolderPermissionInfoModalV2: React.FC<
       tooltip={
         leavableShare.isError
           ? getErrorMessage(leavableShare.error)
-          : t('data.invitation.LeaveSharedFolder')
+          : cannotLeave
+            ? t('data.invitation.NoPermissionToLeaveSharedFolder')
+            : t('data.invitation.LeaveSharedFolder')
       }
       size="sm"
       variant="ghost"
       icon={<LogOutIcon />}
       className="bai-name-action-cell-danger"
       isLoading={leavableShare.isLoading || leaveFolder.isPending}
-      isDisabled={leavableShare.isError}
+      isDisabled={cannotLeave}
       onClick={
         share?.isProjectShare ? () => setIsProjectLeaveOpen(true) : undefined
       }
@@ -364,32 +390,26 @@ const SharedFolderPermissionInfoModalV2: React.FC<
                     return <VFolderPermissionCellV2 vfolderFrgmt={vfolder} />;
                   },
                 },
-                // Hidden only once the lookup found nothing the caller may leave.
-                ...(share || leavableShare.isLoading || leavableShare.isError
-                  ? [
-                      {
-                        key: 'control',
-                        title: t('data.folders.Control'),
-                        render: () => (
-                          <HStack justify="center">
-                            {share && !share.isProjectShare ? (
-                              <BAIPopconfirm
-                                title={t(
-                                  'data.invitation.LeaveSharedFolderDesc',
-                                  { folderName: vfolder?.metadata?.name },
-                                )}
-                                onConfirm={leave}
-                              >
-                                {leaveButton}
-                              </BAIPopconfirm>
-                            ) : (
-                              leaveButton
-                            )}
-                          </HStack>
-                        ),
-                      },
-                    ]
-                  : []),
+                {
+                  key: 'control',
+                  title: t('data.folders.Control'),
+                  render: () => (
+                    <HStack justify="center">
+                      {share && !share.isProjectShare ? (
+                        <BAIPopconfirm
+                          title={t('data.invitation.LeaveSharedFolderDesc', {
+                            folderName: vfolder?.metadata?.name,
+                          })}
+                          onConfirm={leave}
+                        >
+                          {leaveButton}
+                        </BAIPopconfirm>
+                      ) : (
+                        leaveButton
+                      )}
+                    </HStack>
+                  ),
+                },
               ]}
             />
           </VStack>

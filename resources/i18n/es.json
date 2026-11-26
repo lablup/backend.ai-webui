@@ -1304,6 +1304,7 @@
       "NoMoreInvitation": "No hay invitaciones para revisar.",
       "NoOneWasInvited": "No se invita a nadie puesto que la invitación ya existe",
       "NoOneWasShared": "Error al compartir la carpeta de grupo",
+      "NoPermissionToLeaveSharedFolder": "No tiene permiso para abandonar esta carpeta compartida.",
       "NoValidEmails": "No se han introducido correos electrónicos válidos",
       "Pending": "Pendiente",
       "PendingInvitations": "Invitaciones pendientes",

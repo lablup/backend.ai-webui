@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<fe67659cadc1ed5562c91ac003c63368>>
+ * @generated SignedSource<<8402d825a92607f083837060aa12aeb1>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -16,14 +16,13 @@ export type PermissionTarget = {
   scopeType: string;
 };
 export type SharedFolderPermissionInfoModalV2ProjectLeaversQuery$variables = {
-  targets: ReadonlyArray<PermissionTarget>;
+  projectScope: PermissionTarget;
 };
 export type SharedFolderPermissionInfoModalV2ProjectLeaversQuery$data = {
-  readonly myAtomicBulkScopePermissions: {
-    readonly items: ReadonlyArray<{
+  readonly myScopePermissions: {
+    readonly item: {
       readonly permissions: ReadonlyArray<PermissionBit>;
-      readonly scopeId: string;
-    }>;
+    };
   } | null | undefined;
 };
 export type SharedFolderPermissionInfoModalV2ProjectLeaversQuery = {
@@ -36,7 +35,7 @@ var v0 = [
   {
     "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "targets"
+    "name": "projectScope"
   }
 ],
 v1 = [
@@ -47,17 +46,17 @@ v1 = [
         "fields": [
           {
             "kind": "Variable",
-            "name": "targets",
-            "variableName": "targets"
+            "name": "target",
+            "variableName": "projectScope"
           }
         ],
         "kind": "ObjectValue",
         "name": "input"
       }
     ],
-    "concreteType": "MyAtomicBulkScopePermissionsPayload",
+    "concreteType": "MyScopePermissionsPayload",
     "kind": "LinkedField",
-    "name": "myAtomicBulkScopePermissions",
+    "name": "myScopePermissions",
     "plural": false,
     "selections": [
       {
@@ -65,16 +64,9 @@ v1 = [
         "args": null,
         "concreteType": "ScopeEntityPermission",
         "kind": "LinkedField",
-        "name": "items",
-        "plural": true,
+        "name": "item",
+        "plural": false,
         "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "scopeId",
-            "storageKey": null
-          },
           {
             "alias": null,
             "args": null,
@@ -107,16 +99,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "5bac91c97629328b65e386c551d9d9b3",
+    "cacheID": "c3b664cda626c5358d544dcf7f985f82",
     "id": null,
     "metadata": {},
     "name": "SharedFolderPermissionInfoModalV2ProjectLeaversQuery",
     "operationKind": "query",
-    "text": "query SharedFolderPermissionInfoModalV2ProjectLeaversQuery(\n  $targets: [PermissionTarget!]!\n) {\n  myAtomicBulkScopePermissions(input: {targets: $targets}) {\n    items {\n      scopeId\n      permissions\n    }\n  }\n}\n"
+    "text": "query SharedFolderPermissionInfoModalV2ProjectLeaversQuery(\n  $projectScope: PermissionTarget!\n) {\n  myScopePermissions(input: {target: $projectScope}) {\n    item {\n      permissions\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "90e016d54f49ed9842a04d566c8090e5";
+(node as any).hash = "77776da3e8d40fdf550efb25ec818e7c";
 
 export default node;

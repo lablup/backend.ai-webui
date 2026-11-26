@@ -1304,6 +1304,7 @@
       "NoMoreInvitation": "İncelemeye davet yok.",
       "NoOneWasInvited": "Davetiye zaten mevcut olduğundan kimse davet edilmedi",
       "NoOneWasShared": "Grup klasörü paylaşılamadı",
+      "NoPermissionToLeaveSharedFolder": "Bu paylaşılan klasörden ayrılma izniniz yok.",
       "NoValidEmails": "Geçerli e-posta girilmedi",
       "Pending": "Beklemede",
       "PendingInvitations": "Bekleyen davetler",

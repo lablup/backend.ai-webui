@@ -1304,6 +1304,7 @@
       "NoMoreInvitation": "Arvostelukutsuja ei ole.",
       "NoOneWasInvited": "Ketään ei ole kutsuttu, koska kutsu on jo olemassa",
       "NoOneWasShared": "Ryhmäkansion jakaminen epäonnistui",
+      "NoPermissionToLeaveSharedFolder": "Sinulla ei ole oikeutta poistua tästä jaetusta kansiosta.",
       "NoValidEmails": "Kelvollisia sähköposteja ei ole syötetty",
       "Pending": "Odottaa",
       "PendingInvitations": "Odottavat kutsut",

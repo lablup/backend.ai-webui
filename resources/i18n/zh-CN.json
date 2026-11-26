@@ -1304,6 +1304,7 @@
       "NoMoreInvitation": "没有审查邀请。",
       "NoOneWasInvited": "没有人被邀请，因为邀请已经存在",
       "NoOneWasShared": "无法共享群组文件夹",
+      "NoPermissionToLeaveSharedFolder": "您没有退出此共享文件夹的权限。",
       "NoValidEmails": "没有输入有效的电子邮件",
       "Pending": "待处理",
       "PendingInvitations": "待处理的邀请",
