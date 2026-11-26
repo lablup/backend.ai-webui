@@ -1,0 +1,142 @@
+{
+  "version": 1,
+  "channel": "next",
+  "label": "PR preview",
+  "generatedAt": "2026-11-26T15:31:10.832Z",
+  "languages": [
+    "en",
+    "ja",
+    "ko",
+    "th"
+  ],
+  "langs": {
+    "en": {
+      "totals": {
+        "pages": 1,
+        "changes": 2,
+        "added": 1,
+        "modified": 1,
+        "removed": 0,
+        "images": 1,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "share_vfolder",
+          "title": "Share Storage Folders",
+          "status": "modified",
+          "url": "next/en/share_vfolder.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/en/share_vfolder/share_vfolder.md",
+          "counts": {
+            "added": 1,
+            "modified": 1,
+            "removed": 0,
+            "images": 1,
+            "total": 2
+          },
+          "fingerprints": [
+            "57ed56c0d5b1",
+            "80f71937c3ab"
+          ]
+        }
+      ]
+    },
+    "ja": {
+      "totals": {
+        "pages": 1,
+        "changes": 2,
+        "added": 1,
+        "modified": 1,
+        "removed": 0,
+        "images": 1,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "share_vfolder",
+          "title": "ストレージフォルダの共有",
+          "status": "modified",
+          "url": "next/ja/share_vfolder.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ja/share_vfolder/share_vfolder.md",
+          "counts": {
+            "added": 1,
+            "modified": 1,
+            "removed": 0,
+            "images": 1,
+            "total": 2
+          },
+          "fingerprints": [
+            "08af7f9c02e1",
+            "2dbc8917de57"
+          ]
+        }
+      ]
+    },
+    "ko": {
+      "totals": {
+        "pages": 1,
+        "changes": 2,
+        "added": 1,
+        "modified": 1,
+        "removed": 0,
+        "images": 1,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "share_vfolder",
+          "title": "스토리지 폴더 공유",
+          "status": "modified",
+          "url": "next/ko/share_vfolder.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ko/share_vfolder/share_vfolder.md",
+          "counts": {
+            "added": 1,
+            "modified": 1,
+            "removed": 0,
+            "images": 1,
+            "total": 2
+          },
+          "fingerprints": [
+            "8e6bd811dc6b",
+            "bed2b5bea10d"
+          ]
+        }
+      ]
+    },
+    "th": {
+      "totals": {
+        "pages": 1,
+        "changes": 2,
+        "added": 1,
+        "modified": 1,
+        "removed": 0,
+        "images": 1,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "share_vfolder",
+          "title": "การแชร์โฟลเดอร์จัดเก็บ",
+          "status": "modified",
+          "url": "next/th/share_vfolder.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/th/share_vfolder/share_vfolder.md",
+          "counts": {
+            "added": 1,
+            "modified": 1,
+            "removed": 0,
+            "images": 1,
+            "total": 2
+          },
+          "fingerprints": [
+            "932cb3818e10",
+            "be8e7e3553eb"
+          ]
+        }
+      ]
+    }
+  }
+}
