@@ -1,8 +1,8 @@
 /**
  * Registers one drill as a Playwright test and turns it into a readable
  * report. The test body runs the steps in order, screenshots the result of
- * each, and the describe's `afterAll` always cleans up — a failed or timed-out
- * step does not skip teardown.
+ * each, and its `finally` always runs the drill's teardown and the resource
+ * registry cleanup — a failed or timed-out step does not skip cleanup.
  */
 import type { GraphQLMockMap } from '../mocks/session/graphql-interceptor';
 import { setupGraphQLMocks } from '../mocks/session/graphql-interceptor';
@@ -30,7 +30,7 @@ const reports: DrillReport[] = [];
 
 /** The report folder: the drill id when one was selected, else `all`. */
 function reportLabel(): string {
-  const id = process.env.E2E_DRILL;
+  const id = process.env.E2E_DRILL?.trim();
   return id && /^[a-z0-9-]+$/.test(id) ? id : 'all';
 }
 
@@ -44,47 +44,20 @@ export function registerDrill(drill: Drill): void {
     );
   }
   test.describe(`[drill:${drill.id}] ${drill.title}`, () => {
-    let report: DrillReport | undefined;
-    let resources = createTestResources();
-    let runSuffix = '';
+    // A failure the per-step try/catch never sees — the drill-level timeout
+    // firing between steps, an abort outside a step — still fails the test.
+    // Mark its report here, after the body's `finally` filled the rest in.
+    test.afterEach(() => {
+      const info = test.info();
+      if (info.status !== info.expectedStatus) {
+        const report = reports[reports.length - 1];
+        if (report) report.status = 'failed';
+      }
+    });
 
+    // The last describe to finish writes every report collected so far.
     test.afterAll(async () => {
-      if (!report) return;
-      const teardown: DrillReport['teardown'] = { status: 'skipped' };
-      const teardownCtx: DrillTeardownContext = {
-        drillId: drill.id,
-        runSuffix,
-        resources,
-      };
-      let observed: string | void;
-      try {
-        observed = await drill.teardown?.(teardownCtx);
-      } catch (error) {
-        teardown.status = 'failed';
-        teardown.error = describeError(error);
-      }
-      // Runs even when the drill's own teardown failed: it is the registry
-      // that holds what the steps declared.
-      const failed = await resources.cleanup();
-      if (teardown.status !== 'failed') {
-        teardown.status = failed.length === 0 ? 'passed' : 'failed';
-      }
-      teardown.observed = [
-        typeof observed === 'string' ? observed : undefined,
-        failed.length === 0
-          ? 'registered cleanup removed everything it declared'
-          : `could not remove: ${failed.join(', ')}`,
-      ]
-        .filter(Boolean)
-        .join('; ');
-      report.teardown = teardown;
-      report.finishedAt = new Date().toISOString();
-      report.status =
-        report.setup?.status === 'failed' ||
-        teardown.status === 'failed' ||
-        report.steps.some((step) => step.status === 'failed')
-          ? 'failed'
-          : 'passed';
+      if (reports.length === 0) return;
       const written = writeReport(reports, reportLabel());
       console.log(`[drill] report: ${written.html}`);
     });
@@ -95,8 +68,34 @@ export function registerDrill(drill: Drill): void {
       browser,
     }) => {
       test.setTimeout(drill.timeoutMs ?? 240_000);
-      runSuffix = `${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
-      resources = createTestResources();
+      const runSuffix = `${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
+      // Per run: `--repeat-each` reruns this test in one worker, and each run
+      // must clean up its own registry.
+      const resources = createTestResources();
+      const report: DrillReport = {
+        drillId: drill.id,
+        title: drill.title,
+        group: drill.group,
+        prerequisites: drill.prerequisites,
+        status: 'failed',
+        startedAt: new Date().toISOString(),
+        finishedAt: new Date().toISOString(),
+        runSuffix,
+        target: webuiEndpoint,
+        steps: drill.steps.map((step) => ({
+          id: step.id,
+          title: step.title,
+          changed: step.changed,
+          verify: step.verify,
+          expected: step.expected,
+          code: step.code,
+          status: 'not-run',
+          durationMs: 0,
+        })),
+        teardown: { status: 'skipped' },
+      };
+      reports.push(report);
+
       const pages = new Map<DrillAccount, Page>();
       pages.set('user', page);
       let active = page;
@@ -156,30 +155,6 @@ export function registerDrill(drill: Drill): void {
           }
         },
       };
-
-      report = {
-        drillId: drill.id,
-        title: drill.title,
-        group: drill.group,
-        prerequisites: drill.prerequisites,
-        status: 'failed',
-        startedAt: new Date().toISOString(),
-        finishedAt: new Date().toISOString(),
-        runSuffix,
-        target: webuiEndpoint,
-        steps: drill.steps.map((step) => ({
-          id: step.id,
-          title: step.title,
-          changed: step.changed,
-          verify: step.verify,
-          expected: step.expected,
-          code: step.code,
-          status: 'not-run',
-          durationMs: 0,
-        })),
-        teardown: { status: 'skipped' },
-      };
-      reports.push(report);
 
       // Signing in the owner is part of the drill's setup, not a check.
       const setupReport = {
@@ -248,6 +223,43 @@ export function registerDrill(drill: Drill): void {
             .close()
             .catch(() => {});
         }
+        // The drill's teardown and the registry cleanup belong to this run,
+        // so a repeat never orphans the previous run's data.
+        const teardown: DrillReport['teardown'] = { status: 'skipped' };
+        const teardownCtx: DrillTeardownContext = {
+          drillId: drill.id,
+          runSuffix,
+          resources,
+        };
+        let observed: string | void;
+        try {
+          observed = await drill.teardown?.(teardownCtx);
+        } catch (error) {
+          teardown.status = 'failed';
+          teardown.error = describeError(error);
+        }
+        // Runs even when the drill's own teardown failed: it is the registry
+        // that holds what the steps declared.
+        const failed = await resources.cleanup();
+        if (teardown.status !== 'failed') {
+          teardown.status = failed.length === 0 ? 'passed' : 'failed';
+        }
+        teardown.observed = [
+          typeof observed === 'string' ? observed : undefined,
+          failed.length === 0
+            ? 'registered cleanup removed everything it declared'
+            : `could not remove: ${failed.join(', ')}`,
+        ]
+          .filter(Boolean)
+          .join('; ');
+        report.teardown = teardown;
+        report.finishedAt = new Date().toISOString();
+        report.status =
+          report.setup?.status === 'failed' ||
+          teardown.status === 'failed' ||
+          report.steps.some((step) => step.status === 'failed')
+            ? 'failed'
+            : 'passed';
       }
     });
   });

@@ -11,18 +11,12 @@
  * Playwright untouched.
  */
 import { spawnSync } from 'node:child_process';
-import { readdirSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(here, '..', '..');
 const config = path.join('e2e', 'playwright.drill.config.ts');
-
-const ids = readdirSync(here)
-  .filter((file) => file.endsWith('.drill.ts'))
-  .map((file) => file.replace(/\.drill\.ts$/, ''))
-  .sort();
 
 const argv = process.argv.slice(2);
 const separator = argv.indexOf('--');
@@ -79,11 +73,9 @@ if (flags.includes('--all')) {
 }
 
 if (names.length !== 1) usage(2);
+// No id pre-check here: catalog.ts is the single listing, and the spec throws
+// a clear error (with the known ids) for a value it does not select.
 const id = names[0];
-if (!ids.includes(id)) {
-  console.error(`Unknown drill: ${id}`);
-  usage(2);
-}
 
 const result = playwright(forwarded, { E2E_DRILL: id });
 const report = path.join('e2e', 'drill-report', id, 'index.html');

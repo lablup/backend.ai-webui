@@ -95,10 +95,11 @@ function renderCodeRefs(code: DrillCodeRef[]): string {
   if (code.length === 0) return '';
   const links = code
     .map((ref) => {
-      const anchor = ref.to ? `#L${ref.line}-L${ref.to}` : `#L${ref.line}`;
-      // The report sits at e2e/drill-report/<label>/, so the repo root is three up.
+      // The report sits at e2e/drill-report/<label>/, so the repo root is
+      // three up; no `#L` anchor — a plain file view has no line anchors, and
+      // the line is in the link text.
       const where = `${ref.path}:${ref.line}${ref.to ? `-${ref.to}` : ''}`;
-      return `<li><a href="../../../${escapeHtml(ref.path)}${anchor}"><code>${escapeHtml(where)}</code></a></li>`;
+      return `<li><a href="../../../${escapeHtml(ref.path)}"><code>${escapeHtml(where)}</code></a></li>`;
     })
     .join('\n');
   return `<ul class="code">${links}</ul>`;

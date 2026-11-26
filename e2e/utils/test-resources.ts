@@ -40,14 +40,16 @@ type Remover = (
  */
 const REMOVERS: ReadonlyArray<[TestResourceKind, Remover]> = [
   ['deployment', deleteDeploymentsByNameViaApi],
-  // purgeVFolderViaApi returns only once the folder is gone, or throws.
+  // purgeVFolderViaApi returns once the folder is gone, or throws; whether a
+  // folder was ever found decides the found/deleted report, so a missing
+  // folder stays a 0/0 no-op like the other kinds.
   [
     'vFolder',
     async (api, name) => {
       if (!name.startsWith('e2e-'))
         throw new Error(`refusing to purge non-e2e folder "${name}"`);
-      await purgeVFolderViaApi(api, name);
-      return { found: 1, deleted: 1 };
+      const found = await purgeVFolderViaApi(api, name);
+      return { found: found ? 1 : 0, deleted: found ? 1 : 0 };
     },
   ],
   ['prometheusQueryPreset', purgePrometheusQueryPresetsByNameViaApi],

@@ -869,20 +869,25 @@ async function listVFoldersByName(
   return data.vfolder_list.items;
 }
 
-/** Trashes and purges the folder named exactly `name`; a missing one is a no-op. */
+/**
+ * Trashes and purges the folder named exactly `name`; a missing one is a
+ * no-op. Resolves to whether a non-purged folder matching the name was found.
+ */
 export async function purgeVFolderViaApi(
   api: APIRequestContext,
   name: string,
-): Promise<void> {
+): Promise<boolean> {
   const listRemaining = async () =>
     (await listVFoldersByName(api, name)).filter(
       ({ status }) => !PURGED_VFOLDER_STATUSES.has(status),
     );
   const deadline = Date.now() + VFOLDER_PURGE_DEADLINE_MS;
   let lastFailure = '';
+  let found = false;
   for (;;) {
     const remaining = await listRemaining();
-    if (remaining.length === 0) return;
+    if (remaining.length === 0) return found;
+    found = true;
     for (const { id, status } of remaining) {
       if (TRANSITIONAL_VFOLDER_STATUSES.has(status)) continue;
       const step = status === 'delete-pending' ? 'purge' : 'trash';
@@ -902,7 +907,7 @@ export async function purgeVFolderViaApi(
     }
     if (Date.now() >= deadline) {
       const left = await listRemaining();
-      if (left.length === 0) return;
+      if (left.length === 0) return found;
       const states = left.map((f) => `${f.id}: ${f.status}`).join(', ');
       throw new Error(
         `folder "${name}" not deleted after ${VFOLDER_PURGE_DEADLINE_MS}ms (${states}) ${lastFailure}`.trim(),
