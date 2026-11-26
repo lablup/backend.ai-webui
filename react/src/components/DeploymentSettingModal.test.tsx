@@ -4,7 +4,7 @@
  */
 import DeploymentSettingModal from './DeploymentSettingModal';
 import '@testing-library/jest-dom';
-import { render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { RelayEnvironmentProvider } from 'react-relay';
 import { createMockEnvironment } from 'relay-test-utils';
@@ -163,5 +163,27 @@ describe('DeploymentSettingModal deployment name length', () => {
     expect(input).toHaveAttribute('maxLength', '91');
     await user.type(input, 'a'.repeat(100));
     expect(input).toHaveValue('a'.repeat(91));
+  });
+
+  it('rejects a name longer than 91 characters on submit', async () => {
+    const user = userEvent.setup();
+    const { environment } = renderModal({
+      id: 'fixed-project-id',
+      name: 'fixed-project-name',
+    });
+
+    fireEvent.change(
+      screen.getByPlaceholderText('deployment.NamePlaceholder'),
+      {
+        target: { value: 'a'.repeat(92) },
+      },
+    );
+    await user.click(screen.getByTestId('mock-resource-group-select'));
+    await user.click(screen.getByRole('button', { name: 'button.Create' }));
+
+    expect(
+      await screen.findByText('deployment.NameMaxLength'),
+    ).toBeInTheDocument();
+    expect(environment.mock.getAllOperations()).toHaveLength(0);
   });
 });

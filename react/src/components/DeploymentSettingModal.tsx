@@ -320,11 +320,18 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
             rules={[
               { required: true, message: t('deployment.NameRequired') },
               {
-                max: DEPLOYMENT_NAME_MAX_LENGTH,
-                type: 'string',
-                message: t('deployment.NameMaxLength', {
-                  max: DEPLOYMENT_NAME_MAX_LENGTH,
-                }),
+                // An existing over-long name stays saveable, so other fields can
+                // still be edited; only a new or changed name is capped.
+                validator: (_rule: unknown, value?: string) =>
+                  !value ||
+                  value === deployment?.metadata.name ||
+                  [...value].length <= DEPLOYMENT_NAME_MAX_LENGTH
+                    ? Promise.resolve()
+                    : Promise.reject(
+                        t('deployment.NameMaxLength', {
+                          max: DEPLOYMENT_NAME_MAX_LENGTH,
+                        }),
+                      ),
               },
             ]}
           >
