@@ -5,17 +5,17 @@
 - A form is reached through a ref (`<Form ref={formRef}>`) by default, so the `<Form>` element owns its store and the store's lifetime is the element's.
 - `Form.useForm()` is used only when the instance must exist outside the `<Form>`'s own lifetime or context: it is read during render outside the `<Form>` (`Form.useWatch(name, form)` in the declaring component, or a child outside the `<Form>`), or the input must survive the `<Form>` unmounting for a moment.
 - A render-time read inside the `<Form>` needs no instance in the parent: a `Form.Item` with a `shouldUpdate` comparator, or a child rendered inside the `<Form>` that calls `Form.useWatch(name)` or `Form.useFormInstance()`.
-- A kept `Form.useForm()` whose `<Form>` remounts and must start fresh sets `clearOnDestroy` on the `<Form>`, or moves the hook into the child that unmounts.
+- A kept `Form.useForm()` whose `<Form>` remounts for a new record puts that record's values in with `form.setFieldsValue(values)` where it opens, or moves the hook into the child that unmounts. `clearOnDestroy` is not used for this.
 - The rule applies to `react/src` and `packages/backend.ai-ui/src` alike. It is written in `.github/instructions/react.instructions.md` (the Forms section) and summarised in `AGENTS.md`. Existing call sites change only when their file is edited for another reason.
 
 > Unfamiliar terms are collected in the [Glossary](#glossary) at the end.
 
 ## Context
 
-- **The engine**: `Form`, `Form.useForm` and `Form.useWatch` come from `@lablup/ui-common/Form` through the `form-engine` alias (ADR 0019). A form's values, errors and touched state live in a store.
+- **The engine**: `Form`, `Form.useForm` and `Form.useWatch` come from `@lablup/ui-common/Form` through the `form-engine` alias (ADR 0009). A form's values, errors and touched state live in a store.
 - **Who creates the store owns it**: With no `form` prop, `<Form>` creates the store in its own React state (`useForm(undefined)` inside `Form`), so unmounting the element drops the store and the next mount starts from `initialValues`. With `form={form}` from `Form.useForm()`, the store lives in the component that called the hook and survives the `<Form>` unmounting.
 - **The failure**: When the hook's component stays mounted while the `<Form>` below it unmounts and mounts again (a modal body, a drawer, a wizard step), the store keeps the previous input. On remount the engine merges the new `initialValues` under the kept store, so every key the store already holds keeps its old value. A reopened modal shows the last record's input.
-- **Why a decision is needed**: About as many components call `Form.useForm()` (43) as use a ref (48), and most of the `useForm` callers read the instance only in event handlers. Review comments asked for the ref case by case (#11311), with no written rule to point at.
+- **Why a decision is needed**: 34 component files call `Form.useForm()` and 48 use `useRef<FormInstance` (non-test, non-story `.tsx` files under `react/src` and `packages/backend.ai-ui/src`, counted on 2026-11-26), and most of the `useForm` callers read the instance only in event handlers. Review comments asked for the ref case by case (#11311), with no written rule to point at.
 
 ## Diagram
 
@@ -54,12 +54,13 @@ flowchart TB
 
 ### 4. A kept `Form.useForm()` owns its lifetime
 
-- **Fresh start on remount**: `clearOnDestroy` on the `<Form>` empties the store on unmount, so the next mount applies `initialValues`. Moving the hook into the child that unmounts, together with its `<Form>`, works the same way.
+- **Values for a new open**: the parent owns the store, so `form.setFieldsValue(values)` in the handler that opens the form works before the `<Form>` mounts. Moving the hook into the child that unmounts, together with its `<Form>`, gives each mount a fresh store; it does not suit the brief-unmount case of section 2.
+- **No `clearOnDestroy`**: the engine clears the store in an unmount cleanup, which `React.StrictMode` (`react/src/index.tsx`) runs once right after the first mount in development, so the store is emptied while the fields still show values. It also erases input in the brief-unmount case.
 - **No early reset**: `form.resetFields()` called before the `<Form>` mounts restores the previous mount's `initialValues`, because the store learns new `initialValues` only while the `<Form>` renders.
 
 ### 5. Scope and enforcement
 
-- **Where it is written**: the Forms section of `.github/instructions/react.instructions.md` (auto-loaded for `react/**`), its review checklist item, and one line in `AGENTS.md`, which every session loads, so `packages/backend.ai-ui/src` follows it too.
+- **Where it is written**: the Forms section of `.github/instructions/react.instructions.md` (auto-loaded for `react/**`), its review checklist item, and one line in `AGENTS.md`, which every session loads. `packages/backend.ai-ui/src` follows the same rule; that section is not auto-loaded there, so the `AGENTS.md` line and this ADR carry it.
 - **No sweep**: existing `Form.useForm()` call sites are converted when their file is edited for another reason. No ESLint rule enforces this; review does.
 
 ## Rejected alternatives
@@ -79,7 +80,7 @@ flowchart TB
 
 - GitHub issue #11431, decided 2026-11-26; the review on #11311 that asked for the same change.
 - Engine behaviour read from `@lablup/ui-common/Form` (`Form`, `FormStore`, `Field`, `useWatch`) at the pinned `0.2.0-alpha.21` canary.
-- Related: ADR 0019 (the `form-engine` shim that replaced antd's `Form`).
+- Related: ADR 0009 (the form engine in `@lablup/ui-common/Form`, re-exported by `form-engine`).
 
 ## Glossary
 

@@ -132,12 +132,18 @@ boundary.
    - a child rendered inside the `<Form>` that calls `Form.useWatch(name)` (no form argument)
      or `Form.useFormInstance()`. Both read the form from context, so do not pass a `form` prop
      into such a child.
-4. **A kept `Form.useForm()` owns its lifetime.** If its `<Form>` remounts and must start fresh,
-   set `clearOnDestroy` on the `<Form>`, or move the hook into the child that unmounts together
-   with its `<Form>`. Do not call `form.resetFields()` before the `<Form>` mounts: it restores
-   the previous mount's `initialValues`.
+4. **A kept `Form.useForm()` owns its lifetime.** When its `<Form>` remounts for a new record,
+   put that record's values in with `form.setFieldsValue(values)` in the handler that opens it
+   (the parent owns the store, so this works before the `<Form>` mounts), or move the hook into
+   the child that unmounts together with its `<Form>` (not for rule 2's brief-unmount case).
+   - `form.resetFields()` before the `<Form>` mounts restores the previous mount's
+     `initialValues`.
+   - Do not use `clearOnDestroy` for this: the engine clears the store in an unmount cleanup,
+     which `React.StrictMode` runs right after the first mount in development, and it erases
+     input in the brief-unmount case.
 5. Do not convert existing `Form.useForm()` call sites in a sweep. Apply this rule to the form
-   you are writing or already changing. It applies to `packages/backend.ai-ui/src` too.
+   you are writing or already changing. `packages/backend.ai-ui/src` follows the same rule;
+   this file is not auto-loaded there, so the `AGENTS.md` line and ADR 0040 carry it.
 
 ```tsx
 // ❌ The parent owns the store, though nothing reads it during render
