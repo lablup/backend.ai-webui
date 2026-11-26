@@ -6,7 +6,7 @@
 - `Form.useForm()` is used only when the instance must exist outside the `<Form>`'s own lifetime or context: it is read during render outside the `<Form>` (`Form.useWatch(name, form)` in the declaring component, or a child outside the `<Form>`), or the input must survive the `<Form>` unmounting for a moment.
 - A render-time read inside the `<Form>` needs no instance in the parent: a `Form.Item` with a `shouldUpdate` comparator, or a child rendered inside the `<Form>` that calls `Form.useWatch(name)` or `Form.useFormInstance()`.
 - A kept `Form.useForm()` whose `<Form>` remounts for a new record puts that record's values in with `form.setFieldsValue(values)` where it opens, or moves the hook into the child that unmounts. `clearOnDestroy` is not used for this.
-- The rule applies to `react/src` and `packages/backend.ai-ui/src` alike. It is written in `.github/instructions/react.instructions.md` (the Forms section) and summarised in `AGENTS.md`. Existing call sites change only when their file is edited for another reason.
+- The rule applies to `react/src` and `packages/backend.ai-ui/src` alike. It is written in `.claude/rules/form-store-ownership.md` and summarised in `AGENTS.md`. Existing call sites change only when their file is edited for another reason.
 
 > Unfamiliar terms are collected in the [Glossary](#glossary) at the end.
 
@@ -60,7 +60,7 @@ flowchart TB
 
 ### 5. Scope and enforcement
 
-- **Where it is written**: the Forms section of `.github/instructions/react.instructions.md` (auto-loaded for `react/**`), its review checklist item, and one line in `AGENTS.md`, which every session loads. `packages/backend.ai-ui/src` follows the same rule; that section is not auto-loaded there, so the `AGENTS.md` line and this ADR carry it.
+- **Where it is written**: `.claude/rules/form-store-ownership.md`, path-scoped to `react/**` and `packages/backend.ai-ui/**` so it loads for both packages, and one line in `AGENTS.md`, which every session loads. `.github/instructions/react.instructions.md` keeps a short pointer to the rule and a review checklist item.
 - **No sweep**: existing `Form.useForm()` call sites are converted when their file is edited for another reason. No ESLint rule enforces this; review does.
 
 ## Rejected alternatives

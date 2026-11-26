@@ -6,7 +6,7 @@
 - `Form.useForm()`은 instance가 `<Form>`의 수명이나 context 밖에 있어야 할 때만 쓴다. 즉 `<Form>` 밖에서 render 중에 instance를 읽을 때(선언한 component의 `Form.useWatch(name, form)`, 또는 `<Form>` 밖의 child), 또는 `<Form>`이 잠깐 unmount되는 동안에도 입력이 남아야 할 때다.
 - `<Form>` 안에서 render 중에 값을 읽는 데에는 부모의 instance가 필요 없다. `shouldUpdate` comparator를 둔 `Form.Item`, 또는 `<Form>` 안에서 render되며 `Form.useWatch(name)`이나 `Form.useFormInstance()`를 부르는 child를 쓴다.
 - 남겨 둔 `Form.useForm()`의 `<Form>`이 새 record로 다시 mount되면, form을 여는 곳에서 `form.setFieldsValue(values)`로 그 record의 값을 넣거나 hook을 unmount되는 child로 옮긴다. 이 용도로 `clearOnDestroy`는 쓰지 않는다.
-- 이 규칙은 `react/src`와 `packages/backend.ai-ui/src`에 똑같이 적용된다. `.github/instructions/react.instructions.md`의 Forms 절에 쓰고 `AGENTS.md`에 요약한다. 기존 call site는 다른 이유로 그 파일을 고칠 때만 바꾼다.
+- 이 규칙은 `react/src`와 `packages/backend.ai-ui/src`에 똑같이 적용된다. `.claude/rules/form-store-ownership.md`에 쓰고 `AGENTS.md`에 요약한다. 기존 call site는 다른 이유로 그 파일을 고칠 때만 바꾼다.
 
 > 낯선 용어는 문서 맨 아래 [용어](#용어)에 모아 두었다.
 
@@ -60,7 +60,7 @@ flowchart TB
 
 ### 5. Scope and enforcement
 
-- **Where it is written**: `.github/instructions/react.instructions.md`의 Forms 절(`react/**`에 자동으로 읽힌다)과 그 review checklist 항목, 그리고 모든 session이 읽는 `AGENTS.md`의 한 줄에 쓴다. `packages/backend.ai-ui/src`도 같은 규칙을 따른다. 그곳에서는 그 절이 자동으로 읽히지 않으므로 `AGENTS.md`의 한 줄과 이 ADR이 규칙을 전한다.
+- **Where it is written**: `react/**`와 `packages/backend.ai-ui/**`에 path를 지정해 두 package 모두에서 읽히는 `.claude/rules/form-store-ownership.md`와, 모든 session이 읽는 `AGENTS.md`의 한 줄에 쓴다. `.github/instructions/react.instructions.md`에는 이 rule을 가리키는 짧은 안내와 review checklist 항목만 둔다.
 - **No sweep**: 기존 `Form.useForm()` call site는 다른 이유로 그 파일을 고칠 때 바꾼다. 이 규칙을 강제하는 ESLint rule은 없고, review가 확인한다.
 
 ## 대안과 기각 사유
