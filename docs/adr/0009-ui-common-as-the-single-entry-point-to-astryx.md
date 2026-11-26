@@ -209,6 +209,7 @@ All four layer order declarations become the statement below.
 - ui-common: [#40](https://github.com/lablup/ui-common/issues/40) (dependency form, theme, layer), [#41](https://github.com/lablup/ui-common/issues/41) (admission rule, ban on direct imports), [#42](https://github.com/lablup/ui-common/issues/42) (`ui-common` CLI), [#52](https://github.com/lablup/ui-common/issues/52) (upgrade tool).
 - [FR-4099](https://lablup.atlassian.net/browse/FR-4099): moving from the vendor tarball to `@lablup/ui-common` 0.2.0-alpha.15 from the registry, and adding the CLI package `@lablup/ui-common-cli`.
 - [#10203](https://github.com/lablup/backend.ai-webui/issues/10203): bumping to ui-common 0.2.0-alpha.17 and Astryx 0.6.5, and keeping a drawer without a scrim outside the top layer (ui-common [#59](https://github.com/lablup/ui-common/pull/59)).
+- [#11429](https://github.com/lablup/backend.ai-webui/issues/11429): `unmountOnClose` drops only a modal's children; `BAIUnmountAfterClose` unmounts the component that renders it.
 - Decision date: 2026-09-25.
 - Related: the `Badge` and `Token` of [ADR 0007](0007-badge-for-live-values-and-token-for-settled-values.md) are now imported from `@lablup/ui-common/Badge` and `@lablup/ui-common/Token`, and that ADR's STATUS SEMANTICS line moves to the PROJECT LINES right after the UI-COMMON block. `.claude/rules/component-props-extension.md` defines the base of the adapter props.
 

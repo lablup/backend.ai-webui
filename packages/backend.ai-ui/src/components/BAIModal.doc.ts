@@ -55,7 +55,7 @@ export const docs = {
       name: 'open',
       type: 'boolean',
       description:
-        'Whether the modal is visible. While false the component renders nothing, so children unmount.',
+        'Whether the modal is visible. Children mount on the first open and stay mounted while closed; see unmountOnClose and BAIUnmountAfterClose.',
     },
     {
       name: 'isOpen',

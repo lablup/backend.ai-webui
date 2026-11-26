@@ -209,6 +209,7 @@ flowchart TB
 - ui-common: [#40](https://github.com/lablup/ui-common/issues/40)(dependency form, theme, layer), [#41](https://github.com/lablup/ui-common/issues/41)(admission rule, 직접 import 금지), [#42](https://github.com/lablup/ui-common/issues/42)(`ui-common` CLI), [#52](https://github.com/lablup/ui-common/issues/52)(upgrade tool).
 - [FR-4099](https://lablup.atlassian.net/browse/FR-4099): vendor tarball에서 registry의 `@lablup/ui-common` 0.2.0-alpha.15로 옮기고 CLI package `@lablup/ui-common-cli`를 더한다.
 - [#10203](https://github.com/lablup/backend.ai-webui/issues/10203): ui-common 0.2.0-alpha.17과 Astryx 0.6.5로 올리고, scrim 없는 drawer를 top layer 밖에 둔다(ui-common [#59](https://github.com/lablup/ui-common/pull/59)).
+- [#11429](https://github.com/lablup/backend.ai-webui/issues/11429): `unmountOnClose`는 모달의 children만 내리고, `BAIUnmountAfterClose`는 모달을 그리는 컴포넌트까지 내린다.
 - 결정일: 2026-09-25.
 - 관련: [ADR 0007](0007-badge-for-live-values-and-token-for-settled-values.ko.md)의 `Badge`·`Token`은 이제 `@lablup/ui-common/Badge`·`@lablup/ui-common/Token`에서 import하고, 그 ADR의 STATUS SEMANTICS 줄은 UI-COMMON block 바로 뒤의 PROJECT LINES로 옮겨 간다. `.claude/rules/component-props-extension.md`가 adapter props의 base를 정한다.
 

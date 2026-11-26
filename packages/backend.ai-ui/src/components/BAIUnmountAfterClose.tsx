@@ -21,15 +21,10 @@ interface BAIUnmountModalAfterCloseProps {
 }
 
 /**
- * A React component that conditionally unmounts its child modal or drawer component
- * after it has been closed, preserving exit animations.
- *
- * This component expects a single child element (such as a Modal or Drawer) with an `open` prop.
- * It manages an internal mount state to ensure the child remains mounted during exit animations,
- * and only unmounts after the close animation completes.
- *
- * The component intercepts the child's `afterClose` (for Modal) and `afterOpenChange` (for Drawer)
- * callbacks to update its internal state, while preserving any original callbacks provided.
+ * Unmounts its single modal or drawer child once the child reports the close
+ * (`afterClose` / `afterOpenChange(false)`), keeping the callbacks the call site passed.
+ * ui-common Modal has no exit animation, so a modal unmounts right after it closes;
+ * a child with one (a drawer) stays mounted until it ends.
  *
  * @param {BAIUnmountModalAfterCloseProps} props - The props containing a single child element.
  * @returns {React.ReactElement | null} The cloned child element with enhanced unmounting logic, or null if unmounted.
@@ -46,11 +41,8 @@ const BAIUnmountAfterClose: React.FC<BAIUnmountModalAfterCloseProps> = ({
   const childElement = React.Children.only(children);
   const isOpen = childElement.props.open;
 
-  // Track whether the exit animation has finished. While open, the child is
-  // always mounted; once closed, it stays mounted until the close animation
-  // completes (afterClose / afterOpenChange) so the exit transition is shown.
-  // Initialize from `isOpen` so a child that mounts already-open does not start
-  // in the "closed" state (which could unmount it before its effect runs).
+  // Initialized from `isOpen` so a child that mounts open is not unmounted
+  // before its effect runs.
   const [afterClosed, setAfterClosed] = useState(() => !isOpen);
 
   // Reset the afterClosed state to false whenever the modal is opened, so it can be unmounted after the next close.
@@ -61,8 +53,7 @@ const BAIUnmountAfterClose: React.FC<BAIUnmountModalAfterCloseProps> = ({
     }
   }, [isOpen]);
 
-  // Derive synchronously so the child mounts on the same render `open` flips to
-  // true (no one-render delay), while still surviving the close animation.
+  // Derived synchronously so the child mounts on the same render `open` turns true.
   const isMount = isOpen || !afterClosed;
 
   // Return null if the modal should not be rendered
@@ -78,7 +69,6 @@ const BAIUnmountAfterClose: React.FC<BAIUnmountModalAfterCloseProps> = ({
     if (originalAfterClose) {
       originalAfterClose();
     }
-    // Mark as closed after the exit animation completes
     setAfterClosed(true);
   };
 
@@ -90,7 +80,6 @@ const BAIUnmountAfterClose: React.FC<BAIUnmountModalAfterCloseProps> = ({
     if (originalAfterOpenChange) {
       originalAfterOpenChange(open);
     }
-    // Mark as closed after the exit animation completes
     if (!open) {
       setAfterClosed(true);
     }

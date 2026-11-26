@@ -264,7 +264,6 @@ describe('ResourcePresetSettingModal edit contract', () => {
   });
 });
 
-// One modal instance shared by edit and create, as `ResourcePresetList` renders it.
 const SharedModalHost = ({ mode }: { mode: 'edit' | 'create' | null }) => {
   const data = useLazyLoadQuery<ResourcePresetSettingModalSharedTestQuery>(
     graphql`
@@ -289,7 +288,7 @@ const SharedModalHost = ({ mode }: { mode: 'edit' | 'create' | null }) => {
   );
 };
 
-describe('ResourcePresetSettingModal shared create/edit instance', () => {
+describe('ResourcePresetSettingModal as ResourcePresetList renders it', () => {
   it('opens Create with an empty form after an edit was closed', async () => {
     const environment: RelayMockEnvironment = createMockEnvironment();
     environment.mock.queueOperationResolver((operation) =>

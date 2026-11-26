@@ -16,7 +16,7 @@ export const docs = {
   ],
   usage: {
     description:
-      'Renders no markup of its own: it clones its single modal or drawer child, keeps it mounted until the close animation has finished, then returns null so the child unmounts completely. It reads the child structurally (open, afterClose, afterOpenChange), so any modal-shaped component flows through unchanged, and the callbacks the call site already passed still fire. Use it when a dialog must start from a clean state on every open — a fresh form instance re-applying initialValues, selectors back at their defaults — without losing the exit transition that a bare {open && <Modal />} conditional throws away.',
+      'Renders no markup of its own: it clones its single modal or drawer child and returns null once the child reports the close, so the child unmounts completely; a child with an exit animation (a drawer) stays mounted until it ends, while ui-common Modal has none and unmounts right after closing. It reads the child structurally (open, afterClose, afterOpenChange), so any modal-shaped component flows through unchanged, and the callbacks the call site already passed still fire. Use it when a dialog must start from a clean state on every open — a fresh form instance re-applying initialValues, selectors back at their defaults — or when the component rendering the modal holds state or queries outside its children.',
     bestPractices: [
       {
         guidance: true,
@@ -37,11 +37,6 @@ export const docs = {
         guidance: false,
         description:
           'Pass more than one child; React.Children.only throws on a fragment or a list.',
-      },
-      {
-        guidance: false,
-        description:
-          'Reach for it when the dialog already resets itself — the extra mount cycle refetches every query the child owns.',
       },
     ],
   },
