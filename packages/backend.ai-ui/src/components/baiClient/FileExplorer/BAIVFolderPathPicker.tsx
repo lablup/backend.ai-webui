@@ -136,9 +136,9 @@ const BAIVFolderPathPicker: React.FC<BAIVFolderPathPickerProps> = (props) => {
     <>
       <ComplexSelector<string | undefined>
         // Display-only trigger. Astryx `Selector` owns its popup and can't be
-        // held closed (BAISelect keeps `open` inert), so the trigger
-        // is a ComplexSelector: preventDefault() makes composeEventHandlers
-        // skip its own popover-open handler, and the modal opens instead.
+        // held closed, so the trigger is a ComplexSelector: preventDefault()
+        // makes composeEventHandlers skip its own popover-open handler, and the
+        // modal opens instead.
         onClick={(e) => {
           e.preventDefault();
           openPicker();

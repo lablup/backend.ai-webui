@@ -2,24 +2,11 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
- Accessible-name helper for the antd -> Astryx migration (to-astryx phase 3,
- wave 2 / ticket W2-D).
-
- Astryx's universal contract #1: `label` is a **required `string`** that the
- control renders (or announces) itself. antd took a `ReactNode` in the same
- slot — `children`, `title`, `text`, `label` — so every frontier wrapper that
- keeps an antd-shaped surface has to flatten a node into a name.
-
- Casting `node as string` compiles, renders, and poisons `aria-label` with
- `[object Object]` (P2). This module does the flattening properly: it walks
- string/number leaves through fragments, arrays and elements and joins them.
- A node built only from non-textual leaves (an icon, an `<img>`) yields `''`,
- which callers must treat as "no name available" — either `isLabelHidden` plus
- an `endContent` render (Token/Badge), or an explicit translated fallback.
-
- The walk also cannot see PROP-carried text (`Badge label=`, `BAIDoubleToken
- values=`) — such call sites name the text explicitly instead (`title` on
- `BAISelect`'s options path, `label` on its children carrier — FR-3544).
+ Flattens a `ReactNode` into the plain string Astryx wants for a required
+ `label`. Casting `node as string` renders `[object Object]` into `aria-label`;
+ this walks the string and number leaves instead. A node with no text (an icon)
+ yields `''`, which callers treat as "no name available". Text carried in props
+ (`Badge label=`) is invisible to the walk, so such call sites pass it explicitly.
 */
 import React from 'react';
 import type { ReactNode } from 'react';
@@ -61,19 +48,4 @@ export const nodeToAccessibleLabel = (node: ReactNode): string => {
   const out: Array<string> = [];
   walk(node, 0, out);
   return out.join(' ').replace(/\s+/g, ' ').trim();
-};
-
-/**
- * `nodeToAccessibleLabel` with a fallback chain — the shape every frontier
- * wrapper needs: prefer an explicit `aria-label`/`title` the call site already
- * wrote, then the rendered text, then a caller-supplied default.
- */
-export const resolveAccessibleLabel = (
-  ...candidates: Array<ReactNode | undefined>
-): string => {
-  for (const candidate of candidates) {
-    const label = nodeToAccessibleLabel(candidate ?? null);
-    if (label !== '') return label;
-  }
-  return '';
 };

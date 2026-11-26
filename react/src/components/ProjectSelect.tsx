@@ -166,7 +166,6 @@ export interface ProjectSelectProps
   extends Omit<BAISelectProps, 'options'>, ProjectOptionsInput {
   /** The chosen project, or `undefined` after a clear. */
   onSelectProject?: (projectInfo: ProjectInfo | undefined) => void;
-  autoSelectDefault?: boolean;
 }
 
 const ProjectSelect: React.FC<ProjectSelectProps> = ({

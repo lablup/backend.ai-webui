@@ -8,9 +8,6 @@
  mode — the same recipe as `BAIUserSelect`, applied to an app-level
  (react/src) wrapper rather than a `backend.ai-ui` fragment.
 
- FRONTIER RULE: `DeploymentSelect` (antd-shaped `BAISelect`) is NOT touched
- and keeps serving `ChatHeader.tsx` until that call site is moved.
-
  PILOT-DECISIONs:
   - The antd original welded the select and an info ("go to detail page")
     IconButton into one `Space.Compact`-style bordered control — already

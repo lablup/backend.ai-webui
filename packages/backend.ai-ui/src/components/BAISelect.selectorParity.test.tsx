@@ -6,9 +6,11 @@
  * BAISelect is ui-common `Selector` under the BAI name (ADR 0042): its props
  * reach `Selector` unchanged, plus the project defaults and `autoSelectOption`.
  */
+import { Form, FormItem, type FormInstance } from '../form-engine';
 import BAISelect from './BAISelect';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import React from 'react';
 import { beforeAll, describe, expect, it, vi } from 'vitest';
 
 // The popup keeps the keyboard highlight in view; jsdom has no layout.
@@ -162,21 +164,68 @@ describe('BAISelect as the single select', () => {
     },
   );
 
-  it('reports the first option once with autoSelectOption', async () => {
+  it('fills an empty Form.Item with the first option with autoSelectOption', async () => {
+    const formRef = React.createRef<FormInstance>();
+    render(
+      <Form ref={formRef}>
+        <FormItem name="kernel" label="Kernel">
+          <BAISelect
+            autoSelectOption
+            options={[
+              { type: 'section', title: 'Main', options: [{ value: 'k1' }] },
+              { value: 'k2' },
+            ]}
+          />
+        </FormItem>
+      </Form>,
+    );
+    await waitFor(() =>
+      expect(formRef.current?.getFieldValue('kernel')).toBe('k1'),
+    );
+  });
+
+  it('keeps the user choice on a controlled select with autoSelectOption', async () => {
+    const onChange = vi.fn();
+    const Controlled = () => {
+      const [value, setValue] = React.useState<string | null>();
+      return (
+        <BAISelect
+          aria-label="Kernel"
+          hasSearch={false}
+          autoSelectOption
+          value={value}
+          onChange={(next) => {
+            onChange(next);
+            setValue(next);
+          }}
+          options={[{ value: 'k1' }, { value: 'k2' }]}
+        />
+      );
+    };
+    render(<Controlled />);
+    await waitFor(() => expect(onChange).toHaveBeenCalledWith('k1'));
+    await userEvent.click(trigger()!);
+    await userEvent.click(await screen.findByRole('option', { name: 'k2' }));
+    expect(trigger()).toHaveTextContent('k2');
+    expect(onChange).toHaveBeenCalledTimes(2);
+  });
+
+  it('leaves an uncontrolled select alone with autoSelectOption', async () => {
     const onChange = vi.fn();
     render(
       <BAISelect
         aria-label="Kernel"
+        hasSearch={false}
         autoSelectOption
         onChange={onChange}
-        options={[
-          { type: 'section', title: 'Main', options: [{ value: 'k1' }] },
-          { value: 'k2' },
-        ]}
+        options={[{ value: 'k1' }, { value: 'k2' }]}
       />,
     );
-    await waitFor(() => expect(onChange).toHaveBeenCalledWith('k1'));
-    expect(onChange).toHaveBeenCalledTimes(1);
+    await userEvent.click(trigger()!);
+    await userEvent.click(await screen.findByRole('option', { name: 'k2' }));
+    expect(onChange).toHaveBeenCalledWith('k2');
+    expect(onChange).not.toHaveBeenCalledWith('k1');
+    expect(trigger()).toHaveTextContent('k2');
   });
 
   it('leaves a set value alone with autoSelectOption', () => {

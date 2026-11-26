@@ -16,6 +16,7 @@ import {
   type SelectorOptionType,
   type SelectorProps,
 } from '@lablup/ui-common/Selector';
+import { getSelectableOptions } from '@lablup/ui-common/Selector/utils';
 import classNames from 'classnames';
 import React from 'react';
 
@@ -34,26 +35,10 @@ export interface BAISelectProps<
   /**
    * While no value is set, select the first option and report it through
    * `onChange`, so the enclosing Form.Item or the parent state receives it.
+   * Needs a controlled value: the `value` prop or an enclosing Form.Item.
    */
   autoSelectOption?: boolean;
 }
-
-/** The first selectable value, sections included and dividers skipped. */
-const firstOptionValue = (
-  options: ReadonlyArray<SelectorOptionType>,
-): string | undefined => {
-  for (const option of options) {
-    if (typeof option === 'string') return option;
-    if ('type' in option && option.type === 'divider') continue;
-    if ('type' in option && option.type === 'section') {
-      const value = firstOptionValue(option.options);
-      if (value !== undefined) return value;
-      continue;
-    }
-    if ('value' in option) return option.value;
-  }
-  return undefined;
-};
 
 function BAISelect<T extends SelectorOptionType = SelectorOptionType>({
   ghost,
@@ -69,11 +54,15 @@ function BAISelect<T extends SelectorOptionType = SelectorOptionType>({
     ? selectorProps['aria-label']
     : undefined;
 
+  // Forcing `value` on an uncontrolled select would pin it to the first option.
   const autoSelectedValue =
     autoSelectOption &&
+    'value' in selectorProps &&
     (value === undefined || value === null || value === '') &&
     (defaultValue === undefined || defaultValue === null)
-      ? firstOptionValue(selectorProps.options)
+      ? getSelectableOptions(
+          selectorProps.options as Parameters<typeof getSelectableOptions>[0],
+        )[0]?.value
       : undefined;
   const emitAutoSelection = React.useEffectEvent(() => {
     if (autoSelectedValue === undefined) return;

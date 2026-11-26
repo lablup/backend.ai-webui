@@ -58,7 +58,7 @@ The two BAI additions:
 | Prop | Type | Behavior |
 |---|---|---|
 | `ghost` | `boolean` | Adds the `bai-select-ghost` class, the on-dark treatment of the select on the header's brand band (`BAISelect.css`). It is unrelated to `Selector`'s `variant="ghost"`. |
-| `autoSelectOption` | `boolean` | While `value` is `undefined`, `null`, or `''` and `defaultValue` is `undefined` or `null`, `BAISelect` passes the first option's value (sections included, dividers skipped) as `value` and calls `onChange` with it from a layout effect whenever that first value changes. The enclosing Form.Item or the parent state then holds it. |
+| `autoSelectOption` | `boolean` | Applies only to a controlled select, one that receives a `value` prop (an enclosing Form.Item passes one). While that `value` is `undefined`, `null`, or `''` and `defaultValue` is `undefined` or `null`, `BAISelect` passes the first option's value (sections included, dividers skipped) as `value` and calls `onChange` with it from a layout effect whenever that first value changes. The enclosing Form.Item or the parent state then holds it. |
 
 ### 2. Project defaults in `BAISelect`
 

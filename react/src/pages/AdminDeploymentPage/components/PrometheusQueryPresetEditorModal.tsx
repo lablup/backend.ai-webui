@@ -183,7 +183,8 @@ const PrometheusQueryPresetEditorModal: React.FC<
           if (values.description !== initial.description) {
             input.description = values.description ?? null;
           }
-          if (values.categoryId !== initial.categoryId) {
+          // A cleared select reports `null`; the initial value is `undefined`.
+          if ((values.categoryId ?? undefined) !== initial.categoryId) {
             input.categoryId = values.categoryId ?? null;
           }
           if (values.metricName !== initial.metricName) {
