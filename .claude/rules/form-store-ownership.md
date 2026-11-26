@@ -27,39 +27,24 @@ boundary.
 1. **Default: a ref.** `const formRef = useRef<FormInstance<Values>>(null)` and
    `<Form ref={formRef}>`; import `FormInstance` from the same `form-engine` specifier as
    `Form`, at the file's `../` depth (example: `FolderCreateModal.tsx`).
-   - Use the ref in handlers that run while the `<Form>` is mounted (submit, `onOk`, a field's
-     `onChange`). It is `null` while the `<Form>` is not mounted, so `formRef.current?.…` then
-     does nothing, and `await formRef.current?.validateFields()` resolves `undefined`.
-   - Data that arrives later goes in through `initialValues`, or through `setFieldsValue` from
-     a component rendered inside the `<Form>` (`Form.useFormInstance()`), not from a parent
-     effect that can run before the `<Form>` mounts.
 2. **Keep `Form.useForm()` only when the instance must sit outside or outlive the `<Form>`:**
    - the declaring component reads it during render, outside the `<Form>`'s context:
      `Form.useWatch(name, form)` there (example: `VFolderDeployModal.tsx`, where the watched
      resource group sets the Deploy button's `disabled`);
    - a child rendered **outside** the `<Form>` reads it while rendering;
    - the input must survive the `<Form>` unmounting for a moment: a `BAIModal` whose `loading`
-     swaps the body for `BAISkeleton`, a Suspense boundary that re-suspends, wizard steps
-     rendered one at a time.
+     swaps the body for `BAISkeleton`, wizard steps rendered one at a time.
 3. **A read inside the `<Form>` needs no parent instance:**
    - a `Form.Item` with a `shouldUpdate` **comparator**,
      `shouldUpdate={(prev, cur) => prev.type !== cur.type}`. A bare `shouldUpdate` re-renders on
      every store change. `dependencies` alone does not replace `Form.useWatch`: an unnamed item
      with only `dependencies` re-renders on user input but not on `setFieldValue` /
      `setFieldsValue`;
-   - a child rendered inside the `<Form>` that calls `Form.useWatch(name)` (no form argument)
-     or `Form.useFormInstance()`. Both read the form from context, so do not pass a `form` prop
-     into such a child.
-4. **A kept `Form.useForm()` owns its lifetime.** When its `<Form>` remounts for a new record,
-   put that record's values in with `form.setFieldsValue(values)` in the handler that opens it
-   (the parent owns the store, so this works before the `<Form>` mounts), or move the hook into
-   the child that unmounts together with its `<Form>` (not for rule 2's brief-unmount case).
-   - `form.resetFields()` before the `<Form>` mounts restores the previous mount's
-     `initialValues`.
-   - Do not use `clearOnDestroy` for this: the engine clears the store in an unmount cleanup,
-     which `React.StrictMode` runs right after the first mount in development, and it erases
-     input in the brief-unmount case.
-5. Do not convert existing `Form.useForm()` call sites in a sweep. Apply this rule to the form
+   - a child rendered inside the `<Form>` that calls `Form.useWatch(name)` (no form argument),
+     which reads the form from context, so do not pass a `form` prop into such a child.
+     `Form.useFormInstance()` also reads it from context but does not subscribe: use it in that
+     child's handlers and effects, never to read a value during render.
+4. Do not convert existing `Form.useForm()` call sites in a sweep. Apply this rule to the form
    you are writing or already changing. The rule covers `react/src` and
    `packages/backend.ai-ui/src` alike.
 
