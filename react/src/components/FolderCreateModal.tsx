@@ -42,7 +42,6 @@ import {
   BAIRadioListItem,
   BAISwitch,
   BAITextInput,
-  BAIUnmountAfterClose,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { Suspense, useEffect, useEffectEvent, useRef, useState } from 'react';
@@ -110,7 +109,7 @@ export interface FolderCreateModalProps extends Omit<
   alertMessage?: React.ReactNode;
 }
 
-const FolderCreateModalContent: React.FC<FolderCreateModalProps> = ({
+const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
   onRequestClose,
   project,
   initialValidate = false,
@@ -734,28 +733,6 @@ const FolderCreatePermissionCheck: React.FC<
   }, [projectId, canCreate]);
 
   return null;
-};
-
-// Unmounted after close so the form and every query it runs start fresh; the
-// content mounts on open, so its suspending hooks need their own boundary.
-const FolderCreateModal: React.FC<FolderCreateModalProps> = (props) => {
-  'use memo';
-  return (
-    <BAIUnmountAfterClose>
-      <SuspendedFolderCreateModal {...props} />
-    </BAIUnmountAfterClose>
-  );
-};
-
-const SuspendedFolderCreateModal: React.FC<FolderCreateModalProps> = (
-  props,
-) => {
-  'use memo';
-  return (
-    <Suspense fallback={null}>
-      <FolderCreateModalContent {...props} />
-    </Suspense>
-  );
 };
 
 export default FolderCreateModal;

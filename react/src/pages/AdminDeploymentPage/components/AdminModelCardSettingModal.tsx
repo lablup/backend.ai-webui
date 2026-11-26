@@ -26,6 +26,7 @@ import {
   BAITagsInput,
   BAITextArea,
   BAITextInput,
+  BAIUnmountAfterClose,
 } from 'backend.ai-ui';
 import { PlusIcon } from 'lucide-react';
 import { Suspense, useRef, useState } from 'react';
@@ -513,23 +514,23 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
           </Form>
         )}
       </BAIModal>
-      {/* Model folders are created in the model-store project, never the
-          ambient one. */}
-      <FolderCreateModal
-        open={isOpenCreateFolderModal}
-        project={modelStoreProjectContext}
-        initialValidate={true}
-        folderType="model_project"
-        onRequestClose={(result) => {
-          setIsOpenCreateFolderModal(false);
-          if (result) {
-            formRef.current?.setFieldsValue({
-              vfolderId: result.entityId,
-            });
-            vfolderSelectRef.current?.refetch();
-          }
-        }}
-      />
+      <BAIUnmountAfterClose>
+        <FolderCreateModal
+          open={isOpenCreateFolderModal}
+          project={modelStoreProjectContext}
+          initialValidate={true}
+          folderType="model_project"
+          onRequestClose={(result) => {
+            setIsOpenCreateFolderModal(false);
+            if (result) {
+              formRef.current?.setFieldsValue({
+                vfolderId: result.entityId,
+              });
+              vfolderSelectRef.current?.refetch();
+            }
+          }}
+        />
+      </BAIUnmountAfterClose>
     </>
   );
 };

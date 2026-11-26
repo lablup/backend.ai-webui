@@ -43,6 +43,7 @@ import {
   useIsLabelableEntityType,
   BAISegmentedControl,
   BAISegmentedControlItem,
+  BAIUnmountAfterClose,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { PlusIcon, RotateCcwIcon, Trash2Icon, TrashIcon } from 'lucide-react';
@@ -616,19 +617,19 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
             toggleDeleteForeverModal();
           }}
         />
-        <FolderCreateModal
-          open={isOpenCreateModal}
-          // ADR-0001: no ambient project context on the admin Data page — the
-          // modal renders its own required project selector.
-          project={null}
-          alertMessage={t('data.folders.AdminDataPageAlert')}
-          onRequestClose={(result) => {
-            toggleCreateModal();
-            if (result) {
-              updateFetchKey();
-            }
-          }}
-        />
+        <BAIUnmountAfterClose>
+          <FolderCreateModal
+            open={isOpenCreateModal}
+            project={null}
+            alertMessage={t('data.folders.AdminDataPageAlert')}
+            onRequestClose={(result) => {
+              toggleCreateModal();
+              if (result) {
+                updateFetchKey();
+              }
+            }}
+          />
+        </BAIUnmountAfterClose>
       </VStack>
     </AstryxAdminTheme>
   );

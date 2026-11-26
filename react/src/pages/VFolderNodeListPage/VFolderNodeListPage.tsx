@@ -50,6 +50,7 @@ import {
   useIsLabelableEntityType,
   BAISegmentedControl,
   BAISegmentedControlItem,
+  BAIUnmountAfterClose,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { RotateCcwIcon, Trash2Icon, TrashIcon } from 'lucide-react';
@@ -601,25 +602,27 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
           </Suspense>
         </VStack>
       </BAICard>
-      <FolderCreateModal
-        open={isOpenCreateModal}
-        project={projectContext}
-        allowAutoMount={isPersonalProject}
-        initialValues={{
-          usage_mode:
-            queryParams.mode === 'model'
-              ? 'model'
-              : queryParams.mode === 'automount'
-                ? 'automount'
-                : 'general',
-        }}
-        onRequestClose={(success) => {
-          if (success) {
-            updateFetchKey();
-          }
-          toggleCreateModal();
-        }}
-      />
+      <BAIUnmountAfterClose>
+        <FolderCreateModal
+          open={isOpenCreateModal}
+          project={projectContext}
+          allowAutoMount={isPersonalProject}
+          initialValues={{
+            usage_mode:
+              queryParams.mode === 'model'
+                ? 'model'
+                : queryParams.mode === 'automount'
+                  ? 'automount'
+                  : 'general',
+          }}
+          onRequestClose={(success) => {
+            if (success) {
+              updateFetchKey();
+            }
+            toggleCreateModal();
+          }}
+        />
+      </BAIUnmountAfterClose>
       <DeleteVFolderModalV2
         vfolderFrgmts={selectedFolderList}
         open={isOpenDeleteModal}

@@ -156,15 +156,17 @@ export const CreateFolderPanel: React.FC<PanelComponentProps> = () => {
         icon={<BAINewFolderIcon />}
         onClick={() => setIsOpen(true)}
       />
-      <FolderCreateModal
-        open={isOpen}
-        project={project}
-        allowAutoMount={isPersonalProject}
-        onRequestClose={(response) => {
-          setIsOpen(false);
-          if (response) webuiNavigate(buildProjectPath('data'));
-        }}
-      />
+      <BAIUnmountAfterClose>
+        <FolderCreateModal
+          open={isOpen}
+          project={project}
+          allowAutoMount={isPersonalProject}
+          onRequestClose={(response) => {
+            setIsOpen(false);
+            if (response) webuiNavigate(buildProjectPath('data'));
+          }}
+        />
+      </BAIUnmountAfterClose>
     </>
   );
 };
