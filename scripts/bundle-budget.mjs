@@ -8,8 +8,15 @@
 // fails (exit 1) when those eager chunks together exceed BUDGET_BYTES
 // (minified, before gzip), or when any chunk exceeds the service-worker
 // precache limit, which would break the release build.
-import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
+import {
+  existsSync,
+  readdirSync,
+  readFileSync,
+  realpathSync,
+  statSync,
+} from "node:fs";
 import { join, posix, resolve } from "node:path";
+import { pathToFileURL } from "node:url";
 import { gzipSync } from "node:zlib";
 
 // Measured 2026-10-29 on Vite 8: 2.18 MB of eager JS in 133 chunks (entry
@@ -20,14 +27,6 @@ export const BUDGET_BYTES = 2.8 * 1024 * 1024;
 // `maximumFileSizeToCacheInBytes` in react/vite.config.ts.
 export const PRECACHE_LIMIT_BYTES = 5 * 1024 * 1024;
 
-const args = process.argv.slice(2);
-const flag = (name, fallback) => {
-  const i = args.indexOf(name);
-  return i === -1 ? fallback : args[i + 1];
-};
-const buildDir = resolve(flag("--build", "react/build"));
-const json = args.includes("--json");
-
 const STATIC_IMPORT =
   /(?:^|[;}\s])(?:import|export)\s*(?:[\w$*{}\s,]+?\s*from\s*)?["'](\.{1,2}\/[^"']+\.js)["']/g;
 
@@ -37,7 +36,9 @@ function eagerChunks(dir, html) {
   )?.[1];
   if (!entry) throw new Error(`no module script in ${join(dir, "index.html")}`);
   const preloads = [
-    ...html.matchAll(/<link[^>]+rel="modulepreload"[^>]+href="\/?([^"]+\.js)"/g),
+    ...html.matchAll(
+      /<link[^>]+rel="modulepreload"[^>]+href="\/?([^"]+\.js)"/g,
+    ),
   ].map((m) => m[1]);
   const seen = new Set();
   const queue = [entry, ...preloads];
@@ -83,25 +84,38 @@ export function measure(dir) {
   };
 }
 
-const mb = (n) => `${(n / 1024 / 1024).toFixed(2)} MB`;
-const result = measure(buildDir);
-const over =
-  result.eagerBytes > result.budget || result.overPrecacheLimit.length > 0;
-if (json) {
-  console.log(JSON.stringify({ ...result, over }, null, 2));
-} else {
-  console.log(
-    `eager JS ${mb(result.eagerBytes)} (gzip ${mb(result.eagerGzipBytes)}) in ${result.eagerChunkCount} chunks, budget ${mb(result.budget)} — ${result.eagerBytes > result.budget ? "OVER" : "ok"}`,
-  );
-  console.log(`entry ${result.entry}: ${mb(result.entryBytes)}`);
-  for (const c of result.overPrecacheLimit)
+if (
+  process.argv[1] &&
+  existsSync(process.argv[1]) &&
+  import.meta.url === pathToFileURL(realpathSync(process.argv[1])).href
+) {
+  const args = process.argv.slice(2);
+  const flag = (name, fallback) => {
+    const i = args.indexOf(name);
+    return i === -1 ? fallback : args[i + 1];
+  };
+  const buildDir = resolve(flag("--build", "react/build"));
+  const json = args.includes("--json");
+  const mb = (n) => `${(n / 1024 / 1024).toFixed(2)} MB`;
+  const result = measure(buildDir);
+  const over =
+    result.eagerBytes > result.budget || result.overPrecacheLimit.length > 0;
+  if (json) {
+    console.log(JSON.stringify({ ...result, over }, null, 2));
+  } else {
     console.log(
-      `OVER the ${mb(PRECACHE_LIMIT_BYTES)} precache limit: ${c.file} ${mb(c.bytes)}`,
+      `eager JS ${mb(result.eagerBytes)} (gzip ${mb(result.eagerGzipBytes)}) in ${result.eagerChunkCount} chunks, budget ${mb(result.budget)} — ${result.eagerBytes > result.budget ? "OVER" : "ok"}`,
     );
-  console.log(
-    `total JS ${mb(result.totalJsBytes)} in ${result.chunkCount} chunks; largest eager:`,
-  );
-  for (const c of result.largestEager)
-    console.log(`  ${mb(c.bytes).padStart(9)}  ${c.file}`);
+    console.log(`entry ${result.entry}: ${mb(result.entryBytes)}`);
+    for (const c of result.overPrecacheLimit)
+      console.log(
+        `OVER the ${mb(PRECACHE_LIMIT_BYTES)} precache limit: ${c.file} ${mb(c.bytes)}`,
+      );
+    console.log(
+      `total JS ${mb(result.totalJsBytes)} in ${result.chunkCount} chunks; largest eager:`,
+    );
+    for (const c of result.largestEager)
+      console.log(`  ${mb(c.bytes).padStart(9)}  ${c.file}`);
+  }
+  process.exit(over ? 1 : 0);
 }
-process.exit(over ? 1 : 0);

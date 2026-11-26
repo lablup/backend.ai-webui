@@ -1,7 +1,4 @@
-# Production build of the React app plus the boot-path budget
-# (scripts/bundle-budget.mjs). No other PR check builds the app, so the
-# 5 MiB service-worker precache limit used to surface only on release
-# (observed on main, 2026-10-22). Advisory: see typecheck.yml on `paths:`.
+# Per-PR bundle size comparison and the boot-path budget (ADR 0038).
 name: Bundle size
 
 on:
@@ -10,8 +7,17 @@ on:
       - "react/**"
       - "packages/backend.ai-ui/**"
       - "packages/backend.ai-client/**"
+      - "resources/**"
+      - "data/**"
+      - "relay.config.js"
+      - "relay-base.config.js"
+      - "package.json"
       - "pnpm-lock.yaml"
       - "pnpm-workspace.yaml"
+      - ".npmrc"
+      - ".nvmrc"
+      - ".github/actions/setup-node-pnpm/**"
+      - ".github/scripts/bundle-size/**"
       - "scripts/bundle-budget.mjs"
       - ".github/workflows/bundle-size.yml"
   push:
@@ -20,25 +26,187 @@ on:
       - "react/**"
       - "packages/backend.ai-ui/**"
       - "packages/backend.ai-client/**"
+      - "resources/**"
+      - "data/**"
+      - "relay.config.js"
+      - "relay-base.config.js"
+      - "package.json"
       - "pnpm-lock.yaml"
       - "pnpm-workspace.yaml"
+      - ".npmrc"
+      - ".nvmrc"
+      - ".github/actions/setup-node-pnpm/**"
+      - ".github/scripts/bundle-size/**"
       - "scripts/bundle-budget.mjs"
+      - ".github/workflows/bundle-size.yml"
 
-permissions:
-  contents: read
+permissions: {}
 
 concurrency:
-  group: bundle-size-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: true
+  group: bundle-size-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
-  bundle-size:
+  measure:
     name: bundle-size
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    env:
+      PLAN: ${{ github.workspace }}/bundle-size-plan.json
     steps:
       - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: ${{ github.event_name == 'pull_request' && '0' || '1' }}
+
       - uses: ./.github/actions/setup-node-pnpm
-      - name: Build the React app
-        run: pnpm run build:react-only
+        with:
+          install: "false"
+
+      - name: Test the measurement scripts
+        run: node --test .github/scripts/bundle-size/*.test.mjs
+
+      - name: Compute the input keys
+        id: plan
+        env:
+          BASE_REF: ${{ github.base_ref }}
+        run: |
+          set -euo pipefail
+          if [ -n "$BASE_REF" ]; then
+            base="$(git merge-base "origin/${BASE_REF}" HEAD)"
+            node .github/scripts/bundle-size/input-key.mjs --head HEAD --base "$base" --output "$PLAN"
+          else
+            node .github/scripts/bundle-size/input-key.mjs --head HEAD --output "$PLAN"
+          fi
+          echo "plan=$(cat "$PLAN")" >> "$GITHUB_OUTPUT"
+
+      - name: Restore measurement 1
+        if: fromJSON(steps.plan.outputs.plan).targets[0].restoreKey != ''
+        uses: actions/cache/restore@v6
+        with:
+          path: bundle-size-cache/${{ fromJSON(steps.plan.outputs.plan).targets[0].restoreKey }}.json
+          key: ${{ fromJSON(steps.plan.outputs.plan).targets[0].restoreKey }}
+
+      - name: Restore measurement 2
+        if: fromJSON(steps.plan.outputs.plan).targets[1].restoreKey != ''
+        uses: actions/cache/restore@v6
+        with:
+          path: bundle-size-cache/${{ fromJSON(steps.plan.outputs.plan).targets[1].restoreKey }}.json
+          key: ${{ fromJSON(steps.plan.outputs.plan).targets[1].restoreKey }}
+
+      - name: Build and measure
+        id: run
+        run: node .github/scripts/bundle-size/run.mjs --plan "$PLAN" --base-dir "$RUNNER_TEMP/bundle-base"
+
+      - name: Save measurement 1
+        if: fromJSON(steps.run.outputs.saves)[0]
+        uses: actions/cache/save@v6
+        with:
+          path: bundle-size-cache/${{ fromJSON(steps.run.outputs.saves)[0] }}.json
+          key: ${{ fromJSON(steps.run.outputs.saves)[0] }}
+
+      - name: Save measurement 2
+        if: fromJSON(steps.run.outputs.saves)[1]
+        uses: actions/cache/save@v6
+        with:
+          path: bundle-size-cache/${{ fromJSON(steps.run.outputs.saves)[1] }}.json
+          key: ${{ fromJSON(steps.run.outputs.saves)[1] }}
+
+      - name: Save measurement 3
+        if: fromJSON(steps.run.outputs.saves)[2]
+        uses: actions/cache/save@v6
+        with:
+          path: bundle-size-cache/${{ fromJSON(steps.run.outputs.saves)[2] }}.json
+          key: ${{ fromJSON(steps.run.outputs.saves)[2] }}
+
+      - name: Save measurement 4
+        if: fromJSON(steps.run.outputs.saves)[3]
+        uses: actions/cache/save@v6
+        with:
+          path: bundle-size-cache/${{ fromJSON(steps.run.outputs.saves)[3] }}.json
+          key: ${{ fromJSON(steps.run.outputs.saves)[3] }}
+
+      - name: Render the report
+        run: |
+          node .github/scripts/bundle-size/render.mjs --plan "$PLAN" --dir bundle-size --out-dir .
+          cat bundle-size-report.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload the report
+        uses: actions/upload-artifact@v7
+        with:
+          name: bundle-size-report
+          path: |
+            bundle-size-report.md
+            bundle-size-report.json
+          if-no-files-found: error
+          retention-days: 7
+
       - name: Boot-path budget
+        if: contains(fromJSON(steps.run.outputs.built), 'webui')
         run: node scripts/bundle-budget.mjs --build react/build | tee -a "$GITHUB_STEP_SUMMARY"
+
+  report:
+    needs: measure
+    if: >-
+      !cancelled()
+      && github.event_name == 'pull_request'
+      && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Download the report
+        uses: actions/download-artifact@v8
+        with:
+          name: bundle-size-report
+          path: bundle-size-report
+        continue-on-error: true
+
+      - name: Post or update the bundle size comment
+        uses: actions/github-script@v9
+        env:
+          MEASURE_RESULT: ${{ needs.measure.result }}
+        with:
+          script: |
+            const fs = require('node:fs');
+            const marker = '<!-- bundle-size-report -->';
+            try {
+              const { owner, repo } = context.repo;
+              const issue_number = context.payload.pull_request.number;
+              const comments = await github.paginate(github.rest.issues.listComments, {
+                owner, repo, issue_number, per_page: 100,
+              });
+              const existing = comments.find(
+                (c) => c.user.type === 'Bot' && c.body.startsWith(marker),
+              );
+              if (!fs.existsSync('bundle-size-report/bundle-size-report.md')) {
+                if (!existing || process.env.MEASURE_RESULT !== 'failure') {
+                  core.info(`No bundle size report (measure job: ${process.env.MEASURE_RESULT}) — comment left as it is.`);
+                  return;
+                }
+                const head = context.payload.pull_request.head.sha.slice(0, 7);
+                const run = `${context.serverUrl}/${owner}/${repo}/actions/runs/${context.runId}`;
+                await github.rest.issues.updateComment({
+                  owner, repo, comment_id: existing.id,
+                  body: `${marker}\n## Bundle size\n\nHead \`${head}\` was not measured: the [measure job](${run}) failed before it produced a report.\n`,
+                });
+                core.info(`Marked the bundle size comment on #${issue_number} as not measured.`);
+                return;
+              }
+              const body = fs.readFileSync('bundle-size-report/bundle-size-report.md', 'utf8');
+              const { compared } = JSON.parse(
+                fs.readFileSync('bundle-size-report/bundle-size-report.json', 'utf8'),
+              );
+              if (existing) {
+                await github.rest.issues.updateComment({ owner, repo, comment_id: existing.id, body });
+                core.info(`Updated the bundle size comment on #${issue_number}.`);
+              } else if (compared > 0) {
+                await github.rest.issues.createComment({ owner, repo, issue_number, body });
+                core.info(`Posted the bundle size comment on #${issue_number}.`);
+              } else {
+                core.info('No target compared and no earlier comment — nothing to post.');
+              }
+            } catch (error) {
+              core.warning(`Bundle size comment not posted: ${error.message}`);
+            }
