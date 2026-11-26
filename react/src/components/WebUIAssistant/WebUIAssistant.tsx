@@ -4,12 +4,10 @@
  */
 import { useMyAppConfig } from '../../hooks/useAppConfig';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
+import BAIErrorBoundary from '../BAIErrorBoundary';
 import { useCustomEndpointApiKey } from '../Chat/customEndpointKeyStore';
 import { useCurrentLanguage } from '../DefaultProviders';
-import ErrorBoundaryWithNullFallback from '../ErrorBoundaryWithNullFallback';
 import './WebUIAssistant.css';
-import WebUIAssistantChat from './WebUIAssistantChat';
-import WebUIAssistantConnectModal from './WebUIAssistantConnectModal';
 import WebUIAssistantKeyRestorer from './WebUIAssistantKeyRestorer';
 import { useCustomConnectionThisLoad } from './customConnectionThisLoad';
 import { WEBUI_ASSISTANT_PROFILE } from './webUIAssistantProfile';
@@ -21,11 +19,29 @@ import {
 import { IconButton } from '@lablup/ui-common/IconButton';
 import { Spinner } from '@lablup/ui-common/Spinner';
 import { Text } from '@lablup/ui-common/Text';
-import { BAIFlex, BAIPopconfirm, BAIUnmountAfterClose } from 'backend.ai-ui';
+import {
+  BAIFlex,
+  BAIPopconfirm,
+  BAIUnmountAfterClose,
+  useBAILogger,
+} from 'backend.ai-ui';
 import { EraserIcon, MessageCircle, PlugZap, X } from 'lucide-react';
-import { Suspense, useEffect, useEffectEvent, useRef, useState } from 'react';
+import {
+  lazy,
+  startTransition,
+  Suspense,
+  useEffect,
+  useEffectEvent,
+  useRef,
+  useState,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
+
+const loadChat = () => import('./WebUIAssistantChat');
+const loadConnectModal = () => import('./WebUIAssistantConnectModal');
+const WebUIAssistantChat = lazy(loadChat);
+const WebUIAssistantConnectModal = lazy(loadConnectModal);
 
 /** The floating WebUI Assistant; renders nothing until the user turns it on. */
 const WebUIAssistant: React.FC = () => {
@@ -39,6 +55,7 @@ const WebUIAssistantFloating: React.FC = () => {
   'use memo';
 
   const { t } = useTranslation();
+  const { logger } = useBAILogger();
   const [lang] = useCurrentLanguage();
   const [connection] = useMyAppConfig<WebUIAssistantConnection>(
     'userConfig',
@@ -170,6 +187,24 @@ const WebUIAssistantFloating: React.FC = () => {
     return () => window.removeEventListener('resize', onResize);
   }, [isPanelShown]);
 
+  const loadChunk = async (load: () => Promise<unknown>) => {
+    try {
+      await load();
+      return true;
+    } catch (error) {
+      logger.error('Failed to load the WebUI Assistant chunk:', error);
+      return false;
+    }
+  };
+
+  const openConnectModal = async () => {
+    const clickedPathname = window.location.pathname;
+    if (!(await loadChunk(loadConnectModal))) return false;
+    if (window.location.pathname !== clickedPathname) return false;
+    startTransition(() => setIsConnectOpen(true));
+    return true;
+  };
+
   useEffect(() => {
     if (!isOpen || isConnectOpen) return;
     const onKeyDown = (event: KeyboardEvent) => {
@@ -230,7 +265,9 @@ const WebUIAssistantFloating: React.FC = () => {
               icon={<PlugZap size="1em" />}
               label={t('webuiAssistant.ChangeConnection')}
               tooltip={t('webuiAssistant.ChangeConnection')}
-              onClick={() => setIsConnectOpen(true)}
+              clickAction={async () => {
+                await openConnectModal();
+              }}
             />
             <BAIPopconfirm
               title={t('webuiAssistant.ClearConversationConfirm')}
@@ -248,23 +285,37 @@ const WebUIAssistantFloating: React.FC = () => {
             </BAIPopconfirm>
           </BAIFlex>
         </BAIFlex>
-        {hasBeenShown &&
-          (!connection || !isConnected ? (
+        <Suspense
+          fallback={
             <BAIFlex justify="center" align="center" style={{ flex: '1 1 0%' }}>
               <Spinner />
             </BAIFlex>
-          ) : (
-            <ErrorBoundaryWithNullFallback>
-              <WebUIAssistantChat
+          }
+        >
+          {hasBeenShown &&
+            (!connection || !isConnected ? (
+              <BAIFlex
+                justify="center"
+                align="center"
+                style={{ flex: '1 1 0%' }}
+              >
+                <Spinner />
+              </BAIFlex>
+            ) : (
+              <BAIErrorBoundary
                 key={`${conversationKey}-${connection.baseURL}-${apiKey ?? ''}`}
-                baseURL={connection.baseURL}
-                apiKey={apiKey}
-                isVisible={isPanelShown}
-                onChangeConnection={() => setIsConnectOpen(true)}
-                onWorkingChange={setIsWorking}
-              />
-            </ErrorBoundaryWithNullFallback>
-          ))}
+                style={{ flex: '1 1 0%' }}
+              >
+                <WebUIAssistantChat
+                  baseURL={connection.baseURL}
+                  apiKey={apiKey}
+                  isVisible={isPanelShown}
+                  onChangeConnection={openConnectModal}
+                  onWorkingChange={setIsWorking}
+                />
+              </BAIErrorBoundary>
+            ))}
+        </Suspense>
       </BAIFlex>
       <IconButton
         ref={fabRef}
@@ -282,7 +333,7 @@ const WebUIAssistantFloating: React.FC = () => {
         onPointerMove={onFabPointerMove}
         onPointerUp={onFabPointerUp}
         onPointerCancel={onFabPointerCancel}
-        onClick={(event) => {
+        clickAction={async (event) => {
           // The click that ends a drag does not toggle the panel; a keyboard click (detail 0) always does.
           const wasDragged = wasDraggedRef.current && event.detail !== 0;
           wasDraggedRef.current = false;
@@ -290,11 +341,13 @@ const WebUIAssistantFloating: React.FC = () => {
           updatePanelSide();
           // Without a connection the button asks for one; the chat opens once it is saved.
           if (!isConnected) {
-            setIsConnectOpen(true);
-            setIsOpen(true);
+            if (await openConnectModal()) {
+              startTransition(() => setIsOpen(true));
+            }
             return;
           }
-          setIsOpen((open) => !open);
+          if (!isOpen && !(await loadChunk(loadChat))) return;
+          startTransition(() => setIsOpen((open) => !open));
         }}
       />
       {connection?.deploymentId && connection.hasApiKey && !apiKey && (
