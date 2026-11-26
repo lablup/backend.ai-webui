@@ -52,7 +52,7 @@ function isPageReloaded(): boolean {
  * applauncher route. These routes are handled entirely by React Router and
  * should not trigger the normal login orchestration.
  */
-function isAppLauncherPage(): boolean {
+export function isAppLauncherPage(): boolean {
   const currentPage = window.location.pathname.replace(/^\//, '').split('/')[0];
   return currentPage === 'edu-applauncher' || currentPage === 'applauncher';
 }
@@ -60,7 +60,7 @@ function isAppLauncherPage(): boolean {
 /**
  * Check whether backendaiclient is connected and ready.
  */
-function isClientConnected(): boolean {
+export function isClientConnected(): boolean {
   return (
     typeof globalThis.backendaiclient !== 'undefined' &&
     globalThis.backendaiclient !== null &&

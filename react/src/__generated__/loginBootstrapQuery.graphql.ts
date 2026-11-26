@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<6b15ab0168d8ea4fd02fca887a88c920>>
+ * @generated SignedSource<<143bc8dbb2406b8440686eb378347ba7>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,22 +10,21 @@
 
 import { ConcreteRequest } from 'relay-runtime';
 export type UserRoleV2 = "ADMIN" | "MONITOR" | "SUPERADMIN" | "USER" | "%future added value";
-export type UserStatusV2 = "ACTIVE" | "BEFORE_VERIFICATION" | "DELETED" | "INACTIVE" | "%future added value";
-export type loginBootstrapQuery$variables = Record<PropertyKey, never>;
+export type loginBootstrapQuery$variables = {
+  hasRecentProject: boolean;
+  needsAccessKey: boolean;
+  recentProjectName: string;
+};
 export type loginBootstrapQuery$data = {
-  readonly groups: ReadonlyArray<{
-    readonly description: string | null | undefined;
-    readonly id: string | null | undefined;
-    readonly is_active: boolean | null | undefined;
-    readonly name: string | null | undefined;
-  } | null | undefined> | null | undefined;
-  readonly myKeypairs: {
+  readonly myAppConfigs: ReadonlyArray<{
+    readonly config: any;
+    readonly configName: string;
+  }> | null | undefined;
+  readonly myKeypairs?: {
     readonly edges: ReadonlyArray<{
       readonly node: {
         readonly accessKey: string;
         readonly id: string;
-        readonly resourcePolicy: string;
-        readonly userId: string;
       };
     }>;
   } | null | undefined;
@@ -33,18 +32,41 @@ export type loginBootstrapQuery$data = {
     readonly basicInfo: {
       readonly email: string;
       readonly fullName: string | null | undefined;
-      readonly username: string | null | undefined;
     };
+    readonly defaultProject: {
+      readonly edges: ReadonlyArray<{
+        readonly node: {
+          readonly basicInfo: {
+            readonly name: string;
+          };
+          readonly entityId: string;
+          readonly id: string;
+        };
+      }>;
+    } | null | undefined;
+    readonly domain: {
+      readonly basicInfo: {
+        readonly name: string;
+      };
+      readonly entityId: string;
+    } | null | undefined;
     readonly entityId: string;
     readonly id: string;
     readonly organization: {
       readonly domainName: string | null | undefined;
       readonly role: UserRoleV2 | null | undefined;
     };
-    readonly status: {
-      readonly needPasswordChange: boolean | null | undefined;
-      readonly status: UserStatusV2;
-    };
+    readonly recentProject?: {
+      readonly edges: ReadonlyArray<{
+        readonly node: {
+          readonly basicInfo: {
+            readonly name: string;
+          };
+          readonly entityId: string;
+          readonly id: string;
+        };
+      }>;
+    } | null | undefined;
   } | null | undefined;
 };
 export type loginBootstrapQuery = {
@@ -54,174 +76,138 @@ export type loginBootstrapQuery = {
 
 const node: ConcreteRequest = (function(){
 var v0 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "hasRecentProject"
+},
+v1 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "needsAccessKey"
+},
+v2 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "recentProjectName"
+},
+v3 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
 },
-v1 = [
-  {
-    "alias": null,
-    "args": [
-      {
-        "kind": "Literal",
-        "name": "filter",
-        "value": {
-          "isDefault": true
-        }
-      },
-      {
-        "kind": "Literal",
-        "name": "limit",
-        "value": 1
-      }
-    ],
-    "concreteType": "KeyPairConnection",
-    "kind": "LinkedField",
-    "name": "myKeypairs",
-    "plural": false,
-    "selections": [
-      {
-        "alias": null,
-        "args": null,
-        "concreteType": "KeyPairV2Edge",
-        "kind": "LinkedField",
-        "name": "edges",
-        "plural": true,
-        "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "KeyPairV2",
-            "kind": "LinkedField",
-            "name": "node",
-            "plural": false,
-            "selections": [
-              (v0/*: any*/),
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "accessKey",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "userId",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "resourcePolicy",
-                "storageKey": null
-              }
-            ],
-            "storageKey": null
-          }
-        ],
-        "storageKey": null
-      }
-    ],
-    "storageKey": "myKeypairs(filter:{\"isDefault\":true},limit:1)"
-  },
+v4 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "entityId",
+  "storageKey": null
+},
+v5 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "UserV2BasicInfo",
+  "kind": "LinkedField",
+  "name": "basicInfo",
+  "plural": false,
+  "selections": [
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "email",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "fullName",
+      "storageKey": null
+    }
+  ],
+  "storageKey": null
+},
+v6 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "UserV2OrganizationInfo",
+  "kind": "LinkedField",
+  "name": "organization",
+  "plural": false,
+  "selections": [
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "domainName",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "role",
+      "storageKey": null
+    }
+  ],
+  "storageKey": null
+},
+v7 = [
   {
     "alias": null,
     "args": null,
-    "concreteType": "UserV2",
+    "kind": "ScalarField",
+    "name": "name",
+    "storageKey": null
+  }
+],
+v8 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "DomainBasicInfo",
+  "kind": "LinkedField",
+  "name": "basicInfo",
+  "plural": false,
+  "selections": (v7/*: any*/),
+  "storageKey": null
+},
+v9 = {
+  "equals": "GENERAL"
+},
+v10 = {
+  "kind": "Literal",
+  "name": "limit",
+  "value": 1
+},
+v11 = [
+  {
+    "alias": null,
+    "args": null,
+    "concreteType": "ProjectV2Edge",
     "kind": "LinkedField",
-    "name": "myUserV2",
-    "plural": false,
+    "name": "edges",
+    "plural": true,
     "selections": [
-      (v0/*: any*/),
       {
         "alias": null,
         "args": null,
-        "kind": "ScalarField",
-        "name": "entityId",
-        "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": null,
-        "concreteType": "UserV2BasicInfo",
+        "concreteType": "ProjectV2",
         "kind": "LinkedField",
-        "name": "basicInfo",
+        "name": "node",
         "plural": false,
         "selections": [
+          (v3/*: any*/),
+          (v4/*: any*/),
           {
             "alias": null,
             "args": null,
-            "kind": "ScalarField",
-            "name": "username",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "email",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "fullName",
-            "storageKey": null
-          }
-        ],
-        "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": null,
-        "concreteType": "UserV2StatusInfo",
-        "kind": "LinkedField",
-        "name": "status",
-        "plural": false,
-        "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "status",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "needPasswordChange",
-            "storageKey": null
-          }
-        ],
-        "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": null,
-        "concreteType": "UserV2OrganizationInfo",
-        "kind": "LinkedField",
-        "name": "organization",
-        "plural": false,
-        "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "role",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "domainName",
+            "concreteType": "ProjectBasicInfo",
+            "kind": "LinkedField",
+            "name": "basicInfo",
+            "plural": false,
+            "selections": (v7/*: any*/),
             "storageKey": null
           }
         ],
@@ -229,82 +215,283 @@ v1 = [
       }
     ],
     "storageKey": null
-  },
-  {
-    "alias": null,
-    "args": [
-      {
-        "kind": "Literal",
-        "name": "is_active",
-        "value": true
-      },
-      {
-        "kind": "Literal",
-        "name": "type",
-        "value": [
-          "GENERAL"
-        ]
-      }
-    ],
-    "concreteType": "Group",
-    "kind": "LinkedField",
-    "name": "groups",
-    "plural": true,
-    "selections": [
-      (v0/*: any*/),
-      {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "name",
-        "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "description",
-        "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "is_active",
-        "storageKey": null
-      }
-    ],
-    "storageKey": "groups(is_active:true,type:[\"GENERAL\"])"
   }
-];
+],
+v12 = {
+  "condition": "hasRecentProject",
+  "kind": "Condition",
+  "passingValue": true,
+  "selections": [
+    {
+      "alias": "recentProject",
+      "args": [
+        {
+          "fields": [
+            {
+              "kind": "Literal",
+              "name": "isActive",
+              "value": true
+            },
+            {
+              "fields": [
+                {
+                  "kind": "Variable",
+                  "name": "equals",
+                  "variableName": "recentProjectName"
+                }
+              ],
+              "kind": "ObjectValue",
+              "name": "name"
+            },
+            {
+              "kind": "Literal",
+              "name": "type",
+              "value": (v9/*: any*/)
+            }
+          ],
+          "kind": "ObjectValue",
+          "name": "filter"
+        },
+        (v10/*: any*/)
+      ],
+      "concreteType": "ProjectV2Connection",
+      "kind": "LinkedField",
+      "name": "projects",
+      "plural": false,
+      "selections": (v11/*: any*/),
+      "storageKey": null
+    }
+  ]
+},
+v13 = {
+  "alias": "defaultProject",
+  "args": [
+    {
+      "kind": "Literal",
+      "name": "filter",
+      "value": {
+        "isActive": true,
+        "type": (v9/*: any*/)
+      }
+    },
+    (v10/*: any*/),
+    {
+      "kind": "Literal",
+      "name": "orderBy",
+      "value": [
+        {
+          "direction": "ASC",
+          "field": "NAME"
+        }
+      ]
+    }
+  ],
+  "concreteType": "ProjectV2Connection",
+  "kind": "LinkedField",
+  "name": "projects",
+  "plural": false,
+  "selections": (v11/*: any*/),
+  "storageKey": "projects(filter:{\"isActive\":true,\"type\":{\"equals\":\"GENERAL\"}},limit:1,orderBy:[{\"direction\":\"ASC\",\"field\":\"NAME\"}])"
+},
+v14 = {
+  "condition": "needsAccessKey",
+  "kind": "Condition",
+  "passingValue": true,
+  "selections": [
+    {
+      "alias": null,
+      "args": [
+        {
+          "kind": "Literal",
+          "name": "filter",
+          "value": {
+            "isDefault": true
+          }
+        },
+        (v10/*: any*/)
+      ],
+      "concreteType": "KeyPairConnection",
+      "kind": "LinkedField",
+      "name": "myKeypairs",
+      "plural": false,
+      "selections": [
+        {
+          "alias": null,
+          "args": null,
+          "concreteType": "KeyPairV2Edge",
+          "kind": "LinkedField",
+          "name": "edges",
+          "plural": true,
+          "selections": [
+            {
+              "alias": null,
+              "args": null,
+              "concreteType": "KeyPairV2",
+              "kind": "LinkedField",
+              "name": "node",
+              "plural": false,
+              "selections": [
+                (v3/*: any*/),
+                {
+                  "alias": null,
+                  "args": null,
+                  "kind": "ScalarField",
+                  "name": "accessKey",
+                  "storageKey": null
+                }
+              ],
+              "storageKey": null
+            }
+          ],
+          "storageKey": null
+        }
+      ],
+      "storageKey": "myKeypairs(filter:{\"isDefault\":true},limit:1)"
+    }
+  ]
+},
+v15 = {
+  "alias": null,
+  "args": [
+    {
+      "kind": "Literal",
+      "name": "configNames",
+      "value": [
+        "publicConfigByDomain",
+        "domainConfig",
+        "userConfig"
+      ]
+    }
+  ],
+  "concreteType": "AppConfig",
+  "kind": "LinkedField",
+  "name": "myAppConfigs",
+  "plural": true,
+  "selections": [
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "configName",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "config",
+      "storageKey": null
+    }
+  ],
+  "storageKey": "myAppConfigs(configNames:[\"publicConfigByDomain\",\"domainConfig\",\"userConfig\"])"
+};
 return {
   "fragment": {
-    "argumentDefinitions": [],
+    "argumentDefinitions": [
+      (v0/*: any*/),
+      (v1/*: any*/),
+      (v2/*: any*/)
+    ],
     "kind": "Fragment",
     "metadata": null,
     "name": "loginBootstrapQuery",
-    "selections": (v1/*: any*/),
+    "selections": [
+      {
+        "alias": null,
+        "args": null,
+        "concreteType": "UserV2",
+        "kind": "LinkedField",
+        "name": "myUserV2",
+        "plural": false,
+        "selections": [
+          (v3/*: any*/),
+          (v4/*: any*/),
+          (v5/*: any*/),
+          (v6/*: any*/),
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "DomainV2",
+            "kind": "LinkedField",
+            "name": "domain",
+            "plural": false,
+            "selections": [
+              (v4/*: any*/),
+              (v8/*: any*/)
+            ],
+            "storageKey": null
+          },
+          (v12/*: any*/),
+          (v13/*: any*/)
+        ],
+        "storageKey": null
+      },
+      (v14/*: any*/),
+      {
+        "kind": "CatchField",
+        "field": (v15/*: any*/),
+        "to": "NULL"
+      }
+    ],
     "type": "Query",
     "abstractKey": null
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": [],
+    "argumentDefinitions": [
+      (v2/*: any*/),
+      (v0/*: any*/),
+      (v1/*: any*/)
+    ],
     "kind": "Operation",
     "name": "loginBootstrapQuery",
-    "selections": (v1/*: any*/)
+    "selections": [
+      {
+        "alias": null,
+        "args": null,
+        "concreteType": "UserV2",
+        "kind": "LinkedField",
+        "name": "myUserV2",
+        "plural": false,
+        "selections": [
+          (v3/*: any*/),
+          (v4/*: any*/),
+          (v5/*: any*/),
+          (v6/*: any*/),
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "DomainV2",
+            "kind": "LinkedField",
+            "name": "domain",
+            "plural": false,
+            "selections": [
+              (v4/*: any*/),
+              (v8/*: any*/),
+              (v3/*: any*/)
+            ],
+            "storageKey": null
+          },
+          (v12/*: any*/),
+          (v13/*: any*/)
+        ],
+        "storageKey": null
+      },
+      (v14/*: any*/),
+      (v15/*: any*/)
+    ]
   },
   "params": {
-    "cacheID": "2cb1f2f220697664361da8fdf07878b3",
+    "cacheID": "bf70d841523eaf6305c4ca20b72e5da4",
     "id": null,
     "metadata": {},
     "name": "loginBootstrapQuery",
     "operationKind": "query",
-    "text": "query loginBootstrapQuery {\n  myKeypairs(filter: {isDefault: true}, limit: 1) {\n    edges {\n      node {\n        id\n        accessKey\n        userId\n        resourcePolicy\n      }\n    }\n  }\n  myUserV2 {\n    id\n    entityId\n    basicInfo {\n      username\n      email\n      fullName\n    }\n    status {\n      status\n      needPasswordChange\n    }\n    organization {\n      role\n      domainName\n    }\n  }\n  groups(is_active: true, type: [\"GENERAL\"]) {\n    id\n    name\n    description\n    is_active\n  }\n}\n"
+    "text": "query loginBootstrapQuery(\n  $recentProjectName: String!\n  $hasRecentProject: Boolean!\n  $needsAccessKey: Boolean!\n) {\n  myUserV2 {\n    id\n    entityId\n    basicInfo {\n      email\n      fullName\n    }\n    organization {\n      domainName\n      role\n    }\n    domain {\n      entityId\n      basicInfo {\n        name\n      }\n      id\n    }\n    recentProject: projects(filter: {isActive: true, type: {equals: GENERAL}, name: {equals: $recentProjectName}}, limit: 1) @include(if: $hasRecentProject) {\n      edges {\n        node {\n          id\n          entityId\n          basicInfo {\n            name\n          }\n        }\n      }\n    }\n    defaultProject: projects(filter: {isActive: true, type: {equals: GENERAL}}, orderBy: [{field: NAME, direction: ASC}], limit: 1) {\n      edges {\n        node {\n          id\n          entityId\n          basicInfo {\n            name\n          }\n        }\n      }\n    }\n  }\n  myKeypairs(filter: {isDefault: true}, limit: 1) @include(if: $needsAccessKey) {\n    edges {\n      node {\n        id\n        accessKey\n      }\n    }\n  }\n  myAppConfigs(configNames: [\"publicConfigByDomain\", \"domainConfig\", \"userConfig\"]) {\n    configName\n    config\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "c5c6d6c415203923f4ebd801fe788ef4";
+(node as any).hash = "7db49b22a33d73f92126135ffc9c0a80";
 
 export default node;

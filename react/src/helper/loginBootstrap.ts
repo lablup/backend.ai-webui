@@ -6,6 +6,7 @@ import { createFetchFn, createRelayEnvironment } from '../RelayEnvironment';
 import type {
   loginBootstrapQuery,
   loginBootstrapQuery$data,
+  loginBootstrapQuery$variables,
 } from '../__generated__/loginBootstrapQuery.graphql';
 import type { BackendAIClient } from '../hooks';
 import { graphql } from 'react-relay';
@@ -17,56 +18,106 @@ import {
 
 /**
  * Everything the app needs to come up as the signed-in user, in one GraphQL
- * round trip. The webserver refuses it for a session it does not hold, so the
- * same document doubles as the login check (FR-2367). `myKeypairs` and
- * `myUserV2` resolve to the requester; a session authorizes with the default
- * keypair, so that one is the session's access key.
+ * round trip, sent only after `login-check` said the session is live. Only
+ * the starting project is needed: the remembered one if it is still a GENERAL
+ * project of the user, else the first by name (the header's order).
  *
- * No version directives (`@since` …) here: the probe runs before
- * `get_manager_version` (an authenticated call), so the manager version is
- * unknown while this is sent and any gated field would be stripped.
+ * No version directives (`@since` …) here: it runs alongside
+ * `get_manager_version`, so the manager version is unknown while it is sent.
  */
-const loginBootstrapQueryNode = graphql`
-  query loginBootstrapQuery {
-    myKeypairs(filter: { isDefault: true }, limit: 1) {
-      edges {
-        node {
-          id
-          accessKey
-          userId
-          resourcePolicy
-        }
-      }
-    }
+export const loginBootstrapQueryNode = graphql`
+  query loginBootstrapQuery(
+    $recentProjectName: String!
+    $hasRecentProject: Boolean!
+    $needsAccessKey: Boolean!
+  ) {
     myUserV2 {
       id
       entityId
       basicInfo {
-        username
         email
         fullName
       }
-      status {
-        status
-        needPasswordChange
-      }
       organization {
-        role
         domainName
+        role
+      }
+      domain {
+        entityId
+        basicInfo {
+          name
+        }
+      }
+      recentProject: projects(
+        filter: {
+          isActive: true
+          type: { equals: GENERAL }
+          name: { equals: $recentProjectName }
+        }
+        limit: 1
+      ) @include(if: $hasRecentProject) {
+        edges {
+          node {
+            id
+            entityId
+            basicInfo {
+              name
+            }
+          }
+        }
+      }
+      defaultProject: projects(
+        filter: { isActive: true, type: { equals: GENERAL } }
+        orderBy: [{ field: NAME, direction: ASC }]
+        limit: 1
+      ) {
+        edges {
+          node {
+            id
+            entityId
+            basicInfo {
+              name
+            }
+          }
+        }
       }
     }
-    groups(is_active: true, type: ["GENERAL"]) {
-      id
-      name
-      description
-      is_active
+    # Under act-as the manager authorizes with the target's default keypair.
+    myKeypairs(filter: { isDefault: true }, limit: 1)
+      @include(if: $needsAccessKey) {
+      edges {
+        node {
+          id
+          accessKey
+        }
+      }
+    }
+    # Seeds myAppConfigState (ADR 0033); a failed read keeps the base config.
+    myAppConfigs(
+      configNames: ["publicConfigByDomain", "domainConfig", "userConfig"]
+    ) @catch(to: NULL) {
+      configName
+      config
     }
   }
 `;
 
 export type LoginBootstrap = loginBootstrapQuery$data;
 
-/** The access key the bootstrapped session authorizes with. */
+/** The query's variables for `client`, from the remembered project and act-as. */
+export function loginBootstrapVariables(
+  client: BackendAIClient,
+): loginBootstrapQuery$variables {
+  const recentProjectName: string =
+    (globalThis as any).backendaiutils?._peekRecentProjectGroup?.() ?? '';
+  return {
+    recentProjectName,
+    hasRecentProject: !!recentProjectName,
+    needsAccessKey: !!client.actAsUserId,
+  };
+}
+
+/** The access key the bootstrapped session authorizes with under act-as. */
 export const bootstrapAccessKey = (
   bootstrap: LoginBootstrap | null | undefined,
 ): string | undefined => bootstrap?.myKeypairs?.edges[0]?.node.accessKey;
@@ -139,7 +190,7 @@ export class SessionAuthFailureError extends Error {
 }
 
 /**
- * The session is live but the manager failed to resolve `myKeypairs` or `myUserV2`
+ * The session is live but the manager failed to resolve `myUserV2`
  * (an `errors[]` entry that is not a refusal). Not a reason to log out.
  * `message` is the manager's text, else empty.
  */
@@ -191,13 +242,10 @@ function createLoginEnvironment(client: BackendAIClient) {
     }
     // Relay would hand back the nulls as data; `client.query` threw instead.
     const { data, errors } = result as {
-      data?: { myKeypairs?: unknown; myUserV2?: unknown } | null;
+      data?: { myUserV2?: unknown } | null;
       errors?: unknown[];
     };
-    if (
-      errors?.length &&
-      (data?.myKeypairs == null || data?.myUserV2 == null)
-    ) {
+    if (errors?.length && data?.myUserV2 == null) {
       throw new LoginBootstrapIncompleteError(result);
     }
     return result;
@@ -207,11 +255,13 @@ function createLoginEnvironment(client: BackendAIClient) {
 
 export async function fetchLoginBootstrap(
   client: BackendAIClient,
+  variables: loginBootstrapQuery$variables = loginBootstrapVariables(client),
 ): Promise<LoginBootstrap> {
   const data = await fetchQuery<loginBootstrapQuery>(
     createLoginEnvironment(client),
     loginBootstrapQueryNode,
-    {},
+    variables,
+    { fetchPolicy: 'network-only' },
   ).toPromise();
   if (!data) {
     throw new Error('The login bootstrap query returned no data.');
@@ -219,25 +269,37 @@ export async function fetchLoginBootstrap(
   return data;
 }
 
+/** A refusal reads as "no session"; another HTTP failure leaves it live. */
+function classifyProbeFailure(err: unknown): never {
+  if (isSessionAuthFailure(err)) throw new SessionAuthFailureError(err);
+  const status = (err as { statusCode?: unknown } | null)?.statusCode;
+  if (typeof status === 'number' && status >= 400 && status !== 403) {
+    throw new LoginBootstrapIncompleteError(err);
+  }
+  throw err;
+}
+
 /**
- * Ask the manager for the signed-in user's bootstrap data. `null` means the
- * webserver holds no session for this browser; any other failure is thrown.
- * On success the client adopts the identity `login-check` used to supply;
- * when the session id is not known locally, `check_login` supplies it and
- * its verdict wins.
+ * Ask the webserver whether it holds a session for this browser
+ * (`login-check`), and only then load the bootstrap together with the manager
+ * version. `null` means no session; any other failure is thrown, so an outage
+ * is not mistaken for a logged-out browser.
  */
 export async function probeLoginSession(
   client: BackendAIClient,
 ): Promise<LoginBootstrap | null> {
-  let bootstrap: LoginBootstrap;
   try {
-    bootstrap = await fetchLoginBootstrap(client);
+    const authenticated = await client
+      .check_login({ rethrow: true })
+      .catch(classifyProbeFailure);
+    if (authenticated !== true) return null;
+    const [, bootstrap] = await Promise.all([
+      client.get_manager_version().catch(classifyProbeFailure),
+      fetchLoginBootstrap(client),
+    ]);
+    return bootstrap;
   } catch (err) {
     if (err instanceof SessionAuthFailureError) return null;
     throw err;
   }
-  if (!client.adoptLoginSession(bootstrapAccessKey(bootstrap))) {
-    if (!(await client.check_login())) return null;
-  }
-  return bootstrap;
 }

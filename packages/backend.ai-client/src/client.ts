@@ -757,9 +757,10 @@ export class Client {
 
   /**
    * Ask the webserver whether it holds a session for this browser; the
-   * fallback when `adoptLoginSession` has no session id to adopt.
+   * fallback when `adoptLoginSession` has no session id to adopt. A failed
+   * request reads as "not logged in" unless `rethrow` is set.
    */
-  async check_login() {
+  async check_login({ rethrow = false }: { rethrow?: boolean } = {}) {
     let rqst = this.newSignedRequest('POST', `/server/login-check`, null, null);
     let result;
     try {
@@ -778,7 +779,7 @@ export class Client {
         //console.log("login failed");
       }
     } catch (err) {
-      // console.log(err);
+      if (rethrow) throw err;
       return Promise.resolve(false);
     }
     return result.authenticated;

@@ -43,6 +43,7 @@ import {
 } from '../helper/loginBootstrap';
 import {
   getDefaultLoginConfig,
+  refreshConfigFromToml,
   type LoginConfigState,
 } from '../helper/loginConfig';
 import { isCredentialMismatchLoginError } from '../helper/loginErrorType';
@@ -59,7 +60,12 @@ import {
 import { resolvePluginScriptUrl } from '../helper/pluginPath';
 import { resolveInitialLanguage } from '../helper/resolveInitialLanguage';
 import { useElectronEndpointStep } from '../hooks/useElectronEndpointStep';
-import { useLoginOrchestration } from '../hooks/useLoginOrchestration';
+import {
+  isAppLauncherPage,
+  isClientConnected,
+  useLoginOrchestration,
+} from '../hooks/useLoginOrchestration';
+import { INTENTIONAL_LOGOUT_FLAG } from '../hooks/useLogout';
 import {
   useInitializeConfig,
   useConfigRefreshPageEffect,
@@ -94,6 +100,33 @@ import React, {
 import { useTranslation } from 'react-i18next';
 
 type ConnectionMode = 'SESSION' | 'API';
+
+/** A SESSION client and its two startup checks, rejections already handled. */
+interface SessionProbe {
+  endpoint: string;
+  client: ReturnType<typeof createBackendAIClient>['client'];
+  session: Promise<LoginBootstrap | null>;
+  manager: Promise<void>;
+}
+
+function startSessionProbe(
+  endpoint: string,
+  userId = '',
+  password = '',
+): SessionProbe {
+  const { client } = createBackendAIClient(
+    userId,
+    password,
+    endpoint,
+    'SESSION',
+  );
+  const session = probeLoginSession(client);
+  const manager = probeManager(client);
+  // Awaited only once the manager answers; keep both rejections handled.
+  session.catch(() => {});
+  manager.catch(() => {});
+  return { endpoint, client, session, manager };
+}
 
 // Only echo code-shaped `bai_error` values, so a crafted link cannot put prose in the banner.
 const DISPLAYABLE_OPENID_ERROR_CODE = /^[A-Za-z0-9_-]{1,64}$/;
@@ -145,6 +178,7 @@ const LoginView: React.FC<{
   // Initialize config from config.toml (replaces Lit shell's _parseConfig + loadConfig)
   const {
     isLoaded: isConfigLoaded,
+    rawConfig,
     loginConfig: atomLoginConfig,
     loadConfig,
   } = useInitializeConfig();
@@ -282,6 +316,10 @@ const LoginView: React.FC<{
     client: ReturnType<typeof createBackendAIClient>['client'];
     bootstrap: LoginBootstrap;
   } | null>(null);
+  // The silent login's checks, started once config.toml names the endpoint so
+  // they run while the public app config still loads; taken once.
+  const prefetchedProbeRef = useRef<SessionProbe | null>(null);
+  const hasPrefetchedRef = useRef(false);
   // Dev-only Backspace bumps this to cancel the login in flight; each step compares
   // the value it started with after every await and drops a stale result.
   const loginAttemptRef = useRef(0);
@@ -297,6 +335,43 @@ const LoginView: React.FC<{
   useEffect(() => {
     loadConfig();
   }, [loadConfig]);
+
+  const prefetchSessionProbe = useEffectEvent(() => {
+    if (hasPrefetchedRef.current || !rawConfig) return;
+    hasPrefetchedRef.current = true;
+    // Only where the silent login is sure to follow, against a pinned
+    // webserver (SESSION mode, no endpoint step).
+    const tomlEndpoint = refreshConfigFromToml(rawConfig).api_endpoint;
+    if (
+      !tomlEndpoint ||
+      devApiEndpointOverride ||
+      (globalThis as Record<string, unknown>).isElectron ||
+      isAppLauncherPage() ||
+      isClientConnected() ||
+      sessionStorage.getItem(INTENTIONAL_LOGOUT_FLAG) === '1' ||
+      localStorage.getItem('sToken') !== null ||
+      sessionStorage.getItem('sToken') !== null ||
+      new URLSearchParams(window.location.search).has('sToken')
+    )
+      return;
+    const ep = (apiEndpoint || tomlEndpoint).trim().replace(/\/+$/, '');
+    prefetchedProbeRef.current = startSessionProbe(ep);
+  });
+  useEffect(() => {
+    if (rawConfig && !isConfigLoaded) prefetchSessionProbe();
+  }, [rawConfig, isConfigLoaded]);
+
+  /** The prefetched checks when they target `ep`, else fresh ones. */
+  const takeSessionProbe = (
+    ep: string,
+    userId = '',
+    password = '',
+  ): SessionProbe => {
+    const prefetched = prefetchedProbeRef.current;
+    prefetchedProbeRef.current = null;
+    if (prefetched?.endpoint === ep) return prefetched;
+    return startSessionProbe(ep, userId, password);
+  };
 
   const [appliedLoginConfig, setAppliedLoginConfig] = useState<
     typeof atomLoginConfig | null
@@ -911,16 +986,19 @@ const LoginView: React.FC<{
       const password = form.getFieldValue('password') || '';
       const otp = form.getFieldValue('otp') || '';
 
-      const { client } = createBackendAIClient(userId, password, ep, 'SESSION');
+      const probe = showError
+        ? startSessionProbe(ep, userId, password)
+        : takeSessionProbe(ep, userId, password);
+      let client = probe.client;
       clientRef.current = client;
 
       // The session probe runs alongside the reachability check, which is
       // awaited first so Backspace can still abort it.
-      const sessionProbe = probeLoginSession(client).catch((err: unknown) =>
+      const sessionProbe = probe.session.catch((err: unknown) =>
         err instanceof LoginBootstrapIncompleteError ? err : null,
       );
       try {
-        await probeManager(client);
+        await probe.manager;
       } catch (err: unknown) {
         if (isCancelled()) return;
         if (!showError && !(err instanceof LoginProbeCancelledError)) {
@@ -951,6 +1029,19 @@ const LoginView: React.FC<{
           if (!isCancelled()) handleGQLError(err, showError);
         }
         return;
+      }
+
+      // No session and nothing to sign in with: a login attempt could only be refused.
+      if (!showError && (!userId || !password)) {
+        setIsBlockPanelOpen(false);
+        open();
+        setIsLoading(false);
+        return;
+      }
+      const { _config: probedAs } = probe.client;
+      if (probedAs.userId !== userId || probedAs.password !== password) {
+        client = createBackendAIClient(userId, password, ep, 'SESSION').client;
+        clientRef.current = client;
       }
 
       // Not yet authenticated. Show block panel while connecting (only for user-initiated login).
@@ -1158,14 +1249,11 @@ const LoginView: React.FC<{
     }
     if (effectiveConnectionMode === 'SESSION') {
       if (ep === '') return false;
-      const { client } = createBackendAIClient('', '', ep, 'SESSION');
+      const { client, session: sessionProbe, manager } = takeSessionProbe(ep);
       clientRef.current = client;
       const attempt = loginAttemptRef.current;
-      const sessionProbe = probeLoginSession(client);
-      // Awaited only once the manager answers; keep its rejection handled.
-      sessionProbe.catch(() => {});
       try {
-        await probeManager(client);
+        await manager;
       } catch (err) {
         if (attempt !== loginAttemptRef.current) return false;
         return err instanceof LoginProbeCancelledError ? false : 'unreachable';
