@@ -173,10 +173,9 @@ dropdown menu on the **Confirm and Launch** step. See
     (`?`) icon next to each option for a short description. After choosing a
     mode, set the **Cluster Size** with the slider or number input: in
     Single Node mode the size counts **containers** on one agent, and in
-    Multi Node mode it counts **nodes** spread across agents. The *remaining*
-    mark on the slider shows the largest size that can start immediately with
-    the resources currently allocated — a larger size is allowed, but the
-    session may stay pending until enough resources free up. A Multi Node
+    Multi Node mode it counts **nodes** spread across agents. You can set a size
+    larger than the currently available resources allow, but the session may
+    stay pending until enough resources free up. A Multi Node
     session with a size of 1 is created as a Single Node session. For more
     information, refer to the
     [Overview of Backend.AI cluster compute session](#backendai-cluster-compute-session).

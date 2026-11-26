@@ -1,4 +1,4 @@
-# 0040 — Per-PR bundle size comparison
+# 0041 — Per-PR bundle size comparison
 
 ## Summary
 

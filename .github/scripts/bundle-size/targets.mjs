@@ -1,4 +1,4 @@
-// Bundle targets compared per PR (ADR 0040).
+// Bundle targets compared per PR (ADR 0041).
 const SHARED_INPUTS = [
   "relay.config.js",
   "relay-base.config.js",

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Input key per bundle target at the head and the merge base, plus the cache
-// keys and the comparison plan (ADR 0040).
+// keys and the comparison plan (ADR 0041).
 //
 // Usage: node input-key.mjs [--head <commit>] [--base <commit>] [--output plan.json]
 import { execFileSync } from "node:child_process";

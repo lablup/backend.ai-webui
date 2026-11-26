@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Measure one bundle target's build output into bundle-size/<id>.<side>.json (ADR 0040).
+// Measure one bundle target's build output into bundle-size/<id>.<side>.json (ADR 0041).
 //
 // Usage: node measure.mjs --target <id> --side head|base --dir <output directory>
 //          [--commit <sha>] [--error <message>] [--out-dir bundle-size]
