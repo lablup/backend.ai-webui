@@ -30,7 +30,10 @@ it.
 When another user invites you to share one of their storage folders, a small
 invitation badge appears on the Data page entry in the sidebar and next to the
 folder status summary. The badge displays the number of pending invitations
-that still need a response.
+that still need a response. The invitations shown follow the project
+selected with the project selector in the top bar: your personal project shows
+the invitations addressed to you, and any other project shows the ones
+addressed to that project.
 
 ![](../images/vfolder_invitation_badge.png)
 
