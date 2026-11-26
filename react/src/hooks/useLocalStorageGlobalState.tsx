@@ -22,37 +22,53 @@ export const createGlobalStorageStateHook = (
     }
   };
 
-  const writeStored = (key: string, value: unknown) => {
+  type Written = { isWritten: boolean; isSaved?: boolean; value?: unknown };
+
+  // Returns the value as a reload would read it, and whether the storage took it.
+  const writeStored = (key: string, value: unknown): Written => {
+    if (value === undefined) {
+      try {
+        getStorage()?.removeItem(key);
+        return { isWritten: true, isSaved: true };
+      } catch {
+        return { isWritten: true, isSaved: false };
+      }
+    }
+    let raw: string;
+    try {
+      raw = JSON.stringify(value);
+    } catch {
+      return { isWritten: true, isSaved: false, value };
+    }
+    const saved = JSON.parse(raw) as unknown;
     try {
       const storage = getStorage();
-      if (value === undefined) {
-        storage?.removeItem(key);
-      } else {
-        storage?.setItem(key, JSON.stringify(value));
-      }
+      storage?.setItem(key, raw);
+      return { isWritten: true, isSaved: !!storage, value: saved };
     } catch {
-      // Privacy mode or quota: the value still lives in the atom below.
+      // Privacy mode or quota: the value lives in the atom only.
+      return { isWritten: true, isSaved: false, value: saved };
     }
   };
 
   const storedAtomFamily = atomFamily((key: string) => {
     // The value last written through the hook. While an instance is mounted
     // the atom, not the storage, is what every instance reads.
-    const writtenAtom = atom<{ isWritten: boolean; value?: unknown }>({
-      isWritten: false,
-    });
-    // With no instance left the storage is the source again. A new object each
-    // time: jotai keeps the last read for an unmounted atom until a dependency changes.
+    const writtenAtom = atom<Written>({ isWritten: false });
+    // With no instance left the storage is the source again, unless it refused
+    // the value. A new object each time: jotai keeps the last read for an
+    // unmounted atom until a dependency changes.
     writtenAtom.onMount = (setWritten) => () =>
-      setWritten({ isWritten: false });
+      setWritten((written) =>
+        written.isWritten && !written.isSaved ? written : { isWritten: false },
+      );
     return atom(
       (get) => {
         const written = get(writtenAtom);
         return written.isWritten ? written.value : readStored(key);
       },
       (_get, set, next: unknown) => {
-        writeStored(key, next);
-        set(writtenAtom, { isWritten: true, value: next });
+        set(writtenAtom, writeStored(key, next));
       },
     );
   });

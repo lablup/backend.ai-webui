@@ -92,6 +92,36 @@ describe('useLocalStorageGlobalState', () => {
     expect(screen.getByTestId('fresh')).toHaveTextContent('glass');
   });
 
+  it('keeps a value the storage refused, also after every instance unmounted', () => {
+    // Its own key: the refused value stays in the atom for the rest of the file.
+    const REFUSED_KEY = 'backendaiwebui.settings.test.globalState.refused';
+    const RefusedKeyView = ({ next }: { next?: string }) => {
+      const [value, setValue] = useLocalStorageGlobalState<string | undefined>(
+        REFUSED_KEY,
+        undefined,
+      );
+      return (
+        <>
+          <span data-testid="refused">{value ?? 'none'}</span>
+          <button onClick={() => setValue(next)}>write</button>
+        </>
+      );
+    };
+    const setItem = vi
+      .spyOn(Storage.prototype, 'setItem')
+      .mockImplementation(() => {
+        throw new DOMException('quota', 'QuotaExceededError');
+      });
+    const first = render(<RefusedKeyView next="glass" />);
+    fireEvent.click(screen.getByRole('button', { name: 'write' }));
+    expect(screen.getByTestId('refused')).toHaveTextContent('glass');
+    setItem.mockRestore();
+    expect(localStorage.getItem(REFUSED_KEY)).toBeNull();
+    first.unmount();
+    render(<RefusedKeyView />);
+    expect(screen.getByTestId('refused')).toHaveTextContent('glass');
+  });
+
   it('updates every mounted instance when one of them writes', () => {
     const Writer = () => {
       const [, setValue] = useLocalStorageGlobalState<string | undefined>(
