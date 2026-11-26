@@ -94,19 +94,16 @@ describe('toInvitationItems (#10329)', () => {
     expect(items).toHaveLength(1);
   });
 
-  it("leaves out the caller's own offer to a project they answer for", () => {
-    const items = toInvitationItems(
-      [
-        share({
-          entityId: 'own',
-          recipientEntityType: 'project',
-          sharer: { entityId: 'me', basicInfo: { email: 'me@example.com' } },
-        }),
-        share({ entityId: 'theirs', recipientEntityType: 'project' }),
-      ],
-      { selfUserId: 'me' },
-    );
-    expect(items.map((item) => item.id)).toEqual(['theirs']);
+  it("lists the caller's own offer to a project they answer for", () => {
+    const items = toInvitationItems([
+      share({
+        entityId: 'own',
+        recipientEntityType: 'project',
+        sharer: { entityId: 'me', basicInfo: { email: 'me@example.com' } },
+      }),
+      share({ entityId: 'theirs', recipientEntityType: 'project' }),
+    ]);
+    expect(items.map((item) => item.id).sort()).toEqual(['own', 'theirs']);
   });
 
   it('reads the entity types regardless of case', () => {

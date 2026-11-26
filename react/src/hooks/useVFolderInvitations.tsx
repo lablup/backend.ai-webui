@@ -63,17 +63,14 @@ const isEntityType = (value: string | null | undefined, type: string) =>
 
 /**
  * The pending folder shares among the caller's received shares, newest first.
- * `projectNames` names a project share whose `recipientEntity` the caller may not read;
- * a project share `selfUserId` sent is the caller's own offer, not an invitation.
+ * `projectNames` names a project share whose `recipientEntity` the caller may not read.
  */
 export const toInvitationItems = (
   shares: ReadonlyArray<RecipientShare>,
   {
     projectNames = {},
-    selfUserId,
   }: {
     projectNames?: Readonly<Record<string, string>>;
-    selfUserId?: string | null;
   } = {},
 ): InvitationItem[] =>
   _.orderBy(
@@ -83,12 +80,7 @@ export const toInvitationItems = (
           shares,
           (share) =>
             share.status === 'PENDING' &&
-            isEntityType(share.targetEntityType, VFOLDER_ENTITY_TYPE) &&
-            !(
-              selfUserId &&
-              isEntityType(share.recipientEntityType, PROJECT_ENTITY_TYPE) &&
-              share.sharer?.entityId === selfUserId
-            ),
+            isEntityType(share.targetEntityType, VFOLDER_ENTITY_TYPE),
         ),
         'entityId',
       ),
@@ -290,7 +282,6 @@ const loadInvitations = async (): Promise<InvitationItem[]> => {
           project.basicInfo.name,
         ]),
       ),
-      selfUserId: data?.myUserV2?.entityId,
     },
   );
 };
