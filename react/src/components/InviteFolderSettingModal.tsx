@@ -418,7 +418,8 @@ interface InviteFolderSettingModalProps extends Omit<
 > {
   open?: boolean;
   vfolderFrgmt: InviteFolderSettingModalFragment$key | null;
-  onRequestClose: () => void;
+  /** `sharingStopped`: a recipient was removed while open, so folder lists may have changed. */
+  onRequestClose: (sharingStopped?: boolean) => void;
 }
 
 const InviteFolderSettingModal: React.FC<InviteFolderSettingModalProps> = ({
@@ -428,6 +429,7 @@ const InviteFolderSettingModal: React.FC<InviteFolderSettingModalProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
+  const [sharingStopped, setSharingStopped] = useState(false);
   const vfolder = useFragment(
     graphql`
       fragment InviteFolderSettingModalFragment on VFolder {
@@ -455,7 +457,7 @@ const InviteFolderSettingModal: React.FC<InviteFolderSettingModalProps> = ({
       {...baiModalProps}
       isOpen={baiModalProps.open}
       onOpenChange={(next) => {
-        if (!next) onRequestClose();
+        if (!next) onRequestClose(sharingStopped);
       }}
       title={t('data.explorer.ShareFolder')}
       maskClosable={false}
@@ -476,6 +478,7 @@ const InviteFolderSettingModal: React.FC<InviteFolderSettingModalProps> = ({
           }
           ownerUserId={vfolder.ownership?.userId ?? null}
           ownerProjectId={vfolder.ownership?.projectId ?? null}
+          onSharingStopped={() => setSharingStopped(true)}
         />
       ) : null}
     </BAIModal>
@@ -489,6 +492,7 @@ const InviteFolderSettingModalBody: React.FC<{
   restrictToReadOnly: boolean;
   ownerUserId: string | null;
   ownerProjectId: string | null;
+  onSharingStopped: () => void;
 }> = ({
   vfolderId,
   folderName,
@@ -496,6 +500,7 @@ const InviteFolderSettingModalBody: React.FC<{
   restrictToReadOnly,
   ownerUserId,
   ownerProjectId,
+  onSharingStopped,
 }) => {
   'use memo';
   const { t } = useTranslation();
@@ -879,6 +884,7 @@ const InviteFolderSettingModalBody: React.FC<{
             projectNameById={projectNameById}
             fetchKey={fetchKey}
             updateFetchKey={updateFetchKey}
+            onSharingStopped={onSharingStopped}
           />
         </Suspense>
       </VStack>
@@ -957,12 +963,14 @@ const SharedUserTable: React.FC<{
   projectNameById: Record<string, string>;
   fetchKey: string;
   updateFetchKey: () => void;
+  onSharingStopped: () => void;
 }> = ({
   vfolderId,
   defaultMountLevel,
   projectNameById,
   fetchKey,
   updateFetchKey,
+  onSharingStopped,
 }) => {
   'use memo';
   const { t } = useTranslation();
@@ -1142,6 +1150,7 @@ const SharedUserTable: React.FC<{
   const handleStopSharing = async (row: ShareRow) => {
     try {
       await revokeShare({ id: row.shareId });
+      onSharingStopped();
       if (row.userId && policyByUserId[row.userId]) {
         await unsetMountPolicy({ vfolderId, input: { userId: row.userId } });
       }
