@@ -10,7 +10,7 @@ import {
 } from '../helper/customThemeConfig';
 import { useBAISettingUserState } from './useBAISetting';
 import { createGlobalStorageStateHook } from './useLocalStorageGlobalState';
-import { createUseStorageState, useSessionStorageState } from 'backend.ai-ui';
+import { useSessionStorageState } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { useEffect, useSyncExternalStore } from 'react';
 
@@ -32,10 +32,8 @@ export const THEME_FAMILY_STORAGE_KEY = 'backendaiwebui.settings.themeFamily';
 
 // An act-as tab mirrors the target's family in its own sessionStorage: localStorage is the
 // super admin's. `index.html` reads the same key from the same place.
-const useThemeFamilyGlobalState = createGlobalStorageStateHook(
-  createUseStorageState(() =>
-    getActAsTarget() ? sessionStorage : localStorage,
-  ),
+const useThemeFamilyGlobalState = createGlobalStorageStateHook(() =>
+  getActAsTarget() ? sessionStorage : localStorage,
 );
 
 /**

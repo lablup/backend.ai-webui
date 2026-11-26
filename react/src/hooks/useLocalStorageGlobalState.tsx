@@ -2,49 +2,85 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import {
-  useLocalStorageState,
-  type UseStorageStateOptions,
-} from 'backend.ai-ui';
-import { useEffect } from 'react';
+import { useSyncExternalStore } from 'react';
 
 /**
  * A storage-backed state whose instances in one document stay in sync. Call it
- * at module scope with a `createUseStorageState` hook (localStorage, sessionStorage, …).
+ * at module scope with the storage to use (localStorage, sessionStorage, …).
  */
 export const createGlobalStorageStateHook = (
-  useStorageState: typeof useLocalStorageState,
-) =>
-  function useGlobalStorageState<T>(key: string, defaultValue: T) {
-    'use memo';
-    const [storageValue, setStorageValue] = useStorageState<T>(key, {
-      defaultValue: defaultValue,
-    });
-    const eventName = 'useLocalStorageGlobalState:' + key;
+  getStorage: () => Storage | undefined,
+) => {
+  const listenersByKey = new Map<string, Set<() => void>>();
+  // Holds a value the storage refused (privacy mode, quota), so the state still works.
+  const unsavedRawByKey = new Map<string, string | null>();
 
-    useEffect(() => {
-      const handler = (event: any) => {
-        setStorageValue(event.detail);
-      };
-      document.addEventListener(eventName, handler);
-      return () => document.removeEventListener(eventName, handler);
-    }, [setStorageValue, eventName]);
-
-    const setGlobalValue = (value: T) => {
-      document.dispatchEvent(new CustomEvent(eventName, { detail: value }));
-    };
-
-    return [storageValue, setGlobalValue] as const;
+  const readRaw = (key: string): string | null => {
+    if (unsavedRawByKey.has(key)) {
+      return unsavedRawByKey.get(key) ?? null;
+    }
+    try {
+      return getStorage()?.getItem(key) ?? null;
+    } catch {
+      return null;
+    }
   };
 
-// Read at call time: tests that mock `backend.ai-ui` without it still import this module.
-function useLocalStorageStateAtCall<T>(
-  key: string,
-  options?: UseStorageStateOptions<T>,
-) {
-  return useLocalStorageState<T>(key, options);
-}
+  const writeRaw = (key: string, raw: string | null) => {
+    try {
+      const storage = getStorage();
+      if (!storage) {
+        throw new Error('storage unavailable');
+      }
+      if (raw === null) {
+        storage.removeItem(key);
+      } else {
+        storage.setItem(key, raw);
+      }
+      unsavedRawByKey.delete(key);
+    } catch {
+      unsavedRawByKey.set(key, raw);
+    }
+    listenersByKey.get(key)?.forEach((listener) => listener());
+  };
 
-export const useLocalStorageGlobalState = createGlobalStorageStateHook(
-  useLocalStorageStateAtCall,
+  const parse = <T,>(raw: string | null, defaultValue: T): T => {
+    if (!raw) {
+      return defaultValue;
+    }
+    try {
+      return JSON.parse(raw) as T;
+    } catch {
+      return defaultValue;
+    }
+  };
+
+  return function useGlobalStorageState<T>(key: string, defaultValue: T) {
+    'use memo';
+    // useSyncExternalStore re-reads the storage right after subscribing, so an
+    // instance still mounting when another one writes does not keep the old value.
+    const raw = useSyncExternalStore(
+      (onStoreChange) => {
+        const listeners = listenersByKey.get(key) ?? new Set<() => void>();
+        listenersByKey.set(key, listeners);
+        listeners.add(onStoreChange);
+        return () => {
+          listeners.delete(onStoreChange);
+        };
+      },
+      () => readRaw(key),
+    );
+    const value = parse(raw, defaultValue);
+
+    // `undefined` removes the entry.
+    const setGlobalValue = (next: T) => {
+      writeRaw(key, next === undefined ? null : JSON.stringify(next));
+    };
+
+    return [value, setGlobalValue] as const;
+  };
+};
+
+export const useLocalStorageGlobalState = createGlobalStorageStateHook(() =>
+  typeof window === 'undefined' ? undefined : localStorage,
 );
