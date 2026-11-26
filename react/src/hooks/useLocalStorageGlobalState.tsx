@@ -2,7 +2,8 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { useSyncExternalStore } from 'react';
+import { atom, useAtom } from 'jotai';
+import { atomFamily } from 'jotai-family';
 
 /**
  * A storage-backed state whose instances in one document stay in sync. Call it
@@ -11,70 +12,59 @@ import { useSyncExternalStore } from 'react';
 export const createGlobalStorageStateHook = (
   getStorage: () => Storage | undefined,
 ) => {
-  const listenersByKey = new Map<string, Set<() => void>>();
-  // Holds a value the storage refused (privacy mode, quota), so the state still works.
-  const unsavedRawByKey = new Map<string, string | null>();
-
-  const readRaw = (key: string): string | null => {
-    if (unsavedRawByKey.has(key)) {
-      return unsavedRawByKey.get(key) ?? null;
-    }
+  // `undefined` stands for "no entry": JSON never parses to it.
+  const readStored = (key: string): unknown => {
     try {
-      return getStorage()?.getItem(key) ?? null;
+      const raw = getStorage()?.getItem(key);
+      return raw ? JSON.parse(raw) : undefined;
     } catch {
-      return null;
+      return undefined;
     }
   };
 
-  const writeRaw = (key: string, raw: string | null) => {
+  const writeStored = (key: string, value: unknown) => {
     try {
       const storage = getStorage();
-      if (!storage) {
-        throw new Error('storage unavailable');
-      }
-      if (raw === null) {
-        storage.removeItem(key);
+      if (value === undefined) {
+        storage?.removeItem(key);
       } else {
-        storage.setItem(key, raw);
+        storage?.setItem(key, JSON.stringify(value));
       }
-      unsavedRawByKey.delete(key);
     } catch {
-      unsavedRawByKey.set(key, raw);
+      // Privacy mode or quota: the value still lives in the atom below.
     }
-    listenersByKey.get(key)?.forEach((listener) => listener());
   };
 
-  const parse = <T,>(raw: string | null, defaultValue: T): T => {
-    if (!raw) {
-      return defaultValue;
-    }
-    try {
-      return JSON.parse(raw) as T;
-    } catch {
-      return defaultValue;
-    }
-  };
+  const storedAtomFamily = atomFamily((key: string) => {
+    // The value last written through the hook. While an instance is mounted
+    // the atom, not the storage, is what every instance reads.
+    const writtenAtom = atom<{ isWritten: boolean; value?: unknown }>({
+      isWritten: false,
+    });
+    // With no instance left the storage is the source again. A new object each
+    // time: jotai keeps the last read for an unmounted atom until a dependency changes.
+    writtenAtom.onMount = (setWritten) => () =>
+      setWritten({ isWritten: false });
+    return atom(
+      (get) => {
+        const written = get(writtenAtom);
+        return written.isWritten ? written.value : readStored(key);
+      },
+      (_get, set, next: unknown) => {
+        writeStored(key, next);
+        set(writtenAtom, { isWritten: true, value: next });
+      },
+    );
+  });
 
   return function useGlobalStorageState<T>(key: string, defaultValue: T) {
     'use memo';
-    // useSyncExternalStore re-reads the storage right after subscribing, so an
-    // instance still mounting when another one writes does not keep the old value.
-    const raw = useSyncExternalStore(
-      (onStoreChange) => {
-        const listeners = listenersByKey.get(key) ?? new Set<() => void>();
-        listenersByKey.set(key, listeners);
-        listeners.add(onStoreChange);
-        return () => {
-          listeners.delete(onStoreChange);
-        };
-      },
-      () => readRaw(key),
-    );
-    const value = parse(raw, defaultValue);
+    const [stored, setStored] = useAtom(storedAtomFamily(key));
+    const value = stored === undefined ? defaultValue : (stored as T);
 
     // `undefined` removes the entry.
     const setGlobalValue = (next: T) => {
-      writeRaw(key, next === undefined ? null : JSON.stringify(next));
+      setStored(next);
     };
 
     return [value, setGlobalValue] as const;

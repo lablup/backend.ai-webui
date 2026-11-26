@@ -63,6 +63,35 @@ describe('useLocalStorageGlobalState', () => {
     expect(localStorage.getItem(KEY)).toBeNull();
   });
 
+  it('keeps mounted instances on one value when another document changes the storage', () => {
+    localStorage.setItem(KEY, JSON.stringify('stained'));
+    const view = render(
+      <>
+        <Reader testId="a" />
+        <Reader testId="b" />
+      </>,
+    );
+    localStorage.setItem(KEY, JSON.stringify('bliss'));
+    view.rerender(
+      <>
+        <Reader testId="a" />
+        <Reader testId="b" />
+        <Reader testId="mounted-later" />
+      </>,
+    );
+    expect(screen.getByTestId('a')).toHaveTextContent('stained');
+    expect(screen.getByTestId('b')).toHaveTextContent('stained');
+    expect(screen.getByTestId('mounted-later')).toHaveTextContent('stained');
+  });
+
+  it('reads the storage again once no instance is mounted', () => {
+    const first = render(<Parent next="bliss" />);
+    first.unmount();
+    localStorage.setItem(KEY, JSON.stringify('glass'));
+    render(<Reader testId="fresh" />);
+    expect(screen.getByTestId('fresh')).toHaveTextContent('glass');
+  });
+
   it('updates every mounted instance when one of them writes', () => {
     const Writer = () => {
       const [, setValue] = useLocalStorageGlobalState<string | undefined>(
