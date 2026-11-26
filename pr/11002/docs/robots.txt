@@ -1,4 +1,0 @@
-User-agent: *
-Disallow:
-
-Sitemap: https://webui.docs.backend.ai/sitemap.xml
