@@ -1456,6 +1456,7 @@
     "ModelSourceTooltip": "이 리비전의 모델을 모델 폴더에서 가져올지 모델 카드에서 가져올지 선택합니다.",
     "ModelVersion": "모델 버전",
     "Name": "이름",
+    "NameMaxLength": "배포 이름은 최대 {{max}}자까지 입력할 수 있습니다.",
     "NamePlaceholder": "배포 이름을 입력하세요",
     "NameRequired": "배포 이름은 필수입니다.",
     "NewDeployment": "새 배포",

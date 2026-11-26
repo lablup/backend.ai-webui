@@ -1456,6 +1456,7 @@
     "ModelSourceTooltip": "Wybierz, czy model tej rewizji pochodzi z folderu modelu, czy z karty modelu.",
     "ModelVersion": "Nazwa modelu",
     "Name": "Nazwa",
+    "NameMaxLength": "Nazwa wdrożenia może mieć maksymalnie {{max}} znaków.",
     "NamePlaceholder": "Wprowadź nazwę wdrożenia",
     "NameRequired": "Nazwa wdrożenia jest wymagana.",
     "NewDeployment": "Nowe wdrożenie",

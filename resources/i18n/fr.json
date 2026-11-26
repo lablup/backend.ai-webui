@@ -1456,6 +1456,7 @@
     "ModelSourceTooltip": "Choisissez si le modèle de cette révision provient d'un dossier de modèle ou d'une fiche modèle.",
     "ModelVersion": "Nom du modèle",
     "Name": "Nom",
+    "NameMaxLength": "Le nom du déploiement peut comporter jusqu’à {{max}} caractères.",
     "NamePlaceholder": "Saisir un nom de déploiement",
     "NameRequired": "Le nom du déploiement est obligatoire.",
     "NewDeployment": "Nouveau déploiement",

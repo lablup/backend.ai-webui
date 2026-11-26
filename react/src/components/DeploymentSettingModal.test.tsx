@@ -153,3 +153,15 @@ describe('DeploymentSettingModal project prop contract (ADR-0001)', () => {
     );
   });
 });
+
+describe('DeploymentSettingModal deployment name length', () => {
+  it('caps the name input at 91 characters', async () => {
+    const user = userEvent.setup();
+    renderModal({ id: 'fixed-project-id', name: 'fixed-project-name' });
+
+    const input = screen.getByPlaceholderText('deployment.NamePlaceholder');
+    expect(input).toHaveAttribute('maxLength', '91');
+    await user.type(input, 'a'.repeat(100));
+    expect(input).toHaveValue('a'.repeat(91));
+  });
+});

@@ -1456,6 +1456,7 @@
     "ModelSourceTooltip": "Wählen Sie, ob das Modell dieser Revision aus einem Modellordner oder einer Modellkarte stammt.",
     "ModelVersion": "Modellname",
     "Name": "Name",
+    "NameMaxLength": "Der Bereitstellungsname darf höchstens {{max}} Zeichen lang sein.",
     "NamePlaceholder": "Bereitstellungsname eingeben",
     "NameRequired": "Bereitstellungsname ist erforderlich.",
     "NewDeployment": "Neue Bereitstellung",

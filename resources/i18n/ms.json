@@ -1456,6 +1456,7 @@
     "ModelSourceTooltip": "Pilih sama ada model semakan ini berasal daripada folder model atau kad model.",
     "ModelVersion": "Nama Model",
     "Name": "Nama",
+    "NameMaxLength": "Nama penggunaan boleh mengandungi sehingga {{max}} aksara.",
     "NamePlaceholder": "Masukkan nama penggunaan",
     "NameRequired": "Nama penggunaan diperlukan.",
     "NewDeployment": "Penggunaan Baharu",
