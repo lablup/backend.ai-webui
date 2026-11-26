@@ -4,7 +4,7 @@
  */
 import DeploymentSettingModal from './DeploymentSettingModal';
 import '@testing-library/jest-dom';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { RelayEnvironmentProvider } from 'react-relay';
 import { createMockEnvironment } from 'relay-test-utils';
@@ -155,29 +155,19 @@ describe('DeploymentSettingModal project prop contract (ADR-0001)', () => {
 });
 
 describe('DeploymentSettingModal deployment name length', () => {
-  it('caps the name input at 91 characters', async () => {
-    const user = userEvent.setup();
-    renderModal({ id: 'fixed-project-id', name: 'fixed-project-name' });
-
-    const input = screen.getByPlaceholderText('deployment.NamePlaceholder');
-    expect(input).toHaveAttribute('maxLength', '91');
-    await user.type(input, 'a'.repeat(100));
-    expect(input).toHaveValue('a'.repeat(91));
-  });
-
-  it('rejects a name longer than 91 characters on submit', async () => {
+  it('keeps a pasted over-long name and rejects it on submit', async () => {
     const user = userEvent.setup();
     const { environment } = renderModal({
       id: 'fixed-project-id',
       name: 'fixed-project-name',
     });
 
-    fireEvent.change(
-      screen.getByPlaceholderText('deployment.NamePlaceholder'),
-      {
-        target: { value: 'a'.repeat(92) },
-      },
-    );
+    const input = screen.getByPlaceholderText('deployment.NamePlaceholder');
+    expect(input).not.toHaveAttribute('maxLength');
+    await user.click(input);
+    await user.paste('a'.repeat(92));
+    expect(input).toHaveValue('a'.repeat(92));
+
     await user.click(screen.getByTestId('mock-resource-group-select'));
     await user.click(screen.getByRole('button', { name: 'button.Create' }));
 
@@ -185,5 +175,26 @@ describe('DeploymentSettingModal deployment name length', () => {
       await screen.findByText('deployment.NameMaxLength'),
     ).toBeInTheDocument();
     expect(environment.mock.getAllOperations()).toHaveLength(0);
+  });
+
+  it('accepts a 91-character name', async () => {
+    const user = userEvent.setup();
+    const { environment } = renderModal({
+      id: 'fixed-project-id',
+      name: 'fixed-project-name',
+    });
+
+    await user.click(screen.getByPlaceholderText('deployment.NamePlaceholder'));
+    await user.paste('a'.repeat(91));
+    await user.click(screen.getByTestId('mock-resource-group-select'));
+    await user.click(screen.getByRole('button', { name: 'button.Create' }));
+
+    await waitFor(() => {
+      expect(environment.mock.getAllOperations()).toHaveLength(1);
+    });
+    expect(
+      environment.mock.getMostRecentOperation().request.variables.input.metadata
+        .name,
+    ).toBe('a'.repeat(91));
   });
 });

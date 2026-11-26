@@ -338,7 +338,6 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
             <BAITextInput
               aria-label={t('deployment.DeploymentName')}
               placeholder={t('deployment.NamePlaceholder')}
-              maxLength={DEPLOYMENT_NAME_MAX_LENGTH}
             />
           </BAIFormItem>
           {deployment ? (
