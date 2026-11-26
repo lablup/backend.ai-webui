@@ -13,6 +13,7 @@ import { purgeVFoldersByNameViaApi } from '../utils/admin-api';
 import {
   acceptAllInvitationAndVerifySpecificFolder,
   createVFolderAndVerify,
+  personalDataPath,
   shareVFolderAndVerify,
   userInfo,
   verifyVFolder,
@@ -23,6 +24,8 @@ const FOLDER_PREFIX = 'e2e-drill-folder-invitation';
 
 /** Set by `setup`; the steps of this one drill read it. */
 let folderName = '';
+/** The owner's personal Data page, where the folder is a user folder. */
+let ownerDataPath = '';
 
 export const folderInvitationDrill: Drill = {
   id: 'folder-invitation',
@@ -32,7 +35,7 @@ export const folderInvitationDrill: Drill = {
   prerequisites: [
     'A WebUI server is already running and reachable at E2E_WEBUI_ENDPOINT (no local cluster is booted).',
     'The E2E_USER_* account (folder owner) and the E2E_USER2_* account (invitee) both sign in as ordinary users.',
-    'The manager runs the 26.9 share model: the Share dialog posts /folders/{id}/invite and the invitee lists it under invitations.',
+    'The manager supports entity shares: the Share dialog creates the share with createEntityShare and the invitee lists it under Invited Folders.',
     'Nothing else owns the e2e-drill-folder-invitation-* name on the server when the drill starts.',
   ],
   setup: async (ctx) => {
@@ -46,7 +49,7 @@ export const folderInvitationDrill: Drill = {
       id: 'create-folder',
       title: 'Create the folder as the owner',
       changed:
-        'The Create Folder dialog closes and a new row appears in the Active tab of Data, named after this run.',
+        "The Create Folder dialog closes and a new row appears in the Active tab of the owner's personal-project Data page, named after this run.",
       verify:
         'The row is visible in Active, the owner is the signed-in account, and the name starts with e2e-drill-folder-invitation- so cleanup can find it.',
       expected: 'The new folder is listed in Active for the owner.',
@@ -58,7 +61,13 @@ export const folderInvitationDrill: Drill = {
         { path: 'react/src/components/FolderCreateModal.tsx', line: 393 },
       ],
       run: async (ctx) => {
-        await createVFolderAndVerify(ctx.page, folderName);
+        ownerDataPath = await personalDataPath(ctx.page);
+        await createVFolderAndVerify(
+          ctx.page,
+          folderName,
+          'general',
+          ownerDataPath,
+        );
         return `Created "${folderName}" and found it in Active.`;
       },
     },
@@ -66,25 +75,30 @@ export const folderInvitationDrill: Drill = {
       id: 'invite',
       title: 'Invite the second account from the Share dialog',
       changed:
-        'The Share dialog sends the invitation; the backend answers the folder invite request and the dialog closes.',
+        'In the Share dialog the invitee is picked from the user search and Invite creates the share; the share list shows it as pending.',
       verify:
         'The dialog accepted the invitee address without an error. The folder now has an open (pending) share for that account.',
       expected: `The invitation to ${userInfo.user2.email} is accepted by the backend.`,
       code: [
         {
           path: 'react/src/components/InviteFolderSettingModal.tsx',
-          line: 479,
+          line: 766,
         },
         {
           path: 'react/src/components/InviteFolderSettingModal.tsx',
-          line: 333,
-          to: 350,
+          line: 398,
+          to: 413,
         },
         { path: 'react/src/components/VFolderNodesV2.tsx', line: 652 },
       ],
       run: async (ctx) => {
-        await shareVFolderAndVerify(ctx.page, folderName, userInfo.user2.email);
-        return `The invite for ${userInfo.user2.email} was accepted (2xx).`;
+        await shareVFolderAndVerify(
+          ctx.page,
+          folderName,
+          userInfo.user2.email,
+          ownerDataPath,
+        );
+        return `createEntityShare for ${userInfo.user2.email} answered without errors.`;
       },
     },
     {
@@ -98,7 +112,7 @@ export const folderInvitationDrill: Drill = {
       code: [
         {
           path: 'react/src/components/FolderInvitationResponseModal.tsx',
-          line: 109,
+          line: 117,
         },
       ],
       run: async (ctx) => {
@@ -107,6 +121,7 @@ export const folderInvitationDrill: Drill = {
           invitee,
           folderName,
           userInfo.user.email,
+          await personalDataPath(invitee),
         );
         return `Accepted the invitation as ${userInfo.user2.email}.`;
       },
@@ -127,7 +142,12 @@ export const folderInvitationDrill: Drill = {
       ],
       run: async (ctx) => {
         const invitee = await ctx.as('user2');
-        await verifyVFolder(invitee, folderName);
+        await verifyVFolder(
+          invitee,
+          folderName,
+          'Active',
+          await personalDataPath(invitee),
+        );
         return `"${folderName}" is listed in the invitee's Active tab.`;
       },
     },

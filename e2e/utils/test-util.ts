@@ -424,20 +424,26 @@ async function submitLogin(
 ): Promise<Record<string, string>> {
   await page.goto(webuiEndpoint);
   await removeDevServerOverlay(page);
-  const before = await readLocalStorage(page);
-  // A server with baked credentials lands straight on the app shell and the
-  // form never shows: signed in as the requested account, the login is done.
+  let before = await readLocalStorage(page);
+  // A dev bundle with baked credentials signs in silently on boot, so the
+  // shell can appear instead of the form: keep it when it is this account,
+  // otherwise log out (which suppresses the next silent login) and use the form.
   const shell = page.getByTestId('user-dropdown-button');
-  if (await shell.isVisible().catch(() => false)) {
+  const form = page
+    .getByLabel('Email or Username')
+    .or(page.getByTestId('login-endpoint-step-input'));
+  await expect(shell.or(form).first()).toBeVisible({ timeout: 60_000 });
+  if (await shell.isVisible()) {
     const email = await signedInEmail(page);
     if (email && email.toLowerCase() === username.toLowerCase()) {
       return before;
     }
-    throw new Error(
-      `[login] the app boots signed in already (baked credentials) and no login form shows${
-        email ? `; the signed-in account is ${accountLabel(email)}` : ''
-      } — signing in as ${accountLabel(username)} is not possible on this server`,
+    console.log(
+      `[login] the app booted signed in as ${email ? accountLabel(email) : 'an unknown account'}; logging out to sign in as ${accountLabel(username)}`,
     );
+    await logout(page);
+    await expect(form.first()).toBeVisible({ timeout: 30_000 });
+    before = await readLocalStorage(page);
   }
   await fillLoginEndpoint(page, endpoint);
   await page.getByLabel('Email or Username').fill(username);
@@ -671,6 +677,36 @@ export function notFoundPageHeading(page: Page) {
  */
 export function forbiddenPageHeading(page: Page) {
   return page.getByText('Unauthorized Access');
+}
+
+/**
+ * The Data page of the signed-in account's personal project, where a folder
+ * is created as a user folder (the shared project's page makes a project one).
+ */
+export async function personalDataPath(page: Page): Promise<string> {
+  const name = await page.evaluate(async () => {
+    const result = await (globalThis as any).backendaiclient.query(
+      `query {
+        myUserV2 {
+          projects(filter: { isActive: true }, limit: 1000) {
+            edges { node { basicInfo { name type } } }
+          }
+        }
+      }`,
+      {},
+    );
+    return result.myUserV2.projects.edges
+      .map((edge: any) => edge.node.basicInfo)
+      .find((info: any) => info.type === 'PERSONAL')?.name as
+      string | undefined;
+  });
+  if (!name)
+    throw new Error('[data] the signed-in account has no personal project');
+  return `project/${encodeURIComponent(name)}/data`;
+}
+
+function escapeRegExp(text: string): string {
+  return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
 export async function navigateTo(page: Page, path: string) {
@@ -950,8 +986,9 @@ export async function createVFolderAndVerify(
   page: Page,
   folderName: string,
   usageMode: 'general' | 'model' = 'general',
+  dataPath: string = 'data',
 ) {
-  await navigateTo(page, 'data');
+  await navigateTo(page, dataPath);
   // VFolderNodeListPage's BAICard extra renders a single "Create Folder" button.
   // The previous `.nth(1)` assumed an older layout with a second header CTA and
   // breaks against the current React build, so use the first match.
@@ -974,7 +1011,7 @@ export async function createVFolderAndVerify(
   // shared users (#10647); the default is changed from the share modal.
   await modal.submit();
   await modal.waitForClosed();
-  await verifyVFolder(page, folderName);
+  await verifyVFolder(page, folderName, 'Active', dataPath);
 }
 
 export async function moveToTrashAndVerify(
@@ -1165,8 +1202,9 @@ export async function shareVFolderAndVerify(
   page: Page,
   folderName: string,
   invitedUser: string,
+  dataPath: string = 'data',
 ) {
-  await navigateTo(page, 'data');
+  await navigateTo(page, dataPath);
   await selectPropertyFilter(page, 'Name', folderName);
 
   // Click the share button inside the BAINameActionCell of the folder row.
@@ -1179,22 +1217,30 @@ export async function shareVFolderAndVerify(
   // Fill in invited user's email in the share modal
   const shareModal = page.getByRole('dialog', { name: 'Share Folder' });
   await expect(shareModal).toBeVisible();
-  await shareModal.getByRole('textbox', { name: 'Email' }).fill(invitedUser);
+  // The recipient is a searchable user picker; its search box is the input.
+  await shareModal.getByText('Search user').click();
+  const searchBox = page.locator('input[role="combobox"]').last();
+  await searchBox.fill(invitedUser);
+  await page
+    .getByRole('option', { name: new RegExp(escapeRegExp(invitedUser)) })
+    .first()
+    .click();
 
-  // Set up the response promise before clicking Add to avoid a race condition
-  // where the response fires before we start listening.
-  // URL pattern: POST /folders/{id}/invite → 200 or 201
-  const inviteResponsePromise = page.waitForResponse(
+  // Listen before clicking, so a fast answer is not missed.
+  const shareResponsePromise = page.waitForResponse(
     (response) =>
-      response.url().includes('/invite') &&
-      response.request().method() === 'POST',
+      response.request().method() === 'POST' &&
+      (response.request().postData() ?? '').includes(
+        'InviteFolderSettingModalCreateShareMutation',
+      ),
     { timeout: 15000 },
   );
-  await shareModal.getByRole('button', { name: 'Add' }).click();
-  const inviteResponse = await inviteResponsePromise;
-  if (!inviteResponse.ok()) {
+  await shareModal.getByRole('button', { name: 'Invite', exact: true }).click();
+  const shareResponse = await shareResponsePromise;
+  const shareBody = await shareResponse.json().catch(() => ({}));
+  if (!shareResponse.ok() || shareBody?.errors?.length) {
     throw new Error(
-      `POST /folders/.../invite returned ${inviteResponse.status()}: ${await inviteResponse.text()}`,
+      `createEntityShare answered ${shareResponse.status()}: ${JSON.stringify(shareBody?.errors ?? shareBody).slice(0, 300)}`,
     );
   }
 
@@ -1207,6 +1253,7 @@ export async function acceptAllInvitationAndVerifySpecificFolder(
   page: Page,
   folderName: string,
   inviterEmail?: string,
+  dataPath: string = 'data',
 ) {
   // When the caller wants to assert the inviter email, register a listener
   // for the invitations/list response BEFORE navigation so we can inspect
@@ -1275,10 +1322,13 @@ export async function acceptAllInvitationAndVerifySpecificFolder(
   // detach races.
   let folderInvitationAccepted = false;
   for (let i = 0; i < 20; i++) {
+    // Items are not list items any more: take the innermost element holding
+    // both this folder's name and an Accept button.
     const invitationItem = invitationModal
-      .getByRole('listitem')
+      .locator('*')
       .filter({ hasText: folderName })
-      .first();
+      .filter({ has: page.getByRole('button', { name: /^Accept$/i }) })
+      .last();
     const isItemVisible = await invitationItem
       .isVisible({ timeout: 1000 })
       .catch(() => false);
@@ -1332,7 +1382,7 @@ export async function acceptAllInvitationAndVerifySpecificFolder(
     .catch(() => {});
 
   // Verify the shared folder now appears in the user's Active data page.
-  await verifyVFolder(page, folderName, 'Active');
+  await verifyVFolder(page, folderName, 'Active', dataPath);
 }
 
 /**
@@ -1440,7 +1490,7 @@ export async function restoreVFolderAndVerify(page: Page, folderName: string) {
   await expect(popconfirmOkButton).toBeVisible({ timeout: 5000 });
   await popconfirmOkButton.click();
 
-  await verifyVFolder(page, folderName, 'Active');
+  await verifyVFolder(page, folderName, 'Active', dataPath);
 }
 
 export async function createSession(page: Page, sessionName: string) {
