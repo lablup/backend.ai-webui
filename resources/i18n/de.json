@@ -1309,6 +1309,7 @@
       "NoValidEmails": "Es wurden keine gültigen E-Mails eingegeben",
       "Pending": "Ausstehend",
       "PendingInvitations": "Ausstehende Einladungen",
+      "PendingInvitationsNotice": "Es gibt Ordnereinladungen, die geprüft werden müssen. Zum Prüfen klicken.",
       "Shared": "Gruppenordner erfolgreich freigegeben",
       "SharingError": "Die Freigabe ist fehlgeschlagen. Der Benutzer ist möglicherweise bereits freigegeben oder gehört nicht zu dem entsprechenden Projekt.",
       "SharingStopped": "Freigabe beendet",

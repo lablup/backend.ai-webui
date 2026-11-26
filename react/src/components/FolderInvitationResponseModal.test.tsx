@@ -109,6 +109,13 @@ describe('FolderInvitationResponseModal (#10329)', () => {
     expect(screen.getByText('vf-1')).toBeInTheDocument();
   });
 
+  it('names the project of an invitation listed across projects', () => {
+    invitations.push(invitation({ recipientProjectName: 'research' }));
+    render(<FolderInvitationResponseModal open project={null} />);
+    expect(screen.getByText('general.Project')).toBeInTheDocument();
+    expect(screen.getByText('research')).toBeInTheDocument();
+  });
+
   it('lists the folder, the sharer and the share permission only', () => {
     invitations.push(invitation({}));
     render(<FolderInvitationResponseModal open project={PROJECT} />);

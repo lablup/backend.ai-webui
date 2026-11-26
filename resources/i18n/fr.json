@@ -1309,6 +1309,7 @@
       "NoValidEmails": "Aucun e-mail valide n'a été saisi",
       "Pending": "En attente",
       "PendingInvitations": "Invitations en attente",
+      "PendingInvitationsNotice": "Vous avez des invitations à des dossiers à examiner. Cliquez pour les consulter.",
       "Shared": "Le dossier de groupe a été partagé avec succès",
       "SharingError": "Le partage a échoué. L'utilisateur est peut-être déjà partagé ou n'appartient pas au projet approprié.",
       "SharingStopped": "Partage arrêté",

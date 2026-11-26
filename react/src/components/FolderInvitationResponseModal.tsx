@@ -44,7 +44,7 @@ interface FolderInvitationResponseModalProps extends Omit<
 > {
   /** App-level contract, kept: the opener passes `open` + `onCancel`. */
   open?: boolean;
-  /** The page's project (ADR-0001): the invitations listed are the ones addressed to it. */
+  /** The page's project (ADR-0001): the invitations listed are the ones addressed to it; without one a superadmin gets them all. */
   project: ProjectContextOrNull;
   onCancel?: () => void;
 }
@@ -80,6 +80,11 @@ const FolderInvitationResponseModal: React.FC<
           <MetadataListItem label={t('data.Foldername')}>
             {folderName}
           </MetadataListItem>
+          {item.recipientProjectName && (
+            <MetadataListItem label={t('general.Project')}>
+              {item.recipientProjectName}
+            </MetadataListItem>
+          )}
           <MetadataListItem label={t('data.From')}>
             {item.sharerEmail || t('data.invitation.UnknownUser')}
           </MetadataListItem>

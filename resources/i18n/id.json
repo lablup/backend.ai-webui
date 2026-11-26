@@ -1309,6 +1309,7 @@
       "NoValidEmails": "Tidak ada email valid yang dimasukkan",
       "Pending": "Tertunda",
       "PendingInvitations": "Undangan tertunda",
+      "PendingInvitationsNotice": "Ada undangan folder yang perlu ditinjau. Klik untuk memeriksa.",
       "Shared": "Folder grup berhasil dibagikan",
       "SharingError": "Gagal berbagi. Pengguna mungkin sudah dibagikan atau tidak ada dalamm proyek yang sesuai.",
       "SharingStopped": "Berbagi dihentikan",

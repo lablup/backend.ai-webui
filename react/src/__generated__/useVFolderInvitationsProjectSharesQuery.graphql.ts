@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<5d106a66e5ee08ca073397284e72c1f1>>
+ * @generated SignedSource<<d566c4cab32c5d793c7ec9ae197ab13c>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -24,6 +24,8 @@ export type useVFolderInvitationsProjectSharesQuery$data = {
         readonly createdAt: string;
         readonly entityId: string;
         readonly permissions: ReadonlyArray<PermissionBit>;
+        readonly recipientEntityId: string | null | undefined;
+        readonly recipientEntityType: string | null | undefined;
         readonly sharer: {
           readonly basicInfo: {
             readonly email: string;
@@ -141,6 +143,20 @@ v7 = {
 v8 = {
   "alias": null,
   "args": null,
+  "kind": "ScalarField",
+  "name": "recipientEntityType",
+  "storageKey": null
+},
+v9 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "recipientEntityId",
+  "storageKey": null
+},
+v10 = {
+  "alias": null,
+  "args": null,
   "concreteType": "UserV2BasicInfo",
   "kind": "LinkedField",
   "name": "basicInfo",
@@ -156,14 +172,14 @@ v8 = {
   ],
   "storageKey": null
 },
-v9 = {
+v11 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "__typename",
   "storageKey": null
 },
-v10 = {
+v12 = {
   "kind": "InlineFragment",
   "selections": [
     {
@@ -188,15 +204,15 @@ v10 = {
   "type": "VFolder",
   "abstractKey": null
 },
-v11 = {
+v13 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
 },
-v12 = [
-  (v11/*: any*/)
+v14 = [
+  (v13/*: any*/)
 ];
 return {
   "fragment": {
@@ -235,6 +251,8 @@ return {
                   (v5/*: any*/),
                   (v6/*: any*/),
                   (v7/*: any*/),
+                  (v8/*: any*/),
+                  (v9/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -243,7 +261,7 @@ return {
                     "name": "sharer",
                     "plural": false,
                     "selections": [
-                      (v8/*: any*/)
+                      (v10/*: any*/)
                     ],
                     "storageKey": null
                   },
@@ -255,8 +273,8 @@ return {
                     "name": "targetEntity",
                     "plural": false,
                     "selections": [
-                      (v9/*: any*/),
-                      (v10/*: any*/)
+                      (v11/*: any*/),
+                      (v12/*: any*/)
                     ],
                     "storageKey": null
                   }
@@ -309,6 +327,8 @@ return {
                   (v5/*: any*/),
                   (v6/*: any*/),
                   (v7/*: any*/),
+                  (v8/*: any*/),
+                  (v9/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -317,8 +337,8 @@ return {
                     "name": "sharer",
                     "plural": false,
                     "selections": [
-                      (v8/*: any*/),
-                      (v11/*: any*/)
+                      (v10/*: any*/),
+                      (v13/*: any*/)
                     ],
                     "storageKey": null
                   },
@@ -330,24 +350,24 @@ return {
                     "name": "targetEntity",
                     "plural": false,
                     "selections": [
-                      (v9/*: any*/),
-                      (v10/*: any*/),
+                      (v11/*: any*/),
+                      (v12/*: any*/),
                       {
                         "kind": "InlineFragment",
-                        "selections": (v12/*: any*/),
+                        "selections": (v14/*: any*/),
                         "type": "Node",
                         "abstractKey": "__isNode"
                       },
                       {
                         "kind": "InlineFragment",
-                        "selections": (v12/*: any*/),
+                        "selections": (v14/*: any*/),
                         "type": "ArtifactRegistry",
                         "abstractKey": null
                       }
                     ],
                     "storageKey": null
                   },
-                  (v11/*: any*/)
+                  (v13/*: any*/)
                 ],
                 "storageKey": null
               }
@@ -360,16 +380,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "aeff56f03816517cfd946031202a4b73",
+    "cacheID": "fd0badb7378b9552d925ce62f4090a96",
     "id": null,
     "metadata": {},
     "name": "useVFolderInvitationsProjectSharesQuery",
     "operationKind": "query",
-    "text": "query useVFolderInvitationsProjectSharesQuery(\n  $projects: [UUIDScope!]!\n) {\n  entityShares(scope: {recipientProject: $projects}, filter: {status: {equals: PENDING}}, orderBy: [{field: CREATED_AT, direction: \"DESC\"}], limit: 100) {\n    edges {\n      node {\n        entityId\n        status\n        permissions\n        targetEntityType\n        targetEntityId\n        createdAt\n        sharer {\n          basicInfo {\n            email\n          }\n          id\n        }\n        targetEntity {\n          __typename\n          ... on VFolder {\n            metadata {\n              name\n            }\n          }\n          ... on Node {\n            __isNode: __typename\n            id\n          }\n          ... on ArtifactRegistry {\n            id\n          }\n        }\n        id\n      }\n    }\n  }\n}\n"
+    "text": "query useVFolderInvitationsProjectSharesQuery(\n  $projects: [UUIDScope!]!\n) {\n  entityShares(scope: {recipientProject: $projects}, filter: {status: {equals: PENDING}}, orderBy: [{field: CREATED_AT, direction: \"DESC\"}], limit: 100) {\n    edges {\n      node {\n        entityId\n        status\n        permissions\n        targetEntityType\n        targetEntityId\n        createdAt\n        recipientEntityType\n        recipientEntityId\n        sharer {\n          basicInfo {\n            email\n          }\n          id\n        }\n        targetEntity {\n          __typename\n          ... on VFolder {\n            metadata {\n              name\n            }\n          }\n          ... on Node {\n            __isNode: __typename\n            id\n          }\n          ... on ArtifactRegistry {\n            id\n          }\n        }\n        id\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "4adc5584d4fe9cd366789ccaec317d07";
+(node as any).hash = "a7f613b60e5efd8bfb9cb870769f3860";
 
 export default node;

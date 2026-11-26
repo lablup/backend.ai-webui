@@ -1309,6 +1309,7 @@
       "NoValidEmails": "没有输入有效的电子邮件",
       "Pending": "待处理",
       "PendingInvitations": "待处理的邀请",
+      "PendingInvitationsNotice": "您有需要确认的文件夹邀请。点击查看。",
       "Shared": "已成功共享群组文件夹",
       "SharingError": "分享失败。用户可能已被共享或不属于适当的项目。",
       "SharingStopped": "已停止共享",

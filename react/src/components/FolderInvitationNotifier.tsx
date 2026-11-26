@@ -29,16 +29,18 @@ const FolderInvitationNotifier: React.FC<{ project: ProjectContextOrNull }> = ({
     }
     upsertNotification({
       key: NOTIFICATION_KEY,
-      message: t('data.InvitedFoldersTooltip', { count: invitations.length }),
+      // No count: the modal it opens lists the invitations of the page it opens on.
+      message: t('data.invitation.PendingInvitationsNotice'),
       to: { search: new URLSearchParams({ invitation: 'true' }).toString() },
       open: true,
       duration: 0,
     });
   });
 
+  const hasInvitations = invitations.length > 0;
   useEffect(() => {
     syncNotification();
-  }, [invitations.length, project?.id]);
+  }, [hasInvitations, project?.id]);
 
   return null;
 };

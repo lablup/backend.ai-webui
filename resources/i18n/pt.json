@@ -1309,6 +1309,7 @@
       "NoValidEmails": "Nenhum e-mail válido foi inserido",
       "Pending": "Pendente",
       "PendingInvitations": "Convites pendentes",
+      "PendingInvitationsNotice": "Tem convites de pastas para rever. Clique para verificar.",
       "Shared": "Compartilhou com sucesso a pasta do grupo",
       "SharingError": "O compartilhamento falhou. O usuário pode já estar compartilhado ou não pertencer ao projeto apropriado.",
       "SharingStopped": "Partilha interrompida",

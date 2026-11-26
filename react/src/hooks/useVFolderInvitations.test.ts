@@ -66,6 +66,30 @@ describe('toInvitationItems (#10329)', () => {
     expect(items.map((item) => item.id).sort()).toEqual(['own', 'theirs']);
   });
 
+  it('names a project share by the given project names, falling back to its id', () => {
+    const items = toInvitationItems(
+      [
+        share({
+          entityId: 'listed',
+          recipientEntityType: 'PROJECT',
+          recipientEntityId: 'p-1',
+        }),
+        share({
+          entityId: 'unknown',
+          recipientEntityType: 'project',
+          recipientEntityId: 'p-2',
+        }),
+        share({ entityId: 'mine', recipientEntityType: 'user' }),
+      ],
+      { 'p-1': 'research' },
+    );
+    expect(
+      Object.fromEntries(
+        items.map((item) => [item.id, item.recipientProjectName]),
+      ),
+    ).toEqual({ listed: 'research', unknown: 'p-2', mine: undefined });
+  });
+
   it('reads the target entity type regardless of case', () => {
     const items = toInvitationItems([share({ targetEntityType: 'VFOLDER' })]);
     expect(items).toHaveLength(1);

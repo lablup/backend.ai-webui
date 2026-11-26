@@ -1309,6 +1309,7 @@
       "NoValidEmails": "입력하신 이메일이 존재하지 않는 것 같습니다. 주소를 다시 확인해 주세요.",
       "Pending": "대기 중",
       "PendingInvitations": "응답 대기 중인 초대",
+      "PendingInvitationsNotice": "확인이 필요한 폴더 초대가 있습니다. 클릭하여 확인하세요.",
       "Shared": "그룹 폴더를 공유했습니다",
       "SharingError": "공유에 실패했습니다. 이미 공유받은 사용자거나 프로젝트에 소속된 사용자가 아닐 수 있습니다.",
       "SharingStopped": "공유를 중단했습니다",
