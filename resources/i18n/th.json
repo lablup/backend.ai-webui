@@ -3956,11 +3956,14 @@
   "storageProxy": {
     "ConfirmRemoveSFTPProxiesContent": "กลุ่มทรัพยากรที่เลือกจะไม่ใช้พร็อกซีที่เก็บข้อมูลเหล่านี้สำหรับ SFTP อีกต่อไป: <code>{{proxies}}</code> ดำเนินการต่อหรือไม่?",
     "ConfirmRemoveSFTPProxiesTitle": "นำการตั้งค่าพร็อกซีที่เก็บข้อมูล SFTP ออกหรือไม่?",
+    "FailedToLoadSFTPStorageProxies": "ไม่สามารถโหลดพร็อกซีที่เก็บข้อมูล SFTP ได้",
     "FailedToUpdateSFTPResourceGroups": "ไม่สามารถอัปเดตกลุ่มทรัพยากร SFTP ได้",
     "FollowingResourceGroupsWillBeConfigured": "กลุ่มทรัพยากรต่อไปนี้จะได้รับการอัปเดต:",
     "SFTPResourceGroupsUpdated": "อัปเดตกลุ่มทรัพยากร SFTP เรียบร้อยแล้ว",
     "SFTPStorageProxies": "พร็อกซีที่เก็บข้อมูล SFTP",
-    "SFTPStorageProxiesDescription": "พร็อกซีที่เก็บข้อมูลที่ใช้เมื่อผู้ใช้ในกลุ่มทรัพยากรนี้ถ่ายโอนไฟล์ไปยังโฟลเดอร์ของตนผ่าน SFTP"
+    "SFTPStorageProxiesDescription": "พร็อกซีที่เก็บข้อมูลที่ใช้เมื่อผู้ใช้ในกลุ่มทรัพยากรนี้ถ่ายโอนไฟล์ไปยังโฟลเดอร์ของตนผ่าน SFTP",
+    "SFTPStorageProxiesNotSaved": "ไม่ได้โหลดการตั้งค่าพร็อกซีที่เก็บข้อมูล SFTP จึงไม่ได้บันทึก",
+    "SFTPStorageProxiesNotSavedDesc": "พร็อกซีที่เก็บข้อมูล SFTP จะไม่ถูกบันทึก โหลดใหม่แล้วบันทึกอีกครั้ง"
   },
   "summary": {
     "ATOMEnabled": "เปิดใช้งาน ATOM NPU",

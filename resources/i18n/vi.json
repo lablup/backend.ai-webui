@@ -3972,11 +3972,14 @@
   "storageProxy": {
     "ConfirmRemoveSFTPProxiesContent": "Các nhóm tài nguyên đã chọn sẽ không còn sử dụng các proxy lưu trữ này cho SFTP: <code>{{proxies}}</code>. Tiếp tục?",
     "ConfirmRemoveSFTPProxiesTitle": "Xóa cài đặt proxy lưu trữ SFTP?",
+    "FailedToLoadSFTPStorageProxies": "Không thể tải proxy lưu trữ SFTP",
     "FailedToUpdateSFTPResourceGroups": "Không thể cập nhật nhóm tài nguyên SFTP.",
     "FollowingResourceGroupsWillBeConfigured": "Các nhóm tài nguyên sau sẽ được cập nhật:",
     "SFTPResourceGroupsUpdated": "Đã cập nhật nhóm tài nguyên SFTP.",
     "SFTPStorageProxies": "Proxy lưu trữ SFTP",
-    "SFTPStorageProxiesDescription": "Các proxy lưu trữ được dùng khi người dùng trong nhóm tài nguyên này truyền tệp đến thư mục của họ qua SFTP."
+    "SFTPStorageProxiesDescription": "Các proxy lưu trữ được dùng khi người dùng trong nhóm tài nguyên này truyền tệp đến thư mục của họ qua SFTP.",
+    "SFTPStorageProxiesNotSaved": "Cài đặt proxy lưu trữ SFTP chưa được tải nên không được lưu.",
+    "SFTPStorageProxiesNotSavedDesc": "Proxy lưu trữ SFTP sẽ không được lưu. Hãy tải lại rồi lưu lần nữa."
   },
   "summary": {
     "ATOMEnabled": "Đã bật NPU ATOM",

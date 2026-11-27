@@ -3973,11 +3973,14 @@
   "storageProxy": {
     "ConfirmRemoveSFTPProxiesContent": "Wybrane grupy zasobów przestaną używać tych serwerów proxy pamięci masowej do SFTP: <code>{{proxies}}</code>. Kontynuować?",
     "ConfirmRemoveSFTPProxiesTitle": "Usunąć ustawienie serwera proxy pamięci masowej SFTP?",
+    "FailedToLoadSFTPStorageProxies": "Nie udało się wczytać serwerów proxy magazynu SFTP",
     "FailedToUpdateSFTPResourceGroups": "Nie udało się zaktualizować grup zasobów SFTP.",
     "FollowingResourceGroupsWillBeConfigured": "Następujące grupy zasobów zostaną zaktualizowane:",
     "SFTPResourceGroupsUpdated": "Grupy zasobów SFTP zostały zaktualizowane.",
     "SFTPStorageProxies": "Serwery proxy pamięci masowej SFTP",
-    "SFTPStorageProxiesDescription": "Serwery proxy pamięci masowej używane, gdy użytkownicy tej grupy zasobów przesyłają pliki do swoich folderów przez SFTP."
+    "SFTPStorageProxiesDescription": "Serwery proxy pamięci masowej używane, gdy użytkownicy tej grupy zasobów przesyłają pliki do swoich folderów przez SFTP.",
+    "SFTPStorageProxiesNotSaved": "Ustawienia serwerów proxy magazynu SFTP nie zostały wczytane, więc nie zostały zapisane.",
+    "SFTPStorageProxiesNotSavedDesc": "Serwery proxy magazynu SFTP nie zostaną zapisane. Wczytaj je ponownie, a następnie zapisz."
   },
   "summary": {
     "ATOMEnabled": "ATOM NPU włączone",

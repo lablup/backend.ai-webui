@@ -22,6 +22,7 @@ import {
   useSFTPResourceGroups,
 } from '../../../hooks/useSFTPResourceGroups';
 import { ScalingGroupOpts } from './ResourceGroupList';
+import { ErrorState } from '@lablup/ui-common';
 import { Grid } from '@lablup/ui-common/Grid';
 import {
   BAICard,
@@ -58,9 +59,11 @@ type FormInputType = {
   // seeds null when the stored value is absent.
   pendingTimeout: number | null;
   retriesToSkip: number | null;
-  // `sftpProxies` is undefined until its Form.Item registers: it sits behind a
-  // Suspense boundary while the SFTP map / proxy-options query loads.
+  // Both are undefined until their Form.Items register (behind the SFTP map
+  // load and the proxy-options Suspense). The baseline registers with the
+  // select, so the save delta starts from the same map the prefill came from.
   sftpProxies: string[] | undefined;
+  sftpProxiesBaseline: string[] | undefined;
 };
 
 interface ResourceGroupCreateModalProps extends BAIModalProps {
@@ -105,15 +108,16 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
     resourceGroupFrgmt,
   );
 
-  // Superadmin-only SFTP proxy membership for this group, read from etcd without
-  // suspending: gate on a deferred `open` so enabling runs in a transition. The
-  // field below skeletons until the map resolves, then mounts with its prefill
-  // as the Form.Item `initialValue` — the rest of the form renders immediately.
+  // Superadmin-only SFTP proxy membership, read from etcd without suspending
+  // (gated on a deferred `open`). The field waits for this mount's first fetch,
+  // so the prefill is not a stale cache; later refetches keep it registered.
   const deferredOpen = useDeferredValue(modalProps.open);
   const {
     data: proxyResourceGroups,
     isFetching: isSftpMapFetching,
+    isFetchedAfterMount: isSftpMapFetchedAfterMount,
     isError: isSftpMapError,
+    refetch: refetchSftpMap,
   } = useSFTPProxyResourceGroupsQuery({
     enabled: baiClient.is_superadmin && !!deferredOpen,
   });
@@ -121,8 +125,10 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
     proxyResourceGroups,
     resourceGroup?.name ? [resourceGroup.name] : [],
   );
+  const hasSftpMap = proxyResourceGroups !== undefined;
   const isSftpMapLoading =
-    proxyResourceGroups === undefined || isSftpMapFetching;
+    (!hasSftpMap && !isSftpMapError) ||
+    (!isSftpMapFetchedAfterMount && isSftpMapFetching);
 
   // TODO(needs-backend): lablup/backend.ai#16372, lablup/backend.ai#16373 the V2 resource group
   // inputs have no `scheduler_opts`; move create/update to `adminCreateResourceGroupV2` / `updateResourceGroup` then.
@@ -202,9 +208,8 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
           isInFlightCommitCreateResourceGroup ||
           isInFlightCommitAssociateDomain ||
           isInFlightCommitUpdateResourceGroup ||
-          // Hold the save while the SFTP map loads, but not once it has failed:
-          // a failed map skips only the proxy sync, the rest still saves.
-          (baiClient.is_superadmin && isSftpMapLoading && !isSftpMapError),
+          // A failed map skips only the proxy sync (with a warning on save).
+          (baiClient.is_superadmin && isSftpMapLoading),
       }}
       onOk={() => {
         formRef.current
@@ -244,15 +249,15 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
               if (!baiClient.is_superadmin) {
                 return Promise.resolve();
               }
-              // The SFTP Form.Item is replaced by its Suspense fallback while
-              // the SFTP map or the proxy-options query is still loading, so an
-              // unregistered field reads `undefined` here. Skip the sync: "not
-              // loaded" must not mean "deselect all" (a deliberate clear is []).
+              // Not loaded must not mean "deselect all" (a deliberate clear is []).
               if (values.sftpProxies === undefined) {
+                message.warning(t('storageProxy.SFTPStorageProxiesNotSaved'));
                 return Promise.resolve();
               }
+              // Create mode's baseline is []: it only adds, and never touches
+              // entries a deleted group of the same name left on a proxy.
               const { added, removed } = computeProxyDelta(
-                currentSftpProxies,
+                values.sftpProxiesBaseline ?? [],
                 values.sftpProxies,
               );
               return applyGroupProxyDelta([groupName], added, removed).then(
@@ -426,16 +431,33 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
             />
           </BAIFormItem>
           {baiClient.is_superadmin ? (
-            isSftpMapLoading ? (
+            !hasSftpMap && isSftpMapError && !isSftpMapFetching ? (
+              <BAIFormItem label={t('storageProxy.SFTPStorageProxies')}>
+                <ErrorState
+                  tone="warning"
+                  title={t('storageProxy.FailedToLoadSFTPStorageProxies')}
+                  message={t('storageProxy.SFTPStorageProxiesNotSavedDesc')}
+                  primaryAction={{
+                    label: t('button.Retry'),
+                    onClick: () => {
+                      refetchSftpMap();
+                    },
+                  }}
+                />
+              </BAIFormItem>
+            ) : !hasSftpMap || isSftpMapLoading ? (
               <BAIFormItem label={t('storageProxy.SFTPStorageProxies')}>
                 <BAISkeleton variant="input" />
               </BAIFormItem>
             ) : (
-              // Wrap the Form.Item (not the select — that would break Form's
-              // value/onChange binding) in Suspense: BAIStorageProxySelect's
-              // proxy-options query suspends. The prefill is registered as the
-              // Form.Item `initialValue`, computed from the now-resolved map.
+              // Suspense wraps the Form.Items (not the select, which would break
+              // the value binding): BAIStorageProxySelect's options query suspends.
               <Suspense fallback={<BAISkeleton variant="input" />}>
+                <BAIFormItem
+                  hidden
+                  name="sftpProxiesBaseline"
+                  initialValue={currentSftpProxies}
+                />
                 <BAIFormItem
                   label={t('storageProxy.SFTPStorageProxies')}
                   name="sftpProxies"

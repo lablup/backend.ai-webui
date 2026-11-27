@@ -3973,11 +3973,14 @@
   "storageProxy": {
     "ConfirmRemoveSFTPProxiesContent": "선택한 자원 그룹이 다음 스토리지 프록시에서 SFTP용으로 더 이상 사용되지 않습니다: <code>{{proxies}}</code>. 계속하시겠습니까?",
     "ConfirmRemoveSFTPProxiesTitle": "SFTP 스토리지 프록시 설정을 해제할까요?",
+    "FailedToLoadSFTPStorageProxies": "SFTP 스토리지 프록시를 불러오지 못했습니다",
     "FailedToUpdateSFTPResourceGroups": "SFTP 자원 그룹 업데이트에 실패했습니다.",
     "FollowingResourceGroupsWillBeConfigured": "다음 자원 그룹을 수정합니다:",
     "SFTPResourceGroupsUpdated": "SFTP 자원 그룹이 업데이트되었습니다.",
     "SFTPStorageProxies": "SFTP 스토리지 프록시",
-    "SFTPStorageProxiesDescription": "이 자원 그룹의 사용자가 SFTP로 폴더에 파일을 전송할 때 사용하는 스토리지 프록시입니다."
+    "SFTPStorageProxiesDescription": "이 자원 그룹의 사용자가 SFTP로 폴더에 파일을 전송할 때 사용하는 스토리지 프록시입니다.",
+    "SFTPStorageProxiesNotSaved": "SFTP 스토리지 프록시 설정을 불러오지 못해 저장하지 않았습니다.",
+    "SFTPStorageProxiesNotSavedDesc": "SFTP 스토리지 프록시 설정은 저장되지 않습니다. 다시 불러온 뒤 저장하세요."
   },
   "summary": {
     "ATOMEnabled": "ATOM NPU 사용 중",

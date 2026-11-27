@@ -71,7 +71,13 @@ vi.mock('../../../hooks', async (importOriginal) => {
 });
 
 vi.mock('../../../hooks/useSFTPResourceGroups', () => ({
-  useSFTPProxyResourceGroupsQuery: () => ({ data: {}, isFetching: false }),
+  useSFTPProxyResourceGroupsQuery: () => ({
+    data: {},
+    isFetching: false,
+    isFetchedAfterMount: true,
+    isError: false,
+    refetch: vi.fn(),
+  }),
   useSFTPResourceGroups: () => ({ applyGroupProxyDelta: vi.fn() }),
   proxiesServingGroups: () => [],
   computeProxyDelta: () => ({ added: [], removed: [] }),

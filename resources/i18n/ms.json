@@ -3970,11 +3970,14 @@
   "storageProxy": {
     "ConfirmRemoveSFTPProxiesContent": "Kumpulan sumber yang dipilih tidak akan lagi menggunakan proksi storan ini untuk SFTP: <code>{{proxies}}</code>. Teruskan?",
     "ConfirmRemoveSFTPProxiesTitle": "Buang tetapan Proksi Storan SFTP?",
+    "FailedToLoadSFTPStorageProxies": "Tidak dapat memuatkan proksi storan SFTP",
     "FailedToUpdateSFTPResourceGroups": "Gagal mengemas kini kumpulan sumber SFTP.",
     "FollowingResourceGroupsWillBeConfigured": "Kumpulan sumber berikut akan dikemas kini:",
     "SFTPResourceGroupsUpdated": "Kumpulan sumber SFTP telah dikemas kini.",
     "SFTPStorageProxies": "Proksi Storan SFTP",
-    "SFTPStorageProxiesDescription": "Proksi storan yang digunakan apabila pengguna dalam kumpulan sumber ini memindahkan fail ke folder mereka melalui SFTP."
+    "SFTPStorageProxiesDescription": "Proksi storan yang digunakan apabila pengguna dalam kumpulan sumber ini memindahkan fail ke folder mereka melalui SFTP.",
+    "SFTPStorageProxiesNotSaved": "Tetapan proksi storan SFTP tidak dimuatkan, jadi ia tidak disimpan.",
+    "SFTPStorageProxiesNotSavedDesc": "Proksi storan SFTP tidak akan disimpan. Muat semula, kemudian simpan."
   },
   "summary": {
     "ATOMEnabled": "ATOM NPU Didayakan",
