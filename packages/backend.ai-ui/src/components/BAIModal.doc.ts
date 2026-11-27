@@ -39,6 +39,11 @@ export const docs = {
           'Use variant="fullscreen" for edge-to-edge surfaces; a standard dialog is capped at 90vw, so width="90%" and width="100%" render alike.',
       },
       {
+        guidance: true,
+        description:
+          'Leave unmounting to the call site: a modal component built on BAIModal extends BAIModalProps and passes them through, so its caller decides whether to wrap it in BAIUnmountAfterClose or pass unmountOnClose. The modal component does not wrap itself, and sets unmountOnClose inside only when it must stay mounted for its own logic, such as work run when it opens.',
+      },
+      {
         guidance: false,
         description:
           'Build an irreversible-deletion flow on a bare BAIModal — BAIDeleteConfirmModal with requireConfirmInput is the required surface for permanent deletes.',
