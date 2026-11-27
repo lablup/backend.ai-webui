@@ -15,12 +15,8 @@ import {
   resolveAppPath,
   searchParamsToRecord,
 } from '../helper/webmcpNavigation';
-import {
-  useCurrentDomain,
-  useSuspendedBackendaiClient,
-  useWebUINavigate,
-} from '../hooks';
-import { useCurrentUserRole } from '../hooks/backendai';
+import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
+import { useCurrentUserInfo, useCurrentUserRole } from '../hooks/backendai';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useCurrentRouteLabel } from '../hooks/useCurrentRouteLabel';
 import {
@@ -51,14 +47,13 @@ export const displayedEmail = (
   return maskUserInfo ? maskUserIdentity(email) : email;
 };
 
-/** The full name as the header shows it; null when empty. */
+/** The full name, masked as the header masks it; null when blank. */
 export const displayedFullName = (
   fullName: string | null | undefined,
   maskUserInfo: boolean | undefined,
 ): string | null => {
-  const name = fullName?.trim();
-  if (!name) return null;
-  return maskUserInfo ? maskUserIdentity(name) : name;
+  if (!fullName?.trim()) return null;
+  return maskUserInfo ? maskUserIdentity(fullName) : fullName;
 };
 
 const NO_INPUT: WebMCPInputSchema = {
@@ -224,7 +219,10 @@ const WebMCPGlobalToolsRegistrar: React.FC = () => {
   const baiClient = useSuspendedBackendaiClient();
   const loginConfig = useEffectiveLoginConfig();
   const role = useCurrentUserRole();
-  const currentDomain = useCurrentDomain();
+  // Follows a rename in user settings, which the client fields do not.
+  const [currentUser] = useCurrentUserInfo();
+  const domainId: string | undefined = baiClient._config?.domainId;
+  const domainName: string | undefined = baiClient._config?.domainName;
   // Sanctioned global reader (ADR 0001): bai_whoami reports the ambient project.
   const currentProject = useCurrentProjectValue();
   const activeProjectName = useActiveProjectName();
@@ -256,16 +254,16 @@ const WebMCPGlobalToolsRegistrar: React.FC = () => {
 
   useWebMCPTool(
     createWhoamiTool({
-      userId: baiClient.user_uuid || null,
-      email: displayedEmail(baiClient.email, loginConfig.maskUserInfo),
+      userId: currentUser.uuid || null,
+      email: displayedEmail(currentUser.email, loginConfig.maskUserInfo),
       fullName: displayedFullName(
-        baiClient.full_name,
+        currentUser.full_name,
         loginConfig.maskUserInfo,
       ),
       role: role ?? null,
       domain:
-        currentDomain.id || currentDomain.name
-          ? { id: currentDomain.id || null, name: currentDomain.name || null }
+        domainId || domainName
+          ? { id: domainId || null, name: domainName || null }
           : null,
       project: currentProject?.id
         ? { id: currentProject.id, name: currentProject.name ?? null }

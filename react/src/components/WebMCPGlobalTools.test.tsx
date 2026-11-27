@@ -22,8 +22,13 @@ const mocks = vi.hoisted(() => ({
     email: 'user@example.com',
     user_uuid: 'u-1',
     full_name: 'Test User',
-    _config: { endpoint: 'https://api.example.com' },
+    _config: {
+      endpoint: 'https://api.example.com',
+      domainName: 'default',
+      domainId: 'd-1',
+    },
   })),
+  maskUserInfo: false,
 }));
 
 vi.mock('react-i18next', async (importOriginal) => ({
@@ -33,12 +38,18 @@ vi.mock('react-i18next', async (importOriginal) => ({
 vi.mock('../hooks', async (importOriginal) => ({
   ...(await importOriginal<typeof import('../hooks')>()),
   useSuspendedBackendaiClient: mocks.useSuspendedBackendaiClient,
-  useCurrentDomain: () => ({ name: 'default', id: 'd-1' }),
   useWebUINavigate: () => mocks.navigate,
 }));
 vi.mock('../hooks/backendai', async (importOriginal) => ({
   ...(await importOriginal<typeof import('../hooks/backendai')>()),
   useCurrentUserRole: () => 'user',
+  useCurrentUserInfo: () => [
+    { uuid: 'u-1', email: 'user@example.com', full_name: 'Test User' },
+  ],
+}));
+vi.mock('../hooks/useWebUIConfig', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('../hooks/useWebUIConfig')>()),
+  useEffectiveLoginConfig: () => ({ maskUserInfo: mocks.maskUserInfo }),
 }));
 vi.mock('../hooks/useCurrentProject', async (importOriginal) => ({
   ...(await importOriginal<typeof import('../hooks/useCurrentProject')>()),
@@ -177,6 +188,22 @@ describe('WebMCPGlobalTools', () => {
       apiEndpoint: 'https://api.example.com',
       webuiVersion: null,
     });
+  });
+
+  it('masks email and fullName but not userId when user info is masked', async () => {
+    mocks.maskUserInfo = true;
+    try {
+      renderShell(true);
+      await waitFor(() => expect(registerTool).toHaveBeenCalledTimes(3));
+
+      await expect(toolNamed('bai_whoami').execute({})).resolves.toMatchObject({
+        userId: 'u-1',
+        email: 'us**@example.com',
+        fullName: 'Te*******',
+      });
+    } finally {
+      mocks.maskUserInfo = false;
+    }
   });
 
   it('answers bai_get_current_page from the matched route', async () => {
@@ -421,12 +448,12 @@ describe('displayedEmail', () => {
 });
 
 describe('displayedFullName', () => {
-  it('returns the trimmed name when masking is off', () => {
-    expect(displayedFullName(' Test User ', false)).toBe('Test User');
+  it('returns the name unchanged when masking is off', () => {
+    expect(displayedFullName('Test User', false)).toBe('Test User');
   });
 
-  it('masks the name when masking is on', () => {
-    expect(displayedFullName('Test User', true)).not.toBe('Test User');
+  it('masks the name like the header does when masking is on', () => {
+    expect(displayedFullName('Test User', true)).toBe('Te*******');
   });
 
   it('returns null for an empty name', () => {

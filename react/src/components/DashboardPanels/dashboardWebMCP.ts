@@ -414,7 +414,7 @@ export const PREPARE_DASHBOARD_LINK_TOO_LONG =
   'webui_url is long enough that a server may refuse it (see warnings). Tell the user to apply the changes so far in this tab first, or call with clearDraft and fewer changes.';
 
 /** Field rules for addPanel / editPanel in this tool's flat input. */
-export const PREPARE_PANEL_FIELDS_HELP = `panelType: resourceTable (rows), resourceCount (a number), resourceChart (a chart), sessionResourceGrid (session cards). chartType (charts only): ${CHART_TYPES.join(' ')}. range (charts over time only): ${RANGE_PRESETS.join(' ')}. conditions: text, "<property> <operator> <value>" separated by ";", with the keys, operators and values sourcesHelp lists for the source. For the signed-in user's own sessions ("my sessions"), add "user_id == <userId>" with the userId bai_whoami returns; the email may be masked.`;
+export const PREPARE_PANEL_FIELDS_HELP = `panelType: resourceTable (rows), resourceCount (a number), resourceChart (a chart), sessionResourceGrid (session cards). chartType (charts only): ${CHART_TYPES.join(' ')}. range (charts over time only): ${RANGE_PRESETS.join(' ')}. conditions: text, "<property> <operator> <value>" separated by ";", with the keys, operators and values sourcesHelp lists for the source. On the session source only, the signed-in user's own sessions ("my sessions") are the condition "user_id == <userId>" with the userId bai_whoami returns (the email may be masked); other sources have no user_id property.`;
 
 export interface DashboardWebMCPDeps {
   /** The board on screen as the assistant reads it, draft included. */
