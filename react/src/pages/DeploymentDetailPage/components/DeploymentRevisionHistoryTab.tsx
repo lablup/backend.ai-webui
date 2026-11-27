@@ -22,6 +22,7 @@ import { Badge } from '@lablup/ui-common/Badge';
 import { Button } from '@lablup/ui-common/Button';
 import { ButtonGroup } from '@lablup/ui-common/ButtonGroup';
 import { DropdownMenu } from '@lablup/ui-common/DropdownMenu';
+import { IconButton } from '@lablup/ui-common/IconButton';
 import { Link } from '@lablup/ui-common/Link';
 import { Text } from '@lablup/ui-common/Text';
 import { useTheme } from '@lablup/ui-common/theme';
@@ -34,6 +35,7 @@ import {
   BAINameActionCell,
   BAIPopconfirm,
   BAIQuestionIconWithTooltip,
+  BAISelectionLabel,
   BAITable,
   BAIText,
   BAIUnmountAfterClose,
@@ -896,17 +898,25 @@ const DeploymentRevisionHistoryTab: React.FC<
           }}
         />
         <BAIFlex gap="xs" align="center">
-          <Button
-            icon={<GitCompareArrows size="1em" />}
-            label={t('deployment.Compare')}
-            isDisabled={selectedRevisions.length !== 2}
-            tooltip={
-              selectedRevisions.length !== 2
-                ? t('deployment.CompareSelectTwo')
-                : undefined
-            }
-            onClick={openCompareForSelection}
-          />
+          {selectedRevisions.length > 0 ? (
+            <>
+              <BAISelectionLabel
+                count={selectedRevisions.length}
+                onClearSelection={() => setSelectedRevisions([])}
+              />
+              <IconButton
+                icon={<GitCompareArrows size="1em" />}
+                label={t('deployment.Compare')}
+                tooltip={
+                  selectedRevisions.length === 2
+                    ? t('deployment.Compare')
+                    : t('deployment.CompareSelectTwo')
+                }
+                isDisabled={selectedRevisions.length !== 2}
+                onClick={openCompareForSelection}
+              />
+            </>
+          ) : null}
           <BAIFetchKeyButton
             loading={isPending}
             value=""
