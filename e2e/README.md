@@ -23,6 +23,7 @@ e2e/
 ├── project-admin/<page>/    # /project/:projectName/admin/{dashboard,session,deployments,users}
 ├── project/<page>/          # user console, /project/:projectName/*
 ├── common/<area>/           # auth, config.toml behaviour, global search, plugins
+├── drills/                  # runner for one-off scenario files (pnpm e2e:drill <file>)
 ├── mocks/ fixtures/         # GraphQL mocks and fixture files shared across folders
 ├── utils/                   # helpers and Page Object classes
 ├── envs/                    # env files (samples committed, real files git-ignored)
@@ -171,6 +172,14 @@ supported; the global `e2e-*` cleanup teardown is deliberately not wired in
 `e2e-`), so a run killed mid-test can leave its own `e2e-`-prefixed
 artifacts; a failed login leaves the password in the retained trace — treat
 `smoke-report/` as sensitive.
+
+### Drills — run a scenario file once, against a server already running
+
+`e2e/drills/` is a runner, not a place for scenarios: `pnpm e2e:drill <file>`
+runs one scenario file kept outside the repository, explains every step in a
+generated drill report, and answers its data from mocks so the server does not
+change. See `e2e/drills/README.md`. A normal `playwright test` run never picks
+it up.
 
 ### Run specific directory
 

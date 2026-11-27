@@ -194,5 +194,8 @@ e2e/recordings/
 # smoke run reports (e2e/playwright.smoke.config.ts)
 e2e/smoke-report/
 
+# drill reports (e2e/drills/, pnpm e2e:drill)
+e2e/drill-report/
+
 # User manual Markdown served by the WebUI (scripts/copy-manual.mjs)
 resources/manual/

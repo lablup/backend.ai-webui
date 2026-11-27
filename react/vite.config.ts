@@ -1,5 +1,6 @@
 import { graphqlDevtools } from '../packages/backend.ai-graphql-devtools/vite-plugin.mjs';
 import { chunkReport } from './vite-plugins/chunk-report';
+import { drillReportPlugin } from './vite-plugins/drill-report';
 import { relay } from './vite-plugins/relay';
 import {
   devReviewOverlayPlugin,
@@ -1042,6 +1043,7 @@ export default defineConfig(({ command, mode }) => {
       // projectRootStaticPlugin — its 'pre' HTML handler discards earlier
       // transforms (see review-overlay/index.ts).
       devReviewOverlayPlugin(),
+      drillReportPlugin(resolve(projectRoot, 'e2e/drill-report')),
       graphqlDevtools({
         schemaPath: resolve(projectRoot, 'data/schema.graphql'),
         clientDirectivesPath: resolve(
