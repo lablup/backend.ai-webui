@@ -3972,11 +3972,14 @@
   "storageProxy": {
     "ConfirmRemoveSFTPProxiesContent": "所选资源组将不再使用以下存储代理进行 SFTP: <code>{{proxies}}</code>。是否继续？",
     "ConfirmRemoveSFTPProxiesTitle": "移除 SFTP 存储代理设置？",
+    "FailedToLoadSFTPStorageProxies": "无法加载 SFTP 存储代理",
     "FailedToUpdateSFTPResourceGroups": "更新 SFTP 资源组失败。",
     "FollowingResourceGroupsWillBeConfigured": "以下资源组将被更新:",
     "SFTPResourceGroupsUpdated": "SFTP 资源组已更新。",
     "SFTPStorageProxies": "SFTP 存储代理",
-    "SFTPStorageProxiesDescription": "此资源组中的用户通过 SFTP 将文件传输到其文件夹时使用的存储代理。"
+    "SFTPStorageProxiesDescription": "此资源组中的用户通过 SFTP 将文件传输到其文件夹时使用的存储代理。",
+    "SFTPStorageProxiesNotSaved": "未能加载 SFTP 存储代理设置，因此未保存。",
+    "SFTPStorageProxiesNotSavedDesc": "SFTP 存储代理设置不会被保存。请重新加载后再保存。"
   },
   "summary": {
     "ATOMEnabled": "已启用 ATOM NPU",

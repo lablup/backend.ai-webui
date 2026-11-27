@@ -3972,11 +3972,14 @@
   "storageProxy": {
     "ConfirmRemoveSFTPProxiesContent": "選択したリソースグループは、これらのストレージプロキシをSFTP用として使用しなくなります: <code>{{proxies}}</code>。続行しますか？",
     "ConfirmRemoveSFTPProxiesTitle": "SFTPストレージプロキシの設定を解除しますか？",
+    "FailedToLoadSFTPStorageProxies": "SFTPストレージプロキシを読み込めませんでした",
     "FailedToUpdateSFTPResourceGroups": "SFTPリソースグループの更新に失敗しました。",
     "FollowingResourceGroupsWillBeConfigured": "以下のリソースグループを更新します:",
     "SFTPResourceGroupsUpdated": "SFTPリソースグループが更新されました。",
     "SFTPStorageProxies": "SFTPストレージプロキシ",
-    "SFTPStorageProxiesDescription": "このリソースグループのユーザーがSFTPでフォルダーにファイルを転送するときに使用するストレージプロキシです。"
+    "SFTPStorageProxiesDescription": "このリソースグループのユーザーがSFTPでフォルダーにファイルを転送するときに使用するストレージプロキシです。",
+    "SFTPStorageProxiesNotSaved": "SFTPストレージプロキシの設定を読み込めなかったため、保存されませんでした。",
+    "SFTPStorageProxiesNotSavedDesc": "SFTPストレージプロキシの設定は保存されません。再読み込みしてから保存してください。"
   },
   "summary": {
     "ATOMEnabled": "ATOM NPU使用中",

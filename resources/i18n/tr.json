@@ -3970,11 +3970,14 @@
   "storageProxy": {
     "ConfirmRemoveSFTPProxiesContent": "Seçili kaynak grupları bu depolama proxy'lerini artık SFTP için kullanmayacak: <code>{{proxies}}</code>. Devam edilsin mi?",
     "ConfirmRemoveSFTPProxiesTitle": "SFTP Depolama Proxy'si ayarı kaldırılsın mı?",
+    "FailedToLoadSFTPStorageProxies": "SFTP depolama proxy'leri yüklenemedi",
     "FailedToUpdateSFTPResourceGroups": "SFTP kaynak grupları güncellenemedi.",
     "FollowingResourceGroupsWillBeConfigured": "Aşağıdaki kaynak grupları güncellenecektir:",
     "SFTPResourceGroupsUpdated": "SFTP kaynak grupları güncellendi.",
     "SFTPStorageProxies": "SFTP Depolama Proxy'leri",
-    "SFTPStorageProxiesDescription": "Bu kaynak grubundaki kullanıcılar SFTP ile klasörlerine dosya aktarırken kullanılan depolama proxy'leri."
+    "SFTPStorageProxiesDescription": "Bu kaynak grubundaki kullanıcılar SFTP ile klasörlerine dosya aktarırken kullanılan depolama proxy'leri.",
+    "SFTPStorageProxiesNotSaved": "SFTP depolama proxy ayarları yüklenmediği için kaydedilmedi.",
+    "SFTPStorageProxiesNotSavedDesc": "SFTP depolama proxy'leri kaydedilmeyecek. Yeniden yükleyip tekrar kaydedin."
   },
   "summary": {
     "ATOMEnabled": "ATOM NPU Etkin",

@@ -3972,11 +3972,14 @@
   "storageProxy": {
     "ConfirmRemoveSFTPProxiesContent": "Os grupos de recursos selecionados deixarão de utilizar estes proxies de armazenamento para SFTP: <code>{{proxies}}</code>. Continuar?",
     "ConfirmRemoveSFTPProxiesTitle": "Remover a configuração de proxy de armazenamento SFTP?",
+    "FailedToLoadSFTPStorageProxies": "Não foi possível carregar os proxies de armazenamento SFTP",
     "FailedToUpdateSFTPResourceGroups": "Falha ao atualizar os grupos de recursos SFTP.",
     "FollowingResourceGroupsWillBeConfigured": "Os seguintes grupos de recursos serão atualizados:",
     "SFTPResourceGroupsUpdated": "Grupos de recursos SFTP atualizados.",
     "SFTPStorageProxies": "Proxies de armazenamento SFTP",
-    "SFTPStorageProxiesDescription": "Proxies de armazenamento usados quando os utilizadores deste grupo de recursos transferem ficheiros para as suas pastas via SFTP."
+    "SFTPStorageProxiesDescription": "Proxies de armazenamento usados quando os utilizadores deste grupo de recursos transferem ficheiros para as suas pastas via SFTP.",
+    "SFTPStorageProxiesNotSaved": "As definições de proxies de armazenamento SFTP não foram carregadas, por isso não foram guardadas.",
+    "SFTPStorageProxiesNotSavedDesc": "Os proxies de armazenamento SFTP não serão guardados. Volte a carregá-los e guarde novamente."
   },
   "summary": {
     "ATOMEnabled": "ATOM NPU Ativado",

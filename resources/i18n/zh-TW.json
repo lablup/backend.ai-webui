@@ -3974,11 +3974,14 @@
   "storageProxy": {
     "ConfirmRemoveSFTPProxiesContent": "所選資源群組將不再使用以下儲存代理進行 SFTP: <code>{{proxies}}</code>。是否繼續？",
     "ConfirmRemoveSFTPProxiesTitle": "移除 SFTP 儲存代理設定？",
+    "FailedToLoadSFTPStorageProxies": "無法載入 SFTP 儲存代理",
     "FailedToUpdateSFTPResourceGroups": "更新 SFTP 資源群組失敗。",
     "FollowingResourceGroupsWillBeConfigured": "以下資源群組將被更新:",
     "SFTPResourceGroupsUpdated": "SFTP 資源群組已更新。",
     "SFTPStorageProxies": "SFTP 儲存代理",
-    "SFTPStorageProxiesDescription": "此資源群組中的使用者透過 SFTP 將檔案傳輸至其資料夾時使用的儲存代理。"
+    "SFTPStorageProxiesDescription": "此資源群組中的使用者透過 SFTP 將檔案傳輸至其資料夾時使用的儲存代理。",
+    "SFTPStorageProxiesNotSaved": "未能載入 SFTP 儲存代理設定，因此未儲存。",
+    "SFTPStorageProxiesNotSavedDesc": "SFTP 儲存代理設定不會被儲存。請重新載入後再儲存。"
   },
   "summary": {
     "ATOMEnabled": "已启用 ATOM NPU",

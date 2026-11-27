@@ -3970,11 +3970,14 @@
   "storageProxy": {
     "ConfirmRemoveSFTPProxiesContent": "Οι επιλεγμένες ομάδες πόρων δεν θα χρησιμοποιούν πλέον αυτούς τους διακομιστές μεσολάβησης αποθήκευσης για SFTP: <code>{{proxies}}</code>. Συνέχεια;",
     "ConfirmRemoveSFTPProxiesTitle": "Αφαίρεση ρύθμισης Proxy αποθήκευσης SFTP;",
+    "FailedToLoadSFTPStorageProxies": "Δεν ήταν δυνατή η φόρτωση των διακομιστών μεσολάβησης αποθήκευσης SFTP",
     "FailedToUpdateSFTPResourceGroups": "Αποτυχία ενημέρωσης ομάδων πόρων SFTP.",
     "FollowingResourceGroupsWillBeConfigured": "Οι ακόλουθες ομάδες πόρων θα ενημερωθούν:",
     "SFTPResourceGroupsUpdated": "Οι ομάδες πόρων SFTP ενημερώθηκαν.",
     "SFTPStorageProxies": "Proxy αποθήκευσης SFTP",
-    "SFTPStorageProxiesDescription": "Διακομιστές μεσολάβησης αποθήκευσης που χρησιμοποιούνται όταν οι χρήστες αυτής της ομάδας πόρων μεταφέρουν αρχεία στους φακέλους τους μέσω SFTP."
+    "SFTPStorageProxiesDescription": "Διακομιστές μεσολάβησης αποθήκευσης που χρησιμοποιούνται όταν οι χρήστες αυτής της ομάδας πόρων μεταφέρουν αρχεία στους φακέλους τους μέσω SFTP.",
+    "SFTPStorageProxiesNotSaved": "Οι ρυθμίσεις διακομιστών μεσολάβησης αποθήκευσης SFTP δεν φορτώθηκαν, οπότε δεν αποθηκεύτηκαν.",
+    "SFTPStorageProxiesNotSavedDesc": "Οι διακομιστές μεσολάβησης αποθήκευσης SFTP δεν θα αποθηκευτούν. Φορτώστε τους ξανά και μετά αποθηκεύστε."
   },
   "summary": {
     "ATOMEnabled": "ATOM NPU Ενεργοποιημένη",

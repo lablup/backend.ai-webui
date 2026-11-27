@@ -298,11 +298,14 @@
         "storageHost.tab.UserFolderPermissions",
         "storageProxy.ConfirmRemoveSFTPProxiesContent",
         "storageProxy.ConfirmRemoveSFTPProxiesTitle",
+        "storageProxy.FailedToLoadSFTPStorageProxies",
         "storageProxy.FailedToUpdateSFTPResourceGroups",
         "storageProxy.FollowingResourceGroupsWillBeConfigured",
         "storageProxy.SFTPResourceGroupsUpdated",
         "storageProxy.SFTPStorageProxies",
         "storageProxy.SFTPStorageProxiesDescription",
+        "storageProxy.SFTPStorageProxiesNotSaved",
+        "storageProxy.SFTPStorageProxiesNotSavedDesc",
         "webui.menu.Sessions"
       ]
     },

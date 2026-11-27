@@ -3970,11 +3970,14 @@
   "storageProxy": {
     "ConfirmRemoveSFTPProxiesContent": "Выбранные группы ресурсов больше не будут использовать эти прокси хранилища для SFTP: <code>{{proxies}}</code>. Продолжить?",
     "ConfirmRemoveSFTPProxiesTitle": "Удалить настройку прокси хранилища SFTP?",
+    "FailedToLoadSFTPStorageProxies": "Не удалось загрузить прокси хранилища SFTP",
     "FailedToUpdateSFTPResourceGroups": "Не удалось обновить группы ресурсов SFTP.",
     "FollowingResourceGroupsWillBeConfigured": "Следующие группы ресурсов будут обновлены:",
     "SFTPResourceGroupsUpdated": "Группы ресурсов SFTP обновлены.",
     "SFTPStorageProxies": "Прокси хранилища SFTP",
-    "SFTPStorageProxiesDescription": "Прокси хранилища, используемые, когда пользователи этой группы ресурсов передают файлы в свои папки по SFTP."
+    "SFTPStorageProxiesDescription": "Прокси хранилища, используемые, когда пользователи этой группы ресурсов передают файлы в свои папки по SFTP.",
+    "SFTPStorageProxiesNotSaved": "Настройки прокси хранилища SFTP не были загружены, поэтому не сохранены.",
+    "SFTPStorageProxiesNotSavedDesc": "Прокси хранилища SFTP не будут сохранены. Загрузите их повторно и сохраните."
   },
   "summary": {
     "ATOMEnabled": "ATOM NPU Включено",

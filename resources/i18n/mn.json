@@ -3972,11 +3972,14 @@
   "storageProxy": {
     "ConfirmRemoveSFTPProxiesContent": "Сонгосон нөөцийн бүлгүүд эдгээр хадгалалтын проксийг SFTP-д цаашид ашиглахгүй болно: <code>{{proxies}}</code>. Үргэлжлүүлэх үү?",
     "ConfirmRemoveSFTPProxiesTitle": "SFTP хадгалалтын проксийн тохиргоог хасах уу?",
+    "FailedToLoadSFTPStorageProxies": "SFTP хадгалалтын проксиг ачаалж чадсангүй",
     "FailedToUpdateSFTPResourceGroups": "SFTP нөөцийн бүлгүүдийг шинэчлэхэд алдаа гарлаа.",
     "FollowingResourceGroupsWillBeConfigured": "Дараах нөөцийн бүлгүүдийг шинэчилнэ:",
     "SFTPResourceGroupsUpdated": "SFTP нөөцийн бүлгүүд шинэчлэгдлээ.",
     "SFTPStorageProxies": "SFTP хадгалалтын прокси",
-    "SFTPStorageProxiesDescription": "Энэ нөөцийн бүлгийн хэрэглэгчид SFTP-ээр хавтас руугаа файл дамжуулахад ашигладаг хадгалалтын прокси."
+    "SFTPStorageProxiesDescription": "Энэ нөөцийн бүлгийн хэрэглэгчид SFTP-ээр хавтас руугаа файл дамжуулахад ашигладаг хадгалалтын прокси.",
+    "SFTPStorageProxiesNotSaved": "SFTP хадгалалтын проксигийн тохиргоо ачаалагдаагүй тул хадгалагдсангүй.",
+    "SFTPStorageProxiesNotSavedDesc": "SFTP хадгалалтын прокси хадгалагдахгүй. Дахин ачаалаад хадгална уу."
   },
   "summary": {
     "ATOMEnabled": "ATOM NPU-г идэвхжүүлсэн",
