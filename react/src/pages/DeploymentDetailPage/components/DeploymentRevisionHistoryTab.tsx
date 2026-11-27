@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { DeploymentRevisionHistoryTabActivateMutation } from '../../../__generated__/DeploymentRevisionHistoryTabActivateMutation.graphql';
+import { DeploymentRevisionHistoryTabComparePairQuery } from '../../../__generated__/DeploymentRevisionHistoryTabComparePairQuery.graphql';
 import {
   DeploymentRevisionHistoryTabListQuery,
   ModelRevisionOrderBy,
@@ -10,15 +11,18 @@ import {
 import type { DeploymentRevisionHistoryTab_deployment$key } from '../../../__generated__/DeploymentRevisionHistoryTab_deployment.graphql';
 import { App } from '../../../app-shim';
 import DeploymentRevisionDetailDrawer from '../../../components/DeploymentRevisionDetailDrawer';
+import ErrorBoundaryWithNullFallback from '../../../components/ErrorBoundaryWithNullFallback';
 import FolderLink from '../../../components/FolderLink';
 import { convertToOrderBy } from '../../../helper';
 import { useCurrentDomain, useSuspendedBackendaiClient } from '../../../hooks';
 import { useBAISettingUserState } from '../../../hooks/useBAISetting';
 import DeploymentAddRevisionModal from './DeploymentAddRevisionModal';
+import DeploymentRevisionCompareDrawer from './DeploymentRevisionCompareDrawer';
 import { Badge } from '@lablup/ui-common/Badge';
 import { Button } from '@lablup/ui-common/Button';
 import { ButtonGroup } from '@lablup/ui-common/ButtonGroup';
 import { DropdownMenu } from '@lablup/ui-common/DropdownMenu';
+import { IconButton } from '@lablup/ui-common/IconButton';
 import { Link } from '@lablup/ui-common/Link';
 import { Text } from '@lablup/ui-common/Text';
 import { useTheme } from '@lablup/ui-common/theme';
@@ -31,6 +35,7 @@ import {
   BAINameActionCell,
   BAIPopconfirm,
   BAIQuestionIconWithTooltip,
+  BAISelectionLabel,
   BAITable,
   BAIText,
   BAIUnmountAfterClose,
@@ -52,16 +57,19 @@ import * as _ from 'lodash-es';
 import {
   CirclePlay,
   CopyPlusIcon,
+  GitCompareArrows,
   EllipsisVertical,
   LoaderCircle,
 } from 'lucide-react';
 import {
+  parseAsArrayOf,
+  parseAsBoolean,
   parseAsInteger,
   parseAsString,
   parseAsStringLiteral,
   useQueryStates,
 } from 'nuqs';
-import React, { Suspense, useState, useTransition } from 'react';
+import React, { Suspense, useEffect, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   graphql,
@@ -80,6 +88,8 @@ type RevisionNode = NonNullable<
   >['node']
 >;
 
+type RollbackTarget = Pick<RevisionNode, 'id' | 'fieldId' | 'revisionNumber'>;
+
 const availableRevisionSorterKeys = [
   'revisionNumber',
   'createdAt',
@@ -96,6 +106,81 @@ export interface DeploymentRevisionHistoryTabProps {
   deploymentId: string;
   fetchKey?: string;
 }
+
+interface RevisionCompareFromUrlProps {
+  deploymentId: string;
+  fieldIds: ReadonlyArray<string>;
+  currentRevisionId?: string | null;
+  deployingRevisionId?: string | null;
+  showsUnchanged: boolean;
+  onShowsUnchangedChange: (showsUnchanged: boolean) => void;
+  applyDisabledReasonOf: (fieldId: string, id: string) => string | undefined;
+  onApply: (revision: RollbackTarget) => Promise<void>;
+  onClose: () => void;
+}
+
+/** Reads the pair named in the URL, so it opens whether or not it is on the visible page. */
+const RevisionCompareFromUrl: React.FC<RevisionCompareFromUrlProps> = ({
+  deploymentId,
+  fieldIds,
+  applyDisabledReasonOf,
+  onApply,
+  onClose,
+  ...drawerProps
+}) => {
+  'use memo';
+  const { deployment } =
+    useLazyLoadQuery<DeploymentRevisionHistoryTabComparePairQuery>(
+      graphql`
+        query DeploymentRevisionHistoryTabComparePairQuery(
+          $deploymentId: ID!
+          $filter: ModelRevisionFilter
+        ) {
+          deployment(id: $deploymentId) {
+            revisionHistory(filter: $filter, limit: 2) {
+              edges {
+                node {
+                  id
+                  fieldId
+                  revisionNumber
+                  ...DeploymentRevisionCompareDrawer_revision
+                }
+              }
+            }
+          }
+        }
+      `,
+      { deploymentId, filter: { fieldId: { in: [...fieldIds] } } },
+      { fetchPolicy: 'store-and-network' },
+    );
+  const revisions = filterOutNullAndUndefined(
+    _.map(deployment?.revisionHistory?.edges, 'node'),
+  );
+  const left = _.find(revisions, { fieldId: fieldIds[0] });
+  const right = _.find(revisions, { fieldId: fieldIds[1] });
+  const isResolved = !!left && !!right;
+  // A pair that no longer resolves leaves nothing on screen, so drop it from the URL.
+  useEffect(() => {
+    if (!isResolved) onClose();
+  }, [isResolved, onClose]);
+  if (!left || !right) return null;
+  return (
+    <DeploymentRevisionCompareDrawer
+      {...drawerProps}
+      open
+      onClose={onClose}
+      leftRevisionFrgmt={left}
+      rightRevisionFrgmt={right}
+      applyDisabledReason={applyDisabledReasonOf(right.fieldId, right.id)}
+      // Apply replaces the current revision, so it is offered only when the diff starts there.
+      onApply={
+        left.fieldId === drawerProps.currentRevisionId
+          ? () => onApply(right)
+          : undefined
+      }
+    />
+  );
+};
 
 /**
  * Revision history tab for a model deployment detail page.
@@ -133,6 +218,9 @@ const DeploymentRevisionHistoryTab: React.FC<
   // the modal's fragment ref.
   const [sourceRevisionFrgmt, setSourceRevisionFrgmt] =
     useState<RevisionNode | null>(null);
+  const [selectedRevisions, setSelectedRevisions] = useState<RevisionNode[]>(
+    [],
+  );
 
   const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
     'table_column_overrides.DeploymentRevisionHistoryTab',
@@ -144,6 +232,8 @@ const DeploymentRevisionHistoryTab: React.FC<
       pageSize: parseAsInteger.withDefault(10),
       order: parseAsStringLiteral(availableRevisionSorterValues),
       rvFilter: parseAsString,
+      compare: parseAsArrayOf(parseAsString, ','),
+      showUnchanged: parseAsBoolean.withDefault(false),
     },
     {
       history: 'replace',
@@ -156,6 +246,8 @@ const DeploymentRevisionHistoryTab: React.FC<
         pageSize: 'rvPageSize',
         order: 'rvOrder',
         rvFilter: 'rvFilter',
+        compare: 'rvCompare',
+        showUnchanged: 'rvShowUnchanged',
       },
     },
   );
@@ -239,6 +331,9 @@ const DeploymentRevisionHistoryTab: React.FC<
           deployment(id: $deploymentId) {
             currentRevisionId
             deployingRevisionId
+            currentRevision {
+              fieldId
+            }
             revisionHistory(
               filter: $filter
               orderBy: $orderBy
@@ -348,7 +443,7 @@ const DeploymentRevisionHistoryTab: React.FC<
     startTransition(() => updateInternalFetchKey());
   };
 
-  const handleRollback = (revision: RevisionNode): Promise<boolean> => {
+  const handleRollback = (revision: RollbackTarget): Promise<boolean> => {
     return new Promise<boolean>((resolve) => {
       setRollingBackRevisionId(revision.id);
       commitActivate({
@@ -384,6 +479,37 @@ const DeploymentRevisionHistoryTab: React.FC<
     });
   };
 
+  // Every branch that blocks Apply names itself, so none of them can go silent.
+  const applyDisabledReasonOf = (fieldId: string, recordId: string) =>
+    fieldId === currentRevisionId || fieldId === deployingRevisionId
+      ? t('deployment.ApplyDisabled')
+      : isDeploymentInStoppedCategory(deploymentStatus)
+        ? t('deployment.ApplyDisabledDeploymentStopped')
+        : rollingBackRevisionId === recordId
+          ? t('deployment.ApplyDisabledWhileRollingBack')
+          : undefined;
+
+  const currentRevision = listData?.currentRevision;
+
+  // The compared pair lives in the URL (rvCompare=<left>,<right>), so a link reopens it.
+  const comparedIds = _.filter(queryParams.compare, (id) => isValidUUID(id));
+  const openCompare = (left: { fieldId: string }, right: { fieldId: string }) =>
+    setQueryParams({ compare: [left.fieldId, right.fieldId] });
+  const closeCompare = () =>
+    setQueryParams({ compare: null, showUnchanged: null });
+
+  // The baseline goes left: the current revision when it is one of the pair,
+  // else the newer one. Apply is offered only when the current one is the baseline.
+  const openCompareForSelection = () => {
+    const [a, b] = selectedRevisions;
+    if (!a || !b) return;
+    const aIsBase =
+      a.fieldId === currentRevisionId ||
+      (b.fieldId !== currentRevisionId && a.revisionNumber > b.revisionNumber);
+    if (aIsBase) openCompare(a, b);
+    else openCompare(b, a);
+  };
+
   const columns: BAIColumnType<RevisionNode>[] = [
     {
       title: (
@@ -401,16 +527,10 @@ const DeploymentRevisionHistoryTab: React.FC<
       render: (_value, record) => {
         const isCurrent = record.fieldId === currentRevisionId;
         const isDeploying = record.fieldId === deployingRevisionId;
-        // The reason carries the disabled state — every branch that blocks
-        // Apply names itself, so none of them can go silent.
-        const deployDisabledReason =
-          isCurrent || isDeploying
-            ? t('deployment.ApplyDisabled')
-            : isDeploymentInStoppedCategory(deploymentStatus)
-              ? t('deployment.ApplyDisabledDeploymentStopped')
-              : rollingBackRevisionId === record.id
-                ? t('deployment.ApplyDisabledWhileRollingBack')
-                : undefined;
+        const deployDisabledReason = applyDisabledReasonOf(
+          record.fieldId,
+          record.id,
+        );
         return (
           <BAINameActionCell
             title={
@@ -454,15 +574,8 @@ const DeploymentRevisionHistoryTab: React.FC<
               </BAIFlex>
             }
             showActions="always"
-            // Apply must stay a visible button: `moreMenuDisabled` below would
-            // otherwise lock the trigger on a stopped deployment and put its
-            // reason out of reach in the narrow render.
+            // Apply stays a visible button so its disabled reason is reachable.
             minVisibleActions={1}
-            // TODO: "AddNewRevisionFromThis" is currently the only menu item.
-            // The entire More button is disabled when stopped rather than
-            // per-item. When more menu items are added, switch to per-item
-            // disabled and remove moreMenuDisabled.
-            moreMenuDisabled={isDeploymentInStoppedCategory(deploymentStatus)}
             actions={[
               {
                 key: 'deploy',
@@ -484,6 +597,18 @@ const DeploymentRevisionHistoryTab: React.FC<
                   onConfirm: () => {
                     void handleRollback(record);
                   },
+                },
+              },
+              {
+                key: 'compareWithCurrent',
+                title: t('deployment.CompareWithCurrent'),
+                icon: <GitCompareArrows size={token('--font-size-base')} />,
+                showInMenu: 'always',
+                disabled: isCurrent || !currentRevision,
+                onClick: () => {
+                  if (currentRevision) {
+                    openCompare(currentRevision, record);
+                  }
                 },
               },
               {
@@ -773,20 +898,61 @@ const DeploymentRevisionHistoryTab: React.FC<
             const str = stringifyRevisionFilter(next);
             const parsed = parseRevisionFilter(str || null);
             setQueryParams({ rvFilter: str || null, current: 1 });
+            setSelectedRevisions([]);
             doRefetch({ filter: parsed, offset: 0 });
           }}
         />
-        <BAIFetchKeyButton
-          loading={isPending}
-          value=""
-          onChange={() => handleRefresh()}
-        />
+        <BAIFlex gap="xs" align="center">
+          {selectedRevisions.length > 0 ? (
+            <>
+              <BAISelectionLabel
+                count={selectedRevisions.length}
+                onClearSelection={() => setSelectedRevisions([])}
+              />
+              <IconButton
+                variant="ghost"
+                icon={<GitCompareArrows size="1em" />}
+                label={t('deployment.Compare')}
+                tooltip={
+                  selectedRevisions.length === 2
+                    ? t('deployment.Compare')
+                    : t('deployment.CompareSelectTwo')
+                }
+                isDisabled={selectedRevisions.length !== 2}
+                onClick={openCompareForSelection}
+              />
+            </>
+          ) : null}
+          <BAIFetchKeyButton
+            loading={isPending}
+            value=""
+            onChange={() => handleRefresh()}
+          />
+        </BAIFlex>
       </BAIFlex>
       <BAITable
         scroll={{ x: 'max-content' }}
         rowKey="id"
         dataSource={revisions}
         columns={columns}
+        rowSelection={{
+          type: 'checkbox',
+          hideSelectAll: true,
+          preserveSelectedRowKeys: true,
+          selectedRowKeys: _.map(selectedRevisions, 'id'),
+          onChange: (keys) => {
+            const known = _.uniqBy([...selectedRevisions, ...revisions], 'id');
+            setSelectedRevisions(
+              _.filter(known, (revision) => keys.includes(revision.id)),
+            );
+          },
+          getCheckboxProps: (record) => ({
+            disabled:
+              selectedRevisions.length >= 2 &&
+              !_.some(selectedRevisions, { id: record.id }),
+          }),
+          getRowLabel: (record) => `#${record.revisionNumber}`,
+        }}
         loading={isPending}
         size="small"
         tableSettings={{
@@ -800,6 +966,7 @@ const DeploymentRevisionHistoryTab: React.FC<
           // passing `undefined` here would freeze `order` at its previous value
           // and break the ascend → descend → default sort cycle. `null` clears
           // the key and resets to the default order. Mirrors DeploymentReplicasCard.
+          setSelectedRevisions([]);
           setQueryParams({
             order:
               (newOrder as (typeof availableRevisionSorterValues)[number]) ??
@@ -823,6 +990,35 @@ const DeploymentRevisionHistoryTab: React.FC<
           },
         }}
       />
+      {comparedIds.length === 2 ? (
+        // A failed pair leaves the URL, so the same pair can be opened again.
+        <ErrorBoundaryWithNullFallback
+          key={comparedIds.join(',')}
+          onError={closeCompare}
+        >
+          <Suspense fallback={null}>
+            <RevisionCompareFromUrl
+              deploymentId={deploymentId}
+              fieldIds={comparedIds}
+              currentRevisionId={currentRevisionId}
+              deployingRevisionId={deployingRevisionId}
+              showsUnchanged={queryParams.showUnchanged}
+              onShowsUnchangedChange={(showUnchanged) =>
+                setQueryParams({ showUnchanged: showUnchanged || null })
+              }
+              applyDisabledReasonOf={applyDisabledReasonOf}
+              onApply={async (revision) => {
+                const success = await handleRollback(revision);
+                if (success) {
+                  closeCompare();
+                  setSelectedRevisions([]);
+                }
+              }}
+              onClose={closeCompare}
+            />
+          </Suspense>
+        </ErrorBoundaryWithNullFallback>
+      ) : null}
       {/* Local Suspense around the lazily-mounted modal so its lazy form
           selects (preset / vfolder / runtime variant `useLazyLoadQuery`)
           don't bubble their suspend up to the page-level boundary and blank
