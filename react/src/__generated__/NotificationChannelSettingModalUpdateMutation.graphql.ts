@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<85c89403226595615f1aa0b664d5ac2a>>
+ * @generated SignedSource<<98ff77f6cf5b96545dfb6e1654bf96e0>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,7 +9,7 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
-export type NotificationChannelType = "EMAIL" | "WEBHOOK" | "%future added value";
+import { FragmentRefs } from "relay-runtime";
 export type UpdateNotificationChannelInput = {
   description?: string | null | undefined;
   enabled?: boolean | null | undefined;
@@ -50,11 +50,7 @@ export type NotificationChannelSettingModalUpdateMutation$variables = {
 export type NotificationChannelSettingModalUpdateMutation$data = {
   readonly updateNotificationChannel: {
     readonly channel: {
-      readonly channelType: NotificationChannelType;
-      readonly description: string | null | undefined;
-      readonly enabled: boolean;
-      readonly id: string;
-      readonly name: string;
+      readonly " $fragmentSpreads": FragmentRefs<"NotificationChannelSettingModalFragment">;
     };
   } | null | undefined;
 };
@@ -73,67 +69,9 @@ var v0 = [
 ],
 v1 = [
   {
-    "alias": null,
-    "args": [
-      {
-        "kind": "Variable",
-        "name": "input",
-        "variableName": "input"
-      }
-    ],
-    "concreteType": "UpdateNotificationChannelPayload",
-    "kind": "LinkedField",
-    "name": "updateNotificationChannel",
-    "plural": false,
-    "selections": [
-      {
-        "alias": null,
-        "args": null,
-        "concreteType": "NotificationChannel",
-        "kind": "LinkedField",
-        "name": "channel",
-        "plural": false,
-        "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "id",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "name",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "description",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "channelType",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "enabled",
-            "storageKey": null
-          }
-        ],
-        "storageKey": null
-      }
-    ],
-    "storageKey": null
+    "kind": "Variable",
+    "name": "input",
+    "variableName": "input"
   }
 ];
 return {
@@ -142,7 +80,35 @@ return {
     "kind": "Fragment",
     "metadata": null,
     "name": "NotificationChannelSettingModalUpdateMutation",
-    "selections": (v1/*: any*/),
+    "selections": [
+      {
+        "alias": null,
+        "args": (v1/*: any*/),
+        "concreteType": "UpdateNotificationChannelPayload",
+        "kind": "LinkedField",
+        "name": "updateNotificationChannel",
+        "plural": false,
+        "selections": [
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "NotificationChannel",
+            "kind": "LinkedField",
+            "name": "channel",
+            "plural": false,
+            "selections": [
+              {
+                "args": null,
+                "kind": "FragmentSpread",
+                "name": "NotificationChannelSettingModalFragment"
+              }
+            ],
+            "storageKey": null
+          }
+        ],
+        "storageKey": null
+      }
+    ],
     "type": "Mutation",
     "abstractKey": null
   },
@@ -151,19 +117,84 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "NotificationChannelSettingModalUpdateMutation",
-    "selections": (v1/*: any*/)
+    "selections": [
+      {
+        "alias": null,
+        "args": (v1/*: any*/),
+        "concreteType": "UpdateNotificationChannelPayload",
+        "kind": "LinkedField",
+        "name": "updateNotificationChannel",
+        "plural": false,
+        "selections": [
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "NotificationChannel",
+            "kind": "LinkedField",
+            "name": "channel",
+            "plural": false,
+            "selections": [
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "id",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "entityId",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "name",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "description",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "channelType",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "enabled",
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
+          }
+        ],
+        "storageKey": null
+      }
+    ]
   },
   "params": {
-    "cacheID": "57c761c8a3d2a0d82745f648221f1bce",
+    "cacheID": "91f2c9ffd225877a0fa77d93d92d6c1c",
     "id": null,
     "metadata": {},
     "name": "NotificationChannelSettingModalUpdateMutation",
     "operationKind": "mutation",
-    "text": "mutation NotificationChannelSettingModalUpdateMutation(\n  $input: UpdateNotificationChannelInput!\n) {\n  updateNotificationChannel(input: $input) {\n    channel {\n      id\n      name\n      description\n      channelType\n      enabled\n    }\n  }\n}\n"
+    "text": "mutation NotificationChannelSettingModalUpdateMutation(\n  $input: UpdateNotificationChannelInput!\n) {\n  updateNotificationChannel(input: $input) {\n    channel {\n      ...NotificationChannelSettingModalFragment\n      id\n    }\n  }\n}\n\nfragment NotificationChannelSettingModalFragment on NotificationChannel {\n  id\n  entityId\n  name\n  description\n  channelType\n  enabled\n}\n"
   }
 };
 })();
 
-(node as any).hash = "0c22849d4fde42211590c8987c288ea8";
+(node as any).hash = "89caa5aab7f14f2bfb6454ea6f16b572";
 
 export default node;

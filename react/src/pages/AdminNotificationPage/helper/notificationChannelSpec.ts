@@ -73,3 +73,68 @@ export const buildNotificationChannelSpecInput = (
     },
   };
 };
+
+/** A channel's saved spec as the manager returns it; the SMTP password never comes back. */
+export type SavedNotificationChannelSpec = {
+  readonly webhook?: { readonly url: string } | null;
+  readonly email?: {
+    readonly smtp: {
+      readonly host: string;
+      readonly port: number;
+      readonly useTls: boolean;
+      readonly timeout: number;
+    };
+    readonly message: {
+      readonly fromEmail: string;
+      readonly toEmails: ReadonlyArray<string>;
+      readonly subjectTemplate?: string | null;
+    };
+    readonly auth?: { readonly username?: string | null } | null;
+  } | null;
+};
+
+/** The form values that show a saved spec, so editing starts from what is stored. */
+export const specFormValuesFromSaved = (
+  spec: SavedNotificationChannelSpec | null | undefined,
+): Partial<NotificationChannelSpecFormValues> => ({
+  webhookUrl: spec?.webhook?.url,
+  smtpHost: spec?.email?.smtp.host,
+  smtpPort: spec?.email?.smtp.port,
+  smtpUseTls: spec?.email?.smtp.useTls,
+  smtpTimeout: spec?.email?.smtp.timeout,
+  smtpUsername: spec?.email?.auth?.username ?? undefined,
+  fromEmail: spec?.email?.message.fromEmail,
+  toEmails: spec?.email ? [...spec.email.message.toEmails] : undefined,
+  subjectTemplate: spec?.email?.message.subjectTemplate ?? undefined,
+});
+
+/**
+ * Whether an edit sends `spec`, and whether it must first ask for the SMTP password again.
+ * `spec` replaces the saved one whole and the saved password never comes back.
+ */
+export const decideSpecUpdate = ({
+  values,
+  savedValues,
+  hasSavedAuth,
+}: {
+  values: NotificationChannelSpecFormValues;
+  savedValues: NotificationChannelSpecFormValues;
+  hasSavedAuth: boolean;
+}) => {
+  const withoutAuth = (spec: NotificationChannelSpecInput) =>
+    spec.email ? { email: { ...spec.email, auth: null } } : spec;
+  const username = trimmedOrNull(values.smtpUsername);
+  const changesConnection =
+    username !== trimmedOrNull(savedValues.smtpUsername) ||
+    !_.isEqual(
+      withoutAuth(buildNotificationChannelSpecInput(values)),
+      withoutAuth(buildNotificationChannelSpecInput(savedValues)),
+    );
+  const includesSpec = !!values.smtpPassword || changesConnection;
+  // An empty username removes SMTP authentication, which needs no password.
+  return {
+    includesSpec,
+    needsPassword:
+      includesSpec && hasSavedAuth && !!username && !values.smtpPassword,
+  };
+};

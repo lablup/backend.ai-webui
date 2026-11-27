@@ -1,9 +1,5 @@
-/* Equal columns for a row of SMTP fields; min-width lets a number input shrink to its column. */
+/* Equal columns for a row of fields; min-width lets a number input shrink to its column. */
 .notification-channel-field {
   flex: 1;
   min-width: 0;
-}
-
-.notification-channel-alert {
-  margin-bottom: var(--spacing-4);
 }

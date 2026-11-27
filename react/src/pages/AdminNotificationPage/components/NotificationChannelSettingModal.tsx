@@ -3,9 +3,14 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { NotificationChannelSettingModalCreateMutation } from '../../../__generated__/NotificationChannelSettingModalCreateMutation.graphql';
-import { NotificationChannelSettingModalFragment$key } from '../../../__generated__/NotificationChannelSettingModalFragment.graphql';
+import {
+  NotificationChannelSettingModalFragment$data,
+  NotificationChannelSettingModalFragment$key,
+} from '../../../__generated__/NotificationChannelSettingModalFragment.graphql';
+import { NotificationChannelSettingModalSpecQuery } from '../../../__generated__/NotificationChannelSettingModalSpecQuery.graphql';
 import { NotificationChannelSettingModalUpdateMutation } from '../../../__generated__/NotificationChannelSettingModalUpdateMutation.graphql';
 import { App } from '../../../app-shim';
+import BAIErrorBoundary from '../../../components/BAIErrorBoundary';
 import { Form, FormInstance } from '../../../form-engine';
 import {
   DEFAULT_SMTP_PORT,
@@ -14,31 +19,37 @@ import {
   NotificationChannelSpecFormValues,
   buildNotificationChannelSpecInput,
   isHttpUrl,
+  decideSpecUpdate,
+  specFormValuesFromSaved,
 } from '../helper/notificationChannelSpec';
 import './NotificationChannelSettingModal.css';
 import {
-  BAIAlert,
   BAIFlex,
   BAIModal,
   BAIModalProps,
   BAINumberInput,
   BAISegmentedControl,
   BAISegmentedControlItem,
+  BAISkeleton,
   BAISwitch,
   BAITagsInput,
   BAITextArea,
   BAITextInput,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import React, { useRef } from 'react';
+import React, { Suspense, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useFragment, useMutation } from 'react-relay';
+import {
+  graphql,
+  useFragment,
+  useLazyLoadQuery,
+  useMutation,
+} from 'react-relay';
 
 type NotificationChannelFormValues = NotificationChannelSpecFormValues & {
   name: string;
   description?: string;
   enabled: boolean;
-  replaceSpec?: boolean;
 };
 
 interface NotificationChannelSettingModalProps extends Omit<
@@ -51,8 +62,29 @@ interface NotificationChannelSettingModalProps extends Omit<
 
 const isEmail = (value: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 
+// Sits beside Enabled so the two switches share a row.
+const SmtpUseTlsFormItem: React.FC = () => {
+  'use memo';
+  const { t } = useTranslation();
+  const form = Form.useFormInstance<NotificationChannelFormValues>();
+  const channelType = Form.useWatch('channelType', form);
+
+  if (channelType !== 'EMAIL') return null;
+  return (
+    <Form.Item
+      className="notification-channel-field"
+      label={t('externalNotification.SmtpUseTls')}
+      name="smtpUseTls"
+    >
+      <BAISwitch aria-label={t('externalNotification.SmtpUseTls')} />
+    </Form.Item>
+  );
+};
+
 // Mounted inside the Form, so the watches are fresh on every open.
-const ChannelSpecFormItems: React.FC = () => {
+const ChannelSpecFormItems: React.FC<{ hasSavedPassword: boolean }> = ({
+  hasSavedPassword,
+}) => {
   'use memo';
   const { t } = useTranslation();
   const form = Form.useFormInstance<NotificationChannelFormValues>();
@@ -88,24 +120,23 @@ const ChannelSpecFormItems: React.FC = () => {
 
   return (
     <>
+      <Form.Item
+        label={t('externalNotification.SmtpHost')}
+        name="smtpHost"
+        rules={[
+          {
+            required: true,
+            whitespace: true,
+            message: t('externalNotification.SmtpHostRequired'),
+          },
+        ]}
+      >
+        <BAITextInput
+          aria-label={t('externalNotification.SmtpHost')}
+          placeholder="smtp.example.com"
+        />
+      </Form.Item>
       <BAIFlex gap="sm" align="start">
-        <Form.Item
-          className="notification-channel-field"
-          label={t('externalNotification.SmtpHost')}
-          name="smtpHost"
-          rules={[
-            {
-              required: true,
-              whitespace: true,
-              message: t('externalNotification.SmtpHostRequired'),
-            },
-          ]}
-        >
-          <BAITextInput
-            aria-label={t('externalNotification.SmtpHost')}
-            placeholder="smtp.example.com"
-          />
-        </Form.Item>
         <Form.Item
           className="notification-channel-field"
           label={t('externalNotification.SmtpPort')}
@@ -120,15 +151,6 @@ const ChannelSpecFormItems: React.FC = () => {
             max={65535}
             isIntegerOnly
           />
-        </Form.Item>
-      </BAIFlex>
-      <BAIFlex gap="sm" align="start">
-        <Form.Item
-          className="notification-channel-field"
-          label={t('externalNotification.SmtpUseTls')}
-          name="smtpUseTls"
-        >
-          <BAISwitch aria-label={t('externalNotification.SmtpUseTls')} />
         </Form.Item>
         <Form.Item
           className="notification-channel-field"
@@ -176,7 +198,9 @@ const ChannelSpecFormItems: React.FC = () => {
           rules={[
             ({ getFieldValue }) => ({
               validator: async (_rule, value?: string) => {
-                if (value || !getFieldValue('smtpUsername')?.trim()) return;
+                // Left empty with a saved password, the save asks for it only when needed.
+                if (value || hasSavedPassword) return;
+                if (!getFieldValue('smtpUsername')?.trim()) return;
                 throw new Error(
                   t('externalNotification.SmtpPasswordRequiredWithUsername'),
                 );
@@ -248,6 +272,145 @@ const ChannelSpecFormItems: React.FC = () => {
   );
 };
 
+type SavedSpec = {
+  values: Partial<NotificationChannelSpecFormValues>;
+  hasSavedAuth: boolean;
+};
+
+type ChannelFormProps = {
+  channel: NotificationChannelSettingModalFragment$data | null;
+  formRef: React.RefObject<FormInstance<NotificationChannelFormValues> | null>;
+  savedSpecRef: React.RefObject<SavedSpec | null>;
+};
+
+const ChannelForm: React.FC<
+  ChannelFormProps & { savedSpec: SavedSpec | null }
+> = ({ channel, formRef, savedSpecRef, savedSpec }) => {
+  'use memo';
+  const { t } = useTranslation();
+  useEffect(() => {
+    savedSpecRef.current = savedSpec;
+  }, [savedSpec, savedSpecRef]);
+  return (
+    <Form
+      ref={formRef}
+      layout="vertical"
+      initialValues={{
+        name: channel?.name,
+        description: channel?.description ?? undefined,
+        channelType: channel?.channelType ?? 'WEBHOOK',
+        enabled: channel?.enabled ?? true,
+        smtpPort: DEFAULT_SMTP_PORT,
+        smtpUseTls: true,
+        smtpTimeout: DEFAULT_SMTP_TIMEOUT,
+        toEmails: [],
+        ..._.omitBy(savedSpec?.values ?? {}, _.isUndefined),
+      }}
+    >
+      <Form.Item
+        label={t('externalNotification.Name')}
+        name="name"
+        rules={[
+          {
+            required: true,
+            whitespace: true,
+            message: t('externalNotification.NameRequired'),
+          },
+          { max: 256 },
+        ]}
+      >
+        <BAITextInput aria-label={t('externalNotification.Name')} />
+      </Form.Item>
+      <Form.Item
+        label={t('externalNotification.Description')}
+        name="description"
+      >
+        <BAITextArea
+          aria-label={t('externalNotification.Description')}
+          rows={2}
+        />
+      </Form.Item>
+      <Form.Item
+        label={t('externalNotification.ChannelType')}
+        name="channelType"
+      >
+        <BAISegmentedControl
+          aria-label={t('externalNotification.ChannelType')}
+          disabled={!!channel}
+        >
+          {_.map(NOTIFICATION_CHANNEL_TYPES, (channelType) => (
+            <BAISegmentedControlItem
+              key={channelType}
+              value={channelType}
+              label={t(`externalNotification.channelTypes.${channelType}`)}
+            />
+          ))}
+        </BAISegmentedControl>
+      </Form.Item>
+      <BAIFlex gap="sm" align="start">
+        <Form.Item
+          className="notification-channel-field"
+          label={t('externalNotification.Enabled')}
+          name="enabled"
+        >
+          <BAISwitch aria-label={t('externalNotification.Enabled')} />
+        </Form.Item>
+        <SmtpUseTlsFormItem />
+      </BAIFlex>
+      <ChannelSpecFormItems hasSavedPassword={!!savedSpec?.hasSavedAuth} />
+    </Form>
+  );
+};
+
+/** Reads the saved spec only when a channel is edited, so the list never carries it. */
+const EditChannelForm: React.FC<
+  ChannelFormProps & { channel: NotificationChannelSettingModalFragment$data }
+> = (props) => {
+  'use memo';
+  const { adminNotificationChannel } =
+    useLazyLoadQuery<NotificationChannelSettingModalSpecQuery>(
+      graphql`
+        query NotificationChannelSettingModalSpecQuery($id: ID!) {
+          adminNotificationChannel(id: $id) {
+            spec {
+              webhook {
+                url
+              }
+              email {
+                smtp {
+                  host
+                  port
+                  useTls
+                  timeout
+                }
+                message {
+                  fromEmail
+                  toEmails
+                  subjectTemplate
+                }
+                auth {
+                  username
+                }
+              }
+            }
+          }
+        }
+      `,
+      { id: props.channel.entityId },
+      { fetchPolicy: 'network-only' },
+    );
+  const spec = adminNotificationChannel?.spec;
+  return (
+    <ChannelForm
+      {...props}
+      savedSpec={{
+        values: specFormValuesFromSaved(spec),
+        hasSavedAuth: !!spec?.email?.auth,
+      }}
+    />
+  );
+};
+
 const NotificationChannelSettingModal: React.FC<
   NotificationChannelSettingModalProps
 > = ({ channelFrgmt, onRequestClose, ...baiModalProps }) => {
@@ -255,6 +418,7 @@ const NotificationChannelSettingModal: React.FC<
   const { t } = useTranslation();
   const { message } = App.useApp();
   const formRef = useRef<FormInstance<NotificationChannelFormValues>>(null);
+  const savedSpecRef = useRef<SavedSpec | null>(null);
 
   const channel = useFragment(
     graphql`
@@ -291,11 +455,7 @@ const NotificationChannelSettingModal: React.FC<
       ) {
         updateNotificationChannel(input: $input) {
           channel {
-            id
-            name
-            description
-            channelType
-            enabled
+            ...NotificationChannelSettingModalFragment
           }
         }
       }
@@ -313,49 +473,75 @@ const NotificationChannelSettingModal: React.FC<
     message.error(error?.message || t('general.ErrorOccurred'));
   };
 
-  const handleOk = () =>
-    formRef.current
-      ?.validateFields()
-      .then((values) => {
-        const description = _.trim(values.description ?? '') || null;
-        if (channel) {
-          commitUpdate({
-            variables: {
-              input: {
-                id: channel.entityId,
-                name: _.trim(values.name),
-                description,
-                enabled: values.enabled,
-                ...(values.replaceSpec
-                  ? {
-                      spec: buildNotificationChannelSpecInput({
-                        ...values,
-                        channelType: channel.channelType,
-                      }),
-                    }
-                  : {}),
-              },
-            },
-            onCompleted: (_res, errors) => handleResult(errors),
-            onError: handleError,
-          });
-          return;
-        }
-        commitCreate({
-          variables: {
-            input: {
-              name: _.trim(values.name),
-              description,
-              channelType: values.channelType,
-              enabled: values.enabled,
-              spec: buildNotificationChannelSpecInput(values),
-            },
-          },
-          onCompleted: (_res, errors) => handleResult(errors),
-          onError: handleError,
-        });
-      })
-      .catch(() => {});
+  const updateChannel = async () => {
+    const form = formRef.current;
+    if (!form || !channel) return;
+    // The spec fields are validated only when the connection is sent.
+    await form.validateFields(['name', 'description', 'enabled']);
+    const values = form.getFieldsValue(true) as NotificationChannelFormValues;
+    const formValues = { ...values, channelType: channel.channelType };
+    const { includesSpec, needsPassword } = decideSpecUpdate({
+      values: formValues,
+      savedValues: {
+        ...(savedSpecRef.current?.values ?? {}),
+        channelType: channel.channelType,
+      },
+      hasSavedAuth: !!savedSpecRef.current?.hasSavedAuth,
+    });
+    if (includesSpec) await form.validateFields();
+    if (needsPassword) {
+      form.setFields([
+        {
+          name: 'smtpPassword',
+          errors: [t('externalNotification.SmtpPasswordRequiredForChange')],
+        },
+      ]);
+      form.scrollToField('smtpPassword', {
+        behavior: 'smooth',
+        block: 'center',
+      });
+      return;
+    }
+    commitUpdate({
+      variables: {
+        input: {
+          id: channel.entityId,
+          name: _.trim(values.name),
+          description: _.trim(values.description ?? '') || null,
+          enabled: values.enabled,
+          ...(includesSpec
+            ? { spec: buildNotificationChannelSpecInput(formValues) }
+            : {}),
+        },
+      },
+      onCompleted: (_res, errors) => handleResult(errors),
+      onError: handleError,
+    });
+  };
+
+  const createChannel = async () => {
+    const form = formRef.current;
+    if (!form) return;
+    const values = await form.validateFields();
+    commitCreate({
+      variables: {
+        input: {
+          name: _.trim(values.name),
+          description: _.trim(values.description ?? '') || null,
+          channelType: values.channelType,
+          enabled: values.enabled,
+          spec: buildNotificationChannelSpecInput(values),
+        },
+      },
+      onCompleted: (_res, errors) => handleResult(errors),
+      onError: handleError,
+    });
+  };
+
+  const handleOk = () => {
+    // A rejected validateFields is shown on the fields themselves.
+    (channel ? updateChannel() : createChannel()).catch(_.noop);
+  };
 
   return (
     <BAIModal
@@ -372,97 +558,24 @@ const NotificationChannelSettingModal: React.FC<
       onOk={handleOk}
       onCancel={() => onRequestClose(false)}
     >
-      <Form
-        ref={formRef}
-        layout="vertical"
-        initialValues={{
-          name: channel?.name,
-          description: channel?.description ?? undefined,
-          channelType: channel?.channelType ?? 'WEBHOOK',
-          enabled: channel?.enabled ?? true,
-          replaceSpec: false,
-          smtpPort: DEFAULT_SMTP_PORT,
-          smtpUseTls: true,
-          smtpTimeout: DEFAULT_SMTP_TIMEOUT,
-          toEmails: [],
-        }}
-      >
-        <Form.Item
-          label={t('externalNotification.Name')}
-          name="name"
-          rules={[
-            {
-              required: true,
-              whitespace: true,
-              message: t('externalNotification.NameRequired'),
-            },
-            { max: 256 },
-          ]}
-        >
-          <BAITextInput aria-label={t('externalNotification.Name')} />
-        </Form.Item>
-        <Form.Item
-          label={t('externalNotification.Description')}
-          name="description"
-        >
-          <BAITextArea
-            aria-label={t('externalNotification.Description')}
-            rows={2}
-          />
-        </Form.Item>
-        <Form.Item
-          label={t('externalNotification.ChannelType')}
-          name="channelType"
-        >
-          <BAISegmentedControl
-            aria-label={t('externalNotification.ChannelType')}
-            disabled={!!channel}
-          >
-            {_.map(NOTIFICATION_CHANNEL_TYPES, (channelType) => (
-              <BAISegmentedControlItem
-                key={channelType}
-                value={channelType}
-                label={t(`externalNotification.channelTypes.${channelType}`)}
-              />
-            ))}
-          </BAISegmentedControl>
-        </Form.Item>
-        <Form.Item label={t('externalNotification.Enabled')} name="enabled">
-          <BAISwitch aria-label={t('externalNotification.Enabled')} />
-        </Form.Item>
-        {channel ? (
-          <>
-            <Form.Item
-              label={t('externalNotification.ReplaceConnectionSettings')}
-              name="replaceSpec"
-              extra={t('externalNotification.ReplaceConnectionSettingsExtra')}
-            >
-              <BAISwitch
-                aria-label={t('externalNotification.ReplaceConnectionSettings')}
-              />
-            </Form.Item>
-            <Form.Item dependencies={['replaceSpec']} noStyle>
-              {({ getFieldValue }) =>
-                getFieldValue('replaceSpec') ? (
-                  <>
-                    <BAIAlert
-                      type="warning"
-                      showIcon
-                      className="notification-channel-alert"
-                      description={t(
-                        'externalNotification.ReplaceConnectionSettingsWarning',
-                      )}
-                    />
-                    <ChannelSpecFormItems />
-                  </>
-                ) : null
-              }
-            </Form.Item>
-          </>
-        ) : (
-          <ChannelSpecFormItems />
-        )}
-      </Form>
+      <BAIErrorBoundary>
+        <Suspense fallback={<BAISkeleton rows={6} />}>
+          {channel ? (
+            <EditChannelForm
+              channel={channel}
+              formRef={formRef}
+              savedSpecRef={savedSpecRef}
+            />
+          ) : (
+            <ChannelForm
+              channel={null}
+              formRef={formRef}
+              savedSpecRef={savedSpecRef}
+              savedSpec={null}
+            />
+          )}
+        </Suspense>
+      </BAIErrorBoundary>
     </BAIModal>
   );
 };
