@@ -238,6 +238,50 @@ export const MultipleSelectionTooltip: Story = {
   ),
 };
 
+export const TruncatedValueTooltip: Story = {
+  name: 'TruncatedValueTooltip',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'In single mode a selected label the trigger cuts off with an ellipsis is shown whole in a tooltip on hover or focus. It is on by default; `showTooltipOnEllipsis={false}` turns it off. A label that fits gets no tooltip.',
+      },
+    },
+  },
+  render: () => {
+    const longOptions = [
+      {
+        value: 'long',
+        label: 'cr.backend.ai/stable/python-tensorflow:2.15-py311-cuda12.3',
+      },
+      { value: 'short', label: 'Short' },
+    ];
+    return (
+      <BAIFlex direction="column" gap="md">
+        <BAISelect
+          aria-label="Truncated, with tooltip"
+          options={longOptions}
+          defaultValue="long"
+          style={{ width: 200 }}
+        />
+        <BAISelect
+          aria-label="Truncated, tooltip off"
+          showTooltipOnEllipsis={false}
+          options={longOptions}
+          defaultValue="long"
+          style={{ width: 200 }}
+        />
+        <BAISelect
+          aria-label="Fits, no tooltip"
+          options={longOptions}
+          defaultValue="short"
+          style={{ width: 200 }}
+        />
+      </BAIFlex>
+    );
+  },
+};
+
 // Footer in dropdown
 export const WithFooter: Story = {
   render: () => (
