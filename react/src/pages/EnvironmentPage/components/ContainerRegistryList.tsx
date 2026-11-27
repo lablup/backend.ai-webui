@@ -44,6 +44,7 @@ import {
   useToggle,
   BAISwitch,
   useErrorMessageResolver,
+  BAIUnmountAfterClose,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import {
@@ -281,7 +282,6 @@ const ContainerRegistryList: React.FC<{
 
   const editorModalProps: EditorModalProps = {
     open: !!editingRegistry || isNewModalOpen,
-    unmountOnClose: true,
     // The table reads V2 records, which the legacy save does not patch.
     onOk: (type) => {
       message.success({
@@ -640,7 +640,9 @@ const ContainerRegistryList: React.FC<{
           />
         </Suspense>
       ) : (
-        <ContainerRegistryEditorModal {...editorModalProps} />
+        <BAIUnmountAfterClose>
+          <ContainerRegistryEditorModal {...editorModalProps} />
+        </BAIUnmountAfterClose>
       )}
       <BAIDeleteConfirmModal
         open={!!deletingRegistry}

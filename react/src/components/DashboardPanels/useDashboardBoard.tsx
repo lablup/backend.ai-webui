@@ -2,13 +2,22 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { App } from '../../app-shim';
+import { generateUUID } from '../../helper/uuid';
 import { useCurrentUserRole } from '../../hooks/backendai';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
 import { useIsCurrentProjectAdmin } from '../../hooks/useCurrentUserProjectRoles';
 import { useEffectiveLoginConfig } from '../../hooks/useWebUIConfig';
 import DashboardPanelContent from './DashboardPanelContent';
+import DashboardPreviewMark from './DashboardPreviewMark';
 import PanelFrame from './PanelFrame';
 import { PanelHeaderSettingsContext } from './PanelSettingsHeaderControls';
+import {
+  applyAssistantActions as applyActionsToBoard,
+  settingsTouchedBy,
+  type DashboardAssistantAction,
+  type DashboardAssistantCard,
+} from './assistantActions';
 import type { BoardLayoutEntry } from './boardLayout';
 import {
   addPanel,
@@ -26,7 +35,13 @@ import {
   updatePanel,
   type CatalogEntry,
 } from './boardModel';
-import { mergePanelEdits, updateBoard } from './dashboardConfig';
+import type { DashboardChatPanel } from './dashboardChat';
+import {
+  addBoard,
+  createEmptyBoard,
+  mergePanelEdits,
+  updateBoard,
+} from './dashboardConfig';
 import {
   createPanel,
   panelConfigFromInput,
@@ -41,7 +56,8 @@ import {
   overriddenSettings,
   panelSettingOverridesAtom,
 } from './panelSettingOverrides';
-import { mergeSettings, panelDefinitionOf } from './panelSettings';
+import { hasSetting, mergeSettings, panelDefinitionOf } from './panelSettings';
+import { previewMarksOf } from './previewMarks';
 import { availableResourceKeys, resolvePanelTitle } from './resourceRegistry';
 import type {
   DashboardBoard,
@@ -111,6 +127,8 @@ export interface UseDashboardBoardOptions {
   catalog: ReadonlyArray<PanelDefinition>;
   /** Panels the viewer may not read: left off the board, kept in the stored one. */
   deniedPanelIds?: ReadonlyMap<string, string>;
+  /** Proposed changes the board previews without saving them. */
+  draftActions?: ReadonlyArray<DashboardAssistantAction>;
 }
 
 export interface UseDashboardBoardResult {
@@ -139,6 +157,19 @@ export interface UseDashboardBoardResult {
     settings: PanelSettings | undefined,
   ) => void;
   boards: DashboardBoardsState;
+  /** The previewed board's cards, on-board ones first in board order. */
+  assistantCards: Array<DashboardAssistantCard>;
+  /** The previewed board's custom panels. */
+  assistantPanels: Array<DashboardChatPanel>;
+  /** The saved board's cards and custom panels, which a URL draft is read against. */
+  savedAssistantCards: Array<DashboardAssistantCard>;
+  savedAssistantPanels: Array<DashboardChatPanel>;
+  /** True, after telling the user, when a preview is shown and a board edit must wait for Apply or Discard. */
+  blockedByPreview: () => boolean;
+  /** Applies the WebUI Assistant's proposed changes in one save. */
+  applyAssistantActions: (
+    actions: ReadonlyArray<DashboardAssistantAction>,
+  ) => void;
 }
 
 export interface PanelSettingsTarget {
@@ -155,6 +186,7 @@ export const useDashboardBoard = ({
   onRequestEditCustomPanel,
   catalog,
   deniedPanelIds,
+  draftActions,
 }: UseDashboardBoardOptions): UseDashboardBoardResult => {
   'use memo';
   const { t } = useTranslation();
@@ -166,10 +198,22 @@ export const useDashboardBoard = ({
   );
   const {
     board: storedBoard,
-    save,
+    save: saveBoard,
     template,
     boards,
   } = useBoardStore(page, catalog);
+  const { message } = App.useApp();
+  // A card edit during a preview would save the previewed state: Apply or Discard first.
+  const isPreviewing = !!draftActions?.length;
+  const blockedByPreview = () => {
+    if (!isPreviewing) return false;
+    message.info(t('dashboard.agentDraft.FinishPreviewFirst'));
+    return true;
+  };
+  const save = (next: DashboardBoard) => {
+    if (blockedByPreview()) return;
+    saveBoard(next);
+  };
   const [settingOverrides, setSettingOverrides] = useAtom(
     panelSettingOverridesAtom,
   );
@@ -184,6 +228,13 @@ export const useDashboardBoard = ({
         ? { ...prev, [overrideKey(panelId)]: override }
         : _.omit(prev, overrideKey(panelId)),
     );
+
+  // A card the draft re-ranges shows the draft's range, not a header pick.
+  const touchedByDraft = settingsTouchedBy(draftActions ?? []);
+  const overrideOf = (panelId: string) =>
+    touchedByDraft === 'all' || touchedByDraft.includes(panelId)
+      ? undefined
+      : settingOverrides[overrideKey(panelId)];
 
   const config: PanelCatalogConfig = {
     blockList: loginConfig.blockList ?? [],
@@ -222,6 +273,7 @@ export const useDashboardBoard = ({
     );
 
   const removeById = (id: string) => {
+    if (blockedByPreview()) return;
     clearOverrides([id]);
     save(removePanel(board, id));
   };
@@ -233,6 +285,7 @@ export const useDashboardBoard = ({
   };
 
   const updateCustomPanel = (id: string, input: PanelInput) => {
+    if (blockedByPreview()) return;
     const current = board.panels.find((panel) => panel.id === id);
     const next = panelConfigFromInput(input);
     const definition = definitionByKey.get(next.key);
@@ -258,6 +311,7 @@ export const useDashboardBoard = ({
   };
 
   const setPanelsActive = (keys: ReadonlyArray<string>, active: boolean) => {
+    if (blockedByPreview()) return;
     // A user-made panel is listed by its id and only hidden, so unchecking it keeps it.
     const presetIds = new Set(
       board.panels
@@ -290,7 +344,7 @@ export const useDashboardBoard = ({
     const catalogDefinition = definitionByKey.get(panel.key);
     if (!catalogDefinition) return null;
     const definition = panelDefinitionOf(catalogDefinition, panel);
-    const override = settingOverrides[overrideKey(panel.id)];
+    const override = overrideOf(panel.id);
     const effective = effectivePanelSettings(
       panel.settings,
       override,
@@ -383,7 +437,9 @@ export const useDashboardBoard = ({
           deniedFrame={(body) => (
             <PanelFrame
               title={resolvePanelTitle(viewLegacyPanel.descriptor, t)}
-              onEdit={() => onRequestEditCustomPanel(legacyPanel)}
+              onEdit={() => {
+                if (!blockedByPreview()) onRequestEditCustomPanel(legacyPanel);
+              }}
               onRemove={() => removeById(panel.id)}
             >
               {body}
@@ -396,7 +452,9 @@ export const useDashboardBoard = ({
               fetchKey={fetchKey}
               refreshedAt={vars.refreshedAt}
               panelId={panel.id}
-              onEdit={() => onRequestEditCustomPanel(legacyPanel)}
+              onEdit={() => {
+                if (!blockedByPreview()) onRequestEditCustomPanel(legacyPanel);
+              }}
               onRemove={() => removeById(panel.id)}
             />
           )}
@@ -405,14 +463,66 @@ export const useDashboardBoard = ({
     );
   };
 
+  const draftNewBoard = draftActions?.find(
+    (action) => action.type === 'createBoard',
+  );
+  const shownBoard = draftActions?.length
+    ? applyActionsToBoard(board, draftActions, {
+        definitionByKey,
+        catalog,
+        page,
+        template,
+        emptyBoard: draftNewBoard
+          ? createEmptyBoard({ id: 'draft', title: '' }, catalog, page)
+          : undefined,
+      })
+    : board;
+  const savedLayout = toBoardLayout(board, catalog, isRenderable);
+  const previewMarks = draftActions?.length
+    ? previewMarksOf(
+        new Set(savedLayout.map((entry) => entry.id)),
+        draftActions,
+      )
+    : new Map();
+  const markedContent = (id: string, content: React.ReactNode) => {
+    const mark = previewMarks.get(id);
+    return mark ? (
+      <DashboardPreviewMark mark={mark}>{content}</DashboardPreviewMark>
+    ) : (
+      content
+    );
+  };
   const boardItems: Array<BAIBoardItem> = toBoardLayout(
-    board,
+    shownBoard,
     catalog,
     isRenderable,
   ).map((entry) => {
-    const panel = board.panels.find((item) => item.id === entry.id)!;
-    return { ...entry, data: { content: contentOf(panel) } };
+    const panel = shownBoard.panels.find((item) => item.id === entry.id)!;
+    return {
+      ...entry,
+      data: { content: markedContent(panel.id, contentOf(panel)) },
+    };
   });
+  // A card the preview hides stays where it was, dimmed, after the card that preceded it.
+  const previewItems = [...boardItems];
+  if (!draftNewBoard) {
+    savedLayout.forEach((entry, index) => {
+      if (previewMarks.get(entry.id)?.kind !== 'hidden') return;
+      if (previewItems.some((item) => item.id === entry.id)) return;
+      const panel = board.panels.find((item) => item.id === entry.id);
+      if (!panel) return;
+      const before = _.findLast(savedLayout.slice(0, index), (prior) =>
+        previewItems.some((item) => item.id === prior.id),
+      );
+      const at = before
+        ? previewItems.findIndex((item) => item.id === before.id) + 1
+        : 0;
+      previewItems.splice(at, 0, {
+        ...entry,
+        data: { content: markedContent(panel.id, contentOf(panel)) },
+      });
+    });
+  }
 
   const customPanels = board.panels.flatMap((panel) => {
     const definition = definitionByKey.get(panel.key);
@@ -420,9 +530,104 @@ export const useDashboardBoard = ({
     return legacyPanel ? [legacyPanel] : [];
   });
 
+  const titleOf = (panel: PersistedPanelV2, definition: PanelDefinition) => {
+    const legacyPanel = toLegacyPanel(panel, definition);
+    return legacyPanel
+      ? resolvePanelTitle(legacyPanel.descriptor, t)
+      : t(panelTitleKey(definition, role, page));
+  };
+  const assistantCardOf = (
+    panel: PersistedPanelV2,
+    shown: boolean,
+  ): DashboardAssistantCard | null => {
+    const catalogDefinition = definitionByKey.get(panel.key);
+    if (!catalogDefinition) return null;
+    const definition = panelDefinitionOf(catalogDefinition, panel);
+    return {
+      id: panel.id,
+      title: titleOf(panel, definition),
+      shown,
+      ...(shown
+        ? { columnSpan: panel.columnSpan, rowSpan: panel.rowSpan }
+        : {}),
+      ...(hasSetting(definition, 'range')
+        ? {
+            range:
+              effectivePanelSettings(
+                panel.settings,
+                overrideOf(panel.id),
+                definition,
+              )?.range ?? 'default',
+          }
+        : {}),
+    };
+  };
+  /** A board as the assistant reads it: its cards and its custom panels. */
+  const assistantViewOf = (viewed: DashboardBoard) => {
+    const onBoardIds = new Set(
+      toBoardLayout(viewed, catalog, isRenderable).map((entry) => entry.id),
+    );
+    const cards = [
+      ...viewed.panels
+        .filter((panel) => onBoardIds.has(panel.id))
+        .map((panel) => assistantCardOf(panel, true)),
+      // User-made panels taken off the board, then the catalog cards not on it.
+      ...viewed.panels
+        .filter((panel) => panel.hidden && isRenderable(panel))
+        .map((panel) => assistantCardOf(panel, false)),
+      ...siderEntries(visibleEntries)
+        .filter(
+          (entry) => !viewed.panels.some((p) => p.key === entry.definition.key),
+        )
+        .map((entry) =>
+          assistantCardOf(
+            {
+              id: entry.definition.key,
+              key: entry.definition.key,
+              ...entry.definition.defaultSize,
+            },
+            false,
+          ),
+        ),
+    ].filter((card): card is DashboardAssistantCard => !!card);
+    const panels = viewed.panels.flatMap((panel): Array<DashboardChatPanel> => {
+      const definition = definitionByKey.get(panel.key);
+      const legacy = definition ? toLegacyPanel(panel, definition) : null;
+      if (!legacy) return [];
+      const { descriptor } = legacy;
+      return [
+        {
+          id: panel.id,
+          title: resolvePanelTitle(descriptor, t),
+          input: {
+            panelType: legacy.panelType,
+            resourceType: descriptor.resourceType,
+            title: descriptor.title,
+            filter: descriptor.filter,
+            order: descriptor.order,
+            gridView: descriptor.gridView,
+            chart: descriptor.chart,
+            range: descriptor.range,
+          },
+        },
+      ];
+    });
+    return { cards, panels };
+  };
+  // The previewed board, so a follow-up request sees the chat's earlier changes.
+  const { cards: assistantCards, panels: assistantPanels } =
+    assistantViewOf(shownBoard);
+  // The saved board, which a draft carried in the URL is read against.
+  const savedAssistantView = draftActions?.length
+    ? assistantViewOf(board)
+    : { cards: assistantCards, panels: assistantPanels };
+
   return {
-    boardItems,
-    onLayoutChange: (reported) => save(applyLayout(board, reported)),
+    boardItems: previewItems,
+    // A preview is not saved, so a move made on it would land on the stored layout.
+    onLayoutChange: (reported) => {
+      if (!draftActions?.length) saveBoard(applyLayout(board, reported));
+    },
     catalogEntries: siderEntries(visibleEntries),
     // Catalog keys of the cards on the board, plus the ids of the user-made panels shown on it.
     activeKeys: new Set(
@@ -463,6 +668,7 @@ export const useDashboardBoard = ({
     },
     // The modal edits resource group and range; the table's column picks stay.
     updatePanelSettings: (id, settings) => {
+      if (blockedByPreview()) return;
       const current = board.panels.find((item) => item.id === id)?.settings;
       save(
         updatePanel(board, id, {
@@ -474,9 +680,69 @@ export const useDashboardBoard = ({
       setOverride(id, undefined);
     },
     resetLayout: () => {
+      if (blockedByPreview()) return;
       clearOverrides('all');
       save(resetBoard(board, catalog, page, template));
     },
     boards,
+    assistantCards,
+    assistantPanels,
+    blockedByPreview,
+    savedAssistantCards: savedAssistantView.cards,
+    savedAssistantPanels: savedAssistantView.panels,
+    applyAssistantActions: (actions) => {
+      const newBoard = actions.find((action) => action.type === 'createBoard');
+      if (newBoard) {
+        const empty = createEmptyBoard(
+          { id: generateUUID(), title: newBoard.title },
+          catalog,
+          page,
+        );
+        const filled = applyActionsToBoard(board, actions, {
+          definitionByKey,
+          catalog,
+          page,
+          template,
+          emptyBoard: empty,
+        });
+        // Changes before createBoard stay on the current board.
+        const before = actions.slice(0, actions.indexOf(newBoard));
+        const current = applyActionsToBoard(board, before, {
+          definitionByKey,
+          catalog,
+          page,
+          template,
+        });
+        if (current !== board) clearOverrides(settingsTouchedBy(before));
+        // One update: two in a row would each start from this render's config.
+        // The active board merges as save() does, so another tab's edits survive.
+        boards.update((config) =>
+          addBoard(
+            current === board
+              ? config
+              : updateBoard(config, boards.activeBoard.id, (active) => ({
+                  ...active,
+                  panels: mergePanelEdits(
+                    boards.activeBoard.panels,
+                    current.panels,
+                    active.panels,
+                  ),
+                  knownKeys: _.union(active.knownKeys, current.knownKeys),
+                })),
+            { ...empty, panels: filled.panels, knownKeys: filled.knownKeys },
+          ),
+        );
+        return;
+      }
+      const next = applyActionsToBoard(board, actions, {
+        definitionByKey,
+        catalog,
+        page,
+        template,
+      });
+      if (next === board) return;
+      clearOverrides(settingsTouchedBy(actions));
+      saveBoard(next);
+    },
   };
 };

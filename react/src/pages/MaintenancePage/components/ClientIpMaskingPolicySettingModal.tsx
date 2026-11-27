@@ -301,7 +301,6 @@ const ClientIpMaskingPolicySettingModal: React.FC<
     <BAIModal
       {...baiModalProps}
       centered
-      unmountOnClose
       title={
         policy
           ? t('clientIpMasking.EditPolicy')

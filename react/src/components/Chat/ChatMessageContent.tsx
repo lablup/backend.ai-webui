@@ -5,6 +5,7 @@
 import './ChatMessageContent.css';
 import CopyButton from './CopyButton';
 import { SyntaxHighlighter } from './SyntaxHighlighter';
+import { Link } from '@lablup/ui-common/Link';
 import { Text } from '@lablup/ui-common/Text';
 import { useTheme } from '@lablup/ui-common/theme';
 import { BAIFlex } from 'backend.ai-ui';
@@ -270,6 +271,12 @@ const ChatMessageContentBlock = memo<{ block?: string; isStreaming?: boolean }>(
           tr: renderTableRow,
           th: renderTableHeader,
           td: renderTableCell,
+          // A model's link opens beside the app, so the conversation stays.
+          a: ({ href, children }) => (
+            <Link href={href} isExternalLink>
+              {children}
+            </Link>
+          ),
         }}
       >
         {block}

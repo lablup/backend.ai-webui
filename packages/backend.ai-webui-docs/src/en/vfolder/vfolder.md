@@ -25,20 +25,21 @@ selector in the top bar: your personal project shows the `User` folders you
 own, and any other project shows its own folders and the folders shared with
 it.
 
-## Invitation badge and entry point
+## Pending invitations
 
-When another user invites you to share one of their storage folders, a small
-invitation badge appears on the Data page entry in the sidebar and next to the
-folder status summary. The badge displays the number of pending invitations
-that still need a response.
+When another user invites you to share one of their storage folders, a
+**Pending invitations** link appears at the top right of the folder list on
+the Data page. The link displays the number of pending invitations
+that still need a response. The invitations shown follow the project
+selected with the project selector in the top bar: your personal project shows
+the invitations addressed to you, and any other project shows the ones
+addressed to that project.
 
 ![](../images/vfolder_invitation_badge.png)
 
-Click the badge to open the invitation list, where you can accept or decline
-each pending invitation. Accepted folders immediately appear in your folder
-list with the `Invited` type. The `/data` page itself is also a valid entry
-point for reviewing invitations — open the Data page and the same invitation
-list is reachable from the folder status summary.
+Click the link to open the **Invited Folders** modal, where you can accept or
+decline each pending invitation. Accepted folders immediately appear in your
+folder list.
 
 <a id="create-storage-folder"></a>
 <a id="create_storage_folder"></a>

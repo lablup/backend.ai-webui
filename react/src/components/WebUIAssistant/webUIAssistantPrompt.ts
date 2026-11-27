@@ -75,6 +75,41 @@ export function buildAssistantSystemPrompt({
   return parts.join('\n\n');
 }
 
+/** A manual excerpt as the answer cites it: `[n]` is its 1-based position in the prompt. */
+export interface ManualReference {
+  title: string;
+  url: string;
+}
+
+export const manualReferencesOf = (
+  excerpts: ReadonlyArray<ManualSection>,
+  manualBaseURL: string,
+): Array<ManualReference> =>
+  excerpts.map((section) => ({
+    title: `${section.pageTitle} › ${section.heading}`,
+    url: manualSectionURL(manualBaseURL, section),
+  }));
+
+/**
+ * Turns `[n] title` lines into links to excerpt n: a small model copies the
+ * excerpt heading and drops the URL it was asked to link.
+ */
+export function linkManualReferences(
+  text: string,
+  references: ReadonlyArray<ManualReference>,
+): string {
+  if (!references.length) return text;
+  return text.replace(
+    /^(\s*(?:[-*]\s+)?)\[(\d+)\](?!\()[ \t]*(.*)$/gm,
+    (line, prefix: string, index: string, label: string) => {
+      const reference = references[Number(index) - 1];
+      if (!reference || label.includes('](')) return line;
+      const title = (label.trim() || reference.title).replace(/[[\]]/g, '');
+      return `${prefix}[${title}](${reference.url})`;
+    },
+  );
+}
+
 /** Splits `https://…/<lang>/<page>.html#<anchor>` into the section key it points at. */
 export function parseManualTarget(
   url: string,
@@ -82,3 +117,11 @@ export function parseManualTarget(
   const match = /\/([^/#?]+)\.html(?:#([^?]*))?$/.exec(url);
   return match ? { page: match[1], anchor: match[2] || undefined } : null;
 }
+
+/** The tool-calling prompt: the fixed instructions plus the page the user is on. */
+export const buildToolSystemPrompt = (
+  basePrompt: string,
+  page: AssistantPageContext,
+): string =>
+  `${basePrompt.trim()}\n\n## Current page\nWebUI path: ${page.path}` +
+  (page.manualURL ? `\nManual page: ${page.manualURL}` : '');

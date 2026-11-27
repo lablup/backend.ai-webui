@@ -30,6 +30,7 @@ import {
   useUpdatableState,
   type BAIColumnType,
   type GraphQLFilter,
+  BAIUnmountAfterClose,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
@@ -305,21 +306,23 @@ const AdminClientIpMaskingPolicyList: React.FC = () => {
         columns={columns}
         pagination={false}
       />
-      <ClientIpMaskingPolicySettingModal
-        open={isOpenSettingModal}
-        policyFrgmt={editingPolicy}
-        onViewExistingPolicy={(targetType) => {
-          setIsOpenSettingModal(false);
-          setFilter({ targetType });
-          refetch();
-        }}
-        onRequestClose={(success) => {
-          setIsOpenSettingModal(false);
-          if (success && editingPolicy === null) {
+      <BAIUnmountAfterClose>
+        <ClientIpMaskingPolicySettingModal
+          open={isOpenSettingModal}
+          policyFrgmt={editingPolicy}
+          onViewExistingPolicy={(targetType) => {
+            setIsOpenSettingModal(false);
+            setFilter({ targetType });
             refetch();
-          }
-        }}
-      />
+          }}
+          onRequestClose={(success) => {
+            setIsOpenSettingModal(false);
+            if (success && editingPolicy === null) {
+              refetch();
+            }
+          }}
+        />
+      </BAIUnmountAfterClose>
       <BAIDeleteConfirmModal
         open={!!deletingPolicy}
         title={t('clientIpMasking.DeletePolicy')}
