@@ -128,6 +128,26 @@
       );
   }
 
+  /* Drawer mode: docked to the right edge, from under the header to the bottom. */
+  .webui-assistant-panel[data-mode='drawer'] {
+    inset-block-start: calc(
+      var(--webui-header-height, 60px) + var(--webui-titlebar-height, 0px)
+    );
+    inset-block-end: 0;
+    inset-inline-end: 0;
+    translate: none;
+    width: min(480px, 100vw);
+    height: auto;
+    padding-block-end: env(safe-area-inset-bottom, 0px);
+    border-block: 0;
+    border-inline-end: 0;
+    border-radius: 0;
+  }
+
+  .webui-assistant-fab--hidden {
+    display: none;
+  }
+
   /* While an answer is being written, a gradient ring runs around the button. */
   .webui-assistant-fab--working::before {
     content: '';

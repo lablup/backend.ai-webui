@@ -25,7 +25,14 @@ import {
   BAIUnmountAfterClose,
   useBAILogger,
 } from 'backend.ai-ui';
-import { EraserIcon, MessageCircle, PlugZap, X } from 'lucide-react';
+import {
+  EraserIcon,
+  MessageCircle,
+  PanelRightOpen,
+  PictureInPicture2,
+  PlugZap,
+  X,
+} from 'lucide-react';
 import {
   lazy,
   startTransition,
@@ -63,6 +70,9 @@ const WebUIAssistantFloating: React.FC = () => {
   );
   const [isConnectOpen, setIsConnectOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [isDrawerMode, setIsDrawerMode] = useBAISettingUserState(
+    'webui_assistant_drawer_mode',
+  );
   const [conversationKey, setConversationKey] = useState(0);
   const [isWorking, setIsWorking] = useState(false);
   // A link inside the modal (the token settings shortcut) leaves the page; the modal must not cover the new one.
@@ -82,6 +92,8 @@ const WebUIAssistantFloating: React.FC = () => {
       ? !connection.hasApiKey || !!apiKey
       : customBaseURLThisLoad === connection.baseURL);
   const isPanelShown = isOpen && isConnected;
+  // The drawer covers the button's corner, so its header carries the close button instead.
+  const isFabHidden = isPanelShown && !!isDrawerMode;
   const title =
     WEBUI_ASSISTANT_PROFILE.translations[lang] || WEBUI_ASSISTANT_PROFILE.name;
   // The chat (manual download, /models probe) mounts on first open (ADR 0032) and then stays.
@@ -232,6 +244,7 @@ const WebUIAssistantFloating: React.FC = () => {
         ref={panelRef}
         className="webui-assistant-panel"
         data-below={isPanelBelow || undefined}
+        data-mode={isDrawerMode ? 'drawer' : 'floating'}
         // BAIFlex's inline `position`/`display` would beat the class and `hidden`.
         style={{
           position: 'fixed',
@@ -262,6 +275,32 @@ const WebUIAssistantFloating: React.FC = () => {
             <IconButton
               variant="ghost"
               size="sm"
+              data-testid="webui-assistant-mode-toggle"
+              icon={
+                isDrawerMode ? (
+                  <PictureInPicture2 size="1em" />
+                ) : (
+                  <PanelRightOpen size="1em" />
+                )
+              }
+              label={
+                isDrawerMode
+                  ? t('webuiAssistant.CollapseToFloating')
+                  : t('webuiAssistant.ExpandToDrawer')
+              }
+              tooltip={
+                isDrawerMode
+                  ? t('webuiAssistant.CollapseToFloating')
+                  : t('webuiAssistant.ExpandToDrawer')
+              }
+              onClick={() => {
+                if (isDrawerMode) updatePanelSide();
+                setIsDrawerMode(!isDrawerMode);
+              }}
+            />
+            <IconButton
+              variant="ghost"
+              size="sm"
               icon={<PlugZap size="1em" />}
               label={t('webuiAssistant.ChangeConnection')}
               tooltip={t('webuiAssistant.ChangeConnection')}
@@ -283,6 +322,16 @@ const WebUIAssistantFloating: React.FC = () => {
                 tooltip={t('webuiAssistant.ClearConversation')}
               />
             </BAIPopconfirm>
+            {isDrawerMode && (
+              <IconButton
+                variant="ghost"
+                size="sm"
+                icon={<X size="1em" />}
+                label={t('button.Close')}
+                tooltip={t('button.Close')}
+                onClick={() => setIsOpen(false)}
+              />
+            )}
           </BAIFlex>
         </BAIFlex>
         <Suspense
@@ -319,7 +368,7 @@ const WebUIAssistantFloating: React.FC = () => {
       </BAIFlex>
       <IconButton
         ref={fabRef}
-        className={`webui-assistant-fab${isWorking ? ' webui-assistant-fab--working' : ''}`}
+        className={`webui-assistant-fab${isWorking ? ' webui-assistant-fab--working' : ''}${isFabHidden ? ' webui-assistant-fab--hidden' : ''}`}
         data-testid="webui-assistant-fab"
         variant="primary"
         size="lg"

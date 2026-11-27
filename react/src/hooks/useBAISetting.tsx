@@ -52,6 +52,8 @@ export interface UserSettings {
   experimental_session_monitor?: boolean;
   /** Floating WebUI Assistant chat; default off. */
   experimental_webui_assistant?: boolean;
+  /** The WebUI Assistant opens as a right-side drawer instead of a floating window. */
+  webui_assistant_drawer_mode?: boolean;
   extra_ai_agents?: Array<AgentProfile>;
   agent_endpoints?: AgentEndpointBindings;
   session_metrics_board_items?: Array<Omit<BAIBoardItem, 'data'>>;
