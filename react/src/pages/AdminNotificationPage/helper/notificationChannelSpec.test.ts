@@ -111,18 +111,21 @@ describe('specFormValuesFromSaved', () => {
   it('fills the email fields from a saved spec', () => {
     expect(
       specFormValuesFromSaved({
-        smtp: {
-          host: 'smtp.example.com',
-          port: 465,
-          useTls: false,
-          timeout: 10,
+        webhook: null,
+        email: {
+          smtp: {
+            host: 'smtp.example.com',
+            port: 465,
+            useTls: false,
+            timeout: 10,
+          },
+          message: {
+            fromEmail: 'noreply@example.com',
+            toEmails: ['ops@example.com'],
+            subjectTemplate: null,
+          },
+          auth: { username: 'mailer' },
         },
-        message: {
-          fromEmail: 'noreply@example.com',
-          toEmails: ['ops@example.com'],
-          subjectTemplate: null,
-        },
-        auth: { username: 'mailer' },
       }),
     ).toEqual({
       webhookUrl: undefined,
@@ -139,7 +142,10 @@ describe('specFormValuesFromSaved', () => {
 
   it('fills only the URL from a saved webhook spec', () => {
     expect(
-      specFormValuesFromSaved({ url: 'https://hooks.example.com/abc' }),
+      specFormValuesFromSaved({
+        webhook: { url: 'https://hooks.example.com/abc' },
+        email: null,
+      }),
     ).toMatchObject({ webhookUrl: 'https://hooks.example.com/abc' });
   });
 });

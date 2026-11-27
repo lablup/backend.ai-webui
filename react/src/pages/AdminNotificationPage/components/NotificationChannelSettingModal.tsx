@@ -373,10 +373,10 @@ const EditChannelForm: React.FC<
         query NotificationChannelSettingModalSpecQuery($id: ID!) {
           adminNotificationChannel(id: $id) {
             spec {
-              ... on WebhookSpec {
+              webhook {
                 url
               }
-              ... on EmailSpec {
+              email {
                 smtp {
                   host
                   port
@@ -405,11 +405,7 @@ const EditChannelForm: React.FC<
       {...props}
       savedSpec={{
         values: specFormValuesFromSaved(spec),
-        hasSavedAuth:
-          props.channel.channelType === 'EMAIL' &&
-          !!spec &&
-          'auth' in spec &&
-          !!spec.auth,
+        hasSavedAuth: !!spec?.email?.auth,
       }}
     />
   );

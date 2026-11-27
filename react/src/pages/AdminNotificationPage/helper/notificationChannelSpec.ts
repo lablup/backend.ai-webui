@@ -76,34 +76,36 @@ export const buildNotificationChannelSpecInput = (
 
 /** A channel's saved spec as the manager returns it; the SMTP password never comes back. */
 export type SavedNotificationChannelSpec = {
-  readonly url?: string;
-  readonly smtp?: {
-    readonly host: string;
-    readonly port: number;
-    readonly useTls: boolean;
-    readonly timeout: number;
+  readonly webhook?: { readonly url: string } | null;
+  readonly email?: {
+    readonly smtp: {
+      readonly host: string;
+      readonly port: number;
+      readonly useTls: boolean;
+      readonly timeout: number;
+    };
+    readonly message: {
+      readonly fromEmail: string;
+      readonly toEmails: ReadonlyArray<string>;
+      readonly subjectTemplate?: string | null;
+    };
+    readonly auth?: { readonly username?: string | null } | null;
   } | null;
-  readonly message?: {
-    readonly fromEmail: string;
-    readonly toEmails: ReadonlyArray<string>;
-    readonly subjectTemplate?: string | null;
-  } | null;
-  readonly auth?: { readonly username?: string | null } | null;
 };
 
 /** The form values that show a saved spec, so editing starts from what is stored. */
 export const specFormValuesFromSaved = (
   spec: SavedNotificationChannelSpec | null | undefined,
 ): Partial<NotificationChannelSpecFormValues> => ({
-  webhookUrl: spec?.url,
-  smtpHost: spec?.smtp?.host,
-  smtpPort: spec?.smtp?.port,
-  smtpUseTls: spec?.smtp?.useTls,
-  smtpTimeout: spec?.smtp?.timeout,
-  smtpUsername: spec?.auth?.username ?? undefined,
-  fromEmail: spec?.message?.fromEmail,
-  toEmails: spec?.message ? [...spec.message.toEmails] : undefined,
-  subjectTemplate: spec?.message?.subjectTemplate ?? undefined,
+  webhookUrl: spec?.webhook?.url,
+  smtpHost: spec?.email?.smtp.host,
+  smtpPort: spec?.email?.smtp.port,
+  smtpUseTls: spec?.email?.smtp.useTls,
+  smtpTimeout: spec?.email?.smtp.timeout,
+  smtpUsername: spec?.email?.auth?.username ?? undefined,
+  fromEmail: spec?.email?.message.fromEmail,
+  toEmails: spec?.email ? [...spec.email.message.toEmails] : undefined,
+  subjectTemplate: spec?.email?.message.subjectTemplate ?? undefined,
 });
 
 /**
