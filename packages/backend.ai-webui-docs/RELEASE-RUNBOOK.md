@@ -177,6 +177,13 @@ aws amplify update-app --app-id <APP_ID> \
 Do **not** reintroduce version numbers (e.g. `/26.4/`) into rule targets
 — that recreates the manual-reapplication step this design removed.
 
+> **Pending one-time reapplication (FR-3280).** The rule set gained a
+> trailing `/<*>` → `/404.html` (status `404`) catch-all so unmatched
+> paths — an unsupported locale such as `/latest/fr/` above all — serve
+> the build's 404 page instead of an empty body. Until someone applies
+> the rules once by the procedure above, the live site keeps returning
+> the blank 404; deploying the build alone is not enough.
+
 ---
 
 ## What is NOT a runbook step
