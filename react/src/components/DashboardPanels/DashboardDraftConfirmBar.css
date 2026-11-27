@@ -26,4 +26,17 @@
       100vw - var(--webui-assistant-fab-size) - var(--spacing-6) * 3
     );
   }
+
+  /* An open drawer hides the button; the bar moves left of the drawer when there is room. */
+  @media (min-width: 960px) {
+    :root:has(.webui-assistant-panel[data-mode='drawer'][data-open])
+      .dashboard-draft-confirm-bar {
+      inset-inline-end: calc(
+        var(--webui-assistant-drawer-width) + var(--webui-assistant-inset)
+      );
+      max-width: calc(
+        100vw - var(--webui-assistant-drawer-width) - var(--spacing-6) * 2
+      );
+    }
+  }
 }

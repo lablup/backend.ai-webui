@@ -13,6 +13,9 @@ import type { SetStateAction } from 'react';
  */
 export const notificationDrawerOpenState = atom(false);
 
+/** The WebUI Assistant is open as a drawer; the content area makes room for it. */
+export const webUIAssistantDrawerOpenState = atom(false);
+
 export const useNotificationDrawerState = () => {
   'use memo';
   return useAtom(notificationDrawerOpenState);

@@ -4,6 +4,7 @@
  */
 import { useMyAppConfig } from '../../hooks/useAppConfig';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
+import { webUIAssistantDrawerOpenState } from '../../hooks/useShellPanels';
 import BAIErrorBoundary from '../BAIErrorBoundary';
 import { useCustomEndpointApiKey } from '../Chat/customEndpointKeyStore';
 import { useCurrentLanguage } from '../DefaultProviders';
@@ -25,13 +26,22 @@ import {
   BAIUnmountAfterClose,
   useBAILogger,
 } from 'backend.ai-ui';
-import { EraserIcon, MessageCircle, PlugZap, X } from 'lucide-react';
+import { useSetAtom } from 'jotai';
+import {
+  EraserIcon,
+  MessageCircle,
+  PanelRightOpen,
+  PictureInPicture2,
+  PlugZap,
+  X,
+} from 'lucide-react';
 import {
   lazy,
   startTransition,
   Suspense,
   useEffect,
   useEffectEvent,
+  useLayoutEffect,
   useRef,
   useState,
 } from 'react';
@@ -63,6 +73,9 @@ const WebUIAssistantFloating: React.FC = () => {
   );
   const [isConnectOpen, setIsConnectOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [isDrawerMode, setIsDrawerMode] = useBAISettingUserState(
+    'webui_assistant_drawer_mode',
+  );
   const [conversationKey, setConversationKey] = useState(0);
   const [isWorking, setIsWorking] = useState(false);
   // A link inside the modal (the token settings shortcut) leaves the page; the modal must not cover the new one.
@@ -82,6 +95,11 @@ const WebUIAssistantFloating: React.FC = () => {
       ? !connection.hasApiKey || !!apiKey
       : customBaseURLThisLoad === connection.baseURL);
   const isPanelShown = isOpen && isConnected;
+  // The drawer covers the button's corner, so its header carries the close button instead.
+  const isFabHidden = isPanelShown && !!isDrawerMode;
+  const modeToggleLabel = isDrawerMode
+    ? t('webuiAssistant.CollapseToFloating')
+    : t('webuiAssistant.ExpandToDrawer');
   const title =
     WEBUI_ASSISTANT_PROFILE.translations[lang] || WEBUI_ASSISTANT_PROFILE.name;
   // The chat (manual download, /models probe) mounts on first open (ADR 0032) and then stays.
@@ -123,6 +141,28 @@ const WebUIAssistantFloating: React.FC = () => {
     const roomAbove = rect.top - top - gap;
     const roomBelow = window.innerHeight - rect.bottom - gap;
     setIsPanelBelow(roomAbove < panelHeight && roomBelow > roomAbove);
+  };
+  // The drawer starts under the header, which banners above it push down.
+  const measureDrawerTop = () => {
+    const header = document.querySelector('[data-testid="webui-header"]');
+    const panelStyle = panelRef.current?.style;
+    if (!panelStyle) return;
+    // Under the header band, including the alerts pinned below the header.
+    const rect = (header?.parentElement ?? header)?.getBoundingClientRect();
+    if (rect) {
+      panelStyle.setProperty(
+        '--webui-assistant-drawer-top',
+        `${rect.bottom}px`,
+      );
+    } else {
+      panelStyle.removeProperty('--webui-assistant-drawer-top');
+    }
+  };
+  const focusFabOnCloseRef = useRef(false);
+  const closePanel = () => {
+    // In drawer mode the button is hidden while open, so focus would fall to <body>.
+    focusFabOnCloseRef.current = isPanelShown && !!isDrawerMode;
+    setIsOpen(false);
   };
   const offsetStyle = {
     '--webui-assistant-dx': `${offset.x}px`,
@@ -180,12 +220,41 @@ const WebUIAssistantFloating: React.FC = () => {
     dragRef.current = null;
   };
 
-  const onResize = useEffectEvent(() => updatePanelSide());
-  useEffect(() => {
-    if (!isPanelShown) return;
-    window.addEventListener('resize', onResize);
-    return () => window.removeEventListener('resize', onResize);
-  }, [isPanelShown]);
+  // Measured after the mode renders: the button and the floating height exist only then.
+  const onLayoutChange = useEffectEvent(() => {
+    if (isDrawerMode) measureDrawerTop();
+    else updatePanelSide();
+  });
+  const onPanelHidden = useEffectEvent(() => {
+    if (!focusFabOnCloseRef.current) return;
+    focusFabOnCloseRef.current = false;
+    fabRef.current?.focus();
+  });
+  useLayoutEffect(() => {
+    if (!isPanelShown) {
+      onPanelHidden();
+      return;
+    }
+    // The drawer top is a DOM write and goes before paint; the floating side is state.
+    if (isDrawerMode) measureDrawerTop();
+    const frame = requestAnimationFrame(() => onLayoutChange());
+    window.addEventListener('resize', onLayoutChange);
+    // A banner shown or dismissed above the header resizes one of its ancestors.
+    const header = document.querySelector('[data-testid="webui-header"]');
+    const observer = isDrawerMode ? new ResizeObserver(onLayoutChange) : null;
+    for (
+      let node = header?.parentElement;
+      observer && node && node !== document.body;
+      node = node.parentElement
+    ) {
+      observer.observe(node);
+    }
+    return () => {
+      cancelAnimationFrame(frame);
+      observer?.disconnect();
+      window.removeEventListener('resize', onLayoutChange);
+    };
+  }, [isPanelShown, isDrawerMode]);
 
   const loadChunk = async (load: () => Promise<unknown>) => {
     try {
@@ -205,6 +274,14 @@ const WebUIAssistantFloating: React.FC = () => {
     return true;
   };
 
+  const setDrawerOpen = useSetAtom(webUIAssistantDrawerOpenState);
+  const isDrawerShown = isPanelShown && !!isDrawerMode;
+  useEffect(() => {
+    setDrawerOpen(isDrawerShown);
+    return () => setDrawerOpen(false);
+  }, [isDrawerShown, setDrawerOpen]);
+
+  const onEscape = useEffectEvent(() => closePanel());
   useEffect(() => {
     if (!isOpen || isConnectOpen) return;
     const onKeyDown = (event: KeyboardEvent) => {
@@ -216,7 +293,7 @@ const WebUIAssistantFloating: React.FC = () => {
         !event.isComposing &&
         !document.querySelector('dialog[open]')
       ) {
-        setIsOpen(false);
+        onEscape();
       }
     };
     document.addEventListener('keydown', onKeyDown);
@@ -232,6 +309,8 @@ const WebUIAssistantFloating: React.FC = () => {
         ref={panelRef}
         className="webui-assistant-panel"
         data-below={isPanelBelow || undefined}
+        data-mode={isDrawerMode ? 'drawer' : 'floating'}
+        data-open={isPanelShown || undefined}
         // BAIFlex's inline `position`/`display` would beat the class and `hidden`.
         style={{
           position: 'fixed',
@@ -257,8 +336,24 @@ const WebUIAssistantFloating: React.FC = () => {
             <Text weight="semibold" color="inherit">
               {title}
             </Text>
+            {isDrawerMode && isWorking && <Spinner size="sm" />}
           </BAIFlex>
           <BAIFlex gap="xxs" align="center">
+            <IconButton
+              variant="ghost"
+              size="sm"
+              data-testid="webui-assistant-mode-toggle"
+              icon={
+                isDrawerMode ? (
+                  <PictureInPicture2 size="1em" />
+                ) : (
+                  <PanelRightOpen size="1em" />
+                )
+              }
+              label={modeToggleLabel}
+              tooltip={modeToggleLabel}
+              onClick={() => setIsDrawerMode(!isDrawerMode)}
+            />
             <IconButton
               variant="ghost"
               size="sm"
@@ -283,6 +378,16 @@ const WebUIAssistantFloating: React.FC = () => {
                 tooltip={t('webuiAssistant.ClearConversation')}
               />
             </BAIPopconfirm>
+            {isDrawerMode && (
+              <IconButton
+                variant="ghost"
+                size="sm"
+                icon={<X size="1em" />}
+                label={t('button.Close')}
+                tooltip={t('button.Close')}
+                onClick={closePanel}
+              />
+            )}
           </BAIFlex>
         </BAIFlex>
         <Suspense
@@ -319,7 +424,7 @@ const WebUIAssistantFloating: React.FC = () => {
       </BAIFlex>
       <IconButton
         ref={fabRef}
-        className={`webui-assistant-fab${isWorking ? ' webui-assistant-fab--working' : ''}`}
+        className={`webui-assistant-fab${isWorking ? ' webui-assistant-fab--working' : ''}${isFabHidden ? ' webui-assistant-fab--hidden' : ''}`}
         data-testid="webui-assistant-fab"
         variant="primary"
         size="lg"
