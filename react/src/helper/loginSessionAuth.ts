@@ -9,7 +9,7 @@
  * Handles post-authentication GQL connection and client setup.
  */
 import { RelayEnvironment } from '../RelayEnvironment';
-import { loginSessionAuthMyUserQuery } from '../__generated__/loginSessionAuthMyUserQuery.graphql';
+import type { loginBootstrapQuery } from '../__generated__/loginBootstrapQuery.graphql';
 import {
   fetchAndParseConfig,
   fetchAppConfigOnce,
@@ -18,6 +18,8 @@ import { getActAsTarget } from './actAs';
 import {
   bootstrapAccessKey,
   LoginBootstrapIncompleteError,
+  loginBootstrapQueryNode,
+  loginBootstrapVariables,
   type LoginBootstrap,
 } from './loginBootstrap';
 import { applyConfigToClient, type LoginConfigState } from './loginConfig';
@@ -31,86 +33,7 @@ import {
   WEBUI_SETTINGS_CONFIG_KEY,
 } from './webuiSettings';
 import * as _ from 'lodash-es';
-import { fetchQuery, graphql } from 'react-relay';
-
-// Only the starting project is needed: the remembered one if it is still a
-// GENERAL project of the user, else the first by name (the header's order).
-const myUserQuery = graphql`
-  query loginSessionAuthMyUserQuery(
-    $recentProjectName: String!
-    $hasRecentProject: Boolean!
-    $needsAccessKey: Boolean!
-  ) {
-    myUserV2 {
-      id
-      entityId
-      basicInfo {
-        email
-        fullName
-      }
-      organization {
-        domainName
-        role
-      }
-      domain {
-        entityId
-        basicInfo {
-          name
-        }
-      }
-      recentProject: projects(
-        filter: {
-          isActive: true
-          type: { equals: GENERAL }
-          name: { equals: $recentProjectName }
-        }
-        limit: 1
-      ) @include(if: $hasRecentProject) {
-        edges {
-          node {
-            id
-            entityId
-            basicInfo {
-              name
-            }
-          }
-        }
-      }
-      defaultProject: projects(
-        filter: { isActive: true, type: { equals: GENERAL } }
-        orderBy: [{ field: NAME, direction: ASC }]
-        limit: 1
-      ) {
-        edges {
-          node {
-            id
-            entityId
-            basicInfo {
-              name
-            }
-          }
-        }
-      }
-    }
-    # Under act-as the manager authorizes with the target's default keypair.
-    myKeypairs(filter: { isDefault: true }, limit: 1)
-      @include(if: $needsAccessKey) {
-      edges {
-        node {
-          id
-          accessKey
-        }
-      }
-    }
-    # Seeds myAppConfigState (ADR 0033); a failed read keeps the base config.
-    myAppConfigs(
-      configNames: ["publicConfigByDomain", "domainConfig", "userConfig"]
-    ) @catch(to: NULL) {
-      configName
-      config
-    }
-  }
-`;
+import { fetchQuery } from 'react-relay';
 
 /**
  * Create a Backend.AI client with the given credentials.
@@ -243,8 +166,8 @@ export class LoginAttemptCancelledError extends Error {
 /**
  * Perform GQL connection after successful authentication.
  * Sets up globalThis.backendaiclient with user info, projects, and config.
- * Pass the `bootstrap` a `probeLoginSession` call already fetched to reuse
- * its keypair under act-as.
+ * Pass the `bootstrap` a `probeLoginSession` call already fetched to skip the
+ * query.
  * A cancelled attempt (`isCancelled`) leaves the globals and the login
  * cookie untouched, since a newer attempt may already own them.
  */
@@ -269,25 +192,19 @@ export async function connectViaGQL(
   };
   (globalThis as any).backendaiclient = client;
 
-  const recentProjectName =
-    (globalThis as any).backendaiutils._peekRecentProjectGroup() ?? '';
-  const bootstrappedAccessKey = bootstrapAccessKey(bootstrap);
-  let response: loginSessionAuthMyUserQuery['response'] | undefined;
+  let response: LoginBootstrap | undefined;
   try {
-    // The manager tells its version only to an authenticated caller; the
-    // Relay query needs it to keep version-gated fields.
-    await client.get_manager_version();
-    if (isCancelled?.()) throw cancel();
-    response = await fetchQuery<loginSessionAuthMyUserQuery>(
-      RelayEnvironment,
-      myUserQuery,
-      {
-        recentProjectName,
-        hasRecentProject: !!recentProjectName,
-        needsAccessKey: isActingAs && !bootstrappedAccessKey,
-      },
-      { fetchPolicy: 'network-only' },
-    ).toPromise();
+    // Neither request needs the other: the query has no version-gated field.
+    [, response] = await Promise.all([
+      client.get_manager_version(),
+      bootstrap ??
+        fetchQuery<loginBootstrapQuery>(
+          RelayEnvironment,
+          loginBootstrapQueryNode,
+          loginBootstrapVariables(client),
+          { fetchPolicy: 'network-only' },
+        ).toPromise(),
+    ]);
   } catch (err) {
     if (isCancelled?.()) throw cancel();
     // A refused session is cleaned up like a missing user; a network blip is not.
@@ -331,8 +248,7 @@ export async function connectViaGQL(
   // `check_login` reads the access key from the webserver session, which stays
   // the super admin's; under act-as the manager answers with the target's.
   if (isActingAs) {
-    const accessKey =
-      bootstrappedAccessKey ?? response.myKeypairs?.edges[0]?.node.accessKey;
+    const accessKey = bootstrapAccessKey(response);
     if (accessKey) {
       client._config._accessKey = accessKey;
     }

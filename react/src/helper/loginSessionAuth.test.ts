@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { RelayEnvironment } from '../RelayEnvironment';
-import myUserQueryNode from '../__generated__/loginSessionAuthMyUserQuery.graphql';
+import myUserQueryNode from '../__generated__/loginBootstrapQuery.graphql';
 import {
   LoginBootstrapIncompleteError,
   type LoginBootstrap,
@@ -311,14 +311,20 @@ describe('connectViaGQL', () => {
     expect(g.backendaioptions.set).toHaveBeenCalledWith('endpoints', updated);
   });
 
-  test('reads the manager version before the user query, once signed in', async () => {
-    const client = makeClient();
+  test('reads the manager version alongside the user query', async () => {
+    const client = {
+      ...makeClient(),
+      get_manager_version: vi.fn(() => new Promise<string>(() => {})),
+    };
+    let queried = false;
     environment.mock.queueOperationResolver(() => {
-      expect(client.get_manager_version).toHaveBeenCalledTimes(1);
+      queried = true;
       return { data: meWith() } as any;
     });
 
-    await connectViaGQL(client, cfg, []);
+    void connectViaGQL(client, cfg, []);
+    await vi.waitFor(() => expect(queried).toBe(true));
+    expect(client.get_manager_version).toHaveBeenCalledTimes(1);
   });
 
   test('fails the connect when the manager refuses the version', async () => {
@@ -327,6 +333,8 @@ describe('connectViaGQL', () => {
       ...makeClient(),
       get_manager_version: vi.fn().mockRejectedValue(refusal),
     };
+    // The query runs alongside; settle it so a later test's is not deduplicated into it.
+    queueResponses([meWith()]);
 
     await expect(connectViaGQL(client, cfg, [])).rejects.toBe(refusal);
     expect(client.logout).toHaveBeenCalledTimes(1);
@@ -339,6 +347,7 @@ describe('connectViaGQL', () => {
         .fn()
         .mockRejectedValue({ isError: true, statusCode: 502 }),
     };
+    queueResponses([meWith()]);
 
     await expect(connectViaGQL(client, cfg, [])).rejects.toBeInstanceOf(
       LoginBootstrapIncompleteError,
@@ -594,19 +603,19 @@ describe('connectViaGQL — act-as tab (FR-4111)', () => {
     );
   });
 
-  it("takes the target's access key from the probe's bootstrap without a keypair read", async () => {
-    const variables = queueResponses([
-      meWith({ default: [[PROJECT_A, 'alpha']] }),
-    ]);
+  it("connects with the probe's bootstrap without querying again", async () => {
     const client = actAsClient();
     (client._config as Record<string, unknown>)._accessKey = 'ADMIN_KEY';
     const bootstrap = {
+      ...meWith({ default: [[PROJECT_A, 'alpha']] }),
       myKeypairs: { edges: [{ node: { accessKey: 'TARGET_KEY' } }] },
     } as unknown as LoginBootstrap;
+    const before = environment.mock.getAllOperations().length;
 
     await connectViaGQL(client, cfg, [], bootstrap);
-    expect(variables[0].needsAccessKey).toBe(false);
-    expect(client.query).not.toHaveBeenCalled();
+    expect(environment.mock.getAllOperations()).toHaveLength(before);
+    expect(client.get_manager_version).toHaveBeenCalledTimes(1);
+    expect(g.backendaiclient.groups).toEqual(['alpha']);
     expect((client._config as Record<string, unknown>)._accessKey).toBe(
       'TARGET_KEY',
     );

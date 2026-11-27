@@ -377,10 +377,10 @@ class BackendAICommonUtils {
     return '^(?=.*\\d)(?=.*[a-zA-Z])(?=.*[_\\W]).{8,}$';
   }
 
-  _peekRecentProjectGroup(): string | null {
-    const endpointId = (
-      globalThis as any
-    ).backendaiclient._config.endpointHost.replace(/\./g, '_');
+  _peekRecentProjectGroup(
+    client = (globalThis as any).backendaiclient,
+  ): string | null {
+    const endpointId = client._config.endpointHost.replace(/\./g, '_');
     return (globalThis as any).backendaioptions.get(
       'projectGroup.' + endpointId,
     );
