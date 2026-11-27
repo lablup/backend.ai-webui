@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="โฟลเดอร์จัดเก็บ" />
   <meta name="twitter:description" content="Backend.AI มีพื้นที่จัดเก็บเฉพาะเพื่อเก็บไฟล์ของผู้ใช้ให้คงอยู่ เนื่องจากไฟล์และไดเรกทอรีของเซสชันการคำนวณจะถูกลบเมื่อเซสชันสิ้นสุดลง…" />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"โฟลเดอร์จัดเก็บ","inLanguage":"th","description":"Backend.AI มีพื้นที่จัดเก็บเฉพาะเพื่อเก็บไฟล์ของผู้ใช้ให้คงอยู่ เนื่องจากไฟล์และไดเรกทอรีของเซสชันการคำนวณจะถูกลบเมื่อเซสชันสิ้นสุดลง…","dateModified":"2026-11-26T15:29:55.000Z","url":"https://webui.docs.backend.ai/next/th/vfolder.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"โฟลเดอร์จัดเก็บ","inLanguage":"th","description":"Backend.AI มีพื้นที่จัดเก็บเฉพาะเพื่อเก็บไฟล์ของผู้ใช้ให้คงอยู่ เนื่องจากไฟล์และไดเรกทอรีของเซสชันการคำนวณจะถูกลบเมื่อเซสชันสิ้นสุดลง…","dateModified":"2026-11-27T02:35:46.000Z","url":"https://webui.docs.backend.ai/next/th/vfolder.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/vfolder.html" />
   <link rel="alternate" hreflang="en" href="../en/vfolder.html" />
   <link rel="alternate" hreflang="ja" href="../ja/vfolder.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">คู่มือ</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.10.0-alpha.3 (cb9473e)">v26.10.0-alpha.3 (cb9473e)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.10.0-alpha.3 (f3c843a)">v26.10.0-alpha.3 (f3c843a)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="ค้นหาเอกสาร...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -214,17 +214,16 @@
 </p>
 <p data-bai-block="3">โฟลเดอร์จัดเก็บมีสองประเภท: <code>ผู้ใช้</code> และ <code>โปรเจกต์</code> คุณสามารถแยกความแตกต่างได้ในคอลัมน์ &#39;ประเภท&#39;</p>
 <p data-bai-block="4">หน้าข้อมูลจะแสดงโฟลเดอร์ของโปรเจกต์ที่เลือกด้วยตัวเลือกโปรเจกต์ในแถบด้านบน โดยโปรเจกต์ส่วนตัวของคุณจะแสดงโฟลเดอร์ <code>ผู้ใช้</code> ที่คุณเป็นเจ้าของ ส่วนโปรเจกต์อื่นจะแสดงโฟลเดอร์ของโปรเจกต์นั้นและโฟลเดอร์ที่แบ่งปันให้โปรเจกต์นั้น</p>
-<h2 data-bai-block="5" id="vfolder-ปายคำเชญและจดเขาใชงาน">ป้ายคำเชิญและจุดเข้าใช้งาน<a class="hash-link" href="#vfolder-ปายคำเชญและจดเขาใชงาน" aria-label="Direct link to ป้ายคำเชิญและจุดเข้าใช้งาน">#</a></h2>
-<p data-bai-block="6">เมื่อมีผู้ใช้รายอื่นเชิญคุณให้ใช้งานโฟลเดอร์จัดเก็บของพวกเขาร่วมกัน ป้ายคำเชิญขนาดเล็กจะ
-ปรากฏที่รายการหน้าข้อมูลในแถบด้านข้าง และข้างกับสรุปสถานะของโฟลเดอร์ ป้ายจะแสดง
+<h2 data-bai-block="5" id="vfolder-คำเชญทรอดำเนนการ">คำเชิญที่รอดำเนินการ<a class="hash-link" href="#vfolder-คำเชญทรอดำเนนการ" aria-label="Direct link to คำเชิญที่รอดำเนินการ">#</a></h2>
+<p data-bai-block="6">เมื่อมีผู้ใช้รายอื่นเชิญคุณให้ใช้งานโฟลเดอร์จัดเก็บของพวกเขาร่วมกัน ลิงก์ <strong>คำเชิญที่รอดำเนินการ</strong>
+จะปรากฏที่ด้านขวาบนของรายการโฟลเดอร์ในหน้าข้อมูล ลิงก์จะแสดง
 จำนวนคำเชิญที่ค้างอยู่และยังไม่ได้รับการตอบกลับ คำเชิญที่แสดงจะเป็นไปตามโปรเจกต์ที่เลือกด้วย
 ตัวเลือกโปรเจกต์ในแถบด้านบน โดยโปรเจกต์ส่วนตัวของคุณจะแสดงคำเชิญที่ส่งถึงคุณ
 ส่วนโปรเจกต์อื่นจะแสดงคำเชิญที่ส่งถึงโปรเจกต์นั้น</p>
 <p><figure data-bai-block="7" class="doc-figure"><img src="./images/vfolder_invitation_badge.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2280" height="104" /><figcaption>รูปที่ 14.2</figcaption></figure>
 </p>
-<p data-bai-block="8">คลิกที่ป้ายเพื่อเปิดรายการคำเชิญ ซึ่งคุณสามารถยอมรับหรือปฏิเสธคำเชิญที่ค้างอยู่แต่ละ
-รายการได้ โฟลเดอร์ที่ยอมรับแล้วจะปรากฏในรายการโฟลเดอร์ของคุณทันทีด้วยประเภท <code>เชิญแล้ว</code> หน้า <code>/data</code> เองก็เป็นจุดเข้าใช้งานที่ถูกต้องสำหรับการตรวจสอบคำเชิญด้วย เพียง
-เปิดหน้าข้อมูล คุณก็สามารถเข้าถึงรายการคำเชิญเดียวกันได้จากสรุปสถานะของโฟลเดอร์</p>
+<p data-bai-block="8">คลิกที่ลิงก์เพื่อเปิดโมดัล <strong>โฟลเดอร์ที่ได้รับเชิญ</strong> ซึ่งคุณสามารถยอมรับหรือปฏิเสธคำเชิญที่ค้างอยู่แต่ละรายการได้
+โฟลเดอร์ที่ยอมรับแล้วจะปรากฏในรายการโฟลเดอร์ของคุณทันที</p>
 <p><a id="create-storage-folder"></a>
 <a id="create_storage_folder"></a></p>
 <h2 data-bai-block="9" id="vfolder-สรางโฟลเดอรจดเกบ">สร้างโฟลเดอร์จัดเก็บ<a class="hash-link" href="#vfolder-สรางโฟลเดอรจดเกบ" aria-label="Direct link to สร้างโฟลเดอร์จัดเก็บ">#</a></h2>
@@ -539,7 +538,7 @@ storage host นั้น คุณจะสามารถอัปโหลด
     <div class="page-footer">
       <div class="page-metadata">
   <a class="edit-link" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/th/vfolder/vfolder.md" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg> แก้ไขหน้านี้</a>
-  <span class="last-updated">อัปเดตล่าสุด 26 พ.ย. 2569</span>
+  <span class="last-updated">อัปเดตล่าสุด 27 พ.ย. 2569</span>
 </div>
       <nav class="pagination-nav" aria-label="Docs pages">
   <a class="pagination-nav__link pagination-nav__link--prev" href="./my_environments.html">
@@ -559,7 +558,7 @@ storage host นั้น คุณจะสามารถอัปโหลด
   <aside class="doc-toc" aria-labelledby="doc-toc-heading">
   <div class="doc-toc__heading" id="doc-toc-heading">หัวข้อในหน้านี้</div>
   <ul class="doc-toc__list">
-      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#vfolder-%E0%B8%9B%E0%B8%B2%E0%B8%A2%E0%B8%84%E0%B8%B3%E0%B9%80%E0%B8%8A%E0%B8%8D%E0%B9%81%E0%B8%A5%E0%B8%B0%E0%B8%88%E0%B8%94%E0%B9%80%E0%B8%82%E0%B8%B2%E0%B9%83%E0%B8%8A%E0%B8%87%E0%B8%B2%E0%B8%99" data-toc-target="vfolder-ปายคำเชญและจดเขาใชงาน">ป้ายคำเชิญและจุดเข้าใช้งาน</a></li>
+      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#vfolder-%E0%B8%84%E0%B8%B3%E0%B9%80%E0%B8%8A%E0%B8%8D%E0%B8%97%E0%B8%A3%E0%B8%AD%E0%B8%94%E0%B8%B3%E0%B9%80%E0%B8%99%E0%B8%99%E0%B8%81%E0%B8%B2%E0%B8%A3" data-toc-target="vfolder-คำเชญทรอดำเนนการ">คำเชิญที่รอดำเนินการ</a></li>
       <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#vfolder-%E0%B8%AA%E0%B8%A3%E0%B8%B2%E0%B8%87%E0%B9%82%E0%B8%9F%E0%B8%A5%E0%B9%80%E0%B8%94%E0%B8%AD%E0%B8%A3%E0%B8%88%E0%B8%94%E0%B9%80%E0%B8%81%E0%B8%9A" data-toc-target="vfolder-สรางโฟลเดอรจดเกบ">สร้างโฟลเดอร์จัดเก็บ</a></li>
       <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#vfolder-%E0%B8%AA%E0%B8%B3%E0%B8%A3%E0%B8%A7%E0%B8%88%E0%B9%82%E0%B8%9F%E0%B8%A5%E0%B9%80%E0%B8%94%E0%B8%AD%E0%B8%A3" data-toc-target="vfolder-สำรวจโฟลเดอร">สำรวจโฟลเดอร์</a></li>
       <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#vfolder-%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%94%E0%B8%B3%E0%B9%80%E0%B8%99%E0%B8%99%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B9%84%E0%B8%9F%E0%B8%A5" data-toc-target="vfolder-การดำเนนการไฟล">การดำเนินการไฟล์</a></li>

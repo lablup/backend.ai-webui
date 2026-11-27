@@ -2,7 +2,7 @@
   "version": 1,
   "channel": "next",
   "label": "PR preview",
-  "generatedAt": "2026-11-26T15:31:15.729Z",
+  "generatedAt": "2026-11-27T02:37:00.278Z",
   "languages": [
     "en",
     "ja",
@@ -13,10 +13,10 @@
     "en": {
       "totals": {
         "pages": 1,
-        "changes": 1,
-        "added": 0,
-        "modified": 1,
-        "removed": 0,
+        "changes": 4,
+        "added": 1,
+        "modified": 2,
+        "removed": 1,
         "images": 0,
         "newPages": 0,
         "deletedPages": 0
@@ -29,14 +29,17 @@
           "url": "next/en/vfolder.html",
           "sourcePath": "packages/backend.ai-webui-docs/src/en/vfolder/vfolder.md",
           "counts": {
-            "added": 0,
-            "modified": 1,
-            "removed": 0,
+            "added": 1,
+            "modified": 2,
+            "removed": 1,
             "images": 0,
-            "total": 1
+            "total": 4
           },
           "fingerprints": [
-            "1ed67e8298b2"
+            "e94c3b78c474",
+            "9ea7fd414b5f",
+            "e97e4e7e808c",
+            "73e4c75deb9f"
           ]
         }
       ]
@@ -44,10 +47,10 @@
     "ja": {
       "totals": {
         "pages": 1,
-        "changes": 1,
-        "added": 0,
-        "modified": 1,
-        "removed": 0,
+        "changes": 4,
+        "added": 1,
+        "modified": 2,
+        "removed": 1,
         "images": 0,
         "newPages": 0,
         "deletedPages": 0
@@ -60,14 +63,17 @@
           "url": "next/ja/vfolder.html",
           "sourcePath": "packages/backend.ai-webui-docs/src/ja/vfolder/vfolder.md",
           "counts": {
-            "added": 0,
-            "modified": 1,
-            "removed": 0,
+            "added": 1,
+            "modified": 2,
+            "removed": 1,
             "images": 0,
-            "total": 1
+            "total": 4
           },
           "fingerprints": [
-            "06b53e080c34"
+            "07381063c165",
+            "b9cb555b1584",
+            "9c69bd8020ea",
+            "93e9fdb16b7e"
           ]
         }
       ]
@@ -75,10 +81,10 @@
     "ko": {
       "totals": {
         "pages": 1,
-        "changes": 1,
-        "added": 0,
-        "modified": 1,
-        "removed": 0,
+        "changes": 4,
+        "added": 1,
+        "modified": 2,
+        "removed": 1,
         "images": 0,
         "newPages": 0,
         "deletedPages": 0
@@ -91,14 +97,17 @@
           "url": "next/ko/vfolder.html",
           "sourcePath": "packages/backend.ai-webui-docs/src/ko/vfolder/vfolder.md",
           "counts": {
-            "added": 0,
-            "modified": 1,
-            "removed": 0,
+            "added": 1,
+            "modified": 2,
+            "removed": 1,
             "images": 0,
-            "total": 1
+            "total": 4
           },
           "fingerprints": [
-            "e83ddeda2b6f"
+            "615382c3662e",
+            "97aa9e7d3602",
+            "65f80c048e5b",
+            "060b0ec46dde"
           ]
         }
       ]
@@ -106,10 +115,10 @@
     "th": {
       "totals": {
         "pages": 1,
-        "changes": 1,
-        "added": 0,
-        "modified": 1,
-        "removed": 0,
+        "changes": 4,
+        "added": 1,
+        "modified": 2,
+        "removed": 1,
         "images": 0,
         "newPages": 0,
         "deletedPages": 0
@@ -122,14 +131,17 @@
           "url": "next/th/vfolder.html",
           "sourcePath": "packages/backend.ai-webui-docs/src/th/vfolder/vfolder.md",
           "counts": {
-            "added": 0,
-            "modified": 1,
-            "removed": 0,
+            "added": 1,
+            "modified": 2,
+            "removed": 1,
             "images": 0,
-            "total": 1
+            "total": 4
           },
           "fingerprints": [
-            "a5002f8fecd6"
+            "d596f5288b8d",
+            "76af01f5ee37",
+            "bb8b83f5fef8",
+            "3e79af3c1b2f"
           ]
         }
       ]

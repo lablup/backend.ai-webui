@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="ストレージフォルダ" />
   <meta name="twitter:description" content="Backend.AIは、ユーザーのファイルを安全に保管するための専用ストレージを提供しています。コンピュートセッションのファイルやディレクトリはセッション終了時に削除されるため、ストレージフォルダに保存することを推奨します。ストレージフォルダの一覧は、サイドバーのデータページを選択すると確認できます。" />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"ストレージフォルダ","inLanguage":"ja","description":"Backend.AIは、ユーザーのファイルを安全に保管するための専用ストレージを提供しています。コンピュートセッションのファイルやディレクトリはセッション終了時に削除されるため、ストレージフォルダに保存することを推奨します。ストレージフォルダの一覧は、サイドバーのデータページを選択すると確認できます。","dateModified":"2026-11-26T15:29:55.000Z","url":"https://webui.docs.backend.ai/next/ja/vfolder.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"ストレージフォルダ","inLanguage":"ja","description":"Backend.AIは、ユーザーのファイルを安全に保管するための専用ストレージを提供しています。コンピュートセッションのファイルやディレクトリはセッション終了時に削除されるため、ストレージフォルダに保存することを推奨します。ストレージフォルダの一覧は、サイドバーのデータページを選択すると確認できます。","dateModified":"2026-11-27T02:35:46.000Z","url":"https://webui.docs.backend.ai/next/ja/vfolder.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/vfolder.html" />
   <link rel="alternate" hreflang="en" href="../en/vfolder.html" />
   <link rel="alternate" hreflang="ja" href="../ja/vfolder.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">マニュアル</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.10.0-alpha.3 (cb9473e)">v26.10.0-alpha.3 (cb9473e)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.10.0-alpha.3 (f3c843a)">v26.10.0-alpha.3 (f3c843a)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="ドキュメント検索...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -214,18 +214,16 @@
 </p>
 <p data-bai-block="3">ストレージフォルダには、<code>ユーザー</code>と<code>プロジェクト</code>の2つのタイプがあります。「種類」列で区別できます。</p>
 <p data-bai-block="4">データページには、トップバーのプロジェクトセレクターで選択したプロジェクトのフォルダが表示されます。個人プロジェクトでは自分が所有する<code>ユーザー</code>フォルダが表示され、それ以外のプロジェクトではそのプロジェクトのフォルダと、そのプロジェクトに共有されたフォルダが表示されます。</p>
-<h2 data-bai-block="5" id="vfolder-招待バッジとエントリーポイント">招待バッジとエントリーポイント<a class="hash-link" href="#vfolder-招待バッジとエントリーポイント" aria-label="Direct link to 招待バッジとエントリーポイント">#</a></h2>
-<p data-bai-block="6">他のユーザーが自分のストレージフォルダを共有するために招待を送ると、サイドバーのデータ
-ページ項目とフォルダステータスの概要の横に小さな招待バッジが表示されます。バッジには、
+<h2 data-bai-block="5" id="vfolder-保留中の招待">保留中の招待<a class="hash-link" href="#vfolder-保留中の招待" aria-label="Direct link to 保留中の招待">#</a></h2>
+<p data-bai-block="6">他のユーザーが自分のストレージフォルダを共有するために招待を送ると、データページの
+フォルダ一覧上部の右側に<strong>保留中の招待</strong>リンクが表示されます。リンクには、
 まだ応答していない保留中の招待の件数が表示されます。表示される招待は、トップバーの
 プロジェクトセレクターで選択したプロジェクトに従います。個人プロジェクトでは自分宛ての
 招待が表示され、それ以外のプロジェクトではそのプロジェクト宛ての招待が表示されます。</p>
 <p><figure data-bai-block="7" class="doc-figure"><img src="./images/vfolder_invitation_badge.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2280" height="104" /><figcaption>図 14.2</figcaption></figure>
 </p>
-<p data-bai-block="8">バッジをクリックすると招待リストが開き、保留中の各招待を受諾または辞退できます。
-受諾したフォルダは即座にフォルダ一覧に <code>招待</code> タイプとして表示されます。<code>/data</code>
-ページ自体も招待を確認するための有効なエントリーポイントです。データページを開けば、
-フォルダステータスの概要から同じ招待リストにアクセスできます。</p>
+<p data-bai-block="8">リンクをクリックすると<strong>招待されたフォルダー</strong>モーダルが開き、保留中の各招待を受諾または
+辞退できます。受諾したフォルダは即座にフォルダ一覧に表示されます。</p>
 <p><a id="create-storage-folder"></a>
 <a id="create_storage_folder"></a></p>
 <h2 data-bai-block="9" id="vfolder-ストレージフォルダを作成">ストレージフォルダを作成<a class="hash-link" href="#vfolder-ストレージフォルダを作成" aria-label="Direct link to ストレージフォルダを作成">#</a></h2>
@@ -536,7 +534,7 @@
     <div class="page-footer">
       <div class="page-metadata">
   <a class="edit-link" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/ja/vfolder/vfolder.md" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg> このページを編集</a>
-  <span class="last-updated">最終更新日 2026年11月26日</span>
+  <span class="last-updated">最終更新日 2026年11月27日</span>
 </div>
       <nav class="pagination-nav" aria-label="Docs pages">
   <a class="pagination-nav__link pagination-nav__link--prev" href="./my_environments.html">
@@ -556,7 +554,7 @@
   <aside class="doc-toc" aria-labelledby="doc-toc-heading">
   <div class="doc-toc__heading" id="doc-toc-heading">このページの目次</div>
   <ul class="doc-toc__list">
-      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#vfolder-%E6%8B%9B%E5%BE%85%E3%83%90%E3%83%83%E3%82%B8%E3%81%A8%E3%82%A8%E3%83%B3%E3%83%88%E3%83%AA%E3%83%BC%E3%83%9D%E3%82%A4%E3%83%B3%E3%83%88" data-toc-target="vfolder-招待バッジとエントリーポイント">招待バッジとエントリーポイント</a></li>
+      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#vfolder-%E4%BF%9D%E7%95%99%E4%B8%AD%E3%81%AE%E6%8B%9B%E5%BE%85" data-toc-target="vfolder-保留中の招待">保留中の招待</a></li>
       <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#vfolder-%E3%82%B9%E3%83%88%E3%83%AC%E3%83%BC%E3%82%B8%E3%83%95%E3%82%A9%E3%83%AB%E3%83%80%E3%82%92%E4%BD%9C%E6%88%90" data-toc-target="vfolder-ストレージフォルダを作成">ストレージフォルダを作成</a></li>
       <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#vfolder-%E3%83%95%E3%82%A9%E3%83%AB%E3%83%80%E3%83%BC%E3%82%92%E6%8E%A2%E7%B4%A2" data-toc-target="vfolder-フォルダーを探索">フォルダーを探索</a></li>
       <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#vfolder-%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB%E6%93%8D%E4%BD%9C" data-toc-target="vfolder-ファイル操作">ファイル操作</a></li>
