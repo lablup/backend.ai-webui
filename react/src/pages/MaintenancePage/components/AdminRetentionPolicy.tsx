@@ -24,6 +24,7 @@ import {
   BAINameActionCell,
   filterOutNullAndUndefined,
   type GraphQLFilter,
+  BAIUnmountAfterClose,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { PlusIcon, SquarePenIcon, Trash2 } from 'lucide-react';
@@ -247,25 +248,27 @@ const AdminRetentionPolicy: React.FC<AdminRetentionPolicyProps> = ({
           })
         }
       />
-      <RetentionPolicySettingModal
-        open={isOpenSettingModal}
-        policyFrgmt={editingPolicy}
-        onViewExistingPolicy={(category) => {
-          setIsOpenSettingModal(false);
-          onReload({
-            ...variables,
-            filter: { category },
-            orderBy: undefined,
-            offset: 0,
-          });
-        }}
-        onRequestClose={(success) => {
-          setIsOpenSettingModal(false);
-          if (success && editingPolicy === null) {
-            onReload(variables, { fetchPolicy: 'network-only' });
-          }
-        }}
-      />
+      <BAIUnmountAfterClose>
+        <RetentionPolicySettingModal
+          open={isOpenSettingModal}
+          policyFrgmt={editingPolicy}
+          onViewExistingPolicy={(category) => {
+            setIsOpenSettingModal(false);
+            onReload({
+              ...variables,
+              filter: { category },
+              orderBy: undefined,
+              offset: 0,
+            });
+          }}
+          onRequestClose={(success) => {
+            setIsOpenSettingModal(false);
+            if (success && editingPolicy === null) {
+              onReload(variables, { fetchPolicy: 'network-only' });
+            }
+          }}
+        />
+      </BAIUnmountAfterClose>
       <BAIDeleteConfirmModal
         open={!!deletingPolicy}
         title={t('retentionPolicy.DeletePolicy')}

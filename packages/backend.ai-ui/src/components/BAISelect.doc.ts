@@ -204,6 +204,13 @@ export const docs = {
           default: 'false',
         },
         {
+          name: 'showTooltipOnEllipsis',
+          type: 'boolean',
+          description:
+            'Single mode only: passed to ui-common Selector, which shows the selected option’s whole label in a tooltip on hover or focus while the trigger truncates it with an ellipsis. No tooltip while the label fits, nothing is selected, the control is disabled, or labelRender or a rich optionLabelProp="children" node draws the trigger. Pass false to turn it off.',
+          default: 'true',
+        },
+        {
           name: 'optionLabelProp',
           type: 'string',
           description:

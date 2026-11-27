@@ -703,6 +703,41 @@ export function graphQLFilterToPowerSearchFilters(
   );
 }
 
+/**
+ * Plain `{ property, operator, value }` conditions -> the GraphQL filter the
+ * control would build from them; conditions on unknown properties are dropped.
+ */
+export function graphQLFilterOfConditions(
+  conditions: ReadonlyArray<{
+    property: string;
+    operator: FilterOperator;
+    value: unknown;
+  }>,
+  filterProperties: Array<FilterProperty>,
+  combinationMode: 'AND' | 'OR' = 'AND',
+): GraphQLFilter | undefined {
+  const byKey = _.keyBy(filterProperties, 'key');
+  return convertConditionsToGraphQLFilter(
+    _.flatMap(conditions, (condition) => {
+      const property = byKey[condition.property];
+      return property
+        ? [
+            {
+              id: generateId(),
+              property: condition.property,
+              operator: condition.operator,
+              value: condition.value,
+              propertyLabel: property.propertyLabel,
+              type: property.type,
+            },
+          ]
+        : [];
+    }),
+    filterProperties,
+    combinationMode,
+  );
+}
+
 /** Exact inverse of `graphQLFilterToPowerSearchFilters`. */
 export function powerSearchFiltersToGraphQLFilter(
   filters: ReadonlyArray<PowerSearchFilter>,

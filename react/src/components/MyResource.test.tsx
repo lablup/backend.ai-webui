@@ -71,12 +71,92 @@ describe('MyResource', () => {
             ],
           },
         },
+        scopedResourceGroups: {
+          edges: [
+            {
+              node: {
+                resourceInfo: {
+                  capacity: {
+                    entries: [
+                      { resourceType: 'cpu', quantity: '8' },
+                      { resourceType: 'mem', quantity: '16' },
+                    ],
+                  },
+                },
+              },
+            },
+          ],
+        },
       },
     });
 
     const data = await readResourceData();
     expect(data.cpu.used).toEqual({ current: 3, total: 7 });
     expect(data.cpu.free).toEqual({ current: 4, total: 7 });
+  });
+
+  // An unlimited accelerator the manager knows but no group serves.
+  const resolveWithGroups = (
+    environment: ReturnType<typeof renderCard>,
+    scopedResourceGroups: unknown,
+    used: Array<{ resourceType: string; quantity: string }> = [
+      { resourceType: 'cpu', quantity: '3' },
+    ],
+  ) =>
+    environment.mock.resolve(environment.mock.getMostRecentOperation(), {
+      data: {
+        myUserResourceAllocationV2: {
+          user: {
+            used,
+            assignable: [
+              { resourceType: 'cpu', quantity: '4', unlimited: false },
+              { resourceType: 'atom.device', quantity: null, unlimited: true },
+            ],
+          },
+        },
+        projectResourceAllocationV2: {
+          project: { assignable: [] },
+        },
+        scopedResourceGroups,
+      },
+    });
+
+  it('keeps CPU and memory only when no resource group reaches the project', async () => {
+    resolveWithGroups(renderCard(), { edges: [] });
+
+    const data = await readResourceData();
+    expect(data.cpu.used).toEqual({ current: 3, total: 7 });
+    expect(data.accelerators).toEqual([]);
+  });
+
+  it('keeps CPU and memory only when no group reports capacity', async () => {
+    resolveWithGroups(renderCard(), {
+      edges: [{ node: { resourceInfo: null } }],
+    });
+
+    const data = await readResourceData();
+    expect(data.cpu.used).toEqual({ current: 3, total: 7 });
+    expect(data.accelerators).toEqual([]);
+  });
+
+  it('keeps CPU and memory only when the group read comes back null', async () => {
+    resolveWithGroups(renderCard(), null);
+
+    const data = await readResourceData();
+    expect(data.cpu.used).toEqual({ current: 3, total: 7 });
+    expect(data.accelerators).toEqual([]);
+  });
+
+  it('keeps an accelerator in use even when no group of the project offers it', async () => {
+    resolveWithGroups(renderCard(), { edges: [] }, [
+      { resourceType: 'cpu', quantity: '3' },
+      { resourceType: 'atom.device', quantity: '1' },
+    ]);
+
+    const data = await readResourceData();
+    expect(data.accelerators.map((row: { key: string }) => row.key)).toEqual([
+      'atom.device',
+    ]);
   });
 
   it('keeps a rejected query inside the card', async () => {

@@ -55,12 +55,22 @@ export function getAIErrorMessage(error: unknown): string {
       }
 
       const errorBody = JSON.parse(error.responseBody || '{}');
-
-      return errorBody.message;
+      // OpenAI-style servers (vLLM, llama.cpp) wrap it: `{ error: { message } }`.
+      const message = errorBody.message ?? errorBody.error?.message;
+      return typeof message === 'string' && message ? message : error.message;
     } else if (error instanceof Error) {
       return error.message;
     } else if (typeof error === 'string') {
       return error;
+    } else if (error && typeof error === 'object') {
+      // A stream error part can carry the server's raw `{ message }` or `{ error: { message } }`.
+      const body = error as {
+        message?: unknown;
+        error?: { message?: unknown };
+      };
+      const message = body.message ?? body.error?.message;
+      if (typeof message === 'string' && message) return message;
+      return 'Unknown error:' + JSON.stringify(error);
     }
     return 'Unknown error:' + error;
   } catch {

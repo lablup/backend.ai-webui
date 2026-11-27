@@ -99,6 +99,7 @@ read `package.json` / `pnpm-workspace.yaml` / `ls` rather than expecting a list 
 - Fragment prop naming: `queryRef` for Query types, `{typeName}Frgmt` for others.
 - Use `useBAILogger` instead of `console.log`. Use pre-defined error boundaries (`BAIErrorBoundary`, `ErrorBoundaryWithNullFallback`).
 - Use Jotai for global state, Relay for GraphQL state.
+- Forms (ADR 0040): `<Form ref={formRef}>` by default; keep `Form.useForm()` only when the instance is read during render outside the `<Form>` or the input must survive a brief unmount (`.claude/rules/form-store-ownership.md`).
 - Comment only what the code cannot say — ≤2 lines by default; the reasoning behind a change goes in the commit body and the PR, not the source file (`.claude/rules/comment-density.md`). The long justification blocks already in the tree are migration-era history: trim a file's blocks when you edit it, don't sweep.
 
 ### Architecture Decision Records (detail: `.claude/rules/adr.md`, auto-loaded)
@@ -165,7 +166,7 @@ When reviewing PRs (especially agent-generated ones), check:
 - No hardcoded strings, magic numbers, or debug artifacts left behind
 
 <!-- UI-COMMON:START -->
-@lablup/ui-common v0.2.0-alpha.21.canary-20261124060612-1eb7ebf38 · Astryx v0.7.11 · 174 components
+@lablup/ui-common v0.2.0-alpha.21.canary-20261126071028-7df78927f · Astryx v0.7.11 · 174 components
 CLI: run every command as `pnpm exec ui-common <cmd>` (shown below as `ui-common ...`).
 
 SETUP (once, first in your entry stylesheet) — without these, components render unstyled:
@@ -198,7 +199,7 @@ RULES:
   docs authoring     build an integration package, and every field it holds
   upgrade --from <old version> --apply   run after a dependency bump
 
-UI-COMMON (@lablup/ui-common v0.2.0-alpha.21.canary-20261124060612-1eb7ebf38 wraps Astryx v0.7.11):
+UI-COMMON (@lablup/ui-common v0.2.0-alpha.21.canary-20261126071028-7df78927f wraps Astryx v0.7.11):
 - Import only from @lablup/ui-common: the root, or the same subpath Astryx uses (@lablup/ui-common/Button, /theme/tokens.stylex, /lab). Never import @astryxdesign/* directly.
 - Layers: declare `@layer reset, theme, base, astryx-base, astryx-theme, ui-common, components, utilities;` once, first, in the entry stylesheet. ui-common's styles sit in `ui-common`; yours go in `components` / `utilities`.
 - Use AlertModal (@lablup/ui-common/AlertModal), not AlertDialog: ui-common hides AlertDialog.

@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { buildPath, MENU_KEY_TO_SCOPE_FEATURE } from './pathBuilder';
-import { AGENT_PREFILL_PARAM } from './webmcpConstants';
+import { AGENT_PREFILL_PARAM, DASHBOARD_DRAFT_PARAM } from './webmcpConstants';
 
 export type NavigationTarget =
   { ok: true; to: string } | { ok: false; code: string; message: string };
@@ -61,7 +61,8 @@ export const resolveAppPath = (
   // A form filled through the URL must carry the agent-filled notice (ADR 0025).
   if (
     url.searchParams.has('formValues') ||
-    url.searchParams.has(AGENT_PREFILL_PARAM)
+    url.searchParams.has(AGENT_PREFILL_PARAM) ||
+    url.searchParams.has(DASHBOARD_DRAFT_PARAM)
   ) {
     return {
       ok: false,

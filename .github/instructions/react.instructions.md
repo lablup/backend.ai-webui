@@ -92,6 +92,12 @@ inherited call sites needed no edit when their internals were rebuilt on Astryx.
   comments follow `.claude/rules/comment-density.md`: only what the code cannot say, ≤2
   lines by default, with the reasoning in the commit body and the PR instead.
 
+## Forms (ADR 0040)
+
+- Reach a form through `<Form ref={formRef}>` by default; keep `Form.useForm()` only when the
+  instance is read during render outside the `<Form>` or the input must survive a brief
+  unmount. Full rule: `.claude/rules/form-store-ownership.md`.
+
 ## Relay
 
 - **Architecture**: split the query orchestrator (`useLazyLoadQuery`, owns fetch policy and
@@ -254,6 +260,9 @@ templates — copy the nearest one and adapt.
       ADR 0010 / ADR 0011.
 - [ ] `BAIButton action` for async work; `useFetchKey` where refetch is needed;
       `BAIUnmountAfterClose` around form-bearing modals/drawers.
+- [ ] Forms (ADR 0040): `<Form ref={formRef}>` by default. Every new `Form.useForm()` is one
+      of the rule 2 cases in `.claude/rules/form-store-ownership.md` (render-time read outside the `<Form>`, or input that
+      must survive a brief unmount).
 - [ ] i18n: correct hook for the package (`useTranslation` vs `useBAIi18n`), no hard-coded
       user-facing strings.
 - [ ] `useBAILogger` instead of `console.*`; no empty catch; pre-defined error boundaries.

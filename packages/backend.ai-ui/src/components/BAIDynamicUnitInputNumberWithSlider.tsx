@@ -2,32 +2,12 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
- `BAIDynamicUnitInputNumberWithSlider` on Astryx (to-astryx W2-D).
+ PILOT-DECISION — `extraMarks` keeps the antd-shaped position-keyed map so call
+ sites keep passing it; `toAstryxMarks` turns it into Astryx's string-labelled
+ array, flattening a JSX label to its text (no text, or `null`: a bare tick).
 
- antd `Slider` -> Astryx `Slider` (MAPPING §4, a DIRECT mapping):
- `tooltip.formatter` -> `formatValue` + `valueDisplay`, `disabled` ->
- `isDisabled`, `marks` ✅ (shape change, below). The paired number field is the
- already-converted `BAIDynamicUnitInputNumber`.
-
- PILOT-DECISION — **`extraMarks` keeps its antd shape on the surface and is
- translated inside.** antd `SliderMarks` is a `{[position]: ReactNode | {label,
- style}}` map; Astryx wants `{value: number, label?: string}[]` — an ARRAY, and
- the label is a plain STRING. The one live consumer
- (`ResourceAllocationFormItems`) passes a JSX `<RemainingMark />` label, so per
- the frontier rule the prop type stays antd-shaped (restated locally, no antd
- import) and `toAstryxMarks` flattens each label with
- `nodeToAccessibleLabel` — a JSX label degrades to its text, or to an unlabelled
- tick when it has none (P2: casting the node `as string` would have printed
- `[object Object]` on the rail).
-
- PILOT-DECISION — **the per-mark `style={{color: colorTextSecondary}}` and the
- `styles.track` warning tint are DROPPED.** Astryx `Slider` exposes no slot
- styling at all (no `styles`, no per-mark style) — closed by construction (P5).
- The mark colour was already the secondary text colour Astryx paints marks in
- by default, so nothing changes there; the warning-track tint is a real loss
- and the `warn` prop is now inert. It has no live consumer: `warn` is passed
- nowhere in the repo (measured), and the code that drew the matching warning
- arrow was already commented out.
+ PILOT-DECISION — Astryx `Slider` has no slot or per-mark styling, so a mark's
+ `style` and the `warn` track tint are accepted and ignored.
 */
 import {
   convertToBinaryUnit,

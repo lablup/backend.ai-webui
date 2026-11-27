@@ -43,8 +43,11 @@ const useFolderStats = (
   ];
 };
 
-/** `myVfolders` is the viewer's own folders only; invitations are theirs too. */
-const MineFolders: React.FC<{ fetchKey: string }> = ({ fetchKey }) => {
+/** `myVfolders` is the viewer's own folders only; invitations are the page project's. */
+const MineFolders: React.FC<{ projectId: string; fetchKey: string }> = ({
+  projectId,
+  fetchKey,
+}) => {
   'use memo';
   const { t } = useTranslation();
   // The app-wide FolderInvitationResponseModalOpener opens on `?invitation=true`, as the invitation notification does.
@@ -52,7 +55,9 @@ const MineFolders: React.FC<{ fetchKey: string }> = ({ fetchKey }) => {
     'invitation',
     parseAsString.withOptions({ history: 'replace' }),
   );
-  const [invitations, { updateInvitations }] = useVFolderInvitations();
+  const [invitations, { updateInvitations }] = useVFolderInvitations({
+    id: projectId,
+  });
   useUpdateEffect(() => {
     updateInvitations();
   }, [fetchKey]);
@@ -222,7 +227,7 @@ const FolderCounts: React.FC<{ scope: CardScope; fetchKey: string }> = ({
   'use memo';
   switch (scope.kind) {
     case 'mine':
-      return <MineFolders fetchKey={fetchKey} />;
+      return <MineFolders projectId={scope.projectId} fetchKey={fetchKey} />;
     case 'project':
       return <ProjectFolders projectId={scope.projectId} fetchKey={fetchKey} />;
     case 'domain':

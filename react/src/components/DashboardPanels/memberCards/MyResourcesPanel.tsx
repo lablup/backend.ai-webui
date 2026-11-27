@@ -113,8 +113,10 @@ export const MyResourcesInResourceGroup: React.FC<{
                 freeAsLimits(resourceInfo?.free.entries),
               ],
               {
+                // A null, denied or empty read keeps CPU/RAM; `user.used` spans every group.
                 slots:
-                  offeredSlotsOf(resourceInfo?.capacity.entries) ?? undefined,
+                  offeredSlotsOf(resourceInfo?.capacity.entries) ??
+                  new Set(['cpu', 'mem']),
               },
             )
           : []

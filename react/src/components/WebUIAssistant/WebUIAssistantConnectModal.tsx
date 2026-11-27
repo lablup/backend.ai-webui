@@ -245,6 +245,8 @@ const WebUIAssistantConnectModal: React.FC<WebUIAssistantConnectModalProps> = ({
                     value={deploymentId}
                     isLoading={isDeploymentLoading}
                     onChange={(id) => {
+                      // The same deployment's endpoint does not change, so it would never be reported again.
+                      if (id === deploymentId) return;
                       // A transition keeps the modal on screen while DeploymentSelect's value query loads.
                       startDeploymentTransition(() => {
                         setDeploymentId(id);

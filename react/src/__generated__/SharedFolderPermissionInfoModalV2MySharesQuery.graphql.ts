@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<d5a1935124c0eabdc877477f92c8b30a>>
+ * @generated SignedSource<<c850125dbfd9517a8403b455d00b5882>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,8 +9,15 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
+export type PermissionBit = "CREATE" | "HARD_DELETE" | "READ" | "SOFT_DELETE" | "UPDATE" | "%future added value";
+export type PermissionTarget = {
+  entityType: string;
+  scopeId: string;
+  scopeType: string;
+};
 export type SharedFolderPermissionInfoModalV2MySharesQuery$variables = {
   folderId: string;
+  userScope: PermissionTarget;
 };
 export type SharedFolderPermissionInfoModalV2MySharesQuery$data = {
   readonly myEntityShares: {
@@ -20,6 +27,11 @@ export type SharedFolderPermissionInfoModalV2MySharesQuery$data = {
         readonly targetEntityType: string;
       };
     }>;
+  } | null | undefined;
+  readonly myScopePermissions: {
+    readonly item: {
+      readonly permissions: ReadonlyArray<PermissionBit>;
+    };
   } | null | undefined;
 };
 export type SharedFolderPermissionInfoModalV2MySharesQuery = {
@@ -33,6 +45,11 @@ var v0 = [
     "defaultValue": null,
     "kind": "LocalArgument",
     "name": "folderId"
+  },
+  {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "userScope"
   }
 ],
 v1 = [
@@ -86,6 +103,47 @@ v3 = {
   "kind": "ScalarField",
   "name": "targetEntityType",
   "storageKey": null
+},
+v4 = {
+  "alias": null,
+  "args": [
+    {
+      "fields": [
+        {
+          "kind": "Variable",
+          "name": "target",
+          "variableName": "userScope"
+        }
+      ],
+      "kind": "ObjectValue",
+      "name": "input"
+    }
+  ],
+  "concreteType": "MyScopePermissionsPayload",
+  "kind": "LinkedField",
+  "name": "myScopePermissions",
+  "plural": false,
+  "selections": [
+    {
+      "alias": null,
+      "args": null,
+      "concreteType": "ScopeEntityPermission",
+      "kind": "LinkedField",
+      "name": "item",
+      "plural": false,
+      "selections": [
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "permissions",
+          "storageKey": null
+        }
+      ],
+      "storageKey": null
+    }
+  ],
+  "storageKey": null
 };
 return {
   "fragment": {
@@ -128,7 +186,8 @@ return {
           }
         ],
         "storageKey": null
-      }
+      },
+      (v4/*: any*/)
     ],
     "type": "Query",
     "abstractKey": null
@@ -180,20 +239,21 @@ return {
           }
         ],
         "storageKey": null
-      }
+      },
+      (v4/*: any*/)
     ]
   },
   "params": {
-    "cacheID": "6daa6cbc47e235462ddcd6d9328fcbd9",
+    "cacheID": "3b4e7bfce51abc4485c2782de2d7a283",
     "id": null,
     "metadata": {},
     "name": "SharedFolderPermissionInfoModalV2MySharesQuery",
     "operationKind": "query",
-    "text": "query SharedFolderPermissionInfoModalV2MySharesQuery(\n  $folderId: UUID!\n) {\n  myEntityShares(sides: [RECIPIENT], filter: {targetEntityId: {equals: $folderId}, status: {equals: ACCEPTED}}, limit: 1) {\n    edges {\n      node {\n        entityId\n        targetEntityType\n        id\n      }\n    }\n  }\n}\n"
+    "text": "query SharedFolderPermissionInfoModalV2MySharesQuery(\n  $folderId: UUID!\n  $userScope: PermissionTarget!\n) {\n  myEntityShares(sides: [RECIPIENT], filter: {targetEntityId: {equals: $folderId}, status: {equals: ACCEPTED}}, limit: 1) {\n    edges {\n      node {\n        entityId\n        targetEntityType\n        id\n      }\n    }\n  }\n  myScopePermissions(input: {target: $userScope}) {\n    item {\n      permissions\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "9645a99dee5b81706eb008acd26b397a";
+(node as any).hash = "eebb70dd1f5da06f26c9299787fb9668";
 
 export default node;

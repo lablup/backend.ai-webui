@@ -5,11 +5,13 @@
 // Usage:
 //   node generate-pr-comment.mjs --meta pr-meta.json \
 //     [--analysis analysis.json] [--bundle-head …] [--bundle-base …] \
-//     [--docs docs-manifest.json] [--docs-meta docs-meta.json]
+//     [--docs docs-manifest.json] [--docs-meta docs-meta.json] \
+//     [--adr changes.json]
 //
 // Every section is optional but `--meta`: a PR that only changed the manual
-// renders the docs section alone, and one that only changed the component
-// package renders the Storybook sections alone.
+// renders the docs section alone, one that only changed the component package
+// renders the Storybook sections alone, and one that only changed ADRs the ADR
+// section alone.
 
 import { existsSync, readFileSync } from "node:fs";
 
@@ -27,14 +29,15 @@ const bundleHead = readJson(getArg("bundle-head"));
 const bundleBase = readJson(getArg("bundle-base"));
 const docs = readJson(getArg("docs"));
 const docsMeta = readJson(getArg("docs-meta"));
+const adr = readJson(getArg("adr"));
 
 if (!meta) {
   console.error("Missing pr-meta.json");
   process.exit(1);
 }
-if (!analysis && !docs) {
+if (!analysis && !docs && !adr) {
   console.error(
-    "Neither analysis.json nor docs-manifest.json — nothing to report",
+    "No analysis.json, docs-manifest.json or ADR changes.json — nothing to report",
   );
   process.exit(1);
 }
@@ -333,6 +336,85 @@ if (docs) {
   }
 }
 
+// ── ADR preview ──────────────────────────────────────────────────────────────
+// `changes.json` comes from the PR's own scripts, so it is validated the same way.
+const ADR_ID_RE = /^\d{4}$/;
+const ADR_STATUSES = ["added", "modified", "removed"];
+const FILE_STATUSES = ["added", "modified", "removed", "renamed"];
+const MAX_ADRS = 30;
+
+if (adr) {
+  out.push("### 📐 ADR Preview");
+  out.push("");
+  if (meta.adrUrl) {
+    out.push(`**${link("View the ADR preview for this PR", meta.adrUrl)}**`);
+    out.push("");
+    out.push(
+      "_GitHub Pages may take up to a minute to hydrate after the deploy._",
+    );
+    out.push("");
+  }
+
+  const adrs = (Array.isArray(adr.adrs) ? adr.adrs : []).filter(
+    (a) => typeof a?.id === "string" && ADR_ID_RE.test(a.id),
+  );
+  const architecture = ["en", "ko"]
+    .map((lang) => [lang, adr.architecture?.[lang]])
+    .filter(([, status]) => FILE_STATUSES.includes(status));
+
+  if (adrs.length > 0) {
+    out.push("| ADR | Change | Languages |");
+    out.push("|---|---|---|");
+    for (const a of adrs.slice(0, MAX_ADRS)) {
+      const status = ADR_STATUSES.includes(a.status) ? a.status : "modified";
+      const files = a.files ?? {};
+      const langs = ["en", "ko"].filter((lang) =>
+        FILE_STATUSES.includes(files[lang]?.status),
+      );
+      const linkLang =
+        langs.find((lang) => files[lang].status !== "removed") ??
+        langs[0] ??
+        (files.en ? "en" : "ko");
+      const label = `${a.id}${a.title ? ` — ${escapeText(a.title)}` : ""}`;
+      const view = status === "added" ? "" : "view=diff&";
+      const href = `${meta.adrUrl}#/${a.id}?${view}lang=${linkLang}`;
+      const cell = meta.adrUrl ? `[${label}](${href})` : label;
+      const tag =
+        status === "added"
+          ? "`NEW`"
+          : status === "removed"
+            ? "`REMOVED`"
+            : "changed";
+      const langCell = langs
+        .map((lang) =>
+          files[lang].status === "modified"
+            ? `\`${lang}\``
+            : `\`${lang}\` (${files[lang].status})`,
+        )
+        .join(", ");
+      out.push(`| ${cell} | ${tag} | ${langCell || "—"} |`);
+    }
+    if (adrs.length > MAX_ADRS) {
+      out.push(`| _…and ${adrs.length - MAX_ADRS} more_ | | |`);
+    }
+    out.push("");
+  }
+  if (architecture.length > 0) {
+    out.push(
+      `The ADR index (\`docs/ARCHITECTURE*.md\`) changed: ${architecture
+        .map(([lang, status]) => `\`${lang}\` ${status}`)
+        .join(", ")}.`,
+    );
+    out.push("");
+  }
+  if (adrs.length === 0 && architecture.length === 0) {
+    out.push(
+      "Preview built — no ADR change to mark (viewer or pipeline change).",
+    );
+    out.push("");
+  }
+}
+
 out.push("---");
 out.push("");
 out.push(
@@ -340,7 +422,9 @@ out.push(
     analysis && meta.storybookUrl
       ? `${link("Storybook", meta.storybookUrl)} · `
       : ""
-  }${docsEntryUrl ? `${link("Docs", docsEntryUrl)} · ` : ""}${link("CI run", meta.runUrl)}</sub>`,
+  }${docsEntryUrl ? `${link("Docs", docsEntryUrl)} · ` : ""}${
+    adr && meta.adrUrl ? `${link("ADRs", meta.adrUrl)} · ` : ""
+  }${link("CI run", meta.runUrl)}</sub>`,
 );
 
 console.log(out.join("\n"));
