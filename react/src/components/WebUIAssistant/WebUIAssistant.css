@@ -12,6 +12,7 @@
     --webui-assistant-inset: var(--spacing-6);
     --webui-assistant-dx: 0px;
     --webui-assistant-dy: 0px;
+    --webui-assistant-drawer-width: min(480px, 100vw);
   }
 
   .webui-assistant-fab {
@@ -130,15 +131,17 @@
 
   /* Drawer mode: docked to the right edge, from under the header to the bottom. */
   .webui-assistant-panel[data-mode='drawer'] {
-    inset-block-start: calc(
-      var(--webui-header-height, 60px) + var(--webui-titlebar-height, 0px)
+    inset-block-start: var(
+      --webui-assistant-drawer-top,
+      calc(var(--webui-header-height, 60px) + var(--webui-titlebar-height, 0px))
     );
     inset-block-end: 0;
     inset-inline-end: 0;
     translate: none;
-    width: min(480px, 100vw);
+    width: var(--webui-assistant-drawer-width);
     height: auto;
     padding-block-end: env(safe-area-inset-bottom, 0px);
+    padding-inline-end: env(safe-area-inset-right, 0px);
     border-block: 0;
     border-inline-end: 0;
     border-radius: 0;
