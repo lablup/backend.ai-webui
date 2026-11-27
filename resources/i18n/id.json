@@ -1459,6 +1459,7 @@
     "ModelSourceTooltip": "Pilih apakah model revisi ini berasal dari folder model atau kartu model.",
     "ModelVersion": "Nama Model",
     "Name": "Nama",
+    "NameMaxLength": "Nama penerapan dapat berisi hingga {{max}} karakter.",
     "NamePlaceholder": "Masukkan nama penerapan",
     "NameRequired": "Nama penerapan wajib diisi.",
     "NewDeployment": "Penerapan Baru",

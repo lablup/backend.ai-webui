@@ -1459,6 +1459,7 @@
     "ModelSourceTooltip": "选择此修订版本的模型来自模型文件夹还是模型卡。",
     "ModelVersion": "模型名称",
     "Name": "名称",
+    "NameMaxLength": "部署名称最多可输入 {{max}} 个字符。",
     "NamePlaceholder": "输入部署名称",
     "NameRequired": "部署名称为必填项。",
     "NewDeployment": "新建部署",

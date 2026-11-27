@@ -71,6 +71,10 @@ export type DeploymentSettingModalProps = BAIModalProps & {
   onRequestClose: (success: boolean) => void;
 } & DeploymentSettingModalProjectProps;
 
+// Route sessions are named `{deployment name}-{route UUID}` (+37 chars) and the
+// manager stores session names in VARCHAR(128): 128 - 37 = 91.
+const DEPLOYMENT_NAME_MAX_LENGTH = 91;
+
 // Bridge for `BAIFormItem name="openToPublic" valuePropName="checked"`: the
 // form engine injects `checked` + `onChange`, Astryx CheckboxInput wants
 // `value` + value-first `onChange`.
@@ -313,7 +317,23 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
             name="name"
             label={t('deployment.DeploymentName')}
             tooltip={t('deployment.DeploymentNameTooltip')}
-            rules={[{ required: true, message: t('deployment.NameRequired') }]}
+            rules={[
+              { required: true, message: t('deployment.NameRequired') },
+              {
+                // An existing over-long name stays saveable, so other fields can
+                // still be edited; only a new or changed name is capped.
+                validator: (_rule: unknown, value?: string) =>
+                  !value ||
+                  value === deployment?.metadata.name ||
+                  [...value].length <= DEPLOYMENT_NAME_MAX_LENGTH
+                    ? Promise.resolve()
+                    : Promise.reject(
+                        t('deployment.NameMaxLength', {
+                          max: DEPLOYMENT_NAME_MAX_LENGTH,
+                        }),
+                      ),
+              },
+            ]}
           >
             <BAITextInput
               aria-label={t('deployment.DeploymentName')}

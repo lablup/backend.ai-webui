@@ -1459,6 +1459,7 @@
     "ModelSourceTooltip": "Scegli se il modello di questa revisione proviene da una cartella modello o da una scheda modello.",
     "ModelVersion": "Nome modello",
     "Name": "Nome",
+    "NameMaxLength": "Il nome della distribuzione può contenere fino a {{max}} caratteri.",
     "NamePlaceholder": "Inserisci un nome distribuzione",
     "NameRequired": "Il nome della distribuzione è obbligatorio.",
     "NewDeployment": "Nuova distribuzione",

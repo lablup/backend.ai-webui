@@ -1459,6 +1459,7 @@
     "ModelSourceTooltip": "Elija si el modelo de esta revisión proviene de una carpeta de modelo o de una tarjeta de modelo.",
     "ModelVersion": "Nombre del modelo",
     "Name": "Nombre",
+    "NameMaxLength": "El nombre del despliegue puede tener hasta {{max}} caracteres.",
     "NamePlaceholder": "Ingrese un nombre de despliegue",
     "NameRequired": "El nombre del despliegue es obligatorio.",
     "NewDeployment": "Nuevo despliegue",

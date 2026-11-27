@@ -1459,6 +1459,7 @@
     "ModelSourceTooltip": "Chọn xem mô hình của bản sửa đổi này đến từ thư mục mô hình hay thẻ mô hình.",
     "ModelVersion": "Tên mô hình",
     "Name": "Tên",
+    "NameMaxLength": "Tên triển khai có thể dài tối đa {{max}} ký tự.",
     "NamePlaceholder": "Nhập tên triển khai",
     "NameRequired": "Tên triển khai là bắt buộc.",
     "NewDeployment": "Triển khai mới",

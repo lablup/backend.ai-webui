@@ -1459,6 +1459,7 @@
     "ModelSourceTooltip": "Bu revizyonun modelinin bir model klasöründen mi yoksa bir model kartından mı geldiğini seçin.",
     "ModelVersion": "Model Adı",
     "Name": "Ad",
+    "NameMaxLength": "Dağıtım adı en fazla {{max}} karakter olabilir.",
     "NamePlaceholder": "Bir dağıtım adı girin",
     "NameRequired": "Dağıtım adı gereklidir.",
     "NewDeployment": "Yeni Dağıtım",

@@ -1459,6 +1459,7 @@
     "ModelSourceTooltip": "Valitse, tuleeko tämän version malli mallikansiosta vai mallikortista.",
     "ModelVersion": "Mallin nimi",
     "Name": "Nimi",
+    "NameMaxLength": "Käyttöönoton nimessä voi olla enintään {{max}} merkkiä.",
     "NamePlaceholder": "Anna käyttöönoton nimi",
     "NameRequired": "Käyttöönoton nimi vaaditaan.",
     "NewDeployment": "Uusi käyttöönotto",

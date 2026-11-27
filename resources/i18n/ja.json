@@ -1459,6 +1459,7 @@
     "ModelSourceTooltip": "このリビジョンのモデルをモデルフォルダーとモデルカードのどちらから取得するかを選択します。",
     "ModelVersion": "モデル名",
     "Name": "名前",
+    "NameMaxLength": "デプロイ名は最大{{max}}文字まで入力できます。",
     "NamePlaceholder": "デプロイ名を入力",
     "NameRequired": "デプロイ名は必須です。",
     "NewDeployment": "新規デプロイ",

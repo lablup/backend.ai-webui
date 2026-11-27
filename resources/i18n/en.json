@@ -1446,6 +1446,7 @@
     "ModelSourceTooltip": "Choose whether this revision's model comes from a model folder or a model card.",
     "ModelVersion": "Model Name",
     "Name": "Name",
+    "NameMaxLength": "Deployment name can be up to {{max}} characters.",
     "NamePlaceholder": "Enter a deployment name",
     "NameRequired": "Deployment name is required.",
     "NewDeployment": "New Deployment",

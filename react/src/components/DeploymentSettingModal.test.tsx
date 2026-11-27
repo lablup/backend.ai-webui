@@ -153,3 +153,48 @@ describe('DeploymentSettingModal project prop contract (ADR-0001)', () => {
     );
   });
 });
+
+describe('DeploymentSettingModal deployment name length', () => {
+  it('keeps a pasted over-long name and rejects it on submit', async () => {
+    const user = userEvent.setup();
+    const { environment } = renderModal({
+      id: 'fixed-project-id',
+      name: 'fixed-project-name',
+    });
+
+    const input = screen.getByPlaceholderText('deployment.NamePlaceholder');
+    expect(input).not.toHaveAttribute('maxLength');
+    await user.click(input);
+    await user.paste('a'.repeat(92));
+    expect(input).toHaveValue('a'.repeat(92));
+
+    await user.click(screen.getByTestId('mock-resource-group-select'));
+    await user.click(screen.getByRole('button', { name: 'button.Create' }));
+
+    expect(
+      await screen.findByText('deployment.NameMaxLength'),
+    ).toBeInTheDocument();
+    expect(environment.mock.getAllOperations()).toHaveLength(0);
+  });
+
+  it('accepts a 91-character name', async () => {
+    const user = userEvent.setup();
+    const { environment } = renderModal({
+      id: 'fixed-project-id',
+      name: 'fixed-project-name',
+    });
+
+    await user.click(screen.getByPlaceholderText('deployment.NamePlaceholder'));
+    await user.paste('a'.repeat(91));
+    await user.click(screen.getByTestId('mock-resource-group-select'));
+    await user.click(screen.getByRole('button', { name: 'button.Create' }));
+
+    await waitFor(() => {
+      expect(environment.mock.getAllOperations()).toHaveLength(1);
+    });
+    expect(
+      environment.mock.getMostRecentOperation().request.variables.input.metadata
+        .name,
+    ).toBe('a'.repeat(91));
+  });
+});
