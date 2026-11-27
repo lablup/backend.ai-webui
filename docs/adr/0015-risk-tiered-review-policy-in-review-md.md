@@ -67,7 +67,7 @@ flowchart LR
 
 - **Steering files are High**: `REVIEW.md`, `AGENTS.md`, `.claude/**`, `.github/**`, the verification harness, the lint, build, and test configuration, and the ADRs are High even though they are Markdown. High takes precedence over Low.
 - **Path-based limit**: The tier looks only at paths, so a PR that changes risky code in a path not on the High list is reviewed as Medium. The Medium tier reviewer checks the security items in `REVIEW.md` directly.
-- **Plugin dependency**: The gate in fw 29.0.0 or later runs this policy. In a session with an older fw installed, the gate does not read `REVIEW.md`.
+- **Plugin dependency**: A gate that ships `skills/pr-ready-gate/scripts/risk-tier.sh` runs this policy; that started at fw 29.0.0, and fw has since moved to calendar versions (26.11.x), so a session checks for the script, not the version number. A gate without it does not read `REVIEW.md`.
 
 ## Sources
 

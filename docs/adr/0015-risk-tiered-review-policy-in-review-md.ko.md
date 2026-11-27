@@ -67,7 +67,7 @@ flowchart LR
 
 - **Steering files are High**: `REVIEW.md`, `AGENTS.md`, `.claude/**`, `.github/**`, 검증 harness, lint·build·test 설정, ADR은 Markdown이어도 High이다. High가 Low보다 우선한다.
 - **Path-based limit**: tier는 path만 보므로, High 목록에 없는 path에서 위험한 코드를 바꾼 PR은 Medium으로 리뷰된다. `REVIEW.md`의 보안 항목은 Medium tier 리뷰어가 직접 확인한다.
-- **Plugin dependency**: 이 정책을 실행하는 것은 fw 29.0.0 이상의 gate다. 그보다 낮은 fw가 설치된 session의 gate는 `REVIEW.md`를 읽지 않는다.
+- **Plugin dependency**: 이 정책을 실행하는 것은 `skills/pr-ready-gate/scripts/risk-tier.sh`가 있는 gate다. fw 29.0.0에서 시작했지만 fw는 이후 calendar version(26.11.x)으로 바뀌었으므로, session은 버전 숫자가 아닌 이 script가 있는지를 확인한다. 이 script가 없는 gate는 `REVIEW.md`를 읽지 않는다.
 
 ## 출처
 

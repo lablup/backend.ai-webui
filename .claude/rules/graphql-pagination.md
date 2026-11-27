@@ -35,9 +35,9 @@ It is a footgun: grabbing `first` and `offset` from it compiles and type-checks
 fine (both are valid `Int` query variables), but mixes cursor-mode `first` with
 offset-mode `offset` and fails **only at runtime** against a V2 connection.
 
-Some **legacy** connections (e.g. `user_nodes`, `*_nodes` on the non-Strawberry
+Some **legacy** connections (e.g. `agent_nodes`, `*_nodes` on the non-Strawberry
 graph) historically tolerate `first` + `offset` as their offset mode, which is
-why mixed usage exists in older code (`UserManagement.tsx`, `AgentList.tsx`).
+why mixed usage exists in older code (`AgentList.tsx`).
 Do not copy that pattern onto a V2 connection.
 
 ## Rules
@@ -110,5 +110,6 @@ query Foo($first: Int, $after: String) {
   (local state) and `useBAIPaginationOptionStateOnSearchParam` (URL state).
 - `react/src/helper/index.tsx` — `convertToOrderBy` for the `orderBy` argument
   (orthogonal to pagination).
-- Canonical `limit`/`offset` examples: `StorageProxyList.tsx`,
-  `AutoScalingRuleList.tsx`, `AgentSelect.tsx`.
+- Canonical `limit`/`offset` examples on V2 connections: `DeploymentAutoScalingCard.tsx`
+  (`autoScalingRules`) and `UserFolderPermissionPanelV2.tsx`
+  (`adminKeypairResourcePoliciesV2`).

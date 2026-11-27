@@ -1,5 +1,5 @@
 ---
-applyTo: "react/**/*.tsx,react/**/*.ts"
+applyTo: "react/**/*.tsx,react/**/*.ts,packages/backend.ai-ui/src/**/*.tsx,packages/backend.ai-ui/src/**/*.ts"
 ---
 
 # React Guidelines for Backend.AI WebUI
@@ -160,6 +160,29 @@ interfaces, enum members.
   re-exporting a whole upstream props type.
 - Jotai for global state, Relay for GraphQL-backed state, React Context only for simple
   non-persisted UI state. Compose instead of drilling props 3+ levels.
+- When a change fits an existing component, change that component: swap only what changed
+  and keep its structure, instead of adding a wrapper or splitting out a sibling that does
+  the same job (#10050, #10051, #11268). A new component is right when it has a job no
+  existing one has: a different user task, a different data source, or a piece several
+  places will share. A `BAI*` adapter over a ui-common or Astryx component is such a case
+  (`.claude/rules/bui-component-home.md`), and a ui-common defect is fixed upstream. The
+  props a new component adds are the ones call sites need (`columns`, `addButton`); it does
+  not re-expose what it renders inside, such as the `Form.List` and `formItemProps` that
+  #10444 was asked to drop. Base props and `...rest` follow `component-props-extension.md`.
+- Reuse what exists before writing it: the current-domain hooks (`useCurrentDomain().id`
+  for the domain id scoped V2 queries take, `useCurrentDomainValue` for its name),
+  Relay-generated types and existing option types (`SelectorOptionData['disabled']`), and
+  globals such as `globalThis.isElectron` (#10050, #10309, #10496, #9752). The current
+  project is not one of them: leaf components take it as a `project` prop (ADR 0001).
+- A data hook returns the response as it came and takes explicit options (`skip`, a boolean
+  flag). Callers do the formatting (lower-casing, mapping), and a caller's reason to skip
+  comes in as an option instead of being inferred inside the hook (#10278, #10279,
+  #10496). A manager version check stays in the hook that uses the field (ADR 0010).
+- Remove a path for a value no manager in the supported range sends any more, or a query
+  the code no longer needs (#10046, #10051); the range runs from the floor to the branch's
+  own line (ADR 0011). Whether a version gate is added, kept or removed follows ADR 0010
+  and ADR 0011 (`pnpm run dev-env compat` lists the removable ones); a review bot asking
+  for a gate or a legacy fallback is checked against them, not followed as is.
 
 ## Async actions and refetching
 
@@ -230,6 +253,11 @@ templates — copy the nearest one and adapt.
       component's props via `Omit<>` with `...rest` forwarded.
 - [ ] Relay: orchestrator/fragment split, `queryRef` / `{typeName}Frgmt` naming, `$key`
       types, colocated fragments, single pagination mode.
+- [ ] A change that fits an existing component, hook or type extends it rather than
+      duplicating it; a new one, a `BAI*` adapter over ui-common included, has a job of
+      its own (see Composition).
+- [ ] Data hooks return raw data and take explicit options; version gates follow
+      ADR 0010 / ADR 0011.
 - [ ] `BAIButton action` for async work; `useFetchKey` where refetch is needed;
       `BAIUnmountAfterClose` around form-bearing modals/drawers.
 - [ ] Forms (ADR 0040): `<Form ref={formRef}>` by default. Every new `Form.useForm()` is one
