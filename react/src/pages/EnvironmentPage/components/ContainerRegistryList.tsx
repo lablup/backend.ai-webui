@@ -2,15 +2,22 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { ContainerRegistryListDeleteMutation } from '../../../__generated__/ContainerRegistryListDeleteMutation.graphql';
-import { ContainerRegistryListDomainMutation } from '../../../__generated__/ContainerRegistryListDomainMutation.graphql';
+import { ContainerRegistryListCreateDomainRegistryRelationMutation } from '../../../__generated__/ContainerRegistryListCreateDomainRegistryRelationMutation.graphql';
+import { ContainerRegistryListEditingRegistryQuery } from '../../../__generated__/ContainerRegistryListEditingRegistryQuery.graphql';
+import { ContainerRegistryListPurgeDomainRegistryRelationMutation } from '../../../__generated__/ContainerRegistryListPurgeDomainRegistryRelationMutation.graphql';
+import { ContainerRegistryListPurgeMutation } from '../../../__generated__/ContainerRegistryListPurgeMutation.graphql';
 import {
   ContainerRegistryListQuery,
   ContainerRegistryListQuery$data,
+  ContainerRegistryV2Filter,
+  ContainerRegistryV2OrderBy,
 } from '../../../__generated__/ContainerRegistryListQuery.graphql';
 import { App } from '../../../app-shim';
-import ContainerRegistryEditorModal from '../../../components/ContainerRegistryEditorModal';
+import ContainerRegistryEditorModal, {
+  toLegacyRegistryType,
+} from '../../../components/ContainerRegistryEditorModal';
 import TableColumnsSettingModal from '../../../components/TableColumnsSettingModal';
+import { convertToOrderBy } from '../../../helper';
 import { useSuspendedBackendaiClient } from '../../../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../../../hooks/reactPaginationQueryOptions';
 import { useSetBAINotification } from '../../../hooks/useBAINotification';
@@ -24,11 +31,12 @@ import {
   BAIDeleteConfirmModal,
   BAIFlex,
   BAINameActionCell,
-  BAIPropertyFilter,
+  BAIGraphQLPropertyFilter,
   BAITable,
   BAIBooleanToken,
   INITIAL_FETCH_KEY,
   filterOutNullAndUndefined,
+  toGlobalId,
   type BAIColumnType,
   type BAIColumnsType,
   useBAILogger,
@@ -36,6 +44,7 @@ import {
   useToggle,
   BAISwitch,
   useErrorMessageResolver,
+  BAIUnmountAfterClose,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import {
@@ -46,18 +55,12 @@ import {
   PlusIcon,
   SquarePenIcon,
 } from 'lucide-react';
-import { parseAsString, useQueryStates } from 'nuqs';
-import { useState, useDeferredValue, useMemo } from 'react';
+import { parseAsJson, parseAsString, useQueryStates } from 'nuqs';
+import React, { Suspense, useState, useDeferredValue } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
 
-/**
- * How many allowed projects a row shows before the "and N more" indicator.
- * It is also the `first:` on the query — unargumented, the manager applies its
- * own DEFAULT_PAGE_SIZE and the row silently drops the rest. The field is
- * aliased because `ContainerRegistryEditorModalFragment` selects the same one
- * uncapped, and Relay requires one argument set per field per parent.
- */
+/** How many allowed projects a row shows before the "and N more" indicator; also the `first:` on `projects`. */
 const ALLOWED_PROJECT_PREVIEW_COUNT = 3;
 
 /** Columns that restate what another column already says: off until asked for. */
@@ -66,10 +69,40 @@ const DEFAULT_HIDDEN_REGISTRY_COLUMN_KEYS = ['is_global'];
 export type ContainerRegistry = NonNullable<
   NonNullable<
     NonNullable<
-      NonNullable<ContainerRegistryListQuery$data>['container_registry_nodes']
+      NonNullable<ContainerRegistryListQuery$data>['adminContainerRegistriesV2']
     >['edges'][number]
   >['node']
 >;
+
+type EditorModalProps = Omit<
+  React.ComponentProps<typeof ContainerRegistryEditorModal>,
+  'containerRegistryFrgmt'
+>;
+
+/** The editor still saves through the legacy node, so it loads that node for the V2 row being edited. */
+const EditingRegistryModal: React.FC<
+  EditorModalProps & { entityId: string }
+> = ({ entityId, ...modalProps }) => {
+  'use memo';
+  const { container_registry_node } =
+    useLazyLoadQuery<ContainerRegistryListEditingRegistryQuery>(
+      graphql`
+        query ContainerRegistryListEditingRegistryQuery($id: String!) {
+          container_registry_node(id: $id) {
+            ...ContainerRegistryEditorModalFragment
+          }
+        }
+      `,
+      { id: toGlobalId('ContainerRegistryNode', entityId) },
+      { fetchPolicy: 'network-only' },
+    );
+  return (
+    <ContainerRegistryEditorModal
+      containerRegistryFrgmt={container_registry_node}
+      {...modalProps}
+    />
+  );
+};
 
 const ContainerRegistryList: React.FC<{
   style?: React.CSSProperties;
@@ -87,7 +120,9 @@ const ContainerRegistryList: React.FC<{
 
   const [queryParams, setQueryParams] = useQueryStates(
     {
-      filter: parseAsString,
+      filter: parseAsJson<ContainerRegistryV2Filter>(
+        (value) => value as ContainerRegistryV2Filter,
+      ),
       order: parseAsString,
     },
     { history: 'replace' },
@@ -102,76 +137,65 @@ const ContainerRegistryList: React.FC<{
     pageSize: 20,
   });
 
-  const queryVariables = useMemo(
-    () => ({
-      domain: baiClient._config.domainName,
-      filter: queryParams.filter,
-      order: queryParams.order,
-      first: baiPaginationOption.limit,
-      offset: baiPaginationOption.offset,
-      allowedProjectPreviewCount: ALLOWED_PROJECT_PREVIEW_COUNT,
-    }),
-    [
-      baiClient._config.domainName,
-      queryParams.filter,
-      queryParams.order,
-      baiPaginationOption.limit,
-      baiPaginationOption.offset,
-    ],
-  );
+  const queryVariables = {
+    domain: baiClient._config.domainName,
+    filter: queryParams.filter,
+    orderBy:
+      convertToOrderBy<ContainerRegistryV2OrderBy>(queryParams.order) ?? null,
+    limit: baiPaginationOption.limit,
+    offset: baiPaginationOption.offset,
+    allowedProjectPreviewCount: ALLOWED_PROJECT_PREVIEW_COUNT,
+  };
 
   const deferredQueryVariables = useDeferredValue(queryVariables);
   const deferredFetchKey = useDeferredValue(fetchKey);
 
-  const { container_registry_nodes, domain } =
+  const { adminContainerRegistriesV2 } =
     useLazyLoadQuery<ContainerRegistryListQuery>(
       graphql`
         query ContainerRegistryListQuery(
           $domain: String!
-          $filter: String
-          $order: String
-          $first: Int
+          $filter: ContainerRegistryV2Filter
+          $orderBy: [ContainerRegistryV2OrderBy!]
+          $limit: Int
           $offset: Int
           $allowedProjectPreviewCount: Int
         ) {
-          container_registry_nodes(
+          adminContainerRegistriesV2(
             filter: $filter
-            order: $order
-            first: $first
+            orderBy: $orderBy
+            limit: $limit
             offset: $offset
           ) {
+            count
             edges {
               node {
-                ...ContainerRegistryEditorModalFragment
                 id
-                row_id
-                registry_name
-                name
+                entityId
+                registryName
                 url
                 type
                 project
                 username
                 password
-                ssl_verify
-                is_global
-                allowed_groups_preview: allowed_groups(
-                  first: $allowedProjectPreviewCount
-                ) {
+                isGlobal
+                # Enabled = related to the current domain.
+                currentDomain: domains(filter: { name: { equals: $domain } }) {
+                  count
+                }
+                projects(first: $allowedProjectPreviewCount) {
                   count
                   edges {
                     node {
                       id
-                      name
+                      basicInfo {
+                        name
+                      }
                     }
                   }
                 }
               }
             }
-            count
-          }
-          domain(name: $domain) {
-            name
-            allowed_docker_registries
           }
         }
       `,
@@ -184,38 +208,68 @@ const ContainerRegistryList: React.FC<{
         fetchKey: deferredFetchKey,
       },
     );
-  const containerRegistries = _.map(container_registry_nodes?.edges, 'node');
+  const containerRegistries = _.map(adminContainerRegistriesV2?.edges, 'node');
 
-  const [commitDeleteMutation, isInFlightDeleteMutation] =
-    useMutation<ContainerRegistryListDeleteMutation>(graphql`
-      mutation ContainerRegistryListDeleteMutation($id: String!) {
-        delete_container_registry_node_v2(id: $id) {
-          container_registry {
-            id
-          }
+  const [commitPurgeMutation, isInFlightPurgeMutation] =
+    useMutation<ContainerRegistryListPurgeMutation>(graphql`
+      mutation ContainerRegistryListPurgeMutation($id: UUID!) {
+        adminPurgeContainerRegistryV2(id: $id) {
+          purgedId
         }
       }
     `);
 
-  const [commitDomainMutation, isInFlightDomainMutation] =
-    useMutation<ContainerRegistryListDomainMutation>(graphql`
-      mutation ContainerRegistryListDomainMutation(
-        $id: UUID!
-        $allowedDockerRegistries: [String!]!
-      ) {
-        updateDomainV2(
-          id: $id
-          input: { allowedDockerRegistries: $allowedDockerRegistries }
+  const [commitCreateRelationMutation, isInFlightCreateRelationMutation] =
+    useMutation<ContainerRegistryListCreateDomainRegistryRelationMutation>(
+      graphql`
+        mutation ContainerRegistryListCreateDomainRegistryRelationMutation(
+          $domainId: UUID!
+          $containerRegistryId: UUID!
         ) {
-          domain {
-            id
-            registry {
-              allowedDockerRegistries
+          createDomainContainerRegistryRelations(
+            input: {
+              items: [
+                {
+                  domainId: $domainId
+                  containerRegistryId: $containerRegistryId
+                }
+              ]
+            }
+          ) {
+            items {
+              domainId
+              containerRegistryId
             }
           }
         }
-      }
-    `);
+      `,
+    );
+
+  const [commitPurgeRelationMutation, isInFlightPurgeRelationMutation] =
+    useMutation<ContainerRegistryListPurgeDomainRegistryRelationMutation>(
+      graphql`
+        mutation ContainerRegistryListPurgeDomainRegistryRelationMutation(
+          $domainId: UUID!
+          $containerRegistryId: UUID!
+        ) {
+          purgeDomainContainerRegistryRelations(
+            input: {
+              items: [
+                {
+                  domainId: $domainId
+                  containerRegistryId: $containerRegistryId
+                }
+              ]
+            }
+          ) {
+            items {
+              domainId
+              containerRegistryId
+            }
+          }
+        }
+      `,
+    );
 
   const { t } = useTranslation();
   const [editingRegistry, setEditingRegistry] =
@@ -224,7 +278,29 @@ const ContainerRegistryList: React.FC<{
     useState<ContainerRegistry | null>();
   const [isNewModalOpen, setIsNewModalOpen] = useState(false);
 
-  const [inFlightHostName, setInFlightHostName] = useState<string>();
+  const [inFlightRowKey, setInFlightRowKey] = useState<string>();
+
+  const editorModalProps: EditorModalProps = {
+    open: !!editingRegistry || isNewModalOpen,
+    // The table reads V2 records, which the legacy save does not patch.
+    onOk: (type) => {
+      message.success({
+        key: type === 'create' ? 'registry-added' : 'registry-modified',
+        content:
+          type === 'create'
+            ? t('registry.RegistrySuccessfullyAdded')
+            : t('registry.RegistrySuccessfullyModified'),
+      });
+      updateFetchKey();
+      setEditingRegistry(null);
+      setIsNewModalOpen(false);
+    },
+    onCancel: () => {
+      setEditingRegistry(null);
+      setIsNewModalOpen(false);
+    },
+    centered: false,
+  };
 
   const rescanImage = async (
     registry_name: string,
@@ -291,11 +367,75 @@ const ContainerRegistryList: React.FC<{
       .catch(handleReScanError);
   };
 
+  const enabledColumn: BAIColumnType<ContainerRegistry> = {
+    key: 'enabled',
+    title: t('general.Enabled'),
+    render: (_value, record) => {
+      const isEnabled = (record.currentDomain?.count ?? 0) > 0;
+      const isInFlightRelationMutation =
+        isInFlightCreateRelationMutation || isInFlightPurgeRelationMutation;
+      return (
+        // antd Switch checked/loading/disabled -> Astryx Switch
+        // value/isLoading/isDisabled; `label` is required, hidden here
+        // because the column header already names the control (P2).
+        <BAISwitch
+          aria-label={t('general.Enabled')}
+          value={
+            inFlightRowKey === record.id + deferredFetchKey
+              ? !isEnabled
+              : isEnabled
+          }
+          disabled={deferredFetchKey !== fetchKey || isInFlightRelationMutation}
+          isLoading={
+            (deferredFetchKey !== fetchKey || isInFlightRelationMutation) &&
+            inFlightRowKey === record.id + deferredFetchKey
+          }
+          onChange={(isOn) => {
+            setInFlightRowKey(record.id + deferredFetchKey);
+            (isOn ? commitCreateRelationMutation : commitPurgeRelationMutation)(
+              {
+                variables: {
+                  domainId: baiClient._config.domainId,
+                  containerRegistryId: record.entityId,
+                },
+                onCompleted: (_res, errors) => {
+                  if (errors && errors?.length > 0) {
+                    const errorMsgList = _.map(
+                      errors,
+                      (error) => error.message,
+                    );
+                    for (const error of errorMsgList) {
+                      message.error(error);
+                    }
+                  } else {
+                    message.success({
+                      key: 'registry-enabled',
+                      content: isOn
+                        ? t('registry.RegistryTurnedOn')
+                        : t('registry.RegistryTurnedOff'),
+                    });
+                  }
+                  // The refetch also recovers the optimistically-toggled
+                  // switch when the manager returned GraphQL errors.
+                  updateFetchKey();
+                },
+                onError: (error) => {
+                  message.error(getErrorMessage(error));
+                  updateFetchKey();
+                },
+              },
+            );
+          }}
+        />
+      );
+    },
+  };
+
   const columns: BAIColumnsType<ContainerRegistry> = [
     {
       key: 'registry_name',
       title: t('registry.RegistryName'),
-      dataIndex: 'registry_name',
+      dataIndex: 'registryName',
       sorter: true,
       fixed: 'left',
       render: (name: string, record) => (
@@ -325,8 +465,7 @@ const ContainerRegistryList: React.FC<{
               title: t('maintenance.RescanImages'),
               icon: <RefreshCw size="1em" />,
               onClick: () => {
-                record.registry_name &&
-                  rescanImage(record.registry_name, record.project);
+                rescanImage(record.registryName, record.project);
               },
             },
           ]}
@@ -342,6 +481,7 @@ const ContainerRegistryList: React.FC<{
       key: 'type',
       title: t('registry.Type'),
       dataIndex: 'type',
+      render: (value: string) => toLegacyRegistryType(value),
     },
     {
       key: 'project',
@@ -364,107 +504,33 @@ const ContainerRegistryList: React.FC<{
     {
       key: 'is_global',
       title: t('registry.Global'),
-      dataIndex: 'is_global',
+      dataIndex: 'isGlobal',
       render: (value) => <BAIBooleanToken value={value} />,
     },
     {
       key: 'allowed_groups',
       title: t('registry.AllowedProjects'),
       render: (_value, record) => {
-        // A global registry has no allow-list; the server answers this field
-        // with every project, which is noise rather than information.
-        if (record.is_global) {
+        // A global registry is open to every project and has no relation rows.
+        if (record.isGlobal) {
           return t('environment.AllProjects');
         }
-        const groups = filterOutNullAndUndefined(
-          _.map(record.allowed_groups_preview?.edges, (edge) => edge?.node),
+        const projects = filterOutNullAndUndefined(
+          _.map(record.projects?.edges, (edge) => edge?.node),
         );
         return (
           <BAITokenRow
-            items={_.map(groups, (group) => ({
-              key: group.id,
-              label: group.name ?? '',
+            items={_.map(projects, (project) => ({
+              key: project.id,
+              label: project.basicInfo.name,
             }))}
             maxCount={ALLOWED_PROJECT_PREVIEW_COUNT}
-            totalCount={record.allowed_groups_preview?.count ?? undefined}
+            totalCount={record.projects?.count ?? undefined}
           />
         );
       },
     },
-    {
-      key: 'enabled',
-      title: t('general.Enabled'),
-      render: (_value, record) => {
-        const isEnabled = _.includes(
-          domain?.allowed_docker_registries,
-          record.registry_name,
-        );
-        return (
-          // antd Switch checked/loading/disabled -> Astryx Switch
-          // value/isLoading/isDisabled; `label` is required, hidden here
-          // because the column header already names the control (P2).
-          <BAISwitch
-            aria-label={t('general.Enabled')}
-            value={
-              inFlightHostName === record.id + deferredFetchKey
-                ? !isEnabled
-                : isEnabled
-            }
-            disabled={deferredFetchKey !== fetchKey || isInFlightDomainMutation}
-            isLoading={
-              (deferredFetchKey !== fetchKey || isInFlightDomainMutation) &&
-              inFlightHostName === record.id + deferredFetchKey
-            }
-            onChange={(isOn) => {
-              if (!_.isString(record.registry_name)) return;
-              let newAllowedDockerRegistries = _.compact(
-                domain?.allowed_docker_registries,
-              );
-              if (isOn) {
-                newAllowedDockerRegistries.push(record.registry_name);
-              } else {
-                newAllowedDockerRegistries = _.without(
-                  newAllowedDockerRegistries,
-                  record.registry_name,
-                );
-              }
-
-              setInFlightHostName(record.id + deferredFetchKey);
-              commitDomainMutation({
-                variables: {
-                  id: baiClient._config.domainId,
-                  allowedDockerRegistries: newAllowedDockerRegistries,
-                },
-                onCompleted: (_res, errors) => {
-                  if (errors && errors?.length > 0) {
-                    const errorMsgList = _.map(
-                      errors,
-                      (error) => error.message,
-                    );
-                    for (const error of errorMsgList) {
-                      message.error(error);
-                    }
-                  } else {
-                    updateFetchKey();
-                  }
-
-                  message.success({
-                    key: 'registry-enabled',
-                    content: isOn
-                      ? t('registry.RegistryTurnedOn')
-                      : t('registry.RegistryTurnedOff'),
-                  });
-                },
-                onError: (error) => {
-                  message.error(getErrorMessage(error));
-                  updateFetchKey();
-                },
-              });
-            }}
-          />
-        );
-      },
-    },
+    enabledColumn,
   ];
 
   const [storedHiddenColumnKeys, setHiddenColumnKeys] =
@@ -492,10 +558,10 @@ const ContainerRegistryList: React.FC<{
         align="start"
         wrap="wrap"
       >
-        <BAIPropertyFilter
+        <BAIGraphQLPropertyFilter<ContainerRegistryV2Filter>
           filterProperties={[
             {
-              key: 'registry_name',
+              key: 'registryName',
               propertyLabel: t('registry.RegistryName'),
               type: 'string',
             },
@@ -530,7 +596,7 @@ const ContainerRegistryList: React.FC<{
         rowKey={(record) => record.id}
         pagination={{
           pageSize: tablePaginationOption.pageSize,
-          total: container_registry_nodes?.count ?? 0,
+          total: adminContainerRegistriesV2?.count ?? 0,
           current: tablePaginationOption.current,
           onChange(current, pageSize) {
             if (_.isNumber(current) && _.isNumber(pageSize)) {
@@ -566,36 +632,22 @@ const ContainerRegistryList: React.FC<{
           ) as BAIColumnType<ContainerRegistry>[]
         }
       />
-      <ContainerRegistryEditorModal
-        containerRegistryFrgmt={editingRegistry}
-        open={!!editingRegistry || isNewModalOpen}
-        unmountOnClose
-        onOk={(type) => {
-          if (type === 'create') {
-            message.success({
-              key: 'registry-added',
-              content: t('registry.RegistrySuccessfullyAdded'),
-            });
-            updateFetchKey();
-          } else if (type === 'modify') {
-            message.success({
-              key: 'registry-modified',
-              content: t('registry.RegistrySuccessfullyModified'),
-            });
-          }
-          setEditingRegistry(null);
-          setIsNewModalOpen(false);
-        }}
-        onCancel={() => {
-          setEditingRegistry(null);
-          setIsNewModalOpen(false);
-        }}
-        centered={false}
-      />
+      {editingRegistry ? (
+        <Suspense fallback={null}>
+          <EditingRegistryModal
+            entityId={editingRegistry.entityId}
+            {...editorModalProps}
+          />
+        </Suspense>
+      ) : (
+        <BAIUnmountAfterClose>
+          <ContainerRegistryEditorModal {...editorModalProps} />
+        </BAIUnmountAfterClose>
+      )}
       <BAIDeleteConfirmModal
         open={!!deletingRegistry}
         title={t('dialog.title.DeleteSomething', {
-          name: deletingRegistry?.registry_name,
+          name: deletingRegistry?.registryName,
         })}
         target={t('general.ContainerRegistry')}
         items={
@@ -603,19 +655,19 @@ const ContainerRegistryList: React.FC<{
             ? [
                 {
                   key: deletingRegistry.id,
-                  label: deletingRegistry.registry_name ?? '',
+                  label: deletingRegistry.registryName,
                 },
               ]
             : []
         }
-        confirmText={deletingRegistry?.registry_name ?? ''}
+        confirmText={deletingRegistry?.registryName ?? ''}
         requireConfirmInput
-        confirmLoading={isInFlightDeleteMutation}
+        confirmLoading={isInFlightPurgeMutation}
         onOk={() => {
           if (deletingRegistry) {
-            commitDeleteMutation({
+            commitPurgeMutation({
               variables: {
-                id: deletingRegistry.id,
+                id: deletingRegistry.entityId,
               },
               onCompleted: (_res, error) => {
                 if (error) {

@@ -3,7 +3,10 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import '../../__test__/matchMedia.mock.js';
-import { isMatchingMaxPerContainer } from './useResourceLimitAndRemaining';
+import {
+  getShmemMaxLimit,
+  isMatchingMaxPerContainer,
+} from './useResourceLimitAndRemaining';
 
 describe('getConfigName', () => {
   test('should match unknown devices', () => {
@@ -52,5 +55,19 @@ describe('getConfigName', () => {
         'hyperaccel-lpu.device',
       ),
     ).toBe(true);
+  });
+});
+
+describe('getShmemMaxLimit', () => {
+  test('is maxShmPerContainer in GiB', () => {
+    expect(getShmemMaxLimit(2)).toBe('2g');
+    expect(getShmemMaxLimit(0.5)).toBe('0.5g');
+  });
+
+  test('a missing, zero or non-numeric value sets no cap', () => {
+    expect(getShmemMaxLimit(undefined)).toBeUndefined();
+    expect(getShmemMaxLimit(0)).toBeUndefined();
+    expect(getShmemMaxLimit(-1)).toBeUndefined();
+    expect(getShmemMaxLimit('4')).toBeUndefined();
   });
 });

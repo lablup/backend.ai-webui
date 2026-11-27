@@ -2,9 +2,9 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
- Pending folder shares offered to the current user, each a labeled block with
- Accept / Decline. The empty state is rendered explicitly — Astryx `List` has
- no `locale.emptyText` slot.
+ Pending folder shares offered to the current user or to a project they answer
+ for, each a labeled block with Accept / Decline. The empty state is rendered
+ explicitly — Astryx `List` has no `locale.emptyText` slot.
 */
 import { App } from '../app-shim';
 import { useSetBAINotification } from '../hooks/useBAINotification';
@@ -12,6 +12,7 @@ import {
   InvitationItem,
   useVFolderInvitations,
 } from '../hooks/useVFolderInvitations';
+import type { ProjectContextOrNull } from '../types/projectContext';
 import { Button } from '@lablup/ui-common/Button';
 import { Divider } from '@lablup/ui-common/Divider';
 import { EmptyState } from '@lablup/ui-common/EmptyState';
@@ -43,19 +44,21 @@ interface FolderInvitationResponseModalProps extends Omit<
 > {
   /** App-level contract, kept: the opener passes `open` + `onCancel`. */
   open?: boolean;
+  /** The page's project (ADR-0001): the invitations listed are the ones addressed to it; without one a superadmin gets them all. */
+  project: ProjectContextOrNull;
   onCancel?: () => void;
 }
 
 const FolderInvitationResponseModal: React.FC<
   FolderInvitationResponseModalProps
-> = ({ onCancel, ...baiModalProps }) => {
+> = ({ project, onCancel, ...baiModalProps }) => {
   'use memo';
   const { message } = App.useApp();
   const { t } = useTranslation();
   const [
     invitations,
     { acceptInvitation, rejectInvitation, updateInvitations },
-  ] = useVFolderInvitations();
+  ] = useVFolderInvitations(project);
   const { getErrorMessage } = useErrorMessageResolver();
   const { upsertNotification } = useSetBAINotification();
   const { summary: sharePermissionSummary } = useEntitySharePermissionLabels();
@@ -77,6 +80,11 @@ const FolderInvitationResponseModal: React.FC<
           <MetadataListItem label={t('data.Foldername')}>
             {folderName}
           </MetadataListItem>
+          {item.recipientProjectName && (
+            <MetadataListItem label={t('general.Project')}>
+              {item.recipientProjectName}
+            </MetadataListItem>
+          )}
           <MetadataListItem label={t('data.From')}>
             {item.sharerEmail || t('data.invitation.UnknownUser')}
           </MetadataListItem>

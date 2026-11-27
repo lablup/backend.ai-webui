@@ -520,7 +520,7 @@ export const CSSTokenVariables = () => {
  * splash was torn down before login had even finished.
  *
  * Also copies the signed-in user's `userConfig.themeFamily`, which sign-in
- * loaded before the client became ready, into the localStorage mirror BEFORE
+ * loaded before the client became ready, into the FOUC mirror BEFORE
  * the splash goes (FR-3834). The mirror survives logout; the next login
  * overrides it here.
  */

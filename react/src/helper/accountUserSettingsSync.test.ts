@@ -123,18 +123,30 @@ describe('startAccountUserSettingsSync', () => {
     );
   });
 
-  it('saves nothing to the account in an act-as tab', async () => {
+  it("saves to the target's account in an act-as tab without copying this browser's values", async () => {
     actAs.target = { userId: 'u', email: 'x@y', name: 'x' };
     localStorage.setItem(P + 'compact_sidebar', 'true');
     signIn({ settings: { session_monitor_rows: 3 } });
     const send = vi.fn().mockResolvedValue(undefined);
     start(send);
-    // The target's settings show; this browser's own local values are not copied.
+    // The target's settings show; the super admin's local values stay where they are.
     expect(accountSettings()).toEqual({ session_monitor_rows: 3 });
     expect(localStorage.getItem(P + 'compact_sidebar')).toBe('true');
     queueUserSettingWrite('session_monitor_rows', 9);
     await vi.advanceTimersByTimeAsync(USER_SETTINGS_WRITE_DELAY_MS);
+    expect(send).toHaveBeenCalledTimes(1);
+  });
+
+  it('copies nothing up in an act-as tab when the target has no settings', async () => {
+    actAs.target = { userId: 'u', email: 'x@y', name: 'x' };
+    localStorage.setItem(P + 'compact_sidebar', 'true');
+    signIn({});
+    const send = vi.fn().mockResolvedValue(undefined);
+    start(send);
+    await vi.advanceTimersByTimeAsync(USER_SETTINGS_WRITE_DELAY_MS);
+    expect(accountSettings()).toBeUndefined();
     expect(send).not.toHaveBeenCalled();
+    expect(localStorage.getItem(P + 'compact_sidebar')).toBe('true');
   });
 
   it('starts nothing after a failed sign-in read', async () => {

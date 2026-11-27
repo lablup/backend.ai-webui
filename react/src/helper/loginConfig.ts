@@ -99,9 +99,10 @@ export interface LoginConfigState {
   maxGaudi2DevicesPerContainer: number;
   maxWarboyDevicesPerContainer: number;
   maxRNGDDevicesPerContainer: number;
-  /** Unset unless the file or a document names it, so the launcher falls back to the CUDA cap. */
-  maxATOMPLUSDevicesPerContainer?: number;
+  maxATOMPLUSDevicesPerContainer: number;
+  /** Unset unless a document names it, so the launcher falls back to the CUDA cap. */
   maxHyperaccelLPUDevicesPerContainer?: number;
+  /** GiB; 0 means no cap, so shared memory is bounded only by the session memory. */
   maxShmPerContainer: number;
   maxFileUploadSize: number;
   /** MiB; 0 picks the chunk size from the file size. */
@@ -164,7 +165,7 @@ export function getDefaultLoginConfig(): LoginConfigState {
     allowPreferredPort: false,
     allowNonAuthTCP: false,
     maxCPUCoresPerContainer: 64,
-    maxMemoryPerContainer: 16,
+    maxMemoryPerContainer: 64,
     maxCUDADevicesPerContainer: 16,
     maxCUDASharesPerContainer: 16,
     maxROCMDevicesPerContainer: 10,
@@ -174,9 +175,9 @@ export function getDefaultLoginConfig(): LoginConfigState {
     maxGaudi2DevicesPerContainer: 8,
     maxWarboyDevicesPerContainer: 8,
     maxRNGDDevicesPerContainer: 8,
-    maxATOMPLUSDevicesPerContainer: undefined,
+    maxATOMPLUSDevicesPerContainer: 8,
     maxHyperaccelLPUDevicesPerContainer: undefined,
-    maxShmPerContainer: 2,
+    maxShmPerContainer: 0,
     maxFileUploadSize: -1,
     fileUploadChunkSize: 0,
     storageWarningThreshold: 90,

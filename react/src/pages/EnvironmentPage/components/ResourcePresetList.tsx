@@ -24,6 +24,7 @@ import {
   BAINameActionCell,
   BAIDeleteConfirmModal,
   type BAIColumnsType,
+  BAIUnmountAfterClose,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { RotateCw, Trash2, PlusIcon, SquarePenIcon } from 'lucide-react';
@@ -283,20 +284,21 @@ const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
         onCancel={() => setDeletingPresetId(null)}
       />
       <Suspense fallback={null}>
-        <ResourcePresetSettingModal
-          resourcePresetFrgmt={editingResourcePreset}
-          open={!!editingResourcePreset || isCreating}
-          unmountOnClose
-          onRequestClose={(success) => {
-            setEditingResourcePreset(null);
-            setIsCreating(false);
-            if (success) {
-              startRefetchTransition(() => {
-                updateResourcePresetsFetchKey();
-              });
-            }
-          }}
-        />
+        <BAIUnmountAfterClose>
+          <ResourcePresetSettingModal
+            resourcePresetFrgmt={editingResourcePreset}
+            open={!!editingResourcePreset || isCreating}
+            onRequestClose={(success) => {
+              setEditingResourcePreset(null);
+              setIsCreating(false);
+              if (success) {
+                startRefetchTransition(() => {
+                  updateResourcePresetsFetchKey();
+                });
+              }
+            }}
+          />
+        </BAIUnmountAfterClose>
       </Suspense>
     </BAIFlex>
   );

@@ -46,4 +46,52 @@ describe('toInvitationItems (#10329)', () => {
     expect(item.vfolderName).toBeNull();
     expect(item.vfolderId).toBe('vf-1');
   });
+
+  it('lists a share once when both the user and a project query return it', () => {
+    const items = toInvitationItems([
+      share({ entityId: 'same' }),
+      share({ entityId: 'same' }),
+    ]);
+    expect(items).toHaveLength(1);
+  });
+
+  it("lists the caller's own offer among a project's shares", () => {
+    const items = toInvitationItems([
+      share({
+        entityId: 'own',
+        sharer: { basicInfo: { email: 'me@example.com' } },
+      }),
+      share({ entityId: 'theirs' }),
+    ]);
+    expect(items.map((item) => item.id).sort()).toEqual(['own', 'theirs']);
+  });
+
+  it('names a project share by the given project names, falling back to its id', () => {
+    const items = toInvitationItems(
+      [
+        share({
+          entityId: 'listed',
+          recipientEntityType: 'PROJECT',
+          recipientEntityId: 'p-1',
+        }),
+        share({
+          entityId: 'unknown',
+          recipientEntityType: 'project',
+          recipientEntityId: 'p-2',
+        }),
+        share({ entityId: 'mine', recipientEntityType: 'user' }),
+      ],
+      { 'p-1': 'research' },
+    );
+    expect(
+      Object.fromEntries(
+        items.map((item) => [item.id, item.recipientProjectName]),
+      ),
+    ).toEqual({ listed: 'research', unknown: 'p-2', mine: undefined });
+  });
+
+  it('reads the target entity type regardless of case', () => {
+    const items = toInvitationItems([share({ targetEntityType: 'VFOLDER' })]);
+    expect(items).toHaveLength(1);
+  });
 });

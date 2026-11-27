@@ -83,9 +83,12 @@ test.describe(
       await projectSelect.click();
       const targetProject =
         TARGET_PROJECT_OVERRIDE ?? (await getE2EProjectName());
+      // Match on the name text, not the accessible name: a project the admin
+      // administers adds the Project Admin shield's label to the option's name.
       const targetOption = page
         .getByRole('listbox')
-        .getByRole('option', { name: targetProject, exact: true });
+        .getByRole('option')
+        .filter({ has: page.getByText(targetProject, { exact: true }) });
       await targetOption.click();
       await expect(projectSelect).toContainText(targetProject);
 

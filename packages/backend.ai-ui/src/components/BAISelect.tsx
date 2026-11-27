@@ -210,6 +210,18 @@ export interface BAISelectProps<ValueType = any, OptionType = BAISelectOption> {
   /** Badges shown before "+N". Only meaningful with `triggerDisplay="badges"`. */
   maxBadges?: number;
   /**
+   * `mode="multiple"` / `mode="tags"`: lists every selected label in a tooltip
+   * on the trigger. Off unless passed; ignored in single mode.
+   */
+  showSelectedOptionsTooltip?: boolean;
+  /**
+   * Single mode: shows the selected option's whole label in a tooltip while
+   * the trigger cuts it off with an ellipsis. None with `labelRender` or a
+   * rich `optionLabelProp="children"` trigger.
+   * @default true
+   */
+  showTooltipOnEllipsis?: boolean;
+  /**
    * antd's trigger-label source selector. Only `'children'` is honoured: the
    * selected option's rich node renders on the closed trigger (FR-3544).
    * Other values fall back to the flattened text label.
@@ -278,6 +290,8 @@ function BAISelect<ValueType = any, OptionType = BAISelectOption>({
   optionRender,
   triggerDisplay = 'labels',
   maxBadges,
+  showSelectedOptionsTooltip,
+  showTooltipOnEllipsis = true,
   children,
   className,
   style,
@@ -608,6 +622,7 @@ function BAISelect<ValueType = any, OptionType = BAISelectOption>({
         // QA2-B-1: labels, not "N selected". See the PILOT-DECISION above.
         triggerDisplay={triggerDisplay}
         maxBadges={maxBadges}
+        showSelectedOptionsTooltip={showSelectedOptionsTooltip}
         hasClear={allowClear}
         onChange={(next) => {
           const originals = next.map(
@@ -629,6 +644,11 @@ function BAISelect<ValueType = any, OptionType = BAISelectOption>({
       // `Selector` shows the clear button for any non-null value, `''` included.
       hasClear={allowClear && resolvedSingleValue !== ''}
       renderValue={labelRender}
+      // The rich trigger's label span is visually hidden (1px), so ui-common
+      // would read it as clipped on every hover.
+      showTooltipOnEllipsis={
+        showTooltipOnEllipsis && richTriggerNode === undefined
+      }
       // `autoSelectOption` is honoured without the antd layout effect: when
       // nothing is selected the resolved first (or caller-chosen) option is
       // the rendered value, and the caller is told on mount by the same

@@ -16,7 +16,7 @@ export const docs = {
   ],
   usage: {
     description:
-      'The application modal, an adapter over ui-common Modal (a portalled dialog surface) that keeps the antd-shaped prop vocabulary and adds the controller behaviour the bare surface does not provide: a header with title, subtitle and close button, a generated OK and Cancel footer with loading and danger states, backdrop and Escape dismissal policy, a skeleton loading state, an afterClose lifecycle, optional window controls (minimize, maximize, fullscreen) and a close guard that can veto a dismissal. Use it for any modal surface in the app; reaching for ui-common Modal directly means rebuilding the header, footer and dismissal wiring by hand. Children mount on the first open and stay mounted while closed; pass unmountOnClose, or wrap the modal in BAIUnmountAfterClose, to drop them and their state on close, and the built-in labels are translated through useBAIi18n.',
+      'The application modal, an adapter over ui-common Modal (a portalled dialog surface) that keeps the antd-shaped prop vocabulary and adds the controller behaviour the bare surface does not provide: a header with title, subtitle and close button, a generated OK and Cancel footer with loading and danger states, backdrop and Escape dismissal policy, a skeleton loading state, an afterClose lifecycle, optional window controls (minimize, maximize, fullscreen) and a close guard that can veto a dismissal. Use it for any modal surface in the app; reaching for ui-common Modal directly means rebuilding the header, footer and dismissal wiring by hand. Children mount on the first open and stay mounted while closed; wrap the component that renders the modal in BAIUnmountAfterClose to drop it and its state on close, or pass unmountOnClose only when that component must stay mounted and dropping the children is enough, and the built-in labels are translated through useBAIi18n.',
     bestPractices: [
       {
         guidance: true,
@@ -39,6 +39,11 @@ export const docs = {
           'Use variant="fullscreen" for edge-to-edge surfaces; a standard dialog is capped at 90vw, so width="90%" and width="100%" render alike.',
       },
       {
+        guidance: true,
+        description:
+          'Leave unmounting to the call site: a modal component built on BAIModal extends BAIModalProps and passes them through, so its caller decides whether to wrap it in BAIUnmountAfterClose or pass unmountOnClose. The modal component does not wrap itself, and sets unmountOnClose inside only when it must stay mounted for its own logic, such as work run when it opens.',
+      },
+      {
         guidance: false,
         description:
           'Build an irreversible-deletion flow on a bare BAIModal — BAIDeleteConfirmModal with requireConfirmInput is the required surface for permanent deletes.',
@@ -55,7 +60,7 @@ export const docs = {
       name: 'open',
       type: 'boolean',
       description:
-        'Whether the modal is visible. While false the component renders nothing, so children unmount.',
+        'Whether the modal is visible. Children mount on the first open and stay mounted while closed; see unmountOnClose and BAIUnmountAfterClose.',
     },
     {
       name: 'isOpen',
@@ -277,7 +282,7 @@ export const docs = {
       name: 'unmountOnClose',
       type: 'boolean',
       description:
-        'Forwarded to ui-common Modal: unmounts the content, and drops its state, when the modal closes.',
+        'Forwarded to ui-common Modal: unmounts only the content (children) when the modal closes; the component that renders BAIModal stays mounted with its state and queries. Use it only when the modal itself needs to stay mounted. To unmount the modal component too, wrap it in BAIUnmountAfterClose instead.',
     },
     {
       name: 'ref',

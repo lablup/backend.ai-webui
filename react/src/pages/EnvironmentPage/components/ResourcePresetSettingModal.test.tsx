@@ -10,6 +10,7 @@ import ResourcePresetSettingModal from './ResourcePresetSettingModal';
 import '@testing-library/jest-dom';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { BAIUnmountAfterClose } from 'backend.ai-ui';
 import { Suspense } from 'react';
 import {
   graphql,
@@ -263,7 +264,6 @@ describe('ResourcePresetSettingModal edit contract', () => {
   });
 });
 
-// One modal instance shared by edit and create, as `ResourcePresetList` renders it.
 const SharedModalHost = ({ mode }: { mode: 'edit' | 'create' | null }) => {
   const data = useLazyLoadQuery<ResourcePresetSettingModalSharedTestQuery>(
     graphql`
@@ -276,18 +276,19 @@ const SharedModalHost = ({ mode }: { mode: 'edit' | 'create' | null }) => {
     {},
   );
   return (
-    <ResourcePresetSettingModal
-      open={mode !== null}
-      unmountOnClose
-      resourcePresetFrgmt={
-        mode === 'edit' ? data.resource_presets?.[0] : undefined
-      }
-      onRequestClose={vi.fn()}
-    />
+    <BAIUnmountAfterClose>
+      <ResourcePresetSettingModal
+        open={mode !== null}
+        resourcePresetFrgmt={
+          mode === 'edit' ? data.resource_presets?.[0] : undefined
+        }
+        onRequestClose={vi.fn()}
+      />
+    </BAIUnmountAfterClose>
   );
 };
 
-describe('ResourcePresetSettingModal shared create/edit instance', () => {
+describe('ResourcePresetSettingModal as ResourcePresetList renders it', () => {
   it('opens Create with an empty form after an edit was closed', async () => {
     const environment: RelayMockEnvironment = createMockEnvironment();
     environment.mock.queueOperationResolver((operation) =>

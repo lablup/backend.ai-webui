@@ -49,15 +49,17 @@ const previews = isDir(prRoot)
           ? `./pr/${n}/storybook/`
           : null,
         docs: docsEntry(n),
+        adr: isDir(join(prRoot, String(n), "adr")) ? `./pr/${n}/adr/` : null,
       }))
-      .filter((entry) => entry.storybook || entry.docs)
+      .filter((entry) => entry.storybook || entry.docs || entry.adr)
   : [];
 
 const items = previews
-  .map(({ n, storybook, docs }) => {
+  .map(({ n, storybook, docs, adr }) => {
     const links = [
       storybook && `<a href="${storybook}">Storybook</a>`,
       docs && `<a href="${docs}">Docs</a>`,
+      adr && `<a href="${adr}">ADRs</a>`,
     ]
       .filter(Boolean)
       .join(" · ");
@@ -91,9 +93,9 @@ const html = `<!doctype html>
   <body>
     <h1>Backend.AI WebUI — PR previews</h1>
     <p>
-      One build of <code>packages/backend.ai-ui</code> and of the user manual
-      per open pull request, whichever the PR changed. Previews are removed when
-      their PR is merged or closed.
+      One build of <code>packages/backend.ai-ui</code>, of the user manual and
+      of the ADR viewer per open pull request, whichever the PR changed.
+      Previews are removed when their PR is merged or closed.
     </p>
 ${previews.length > 0 ? `    <ul>\n${items}\n    </ul>` : "    <p>No live previews right now.</p>"}
   </body>

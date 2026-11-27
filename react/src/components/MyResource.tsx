@@ -8,6 +8,7 @@ import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import ResourceUsageStatistics from './DashboardPanels/memberCards/ResourceUsageStatistics';
 import {
   offeredSlotsOf,
+  shownSlotsOf,
   toUsageRows,
 } from './DashboardPanels/memberCards/memberCardData';
 import { readPrimary, readSecondary } from './DashboardPanels/panelPermission';
@@ -225,15 +226,18 @@ const MyTotalResourceStatisticsContent: React.FC<{
   const user = readPrimary(data.myUserResourceAllocationV2)?.user;
   const project = readSecondary(data.projectResourceAllocationV2).value
     ?.project;
-  // Only the slots some group of the project offers; the allocation lists every slot the manager knows.
+  // The allocation lists every slot the manager knows; keep the offered ones and those in use.
   const groupSlots = _.compact(
     _.map(readSecondary(data.scopedResourceGroups).value?.edges, (edge) =>
       offeredSlotsOf(edge?.node?.resourceInfo?.capacity.entries),
     ),
   );
-  const slots = groupSlots.length
-    ? new Set(groupSlots.flatMap((offered) => [...offered]))
-    : undefined;
+  const slots = shownSlotsOf(
+    groupSlots.length
+      ? new Set(groupSlots.flatMap((offered) => [...offered]))
+      : null,
+    user?.used ?? [],
+  );
 
   return (
     <ResourceUsageStatistics

@@ -50,7 +50,7 @@ const TEST_PASSWORD = 'oldPassword1!';
 async function fillLoginForm(page: Page): Promise<void> {
   await fillLoginEndpoint(page, webServerEndpoint);
   await page.getByLabel('Email or Username').fill(TEST_EMAIL);
-  await page.getByLabel('Password').fill(TEST_PASSWORD);
+  await page.getByLabel('Password', { exact: true }).fill(TEST_PASSWORD);
 }
 
 /**
@@ -235,7 +235,9 @@ test.describe('real account password change flow', () => {
       await page.goto(webuiEndpoint);
       await fillLoginEndpoint(page, webServerEndpoint);
       await page.getByLabel('Email or Username').fill(USER_EMAIL);
-      await page.getByLabel('Password').fill(ORIGINAL_PASSWORD);
+      await page
+        .getByLabel('Password', { exact: true })
+        .fill(ORIGINAL_PASSWORD);
 
       // ── Now register the mock: first user-initiated call → expired, rest → real backend ──
       // The mock is registered late (after page.goto and form fill) so that the app's
