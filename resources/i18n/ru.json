@@ -1178,6 +1178,7 @@
       "DefaultMountPermission": "Разрешение монтирования по умолчанию",
       "Delete": "Удалить",
       "DeleteAFolder": "Удалить папку",
+      "DeleteCompleted": "Удалены окончательно",
       "DeleteFailureDescription": "Не удалось удалить {{failed}} из {{total}} папок. Проверьте причину для каждой папки ниже.",
       "DeleteForever": "Удалить навсегда",
       "DeleteForeverConfirmText": "удалить",

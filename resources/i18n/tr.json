@@ -1178,6 +1178,7 @@
       "DefaultMountPermission": "Varsayılan bağlama izni",
       "Delete": "Sil",
       "DeleteAFolder": "Klasörü sil",
+      "DeleteCompleted": "Kalıcı olarak silinenler",
       "DeleteFailureDescription": "{{total}} klasörden {{failed}} tanesi silinemedi. Aşağıda her klasörün nedenini kontrol edin.",
       "DeleteForever": "Tamamen sil",
       "DeleteForeverConfirmText": "sil",

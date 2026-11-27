@@ -1178,6 +1178,7 @@
       "DefaultMountPermission": "Oletusliitosoikeus",
       "Delete": "Poista",
       "DeleteAFolder": "Poista kansio",
+      "DeleteCompleted": "Pysyvästi poistetut",
       "DeleteFailureDescription": "{{failed}}/{{total}} kansiota ei voitu poistaa. Tarkista alla kunkin kansion syy.",
       "DeleteForever": "Poista ikuisesti",
       "DeleteForeverConfirmText": "poista",

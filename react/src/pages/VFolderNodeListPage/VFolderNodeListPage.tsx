@@ -19,7 +19,11 @@ import VFolderNodesV2, {
   availableVFolderSorterValues,
 } from '../../components/VFolderNodesV2';
 import { convertToOrderBy, handleRowSelectionChange } from '../../helper';
-import { isDeletedCategory } from '../../helper/vfolderStatus';
+import {
+  VFOLDER_STATUS_FILTER_ACTIVE,
+  VFOLDER_STATUS_FILTER_TRASH,
+  isDeletedCategory,
+} from '../../helper/vfolderStatus';
 import { useCurrentUserInfo } from '../../hooks/backendai';
 import { useBAIPaginationOptionStateOnSearchParam } from '../../hooks/reactPaginationQueryOptions';
 import { useIsPersonalProject } from '../../hooks/useAccessibleProjects';
@@ -80,25 +84,6 @@ interface VFolderNodeListPageProps {}
 const DEFAULT_ORDER = '-created_at';
 const statusCategoryValues = ['active', 'deleted'] as const;
 const modeValues = ['all', 'general', 'data', 'automount', 'model'] as const;
-
-const DELETE_STATUSES = [
-  'DELETE_PENDING',
-  'DELETE_ONGOING',
-  'DELETE_ERROR',
-  'DELETE_COMPLETE',
-] as const;
-const VISIBLE_DELETED_STATUSES = [
-  'DELETE_PENDING',
-  'DELETE_ONGOING',
-  'DELETE_ERROR',
-] as const;
-
-const STATUS_FILTER_ACTIVE = {
-  status: { notIn: DELETE_STATUSES },
-} as const;
-const STATUS_FILTER_DELETED = {
-  status: { in: VISIBLE_DELETED_STATUSES },
-} as const;
 
 // V2 `VFolderOperationStatus` has no PERFORMING / MOUNTED / ERROR values
 // (unlike V1's `VirtualFolderNode.status`), so the status filter property
@@ -210,8 +195,8 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
 
   const statusFilter =
     queryParams.statusCategory === 'deleted'
-      ? STATUS_FILTER_DELETED
-      : STATUS_FILTER_ACTIVE;
+      ? VFOLDER_STATUS_FILTER_TRASH
+      : VFOLDER_STATUS_FILTER_ACTIVE;
 
   // Built from literals and stable references only (no helper call): the
   // compiler keeps unknown calls with mutable arguments un-memoized.
@@ -246,8 +231,8 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
     orderBy: convertToOrderBy<VFolderOrderBy>(
       queryParams.order || DEFAULT_ORDER,
     ),
-    filterForActiveCount: STATUS_FILTER_ACTIVE,
-    filterForDeletedCount: STATUS_FILTER_DELETED,
+    filterForActiveCount: VFOLDER_STATUS_FILTER_ACTIVE,
+    filterForDeletedCount: VFOLDER_STATUS_FILTER_TRASH,
   };
   const deferredQueryVariables = useDeferredValue(queryVariables);
   const deferredFetchKey = useDeferredValue(fetchKey);

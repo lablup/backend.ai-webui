@@ -20,7 +20,12 @@ import VFolderNodesV2, {
   availableVFolderSorterValues,
 } from '../../components/VFolderNodesV2';
 import { convertToOrderBy, handleRowSelectionChange } from '../../helper';
-import { isDeletedCategory } from '../../helper/vfolderStatus';
+import {
+  VFOLDER_STATUS_FILTER_ACTIVE,
+  VFOLDER_STATUS_FILTER_DELETE_COMPLETE,
+  VFOLDER_STATUS_FILTER_TRASH,
+  isDeletedCategory,
+} from '../../helper/vfolderStatus';
 import { useBAIPaginationOptionStateOnSearchParam } from '../../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
 import { useEffectiveLoginConfig } from '../../hooks/useWebUIConfig';
@@ -61,22 +66,14 @@ type VFolderNodesType = NonNullableNodeOnEdges<
   AdminVFolderNodeListPageQuery$data['adminVfoldersV2']
 >;
 
-const DELETE_STATUSES = [
-  'DELETE_PENDING',
-  'DELETE_ONGOING',
-  'DELETE_ERROR',
-  'DELETE_COMPLETE',
-] as const;
-
-const STATUS_FILTER_ACTIVE = {
-  status: { notIn: DELETE_STATUSES },
-} as const;
-const STATUS_FILTER_DELETED = {
-  status: { in: DELETE_STATUSES },
-} as const;
-
 const DEFAULT_ORDER = '-created_at';
-const statusCategoryValues = ['active', 'deleted'] as const;
+const statusCategoryValues = ['active', 'deleted', 'deleteComplete'] as const;
+type StatusCategory = (typeof statusCategoryValues)[number];
+const STATUS_FILTERS: Record<StatusCategory, VFolderFilter> = {
+  active: VFOLDER_STATUS_FILTER_ACTIVE,
+  deleted: VFOLDER_STATUS_FILTER_TRASH,
+  deleteComplete: VFOLDER_STATUS_FILTER_DELETE_COMPLETE,
+};
 const modeValues = ['all', 'general', 'data', 'automount', 'model'] as const;
 
 // Module constants so each mode's filter keeps a stable identity; a fresh object
@@ -164,10 +161,7 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
 
   const [fetchKey, updateFetchKey] = useFetchKey();
 
-  const statusFilter =
-    queryParams.statusCategory === 'deleted'
-      ? STATUS_FILTER_DELETED
-      : STATUS_FILTER_ACTIVE;
+  const statusFilter = STATUS_FILTERS[queryParams.statusCategory];
 
   // Built from literals and stable references only (no helper call): the
   // compiler keeps unknown calls with mutable arguments un-memoized, and any
@@ -189,8 +183,9 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
     orderBy: convertToOrderBy<VFolderOrderBy>(
       queryParams.order || DEFAULT_ORDER,
     ),
-    filterForActiveCount: STATUS_FILTER_ACTIVE,
-    filterForDeletedCount: STATUS_FILTER_DELETED,
+    filterForActiveCount: STATUS_FILTERS.active,
+    filterForDeletedCount: STATUS_FILTERS.deleted,
+    filterForDeleteCompleteCount: STATUS_FILTERS.deleteComplete,
   };
   const deferredQueryVariables = useDeferredValue(queryVariables);
   const deferredFetchKey = useDeferredValue(fetchKey);
@@ -205,6 +200,7 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
           $orderBy: [VFolderOrderBy!]
           $filterForActiveCount: VFolderFilter
           $filterForDeletedCount: VFolderFilter
+          $filterForDeleteCompleteCount: VFolderFilter
         ) {
           adminVfoldersV2(
             offset: $offset
@@ -232,6 +228,11 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
             count
           }
           deleted: adminVfoldersV2(filter: $filterForDeletedCount) {
+            count
+          }
+          deleteComplete: adminVfoldersV2(
+            filter: $filterForDeleteCompleteCount
+          ) {
             count
           }
         }
@@ -270,7 +271,7 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
               setQuery(
                 {
                   ...storedQuery.queryParams,
-                  statusCategory: key as 'active' | 'deleted',
+                  statusCategory: key as StatusCategory,
                 },
                 { history: 'replace' },
               );
@@ -283,6 +284,7 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
               {
                 active: t('data.Active'),
                 deleted: t('data.folders.TrashBin'),
+                deleteComplete: t('data.folders.DeleteCompleted'),
               },
               (label, key) => {
                 const count =
@@ -512,27 +514,32 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
                 vfoldersFrgmt={filterOutNullAndUndefined(
                   _.map(adminVfoldersV2?.edges, 'node'),
                 )}
-                rowSelection={{
-                  type: 'checkbox',
-                  preserveSelectedRowKeys: true,
-                  getCheckboxProps(record: VFolderNodeInList) {
-                    return {
-                      disabled:
-                        isDeletedCategory(record.vfolderStatus) &&
-                        record.vfolderStatus !== 'DELETE_PENDING',
-                    };
-                  },
-                  onChange: (selectedRowKeys) => {
-                    handleRowSelectionChange(
-                      selectedRowKeys,
-                      filterOutNullAndUndefined(
-                        _.map(adminVfoldersV2?.edges, 'node'),
-                      ),
-                      setSelectedFolderList,
-                    );
-                  },
-                  selectedRowKeys: _.map(selectedFolderList, (i) => i.id),
-                }}
+                // DELETE_COMPLETE rows allow no action, so that tab has no selection column.
+                rowSelection={
+                  queryParams.statusCategory === 'deleteComplete'
+                    ? undefined
+                    : {
+                        type: 'checkbox',
+                        preserveSelectedRowKeys: true,
+                        getCheckboxProps(record: VFolderNodeInList) {
+                          return {
+                            disabled:
+                              isDeletedCategory(record.vfolderStatus) &&
+                              record.vfolderStatus !== 'DELETE_PENDING',
+                          };
+                        },
+                        onChange: (selectedRowKeys) => {
+                          handleRowSelectionChange(
+                            selectedRowKeys,
+                            filterOutNullAndUndefined(
+                              _.map(adminVfoldersV2?.edges, 'node'),
+                            ),
+                            setSelectedFolderList,
+                          );
+                        },
+                        selectedRowKeys: _.map(selectedFolderList, (i) => i.id),
+                      }
+                }
                 pagination={{
                   pageSize: tablePaginationOption.pageSize,
                   current: tablePaginationOption.current,

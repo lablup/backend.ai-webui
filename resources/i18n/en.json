@@ -1165,6 +1165,7 @@
       "DefaultMountPermission": "Default mount permission",
       "Delete": "Delete",
       "DeleteAFolder": "Delete folder",
+      "DeleteCompleted": "Permanently Deleted",
       "DeleteFailureDescription": "{{failed}} of {{total}} folders could not be deleted. Check the reason for each folder below.",
       "DeleteForever": "Delete forever",
       "DeleteForeverConfirmText": "delete",

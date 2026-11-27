@@ -1178,6 +1178,7 @@
       "DefaultMountPermission": "Үндсэн холболтын эрх",
       "Delete": "Устгах",
       "DeleteAFolder": "Фолдер устгах",
+      "DeleteCompleted": "Бүрэн устгасан",
       "DeleteFailureDescription": "{{total}} фолдероос {{failed}}-ыг устгаж чадаагүй. Доор фолдер бүрийн шалтгааныг шалгана уу.",
       "DeleteForever": "Бүрмөсөн устгах",
       "DeleteForeverConfirmText": "устгах",

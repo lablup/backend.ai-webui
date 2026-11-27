@@ -1178,6 +1178,7 @@
       "DefaultMountPermission": "Permissão de montagem predefinida",
       "Delete": "Excluir",
       "DeleteAFolder": "Excluir uma pasta",
+      "DeleteCompleted": "Eliminados permanentemente",
       "DeleteFailureDescription": "{{failed}} de {{total}} pastas não puderam ser excluídas. Verifique o motivo de cada pasta abaixo.",
       "DeleteForever": "Apagar para sempre",
       "DeleteForeverConfirmText": "excluir",

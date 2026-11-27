@@ -1178,6 +1178,7 @@
       "DefaultMountPermission": "Quyền gắn kết mặc định",
       "Delete": "Xóa bỏ",
       "DeleteAFolder": "Xóa một thư mục",
+      "DeleteCompleted": "Đã xóa hoàn toàn",
       "DeleteFailureDescription": "{{failed}} trong số {{total}} thư mục không thể xóa. Kiểm tra lý do cho từng thư mục bên dưới.",
       "DeleteForever": "Xóa vĩnh viễn",
       "DeleteForeverConfirmText": "xóa",

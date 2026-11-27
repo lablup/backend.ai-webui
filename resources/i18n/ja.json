@@ -1178,6 +1178,7 @@
       "DefaultMountPermission": "デフォルトのマウント権限",
       "Delete": "削除",
       "DeleteAFolder": "フォルダを削除する",
+      "DeleteCompleted": "削除完了",
       "DeleteFailureDescription": "{{total}}件中{{failed}}件のフォルダを削除できませんでした。以下で各フォルダの理由を確認してください。",
       "DeleteForever": "永久に削除",
       "DeleteForeverConfirmText": "削除",

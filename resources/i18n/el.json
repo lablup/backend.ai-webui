@@ -1178,6 +1178,7 @@
       "DefaultMountPermission": "Προεπιλεγμένο δικαίωμα προσάρτησης",
       "Delete": "Διαγράφω",
       "DeleteAFolder": "Διαγραφή φακέλου",
+      "DeleteCompleted": "Οριστικά διαγραμμένα",
       "DeleteFailureDescription": "Δεν ήταν δυνατή η διαγραφή {{failed}} από {{total}} φακέλους. Ελέγξτε τον λόγο για κάθε φάκελο παρακάτω.",
       "DeleteForever": "Διαγραφή για πάντα",
       "DeleteForeverConfirmText": "διαγραφή",

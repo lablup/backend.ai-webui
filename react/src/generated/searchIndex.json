@@ -960,6 +960,10 @@
         },
         {
           "param": "statusCategory",
+          "key": "deleteComplete"
+        },
+        {
+          "param": "statusCategory",
           "key": "deleted"
         }
       ],
@@ -1055,6 +1059,7 @@
         "data.folders.CreatedAt",
         "data.folders.DefaultMountPermission",
         "data.folders.Delete",
+        "data.folders.DeleteCompleted",
         "data.folders.DeleteFailureDescription",
         "data.folders.DeleteForever",
         "data.folders.DeleteForeverDescription",
