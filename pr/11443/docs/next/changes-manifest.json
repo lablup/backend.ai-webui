@@ -2,7 +2,7 @@
   "version": 1,
   "channel": "next",
   "label": "PR preview",
-  "generatedAt": "2026-11-26T15:31:10.832Z",
+  "generatedAt": "2026-11-27T04:00:01.600Z",
   "languages": [
     "en",
     "ja",
@@ -13,8 +13,8 @@
     "en": {
       "totals": {
         "pages": 1,
-        "changes": 2,
-        "added": 1,
+        "changes": 1,
+        "added": 0,
         "modified": 1,
         "removed": 0,
         "images": 1,
@@ -29,15 +29,14 @@
           "url": "next/en/share_vfolder.html",
           "sourcePath": "packages/backend.ai-webui-docs/src/en/share_vfolder/share_vfolder.md",
           "counts": {
-            "added": 1,
+            "added": 0,
             "modified": 1,
             "removed": 0,
             "images": 1,
-            "total": 2
+            "total": 1
           },
           "fingerprints": [
-            "57ed56c0d5b1",
-            "80f71937c3ab"
+            "57ed56c0d5b1"
           ]
         }
       ]
@@ -45,8 +44,8 @@
     "ja": {
       "totals": {
         "pages": 1,
-        "changes": 2,
-        "added": 1,
+        "changes": 1,
+        "added": 0,
         "modified": 1,
         "removed": 0,
         "images": 1,
@@ -61,15 +60,14 @@
           "url": "next/ja/share_vfolder.html",
           "sourcePath": "packages/backend.ai-webui-docs/src/ja/share_vfolder/share_vfolder.md",
           "counts": {
-            "added": 1,
+            "added": 0,
             "modified": 1,
             "removed": 0,
             "images": 1,
-            "total": 2
+            "total": 1
           },
           "fingerprints": [
-            "08af7f9c02e1",
-            "2dbc8917de57"
+            "08af7f9c02e1"
           ]
         }
       ]
@@ -77,8 +75,8 @@
     "ko": {
       "totals": {
         "pages": 1,
-        "changes": 2,
-        "added": 1,
+        "changes": 1,
+        "added": 0,
         "modified": 1,
         "removed": 0,
         "images": 1,
@@ -93,15 +91,14 @@
           "url": "next/ko/share_vfolder.html",
           "sourcePath": "packages/backend.ai-webui-docs/src/ko/share_vfolder/share_vfolder.md",
           "counts": {
-            "added": 1,
+            "added": 0,
             "modified": 1,
             "removed": 0,
             "images": 1,
-            "total": 2
+            "total": 1
           },
           "fingerprints": [
-            "8e6bd811dc6b",
-            "bed2b5bea10d"
+            "8e6bd811dc6b"
           ]
         }
       ]
@@ -109,8 +106,8 @@
     "th": {
       "totals": {
         "pages": 1,
-        "changes": 2,
-        "added": 1,
+        "changes": 1,
+        "added": 0,
         "modified": 1,
         "removed": 0,
         "images": 1,
@@ -125,15 +122,14 @@
           "url": "next/th/share_vfolder.html",
           "sourcePath": "packages/backend.ai-webui-docs/src/th/share_vfolder/share_vfolder.md",
           "counts": {
-            "added": 1,
+            "added": 0,
             "modified": 1,
             "removed": 0,
             "images": 1,
-            "total": 2
+            "total": 1
           },
           "fingerprints": [
-            "932cb3818e10",
-            "be8e7e3553eb"
+            "932cb3818e10"
           ]
         }
       ]

@@ -2,15 +2,15 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://webui.docs.backend.ai/next/ko/quickstart.html</loc>
-    <lastmod>2026-11-20T08:18:05.000Z</lastmod>
+    <lastmod>2026-11-20T08:18:06.000Z</lastmod>
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/ko/disclaimer.html</loc>
-    <lastmod>2026-11-20T08:18:05.000Z</lastmod>
+    <lastmod>2026-11-20T08:18:06.000Z</lastmod>
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/ko/overview.html</loc>
-    <lastmod>2026-11-20T08:18:05.000Z</lastmod>
+    <lastmod>2026-11-20T08:18:06.000Z</lastmod>
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/ko/installation.html</loc>
@@ -22,15 +22,15 @@
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/ko/header.html</loc>
-    <lastmod>2026-11-20T08:18:05.000Z</lastmod>
+    <lastmod>2026-11-20T08:18:06.000Z</lastmod>
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/ko/dashboard.html</loc>
-    <lastmod>2026-11-20T08:18:05.000Z</lastmod>
+    <lastmod>2026-11-20T08:18:06.000Z</lastmod>
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/ko/session_page.html</loc>
-    <lastmod>2026-11-20T08:18:05.000Z</lastmod>
+    <lastmod>2026-11-20T08:18:06.000Z</lastmod>
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/ko/sessions_all.html</loc>
@@ -38,11 +38,11 @@
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/ko/cluster_session.html</loc>
-    <lastmod>2026-11-20T08:18:05.000Z</lastmod>
+    <lastmod>2026-11-20T08:18:06.000Z</lastmod>
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/ko/deployment.html</loc>
-    <lastmod>2026-11-20T08:18:05.000Z</lastmod>
+    <lastmod>2026-11-20T08:18:06.000Z</lastmod>
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/ko/chat.html</loc>
@@ -50,23 +50,23 @@
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/ko/my_environments.html</loc>
-    <lastmod>2026-11-20T08:18:05.000Z</lastmod>
+    <lastmod>2026-11-20T08:18:06.000Z</lastmod>
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/ko/vfolder.html</loc>
-    <lastmod>2026-11-20T08:18:05.000Z</lastmod>
+    <lastmod>2026-11-27T03:57:35.000Z</lastmod>
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/ko/mount_vfolder.html</loc>
-    <lastmod>2026-11-20T08:18:05.000Z</lastmod>
+    <lastmod>2026-11-20T08:18:06.000Z</lastmod>
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/ko/share_vfolder.html</loc>
-    <lastmod>2026-11-26T15:29:38.000Z</lastmod>
+    <lastmod>2026-11-25T04:35:40.000Z</lastmod>
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/ko/sftp_to_container.html</loc>
-    <lastmod>2026-11-20T08:18:05.000Z</lastmod>
+    <lastmod>2026-11-20T08:18:06.000Z</lastmod>
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/ko/user_settings.html</loc>
@@ -78,15 +78,15 @@
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/ko/rbac_management.html</loc>
-    <lastmod>2026-11-20T08:18:05.000Z</lastmod>
+    <lastmod>2026-11-20T08:18:06.000Z</lastmod>
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/ko/agent_summary.html</loc>
-    <lastmod>2026-11-20T08:18:05.000Z</lastmod>
+    <lastmod>2026-11-20T08:18:06.000Z</lastmod>
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/ko/statistics.html</loc>
-    <lastmod>2026-11-20T08:18:05.000Z</lastmod>
+    <lastmod>2026-11-20T08:18:06.000Z</lastmod>
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/ko/admin_menu.html</loc>
@@ -94,34 +94,34 @@
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/ko/trouble_shooting.html</loc>
-    <lastmod>2026-11-20T08:18:05.000Z</lastmod>
+    <lastmod>2026-11-20T08:18:06.000Z</lastmod>
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/ko/appendix.html</loc>
-    <lastmod>2026-11-20T08:18:05.000Z</lastmod>
+    <lastmod>2026-11-20T08:18:06.000Z</lastmod>
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/ko/license_agreement.html</loc>
-    <lastmod>2026-11-20T08:18:05.000Z</lastmod>
+    <lastmod>2026-11-20T08:18:06.000Z</lastmod>
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/ko/references.html</loc>
-    <lastmod>2026-11-20T08:18:05.000Z</lastmod>
+    <lastmod>2026-11-20T08:18:06.000Z</lastmod>
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/ko/index.html</loc>
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/en/quickstart.html</loc>
-    <lastmod>2026-11-20T08:18:05.000Z</lastmod>
+    <lastmod>2026-11-20T08:18:06.000Z</lastmod>
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/en/disclaimer.html</loc>
-    <lastmod>2026-11-20T08:18:05.000Z</lastmod>
+    <lastmod>2026-11-20T08:18:06.000Z</lastmod>
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/en/overview.html</loc>
-    <lastmod>2026-11-20T08:18:05.000Z</lastmod>
+    <lastmod>2026-11-20T08:18:06.000Z</lastmod>
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/en/installation.html</loc>
@@ -133,15 +133,15 @@
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/en/header.html</loc>
-    <lastmod>2026-11-20T08:18:05.000Z</lastmod>
+    <lastmod>2026-11-20T08:18:06.000Z</lastmod>
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/en/dashboard.html</loc>
-    <lastmod>2026-11-20T08:18:05.000Z</lastmod>
+    <lastmod>2026-11-20T08:18:06.000Z</lastmod>
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/en/session_page.html</loc>
-    <lastmod>2026-11-20T08:18:05.000Z</lastmod>
+    <lastmod>2026-11-20T08:18:06.000Z</lastmod>
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/en/sessions_all.html</loc>
@@ -149,11 +149,11 @@
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/en/cluster_session.html</loc>
-    <lastmod>2026-11-20T08:18:05.000Z</lastmod>
+    <lastmod>2026-11-20T08:18:06.000Z</lastmod>
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/en/deployment.html</loc>
-    <lastmod>2026-11-20T08:18:05.000Z</lastmod>
+    <lastmod>2026-11-20T08:18:06.000Z</lastmod>
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/en/chat.html</loc>
@@ -161,23 +161,23 @@
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/en/my_environments.html</loc>
-    <lastmod>2026-11-20T08:18:05.000Z</lastmod>
+    <lastmod>2026-11-20T08:18:06.000Z</lastmod>
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/en/vfolder.html</loc>
-    <lastmod>2026-11-20T08:18:05.000Z</lastmod>
+    <lastmod>2026-11-27T03:57:35.000Z</lastmod>
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/en/mount_vfolder.html</loc>
-    <lastmod>2026-11-20T08:18:05.000Z</lastmod>
+    <lastmod>2026-11-20T08:18:06.000Z</lastmod>
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/en/share_vfolder.html</loc>
-    <lastmod>2026-11-26T15:29:38.000Z</lastmod>
+    <lastmod>2026-11-25T04:35:40.000Z</lastmod>
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/en/sftp_to_container.html</loc>
-    <lastmod>2026-11-20T08:18:05.000Z</lastmod>
+    <lastmod>2026-11-20T08:18:06.000Z</lastmod>
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/en/user_settings.html</loc>
@@ -189,15 +189,15 @@
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/en/rbac_management.html</loc>
-    <lastmod>2026-11-20T08:18:05.000Z</lastmod>
+    <lastmod>2026-11-20T08:18:06.000Z</lastmod>
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/en/agent_summary.html</loc>
-    <lastmod>2026-11-20T08:18:05.000Z</lastmod>
+    <lastmod>2026-11-20T08:18:06.000Z</lastmod>
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/en/statistics.html</loc>
-    <lastmod>2026-11-20T08:18:05.000Z</lastmod>
+    <lastmod>2026-11-20T08:18:06.000Z</lastmod>
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/en/admin_menu.html</loc>
@@ -205,34 +205,34 @@
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/en/trouble_shooting.html</loc>
-    <lastmod>2026-11-20T08:18:05.000Z</lastmod>
+    <lastmod>2026-11-20T08:18:06.000Z</lastmod>
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/en/appendix.html</loc>
-    <lastmod>2026-11-20T08:18:05.000Z</lastmod>
+    <lastmod>2026-11-20T08:18:06.000Z</lastmod>
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/en/license_agreement.html</loc>
-    <lastmod>2026-11-20T08:18:05.000Z</lastmod>
+    <lastmod>2026-11-20T08:18:06.000Z</lastmod>
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/en/references.html</loc>
-    <lastmod>2026-11-20T08:18:05.000Z</lastmod>
+    <lastmod>2026-11-20T08:18:06.000Z</lastmod>
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/en/index.html</loc>
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/ja/quickstart.html</loc>
-    <lastmod>2026-11-20T08:18:05.000Z</lastmod>
+    <lastmod>2026-11-20T08:18:06.000Z</lastmod>
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/ja/disclaimer.html</loc>
-    <lastmod>2026-11-20T08:18:05.000Z</lastmod>
+    <lastmod>2026-11-20T08:18:06.000Z</lastmod>
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/ja/overview.html</loc>
-    <lastmod>2026-11-20T08:18:05.000Z</lastmod>
+    <lastmod>2026-11-20T08:18:06.000Z</lastmod>
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/ja/installation.html</loc>
@@ -244,15 +244,15 @@
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/ja/header.html</loc>
-    <lastmod>2026-11-20T08:18:05.000Z</lastmod>
+    <lastmod>2026-11-20T08:18:06.000Z</lastmod>
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/ja/dashboard.html</loc>
-    <lastmod>2026-11-20T08:18:05.000Z</lastmod>
+    <lastmod>2026-11-20T08:18:06.000Z</lastmod>
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/ja/session_page.html</loc>
-    <lastmod>2026-11-20T08:18:05.000Z</lastmod>
+    <lastmod>2026-11-20T08:18:06.000Z</lastmod>
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/ja/sessions_all.html</loc>
@@ -260,11 +260,11 @@
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/ja/cluster_session.html</loc>
-    <lastmod>2026-11-20T08:18:05.000Z</lastmod>
+    <lastmod>2026-11-20T08:18:06.000Z</lastmod>
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/ja/deployment.html</loc>
-    <lastmod>2026-11-20T08:18:05.000Z</lastmod>
+    <lastmod>2026-11-20T08:18:06.000Z</lastmod>
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/ja/chat.html</loc>
@@ -272,23 +272,23 @@
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/ja/my_environments.html</loc>
-    <lastmod>2026-11-20T08:18:05.000Z</lastmod>
+    <lastmod>2026-11-20T08:18:06.000Z</lastmod>
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/ja/vfolder.html</loc>
-    <lastmod>2026-11-20T08:18:05.000Z</lastmod>
+    <lastmod>2026-11-27T03:57:35.000Z</lastmod>
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/ja/mount_vfolder.html</loc>
-    <lastmod>2026-11-20T08:18:05.000Z</lastmod>
+    <lastmod>2026-11-20T08:18:06.000Z</lastmod>
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/ja/share_vfolder.html</loc>
-    <lastmod>2026-11-26T15:29:38.000Z</lastmod>
+    <lastmod>2026-11-25T04:35:40.000Z</lastmod>
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/ja/sftp_to_container.html</loc>
-    <lastmod>2026-11-20T08:18:05.000Z</lastmod>
+    <lastmod>2026-11-20T08:18:06.000Z</lastmod>
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/ja/user_settings.html</loc>
@@ -300,15 +300,15 @@
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/ja/rbac_management.html</loc>
-    <lastmod>2026-11-20T08:18:05.000Z</lastmod>
+    <lastmod>2026-11-20T08:18:06.000Z</lastmod>
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/ja/agent_summary.html</loc>
-    <lastmod>2026-11-20T08:18:05.000Z</lastmod>
+    <lastmod>2026-11-20T08:18:06.000Z</lastmod>
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/ja/statistics.html</loc>
-    <lastmod>2026-11-20T08:18:05.000Z</lastmod>
+    <lastmod>2026-11-20T08:18:06.000Z</lastmod>
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/ja/admin_menu.html</loc>
@@ -316,34 +316,34 @@
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/ja/trouble_shooting.html</loc>
-    <lastmod>2026-11-20T08:18:05.000Z</lastmod>
+    <lastmod>2026-11-20T08:18:06.000Z</lastmod>
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/ja/appendix.html</loc>
-    <lastmod>2026-11-20T08:18:05.000Z</lastmod>
+    <lastmod>2026-11-20T08:18:06.000Z</lastmod>
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/ja/license_agreement.html</loc>
-    <lastmod>2026-11-20T08:18:05.000Z</lastmod>
+    <lastmod>2026-11-20T08:18:06.000Z</lastmod>
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/ja/references.html</loc>
-    <lastmod>2026-11-20T08:18:05.000Z</lastmod>
+    <lastmod>2026-11-20T08:18:06.000Z</lastmod>
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/ja/index.html</loc>
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/th/quickstart.html</loc>
-    <lastmod>2026-11-20T08:18:05.000Z</lastmod>
+    <lastmod>2026-11-20T08:18:06.000Z</lastmod>
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/th/disclaimer.html</loc>
-    <lastmod>2026-11-20T08:18:05.000Z</lastmod>
+    <lastmod>2026-11-20T08:18:06.000Z</lastmod>
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/th/overview.html</loc>
-    <lastmod>2026-11-20T08:18:05.000Z</lastmod>
+    <lastmod>2026-11-20T08:18:06.000Z</lastmod>
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/th/installation.html</loc>
@@ -355,15 +355,15 @@
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/th/header.html</loc>
-    <lastmod>2026-11-20T08:18:05.000Z</lastmod>
+    <lastmod>2026-11-20T08:18:06.000Z</lastmod>
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/th/dashboard.html</loc>
-    <lastmod>2026-11-20T08:18:05.000Z</lastmod>
+    <lastmod>2026-11-20T08:18:06.000Z</lastmod>
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/th/session_page.html</loc>
-    <lastmod>2026-11-20T08:18:05.000Z</lastmod>
+    <lastmod>2026-11-20T08:18:06.000Z</lastmod>
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/th/sessions_all.html</loc>
@@ -371,11 +371,11 @@
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/th/cluster_session.html</loc>
-    <lastmod>2026-11-20T08:18:05.000Z</lastmod>
+    <lastmod>2026-11-20T08:18:06.000Z</lastmod>
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/th/deployment.html</loc>
-    <lastmod>2026-11-20T08:18:05.000Z</lastmod>
+    <lastmod>2026-11-20T08:18:06.000Z</lastmod>
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/th/chat.html</loc>
@@ -383,23 +383,23 @@
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/th/my_environments.html</loc>
-    <lastmod>2026-11-20T08:18:05.000Z</lastmod>
+    <lastmod>2026-11-20T08:18:06.000Z</lastmod>
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/th/vfolder.html</loc>
-    <lastmod>2026-11-20T08:18:05.000Z</lastmod>
+    <lastmod>2026-11-27T03:57:35.000Z</lastmod>
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/th/mount_vfolder.html</loc>
-    <lastmod>2026-11-20T08:18:05.000Z</lastmod>
+    <lastmod>2026-11-20T08:18:06.000Z</lastmod>
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/th/share_vfolder.html</loc>
-    <lastmod>2026-11-26T15:29:38.000Z</lastmod>
+    <lastmod>2026-11-25T04:35:40.000Z</lastmod>
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/th/sftp_to_container.html</loc>
-    <lastmod>2026-11-20T08:18:05.000Z</lastmod>
+    <lastmod>2026-11-20T08:18:06.000Z</lastmod>
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/th/user_settings.html</loc>
@@ -411,15 +411,15 @@
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/th/rbac_management.html</loc>
-    <lastmod>2026-11-20T08:18:05.000Z</lastmod>
+    <lastmod>2026-11-20T08:18:06.000Z</lastmod>
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/th/agent_summary.html</loc>
-    <lastmod>2026-11-20T08:18:05.000Z</lastmod>
+    <lastmod>2026-11-20T08:18:06.000Z</lastmod>
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/th/statistics.html</loc>
-    <lastmod>2026-11-20T08:18:05.000Z</lastmod>
+    <lastmod>2026-11-20T08:18:06.000Z</lastmod>
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/th/admin_menu.html</loc>
@@ -427,19 +427,19 @@
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/th/trouble_shooting.html</loc>
-    <lastmod>2026-11-20T08:18:05.000Z</lastmod>
+    <lastmod>2026-11-20T08:18:06.000Z</lastmod>
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/th/appendix.html</loc>
-    <lastmod>2026-11-20T08:18:05.000Z</lastmod>
+    <lastmod>2026-11-20T08:18:06.000Z</lastmod>
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/th/license_agreement.html</loc>
-    <lastmod>2026-11-20T08:18:05.000Z</lastmod>
+    <lastmod>2026-11-20T08:18:06.000Z</lastmod>
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/th/references.html</loc>
-    <lastmod>2026-11-20T08:18:05.000Z</lastmod>
+    <lastmod>2026-11-20T08:18:06.000Z</lastmod>
   </url>
   <url>
     <loc>https://webui.docs.backend.ai/next/th/index.html</loc>
