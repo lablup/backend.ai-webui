@@ -2,14 +2,11 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { AstryxReverseTheme } from '../../astryx-theme';
-import { useCustomThemeConfig } from '../../hooks/useCustomThemeConfig';
 import BAISider from '../BAISider';
 import SiderToggleButton from '../SiderToggleButton';
 import WebUISiderFooter from './WebUISiderFooter';
 import WebUISiderLogo from './WebUISiderLogo';
 import WebUISiderNavigation from './WebUISiderNavigation';
-import { useTheme } from '@lablup/ui-common/theme';
 import { useHover } from 'backend.ai-ui';
 import React, { useRef } from 'react';
 
@@ -61,38 +58,4 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
   );
 };
 
-/**
- * Whether the operator's `theme.siderMode` override asks for the polarity
- * opposite the app's resolved mode. Shared by the rail and the mobile nav
- * drawer so both navigation surfaces follow the operator's choice.
- */
-export const useSiderThemeReversed = (): boolean => {
-  'use memo';
-  const { rawThemeConfig } = useCustomThemeConfig();
-  const { mode } = useTheme();
-  const isParentDark = mode === 'dark';
-
-  return (
-    (isParentDark && rawThemeConfig?.theme?.siderMode === 'light') ||
-    (!isParentDark && rawThemeConfig?.theme?.siderMode === 'dark')
-  );
-};
-
-/**
- * Applies the operator's `theme.siderMode` override — a nested `<Theme>` with the
- * inverted resolved mode (`AstryxReverseTheme`).
- */
-const WebUISiderWithCustomTheme: React.FC<WebUISiderProps> = (props) => {
-  'use memo';
-  const shouldReverse = useSiderThemeReversed();
-
-  return shouldReverse ? (
-    <AstryxReverseTheme>
-      <WebUISider {...props} />
-    </AstryxReverseTheme>
-  ) : (
-    <WebUISider {...props} />
-  );
-};
-
-export default WebUISiderWithCustomTheme;
+export default WebUISider;

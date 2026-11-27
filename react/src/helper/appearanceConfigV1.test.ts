@@ -116,13 +116,12 @@ describe('migrateV1AppearanceConfig', () => {
     );
   });
 
-  it('moves headerBg, fontFamily, sider mode, logo and names', () => {
+  it('moves headerBg, fontFamily, logo and names', () => {
     expect(migrated?.theme?.families?.default?.headerBg).toEqual([
       '#FF9729',
       '#E88A28',
     ]);
     expect(migrated?.theme?.fontFamily).toBe("'Ubuntu', Roboto, sans-serif");
-    expect(migrated?.theme?.siderMode).toBe('dark');
     expect(migrated?.branding?.logo).toEqual(V1_DOCUMENT.logo);
     expect(migrated?.branding?.companyName).toBe('Lablup Inc.');
     expect(migrated?.branding?.brandName).toBe('Backend.AI');
@@ -210,12 +209,8 @@ describe('migrateV1AppearanceConfig', () => {
     );
   });
 
-  it('omits siderMode when the v1 document left the sider on auto', () => {
-    const doc = migrateV1AppearanceConfig({
-      ...V1_DOCUMENT,
-      sider: { theme: 'auto' },
-    });
-    expect(doc?.theme?.siderMode).toBeUndefined();
+  it('drops the v1 sider theme, which v2 has no field for', () => {
+    expect(migrated?.theme).not.toHaveProperty('siderMode');
   });
 
   it('drops logo keys the v2 schema does not declare', () => {

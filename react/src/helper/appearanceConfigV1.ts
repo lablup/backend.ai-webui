@@ -179,12 +179,8 @@ export const migrateV1AppearanceConfig = (
     doc.light?.token?.fontFamily,
     doc.dark?.token?.fontFamily,
   );
-  const siderTheme = doc.sider?.theme;
-  const siderMode =
-    siderTheme === 'dark' || siderTheme === 'light' ? siderTheme : undefined;
   const theme: BAIThemeConfig = {
     ...(fontFamily ? { fontFamily } : {}),
-    ...(siderMode ? { siderMode } : {}),
     families,
   };
 

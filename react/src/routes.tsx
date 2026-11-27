@@ -4,7 +4,7 @@
  */
 import BAIErrorBoundary, { ErrorView } from './components/BAIErrorBoundary';
 import {
-  DefaultProvidersForReactRoot,
+  DefaultProviders,
   RoutingEventHandler,
 } from './components/DefaultProviders';
 import DevReviewRouteLabel, {
@@ -57,7 +57,7 @@ import { useSetAtom } from 'jotai';
 import { parseAsString, useQueryStates } from 'nuqs';
 import React, { Suspense, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { RouteObject, useParams } from 'react-router-dom';
+import { Outlet, RouteObject, useParams } from 'react-router-dom';
 
 const ComputeSessionListPage = React.lazy(
   () => import('./pages/ComputeSessionListPage/ComputeSessionListPage'),
@@ -1594,241 +1594,247 @@ const eduAppExtraParamSpec = {
  */
 export const routes: RouteObject[] = [
   {
-    path: '/interactive-login',
+    // Root layout: the app providers mount once here, so every route below
+    // renders under them (ADR 0043).
     errorElement: <ErrorView />,
     element: (
       <BAIErrorBoundary>
-        <DefaultProvidersForReactRoot>
-          <STokenGuard>
-            <Suspense>
-              <LoginView waitForMainLayout={false} />
-            </Suspense>
-            <LogoutEventHandler />
-            <Suspense fallback={<BAISkeleton rows={4} />}>
-              <InteractiveLoginPage />
-            </Suspense>
-          </STokenGuard>
-        </DefaultProvidersForReactRoot>
+        <DefaultProviders>
+          <Outlet />
+        </DefaultProviders>
       </BAIErrorBoundary>
     ),
-  },
-  {
-    // Browser-delegated Agent CLI login (FR-3763). Not linked from any menu.
-    path: '/cli-login',
-    errorElement: <ErrorView />,
-    element: (
-      <BAIErrorBoundary>
-        <DefaultProvidersForReactRoot>
-          <STokenGuard>
-            <Suspense>
-              <LoginView waitForMainLayout={false} />
-            </Suspense>
-            <LogoutEventHandler />
-            <Suspense fallback={<BAISkeleton rows={4} />}>
-              <CliLoginPage />
-            </Suspense>
-          </STokenGuard>
-        </DefaultProvidersForReactRoot>
-      </BAIErrorBoundary>
-    ),
-  },
-  {
-    path: '/verify-email',
-    errorElement: <ErrorView />,
-    element: (
-      <BAIErrorBoundary>
-        <DefaultProvidersForReactRoot>
-          <Suspense fallback={<BAISkeleton rows={4} />}>
-            <EmailVerificationPage />
-          </Suspense>
-        </DefaultProvidersForReactRoot>
-      </BAIErrorBoundary>
-    ),
-  },
-  {
-    path: '/change-password',
-    errorElement: <ErrorView />,
-    element: (
-      <BAIErrorBoundary>
-        <DefaultProvidersForReactRoot>
-          <Suspense fallback={<BAISkeleton rows={4} />}>
-            <ChangePasswordPage />
-          </Suspense>
-        </DefaultProvidersForReactRoot>
-      </BAIErrorBoundary>
-    ),
-  },
-  {
-    path: '/edu-applauncher',
-    errorElement: <ErrorView />,
-    Component: () => {
-      'use memo';
-      const [sToken] = useSToken();
-      const [rawExtraParams] = useQueryStates(eduAppExtraParamSpec);
-      // Narrow via type-guard reducer so `extraParams` is inferred as
-      // `Record<string, string>` without a type assertion. Non-string values
-      // are dropped defensively — nuqs parsers can emit `null`, and future
-      // schema changes might add non-string shapes that shouldn't silently
-      // leak into `client.token_login` via `extraParams`.
-      const extraParams = Object.entries(rawExtraParams).reduce<
-        Record<string, string>
-      >((accumulator, [key, value]) => {
-        if (typeof value === 'string') {
-          accumulator[key] = value;
-        }
-        return accumulator;
-      }, {});
-
-      return (
-        <BAIErrorBoundary>
-          <DefaultProvidersForReactRoot>
-            <STokenLoginBoundary
-              sToken={sToken ?? ''}
-              extraParams={extraParams}
-              // URL is intentionally NOT stripped on success here —
-              // EduAppLauncher's `_createEduSession` still reads
-              // `sToken` (for the customer-specific
-              // `eduApp.get_user_credential` call) and other URL params
-              // drive the launch sequence. The edu token URL is issued
-              // by the integrating LMS, so leaking it into browser
-              // history is considered acceptable in this flow.
-              onSuccess={persistPostLoginState}
-            >
-              <Suspense fallback={<BAISkeleton rows={4} />}>
-                <EduAppLauncherPage sToken={sToken} extraParams={extraParams} />
+    children: [
+      {
+        path: '/interactive-login',
+        errorElement: <ErrorView />,
+        element: (
+          <BAIErrorBoundary>
+            <STokenGuard>
+              <Suspense>
+                <LoginView waitForMainLayout={false} />
               </Suspense>
-            </STokenLoginBoundary>
-          </DefaultProvidersForReactRoot>
-        </BAIErrorBoundary>
-      );
-    },
-  },
-  {
-    path: '/applauncher',
-    errorElement: <ErrorView />,
-    Component: () => {
-      'use memo';
-      const [sToken] = useSToken();
-      const [rawExtraParams] = useQueryStates(eduAppExtraParamSpec);
-      // Narrow via type-guard reducer so `extraParams` is inferred as
-      // `Record<string, string>` without a type assertion. Non-string values
-      // are dropped defensively — nuqs parsers can emit `null`, and future
-      // schema changes might add non-string shapes that shouldn't silently
-      // leak into `client.token_login` via `extraParams`.
-      const extraParams = Object.entries(rawExtraParams).reduce<
-        Record<string, string>
-      >((accumulator, [key, value]) => {
-        if (typeof value === 'string') {
-          accumulator[key] = value;
-        }
-        return accumulator;
-      }, {});
-
-      return (
-        <BAIErrorBoundary>
-          <DefaultProvidersForReactRoot>
-            <STokenLoginBoundary
-              sToken={sToken ?? ''}
-              extraParams={extraParams}
-              // URL retained — see comment on `/edu-applauncher`.
-              onSuccess={persistPostLoginState}
-            >
+              <LogoutEventHandler />
               <Suspense fallback={<BAISkeleton rows={4} />}>
-                <EduAppLauncherPage sToken={sToken} extraParams={extraParams} />
+                <InteractiveLoginPage />
               </Suspense>
-            </STokenLoginBoundary>
-          </DefaultProvidersForReactRoot>
-        </BAIErrorBoundary>
-      );
-    },
-  },
-  {
-    path: '/',
-    errorElement: <ErrorView />,
-    element: (
-      <BAIErrorBoundary>
-        <DefaultProvidersForReactRoot>
-          <STokenGuard>
-            <Suspense>
-              <LoginView />
+            </STokenGuard>
+          </BAIErrorBoundary>
+        ),
+      },
+      {
+        // Browser-delegated Agent CLI login (FR-3763). Not linked from any menu.
+        path: '/cli-login',
+        errorElement: <ErrorView />,
+        element: (
+          <BAIErrorBoundary>
+            <STokenGuard>
+              <Suspense>
+                <LoginView waitForMainLayout={false} />
+              </Suspense>
+              <LogoutEventHandler />
+              <Suspense fallback={<BAISkeleton rows={4} />}>
+                <CliLoginPage />
+              </Suspense>
+            </STokenGuard>
+          </BAIErrorBoundary>
+        ),
+      },
+      {
+        path: '/verify-email',
+        errorElement: <ErrorView />,
+        element: (
+          <BAIErrorBoundary>
+            <Suspense fallback={<BAISkeleton rows={4} />}>
+              <EmailVerificationPage />
             </Suspense>
-            {/*FYI, MainLayout has ErrorBoundaryWithNullFallback for <Outlet/> */}
-            <MainLayout />
-            <ErrorBoundaryWithNullFallback>
-              <RoutingEventHandler />
-            </ErrorBoundaryWithNullFallback>
-            <ErrorBoundaryWithNullFallback>
-              <RouteDocumentTitle />
-            </ErrorBoundaryWithNullFallback>
-            {/* Suspends until login; renders nothing unless WebMCP is on. */}
-            <Suspense fallback={null}>
+          </BAIErrorBoundary>
+        ),
+      },
+      {
+        path: '/change-password',
+        errorElement: <ErrorView />,
+        element: (
+          <BAIErrorBoundary>
+            <Suspense fallback={<BAISkeleton rows={4} />}>
+              <ChangePasswordPage />
+            </Suspense>
+          </BAIErrorBoundary>
+        ),
+      },
+      {
+        path: '/edu-applauncher',
+        errorElement: <ErrorView />,
+        Component: () => {
+          'use memo';
+          const [sToken] = useSToken();
+          const [rawExtraParams] = useQueryStates(eduAppExtraParamSpec);
+          // Narrow via type-guard reducer so `extraParams` is inferred as
+          // `Record<string, string>` without a type assertion. Non-string values
+          // are dropped defensively — nuqs parsers can emit `null`, and future
+          // schema changes might add non-string shapes that shouldn't silently
+          // leak into `client.token_login` via `extraParams`.
+          const extraParams = Object.entries(rawExtraParams).reduce<
+            Record<string, string>
+          >((accumulator, [key, value]) => {
+            if (typeof value === 'string') {
+              accumulator[key] = value;
+            }
+            return accumulator;
+          }, {});
+
+          return (
+            <BAIErrorBoundary>
+              <STokenLoginBoundary
+                sToken={sToken ?? ''}
+                extraParams={extraParams}
+                // URL is intentionally NOT stripped on success here —
+                // EduAppLauncher's `_createEduSession` still reads
+                // `sToken` (for the customer-specific
+                // `eduApp.get_user_credential` call) and other URL params
+                // drive the launch sequence. The edu token URL is issued
+                // by the integrating LMS, so leaking it into browser
+                // history is considered acceptable in this flow.
+                onSuccess={persistPostLoginState}
+              >
+                <Suspense fallback={<BAISkeleton rows={4} />}>
+                  <EduAppLauncherPage
+                    sToken={sToken}
+                    extraParams={extraParams}
+                  />
+                </Suspense>
+              </STokenLoginBoundary>
+            </BAIErrorBoundary>
+          );
+        },
+      },
+      {
+        path: '/applauncher',
+        errorElement: <ErrorView />,
+        Component: () => {
+          'use memo';
+          const [sToken] = useSToken();
+          const [rawExtraParams] = useQueryStates(eduAppExtraParamSpec);
+          // Narrow via type-guard reducer so `extraParams` is inferred as
+          // `Record<string, string>` without a type assertion. Non-string values
+          // are dropped defensively — nuqs parsers can emit `null`, and future
+          // schema changes might add non-string shapes that shouldn't silently
+          // leak into `client.token_login` via `extraParams`.
+          const extraParams = Object.entries(rawExtraParams).reduce<
+            Record<string, string>
+          >((accumulator, [key, value]) => {
+            if (typeof value === 'string') {
+              accumulator[key] = value;
+            }
+            return accumulator;
+          }, {});
+
+          return (
+            <BAIErrorBoundary>
+              <STokenLoginBoundary
+                sToken={sToken ?? ''}
+                extraParams={extraParams}
+                // URL retained — see comment on `/edu-applauncher`.
+                onSuccess={persistPostLoginState}
+              >
+                <Suspense fallback={<BAISkeleton rows={4} />}>
+                  <EduAppLauncherPage
+                    sToken={sToken}
+                    extraParams={extraParams}
+                  />
+                </Suspense>
+              </STokenLoginBoundary>
+            </BAIErrorBoundary>
+          );
+        },
+      },
+      {
+        path: '/',
+        errorElement: <ErrorView />,
+        element: (
+          <BAIErrorBoundary>
+            <STokenGuard>
+              <Suspense>
+                <LoginView />
+              </Suspense>
+              {/*FYI, MainLayout has ErrorBoundaryWithNullFallback for <Outlet/> */}
+              <MainLayout />
               <ErrorBoundaryWithNullFallback>
-                <WebMCPGlobalTools />
+                <RoutingEventHandler />
               </ErrorBoundaryWithNullFallback>
-            </Suspense>
-            {/* Handoff to the review overlay (FR-3811). Dev servers: on
+              <ErrorBoundaryWithNullFallback>
+                <RouteDocumentTitle />
+              </ErrorBoundaryWithNullFallback>
+              {/* Suspends until login; renders nothing unless WebMCP is on. */}
+              <Suspense fallback={null}>
+                <ErrorBoundaryWithNullFallback>
+                  <WebMCPGlobalTools />
+                </ErrorBoundaryWithNullFallback>
+              </Suspense>
+              {/* Handoff to the review overlay (FR-3811). Dev servers: on
                 unless VITE_DEV_REVIEW_OVERLAY opts out, as in the Vite
                 plugin. Built bundles: only where VITE_REVIEW_OVERLAY_BUILD
                 opts IN (FR-3880 — the nightly deployment). Every operand is
                 a literal after Vite's env substitution, so a release build,
                 which sets neither, folds the whole branch — and the imported
                 module — away. */}
-            {(
-              import.meta.env.DEV
-                ? isDevReviewOverlayEnabled()
-                : import.meta.env.VITE_REVIEW_OVERLAY_BUILD === '1' ||
-                  import.meta.env.VITE_REVIEW_OVERLAY_BUILD === 'true'
-            ) ? (
+              {(
+                import.meta.env.DEV
+                  ? isDevReviewOverlayEnabled()
+                  : import.meta.env.VITE_REVIEW_OVERLAY_BUILD === '1' ||
+                    import.meta.env.VITE_REVIEW_OVERLAY_BUILD === 'true'
+              ) ? (
+                <ErrorBoundaryWithNullFallback>
+                  <DevReviewRouteLabel />
+                </ErrorBoundaryWithNullFallback>
+              ) : null}
               <ErrorBoundaryWithNullFallback>
-                <DevReviewRouteLabel />
+                <ProductAnalyticsGate />
               </ErrorBoundaryWithNullFallback>
-            ) : null}
-            <ErrorBoundaryWithNullFallback>
-              <ProductAnalyticsGate />
-            </ErrorBoundaryWithNullFallback>
-            <Suspense>
-              <ErrorBoundaryWithNullFallback>
-                <AutoDiagnosticsEffect />
-              </ErrorBoundaryWithNullFallback>
-            </Suspense>
-            <Suspense>
-              <ErrorBoundaryWithNullFallback>
-                <LoginView />
-              </ErrorBoundaryWithNullFallback>
-              <ErrorBoundaryWithNullFallback>
-                <FolderExplorerOpener />
-              </ErrorBoundaryWithNullFallback>
-              <ErrorBoundaryWithNullFallback>
-                <FolderInvitationResponseModalOpener />
-              </ErrorBoundaryWithNullFallback>
-              <ErrorBoundaryWithNullFallback>
-                <FileUploadManager />
-              </ErrorBoundaryWithNullFallback>
-            </Suspense>
-            {/* Its own boundary: the opener suspends on the client, and
+              <Suspense>
+                <ErrorBoundaryWithNullFallback>
+                  <AutoDiagnosticsEffect />
+                </ErrorBoundaryWithNullFallback>
+              </Suspense>
+              <Suspense>
+                <ErrorBoundaryWithNullFallback>
+                  <LoginView />
+                </ErrorBoundaryWithNullFallback>
+                <ErrorBoundaryWithNullFallback>
+                  <FolderExplorerOpener />
+                </ErrorBoundaryWithNullFallback>
+                <ErrorBoundaryWithNullFallback>
+                  <FolderInvitationResponseModalOpener />
+                </ErrorBoundaryWithNullFallback>
+                <ErrorBoundaryWithNullFallback>
+                  <FileUploadManager />
+                </ErrorBoundaryWithNullFallback>
+              </Suspense>
+              {/* Its own boundary: the opener suspends on the client, and
                 sharing the block above would unmount `FileUploadManager`
                 and drop in-flight uploads. */}
-            <Suspense fallback={null}>
-              <ErrorBoundaryWithNullFallback>
-                <UserSettingsModalOpener />
-              </ErrorBoundaryWithNullFallback>
-            </Suspense>
-          </STokenGuard>
-        </DefaultProvidersForReactRoot>
-      </BAIErrorBoundary>
-    ),
-    children: [
-      {
-        // Pathless boundary: thrown Response errors (404/401/403) from pages
-        // or future loaders render INSIDE the shell via RouteErrorBoundary.
-        errorElement: <RouteErrorBoundary />,
+              <Suspense fallback={null}>
+                <ErrorBoundaryWithNullFallback>
+                  <UserSettingsModalOpener />
+                </ErrorBoundaryWithNullFallback>
+              </Suspense>
+            </STokenGuard>
+          </BAIErrorBoundary>
+        ),
         children: [
           {
-            // Route-handle-declared access control (FR-3383): throws
-            // Response 401/404 per the deepest `handle.access` declaration,
-            // caught by RouteErrorBoundary above.
-            element: <RouteAccessGuard />,
-            children: mainLayoutChildRoutes,
+            // Pathless boundary: thrown Response errors (404/401/403) from pages
+            // or future loaders render INSIDE the shell via RouteErrorBoundary.
+            errorElement: <RouteErrorBoundary />,
+            children: [
+              {
+                // Route-handle-declared access control (FR-3383): throws
+                // Response 401/404 per the deepest `handle.access` declaration,
+                // caught by RouteErrorBoundary above.
+                element: <RouteAccessGuard />,
+                children: mainLayoutChildRoutes,
+              },
+            ],
           },
         ],
       },
