@@ -348,11 +348,7 @@ test.describe(
       await expect(getFilterTokenRemoveButton(modal, 'Result')).toBeVisible();
     });
 
-    // FIXME(#10289): the PowerSearch Tokenizer end lane (loading spinner +
-    // 'Clear all' button) covers the token's 'Remove' button in this narrow
-    // filter and intercepts the click. The fix waits on upstream
-    // facebook/astryx#7365; un-fixme once it lands.
-    test.fixme('Admin can remove an applied filter to restore the full history list', async ({
+    test('Admin can remove an applied filter to restore the full history list', async ({
       page,
     }) => {
       // 1. Open the Session Detail drawer and history modal

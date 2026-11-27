@@ -2,8 +2,14 @@
 // Tests for session dependency management via useStartSession (dependencies field).
 // Sessions are created via globalThis.backendaiclient API, not through the launcher UI,
 // because the session launcher page intentionally has no dependency UI.
+import { createAccountApiContext } from '../../utils/admin-api';
 import { SessionAPIHelper } from '../../utils/classes/session/SessionAPIHelper';
-import { loginAsUser, navigateTo } from '../../utils/test-util';
+import { loginAsUser, navigateTo, userInfo } from '../../utils/test-util';
+import {
+  readAccountSettingViaApi,
+  waitForAccountSettingsWrite,
+  writeAccountSettingViaApi,
+} from '../../utils/user-settings-util';
 import { test, expect } from '@playwright/test';
 
 test.describe(
@@ -235,43 +241,69 @@ test.describe(
   'Session List - Dependencies Column',
   { tag: ['@regression', '@session', '@functional'] },
   () => {
+    // The columns are an account setting of the shared user (ADR 0035).
+    const COLUMNS_SETTING = 'table_column_overrides.ComputeSessionListPage';
+    let restoreColumns: (() => Promise<void>) | undefined;
+
     test.beforeEach(async ({ page, request }) => {
       await loginAsUser(page, request);
+    });
+
+    test.afterEach(async ({ page }) => {
+      if (!restoreColumns) return;
+      const restore = restoreColumns;
+      restoreColumns = undefined;
+      // Leaving the page flushes pending settings writes (pagehide); drop them
+      // so none can land after the restore.
+      await page
+        .route('**/admin/gql', (route) =>
+          (route.request().postData() ?? '').includes(
+            'useAppConfigMyUpsertMutation',
+          )
+            ? route.abort()
+            : route.fallback(),
+        )
+        .catch(() => undefined);
+      await page.goto('about:blank').catch(() => undefined);
+      await restore();
     });
 
     test('Dependencies column can be enabled via table settings', async ({
       page,
     }) => {
-      // The table settings (gear) button is only rendered when the session list
-      // table component is successfully loaded. On the current test server the
-      // backend returns an error for session list queries, so the table is
-      // replaced by an error alert and the settings button never appears.
-      test.fixme(
-        true,
-        'Requires a working session list table. Backend currently returns an error for session queries, preventing the table (and its settings button) from rendering.',
-      );
+      const api = await createAccountApiContext(userInfo.user, 'User');
+      let original: unknown;
+      let read = false;
+      restoreColumns = async () => {
+        try {
+          if (read) {
+            await writeAccountSettingViaApi(api, COLUMNS_SETTING, original);
+          }
+        } finally {
+          await api.dispose();
+        }
+      };
+      original = await readAccountSettingViaApi(api, COLUMNS_SETTING);
+      read = true;
+      // Start from the default columns, where Dependencies is hidden.
+      await writeAccountSettingViaApi(api, COLUMNS_SETTING, undefined);
 
       await navigateTo(page, 'session');
-      // Wait for the session type tab list as a reliable page-ready indicator.
-      // The tablist (All / Interactive / Batch / Inference / Upload Sessions) is
-      // always rendered, even when no sessions exist or the data API returns an
-      // error. Unlike `.ant-table` or the hidden radio inputs, the tablist is
-      // always visible after navigation to the session page.
-      await expect(page.getByRole('tablist')).toBeVisible({ timeout: 10000 });
+      const settingButton = page.getByRole('button', {
+        name: 'Table Settings',
+      });
+      await expect(settingButton).toBeVisible({ timeout: 15000 });
 
       const dependenciesHeader = page.getByRole('columnheader', {
         name: 'Dependencies',
       });
       await expect(dependenciesHeader).not.toBeVisible();
 
-      const settingButton = page
-        .getByRole('button', { name: 'setting' })
-        .and(page.locator('.ant-btn-sm'));
       await settingButton.click();
 
-      const settingModal = page.getByRole('dialog', {
-        name: /Table Settings/i,
-      });
+      const settingModal = page
+        .getByRole('dialog')
+        .filter({ hasText: 'Table Settings' });
       await expect(settingModal).toBeVisible({ timeout: 5000 });
 
       const dependenciesCheckbox = settingModal.getByRole('checkbox', {
@@ -289,19 +321,25 @@ test.describe(
 
       await dependenciesCheckbox.check();
 
-      await settingModal.getByRole('button', { name: /OK/i }).click();
+      await settingModal.getByRole('button', { name: 'Apply' }).click();
       await expect(settingModal).not.toBeVisible({ timeout: 5000 });
 
       await expect(dependenciesHeader).toBeVisible({ timeout: 5000 });
 
-      // Revert
+      // Hide it again and wait for the write, so it lands before the restore.
       await settingButton.click();
       await expect(settingModal).toBeVisible({ timeout: 5000 });
       await settingModal
         .getByRole('checkbox', { name: /Dependencies/i })
         .uncheck();
-      await settingModal.getByRole('button', { name: /OK/i }).click();
+      const hidden = waitForAccountSettingsWrite(page, (settings) => {
+        const overrides = settings[COLUMNS_SETTING] as
+          Record<string, { hidden?: boolean }> | undefined;
+        return !!overrides && overrides.dependencies?.hidden !== false;
+      });
+      await settingModal.getByRole('button', { name: 'Apply' }).click();
       await expect(settingModal).not.toBeVisible({ timeout: 5000 });
+      await hidden;
 
       await expect(dependenciesHeader).not.toBeVisible();
     });
