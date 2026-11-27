@@ -158,7 +158,7 @@ When reviewing PRs (especially agent-generated ones), check:
 - No hardcoded strings, magic numbers, or debug artifacts left behind
 
 <!-- UI-COMMON:START -->
-@lablup/ui-common v0.2.0-alpha.21.pr-178-20261127063349-74c8a2bd9 · Astryx v0.7.11 · 174 components
+@lablup/ui-common v0.2.0-alpha.21.pr-178-20261127071153-440fb7277 · Astryx v0.7.11 · 174 components
 CLI: run every command as `pnpm exec ui-common <cmd>` (shown below as `ui-common ...`).
 
 SETUP (once, first in your entry stylesheet) — without these, components render unstyled:
@@ -191,7 +191,7 @@ RULES:
   docs authoring     build an integration package, and every field it holds
   upgrade --from <old version> --apply   run after a dependency bump
 
-UI-COMMON (@lablup/ui-common v0.2.0-alpha.21.pr-178-20261127063349-74c8a2bd9 wraps Astryx v0.7.11):
+UI-COMMON (@lablup/ui-common v0.2.0-alpha.21.pr-178-20261127071153-440fb7277 wraps Astryx v0.7.11):
 - Import only from @lablup/ui-common: the root, or the same subpath Astryx uses (@lablup/ui-common/Button, /theme/tokens.stylex, /lab). Never import @astryxdesign/* directly.
 - Layers: declare `@layer reset, theme, base, astryx-base, astryx-theme, ui-common, components, utilities;` once, first, in the entry stylesheet. ui-common's styles sit in `ui-common`; yours go in `components` / `utilities`.
 - Use AlertModal (@lablup/ui-common/AlertModal), not AlertDialog: ui-common hides AlertDialog.
