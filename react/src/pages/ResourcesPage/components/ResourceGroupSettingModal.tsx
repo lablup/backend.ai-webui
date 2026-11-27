@@ -127,7 +127,8 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
   );
   const hasSftpMap = proxyResourceGroups !== undefined;
   const isSftpMapLoading =
-    (!hasSftpMap || !isSftpMapFetchedAfterMount) && isSftpMapFetching;
+    (!hasSftpMap && !isSftpMapError) ||
+    (!isSftpMapFetchedAfterMount && isSftpMapFetching);
 
   // TODO(needs-backend): lablup/backend.ai#16372, lablup/backend.ai#16373 the V2 resource group
   // inputs have no `scheduler_opts`; move create/update to `adminCreateResourceGroupV2` / `updateResourceGroup` then.
@@ -253,10 +254,8 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
                 message.warning(t('storageProxy.SFTPStorageProxiesNotSaved'));
                 return Promise.resolve();
               }
-              // Create mode diffs against the live map, so a group recreated
-              // under an old name drops stale proxy entries — except where it is
-              // the proxy's only group: an emptied list deletes the key, which
-              // means "all groups".
+              // Create mode drops stale entries, but never a proxy's last group:
+              // an emptied list deletes the key, which means "all groups".
               const baseline = resourceGroup
                 ? (values.sftpProxiesBaseline ?? [])
                 : proxiesServingGroups(proxyResourceGroups, [groupName]);
