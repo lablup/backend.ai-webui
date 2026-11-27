@@ -31,12 +31,18 @@ Drill files are one-off: keep them outside the repository (a scratch folder)
 and share the result, not the file. Nothing under `e2e/drills/` names a
 scenario.
 
-The report is written to `e2e/drill-report/<id>/index.html` (git-ignored) — the CLI prints the path, and the page is self-contained
-except for its screenshots, which sit next to it. It shows, per drill: pass or
-fail, the prerequisites it assumed, and per step the PASS/FAIL/NOT RUN status,
-what changed, what to verify, expected vs observed, the failure text, a
-screenshot of the page the step left on screen, and links to the related code
-(`path:line`, relative to the repository root).
+The report is one page, written to `e2e/drill-report/<id>/` (git-ignored) with
+its screenshots. It steps through the drill a screen at a time (← / →): the
+screen a step left, and beside it what changed, what to check, the pass or fail
+of that step and links to the code at the current commit. The page's own labels
+are Korean; write a drill's `title` / `changed` / `verify` in the language the
+reviewers read.
+
+Share it through the branch's dev server, which serves the folder at
+`/__drill/<id>/` (`react/vite-plugins/drill-report.ts`): the dev server's share
+URL plus `/__drill/<id>/` opens it for anyone on the dev gateway. Nothing is
+uploaded anywhere, so the report goes away with the worktree and its dev server
+when the PR is done.
 
 ## Data: mocks only
 
