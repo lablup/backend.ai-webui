@@ -44,6 +44,9 @@ URL plus `/__drill/<id>/` opens it for anyone on the dev gateway. Nothing is
 uploaded anywhere, so the report goes away with the worktree and its dev server
 when the PR is done.
 
+The `drill` skill (`.claude/skills/drill/`) walks an agent through writing,
+running and sharing one, when a user asks for it.
+
 ## Data: mocks only
 
 A drill proves what a screen says, not that a server state can be built. So the
