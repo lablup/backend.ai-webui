@@ -70,7 +70,7 @@ catalog:
   relay-test-utils: ^20.1.1
   # Hold below 1.9 until #11185: 1.9.0 returns null-prototype tables, which the
   # webserver config merge helpers (react/src/global-stores.ts) do not handle.
-  smol-toml: ^1.7.1
+  smol-toml: ^1.9.0
   ts-jest: ^29.4.9
   tus-js-client: ^4.3.1
   typescript-eslint: ^8.66.0
