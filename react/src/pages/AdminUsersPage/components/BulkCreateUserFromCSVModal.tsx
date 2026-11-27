@@ -17,6 +17,7 @@ import BAIFormItem from '../../../components/BAIFormItem';
 import BAIPanelItem from '../../../components/BAIPanelItem';
 import { passwordPattern } from '../../../components/LoginFormPanel';
 import ProjectSelect from '../../../components/ProjectSelect';
+import UserResourcePolicySelect from '../../../components/UserResourcePolicySelect';
 import { Form } from '../../../form-engine';
 import {
   CanonicalUserColumn,
@@ -37,7 +38,6 @@ import {
   type FailedUserCreation,
 } from './BulkCreateUserFailure';
 import GeneratedKeypairListModal from './GeneratedKeypairListModal';
-import UserResourcePolicySelect from './UserResourcePolicySelect';
 import { EmptyState } from '@lablup/ui-common/EmptyState';
 import { Heading } from '@lablup/ui-common/Heading';
 import { Text } from '@lablup/ui-common/Text';

@@ -2,8 +2,8 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { UserResourcePolicySelectQuery } from '../../../__generated__/UserResourcePolicySelectQuery.graphql';
-import { localeCompare } from '../../../helper';
+import { UserResourcePolicySelectQuery } from '../__generated__/UserResourcePolicySelectQuery.graphql';
+import { localeCompare } from '../helper';
 import { BAISelect } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
@@ -23,6 +23,7 @@ interface Props {
   placeholder?: string;
   disabled?: boolean;
   style?: React.CSSProperties;
+  'aria-label'?: string;
 }
 
 const UserResourcePolicySelect: React.FC<Props> = (selectProps) => {
