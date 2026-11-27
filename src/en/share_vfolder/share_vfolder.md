@@ -1,0 +1,143 @@
+---
+navTitle: Share Storage Folders
+---
+
+# Sharing Storage Folders and Access Control
+
+You may need to share the contents of storage folders with other users or project
+members to collaborate. For this purpose, Backend.AI provides a flexible folder
+sharing feature.
+
+<a id="share-storage-folders-with-other-users"></a>
+
+## Share storage folders with other users
+
+Let's learn how to share your personal storage folder with other users. First,
+log in to User A's account and go to the Data page. There are several
+folders, and we want to share a folder named `tests` to User B.
+
+![](../images/list_of_vfolders_A.png)
+
+Inside the `tests` folder you can see files and directories like `hello.txt`
+and `myfolder`.
+
+![](../images/test_vfolder_explorer_A.png)
+
+Confirm that the `tests` folder is not listed when logging in with User B's
+account.
+
+![](../images/no_test_vfolder_in_B.png)
+
+:::note
+If a folder named `tests` already exists in User B's account, User A's
+`tests` folder cannot be shared with User B.
+:::
+
+Back to User A's account, click the share button next to the `tests` folder's
+name in the list.
+
+![](../images/share_button_on_list.png)
+
+A Share Folder modal opens. In the **Invite User** section, select User B in
+the user selector, set **Share permission** and **Mount Permission**, then
+click **Invite**. **Share permission** is what the share lets the user do with
+the folder, and **Mount Permission** is how the folder is mounted into the
+user's sessions. An address that does not have an account yet is invited with
+**Invite by e-mail**.
+
+A folder can also be shared with a whole project — choose **Share with
+project**, select the project, set **Share permission**, and click **Invite**;
+the project's members mount the folder at its **Default mount permission**.
+
+![=720px](../images/send_vfolder_invitation.png)
+
+Switch back to User B's account and go to the Data page. When invitations are
+waiting for a response, a **Pending invitations** link appears at the top right
+of the folder list, showing the number of pending invitations.
+
+![](../images/vfolder_invitation_badge.png)
+
+Clicking the link opens the **Invited Folders** modal, where pending folder
+invitations can be accepted or declined.
+
+![=520px](../images/invitation_accept.png)
+
+Go to the Data page and check that the `tests` folder is displayed in
+the list. If you don't see it on the list, try refreshing your browser page.
+Since you have accepted the invitation, you can now view the contents of User
+A's `tests` folder in User B account. Unlike folders created by User B,
+the shared folder shows User A's email address in the Owner column.
+
+![](../images/test_vfolder_listed_in_B.png)
+<!-- TODO(screenshot): User B's /data after accepting - the folder list as the invitee, with User A in the Owner column and no Mount Permission column. Not captured: the capture backend admits no second (non-admin) account, so this image still shows the retired Mount Permission column. -->
+
+Let's navigate inside the `tests` folder by clicking its name in the list. You
+can check the `hello.txt` and `myfolder` that you checked in the User A's
+account again. Since User A shared the folder as `Read only`, the write
+actions are disabled in the folder explorer: **Upload**, **Create Folder**,
+**Delete**, and the **Rename** button next to each item cannot be used. User B
+can only browse the folder and download its contents.
+
+![](../images/folder_explorer_in_B.png)
+
+Let's create a compute session
+by mounting this storage folder with the User B's account.
+
+![](../images/launch_session_with_test_mounted_B.png)
+
+After creating a session, open the web terminal and check that the `tests`
+folder is mounted in the home folder. The contents of the `tests` folder are
+displayed, but attempts to create or delete files are not allowed. This is
+because User A shared it as read-only. User B can create a file in the `tests`
+folder if it has been shared including write access.
+
+![=480px](../images/file_operations_on_shared_test_folder.png)
+
+This way, you can share your personal storage folders with other users based on
+your Backend.AI email account.
+
+:::note
+Backend.AI also provides sharing project folder to project members.
+For details, go to [sharing a project storage folder with project members](#share-project-storage-folders-with-project-members).
+:::
+
+<a id="adjust-permission-for-shared-folders"></a>
+
+## Adjust permission for shared folders
+
+You can modify the permissions of shared users from the Share Folder modal.
+The **Shared Users** table lists both the users who have accepted the
+invitation and the invitations that are still waiting for an answer. Change a
+listed user's **Share permission** or **Mount Permission** in their row.
+
+![=760px](../images/modify_perm.png)
+
+The **Folder Info** section of the modal shows the folder's
+**Default mount permission**. Click **Edit** to change it.
+
+:::note
+Renaming the folder itself is available only for the owner, even if the user has been
+granted Read & Write permission. Please note that Read & Write permission does not
+include renaming the folder.
+:::
+
+<a id="stop-sharing-a-folder"></a>
+
+## Stop sharing a folder
+
+To stop sharing a folder as the inviter, open the Share Folder modal by
+clicking the share button next to the folder's name in the folder list. In the
+**Shared Users** table, click the **Stop sharing** action in the row of the
+user you want to remove. A confirmation dialog will appear asking you to
+confirm. Click `Confirm` to revoke the user's access. An invitation that is
+still waiting for an answer is withdrawn with **Cancel invitation** instead.
+
+![=760px](../images/modify_permission_and_stop_sharing.png)
+
+If access to a shared folder is no longer needed as an invitee, click the share
+button next to the folder in the folder list to open the Shared Folder
+Permission modal. In the permission table, click the leave icon in the
+**Control** column to leave the shared folder. A confirmation dialog will appear
+before the action is completed.
+
+![=650px](../images/leave_shared_folder.png)
