@@ -643,7 +643,11 @@ function BAISelect<ValueType = any, OptionType = BAISelectOption>({
       // `Selector` shows the clear button for any non-null value, `''` included.
       hasClear={allowClear && resolvedSingleValue !== ''}
       renderValue={labelRender}
-      showTooltipOnEllipsis={showTooltipOnEllipsis}
+      // The rich trigger's label span is visually hidden (1px), so ui-common
+      // would read it as clipped on every hover.
+      showTooltipOnEllipsis={
+        showTooltipOnEllipsis && richTriggerNode === undefined
+      }
       // `autoSelectOption` is honoured without the antd layout effect: when
       // nothing is selected the resolved first (or caller-chosen) option is
       // the rendered value, and the caller is told on mount by the same

@@ -26,6 +26,7 @@ const meta: Meta<typeof BAISelect> = {
 | \`searchAction\` | \`(value: string) => Promise<void>\` | - | Async search with transition |
 | \`atBottomThreshold\` | \`number\` | \`30\` | Threshold for bottom detection (px) |
 | \`atBottomStateChange\` | \`(atBottom: boolean) => void\` | - | Callback for bottom state changes |
+| \`showTooltipOnEllipsis\` | \`boolean\` | \`true\` | Single mode: whole selected label in a tooltip while the trigger truncates it |
 
 For all other props, refer to [Ant Design Select](https://ant.design/components/select).
         `,
@@ -34,6 +35,15 @@ For all other props, refer to [Ant Design Select](https://ant.design/components/
   },
   argTypes: {
     // BAI-specific props - document fully
+    showTooltipOnEllipsis: {
+      control: { type: 'boolean' },
+      description:
+        'Single mode: shows the whole selected label in a tooltip while the trigger truncates it',
+      table: {
+        type: { summary: 'boolean' },
+        defaultValue: { summary: 'true' },
+      },
+    },
     ghost: {
       control: { type: 'boolean' },
       description: 'Transparent background style',
@@ -109,6 +119,14 @@ const sampleOptions = [
   { label: 'Option 2', value: 'option2' },
   { label: 'Option 3', value: 'option3' },
   { label: 'Option 4', value: 'option4' },
+];
+
+const sampleTruncatableOptions = [
+  {
+    label: 'cr.backend.ai/stable/python-tensorflow:2.15-py311-cuda12.3',
+    value: 'long',
+  },
+  { label: 'Short', value: 'short' },
 ];
 
 // Default story with interactive controls
@@ -240,6 +258,8 @@ export const MultipleSelectionTooltip: Story = {
 
 export const TruncatedValueTooltip: Story = {
   name: 'TruncatedValueTooltip',
+  // The tooltip needs a hover, so a still frame shows only the triggers.
+  tags: ['no-vrt'],
   parameters: {
     docs: {
       description: {
@@ -249,32 +269,31 @@ export const TruncatedValueTooltip: Story = {
     },
   },
   render: () => {
-    const longOptions = [
-      {
-        value: 'long',
-        label: 'cr.backend.ai/stable/python-tensorflow:2.15-py311-cuda12.3',
-      },
-      { value: 'short', label: 'Short' },
-    ];
+    const [withTooltip, setWithTooltip] = useState('long');
+    const [tooltipOff, setTooltipOff] = useState('long');
+    const [fits, setFits] = useState('short');
     return (
       <BAIFlex direction="column" gap="md">
         <BAISelect
           aria-label="Truncated, with tooltip"
-          options={longOptions}
-          defaultValue="long"
+          options={sampleTruncatableOptions}
+          value={withTooltip}
+          onChange={setWithTooltip}
           style={{ width: 200 }}
         />
         <BAISelect
           aria-label="Truncated, tooltip off"
           showTooltipOnEllipsis={false}
-          options={longOptions}
-          defaultValue="long"
+          options={sampleTruncatableOptions}
+          value={tooltipOff}
+          onChange={setTooltipOff}
           style={{ width: 200 }}
         />
         <BAISelect
           aria-label="Fits, no tooltip"
-          options={longOptions}
-          defaultValue="short"
+          options={sampleTruncatableOptions}
+          value={fits}
+          onChange={setFits}
           style={{ width: 200 }}
         />
       </BAIFlex>

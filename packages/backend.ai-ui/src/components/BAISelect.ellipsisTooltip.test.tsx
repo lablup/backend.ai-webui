@@ -63,6 +63,20 @@ describe('BAISelect truncated value tooltip (#11446)', () => {
     expect(screen.queryByRole('tooltip')).toBeNull();
   });
 
+  it('shows no tooltip on a rich trigger, whose label span is visually hidden', () => {
+    stubClipping(true);
+    render(
+      <BAISelect
+        aria-label="Image"
+        optionLabelProp="children"
+        options={[{ value: 'long', label: <strong>{longLabel}</strong> }]}
+        value="long"
+      />,
+    );
+    hoverTrigger('Image');
+    expect(screen.queryByRole('tooltip')).toBeNull();
+  });
+
   it('shows no tooltip while the label fits', () => {
     stubClipping(false);
     render(<BAISelect aria-label="Image" options={options} value="short" />);
