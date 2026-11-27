@@ -28,6 +28,22 @@ import * as path from 'path';
 
 const reports: DrillReport[] = [];
 
+// Sign-in copies local settings to an account's userConfig the first time;
+// answered here so a drill never writes it and every drill gets it.
+const SIGN_IN_MOCKS: GraphQLMockMap = {
+  useAppConfigMyUpsertMutation: (variables) => ({
+    myAtomicBulkUpsertAppConfigFragments: {
+      items: (variables.input?.items ?? []).map(
+        (item: { configName: string; config: unknown }, index: number) => ({
+          id: `drill-mock-${index}`,
+          configName: item.configName,
+          config: item.config,
+        }),
+      ),
+    },
+  }),
+};
+
 const describeError = (error: unknown): string =>
   error instanceof Error ? (error.stack ?? error.message) : String(error);
 
@@ -97,12 +113,13 @@ export function registerDrill(drill: Drill): void {
       const extraPages: Page[] = [];
       // Registered mock maps apply to every page of the drill, including the
       // ones `as()` opens later.
-      const mockMaps: GraphQLMockMap[] = [];
+      const mockMaps: GraphQLMockMap[] = [SIGN_IN_MOCKS];
       const applyMocks = async (target: Page) => {
         for (const mocks of mockMaps) {
           await setupGraphQLMocks(target, mocks);
         }
       };
+      await applyMocks(page);
       const signIn = async (account: DrillAccount, target: Page) => {
         if (account === 'admin') await loginAsAdmin(target, request);
         else if (account === 'user2') await loginAsUser2(target, request);
