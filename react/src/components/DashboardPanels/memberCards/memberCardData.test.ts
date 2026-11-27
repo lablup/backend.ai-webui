@@ -10,6 +10,7 @@ import {
   toPresetRows,
   toUsageRows,
   offeredSlotsOf,
+  shownSlotsOf,
   freeAsLimits,
 } from './memberCardData';
 
@@ -141,6 +142,21 @@ describe('offeredSlotsOf', () => {
 
   it('is null when the capacity is unknown', () => {
     expect(offeredSlotsOf(null)).toBeNull();
+  });
+});
+
+describe('shownSlotsOf', () => {
+  it('falls back to cpu and mem when no group offered any slot', () => {
+    expect(shownSlotsOf(null, [])).toEqual(new Set(['cpu', 'mem']));
+  });
+
+  it('adds a slot in use that no group offers, and skips an idle one', () => {
+    expect(
+      shownSlotsOf(new Set(['cpu', 'mem', 'cuda.device']), [
+        { resourceType: 'atom.device', quantity: '1' },
+        { resourceType: 'rngd.device', quantity: '0' },
+      ]),
+    ).toEqual(new Set(['cpu', 'mem', 'cuda.device', 'atom.device']));
   });
 });
 

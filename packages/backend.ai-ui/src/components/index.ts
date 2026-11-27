@@ -324,6 +324,8 @@ export { default as BAIMultiSelector } from './BAIMultiSelector';
 export type { BAIMultiSelectorProps } from './BAIMultiSelector';
 export { default as BAINumberInput } from './BAINumberInput';
 export type { BAINumberInputProps } from './BAINumberInput';
+export { default as BAIPasswordInput } from './BAIPasswordInput';
+export type { BAIPasswordInputProps } from './BAIPasswordInput';
 export { default as BAIRadioList, BAIRadioListItem } from './BAIRadioList';
 export type { BAIRadioListProps, BAIRadioListItemProps } from './BAIRadioList';
 export { default as BAISegmentedControl } from './BAISegmentedControl';

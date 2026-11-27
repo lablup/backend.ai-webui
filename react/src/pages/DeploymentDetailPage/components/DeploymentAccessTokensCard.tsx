@@ -254,7 +254,12 @@ const DeploymentAccessTokensCard: React.FC<DeploymentAccessTokensCardProps> = ({
             {/* `ellipsis` stays a bare boolean on purpose — a truncate tooltip
                 would put the secret behind a hover. Copy is the way. FR-3698. */}
             {createdToken ? (
-              <BAIText copyable={{ text: createdToken.token }} ellipsis code>
+              <BAIText
+                copyable={{ text: createdToken.token }}
+                ellipsis
+                code
+                className="ph-no-capture"
+              >
                 {createdToken.token}
               </BAIText>
             ) : null}
@@ -412,6 +417,7 @@ const DeploymentAccessTokensTable: React.FC<
                     <BAIText
                       copyable={{ text: row.token }}
                       ellipsis
+                      className="ph-no-capture"
                       style={{ maxWidth: 200 }}
                     >
                       {row.token}

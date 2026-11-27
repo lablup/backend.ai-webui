@@ -447,7 +447,7 @@ async function submitLogin(
   }
   await fillLoginEndpoint(page, endpoint);
   await page.getByLabel('Email or Username').fill(username);
-  await page.getByLabel('Password').fill(password);
+  await page.getByLabel('Password', { exact: true }).fill(password);
   // Astryx Button exposes no aria-label — its accessible name is the visible text.
   const loginButton = page.getByRole('button', { name: 'Login', exact: true });
   const account = accountLabel(username);

@@ -29,7 +29,6 @@ import { Button } from '@lablup/ui-common/Button';
 import { Field } from '@lablup/ui-common/Field';
 import { HStack, StackItem, VStack } from '@lablup/ui-common/Stack';
 import { Heading } from '@lablup/ui-common/Text';
-import { Token } from '@lablup/ui-common/Token';
 import { Tooltip } from '@lablup/ui-common/Tooltip';
 import * as stylex from '@stylexjs/stylex';
 import {
@@ -331,11 +330,15 @@ const ExistingShareNoticeModal: React.FC<{
           data-testid="existing-share-table"
           columns={[
             {
+              title: t('data.folders.ShareType'),
+              dataIndex: 'kind',
+              render: (kind: ShareRow['kind']) =>
+                kind === 'project' ? t('general.Project') : t('general.User'),
+            },
+            {
               title: t('data.folders.Recipient'),
               dataIndex: 'name',
-              render: (name: string, row) => (
-                <RecipientCell name={name} kind={row.kind} />
-              ),
+              render: (name: string) => <RecipientCell name={name} />,
             },
             {
               title: t('general.Status'),
@@ -372,25 +375,17 @@ const ExistingShareNoticeModal: React.FC<{
   );
 };
 
-// A recipient's name with a token saying whether it is a user or a project.
 const styles = stylex.create({
   recipientCell: { minWidth: 0 },
 });
 
-const RecipientCell: React.FC<{ name: string; kind: RecipientKind }> = ({
-  name,
-  kind,
-}) => {
+const RecipientCell: React.FC<{ name: string }> = ({ name }) => {
   'use memo';
-  const { t } = useTranslation();
   return (
     <HStack gap={2} align="center" xstyle={styles.recipientCell}>
       <StackItem size="fill">
         <BAIText ellipsis={{ tooltip: true }}>{name}</BAIText>
       </StackItem>
-      <Token
-        label={kind === 'project' ? t('general.Project') : t('general.User')}
-      />
     </HStack>
   );
 };
@@ -418,7 +413,8 @@ interface InviteFolderSettingModalProps extends Omit<
 > {
   open?: boolean;
   vfolderFrgmt: InviteFolderSettingModalFragment$key | null;
-  onRequestClose: () => void;
+  /** `sharingStopped`: a recipient was removed while open, so folder lists may have changed. */
+  onRequestClose: (sharingStopped?: boolean) => void;
 }
 
 const InviteFolderSettingModal: React.FC<InviteFolderSettingModalProps> = ({
@@ -428,6 +424,7 @@ const InviteFolderSettingModal: React.FC<InviteFolderSettingModalProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
+  const [sharingStopped, setSharingStopped] = useState(false);
   const vfolder = useFragment(
     graphql`
       fragment InviteFolderSettingModalFragment on VFolder {
@@ -455,7 +452,7 @@ const InviteFolderSettingModal: React.FC<InviteFolderSettingModalProps> = ({
       {...baiModalProps}
       isOpen={baiModalProps.open}
       onOpenChange={(next) => {
-        if (!next) onRequestClose();
+        if (!next) onRequestClose(sharingStopped);
       }}
       title={t('data.explorer.ShareFolder')}
       maskClosable={false}
@@ -476,6 +473,7 @@ const InviteFolderSettingModal: React.FC<InviteFolderSettingModalProps> = ({
           }
           ownerUserId={vfolder.ownership?.userId ?? null}
           ownerProjectId={vfolder.ownership?.projectId ?? null}
+          onSharingStopped={() => setSharingStopped(true)}
         />
       ) : null}
     </BAIModal>
@@ -489,6 +487,7 @@ const InviteFolderSettingModalBody: React.FC<{
   restrictToReadOnly: boolean;
   ownerUserId: string | null;
   ownerProjectId: string | null;
+  onSharingStopped: () => void;
 }> = ({
   vfolderId,
   folderName,
@@ -496,6 +495,7 @@ const InviteFolderSettingModalBody: React.FC<{
   restrictToReadOnly,
   ownerUserId,
   ownerProjectId,
+  onSharingStopped,
 }) => {
   'use memo';
   const { t } = useTranslation();
@@ -879,6 +879,7 @@ const InviteFolderSettingModalBody: React.FC<{
             projectNameById={projectNameById}
             fetchKey={fetchKey}
             updateFetchKey={updateFetchKey}
+            onSharingStopped={onSharingStopped}
           />
         </Suspense>
       </VStack>
@@ -957,12 +958,14 @@ const SharedUserTable: React.FC<{
   projectNameById: Record<string, string>;
   fetchKey: string;
   updateFetchKey: () => void;
+  onSharingStopped: () => void;
 }> = ({
   vfolderId,
   defaultMountLevel,
   projectNameById,
   fetchKey,
   updateFetchKey,
+  onSharingStopped,
 }) => {
   'use memo';
   const { t } = useTranslation();
@@ -1142,6 +1145,7 @@ const SharedUserTable: React.FC<{
   const handleStopSharing = async (row: ShareRow) => {
     try {
       await revokeShare({ id: row.shareId });
+      onSharingStopped();
       if (row.userId && policyByUserId[row.userId]) {
         await unsetMountPolicy({ vfolderId, input: { userId: row.userId } });
       }
@@ -1212,12 +1216,18 @@ const SharedUserTable: React.FC<{
       rowKey="shareId"
       columns={[
         {
+          title: t('data.folders.ShareType'),
+          dataIndex: 'kind',
+          render: (kind: ShareRow['kind']) =>
+            kind === 'project' ? t('general.Project') : t('general.User'),
+        },
+        {
           title: t('data.folders.Recipient'),
           dataIndex: 'name',
           sorter: (a, b) => localeCompare(a.name, b.name),
           render: (name: string, row) => (
             <BAINameActionCell
-              title={<RecipientCell name={name} kind={row.kind} />}
+              title={<RecipientCell name={name} />}
               showActions="always"
               actions={rowActions(row)}
             />

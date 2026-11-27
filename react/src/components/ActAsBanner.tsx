@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { exitActAs, getActAsTarget } from '../helper/actAs';
+import { flushUserSettingsSyncWithin } from '../helper/userSettingsAppConfig';
 import { Banner } from '@lablup/ui-common/Banner';
 import { Button } from '@lablup/ui-common/Button';
 import { LogOutIcon } from 'lucide-react';
@@ -32,7 +33,11 @@ const ActAsBanner: React.FC = () => {
           variant="secondary"
           icon={<LogOutIcon size="1em" />}
           label={t('actAs.Exit')}
-          onClick={exitActAs}
+          clickAction={async () => {
+            // The tab closes right after, so the target's pending settings go first.
+            await flushUserSettingsSyncWithin();
+            exitActAs();
+          }}
         />
       }
     />

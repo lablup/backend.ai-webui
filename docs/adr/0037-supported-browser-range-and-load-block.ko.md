@@ -1,5 +1,7 @@
 # 0037 — Supported browser range and the load block below it
 
+> section 4의 "app을 로드하지 않는다"는 그래도 이용하기 경로를 더하는 [ADR 0038](0038-use-anyway-past-the-unsupported-browser-block.ko.md)이 일부 대체한다. 0038은 기각된 대안 "Warn with a dismissible banner and load anyway"도 배너가 아닌 차단 화면의 확인 절차로 다시 다룬다.
+
 ## Summary
 
 > 낯선 용어는 문서 맨 아래 [용어](#용어)에 모아 두었다.
