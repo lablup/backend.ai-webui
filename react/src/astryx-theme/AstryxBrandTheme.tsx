@@ -14,7 +14,6 @@
  */
 import { useCustomThemeConfig } from '../hooks/useCustomThemeConfig';
 import { useThemeMode } from '../hooks/useThemeMode';
-import AstryxThemeStyleKeeper from './AstryxThemeStyleKeeper';
 import { resolveRoleTheme } from './resolveRoleTheme';
 import { Theme as AstryxTheme } from '@lablup/ui-common/theme';
 import React from 'react';
@@ -48,8 +47,6 @@ const AstryxBrandTheme: React.FC<AstryxBrandThemeProps> = ({
   );
   return (
     <AstryxTheme theme={theme} mode={mode ?? (isDarkMode ? 'dark' : 'light')}>
-      {/* Must stay the first child: see the trap note in the component. */}
-      <AstryxThemeStyleKeeper />
       {children}
     </AstryxTheme>
   );

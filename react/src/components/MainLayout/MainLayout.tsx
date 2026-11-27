@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { AstryxAdminTheme, AstryxReverseTheme } from '../../astryx-theme';
+import { AstryxAdminTheme } from '../../astryx-theme';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../../hooks';
 import { useResourceSlotsDetails } from '../../hooks/backendai';
 import { useMyAppConfig } from '../../hooks/useAppConfig';
@@ -33,7 +33,7 @@ import WebUIAssistant from '../WebUIAssistant/WebUIAssistant';
 import WebUIBreadcrumb from '../WebUIBreadcrumb';
 import './MainLayout.css';
 import WebUIHeader from './WebUIHeader';
-import WebUISider, { useSiderThemeReversed } from './WebUISider';
+import WebUISider from './WebUISider';
 import WebUISiderFooter from './WebUISiderFooter';
 import WebUISiderLogo from './WebUISiderLogo';
 import WebUISiderNavigation from './WebUISiderNavigation';
@@ -81,9 +81,6 @@ function MainLayout() {
   // Lifted to Jotai so the search palette's "Toggle sidebar" action drives the
   // same state as the `[` shortcut.
   const [sideCollapsed, setSideCollapsed] = useSiderCollapsedState();
-  // The operator's `theme.siderMode` polarity override applies to the drawer's
-  // navigation surface too.
-  const shouldReverse = useSiderThemeReversed();
 
   const matches = useMatches();
   // @ts-ignore
@@ -192,12 +189,6 @@ function MainLayout() {
             // The rail's own width, so a menu row is the same size on both
             // surfaces.
             width: SIDER_WIDTH,
-            wrap: (drawer) =>
-              shouldReverse ? (
-                <AstryxReverseTheme>{drawer}</AstryxReverseTheme>
-              ) : (
-                drawer
-              ),
             children: (
               <>
                 <WebUISiderNavigation />

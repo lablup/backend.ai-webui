@@ -13,7 +13,6 @@ with this page, the code wins.
   "schemaVersion": 2,
   "theme": {
     "fontFamily": "'Ubuntu', Roboto, sans-serif",
-    "siderMode": "dark",
     "families": {
       "default": {
         "seeds": {
@@ -56,7 +55,6 @@ with this page, the code wins.
 | -------------------------------------- | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `schemaVersion`                        | `2` (const)                | Required. Anything else is dropped by the loader with a console error.                                                                                                                                                                                                                                              |
 | `theme.fontFamily`                     | string                     | CSS `font-family` list. For every non-generic name the loader injects `resources/fonts/<name>/<name>.css` (`name` = lowercased, spaces → `-`). Only `ubuntu` and `roboto` ship; a new font needs the directory per `resources/fonts/ADDING_FONTS.md`, otherwise the name silently falls through to the next family. |
-| `theme.siderMode`                      | `"dark"` \| `"light"`      | Forces the sider polarity. Omit to follow the page scheme.                                                                                                                                                                                                                                                          |
 | `theme.families`                       | object                     | Keyed by family id; `default` is required and is what renders when no family is selected.                                                                                                                                                                                                                           |
 | `theme.families.<id>.seeds.accent`     | seed                       | Brand colour: primary buttons, `--color-accent`, `--color-text-accent`, focus rings. Role mapping is in code: `brand`=accent, `admin`=info, `secondary`=success.                                                                                                                                                    |
 | `…seeds.link`                          | seed                       | `--color-link`. Falls back to `--color-text-accent` when omitted.                                                                                                                                                                                                                                                   |

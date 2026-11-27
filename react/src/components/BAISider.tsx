@@ -34,9 +34,8 @@
 
  DROPPED:
  - The nested `ConfigProvider algorithm={darkAlgorithm}` that gave the sider
-   an independent light/dark polarity: the Astryx equivalent is a nested
-   `<Theme mode>`, and the caller (`WebUISider`) owns that decision via
-   `AstryxReverseTheme`, so this shell no longer re-themes anything (P11).
+   an independent light/dark polarity: the sider follows the page mode
+   (ADR 0044).
  - `boxShadow: '0px 0px 10px rgba(0,0,0,0.10)'` on the rail — kept, because
    it is the only thing separating the sider from the content column in the
    light theme, and it is a plain CSS value, not an antd token.

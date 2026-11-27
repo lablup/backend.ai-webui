@@ -63,6 +63,21 @@ describe('nested Astryx theme across a portal', () => {
     );
   });
 
+  it('gives the whole app the admin theme when the app-level role is admin', () => {
+    render(
+      <ThemeModeProvider>
+        <AstryxBrandTheme mode="light" role="admin">
+          <span data-testid="in-app">app</span>
+        </AstryxBrandTheme>
+      </ThemeModeProvider>,
+    );
+
+    expect(nearestThemeOf(screen.getByTestId('in-app'))).toBe(adminName);
+    expect(document.documentElement.getAttribute('data-astryx-theme')).toBe(
+      adminName,
+    );
+  });
+
   it('keeps the admin theme by DOM ancestry for a non-portalled dialog', () => {
     renderInAdminRegion(
       <Modal isInline isOpen onOpenChange={vi.fn()} aria-label="Inline dialog">

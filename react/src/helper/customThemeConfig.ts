@@ -45,8 +45,6 @@ export type BAIThemeFamily = {
 
 export type BAIThemeConfig = {
   fontFamily?: string;
-  /** Forces the sider chrome's polarity regardless of the page scheme. */
-  siderMode?: 'light' | 'dark';
   /** Selectable families keyed by family id; `default` must exist. */
   families?: Record<string, BAIThemeFamily>;
 };

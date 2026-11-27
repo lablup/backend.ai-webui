@@ -115,7 +115,6 @@ export type ThemeConfig = {
   schemaVersion?: 2;
   theme?: {
     fontFamily?: string;
-    siderMode?: 'light' | 'dark';
     families?: Record<string, ThemeFamilyConfig>;
   };
   branding?: ThemeBrandingConfig;
