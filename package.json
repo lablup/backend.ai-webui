@@ -29,6 +29,7 @@
     "build": "rm -rf build/web dist && mkdir -p build/web && pnpm run copyindex && pnpm run copyresource && pnpm run copyconfig && pnpm run copymonaco && tsc && pnpm run -r --stream build",
     "build:react-only": "pnpm run --prefix ./react build:only",
     "server:p": "serve build/web",
+    "adr": "serve docs",
     "dev": "node scripts/dev.mjs",
     "dev-env": "node scripts/dev-env.mjs",
     "electron:d": "electron build/electron-app --dev",
