@@ -10,6 +10,7 @@ import { convertToBinaryUnit } from '../../../helper';
 import { useResourceSlotsDetails } from '../../../hooks/backendai';
 import {
   diffRevisions,
+  MODEL_SETTING_FIELDS,
   REVISION_DIFF_GROUPS,
   type RevisionDiffGroup,
   type RevisionDiffRow,
@@ -17,9 +18,10 @@ import {
 import { Badge } from '@lablup/ui-common/Badge';
 import { Button } from '@lablup/ui-common/Button';
 import { Text } from '@lablup/ui-common/Text';
-import { Tooltip } from '@lablup/ui-common/Tooltip';
+import * as stylex from '@stylexjs/stylex';
 import {
   BAIDrawer,
+  BAIIconWithTooltip,
   type BAIDrawerProps,
   BAIFlex,
   BAIPopconfirm,
@@ -132,6 +134,11 @@ const revisionFragment = graphql`
 
 type RevisionData = DeploymentRevisionCompareDrawer_revision$data;
 
+const styles = stylex.create({
+  // Values are paths, commands and JSON: break anywhere, keep their line breaks.
+  value: { wordBreak: 'break-all', whiteSpace: 'pre-wrap' },
+});
+
 export interface DeploymentRevisionCompareDrawerProps extends Omit<
   BAIDrawerProps,
   'title' | 'children' | 'extra'
@@ -200,14 +207,6 @@ const DeploymentRevisionCompareDrawer: React.FC<
   // A model's name is its own row; it tags the other rows only when there are several.
   const hasSeveralModels =
     rows.filter((row) => row.field === 'modelName').length > 1;
-  const MODEL_FIELDS = new Set([
-    'modelPath',
-    'command',
-    'shell',
-    'port',
-    'healthCheck',
-    'preStartActions',
-  ]);
 
   const fieldLabel = (row: RevisionDiffRow): string => {
     switch (row.field) {
@@ -264,36 +263,32 @@ const DeploymentRevisionCompareDrawer: React.FC<
 
   // The diff status icons of GitHub's Primer octicons: added, removed, modified.
   const statusMarker = (row: RevisionDiffRow) => {
+    // An unchanged row keeps an invisible glyph so its label lines up with the others.
     if (row.status === 'same') {
-      return <BAIText style={{ width: '1em', flexShrink: 0 }} />;
+      return <SquareDot size="1em" color="transparent" aria-hidden />;
     }
-    const { type, Icon, label } = {
+    const { color, Icon, label } = {
       added: {
-        type: 'success' as const,
+        color: 'var(--color-success)',
         Icon: SquarePlus,
         label: t('deployment.CompareAdded'),
       },
       removed: {
-        type: 'danger' as const,
+        color: 'var(--color-error)',
         Icon: SquareMinus,
         label: t('deployment.CompareRemoved'),
       },
       changed: {
-        type: 'warning' as const,
+        color: 'var(--color-warning)',
         Icon: SquareDot,
         label: t('deployment.CompareChanged'),
       },
     }[row.status];
     return (
-      <Tooltip content={label}>
-        <BAIText
-          type={type}
-          aria-label={label}
-          style={{ display: 'inline-flex', flexShrink: 0 }}
-        >
-          <Icon size="1em" aria-hidden />
-        </BAIText>
-      </Tooltip>
+      <BAIIconWithTooltip
+        icon={<Icon size="1em" color={color} />}
+        content={label}
+      />
     );
   };
 
@@ -320,11 +315,7 @@ const DeploymentRevisionCompareDrawer: React.FC<
         </BAIText>
       );
     }
-    return (
-      <BAIText style={{ wordBreak: 'break-all', whiteSpace: 'pre-wrap' }}>
-        {value}
-      </BAIText>
-    );
+    return <Text xstyle={styles.value}>{value}</Text>;
   };
 
   const revisionTitle = (revision: RevisionData | null | undefined) => {
@@ -353,7 +344,7 @@ const DeploymentRevisionCompareDrawer: React.FC<
         <BAIFlex gap="xs" align="center" wrap="nowrap">
           {statusMarker(row)}
           <BAIText ellipsis={{ tooltip: true }}>{fieldLabel(row)}</BAIText>
-          {hasSeveralModels && MODEL_FIELDS.has(row.field) ? (
+          {hasSeveralModels && MODEL_SETTING_FIELDS.has(row.field) ? (
             <BAIText type="secondary" ellipsis={{ tooltip: true }}>
               {row.name}
             </BAIText>

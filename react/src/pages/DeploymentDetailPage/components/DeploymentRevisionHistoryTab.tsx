@@ -172,7 +172,12 @@ const RevisionCompareFromUrl: React.FC<RevisionCompareFromUrlProps> = ({
       leftRevisionFrgmt={left}
       rightRevisionFrgmt={right}
       applyDisabledReason={applyDisabledReasonOf(right.fieldId, right.id)}
-      onApply={() => onApply(right)}
+      // Apply replaces the current revision, so it is offered only when the diff starts there.
+      onApply={
+        left.fieldId === drawerProps.currentRevisionId
+          ? () => onApply(right)
+          : undefined
+      }
     />
   );
 };
@@ -328,7 +333,6 @@ const DeploymentRevisionHistoryTab: React.FC<
             deployingRevisionId
             currentRevision {
               fieldId
-              revisionNumber
             }
             revisionHistory(
               filter: $filter
@@ -495,7 +499,7 @@ const DeploymentRevisionHistoryTab: React.FC<
     setQueryParams({ compare: null, showUnchanged: null });
 
   // The baseline goes left: the current revision when it is one of the pair,
-  // else the newer one, so Apply always targets the right-hand revision.
+  // else the newer one. Apply is offered only when the current one is the baseline.
   const openCompareForSelection = () => {
     const [a, b] = selectedRevisions;
     if (!a || !b) return;
@@ -894,6 +898,7 @@ const DeploymentRevisionHistoryTab: React.FC<
             const str = stringifyRevisionFilter(next);
             const parsed = parseRevisionFilter(str || null);
             setQueryParams({ rvFilter: str || null, current: 1 });
+            setSelectedRevisions([]);
             doRefetch({ filter: parsed, offset: 0 });
           }}
         />
@@ -961,6 +966,7 @@ const DeploymentRevisionHistoryTab: React.FC<
           // passing `undefined` here would freeze `order` at its previous value
           // and break the ascend → descend → default sort cycle. `null` clears
           // the key and resets to the default order. Mirrors DeploymentReplicasCard.
+          setSelectedRevisions([]);
           setQueryParams({
             order:
               (newOrder as (typeof availableRevisionSorterValues)[number]) ??
@@ -985,8 +991,11 @@ const DeploymentRevisionHistoryTab: React.FC<
         }}
       />
       {comparedIds.length === 2 ? (
-        // Keyed by the pair, so picking another pair clears a failed one.
-        <ErrorBoundaryWithNullFallback key={comparedIds.join(',')}>
+        // A failed pair leaves the URL, so the same pair can be opened again.
+        <ErrorBoundaryWithNullFallback
+          key={comparedIds.join(',')}
+          onError={closeCompare}
+        >
           <Suspense fallback={null}>
             <RevisionCompareFromUrl
               deploymentId={deploymentId}
@@ -1000,7 +1009,10 @@ const DeploymentRevisionHistoryTab: React.FC<
               applyDisabledReasonOf={applyDisabledReasonOf}
               onApply={async (revision) => {
                 const success = await handleRollback(revision);
-                if (success) closeCompare();
+                if (success) {
+                  closeCompare();
+                  setSelectedRevisions([]);
+                }
               }}
               onClose={closeCompare}
             />

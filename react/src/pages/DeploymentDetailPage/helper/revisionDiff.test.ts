@@ -286,6 +286,26 @@ describe('diffRevisions', () => {
     });
   });
 
+  it('masks runtime settings named like a credential, and only those', () => {
+    const rows = diffRevisions(base, {
+      ...base,
+      modelRuntimeConfig: {
+        ...base.modelRuntimeConfig,
+        inferenceRuntimeConfig: { hf_token: 'hf_x', max_model_len: 4096 },
+        runtimeVariantPresetValues: [
+          { presetId: 'p2', value: 'sk-1', preset: { displayName: 'API Key' } },
+        ],
+      },
+    });
+    expect(
+      rowOf(rows, 'runtime:inferenceRuntimeConfig:hf_token')?.isSecret,
+    ).toBe(true);
+    expect(
+      rowOf(rows, 'runtime:inferenceRuntimeConfig:max_model_len')?.isSecret,
+    ).toBeUndefined();
+    expect(rowOf(rows, 'runtime:presetValue:p2')?.isSecret).toBe(true);
+  });
+
   it('treats a missing revision side as all added', () => {
     const rows = diffRevisions(null, base);
     expect(rowOf(rows, 'image:image')?.status).toBe('added');

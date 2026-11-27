@@ -217,6 +217,16 @@ const MODEL_FIELDS = [
 ] as const;
 type ModelField = (typeof MODEL_FIELDS)[number];
 
+/** The per-model setting rows, which the view tags with the model's name. */
+export const MODEL_SETTING_FIELDS: ReadonlySet<string> = new Set([
+  ...MODEL_FIELDS.filter((field) => field !== 'modelName'),
+  'healthCheck',
+]);
+
+// Runtime settings named like a credential are masked as env vars are.
+const looksSecret = (name: string | undefined) =>
+  !!name && /token|key|secret/i.test(name);
+
 // Keyed by position: the add-revision modal renames the model, so a name would
 // pair nothing across that edit.
 const modelMap = (revision: Maybe<RevisionDiffInput>) => {
@@ -345,9 +355,11 @@ export const diffRevisions = (
   for (const presetId of unionKeys(leftPresets, rightPresets)) {
     const l = leftPresets.get(presetId);
     const r = rightPresets.get(presetId);
+    const label = r?.label ?? l?.label;
     push('runtime', 'presetValue', l?.value ?? null, r?.value ?? null, {
-      name: r?.label ?? l?.label,
+      name: label,
       keySuffix: presetId,
+      isSecret: looksSecret(label),
     });
   }
   const leftJson = flattenJson(
@@ -362,7 +374,7 @@ export const diffRevisions = (
       'inferenceRuntimeConfig',
       leftJson.get(path) ?? null,
       rightJson.get(path) ?? null,
-      { name: path, keySuffix: path },
+      { name: path, keySuffix: path, isSecret: looksSecret(path) },
     );
   }
 
