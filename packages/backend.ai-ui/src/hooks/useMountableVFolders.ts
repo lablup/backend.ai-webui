@@ -1,9 +1,9 @@
 import { useFetchKey } from '.';
 import type {
-  useMountableVFoldersAutoMountedQuery,
   VFolderFilter,
   VFolderScope,
-} from '../__generated__/useMountableVFoldersAutoMountedQuery.graphql';
+} from '../__generated__/BAIScopedVFolderSelectQuery.graphql';
+import type { useMountableVFoldersAutoMountedQuery } from '../__generated__/useMountableVFoldersAutoMountedQuery.graphql';
 import * as _ from 'lodash-es';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
@@ -13,6 +13,8 @@ export type { VFolderFilter, VFolderScope };
 export interface AutoMountedFolder {
   vfolderId: string;
   name: string;
+  /** Set by an auto-mount setting; otherwise the folder takes its default path. */
+  mountDestination?: string;
 }
 
 export interface VFolderMountScope {
@@ -21,9 +23,6 @@ export interface VFolderMountScope {
   /** Hosts granting `mount-in-session`. */
   mountableHosts: ReadonlyArray<string>;
 }
-
-/** A dotfile folder is what a session mounts without being asked. */
-export const isAutoMountFolderName = (name: string) => name.startsWith('.');
 
 /** The caller's own folders plus the current project's, the reach a session mounts from. */
 export const mountableVFolderScope = (
@@ -60,9 +59,9 @@ export const notDeletedVFolderFilter: VFolderFilter = {
 const AUTO_MOUNTED_FOLDER_LIMIT = 100;
 
 /**
- * The ready dotfile folders a session in `scope` mounts on its own.
- * Suspends. Callers passing the same scope share one query, so a `refetch`
- * from any of them updates all.
+ * The ready folders the user's and the project's auto-mount settings mount
+ * into a session in `scope`, without those the caller's mount level is NONE for. Suspends. Callers passing the same scope share
+ * one query, so a `refetch` from any of them updates all.
  */
 export const useSuspendedAutoMountedVFolders = ({
   scope,
@@ -70,28 +69,29 @@ export const useSuspendedAutoMountedVFolders = ({
 }: VFolderMountScope) => {
   'use memo';
   const [fetchKey, updateFetchKey] = useFetchKey();
-  const { scopedVFoldersV2 } =
+  const { scopedVfolderAutoMounts } =
     useLazyLoadQuery<useMountableVFoldersAutoMountedQuery>(
       graphql`
         query useMountableVFoldersAutoMountedQuery(
-          $scope: VFolderScope!
-          $filter: VFolderFilter
+          $autoMountScope: VFolderAutoMountScope!
           $limit: Int!
         ) {
-          scopedVFoldersV2(
-            scope: $scope
-            filter: $filter
+          scopedVfolderAutoMounts(
+            scope: $autoMountScope
             limit: $limit
-            orderBy: [{ field: NAME, direction: ASC }]
+            orderBy: [{ field: MOUNT_DESTINATION, direction: ASC }]
           ) {
             edges {
               node {
-                entityId
-                accessControl {
-                  permission
-                }
-                metadata {
-                  name
+                vfolderId
+                mountDestination
+                vfolder {
+                  host
+                  status
+                  mountPermission
+                  metadata {
+                    name
+                  }
                 }
               }
             }
@@ -99,25 +99,28 @@ export const useSuspendedAutoMountedVFolders = ({
         }
       `,
       {
-        scope,
-        filter: {
-          AND: [
-            mountableVFolderFilter(mountableHosts),
-            { name: { startsWith: '.' }, status: { equals: 'READY' } },
-          ],
-        },
+        // The auto-mount scope has no domain; a session mounts the user's and the project's.
+        autoMountScope: { project: scope.project, user: scope.user },
         limit: AUTO_MOUNTED_FOLDER_LIMIT,
       },
       { fetchKey, fetchPolicy: 'store-and-network' },
     );
 
-  // A folder whose mount level is NONE is skipped by the server's auto-mount.
   const autoMountedFolders: Array<AutoMountedFolder> = _.compact(
-    _.map(scopedVFoldersV2?.edges, ({ node }) =>
-      node.accessControl.permission === 'NONE'
-        ? null
-        : { vfolderId: node.entityId, name: node.metadata.name },
+    _.map(scopedVfolderAutoMounts?.edges, ({ node }) =>
+      node.vfolder?.status === 'READY' &&
+      node.vfolder.mountPermission !== 'NONE' &&
+      _.includes(mountableHosts, node.vfolder.host)
+        ? {
+            vfolderId: node.vfolderId,
+            name: node.vfolder.metadata.name,
+            mountDestination: node.mountDestination,
+          }
+        : null,
     ),
   );
-  return { autoMountedFolders, refetch: () => updateFetchKey() };
+  return {
+    autoMountedFolders,
+    refetch: () => updateFetchKey(),
+  };
 };
