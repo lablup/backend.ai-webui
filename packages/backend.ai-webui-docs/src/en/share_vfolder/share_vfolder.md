@@ -141,8 +141,3 @@ Permission modal. In the permission table, click the leave icon in the
 before the action is completed.
 
 ![=650px](../images/leave_shared_folder.png)
-
-When a folder is shared with a whole project, a project admin can leave the
-project's share from the same modal while that project is selected with the
-project selector in the top bar. Leaving removes the folder from **all** of
-the project's members, not only from you.
