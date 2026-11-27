@@ -1,0 +1,27 @@
+{
+  "base": "main",
+  "head": "chore/gh-11421-review-guidelines",
+  "baseSha": "3d17cc7415355217656bd4534a2471b6e8816294",
+  "headSha": "160a6baa3e9d19556ff3b60622efb5fec53733f2",
+  "adrs": [
+    {
+      "id": "0015",
+      "status": "modified",
+      "title": "Risk-tiered review policy in REVIEW.md",
+      "files": {
+        "en": {
+          "path": "adr/0015-risk-tiered-review-policy-in-review-md.md",
+          "status": "modified"
+        },
+        "ko": {
+          "path": "adr/0015-risk-tiered-review-policy-in-review-md.ko.md",
+          "status": "modified"
+        }
+      }
+    }
+  ],
+  "architecture": {
+    "en": "modified",
+    "ko": "modified"
+  }
+}
