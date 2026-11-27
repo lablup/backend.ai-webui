@@ -43,15 +43,19 @@
   margin-right: var(--bai-drawer-area-width, 256px);
 }
 
-/* The WebUI Assistant drawer docks beside the content; with both open the wider one wins. */
-.main-layout-main-content.assistant-docked {
+/* The WebUI Assistant drawer sits under the header, so only the area below it makes room.
+   With the notification drawer also open, its margin already covers part of the width. */
+.main-layout-main-content.assistant-docked .main-layout-content-area {
   margin-right: var(--webui-assistant-drawer-width, 480px);
+  transition: margin-right 0.3s ease;
 }
 
-.main-layout-main-content.margin-style.assistant-docked {
+.main-layout-main-content.margin-style.assistant-docked
+  .main-layout-content-area {
   margin-right: max(
-    var(--bai-drawer-area-width, 256px),
-    var(--webui-assistant-drawer-width, 480px)
+    0px,
+    var(--webui-assistant-drawer-width, 480px) -
+      var(--bai-drawer-area-width, 256px)
   );
 }
 

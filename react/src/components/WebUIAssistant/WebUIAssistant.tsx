@@ -147,17 +147,15 @@ const WebUIAssistantFloating: React.FC = () => {
     const header = document.querySelector('[data-testid="webui-header"]');
     const panelStyle = panelRef.current?.style;
     if (!panelStyle) return;
-    // Docked beside the content it runs from the header's top; over it, from its bottom.
-    const rect = header?.getBoundingClientRect();
+    // Under the header band, including the alerts pinned below the header.
+    const rect = (header?.parentElement ?? header)?.getBoundingClientRect();
     if (rect) {
       panelStyle.setProperty(
         '--webui-assistant-drawer-top',
         `${rect.bottom}px`,
       );
-      panelStyle.setProperty('--webui-assistant-docked-top', `${rect.top}px`);
     } else {
       panelStyle.removeProperty('--webui-assistant-drawer-top');
-      panelStyle.removeProperty('--webui-assistant-docked-top');
     }
   };
   const focusFabOnCloseRef = useRef(false);

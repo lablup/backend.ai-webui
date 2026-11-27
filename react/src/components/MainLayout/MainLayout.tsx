@@ -258,7 +258,10 @@ function MainLayout() {
                   </ErrorBoundaryWithNullFallback>
                 </div>
                 {/* Anchors the overlay scrollbar's track to the scroll column. */}
-                <div style={{ position: 'relative', flex: 1, minHeight: 0 }}>
+                <div
+                  className="main-layout-content-area"
+                  style={{ position: 'relative', flex: 1, minHeight: 0 }}
+                >
                   <BAIFlex
                     ref={contentScrollFlexRef}
                     direction="column"
