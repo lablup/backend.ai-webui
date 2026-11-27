@@ -67,6 +67,8 @@ export interface BAITableRowSelection<RecordType> {
   preserveSelectedRowKeys?: boolean;
   /** Accessible per-row checkbox label, e.g. `record => record.name`. */
   getRowLabel?: (record: RecordType) => string;
+  /** Hides the header select-all checkbox, for a selection `onChange` caps. */
+  hideSelectAll?: boolean;
 }
 
 export interface BAITablePaginationConfig extends Omit<
@@ -307,6 +309,7 @@ const BAITable = <RecordType extends AnyRecord = AnyRecord>({
                 : undefined,
               getRowLabel: rowSelection.getRowLabel,
               isPreservingOtherPages: rowSelection.preserveSelectedRowKeys,
+              isSelectAllHidden: rowSelection.hideSelectAll,
             }
           : undefined
       }

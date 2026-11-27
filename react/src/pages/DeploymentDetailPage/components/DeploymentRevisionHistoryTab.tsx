@@ -932,11 +932,10 @@ const DeploymentRevisionHistoryTab: React.FC<
         columns={columns}
         rowSelection={{
           type: 'checkbox',
+          hideSelectAll: true,
           preserveSelectedRowKeys: true,
           selectedRowKeys: _.map(selectedRevisions, 'id'),
           onChange: (keys) => {
-            // The header checkbox would select the whole page; a compare takes two.
-            if (keys.length > 2) return;
             const known = _.uniqBy([...selectedRevisions, ...revisions], 'id');
             setSelectedRevisions(
               _.filter(known, (revision) => keys.includes(revision.id)),
