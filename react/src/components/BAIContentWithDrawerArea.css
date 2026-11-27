@@ -43,6 +43,18 @@
   margin-right: var(--bai-drawer-area-width, 256px);
 }
 
+/* The WebUI Assistant drawer docks beside the content; with both open the wider one wins. */
+.main-layout-main-content.assistant-docked {
+  margin-right: var(--webui-assistant-drawer-width, 480px);
+}
+
+.main-layout-main-content.margin-style.assistant-docked {
+  margin-right: max(
+    var(--bai-drawer-area-width, 256px),
+    var(--webui-assistant-drawer-width, 480px)
+  );
+}
+
 body:has(.main-layout-main-content.margin-style) .astryx-drawer {
   box-shadow: none !important;
   border-left: 1px solid var(--color-border-emphasized);

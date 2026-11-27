@@ -2,7 +2,10 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { notificationDrawerOpenState } from '../hooks/useShellPanels';
+import {
+  notificationDrawerOpenState,
+  webUIAssistantDrawerOpenState,
+} from '../hooks/useShellPanels';
 import './BAIContentWithDrawerArea.css';
 import { useBAIBreakpoint } from 'backend.ai-ui';
 import { useAtomValue } from 'jotai';
@@ -30,16 +33,19 @@ const BAIContentWithDrawerArea: React.FC<Props> = ({
   ...contextProps
 }) => {
   const isOpenDrawer = useAtomValue(notificationDrawerOpenState);
+  const isAssistantDrawerOpen = useAtomValue(webUIAssistantDrawerOpenState);
   // ADR 0020 R3: JS behaviour branch — the drawer style is
   // a layout MODE, not a track layout, so it stays on the JS-side hook.
   const { xl } = useBAIBreakpoint();
   const drawerStyle: DrawerStyle =
     xl && isOpenDrawer ? 'margin-style' : 'overlay-style';
+  const isAssistantDocked = xl && isAssistantDrawerOpen;
   return (
     <div
       {...contextProps}
       className={
         `main-layout-main-content ${drawerStyle}` +
+        (isAssistantDocked ? ' assistant-docked ' : ' ') +
         (contextProps.className || '')
       }
       style={

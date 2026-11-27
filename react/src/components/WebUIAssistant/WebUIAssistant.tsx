@@ -4,6 +4,7 @@
  */
 import { useMyAppConfig } from '../../hooks/useAppConfig';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
+import { webUIAssistantDrawerOpenState } from '../../hooks/useShellPanels';
 import BAIErrorBoundary from '../BAIErrorBoundary';
 import { useCustomEndpointApiKey } from '../Chat/customEndpointKeyStore';
 import { useCurrentLanguage } from '../DefaultProviders';
@@ -25,6 +26,7 @@ import {
   BAIUnmountAfterClose,
   useBAILogger,
 } from 'backend.ai-ui';
+import { useSetAtom } from 'jotai';
 import {
   EraserIcon,
   MessageCircle,
@@ -145,13 +147,17 @@ const WebUIAssistantFloating: React.FC = () => {
     const header = document.querySelector('[data-testid="webui-header"]');
     const panelStyle = panelRef.current?.style;
     if (!panelStyle) return;
-    if (header) {
+    // Docked beside the content it runs from the header's top; over it, from its bottom.
+    const rect = header?.getBoundingClientRect();
+    if (rect) {
       panelStyle.setProperty(
         '--webui-assistant-drawer-top',
-        `${header.getBoundingClientRect().bottom}px`,
+        `${rect.bottom}px`,
       );
+      panelStyle.setProperty('--webui-assistant-docked-top', `${rect.top}px`);
     } else {
       panelStyle.removeProperty('--webui-assistant-drawer-top');
+      panelStyle.removeProperty('--webui-assistant-docked-top');
     }
   };
   const focusFabOnCloseRef = useRef(false);
@@ -269,6 +275,13 @@ const WebUIAssistantFloating: React.FC = () => {
     startTransition(() => setIsConnectOpen(true));
     return true;
   };
+
+  const setDrawerOpen = useSetAtom(webUIAssistantDrawerOpenState);
+  const isDrawerShown = isPanelShown && !!isDrawerMode;
+  useEffect(() => {
+    setDrawerOpen(isDrawerShown);
+    return () => setDrawerOpen(false);
+  }, [isDrawerShown, setDrawerOpen]);
 
   const onEscape = useEffectEvent(() => closePanel());
   useEffect(() => {

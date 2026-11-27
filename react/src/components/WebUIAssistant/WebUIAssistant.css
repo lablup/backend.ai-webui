@@ -147,6 +147,16 @@
     border-radius: 0;
   }
 
+  /* Docked beside the content (BAIContentWithDrawerArea): full height next to the header, no shadow. */
+  body:has(.main-layout-main-content.assistant-docked)
+    .webui-assistant-panel[data-mode='drawer'] {
+    inset-block-start: var(
+      --webui-assistant-docked-top,
+      var(--webui-titlebar-height, 0px)
+    );
+    box-shadow: none;
+  }
+
   .webui-assistant-fab--hidden {
     display: none;
   }
