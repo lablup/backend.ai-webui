@@ -73,15 +73,15 @@ describe('PANEL_CATALOG', () => {
     [
       'project',
       [
+        'mySession',
+        'myTotalResource',
+        'myResource',
         'start.recentHistory',
         'start.session',
         'start.batchSession',
         'start.folder',
         'start.deployment',
         'start.url',
-        'mySession',
-        'myTotalResource',
-        'myResource',
         'myRecentSessions',
         'quotaPerStorageVolume',
         'myDeployments',

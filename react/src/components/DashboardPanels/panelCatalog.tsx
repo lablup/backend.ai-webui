@@ -726,17 +726,16 @@ const PRESET_PANELS: ReadonlyArray<PanelDefinition> = resourceKeys.map(
  * explains it. Cards not listed follow, in catalog order.
  */
 const PAGE_ORDER: Record<PanelPage, ReadonlyArray<string>> = {
-  // The Start cards lead: equal 2x2 cards from the top row stay together on any column count.
   project: [
+    'mySession',
+    'myTotalResource',
+    'myResource',
     'start.recentHistory',
     'start.session',
     'start.batchSession',
     'start.folder',
     'start.deployment',
     'start.url',
-    'mySession',
-    'myTotalResource',
-    'myResource',
     'myRecentSessions',
     'quotaPerStorageVolume',
     'myDeployments',
