@@ -12,7 +12,7 @@
 
 - **Per-route providers**: Each of the seven top-level routes wrapped its own element in `DefaultProvidersForReactRoot`. `routes.tsx` repeated the wrapper seven times, and React Router mounted a new copy of the providers when a user moved from one top-level route to another.
 - **Provider contents**: `DefaultProviders` in `react/src/components/DefaultProviders.tsx` renders the Relay environment, the query client, the app-level `<Theme>` (ADR 0044), `BAIConfigProvider`, `FormConfigProvider`, `BAIAppProvider`, `NotificationHost` and `BAIWebMCPProvider` (ADR 0025).
-- **Router dependency**: `DefaultProviders` calls `useRouteScope()` (ADR 0044), and `NotificationHost` renders notification items that navigate with router hooks. Both must render inside `RouterProvider`.
+- **Router dependency**: `DefaultProviders` renders `RouteScopedBrandTheme`, which calls `useRouteScope()` (ADR 0044), and `NotificationHost` renders notification items that navigate with router hooks. Both must render inside `RouterProvider`.
 
 ## Diagram
 
@@ -48,7 +48,7 @@ flowchart TB
 
 ## Rejected alternatives
 
-- **Providers outside `RouterProvider`**: `react/src/App.tsx` could wrap `RouterProvider` in `DefaultProviders`, which mounts the providers once without changing `routes.tsx`. This is rejected because `DefaultProviders` calls `useRouteScope()` and `NotificationHost` renders items that call router hooks, and neither works outside `RouterProvider`.
+- **Providers outside `RouterProvider`**: `react/src/App.tsx` could wrap `RouterProvider` in `DefaultProviders`, which mounts the providers once without changing `routes.tsx`. This is rejected because `RouteScopedBrandTheme` inside `DefaultProviders` calls `useRouteScope()` and `NotificationHost` renders items that call router hooks, and neither works outside `RouterProvider`.
 - **Providers per route**: Each top-level route could keep wrapping its own element, which keeps every route's element complete on its own. This is rejected because `routes.tsx` repeats the wrapper for every route, and React Router remounts the providers on navigation between top-level routes.
 
 ## Consequences

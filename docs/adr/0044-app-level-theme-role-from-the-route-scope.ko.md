@@ -2,7 +2,7 @@
 
 ## Summary
 
-- app에는 app-level `<Theme>`이 하나 있고, 그것은 `DefaultProviders` 안의 `AstryxBrandTheme`이다(ADR 0043). `DefaultProviders`는 `admin` [route scope](#용어)에서는 [theme role](#용어) `admin`을, 나머지 scope에서는 `brand`를 넘긴다.
+- app에는 app-level `<Theme>`이 하나 있고, 그것은 `DefaultProviders` 안의 `AstryxBrandTheme`이다(ADR 0043). `DefaultProviders.tsx`의 `RouteScopedBrandTheme`은 `admin` [route scope](#용어)에서는 [theme role](#용어) `admin`을, 나머지 scope에서는 `brand`를 넘긴다.
 - `MainLayout`은 [shell](#용어) 전체를 감싸는 theme provider를 render하지 않고, `SystemAdminScopeTheme`은 더 이상 없다.
 - app-level `<Theme>`의 첫 자식인 `AstryxThemeStyleKeeper`는 다른 theme provider가 role을 바꾸거나 unmount되는 동안 brand와 admin [runtime theme](#용어)의 CSS를 document에 유지한다.
 - 다른 role이나 mode가 필요한 영역은 `AstryxAdminTheme`이나 `AstryxReverseTheme`을 중첩한다.
@@ -21,7 +21,8 @@
 
 ```mermaid
 flowchart TB
-  dp["DefaultProviders"] -- "useRouteScope에서 얻은 role" --> bt["AstryxBrandTheme: app-level Theme"]
+  dp["DefaultProviders"] -- "render한다" --> rs["RouteScopedBrandTheme"]
+  rs -- "useRouteScope에서 얻은 role" --> bt["AstryxBrandTheme: app-level Theme"]
   bt -- "첫 자식, brand와 admin CSS를 inject한다" --> kp["AstryxThemeStyleKeeper"]
   bt -- "children" --> ml["MainLayout: header, sider, page area"]
   bt -- "children" --> ov["NotificationHost와 MainLayout 옆의 component"]
@@ -35,7 +36,8 @@ flowchart TB
 
 - **Role prop**: `react/src/astryx-theme/AstryxBrandTheme.tsx`의 `AstryxBrandTheme`은 `role?: 'brand' | 'admin'` prop을 가지며 기본값은 `brand`다. `AstryxBrandTheme`은 `resolveRoleTheme(rawThemeConfig?.theme, role, activeThemeFamily)`로 자기 theme을 정한다.
 - **No router read**: `AstryxBrandTheme`은 router hook을 호출하지 않으므로, unit test는 router 없이 그것을 render한다.
-- **Role source**: `DefaultProviders`가 `useRouteScope()`를 호출한다. `DefaultProviders`는 scope가 `admin`이면 `admin`을, scope가 `project`나 `projectAdmin`이면 `brand`를 넘긴다.
+- **Role source**: `react/src/components/DefaultProviders.tsx`의 `RouteScopedBrandTheme`이 `useRouteScope()`를 호출한다. `RouteScopedBrandTheme`은 scope가 `admin`이면 `admin`을, scope가 `project`나 `projectAdmin`이면 `brand`를 넘긴다.
+- **Router subscription**: `RouteScopedBrandTheme`은 `'use memo'`를 둔 별도 component다. URL이 바뀌면 React는 `RouteScopedBrandTheme`만 다시 render하고, `DefaultProviders`와 `DefaultProviders`가 render하는 provider는 다시 render하지 않는다.
 
 ### 2. shell 전체를 감싸는 theme provider는 없다
 
@@ -55,7 +57,7 @@ flowchart TB
 
 | Provider | 감싸는 곳 | 넘기는 theme |
 |---|---|---|
-| `AstryxAdminTheme` | `WebUISiderNavigation`의 admin menu; `projectAdmin`과 `admin` scope에서 `MainLayout`의 page area; `AdminVFolderNodeListPage` | admin theme. `projectAdmin`에서는 app-level theme과 다르고 `admin`에서는 같다 |
+| `AstryxAdminTheme` | `WebUISiderNavigation`의 admin menu; `projectAdmin` scope에서 `MainLayout`의 page area; `AdminVFolderNodeListPage` | admin theme. `projectAdmin`에서는 app-level theme과 다르다. `admin`에서는 admin menu와 `AdminVFolderNodeListPage`가 app-level `<Theme>`과 같은 theme을 넘긴다 |
 | `AstryxReverseTheme` | `theme.siderMode`가 page와 반대인 mode를 요구할 때의 sider와 mobile navigation drawer | 반전된 mode의 brand theme |
 | `AstryxBrandTheme`, `AstryxAdminTheme`, `AstryxSecondaryTheme` | 개발용 page인 `AstryxStylexProbePage`의 sample | 각 sample의 theme |
 
@@ -72,7 +74,7 @@ flowchart TB
 - **Admin console overlays**: admin console에서는 `DefaultProviders`와 `routes.tsx`가 `MainLayout` 바깥에 render하는 component, 곧 notification stack, folder explorer, folder invitation modal, file upload manager가 admin theme을 받는다. 이 결정 전에는 이들이 brand theme을 받았다.
 - **Document-level values**: admin console에서 Astryx는 `<html>`에 admin theme의 이름을 쓰고, `CSSTokenVariables`는 `:root`의 `--token-colorPrimary`에 admin accent를 쓴다.
 - **Signed-out admin URL**: 로그아웃 상태의 사용자가 `/admin` URL을 열면 login form이 admin theme 아래에서 보인다.
-- **Duplicate admin theme**: `admin` scope에서는 중첩된 `AstryxAdminTheme` 각각이 app-level `<Theme>`과 같은 theme을 넘긴다. admin menu와 page area는 app-level role이 `brand`인 `projectAdmin` scope에서 자기 provider가 필요하다.
+- **Duplicate admin theme**: `admin` scope에서는 `WebUISiderNavigation`의 admin menu와 `AdminVFolderNodeListPage`가 app-level `<Theme>`과 같은 theme을 넘기는 `AstryxAdminTheme`을 중첩한다. admin menu는 app-level role이 `brand`인 `projectAdmin` scope에서 자기 provider가 필요하다.
 - **Persistent admin CSS**: keeper는 admin theme을 쓰지 않는 page에서도 admin theme의 CSS를 document에 유지한다.
 - **Keeper dependencies**: keeper는 React의 insertion effect 실행 순서와, Astryx가 첫 `<Theme>`에서 inject한다는 동작에 의존한다. `themeStyleOwnership.test.tsx`는 자신이 다루는 순서 중 하나가 theme을 CSS 없이 남기면 실패한다.
 

@@ -2,7 +2,7 @@
 
 ## Summary
 
-- The app has one app-level `<Theme>`, `AstryxBrandTheme` inside `DefaultProviders` (ADR 0043). `DefaultProviders` passes it the [theme role](#glossary) `admin` on the `admin` [route scope](#glossary) and `brand` on the other scopes.
+- The app has one app-level `<Theme>`, `AstryxBrandTheme` inside `DefaultProviders` (ADR 0043). `RouteScopedBrandTheme` in `DefaultProviders.tsx` passes it the [theme role](#glossary) `admin` on the `admin` [route scope](#glossary) and `brand` on the other scopes.
 - `MainLayout` renders no theme provider around the whole [shell](#glossary), and `SystemAdminScopeTheme` no longer exists.
 - `AstryxThemeStyleKeeper`, the first child of the app-level `<Theme>`, keeps the CSS of the brand and admin [runtime themes](#glossary) in the document while other theme providers change role or unmount.
 - A region that needs another role or mode nests `AstryxAdminTheme` or `AstryxReverseTheme`.
@@ -21,7 +21,8 @@
 
 ```mermaid
 flowchart TB
-  dp["DefaultProviders"] -- "role from useRouteScope" --> bt["AstryxBrandTheme: the app-level Theme"]
+  dp["DefaultProviders"] -- "renders" --> rs["RouteScopedBrandTheme"]
+  rs -- "role from useRouteScope" --> bt["AstryxBrandTheme: the app-level Theme"]
   bt -- "first child, injects the brand and admin CSS" --> kp["AstryxThemeStyleKeeper"]
   bt -- "children" --> ml["MainLayout: header, sider, page area"]
   bt -- "children" --> ov["NotificationHost and the components beside MainLayout"]
@@ -35,7 +36,8 @@ flowchart TB
 
 - **Role prop**: `AstryxBrandTheme` in `react/src/astryx-theme/AstryxBrandTheme.tsx` has the prop `role?: 'brand' | 'admin'`, which defaults to `brand`. It resolves its theme with `resolveRoleTheme(rawThemeConfig?.theme, role, activeThemeFamily)`.
 - **No router read**: `AstryxBrandTheme` does not call a router hook, so a unit test renders it without a router.
-- **Role source**: `DefaultProviders` calls `useRouteScope()`. It passes `admin` when the scope is `admin`, and `brand` when the scope is `project` or `projectAdmin`.
+- **Role source**: `RouteScopedBrandTheme` in `react/src/components/DefaultProviders.tsx` calls `useRouteScope()`. It passes `admin` when the scope is `admin`, and `brand` when the scope is `project` or `projectAdmin`.
+- **Router subscription**: `RouteScopedBrandTheme` is a separate component with `'use memo'`. A URL change re-renders it, and does not re-render `DefaultProviders` or the providers that `DefaultProviders` renders.
 
 ### 2. No theme provider around the whole shell
 
@@ -55,7 +57,7 @@ flowchart TB
 
 | Provider | Where it wraps | Theme it passes |
 |---|---|---|
-| `AstryxAdminTheme` | the admin menu in `WebUISiderNavigation`; the page area in `MainLayout` on the `projectAdmin` and `admin` scopes; `AdminVFolderNodeListPage` | the admin theme, which differs from the app-level theme on `projectAdmin` and equals it on `admin` |
+| `AstryxAdminTheme` | the admin menu in `WebUISiderNavigation`; the page area in `MainLayout` on the `projectAdmin` scope; `AdminVFolderNodeListPage` | the admin theme, which differs from the app-level theme on `projectAdmin`; on `admin`, the admin menu and `AdminVFolderNodeListPage` pass the same theme as the app-level `<Theme>` |
 | `AstryxReverseTheme` | the sider and the mobile navigation drawer, when `theme.siderMode` asks for the mode opposite the page's | the brand theme in the inverted mode |
 | `AstryxBrandTheme`, `AstryxAdminTheme`, `AstryxSecondaryTheme` | the samples on `AstryxStylexProbePage`, a development page | the theme of each sample |
 
@@ -72,7 +74,7 @@ flowchart TB
 - **Admin console overlays**: In the admin console, the components that `DefaultProviders` and `routes.tsx` render outside `MainLayout` take the admin theme: the notification stack, the folder explorer, the folder invitation modal and the file upload manager. Before this decision they took the brand theme.
 - **Document-level values**: In the admin console, Astryx writes the admin theme's name on `<html>`, and `CSSTokenVariables` writes the admin accent to `--token-colorPrimary` on `:root`.
 - **Signed-out admin URL**: A signed-out user who opens an `/admin` URL sees the login form under the admin theme.
-- **Duplicate admin theme**: On the `admin` scope, each nested `AstryxAdminTheme` passes the same theme as the app-level `<Theme>`. The admin menu and the page area need their provider on the `projectAdmin` scope, where the app-level role is `brand`.
+- **Duplicate admin theme**: On the `admin` scope, the admin menu in `WebUISiderNavigation` and `AdminVFolderNodeListPage` nest an `AstryxAdminTheme` that passes the same theme as the app-level `<Theme>`. The admin menu needs its provider on the `projectAdmin` scope, where the app-level role is `brand`.
 - **Persistent admin CSS**: The keeper keeps the admin theme's CSS in the document on pages that do not use the admin theme.
 - **Keeper dependencies**: The keeper relies on React's order of insertion effects and on Astryx injecting from the first `<Theme>`. `themeStyleOwnership.test.tsx` fails when a sequence it covers leaves a theme without CSS.
 

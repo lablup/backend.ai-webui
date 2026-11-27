@@ -401,20 +401,11 @@ const AutoAdminPrimaryColorProvider = ({
 }) => {
   'use memo';
 
-  // Apply the admin primary color on any non-project scope (global `admin` and
-  // `projectAdmin`). Derived from the matched route handle via `useRouteScope`
-  // rather than the role-filtered `isSelectedAdminCategoryMenu`, so the admin
-  // theming is driven by the URL scope itself — correct under the
-  // scope-prefixed routes and independent of which admin menu items the
-  // current user's role happens to surface.
-  const isAdminScope = useRouteScope() !== 'project';
-  if (isAdminScope) {
-    return (
-      // `AstryxAdminTheme` is the whole accent swap — the antd
-      // `ConfigProvider` + `App` pairing it replaced went away with the final
-      // switch (FR-3482 tickets 04/35).
-      <AstryxAdminTheme>{children}</AstryxAdminTheme>
-    );
+  // The project admin pages take the admin accent under a brand app-level
+  // theme. On the `admin` scope the app-level theme is already admin (ADR 0044).
+  const isProjectAdminScope = useRouteScope() === 'projectAdmin';
+  if (isProjectAdminScope) {
+    return <AstryxAdminTheme>{children}</AstryxAdminTheme>;
   }
 
   return children;

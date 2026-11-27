@@ -12,7 +12,7 @@
 
 - **Per-route providers**: top-level route 일곱 개가 각자 자기 element를 `DefaultProvidersForReactRoot`로 감쌌다. `routes.tsx`는 이 wrapper를 일곱 번 반복했고, 사용자가 한 top-level route에서 다른 top-level route로 이동하면 React Router가 providers를 새로 mount했다.
 - **Provider contents**: `react/src/components/DefaultProviders.tsx`의 `DefaultProviders`는 Relay environment, query client, app-level `<Theme>`(ADR 0044), `BAIConfigProvider`, `FormConfigProvider`, `BAIAppProvider`, `NotificationHost`, `BAIWebMCPProvider`(ADR 0025)를 render한다.
-- **Router dependency**: `DefaultProviders`는 `useRouteScope()`를 호출하고(ADR 0044), `NotificationHost`는 router hook으로 이동하는 notification item을 render한다. 둘 다 `RouterProvider` 안에서 render되어야 한다.
+- **Router dependency**: `DefaultProviders`는 `useRouteScope()`를 호출하는 `RouteScopedBrandTheme`을 render하고(ADR 0044), `NotificationHost`는 router hook으로 이동하는 notification item을 render한다. 둘 다 `RouterProvider` 안에서 render되어야 한다.
 
 ## 설계도
 
@@ -48,7 +48,7 @@ flowchart TB
 
 ## 대안과 기각 사유
 
-- **Providers outside `RouterProvider`**: `react/src/App.tsx`가 `RouterProvider`를 `DefaultProviders`로 감싸면 `routes.tsx`를 바꾸지 않고 providers를 한 번만 mount할 수 있다. `DefaultProviders`가 `useRouteScope()`를 호출하고 `NotificationHost`가 router hook을 호출하는 item을 render하는데, 둘 다 `RouterProvider` 바깥에서는 동작하지 않으므로 기각한다.
+- **Providers outside `RouterProvider`**: `react/src/App.tsx`가 `RouterProvider`를 `DefaultProviders`로 감싸면 `routes.tsx`를 바꾸지 않고 providers를 한 번만 mount할 수 있다. `DefaultProviders` 안의 `RouteScopedBrandTheme`이 `useRouteScope()`를 호출하고 `NotificationHost`가 router hook을 호출하는 item을 render하는데, 둘 다 `RouterProvider` 바깥에서는 동작하지 않으므로 기각한다.
 - **Providers per route**: top-level route가 각자 자기 element를 계속 감싸면 route의 element 하나하나가 그 자체로 완결된다. `routes.tsx`가 route마다 wrapper를 반복하고, top-level route 사이를 이동할 때 React Router가 providers를 다시 mount하므로 기각한다.
 
 ## Consequences

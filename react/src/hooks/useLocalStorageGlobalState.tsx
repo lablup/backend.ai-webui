@@ -34,10 +34,14 @@ export const createGlobalStorageStateHook = (
         return { isWritten: true, isSaved: false };
       }
     }
-    let raw: string;
+    let raw: string | undefined;
     try {
       raw = JSON.stringify(value);
     } catch {
+      raw = undefined;
+    }
+    // `JSON.stringify` gives `undefined`, without throwing, for a function or a symbol.
+    if (raw === undefined) {
       return { isWritten: true, isSaved: false, value };
     }
     const saved = JSON.parse(raw) as unknown;

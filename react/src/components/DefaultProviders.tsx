@@ -265,6 +265,19 @@ export const RoutingEventHandler = () => {
 };
 
 /**
+ * The app-level theme with its role from the route scope: the system admin
+ * pages take the admin accent for the whole app (ADR 0044). Kept apart from
+ * `DefaultProviders` so a URL change re-renders this component only.
+ */
+const RouteScopedBrandTheme: React.FC<{ children?: React.ReactNode }> = ({
+  children,
+}) => {
+  'use memo';
+  const role = useRouteScope() === 'admin' ? 'admin' : 'brand';
+  return <AstryxBrandTheme role={role}>{children}</AstryxBrandTheme>;
+};
+
+/**
  * The app providers. Mounted once, by the root layout route in `routes.tsx`
  * (ADR 0043), so every route renders under them.
  */
@@ -275,8 +288,6 @@ export const DefaultProviders: React.FC<{
   const { t } = useTranslation();
   const { token } = useTheme();
   const enableWebMCP = useLoginConfig()?.enableWebMCP ?? false;
-  // The system admin pages take the admin accent for the whole app (ADR 0044).
-  const themeRole = useRouteScope() === 'admin' ? 'admin' : 'brand';
 
   // Non-`en` locales are lazy chunks; `loadBuiLocale` caches one promise per
   // language, so `use` suspends on the same object across renders.
@@ -289,7 +300,7 @@ export const DefaultProviders: React.FC<{
           <QueryClientProvider client={queryClient}>
             {/* The app's only app-level `<Theme>`. `mode` comes from
                 `useThemeMode`, which `<Theme>` syncs onto `<html>`. */}
-            <AstryxBrandTheme role={themeRole}>
+            <RouteScopedBrandTheme>
               {/* Locale + client: Astryx's `InternationalizationProvider`, BUI's
                     i18next instance, dayjs's locale, the Backend.AI client. */}
               <BAIConfigProvider
@@ -336,7 +347,7 @@ export const DefaultProviders: React.FC<{
                   </BAIAppProvider>
                 </FormConfigProvider>
               </BAIConfigProvider>
-            </AstryxBrandTheme>
+            </RouteScopedBrandTheme>
           </QueryClientProvider>
         </RelayEnvironmentProvider>
       )}

@@ -113,9 +113,12 @@ describe('useLocalStorageGlobalState', () => {
         throw new DOMException('quota', 'QuotaExceededError');
       });
     const first = render(<RefusedKeyView next="glass" />);
-    fireEvent.click(screen.getByRole('button', { name: 'write' }));
-    expect(screen.getByTestId('refused')).toHaveTextContent('glass');
-    setItem.mockRestore();
+    try {
+      fireEvent.click(screen.getByRole('button', { name: 'write' }));
+      expect(screen.getByTestId('refused')).toHaveTextContent('glass');
+    } finally {
+      setItem.mockRestore();
+    }
     expect(localStorage.getItem(REFUSED_KEY)).toBeNull();
     first.unmount();
     render(<RefusedKeyView />);
