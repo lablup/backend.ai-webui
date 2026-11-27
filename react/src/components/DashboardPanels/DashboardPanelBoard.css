@@ -1,0 +1,6 @@
+/* A card the WebUI Assistant points at: hovered in a proposal, or just changed. */
+.dashboard-panel-board__assistant-target {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+  transition: outline-color 0.2s;
+}

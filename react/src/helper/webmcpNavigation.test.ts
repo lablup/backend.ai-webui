@@ -30,6 +30,7 @@ describe('resolveAppPath', () => {
     for (const path of [
       '/session/start?formValues=%7B%22sessionName%22%3A%22x%22%7D',
       '/project/alpha/session/start?agentPrefill=abc',
+      '/admin/dashboard?dashboardDraft=%5B%5D',
     ]) {
       expect(resolve(path)).toMatchObject({
         ok: false,

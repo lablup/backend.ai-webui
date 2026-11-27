@@ -6,21 +6,56 @@ import { useWebUILocation } from '../../hooks';
 import { useTanQuery } from '../../hooks/reactQueryAlias';
 import { useHelpURL, useManualBaseURL } from '../../hooks/useHelpURL';
 import ChatMessageContent from '../Chat/ChatMessageContent';
-import type { ChatMessage as ChatUIMessage } from '../Chat/ChatModel';
+import {
+  getAIErrorMessage,
+  type ChatMessage as ChatUIMessage,
+} from '../Chat/ChatModel';
 import { fetchOpenAIModels, type ModelsFetchError } from '../Chat/openAIModels';
+import {
+  actionTargetId,
+  isNoopAction,
+  type DashboardAssistantAction,
+} from '../DashboardPanels/assistantActions';
+import {
+  dashboardAgentAtom,
+  type DashboardAgent,
+} from '../DashboardPanels/dashboardAgent';
+import {
+  buildDashboardChatPrompt,
+  dashboardExamplesOf,
+  describeDashboardAction,
+  answersFromManual,
+  looksLikeQuestion,
+  parseDashboardChatReply,
+} from '../DashboardPanels/dashboardChat';
+import {
+  SEARCH_MANUAL_TOOL,
+  probeToolCalling,
+  searchManualResult,
+  streamToolChat,
+} from './assistantToolChat';
+import { generateAssistantText } from './generateAssistantText';
 import {
   createManualIndex,
   loadManual,
   searchManual,
   type ManualSection,
 } from './manualSearch';
+import { pageToolRegistry } from './pageToolRegistry';
 import { streamChatCompletion } from './streamChatCompletion';
-import { WEBUI_ASSISTANT_PROFILE } from './webUIAssistantProfile';
+import {
+  WEBUI_ASSISTANT_PROFILE,
+  WEBUI_ASSISTANT_TOOL_PROFILE,
+} from './webUIAssistantProfile';
 import {
   MANUAL_RESOURCE_BASE,
   WEBUI_ASSISTANT_EXCERPT_COUNT,
   isAuthRejected,
   buildAssistantSystemPrompt,
+  buildToolSystemPrompt,
+  linkManualReferences,
+  manualReferencesOf,
+  type ManualReference,
   parseManualTarget,
 } from './webUIAssistantPrompt';
 import { useChat } from '@ai-sdk/react';
@@ -32,16 +67,142 @@ import {
   ChatMessage,
   ChatMessageBubble,
   ChatMessageList,
+  ChatSystemMessage,
 } from '@lablup/ui-common/Chat';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { List, ListItem } from '@lablup/ui-common/List';
 import { Spinner } from '@lablup/ui-common/Spinner';
 import { Text } from '@lablup/ui-common/Text';
-import { DefaultChatTransport } from 'ai';
+import {
+  DefaultChatTransport,
+  convertToModelMessages,
+  createUIMessageStream,
+  createUIMessageStreamResponse,
+  getToolName,
+  isToolUIPart,
+  type ModelMessage,
+} from 'ai';
 import { BAIFlex, useEventNotStable } from 'backend.ai-ui';
-import { MessageCircleQuestion } from 'lucide-react';
+import { useAtomValue } from 'jotai';
+import {
+  CornerDownRight,
+  LocateFixed,
+  MessageCircleQuestion,
+} from 'lucide-react';
 import { useEffect, useEffectEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 
 const MODEL_POLL_INTERVAL_MS = 5000;
+const TOOL_PROBE_RETRY_MS = 60_000;
+
+const messageText = (message: ChatUIMessage) =>
+  message.parts
+    .filter((part) => part.type === 'text')
+    .map((part) => part.text)
+    .join('');
+
+/** Earlier turns as text only: past tool calls would crowd a small model's context. */
+const TOOLS_ONLY_ANSWER = '(Used tools; no text answer.)';
+
+const textOnlyModelMessages = (
+  messages: ReadonlyArray<ChatUIMessage>,
+): Array<ModelMessage> =>
+  convertToModelMessages(
+    messages.map((message) => {
+      const parts = message.parts.filter((part) => part.type === 'text');
+      // An answer that was only tool calls still takes its turn, so roles keep alternating.
+      return {
+        ...message,
+        parts: parts.length
+          ? parts
+          : [{ type: 'text' as const, text: TOOLS_ONLY_ANSWER }],
+      };
+    }),
+  );
+
+type ToolPart = Extract<ChatUIMessage['parts'][number], { toolCallId: string }>;
+const toolPartsOf = (message: ChatUIMessage): Array<ToolPart> =>
+  message.parts.filter(
+    (part): part is ToolPart =>
+      isToolUIPart(part) || part.type === 'dynamic-tool',
+  );
+// Words that make a request about the dashboard, so the board is read before the model answers.
+const DASHBOARD_WORDS =
+  /\b(card|panel|board|dashboard|widget)s?\b|카드|패널|보드|대시보드/;
+
+/** How many earlier dashboard messages a request carries; the board itself carries the state. */
+const DASHBOARD_HISTORY_MESSAGES = 6;
+
+/** What a dashboard answer proposed, kept on its message for display and history. */
+interface DashboardTurn {
+  items: Array<{
+    action: DashboardAssistantAction;
+    text: string;
+    isNoop: boolean;
+  }>;
+}
+
+interface AssistantMessageMetadata {
+  dashboard?: DashboardTurn;
+  /** A note in the conversation (what Apply saved), never sent to the model. */
+  notice?: boolean;
+  /** The manual excerpts the answer's `[n]` references point at. */
+  references?: Array<ManualReference>;
+}
+
+const metadataOf = (message: ChatUIMessage) =>
+  (message.metadata ?? {}) as AssistantMessageMetadata;
+
+/** A dashboard answer as `useChat` reads a streamed one. */
+const dashboardResponse = (reply: string, turn: DashboardTurn) =>
+  createUIMessageStreamResponse({
+    stream: createUIMessageStream({
+      execute: ({ writer }) => {
+        writer.write({
+          type: 'start',
+          messageMetadata: {
+            dashboard: turn,
+          } satisfies AssistantMessageMetadata,
+        });
+        if (reply) {
+          writer.write({ type: 'text-start', id: 'reply' });
+          writer.write({ type: 'text-delta', id: 'reply', delta: reply });
+          writer.write({ type: 'text-end', id: 'reply' });
+        }
+        writer.write({ type: 'finish' });
+      },
+    }),
+  });
+
+/** Earlier dashboard requests and answers, as the agent prompt's examples expect them. */
+const dashboardHistoryOf = (
+  messages: ReadonlyArray<ChatUIMessage>,
+): Array<ModelMessage> =>
+  messages
+    .flatMap((message, index): Array<ModelMessage> => {
+      const turn = metadataOf(message).dashboard;
+      const request = messages[index - 1];
+      if (!turn || request?.role !== 'user') return [];
+      return [
+        { role: 'user', content: messageText(request) },
+        {
+          role: 'assistant',
+          content: JSON.stringify({
+            reply: messageText(message),
+            actions: turn.items
+              .filter((item) => !item.isNoop)
+              .map(({ action }) =>
+                action.type === 'addPanel'
+                  ? { type: 'addPanel', id: action.panel.id }
+                  : action.type === 'editPanel'
+                    ? { type: 'editPanel', id: action.id }
+                    : action,
+              ),
+          }),
+        },
+      ];
+    })
+    .slice(-DASHBOARD_HISTORY_MESSAGES);
 
 /** Thrown so a failed refetch keeps the last model list instead of replacing it. */
 class ModelsQueryError extends Error {
@@ -58,24 +219,23 @@ interface WebUIAssistantChatProps {
   isVisible: boolean;
   /** Lets the user fix a connection the endpoint rejects or cannot be reached on. */
   onChangeConnection: () => void;
+  /** Whether an answer is being written, for the panel's working indicator. */
+  onWorkingChange?: (isWorking: boolean) => void;
 }
-
-const messageText = (message: ChatUIMessage) =>
-  message.parts
-    .filter((part) => part.type === 'text')
-    .map((part) => part.text)
-    .join('');
 
 const WebUIAssistantChat: React.FC<WebUIAssistantChatProps> = ({
   baseURL: apiBaseURL,
   apiKey: token,
   isVisible,
   onChangeConnection,
+  onWorkingChange,
 }) => {
   'use memo';
 
   const { t } = useTranslation();
   const location = useWebUILocation();
+  // Set while a dashboard page is open: requests that change the board go to its agent.
+  const dashboardAgent = useAtomValue(dashboardAgentAtom);
   const helpURL = useHelpURL();
   const { baseURL: manualBaseURL, docsLang } = useManualBaseURL();
 
@@ -115,6 +275,22 @@ const WebUIAssistantChat: React.FC<WebUIAssistantChatProps> = ({
   const modelId = models[0]?.id;
   const isTokenRejected = isAuthRejected(modelsError);
 
+  // Tool calls when the endpoint takes them; otherwise the prompt-only answers below.
+  const toolsQuery = useTanQuery({
+    queryKey: ['webui-assistant-tool-calling', apiBaseURL, token, modelId],
+    queryFn: () =>
+      probeToolCalling({
+        baseURL: apiBaseURL,
+        apiKey: token,
+        modelId: modelId ?? '',
+      }).catch(() => false),
+    enabled: !!modelId,
+    // A refusal may be a deployment still warming up, so it is asked again later.
+    staleTime: (query) =>
+      query.state.data === true ? Infinity : TOOL_PROBE_RETRY_MS,
+    retry: false,
+  });
+
   // `null` = the manual is not loaded, which the prompt must not report as "nothing matched".
   const pickExcerpts = (question: string): ManualSection[] | null => {
     if (!manualIndex) {
@@ -139,6 +315,77 @@ const WebUIAssistantChat: React.FC<WebUIAssistantChatProps> = ({
       : hits;
   };
 
+  /** A request that names a card, a panel or the board itself. */
+  const namesDashboard = (request: string) => {
+    const text = request.toLowerCase();
+    return (
+      DASHBOARD_WORDS.test(text) ||
+      !!dashboardAgent?.context.cards.some((card) =>
+        text.includes(card.title.toLowerCase()),
+      )
+    );
+  };
+
+  /** A question gets the manual searched first; a request about the dashboard gets the board read first. */
+  const prefetchFor = (request: string) =>
+    !request
+      ? []
+      : looksLikeQuestion(request)
+        ? [{ toolName: SEARCH_MANUAL_TOOL, input: { query: request } }]
+        : pageToolRegistry.get('bai_get_current_dashboard') &&
+            namesDashboard(request)
+          ? [{ toolName: 'bai_get_current_dashboard', input: {} }]
+          : [];
+
+  /** The agent's answer, or null when the request is a question for the manual. */
+  const askDashboard = async (
+    agent: DashboardAgent,
+    history: ReadonlyArray<ChatUIMessage>,
+    request: string,
+    abortSignal?: AbortSignal,
+  ): Promise<Response | null> => {
+    let answer: string;
+    try {
+      answer = await generateAssistantText({
+        baseURL: apiBaseURL,
+        apiKey: token,
+        modelId: modelId ?? '',
+        system: buildDashboardChatPrompt(agent.context),
+        messages: [
+          ...dashboardHistoryOf(history),
+          { role: 'user', content: request },
+        ],
+        abortSignal,
+      });
+    } catch (e) {
+      throw new Error(getAIErrorMessage(e));
+    }
+    const { reply, actions, isQuestion } = parseDashboardChatReply(
+      answer,
+      agent.context,
+    );
+    // Changes after a new board land on that board, so the current one cannot make them no-ops.
+    const newBoardIndex = actions.findIndex((a) => a.type === 'createBoard');
+    const items = actions.map((action, index) => ({
+      action,
+      text: describeDashboardAction(action, agent.context, t),
+      isNoop:
+        (newBoardIndex < 0 || index < newBoardIndex) &&
+        isNoopAction(action, agent.context.cards),
+    }));
+    const effective = items.filter((item) => !item.isNoop);
+    if (
+      answersFromManual({
+        request,
+        isQuestion,
+        hasChange: effective.length > 0,
+      })
+    )
+      return null;
+    if (effective.length) agent.propose(effective.map((item) => item.action));
+    return dashboardResponse(reply, { items });
+  };
+
   const { messages, sendMessage, status, stop, error } = useChat({
     id: 'webui-assistant',
     experimental_throttle: 100,
@@ -146,10 +393,57 @@ const WebUIAssistantChat: React.FC<WebUIAssistantChatProps> = ({
       api: apiBaseURL,
       fetch: useEventNotStable(async (_input, init) => {
         const body = JSON.parse(init?.body as string);
-        const uiMessages: ChatUIMessage[] = body?.messages ?? [];
+        const uiMessages = ((body?.messages ?? []) as ChatUIMessage[]).filter(
+          (message) => !metadataOf(message).notice,
+        );
         const lastUser = [...uiMessages]
           .reverse()
           .find((m) => m.role === 'user');
+        // Without page tools (enableWebMCP off) the prompt-only answers still edit the board.
+        // Asked again when unknown or when a refusal has gone stale.
+        const supportsTools =
+          toolsQuery.data === true ||
+          ((toolsQuery.data === undefined || toolsQuery.isStale) &&
+            (await toolsQuery.refetch()).data === true);
+        if (supportsTools && pageToolRegistry.list().length > 0) {
+          return streamToolChat({
+            baseURL: apiBaseURL ?? '',
+            apiKey: token,
+            modelId: modelId ?? '',
+            system: buildToolSystemPrompt(
+              WEBUI_ASSISTANT_TOOL_PROFILE.systemPrompt,
+              { path: location.pathname, manualURL: helpURL ?? undefined },
+            ),
+            messages: textOnlyModelMessages(uiMessages),
+            registry: pageToolRegistry,
+            prefetch: prefetchFor(lastUser ? messageText(lastUser) : ''),
+            searchManual: (query) => {
+              if (!manualIndex) {
+                if (manualQuery.isError) void manualQuery.refetch();
+                return searchManualResult(null, manualBaseURL);
+              }
+              return searchManualResult(
+                searchManual(
+                  manualIndex,
+                  query,
+                  WEBUI_ASSISTANT_EXCERPT_COUNT,
+                ).map((hit) => hit.section),
+                manualBaseURL,
+              );
+            },
+            abortSignal: init?.signal || undefined,
+          });
+        }
+        if (dashboardAgent && lastUser) {
+          const response = await askDashboard(
+            dashboardAgent,
+            uiMessages.slice(0, -1),
+            messageText(lastUser),
+            init?.signal || undefined,
+          );
+          if (response) return response;
+        }
+        const excerpts = pickExcerpts(lastUser ? messageText(lastUser) : '');
         return streamChatCompletion({
           baseURL: apiBaseURL ?? '',
           apiKey: token,
@@ -159,9 +453,12 @@ const WebUIAssistantChat: React.FC<WebUIAssistantChatProps> = ({
           system: buildAssistantSystemPrompt({
             basePrompt: WEBUI_ASSISTANT_PROFILE.systemPrompt,
             page: { path: location.pathname, manualURL: helpURL ?? undefined },
-            excerpts: pickExcerpts(lastUser ? messageText(lastUser) : ''),
+            excerpts,
             manualBaseURL,
           }),
+          startMetadata: {
+            references: manualReferencesOf(excerpts ?? [], manualBaseURL),
+          } satisfies AssistantMessageMetadata,
         });
       }),
     }),
@@ -177,6 +474,13 @@ const WebUIAssistantChat: React.FC<WebUIAssistantChatProps> = ({
   );
 
   const isStreaming = status === 'streaming' || status === 'submitted';
+  const reportWorking = useEffectEvent((isWorking: boolean) =>
+    onWorkingChange?.(isWorking),
+  );
+  useEffect(() => {
+    reportWorking(isStreaming);
+    return () => reportWorking(false);
+  }, [isStreaming]);
   const isModelReady = !!modelId;
 
   if (!isModelReady) {
@@ -225,22 +529,148 @@ const WebUIAssistantChat: React.FC<WebUIAssistantChatProps> = ({
   const isWaitingForFirstToken =
     isStreaming && (lastMessage?.role === 'user' || !lastMessage);
 
+  const thinking = (
+    <BAIFlex gap="xs">
+      <Spinner size="sm" />
+      <Text color="secondary">{t('chatui.Thinking')}</Text>
+    </BAIFlex>
+  );
+
+  /** One line for a tool the answer called; the result's own text when it has one. */
+  const toolLineOf = (part: ToolPart): string => {
+    const name =
+      part.type === 'dynamic-tool' ? part.toolName : getToolName(part);
+    if (part.state === 'output-error') {
+      return t('webuiAssistant.ToolFailed', { name, error: part.errorText });
+    }
+    const input = (part.input ?? {}) as Record<string, unknown>;
+    const output = (
+      part.state === 'output-available' ? part.output : undefined
+    ) as Record<string, unknown> | undefined;
+    const failure = (output?.error as { message?: string } | undefined)
+      ?.message;
+    if (failure)
+      return t('webuiAssistant.ToolFailed', { name, error: failure });
+    // The reasons are English for the model, which explains them in the user's language.
+    const rejected = output?.rejected as Array<unknown> | undefined;
+    const applied = Array.isArray(output?.applied)
+      ? (output.applied as Array<string>)
+      : undefined;
+    // A filled form or a previewed change carries a path; a refused one has none.
+    const hasApplied = output?.path != null || !!applied?.length;
+    if (rejected?.length && !hasApplied) {
+      return t('webuiAssistant.ToolRejected');
+    }
+    const partly = rejected?.length
+      ? ` (${t('webuiAssistant.ToolRejected')})`
+      : '';
+    switch (name) {
+      case 'search_manual':
+        return t('webuiAssistant.ToolSearchManual', {
+          query: String(input.query ?? ''),
+        });
+      case 'bai_navigate':
+        return t('webuiAssistant.ToolNavigate', {
+          page: String(output?.path ?? input.path ?? input.page ?? ''),
+        });
+      case 'bai_get_current_page':
+        return t('webuiAssistant.ToolReadPage');
+      case 'bai_get_current_dashboard':
+        return t('webuiAssistant.ToolReadDashboard');
+      case 'bai_prepare_dashboard':
+        return output
+          ? t('webuiAssistant.ToolPreviewDashboard', {
+              change: applied?.join(', '),
+            }) + partly
+          : t('webuiAssistant.ToolUsed', { name });
+      case 'bai_prepare_session':
+        return output
+          ? t('webuiAssistant.ToolPrepareSession') + partly
+          : t('webuiAssistant.ToolUsed', { name });
+      default:
+        return t('webuiAssistant.ToolUsed', { name });
+    }
+  };
+
+  const dashboardTurnView = (text: string, turn: DashboardTurn) => (
+    <BAIFlex direction="column" align="stretch" gap="xxs">
+      {text ? <Text size="sm">{text}</Text> : null}
+      {turn.items.length === 0 ? (
+        <Text size="sm" color="secondary">
+          {t('webuiAssistant.DashboardNoProposal')}
+        </Text>
+      ) : (
+        turn.items.map(({ action, text: line, isNoop }, index) => {
+          // A hidden card is not on the board to point at.
+          const target =
+            dashboardAgent && action.type !== 'hide'
+              ? actionTargetId(action)
+              : undefined;
+          return (
+            <BAIFlex
+              key={index}
+              gap="xs"
+              align="center"
+              justify="between"
+              onMouseEnter={() => dashboardAgent?.highlight(target ?? null)}
+              onMouseLeave={() => dashboardAgent?.highlight(null)}
+            >
+              <Text size="sm" color={isNoop ? 'secondary' : undefined}>
+                {`· ${line}${
+                  isNoop ? ` (${t('webuiAssistant.DashboardAlreadyDone')})` : ''
+                }`}
+              </Text>
+              {target ? (
+                <IconButton
+                  variant="ghost"
+                  size="sm"
+                  icon={<LocateFixed size="1em" />}
+                  label={t('webuiAssistant.DashboardLocateCard')}
+                  tooltip={t('webuiAssistant.DashboardLocateCard')}
+                  onClick={() => dashboardAgent?.reveal(target)}
+                />
+              ) : null}
+            </BAIFlex>
+          );
+        })
+      )}
+    </BAIFlex>
+  );
+
   const messageItems = [
     ...messages.map((message, index) => {
-      const text = messageText(message);
       const isUser = message.role === 'user';
+      const isMessageStreaming = isStreaming && index === messages.length - 1;
+      const text = messageText(message);
+      const { dashboard, notice, references } = metadataOf(message);
+      const toolParts = isUser ? [] : toolPartsOf(message);
+      if (notice) {
+        return <ChatSystemMessage key={message.id}>{text}</ChatSystemMessage>;
+      }
       return (
         <ChatMessage key={message.id} sender={isUser ? 'user' : 'assistant'}>
           <ChatMessageBubble>
+            {toolParts.length > 0 ? (
+              <BAIFlex direction="column" align="stretch" gap="xxs">
+                {toolParts.map((part) => (
+                  <Text key={part.toolCallId} size="sm" color="secondary">
+                    {`· ${toolLineOf(part)}`}
+                  </Text>
+                ))}
+              </BAIFlex>
+            ) : null}
             {isUser ? (
               text
-            ) : (
-              <ChatMessageContent
-                isStreaming={isStreaming && index === messages.length - 1}
-              >
-                {text}
+            ) : dashboard ? (
+              dashboardTurnView(text, dashboard)
+            ) : isMessageStreaming && !text.trim() ? (
+              // A reasoning model streams its reasoning first, which has nothing to show.
+              thinking
+            ) : text.trim() || !toolParts.length ? (
+              <ChatMessageContent isStreaming={isMessageStreaming}>
+                {linkManualReferences(text, references ?? [])}
               </ChatMessageContent>
-            )}
+            ) : null}
           </ChatMessageBubble>
         </ChatMessage>
       );
@@ -248,15 +678,17 @@ const WebUIAssistantChat: React.FC<WebUIAssistantChatProps> = ({
     ...(isWaitingForFirstToken
       ? [
           <ChatMessage key="thinking" sender="assistant">
-            <ChatMessageBubble>
-              <BAIFlex gap="xs">
-                <Spinner size="sm" />
-                <Text color="secondary">{t('chatui.Thinking')}</Text>
-              </BAIFlex>
-            </ChatMessageBubble>
+            <ChatMessageBubble>{thinking}</ChatMessageBubble>
           </ChatMessage>,
         ]
       : []),
+  ];
+
+  // The same order as the empty state's text: a question first, then changes.
+  const examples = [
+    t('webuiAssistant.ExampleStartSession'),
+    t('webuiAssistant.ExampleShareFolder'),
+    ...(dashboardAgent ? dashboardExamplesOf(dashboardAgent.context, t) : []),
   ];
 
   return (
@@ -282,19 +714,43 @@ const WebUIAssistantChat: React.FC<WebUIAssistantChatProps> = ({
         {messageItems.length === 0 ? (
           <BAIFlex
             direction="column"
-            align="center"
+            align="stretch"
             justify="center"
             gap="sm"
-            style={{ flex: '1 1 0%', textAlign: 'center' }}
+            style={{ flex: '1 1 0%' }}
           >
-            <MessageCircleQuestion
-              size={32}
-              // A global rule sizes SVGs to 1em, so `size` alone stays at text size.
-              style={{ fontSize: 32 }}
-              color="var(--color-text-secondary)"
-              aria-hidden
-            />
-            <Text color="secondary">{t('webuiAssistant.EmptyState')}</Text>
+            <BAIFlex
+              direction="column"
+              align="center"
+              gap="sm"
+              style={{ textAlign: 'center' }}
+            >
+              <MessageCircleQuestion
+                size={32}
+                // A global rule sizes SVGs to 1em, so `size` alone stays at text size.
+                style={{ fontSize: 32 }}
+                color="var(--color-text-secondary)"
+                aria-hidden
+              />
+              <Text color="secondary">
+                {dashboardAgent
+                  ? t('webuiAssistant.DashboardChatEmpty')
+                  : t('webuiAssistant.EmptyState')}
+              </Text>
+            </BAIFlex>
+            {/* A ReactNode label wraps; a Button would cut a sentence to one line. */}
+            <List density="compact" hasDividers>
+              {examples.map((example) => (
+                <ListItem
+                  key={example}
+                  startContent={<CornerDownRight size="1em" aria-hidden />}
+                  label={<Text size="sm">{example}</Text>}
+                  align="first-line"
+                  isDisabled={isStreaming}
+                  onClick={() => sendMessage({ text: example })}
+                />
+              ))}
+            </List>
           </BAIFlex>
         ) : (
           <ChatMessageList density="compact" isStreaming={isStreaming}>
@@ -308,6 +764,7 @@ const WebUIAssistantChat: React.FC<WebUIAssistantChatProps> = ({
       <BAIFlex
         direction="column"
         align="stretch"
+        gap="sm"
         style={{
           flexShrink: 0,
           borderTop: '1px solid var(--color-border)',
@@ -322,7 +779,11 @@ const WebUIAssistantChat: React.FC<WebUIAssistantChatProps> = ({
               '--radius-chat': 'var(--radius-container)',
             } as React.CSSProperties
           }
-          placeholder={t('webuiAssistant.Placeholder')}
+          placeholder={
+            dashboardAgent
+              ? t('webuiAssistant.DashboardPlaceholder')
+              : t('webuiAssistant.Placeholder')
+          }
           isStopShown={isStreaming}
           onStop={stop}
           onSubmit={(value) => {

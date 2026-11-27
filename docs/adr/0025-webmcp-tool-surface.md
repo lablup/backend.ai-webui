@@ -1,5 +1,7 @@
 # 0025 — WebMCP tool surface
 
+> Sections 1 and 2 are extended by [ADR 0041](0041-webui-assistant-calls-page-webmcp-tools.md): tools also register with the page registry the WebUI Assistant reads, and the active check is true when either target exists.
+
 ## Summary
 
 > Unfamiliar terms are collected in the [Glossary](#glossary) at the end.
@@ -65,12 +67,12 @@ flowchart LR
 
 ### 3. Names follow the `bai_` prefix and fixed shapes
 
-| Shape | What it does | Example |
-|---|---|---|
+| Shape                     | What it does                                                         | Example                    |
+| ------------------------- | -------------------------------------------------------------------- | -------------------------- |
 | `bai_list_visible_<noun>` | Returns the page rows drawn on screen now, in the current sort order | `bai_list_visible_session` |
-| `bai_get_current_<noun>` | Returns the one open or selected item, or `null` when there is none | `bai_get_current_vfolder` |
-| `bai_get_<noun>_filter` | Returns the filter, sort, and page state the page keeps in the URL | `bai_get_session_filter` |
-| `bai_prepare_<noun>` | Opens a create or edit form and fills in values. It does not submit | `bai_prepare_session` |
+| `bai_get_current_<noun>`  | Returns the one open or selected item, or `null` when there is none  | `bai_get_current_vfolder`  |
+| `bai_get_<noun>_filter`   | Returns the filter, sort, and page state the page keeps in the URL   | `bai_get_session_filter`   |
+| `bai_prepare_<noun>`      | Opens a create or edit form and fills in values. It does not submit  | `bai_prepare_session`      |
 
 - **Noun**: `<noun>` is a singular snake_case word, and uses the resource name of the schema (`session`, `vfolder`, `deployment`, `model_card`).
 - **App shell tools**: A tool that belongs to no specific page is named with a short verb phrase. FR-4073 puts `bai_whoami`, `bai_get_current_page`, and `bai_navigate` in the app shell.
@@ -79,11 +81,11 @@ flowchart LR
 
 ### 4. Tools only read, navigate, and fill forms
 
-| Allowed | Forbidden |
-|---|---|
-| Read the data and URL state the component has already drawn on screen | Submit a create, edit, or confirm action |
-| Navigate to another page or item in the app | Call a destructive action such as delete, purge, terminate, or revoke |
-| Open a form or modal and fill in values | Allow either of the above on the condition of a confirmation dialog inside the page |
+| Allowed                                                               | Forbidden                                                                           |
+| --------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| Read the data and URL state the component has already drawn on screen | Submit a create, edit, or confirm action                                            |
+| Navigate to another page or item in the app                           | Call a destructive action such as delete, purge, terminate, or revoke               |
+| Open a form or modal and fill in values                               | Allow either of the above on the condition of a confirmation dialog inside the page |
 
 - **Enforced by the tool list**: WebUI keeps this rule by not building any `execute` that calls a submit or a delete. Even if an agent can press an approve button in the UI, calling a tool does not cause that action.
 - **Prepare description**: The `description` of a `bai_prepare_<noun>` tool states that the tool does not submit the form and that a person submits it.
@@ -100,14 +102,14 @@ flowchart LR
 
 `validateWebMCPInput(schema, input)` handles only flat object schemas. The `WebMCPInputSchema` type allows only this subset, so nested objects, arrays, and `oneOf` do not compile.
 
-| Keyword | Check |
-|---|---|
-| `type` | `string`, `integer`, `number` (a finite number), `boolean` |
-| `enum` | For `string` and number properties, whether the value is in the list |
-| `required` | Whether each listed key is not `undefined` |
-| `minimum`, `maximum` | The range of a number |
-| `minLength`, `maxLength` | The length of a string |
-| `additionalProperties: false` | Whether no undeclared key is present |
+| Keyword                       | Check                                                                |
+| ----------------------------- | -------------------------------------------------------------------- |
+| `type`                        | `string`, `integer`, `number` (a finite number), `boolean`           |
+| `enum`                        | For `string` and number properties, whether the value is in the list |
+| `required`                    | Whether each listed key is not `undefined`                           |
+| `minimum`, `maximum`          | The range of a number                                                |
+| `minLength`, `maxLength`      | The length of a string                                               |
+| `additionalProperties: false` | Whether no undeclared key is present                                 |
 
 - **Input forms**: A string input is parsed as JSON first. `undefined`, `null`, and an input whose parse result is `null` are treated as `{}`.
 - **Always on**: `useWebMCPTool` always runs the check before calling `execute`. A rule across several properties (for example, only one of two) is checked by the tool's `execute` itself.
@@ -115,13 +117,13 @@ flowchart LR
 
 ### 6. Failures return a structured error
 
-| `code` | Who returns it | When |
-|---|---|---|
-| `invalid_input` | `useWebMCPTool` | `validateWebMCPInput` rejected the input. `issues: [{ path, message }]` is attached |
-| `execution_failed` | `useWebMCPTool` | The input check or `execute` threw, the return value cannot be converted to JSON, or the conversion result is `undefined`. `message` holds the first string among `message`, `msg`, and `title` of the exception or of the plain object the client and Relay throw, and holds a fixed text when none of the three exists |
-| `tool_unavailable` | `useWebMCPTool` | A call arrived after registration ended: the component switched to passing a `null` tool, unmounted, or the gate turned off |
-| `page_forbidden`·`page_not_found`·`page_error` | `bai_navigate` | A route error screen appeared instead of the page. The kind (`forbidden`, `not_found`, `error`) comes from what `RouteErrorContent` records in `routeErrorScreenAtom`, and `bai_get_current_page` returns the same value as `errorScreen`. While that screen is up, the tab title is the screen's title, not the page name |
-| Any other snake_case string | The tool's `execute` | The tool rejected the call by its own rule. The tool builds it with `webMCPError(code, message)` |
+| `code`                                         | Who returns it       | When                                                                                                                                                                                                                                                                                                                       |
+| ---------------------------------------------- | -------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `invalid_input`                                | `useWebMCPTool`      | `validateWebMCPInput` rejected the input. `issues: [{ path, message }]` is attached                                                                                                                                                                                                                                        |
+| `execution_failed`                             | `useWebMCPTool`      | The input check or `execute` threw, the return value cannot be converted to JSON, or the conversion result is `undefined`. `message` holds the first string among `message`, `msg`, and `title` of the exception or of the plain object the client and Relay throw, and holds a fixed text when none of the three exists   |
+| `tool_unavailable`                             | `useWebMCPTool`      | A call arrived after registration ended: the component switched to passing a `null` tool, unmounted, or the gate turned off                                                                                                                                                                                                |
+| `page_forbidden`·`page_not_found`·`page_error` | `bai_navigate`       | A route error screen appeared instead of the page. The kind (`forbidden`, `not_found`, `error`) comes from what `RouteErrorContent` records in `routeErrorScreenAtom`, and `bai_get_current_page` returns the same value as `errorScreen`. While that screen is up, the tab title is the screen's title, not the page name |
+| Any other snake_case string                    | The tool's `execute` | The tool rejected the call by its own rule. The tool builds it with `webMCPError(code, message)`                                                                                                                                                                                                                           |
 
 - **Shape**: Every error is `{ error: { code, message, issues? } }` (`WebMCPErrorResult`).
 - **Success shape**: A successful call returns one JSON object with camelCase keys.
@@ -129,11 +131,11 @@ flowchart LR
 
 ### 7. Annotations only under fixed conditions
 
-| Annotation | Tools that carry it |
-|---|---|
-| `readOnlyHint: true` | Tools that only read. Navigation and form-filling tools do not carry it |
-| `untrustedContentHint: true` | Tools whose return value contains text a user wrote, such as a name, an email, a description, or a project name |
-| `consequentialHint` | Not used. Because of section 4 no tool produces an irreversible result, and the `WebMCPToolAnnotations` type does not include it |
+| Annotation                   | Tools that carry it                                                                                                              |
+| ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| `readOnlyHint: true`         | Tools that only read. Navigation and form-filling tools do not carry it                                                          |
+| `untrustedContentHint: true` | Tools whose return value contains text a user wrote, such as a name, an email, a description, or a project name                  |
+| `consequentialHint`          | Not used. Because of section 4 no tool produces an irreversible result, and the `WebMCPToolAnnotations` type does not include it |
 
 - **Description is page content**: An agent also receives a tool's `description` as untrusted content sent by the page. A tool author does not put user-written data in a `description`.
 
@@ -170,11 +172,11 @@ flowchart LR
 
 ## Glossary
 
-| Term | Meaning |
-|---|---|
-| WebMCP | WebMCP is a W3C community group proposal in which a web page registers tools in JavaScript and an AI agent connected to the browser calls them. Its entry point is `document.modelContext`. |
-| tool | A tool is a registration unit made of `name`, `description`, `inputSchema`, and `execute`. An agent calls a tool by name with a JSON input and receives the return value of `execute` as JSON. |
-| polyfill | A polyfill is a library that imitates an API the browser lacks with the page's JavaScript and fills it in. FR-3764 filled in `document.modelContext` with `@mcp-b/global`. |
-| relay | A relay is a separate process plus an embed inside the page that connects an MCP client outside the page to the page's tools. FR-3764 used `@mcp-b/webmcp-local-relay`. |
-| origin trial | An origin trial is a Chrome program that opens an experimental feature to a specific site in advance through a token. |
-| AbortSignal | `AbortSignal` is a web-standard object that an `AbortController` creates. When the signal passed to `registerTool` is aborted, the browser removes that tool's registration. |
+| Term         | Meaning                                                                                                                                                                                        |
+| ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| WebMCP       | WebMCP is a W3C community group proposal in which a web page registers tools in JavaScript and an AI agent connected to the browser calls them. Its entry point is `document.modelContext`.    |
+| tool         | A tool is a registration unit made of `name`, `description`, `inputSchema`, and `execute`. An agent calls a tool by name with a JSON input and receives the return value of `execute` as JSON. |
+| polyfill     | A polyfill is a library that imitates an API the browser lacks with the page's JavaScript and fills it in. FR-3764 filled in `document.modelContext` with `@mcp-b/global`.                     |
+| relay        | A relay is a separate process plus an embed inside the page that connects an MCP client outside the page to the page's tools. FR-3764 used `@mcp-b/webmcp-local-relay`.                        |
+| origin trial | An origin trial is a Chrome program that opens an experimental feature to a specific site in advance through a token.                                                                          |
+| AbortSignal  | `AbortSignal` is a web-standard object that an `AbortController` creates. When the signal passed to `registerTool` is aborted, the browser removes that tool's registration.                   |

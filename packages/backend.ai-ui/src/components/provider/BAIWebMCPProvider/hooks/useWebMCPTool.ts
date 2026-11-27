@@ -51,16 +51,20 @@ export const getWebMCPModelContext = (): WebMCPModelContext | undefined => {
  */
 export const useBAIWebMCPActive = (): boolean => {
   'use memo';
-  const { enabled } = use(BAIWebMCPContext);
-  return enabled && getWebMCPModelContext() !== undefined;
+  const { enabled, pageRegistry } = use(BAIWebMCPContext);
+  return (
+    enabled &&
+    (pageRegistry !== undefined || getWebMCPModelContext() !== undefined)
+  );
 };
 
 /**
- * Registers `tool` through `document.modelContext.registerTool` while the
- * caller is mounted, and unregisters it by aborting the registration signal.
+ * Registers `tool` through `document.modelContext.registerTool`, and with the
+ * provider's `pageRegistry`, while the caller is mounted, and unregisters it by
+ * aborting the registration signal.
  *
  * - Nothing happens unless `BAIWebMCPProvider` is `enabled` and the browser
- *   exposes the API. `null` registers nothing.
+ *   exposes the API or the host passed a `pageRegistry`. `null` registers nothing.
  * - The tool re-registers when its name, description, schema or annotations
  *   change. `execute` always runs against the latest render's closure.
  * - Bad input, thrown errors, results that cannot be serialized and calls after
@@ -68,12 +72,13 @@ export const useBAIWebMCPActive = (): boolean => {
  */
 const useWebMCPTool = (tool: WebMCPTool | null): void => {
   'use memo';
-  const { enabled } = use(BAIWebMCPContext);
+  const { enabled, pageRegistry } = use(BAIWebMCPContext);
   const { logger } = useBAILogger();
 
   const registrationKey =
     enabled && tool
       ? JSON.stringify([
+          !!pageRegistry,
           tool.name,
           tool.description,
           tool.inputSchema,
@@ -106,8 +111,10 @@ const useWebMCPTool = (tool: WebMCPTool | null): void => {
   });
 
   const register = useEffectEvent((signal: AbortSignal) => {
-    const modelContext = getWebMCPModelContext();
-    if (!modelContext || !tool) return;
+    const targets = [getWebMCPModelContext(), pageRegistry].filter(
+      (target): target is WebMCPModelContext => target !== undefined,
+    );
+    if (!targets.length || !tool) return;
 
     const descriptor: WebMCPToolDescriptor = {
       name: tool.name,
@@ -119,12 +126,14 @@ const useWebMCPTool = (tool: WebMCPTool | null): void => {
     const reportFailure = (error: unknown) => {
       logger.warn('[WebMCP] registerTool failed', error);
     };
-    try {
-      Promise.resolve(modelContext.registerTool(descriptor, { signal })).catch(
-        reportFailure,
-      );
-    } catch (error) {
-      reportFailure(error);
+    for (const target of targets) {
+      try {
+        Promise.resolve(target.registerTool(descriptor, { signal })).catch(
+          reportFailure,
+        );
+      } catch (error) {
+        reportFailure(error);
+      }
     }
   });
 

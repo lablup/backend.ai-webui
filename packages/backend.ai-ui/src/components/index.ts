@@ -41,7 +41,11 @@ export type {
   BAIPropertyFilterProps,
   FilterProperty,
 } from './BAIPropertyFilter';
-export { default as BAIGraphQLPropertyFilter } from './BAIGraphQLPropertyFilter';
+export {
+  default as BAIGraphQLPropertyFilter,
+  availableOperatorsOf,
+  graphQLFilterOfConditions,
+} from './BAIGraphQLPropertyFilter';
 export type {
   StringFilter,
   IntFilter,
