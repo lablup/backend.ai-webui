@@ -26,7 +26,7 @@ const meta: Meta<typeof BAISelect> = {
 | \`searchAction\` | \`(value: string) => Promise<void>\` | - | Async search with transition |
 | \`atBottomThreshold\` | \`number\` | \`30\` | Threshold for bottom detection (px) |
 | \`atBottomStateChange\` | \`(atBottom: boolean) => void\` | - | Callback for bottom state changes |
-| \`showTooltipOnEllipsis\` | \`boolean\` | \`true\` | Single mode: whole selected label in a tooltip while the trigger truncates it |
+| \`showTooltipOnEllipsis\` | \`boolean\` | \`true\` | Single mode, text triggers (not rich \`optionLabelProp="children"\`): whole selected label in a tooltip while the trigger truncates it |
 
 For all other props, refer to [Ant Design Select](https://ant.design/components/select).
         `,
@@ -38,7 +38,7 @@ For all other props, refer to [Ant Design Select](https://ant.design/components/
     showTooltipOnEllipsis: {
       control: { type: 'boolean' },
       description:
-        'Single mode: shows the whole selected label in a tooltip while the trigger truncates it',
+        'Single mode, text triggers only (not rich optionLabelProp="children"): shows the whole selected label in a tooltip while the trigger truncates it',
       table: {
         type: { summary: 'boolean' },
         defaultValue: { summary: 'true' },

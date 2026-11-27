@@ -216,7 +216,8 @@ export interface BAISelectProps<ValueType = any, OptionType = BAISelectOption> {
   showSelectedOptionsTooltip?: boolean;
   /**
    * Single mode: shows the selected option's whole label in a tooltip while
-   * the trigger cuts it off with an ellipsis. None with `labelRender`.
+   * the trigger cuts it off with an ellipsis. None with `labelRender` or a
+   * rich `optionLabelProp="children"` trigger.
    * @default true
    */
   showTooltipOnEllipsis?: boolean;
