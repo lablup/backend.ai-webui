@@ -120,8 +120,8 @@ function startSessionProbe(
     endpoint,
     'SESSION',
   );
-  const session = probeLoginSession(client);
   const manager = probeManager(client);
+  const session = probeLoginSession(client, manager);
   // Awaited only once the manager answers; keep both rejections handled.
   session.catch(() => {});
   manager.catch(() => {});

@@ -6,6 +6,7 @@ import type { BackendAIClient } from '../hooks';
 import {
   LoginBootstrapIncompleteError,
   isSessionAuthFailure,
+  loginBootstrapVariables,
   refusalDetail,
   probeLoginSession,
 } from './loginBootstrap';
@@ -71,6 +72,7 @@ function makeClient(overrides: Record<string, unknown> = {}) {
       body,
     })),
     _wrapWithPromise: vi.fn().mockResolvedValue({ data: bootstrap }),
+    _config: { endpointHost: 'api.example.com' },
     // A real method that reads `this`, as the client's own does.
     _managerVersion: '26.9.0',
     isManagerVersionCompatibleWith(this: { _managerVersion: string }) {
@@ -121,6 +123,36 @@ describe('isSessionAuthFailure', () => {
   });
 });
 
+describe('loginBootstrapVariables', () => {
+  it('reads the remembered project from the client before the global client is set', async () => {
+    const g = globalThis as any;
+    const saved = {
+      backendaiclient: g.backendaiclient,
+      backendaioptions: g.backendaioptions,
+      backendaimetadata: g.backendaimetadata,
+      tasker: g.tasker,
+      backendaiutils: g.backendaiutils,
+    };
+    try {
+      const { backendaiUtils } = await import('../global-stores');
+      const get = vi.fn((key: string) =>
+        key === 'projectGroup.api_example_com' ? 'my-project' : null,
+      );
+      g.backendaiclient = undefined;
+      g.backendaioptions = { get };
+      g.backendaiutils = backendaiUtils;
+      expect(loginBootstrapVariables(makeClient())).toEqual({
+        recentProjectName: 'my-project',
+        hasRecentProject: true,
+        needsAccessKey: false,
+      });
+      expect(get).toHaveBeenCalledWith('projectGroup.api_example_com');
+    } finally {
+      Object.assign(g, saved);
+    }
+  });
+});
+
 describe('probeLoginSession', () => {
   it('asks login-check first, then sends the bootstrap with the version', async () => {
     const client = makeClient();
@@ -142,6 +174,55 @@ describe('probeLoginSession', () => {
       check_login: vi.fn().mockResolvedValue(false),
     });
     await expect(probeLoginSession(client)).resolves.toBeNull();
+    expect(client._wrapWithPromise).not.toHaveBeenCalled();
+    expect(client.get_manager_version).not.toHaveBeenCalled();
+  });
+
+  it('holds the bootstrap and the version until the manager is reachable', async () => {
+    const client = makeClient();
+    let markReachable!: () => void;
+    const reachable = new Promise<void>((resolve) => {
+      markReachable = resolve;
+    });
+    const probe = probeLoginSession(client, reachable);
+    await vi.waitFor(() => expect(client.check_login).toHaveBeenCalled());
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    expect(client._wrapWithPromise).not.toHaveBeenCalled();
+    expect(client.get_manager_version).not.toHaveBeenCalled();
+    markReachable();
+    await expect(probe).resolves.toMatchObject({
+      myUserV2: { entityId: 'uuid-1' },
+    });
+    expect(client._wrapWithPromise).toHaveBeenCalledTimes(1);
+    expect(client.get_manager_version).toHaveBeenCalledTimes(1);
+  });
+
+  it('rejects with the reachability failure and sends nothing more', async () => {
+    const client = makeClient();
+    const down = Object.assign(new Error('Gateway Timeout'), {
+      isError: true,
+      statusCode: 504,
+    });
+    await expect(probeLoginSession(client, Promise.reject(down))).rejects.toBe(
+      down,
+    );
+    expect(client._wrapWithPromise).not.toHaveBeenCalled();
+    expect(client.get_manager_version).not.toHaveBeenCalled();
+  });
+
+  it('does not read an unreachable manager as no session', async () => {
+    const client = makeClient();
+    await expect(
+      probeLoginSession(client, Promise.reject(authFailed)),
+    ).rejects.toBe(authFailed);
+  });
+
+  it('ignores reachability when login-check finds no session', async () => {
+    const client = makeClient({
+      check_login: vi.fn().mockResolvedValue(false),
+    });
+    const reachable = new Promise<void>(() => {});
+    await expect(probeLoginSession(client, reachable)).resolves.toBeNull();
     expect(client._wrapWithPromise).not.toHaveBeenCalled();
     expect(client.get_manager_version).not.toHaveBeenCalled();
   });

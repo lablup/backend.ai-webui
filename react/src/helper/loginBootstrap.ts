@@ -109,7 +109,7 @@ export function loginBootstrapVariables(
   client: BackendAIClient,
 ): loginBootstrapQuery$variables {
   const recentProjectName: string =
-    (globalThis as any).backendaiutils?._peekRecentProjectGroup?.() ?? '';
+    (globalThis as any).backendaiutils?._peekRecentProjectGroup?.(client) ?? '';
   return {
     recentProjectName,
     hasRecentProject: !!recentProjectName,
@@ -281,18 +281,21 @@ function classifyProbeFailure(err: unknown): never {
 
 /**
  * Ask the webserver whether it holds a session for this browser
- * (`login-check`), and only then load the bootstrap together with the manager
- * version. `null` means no session; any other failure is thrown, so an outage
- * is not mistaken for a logged-out browser.
+ * (`login-check`), and only then, once `reachable` resolves, load the bootstrap
+ * together with the manager version. `null` means no session; any other
+ * failure, `reachable`'s included, is thrown, so an outage is not mistaken for
+ * a logged-out browser.
  */
 export async function probeLoginSession(
   client: BackendAIClient,
+  reachable?: Promise<unknown>,
 ): Promise<LoginBootstrap | null> {
   try {
     const authenticated = await client
       .check_login({ rethrow: true })
       .catch(classifyProbeFailure);
     if (authenticated !== true) return null;
+    await reachable;
     const [, bootstrap] = await Promise.all([
       client.get_manager_version().catch(classifyProbeFailure),
       fetchLoginBootstrap(client),
