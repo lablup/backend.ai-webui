@@ -10,11 +10,12 @@ import { useOpenSessionDetail } from '../useOpenSessionDetail';
 import { useResetPageOn } from '../useResetPageOn';
 import ScopedCard from './ScopedCard';
 import SessionList from './SessionList';
+import { CARD_TABLE_PAGE_SIZE, FIT_CARD_WIDTH } from './cardTable';
 import { BAILink, BAISessionNodesV2 } from 'backend.ai-ui';
 import React, { useDeferredValue } from 'react';
 import { useTranslation } from 'react-i18next';
 
-const PAGE_SIZE = 5;
+const PAGE_SIZE = CARD_TABLE_PAGE_SIZE;
 const ORDER_BY = [{ field: 'CREATED_AT' as const, direction: 'DESC' as const }];
 
 const RecentSessionsTable: React.FC<{ scope: CardScope; fetchKey: string }> = ({
@@ -51,6 +52,7 @@ const RecentSessionsTable: React.FC<{ scope: CardScope; fetchKey: string }> = ({
       {({ count, rows }) => (
         <BAISessionNodesV2
           sessionsFrgmt={rows}
+          scroll={FIT_CARD_WIDTH}
           disableSorter
           loading={
             deferredPage.offset !== page.offset ||
@@ -78,6 +80,7 @@ const RecentSessionsTable: React.FC<{ scope: CardScope; fetchKey: string }> = ({
           }
           pagination={{
             pageSize: tablePaginationOption.pageSize,
+            showSizeChanger: false,
             current: tablePaginationOption.current,
             total: count,
             onChange: (current, pageSize) =>

@@ -33,6 +33,7 @@ import { projectAuditScope } from '../projectAdminCards/projectCardData';
 import { withinWindow, type DateTimeWindow } from '../timeRange';
 import type { PanelComponentProps } from '../types';
 import ScopedCard from './ScopedCard';
+import { FIT_CARD_WIDTH } from './cardTable';
 import {
   BAIAuditLogNodes,
   BAIFlex,
@@ -587,6 +588,8 @@ export const AuditLogRows: React.FC<{
   onChangePage: (current: number, pageSize: number) => void;
   /** Adds a copy button for the full description beside the truncated text. */
   copyableDescription?: boolean;
+  /** In a card, fits the table to the card's width; omitted, it scrolls sideways. */
+  fitCardWidth?: boolean;
 }> = ({
   data,
   hideTriggeredBy,
@@ -595,6 +598,7 @@ export const AuditLogRows: React.FC<{
   pageSize,
   onChangePage,
   copyableDescription,
+  fitCardWidth,
 }) => {
   'use memo';
   const { t } = useTranslation();
@@ -605,6 +609,7 @@ export const AuditLogRows: React.FC<{
       auditLogFrgmt={filterOutNullAndUndefined(
         logs?.edges.map((edge) => edge?.node),
       )}
+      {...(fitCardWidth ? { scroll: FIT_CARD_WIDTH } : {})}
       disableSorter
       loading={loading}
       customizeColumns={(columns) =>
@@ -771,6 +776,7 @@ const AuditLogTable: React.FC<{
     <AuditLogRows
       data={data}
       hideTriggeredBy={hideTriggeredBy}
+      fitCardWidth
       loading={deferredList !== listVariables}
       current={tablePaginationOption.current}
       pageSize={tablePaginationOption.pageSize}

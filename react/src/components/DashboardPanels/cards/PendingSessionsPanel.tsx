@@ -13,6 +13,7 @@ import SessionList, {
   inResourceGroups,
   type SessionV2Filter,
 } from './SessionList';
+import { CARD_TABLE_PAGE_SIZE, FIT_CARD_WIDTH } from './cardTable';
 import { Text } from '@lablup/ui-common/Text';
 import {
   BAILink,
@@ -29,7 +30,7 @@ import React, { Suspense, useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
-const PAGE_SIZE = 5;
+const PAGE_SIZE = CARD_TABLE_PAGE_SIZE;
 const PENDING_FILTER: SessionV2Filter = { status: { in: ['PENDING'] } };
 // Longest waiting first.
 const ORDER_BY = [{ field: 'CREATED_AT' as const, direction: 'ASC' as const }];
@@ -195,6 +196,7 @@ const PendingSessionTable: React.FC<{
         {({ count, rows }) => (
           <BAISessionNodesV2
             sessionsFrgmt={rows}
+            scroll={FIT_CARD_WIDTH}
             disableSorter
             loading={
               deferredPage.offset !== page.offset ||
@@ -235,6 +237,7 @@ const PendingSessionTable: React.FC<{
             }
             pagination={{
               pageSize: tablePaginationOption.pageSize,
+              showSizeChanger: false,
               current: tablePaginationOption.current,
               total: count,
               onChange: (current, pageSize) =>
