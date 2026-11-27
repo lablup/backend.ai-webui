@@ -80,7 +80,7 @@ changes server data or server-global settings.
 
 A drill is a scratch file exporting one `drill: Drill` (type in
 `e2e/drills/types.ts`; import it and the helpers by absolute path).
-`e2e/drills/drill.spec.ts` loads the file `E2E_DRILL_FILE` names (the CLI sets
+`e2e/drills/drill.run.ts` loads the file `E2E_DRILL_FILE` names (the CLI sets
 it) as one Playwright test; `e2e/drills/drill-test.ts` runs the steps, screenshots each,
 and writes the report.
 
@@ -135,7 +135,7 @@ Writing rules:
 
 - Env selection, accounts and helpers are shared with the suite (`e2e-parts.ts`,
   `utils/test-util.ts`, `utils/admin-api.ts`).
-- Drills live outside the `E2E_PART` folder rule, so a normal suite run never
-  picks them up (the drill project's `testDir` is `e2e/drills/`).
+- The drill entry is `drill.run.ts`, not a `*.spec.ts`, so no suite config
+  collects it; only `e2e/playwright.drill.config.ts` matches it.
 - The walkthrough (`.claude/skills/walkthrough/`) guides a reviewer to an
   element and executes nothing; the two stay separate by design.

@@ -5,8 +5,7 @@
  * `e2e/drills/README.md`.
  */
 import type { GraphQLMockMap } from '../mocks/session/graphql-interceptor';
-import type { TestResources } from '../utils/test-resources';
-import type { APIRequestContext, Browser, Page } from '@playwright/test';
+import type { Page } from '@playwright/test';
 
 /** The accounts a drill may act as; all but `user` need their own page. */
 export type DrillAccount = 'admin' | 'user' | 'user2';
@@ -24,9 +23,6 @@ export interface DrillContext {
   readonly runSuffix: string;
   /** The owner account's page. */
   readonly page: Page;
-  readonly browser: Browser;
-  readonly request: APIRequestContext;
-  readonly resources: TestResources;
   /** A page signed in as `account`, opened on first use. */
   as(account: DrillAccount): Promise<Page>;
   /**
@@ -42,7 +38,6 @@ export interface DrillContext {
 export interface DrillTeardownContext {
   readonly drillId: string;
   readonly runSuffix: string;
-  readonly resources: TestResources;
 }
 
 export interface DrillStep {
@@ -78,9 +73,6 @@ export interface Drill {
   steps: DrillStep[];
   /** Whole-drill budget; the default is four minutes. */
   timeoutMs?: number;
-  /**
-   * Removes anything the drill created that the shared resource registry
-   * cannot (the registry is cleaned whether or not the steps passed).
-   */
+  /** A final check after the steps, run whether or not they passed. */
   teardown?: (ctx: DrillTeardownContext) => Promise<string | void>;
 }

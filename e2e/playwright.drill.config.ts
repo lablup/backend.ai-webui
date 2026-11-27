@@ -5,8 +5,8 @@ import * as path from 'path';
 
 /*
  * Drill run: `pnpm e2e:drill <id>` (e2e/drills/cli.mjs) starts this config.
- * One worker, no retries: a drill mutates a live server and its report should
- * describe what happened once, not the last attempt. E2E_PART / E2E_ENV_FILE
+ * One worker, no retries: a drill's report should describe what happened
+ * once, not the last attempt. E2E_PART / E2E_ENV_FILE
  * pick the env file exactly as playwright.config.ts does, so a drill runs
  * against an already-running server with the same accounts as the suite.
  */
@@ -45,7 +45,7 @@ if (!process.env.TEST_WORKER_INDEX && !process.env.E2E_LOGIN_STATE_RUN) {
 
 export default defineConfig({
   testDir: path.join(__dirname, 'drills'),
-  testMatch: /drill\.spec\.ts$/,
+  testMatch: /drill\.run\.ts$/,
   fullyParallel: false,
   workers: 1,
   retries: 0,

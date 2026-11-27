@@ -1,13 +1,11 @@
 /**
  * Registers one drill as a Playwright test and turns it into a readable
  * report. The test body runs the steps in order, screenshots the result of
- * each, and its `finally` always runs the drill's teardown and the resource
- * registry cleanup — a failed or timed-out step does not skip cleanup.
+ * each, and its `finally` always runs the drill's teardown — a failed or
+ * timed-out step does not skip it.
  */
 import type { GraphQLMockMap } from '../mocks/session/graphql-interceptor';
 import { setupGraphQLMocks } from '../mocks/session/graphql-interceptor';
-import type { TestResources } from '../utils/test-resources';
-import { createTestResources } from '../utils/test-resources';
 import {
   loginAsAdmin,
   loginAsUser,
@@ -51,25 +49,12 @@ export function registerDrill(drill: Drill): void {
       }
     });
 
-    // The last describe to finish writes every report collected so far, and
-    // sweeps any registry the body's `finally` could not reach (a timeout or
-    // an abort cut it short): `cleanup()` is idempotent, so this runs with a
-    // fresh budget and only removes what is still registered.
+    // The last describe to finish writes every report collected so far.
     test.afterAll(async () => {
-      const leftover: string[] = [];
-      for (const registry of runRegistries) {
-        const failed = await registry.cleanup();
-        if (failed.length > 0) leftover.push(...failed);
-      }
-      if (leftover.length > 0) {
-        console.warn(`[drill] could not remove: ${leftover.join(', ')}`);
-      }
       if (reports.length === 0) return;
       const written = writeReport(reports, drill.id);
       console.log(`[drill] report: ${written.html}`);
     });
-
-    const runRegistries: TestResources[] = [];
 
     test(`[drill:${drill.id}] ${drill.title}`, async ({
       page,
@@ -78,10 +63,6 @@ export function registerDrill(drill: Drill): void {
     }) => {
       test.setTimeout(drill.timeoutMs ?? 240_000);
       const runSuffix = `${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
-      // Per run: `--repeat-each` reruns this test in one worker, and each run
-      // must clean up its own registry.
-      const resources = createTestResources();
-      runRegistries.push(resources);
       const report: DrillReport = {
         drillId: drill.id,
         title: drill.title,
@@ -135,9 +116,6 @@ export function registerDrill(drill: Drill): void {
         drillId: drill.id,
         runSuffix,
         page,
-        browser,
-        request,
-        resources,
         get activePage() {
           return active;
         },
@@ -175,28 +153,32 @@ export function registerDrill(drill: Drill): void {
         error: '',
       };
       report.setup = setupReport;
+      // Blocked writes up to `attributed` were reported by setup or a step;
+      // ones between steps collect in `stray`. Both kinds left unreported
+      // fail the drill through the teardown result.
+      let attributed = 0;
+      const stray: string[] = [];
       // One try around sign-in, setup and the steps: a failure at any of them
-      // still reaches the `finally` below, so cleanup never depends on how far
-      // the run got.
+      // still reaches the `finally` below, so the teardown always runs.
       try {
         try {
           await ctx.as('user');
-        } catch (error) {
-          setupReport.status = 'failed';
-          setupReport.error = describeError(error);
-          throw error;
-        }
-        if (drill.setup) {
-          try {
+          if (drill.setup) {
             const observedSetup = await drill.setup(ctx);
             if (typeof observedSetup === 'string') {
               setupReport.observed = observedSetup;
             }
-          } catch (error) {
-            setupReport.status = 'failed';
-            setupReport.error = describeError(error);
-            throw error;
           }
+          attributed = guard.blocked.length;
+          if (attributed > 0) {
+            throw new Error(
+              `blocked writes no mock answered during sign-in or setup: ${guard.blocked.join(', ')}`,
+            );
+          }
+        } catch (error) {
+          setupReport.status = 'failed';
+          setupReport.error = describeError(error);
+          throw error;
         }
         for (const [index, step] of drill.steps.entries()) {
           const stepReport = report.steps[index] as StepReport;
@@ -204,10 +186,13 @@ export function registerDrill(drill: Drill): void {
           let failure: unknown;
           await test.step(step.title, async () => {
             try {
+              stray.push(...guard.blocked.slice(attributed));
               const blockedBefore = guard.blocked.length;
+              attributed = blockedBefore;
               const observed = await step.run(ctx);
               if (typeof observed === 'string') stepReport.observed = observed;
               const blocked = guard.blocked.slice(blockedBefore);
+              attributed = guard.blocked.length;
               if (blocked.length) {
                 throw new Error(
                   `blocked writes no mock answered: ${blocked.join(', ')}`,
@@ -215,6 +200,7 @@ export function registerDrill(drill: Drill): void {
               }
               stepReport.status = 'passed';
             } catch (error) {
+              attributed = guard.blocked.length;
               failure = error;
               stepReport.status = 'failed';
               stepReport.error = describeError(error);
@@ -249,35 +235,31 @@ export function registerDrill(drill: Drill): void {
             .close()
             .catch(() => {});
         }
-        // The drill's teardown and the registry cleanup belong to this run,
-        // so a repeat never orphans the previous run's data.
         const teardown: DrillReport['teardown'] = { status: 'skipped' };
-        const teardownCtx: DrillTeardownContext = {
-          drillId: drill.id,
-          runSuffix,
-          resources,
-        };
-        let observed: string | void;
-        try {
-          observed = await drill.teardown?.(teardownCtx);
-        } catch (error) {
+        const unattributed = [...stray, ...guard.blocked.slice(attributed)];
+        const errors: string[] = [];
+        if (unattributed.length > 0) {
+          errors.push(
+            `blocked writes no mock answered outside a step: ${unattributed.join(', ')}`,
+          );
+        }
+        if (drill.teardown) {
+          const teardownCtx: DrillTeardownContext = {
+            drillId: drill.id,
+            runSuffix,
+          };
+          try {
+            const observed = await drill.teardown(teardownCtx);
+            if (typeof observed === 'string') teardown.observed = observed;
+            teardown.status = 'passed';
+          } catch (error) {
+            errors.push(describeError(error));
+          }
+        }
+        if (errors.length > 0) {
           teardown.status = 'failed';
-          teardown.error = describeError(error);
+          teardown.error = errors.join('\n');
         }
-        // Runs even when the drill's own teardown failed: it is the registry
-        // that holds what the steps declared.
-        const failed = await resources.cleanup();
-        if (teardown.status !== 'failed') {
-          teardown.status = failed.length === 0 ? 'passed' : 'failed';
-        }
-        teardown.observed = [
-          typeof observed === 'string' ? observed : undefined,
-          failed.length === 0
-            ? 'registered cleanup removed everything it declared'
-            : `could not remove: ${failed.join(', ')}`,
-        ]
-          .filter(Boolean)
-          .join('; ');
         report.teardown = teardown;
         report.finishedAt = new Date().toISOString();
         report.status =
@@ -286,6 +268,10 @@ export function registerDrill(drill: Drill): void {
           report.steps.some((step) => step.status === 'failed')
             ? 'failed'
             : 'passed';
+      }
+      // Reached only when setup and every step passed.
+      if (report.teardown.status === 'failed') {
+        throw new Error(report.teardown.error);
       }
     });
   });

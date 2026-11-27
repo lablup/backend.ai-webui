@@ -99,12 +99,13 @@ const STATUS_KO: Record<string, string> = {
  * step left, and beside it what changed, what to check and the code.
  */
 export function renderReport(reports: DrillReport[]): string {
-  const drill = reports[0];
+  const drill = reports[reports.length - 1];
   const sha = headCommit();
   const steps = drill.steps.map((step) => ({
     title: step.title,
     changed: step.changed,
     verify: step.verify,
+    observed: step.observed ?? '',
     status: STATUS_KO[step.status],
     failed: step.status !== 'passed',
     error: step.error ?? '',
@@ -114,16 +115,31 @@ export function renderReport(reports: DrillReport[]): string {
       url: `https://github.com/lablup/backend.ai-webui/blob/${sha}/${ref.path}#L${ref.line}${ref.to ? `-L${ref.to}` : ''}`,
     })),
   }));
-  const meta = `${STATUS_KO[drill.status]} · 실행 ${drill.runSuffix} · 대상 ${drill.target}${
-    drill.setup?.status === 'failed'
-      ? ` · 준비 단계 실패: ${drill.setup.error ?? ''}`
-      : ''
-  }`;
+  const meta = `${STATUS_KO[drill.status]} · 실행 ${drill.runSuffix} · 대상 ${drill.target}`;
+  // Setup and teardown happen outside the steps, so their result is shown
+  // above them: a drill can fail there with every step passed or not run.
+  const notices: { label: string; text: string; failed: boolean }[] = [];
+  if (drill.setup?.status === 'failed') {
+    notices.push({
+      label: '준비 단계 실패',
+      text: drill.setup.error ?? '',
+      failed: true,
+    });
+  }
+  if (drill.teardown.status !== 'skipped') {
+    notices.push({
+      label: `마무리 확인 ${STATUS_KO[drill.teardown.status]}`,
+      text: drill.teardown.error ?? drill.teardown.observed ?? '',
+      failed: drill.teardown.status === 'failed',
+    });
+  }
   // `<` is escaped so no value can close the inline script.
-  const data = JSON.stringify({ title: drill.title, meta, steps }).replace(
-    /</g,
-    '\\u003c',
-  );
+  const data = JSON.stringify({
+    title: drill.title,
+    meta,
+    notices,
+    steps,
+  }).replace(/</g, '\\u003c');
   return PAGE.replace('__DATA__', () => data);
 }
 
@@ -160,6 +176,12 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--focus);outline-offs
 .field h3{font-size:11px;font-weight:600;letter-spacing:.06em;color:var(--muted);margin:0 0 4px}
 .field p{margin:0}
 .check{background:var(--accent-soft);border-radius:6px;padding:10px 12px}
+.notices{display:flex;flex-direction:column;gap:8px;margin-top:14px}
+.notice{border:1px solid var(--line);background:var(--panel);border-radius:8px;padding:10px 14px}
+.notice.failed{border-color:var(--fail);background:var(--fail-soft);color:var(--fail)}
+.notice b{display:block;font-size:13px}
+.notice pre{margin:4px 0 0;white-space:pre-wrap;font-size:12.5px;font-family:var(--mono)}
+.observed{margin-top:6px!important;font-size:13.5px;color:var(--muted)}
 pre.error{margin:0;white-space:pre-wrap;font-size:12.5px;background:var(--fail-soft);color:var(--fail);border-radius:6px;padding:10px 12px}
 .code a{display:block;font-family:var(--mono);font-size:12.5px;color:var(--accent);text-decoration:none;overflow-wrap:anywhere}
 .strip{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-top:22px}
@@ -178,13 +200,14 @@ pre.error{margin:0;white-space:pre-wrap;font-size:12.5px;background:var(--fail-s
   <span class="count" id="count"></span>
   <div class="nav"><button id="prev" type="button">← 이전</button><button id="next" type="button">다음 →</button></div>
 </header>
+<section class="notices" id="notices" aria-label="준비와 마무리"></section>
 <main>
   <section class="stage">
     <figure class="shot"><img id="shot" alt="" /></figure>
     <article class="note">
       <div><div class="step-no"><span id="stepno"></span><span class="badge" id="badge"></span></div><h2 id="stitle"></h2></div>
       <div class="field"><h3>무엇이 바뀌었나</h3><p id="changed"></p></div>
-      <div class="field check"><h3>확인할 것</h3><p id="verify"></p></div>
+      <div class="field check"><h3>확인할 것</h3><p id="verify"></p><p class="observed" id="observed" hidden></p></div>
       <pre class="error" id="error" hidden></pre>
       <div class="field code"><h3>코드</h3><div id="code"></div></div>
     </article>
@@ -196,6 +219,13 @@ const D = __DATA__;
 const $ = (id) => document.getElementById(id);
 let i = 0;
 $("title").textContent = D.title; $("meta").textContent = D.meta; document.title = D.title;
+$("notices").hidden = D.notices.length === 0;
+D.notices.forEach((n) => {
+  const box = document.createElement("div"); box.className = "notice" + (n.failed ? " failed" : "");
+  const label = document.createElement("b"); label.textContent = n.label; box.append(label);
+  if (n.text) { const pre = document.createElement("pre"); pre.textContent = n.text; box.append(pre); }
+  $("notices").appendChild(box);
+});
 D.steps.forEach((s, k) => {
   const b = document.createElement("button"); b.type = "button"; if (s.failed) b.classList.add("failed");
   const img = document.createElement("img"); img.alt = ""; img.loading = "lazy"; if (s.img) img.src = s.img;
@@ -211,6 +241,7 @@ function render() {
   $("stepno").textContent = "단계 " + String(i + 1).padStart(2, "0");
   $("badge").textContent = s.status; $("badge").className = "badge" + (s.failed ? " failed" : "");
   $("stitle").textContent = s.title; $("changed").textContent = s.changed; $("verify").textContent = s.verify;
+  $("observed").textContent = "관찰된 결과: " + s.observed; $("observed").hidden = !s.observed;
   $("error").textContent = s.error; $("error").hidden = !s.error;
   $("code").replaceChildren(...s.code.map((c) => Object.assign(document.createElement("a"), { href: c.url, target: "_blank", rel: "noopener", textContent: c.label })));
   $("prev").disabled = i === 0; $("next").disabled = i === D.steps.length - 1;

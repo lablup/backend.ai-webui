@@ -302,6 +302,14 @@ async function signedInEmail(page: Page): Promise<string> {
     .catch(() => '');
 }
 
+function sameOrigin(a: string, b: string): boolean {
+  try {
+    return new URL(a).origin === new URL(b).origin;
+  } catch {
+    return false;
+  }
+}
+
 /** The path of `url` below `endpoint`'s own path (a webserver may sit under a prefix). */
 function pathBelow(endpoint: string, url: string): string | undefined {
   const base = new URL(endpoint);
@@ -435,11 +443,20 @@ async function submitLogin(
   await expect(shell.or(form).first()).toBeVisible({ timeout: 60_000 });
   if (await shell.isVisible()) {
     const email = await signedInEmail(page);
-    if (email && email.toLowerCase() === username.toLowerCase()) {
+    const connected: string = await page
+      .evaluate(
+        () => (globalThis as any).backendaiclient?._config?.endpoint ?? '',
+      )
+      .catch(() => '');
+    if (
+      email &&
+      email.toLowerCase() === username.toLowerCase() &&
+      sameOrigin(connected, endpoint)
+    ) {
       return before;
     }
     console.log(
-      `[login] the app booted signed in as ${email ? accountLabel(email) : 'an unknown account'}; logging out to sign in as ${accountLabel(username)}`,
+      `[login] the app booted signed in as ${email ? accountLabel(email) : 'an unknown account'} on ${connected || 'an unknown endpoint'}; logging out to sign in as ${accountLabel(username)} on ${endpoint}`,
     );
     await logout(page);
     await expect(form.first()).toBeVisible({ timeout: 30_000 });
@@ -1219,12 +1236,14 @@ export async function shareVFolderAndVerify(
   await expect(shareModal).toBeVisible();
   // The recipient is a searchable user picker; its search box is the input.
   await shareModal.getByText('Search user').click();
-  const searchBox = page.locator('input[role="combobox"]').last();
+  const searchBox = shareModal.locator('input[role="combobox"]').last();
   await searchBox.fill(invitedUser);
-  await page
-    .getByRole('option', { name: new RegExp(escapeRegExp(invitedUser)) })
-    .first()
-    .click();
+  // The address as a whole token, so `a@x.io` does not pick `aa@x.io`.
+  const recipient = new RegExp(
+    `(^|[^\\w.+@-])${escapeRegExp(invitedUser)}($|[^\\w.+@-])`,
+    'i',
+  );
+  await page.getByRole('option', { name: recipient }).first().click();
 
   // Listen before clicking, so a fast answer is not missed.
   const shareResponsePromise = page.waitForResponse(
@@ -1275,7 +1294,7 @@ export async function acceptAllInvitationAndVerifySpecificFolder(
   // Open the FolderInvitationResponseModal directly via its query param.
   // The notification-based "See Detail" entry was replaced by an Invited
   // Folders badge + modal; using the query param avoids a brittle click path.
-  await navigateTo(page, 'data');
+  await navigateTo(page, dataPath);
   await page.evaluate(() => {
     const url = new URL(window.location.href);
     url.searchParams.set('invitation', 'true');
@@ -1452,8 +1471,12 @@ export async function leaveSharedFolderAndVerify(
   await removeSearchButton(page, folderName);
 }
 
-export async function restoreVFolderAndVerify(page: Page, folderName: string) {
-  await navigateTo(page, 'data');
+export async function restoreVFolderAndVerify(
+  page: Page,
+  folderName: string,
+  dataPath: string = 'data',
+) {
+  await navigateTo(page, dataPath);
   await page
     .getByRole('tab', { name: /^Trash/ })
     .or(page.getByRole('button', { name: /^Trash/ }))

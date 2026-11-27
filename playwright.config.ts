@@ -59,8 +59,6 @@ if (!process.env.TEST_WORKER_INDEX && !process.env.E2E_LOGIN_STATE_RUN) {
 }
 
 const teardownSpec = /global-cleanup\.teardown\.ts/;
-// Drills run on demand through `pnpm e2e:drill`, never in a suite run.
-const drillSpec = /[\\/]drills[\\/]/;
 const partFilter = e2ePartFilter(e2eParts, path.join(__dirname, "e2e"));
 /**
  * Read environment variables from file.
@@ -123,8 +121,8 @@ export default defineConfig({
       // adding one per part, so `--project chromium` keeps working.
       ...(partFilter.testMatch && { testMatch: partFilter.testMatch }),
       testIgnore: partFilter.testIgnore
-        ? [teardownSpec, drillSpec, partFilter.testIgnore]
-        : [teardownSpec, drillSpec],
+        ? [teardownSpec, partFilter.testIgnore]
+        : teardownSpec,
       teardown: "cleanup",
     },
 
