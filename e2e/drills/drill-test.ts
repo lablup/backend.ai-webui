@@ -22,18 +22,13 @@ import type {
   DrillContext,
   DrillTeardownContext,
 } from './types';
+import { createWriteGuard } from './write-guard';
 import type { Page } from '@playwright/test';
 import { test } from '@playwright/test';
 import * as fs from 'fs';
 import * as path from 'path';
 
 const reports: DrillReport[] = [];
-
-/** The report folder: the drill id when one was selected, else `all`. */
-function reportLabel(): string {
-  const id = process.env.E2E_DRILL?.trim();
-  return id && /^[a-z0-9-]+$/.test(id) ? id : 'all';
-}
 
 const describeError = (error: unknown): string =>
   error instanceof Error ? (error.stack ?? error.message) : String(error);
@@ -70,7 +65,7 @@ export function registerDrill(drill: Drill): void {
         console.warn(`[drill] could not remove: ${leftover.join(', ')}`);
       }
       if (reports.length === 0) return;
-      const written = writeReport(reports, reportLabel());
+      const written = writeReport(reports, drill.id);
       console.log(`[drill] report: ${written.html}`);
     });
 
@@ -111,6 +106,8 @@ export function registerDrill(drill: Drill): void {
       };
       reports.push(report);
 
+      const guard = createWriteGuard();
+      await guard.install(page);
       const pages = new Map<DrillAccount, Page>();
       pages.set('user', page);
       let active = page;
@@ -131,7 +128,7 @@ export function registerDrill(drill: Drill): void {
         else await loginAsUser(target, request);
         signedIn.add(account);
       };
-      const dir = reportDirectory(reportLabel());
+      const dir = reportDirectory(drill.id);
       fs.mkdirSync(dir, { recursive: true });
 
       const ctx: DrillContext = {
@@ -158,6 +155,7 @@ export function registerDrill(drill: Drill): void {
           });
           pages.set(account, next);
           extraPages.push(next);
+          await guard.install(next);
           await applyMocks(next);
           await signIn(account, next);
           active = next;
@@ -206,8 +204,15 @@ export function registerDrill(drill: Drill): void {
           let failure: unknown;
           await test.step(step.title, async () => {
             try {
+              const blockedBefore = guard.blocked.length;
               const observed = await step.run(ctx);
               if (typeof observed === 'string') stepReport.observed = observed;
+              const blocked = guard.blocked.slice(blockedBefore);
+              if (blocked.length) {
+                throw new Error(
+                  `blocked writes no mock answered: ${blocked.join(', ')}`,
+                );
+              }
               stepReport.status = 'passed';
             } catch (error) {
               failure = error;

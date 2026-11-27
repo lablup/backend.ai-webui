@@ -23,7 +23,7 @@ e2e/
 ├── project-admin/<page>/    # /project/:projectName/admin/{dashboard,session,deployments,users}
 ├── project/<page>/          # user console, /project/:projectName/*
 ├── common/<area>/           # auth, config.toml behaviour, global search, plugins
-├── drills/                  # on-demand scenarios with explanations (pnpm e2e:drill)
+├── drills/                  # runner for one-off scenario files (pnpm e2e:drill <file>)
 ├── mocks/ fixtures/         # GraphQL mocks and fixture files shared across folders
 ├── utils/                   # helpers and Page Object classes
 ├── envs/                    # env files (samples committed, real files git-ignored)
@@ -173,21 +173,13 @@ supported; the global `e2e-*` cleanup teardown is deliberately not wired in
 artifacts; a failed login leaves the password in the retained trace — treat
 `smoke-report/` as sensitive.
 
-### Drills — one scenario on demand, against a server already running
+### Drills — run a scenario file once, against a server already running
 
-`e2e/drills/` runs a named scenario that clicks, types and asserts like a spec,
-but boots nothing, explains every step (what changed on screen, what to verify,
-the related code) in a generated drill report, and cleans up what it created so
-the same drill can run again. See `e2e/drills/README.md`.
-
-```bash
-pnpm e2e:drill --list                 # ids in run order
-pnpm e2e:drill folder-invitation      # one drill; report at e2e/drill-report/<id>/index.html
-pnpm e2e:drill --all                  # every drill, in order
-```
-
-Drills take the same `E2E_PART` / `E2E_ENV_FILE` and accounts as the suite; a
-normal `playwright test` run never picks them up.
+`e2e/drills/` is a runner, not a place for scenarios: `pnpm e2e:drill <file>`
+runs one scenario file kept outside the repository, explains every step in a
+generated drill report, and answers its data from mocks so the server does not
+change. See `e2e/drills/README.md`. A normal `playwright test` run never picks
+it up.
 
 ### Run specific directory
 
