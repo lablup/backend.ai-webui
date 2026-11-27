@@ -36,8 +36,8 @@ const LoginSessionExtendButton: React.FC<LoginSessionExtendButtonProps> = ({
   const [isPending, startTransition] = useTransition();
   const [fetchKey, updateFetchKey] = useUpdatableState('first');
 
-  // RESPONSIVE-POLICY R3: antd `Grid.useBreakpoint()` → BUI's
-  // `useBAIBreakpoint()` (MAPPING §3.9 — `useMediaQuery` is not equivalent).
+  // ADR 0020 R3: `useBAIBreakpoint()`, not Astryx `useMediaQuery` (which
+  // reports `false` on first render).
   const gridBreakpoint = useBAIBreakpoint();
 
   const [isLoginSessionExpired, setIsLoginSessionExpired] = useAtom(

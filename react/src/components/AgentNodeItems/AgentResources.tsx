@@ -3,7 +3,9 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { AgentResourcesFragment$key } from '../../__generated__/AgentResourcesFragment.graphql';
+import { AGENT_NETWORK_STAT_KEYS } from '../../helper/webuiSettings';
 import { useResourceSlotsDetails } from '../../hooks/backendai';
+import { useEffectiveLoginConfig } from '../../hooks/useWebUIConfig';
 import AgentDetailModal from '../AgentDetailModal';
 import SimpleProgressWithLabel from '../SimpleProgressWithLabel';
 import { HStack } from '@lablup/ui-common';
@@ -38,6 +40,7 @@ const AgentResources: React.FC<AgentResourcesProps> = ({ agentNodeFrgmt }) => {
 
   const { t } = useTranslation();
   const { mergedResourceSlots } = useResourceSlotsDetails();
+  const { showAgentNetworkStats } = useEffectiveLoginConfig();
 
   const [openInfoModal, setOpenInfoModal] = useState(false);
 
@@ -71,7 +74,7 @@ const AgentResources: React.FC<AgentResourcesProps> = ({ agentNodeFrgmt }) => {
           <MetadataListItem label={t('agent.ResourceAllocation')}>
             {/* antd Row gutter={[16,16]} + Col xs={24} sm={12} (uniform 2-up
                 from 576px) → Grid columns={{minWidth:280, max:2}}
-                (RESPONSIVE-POLICY R1, container-driven). The gutter is 2, not
+                (ADR 0020 R1, container-driven). The gutter is 2, not
                 the mapped 4: a cell is now a whole progress block, so the gap
                 separates blocks rather than a label from its own bar. */}
             <Grid columns={{ minWidth: 280, max: 2 }} gap={2}>
@@ -294,7 +297,11 @@ const AgentResources: React.FC<AgentResourcesProps> = ({ agentNodeFrgmt }) => {
                   )}%)`}
                 />
                 {_.map(_.keys(parsedLiveStat?.node), (statKey) => {
-                  if (['cpu_util', 'mem', 'disk'].includes(statKey)) {
+                  if (
+                    ['cpu_util', 'mem', 'disk'].includes(statKey) ||
+                    (!showAgentNetworkStats &&
+                      AGENT_NETWORK_STAT_KEYS.includes(statKey))
+                  ) {
                     return null;
                   }
                   if (_.includes(statKey, '_util')) {

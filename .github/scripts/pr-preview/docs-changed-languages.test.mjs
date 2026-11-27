@@ -76,6 +76,11 @@ test("non-source files in the docs package do not trigger a build", () => {
   assert.deepEqual(result, { docs: false, languages: [], reason: "none" });
 });
 
+test("a test of the LFS scripts is not a build input", () => {
+  const result = classify([".github/scripts/lfs/test-pull-docs-images.sh"]);
+  assert.deepEqual(result, { docs: false, languages: [], reason: "none" });
+});
+
 test("a directory under src/ that is not a language code is ignored", () => {
   const result = classify([`${DOCS}/src/drafts/whatever.md`]);
   assert.deepEqual(result, { docs: false, languages: [], reason: "none" });

@@ -32,7 +32,7 @@ const hits = buildHits({
 const makeCtx = (overrides: Partial<SearchContext> = {}): SearchContext => ({
   isSuperAdmin: false,
   isManagerVersionCompatibleWith: () => false,
-  config: { fasttrackEndpoint: null },
+  config: { fasttrackEndpoint: null, isHelpHidden: false },
   visibleMenuKeys: new Set(allMenuKeys),
   disabledMenuKeys: new Set(),
   blockedMenuKeys: new Set(),
@@ -93,7 +93,7 @@ describe('isHitVisible', () => {
     expect(isHitVisible(hitById('page:/usersettings'), ctx)).toBe(false);
     expect(
       isHitVisible(
-        hitById('setting:/usersettings#userSettings.AutoLogout'),
+        hitById('setting:/usersettings#userSettings.AutomaticUpdateCheck'),
         ctx,
       ),
     ).toBe(false);
@@ -116,7 +116,9 @@ describe('isHitVisible', () => {
     const ctx = makeCtx({
       visibleMenuKeys: new Set(_.without(allMenuKeys, 'usersettings')),
     });
-    const settingHit = hitById('setting:/usersettings#userSettings.AutoLogout');
+    const settingHit = hitById(
+      'setting:/usersettings#userSettings.AutomaticUpdateCheck',
+    );
     // Whitelisted globally, so the page gate is not what hides it.
     expect(isHitVisible(settingHit, ctx)).toBe(true);
     expect(

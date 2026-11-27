@@ -9,7 +9,9 @@ import { vi } from 'vitest';
 describe('BAIUncontrolledInput', () => {
   it('maps disabled', () => {
     render(<BAIUncontrolledInput label="Font" disabled />);
-    expect(screen.getByRole('textbox', { name: 'Font' })).toBeDisabled();
+    const field = screen.getByRole('textbox', { name: 'Font' });
+    expect(field).toHaveAttribute('aria-disabled', 'true');
+    expect(field).toHaveAttribute('readonly');
   });
 
   it('maps an antd status string onto an invalid field', () => {

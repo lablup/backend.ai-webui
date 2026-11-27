@@ -56,7 +56,7 @@ import {
   filterOutNullAndUndefined,
   BAISegmentedControl,
   BAISegmentedControlItem,
-  BAISelector,
+  BAISelect,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import { Duration } from 'dayjs/plugin/duration';
@@ -133,6 +133,8 @@ interface SessionResourceGridProps {
   filter?: string | null;
   order?: string | null;
   projectId?: string | null;
+  /** Narrows the list to a domain, for a caller without a project. */
+  domainName?: string | null;
   fetchKey: string;
   onClickSession?: (sessionId: string) => void;
   /**
@@ -151,6 +153,7 @@ const SessionResourceGrid = ({
   filter,
   order,
   projectId,
+  domainName,
   fetchKey,
   onClickSession,
   viewParams,
@@ -235,6 +238,7 @@ const SessionResourceGrid = ({
         $filter: String
         $order: String
         $group_id: String
+        $domain_name: String
       ) {
         compute_session_list(
           limit: $limit
@@ -242,6 +246,7 @@ const SessionResourceGrid = ({
           filter: $filter
           order: $order
           group_id: $group_id
+          domain_name: $domain_name
         ) @catch(to: RESULT) {
           total_count
           items {
@@ -277,6 +282,7 @@ const SessionResourceGrid = ({
       filter,
       order: order || '-created_at',
       group_id: projectId,
+      domain_name: domainName,
     },
     { fetchPolicy: 'network-only', fetchKey },
   );
@@ -594,11 +600,12 @@ const SessionResourceGrid = ({
               )}
             </>
           ) : (
-            <BAISelector
+            <BAISelect
+              showSearch={false}
               aria-label={t('session.resourceGrid.Metric')}
-              size="sm"
-              width={180}
-              options={metricOptions}
+              size="small"
+              style={{ width: 180 }}
+              options={metricOptions.map((value) => ({ value, label: value }))}
               value={metric}
               placeholder={t('session.resourceGrid.NoLiveMetrics')}
               disabled={metricOptions.length === 0}

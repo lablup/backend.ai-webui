@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<c1b28a9e8200047eb0da63c66b7da2ae>>
+ * @generated SignedSource<<3f8ae5726f0d9bae690e6142b8d44e19>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,19 +10,23 @@
 
 import { ConcreteRequest } from 'relay-runtime';
 export type ArtifactAvailability = "ALIVE" | "DELETED" | "%future added value";
-export type DeleteArtifactsInput = {
-  artifactIds: ReadonlyArray<string>;
+export type PartialBulkDeleteArtifactsInput = {
+  ids: ReadonlyArray<string>;
 };
 export type BAIDeactivateArtifactsModalDeleteArtifactsMutation$variables = {
-  input: DeleteArtifactsInput;
+  input: PartialBulkDeleteArtifactsInput;
 };
 export type BAIDeactivateArtifactsModalDeleteArtifactsMutation$data = {
-  readonly deleteArtifacts: {
-    readonly artifacts: ReadonlyArray<{
+  readonly partialBulkDeleteArtifacts: {
+    readonly failed: ReadonlyArray<{
+      readonly id: string;
+      readonly message: string;
+    }>;
+    readonly successes: ReadonlyArray<{
       readonly availability: ArtifactAvailability;
       readonly id: string;
     }>;
-  } | null | undefined;
+  };
 };
 export type BAIDeactivateArtifactsModalDeleteArtifactsMutation = {
   response: BAIDeactivateArtifactsModalDeleteArtifactsMutation$data;
@@ -37,7 +41,14 @@ var v0 = [
     "name": "input"
   }
 ],
-v1 = [
+v1 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "id",
+  "storageKey": null
+},
+v2 = [
   {
     "alias": null,
     "args": [
@@ -47,9 +58,9 @@ v1 = [
         "variableName": "input"
       }
     ],
-    "concreteType": "DeleteArtifactsPayload",
+    "concreteType": "PartialBulkArtifactsPayload",
     "kind": "LinkedField",
-    "name": "deleteArtifacts",
+    "name": "partialBulkDeleteArtifacts",
     "plural": false,
     "selections": [
       {
@@ -57,21 +68,34 @@ v1 = [
         "args": null,
         "concreteType": "Artifact",
         "kind": "LinkedField",
-        "name": "artifacts",
+        "name": "successes",
         "plural": true,
         "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "id",
-            "storageKey": null
-          },
+          (v1/*: any*/),
           {
             "alias": null,
             "args": null,
             "kind": "ScalarField",
             "name": "availability",
+            "storageKey": null
+          }
+        ],
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "concreteType": "PartialBulkFailure",
+        "kind": "LinkedField",
+        "name": "failed",
+        "plural": true,
+        "selections": [
+          (v1/*: any*/),
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "message",
             "storageKey": null
           }
         ],
@@ -87,7 +111,7 @@ return {
     "kind": "Fragment",
     "metadata": null,
     "name": "BAIDeactivateArtifactsModalDeleteArtifactsMutation",
-    "selections": (v1/*: any*/),
+    "selections": (v2/*: any*/),
     "type": "Mutation",
     "abstractKey": null
   },
@@ -96,19 +120,19 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "BAIDeactivateArtifactsModalDeleteArtifactsMutation",
-    "selections": (v1/*: any*/)
+    "selections": (v2/*: any*/)
   },
   "params": {
-    "cacheID": "e45a6c0badd3acc1f5f3b7801541d496",
+    "cacheID": "6c07b526af3f353eaa93e3b6dfd88147",
     "id": null,
     "metadata": {},
     "name": "BAIDeactivateArtifactsModalDeleteArtifactsMutation",
     "operationKind": "mutation",
-    "text": "mutation BAIDeactivateArtifactsModalDeleteArtifactsMutation(\n  $input: DeleteArtifactsInput!\n) {\n  deleteArtifacts(input: $input) {\n    artifacts {\n      id\n      availability\n    }\n  }\n}\n"
+    "text": "mutation BAIDeactivateArtifactsModalDeleteArtifactsMutation(\n  $input: PartialBulkDeleteArtifactsInput!\n) {\n  partialBulkDeleteArtifacts(input: $input) {\n    successes {\n      id\n      availability\n    }\n    failed {\n      id\n      message\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "377ca74de3de373f6dda7069cc9b34eb";
+(node as any).hash = "ce674ac703257f81a2cdc6cc92108cc6";
 
 export default node;

@@ -140,12 +140,6 @@ A notification window pops up when a new WebUI version is detected. It works
 only in an environment where Internet access is available. If the feature is
 automatically disabled, clicking the toggle again will resume update checks.
 
-### Auto logout
-
-Log out automatically when all Backend.AI WebUI pages are closed except for
-pages created to run apps in a session (e.g. Jupyter Notebook, web terminal,
-etc.).
-
 ### My keypair information
 
 Every user has at least one keypair. You can view your access key and secret key
@@ -250,37 +244,22 @@ into the confirmation field before the delete is allowed.
 When using the WebUI app, you can create SSH/SFTP connections directly to a
 compute session. Once you sign up for Backend.AI, a public keypair is
 provided. If you click the button on the right of the SSH Keypair Management
-section, the following dialog appears. The existing SSH public key is shown
-under the **Current public key** label; click the copy button next to the
-label to copy it. You can update the SSH keypair by clicking the `Generate`
-button at the bottom of the dialog. SSH public/private keys are randomly
-generated and stored as user information. Please note that the secret key
-cannot be checked again unless it is saved manually immediately after
-creation.
+section, the following dialog appears. The **Public Key** field shows the SSH
+public key currently registered, and you can edit it directly.
 
-![=528px](../images/ssh_keypair_dialog.png)
+![=520px](../images/ssh_keypair_dialog.png)
 
 :::note
 Backend.AI uses SSH keypair based on OpenSSH. On Windows, you may need to convert
 this into a PPK key.
 :::
 
-Backend.AI WebUI supports adding your own SSH keypair to provide flexibility
-such as accessing a private repository. To add your own SSH keypair, click the
-`Enter Manually` button. You will then see two text areas labeled **Public Key**
-and **Private Key**.
-
-![=528px](../images/add_ssh_keypair_manually_dialog.png)
-
-Enter the keys and click the `Save` button. When the keypair is registered
-successfully, the message *"SSH Keypair has been successfully registered."* is
-displayed, the dialog closes, and you can access your Backend.AI session using
-your own key. If the server rejects the keypair -- for example when a key is
-malformed or the public and private keys do not match -- the dialog stays open
-and shows the error message returned by the server, so you can correct the
-keys and save again.
-
-![=528px](../images/ssh_keypair_dialog_after.png)
+To change the key, enter your own SSH public key in the **Public Key** field and
+click the `Save` button. When the key is registered successfully, the message
+*"SSH Keypair has been successfully registered."* is displayed and the dialog
+closes. If the server rejects the key, the dialog stays open and shows the
+error message returned by the server, so you can correct the key and save
+again.
 
 ### Max concurrent file upload limit
 
@@ -332,16 +311,10 @@ future updates. Each feature is turned on with its **Enabled** checkbox.
 - **AI Agents**: Enable the AI Agents feature, which provides agent-based AI
   capabilities within the WebUI. When turned on, AI agent functionality becomes
   available for use in your sessions.
-- **Custom dashboard panels**: Lets you add your own custom panels to the
-  Dashboard page, each showing a data source you choose, narrowed by a
-  condition you define. The panels appear only while this feature is enabled;
-  turning it off later hides them without deleting them, and turning it back
-  on restores them exactly as they were. See
-  [Custom Panels](#custom-panels) for how to add and manage them.
 - **Import from Hugging Face**: Adds an **Import Hugging Face Model** tab to the
-  **Start From URL** dialog on the Start page, so you can import a model from
-  Hugging Face directly into a model folder. The tab appears only when model
-  deployment is also available in your installation.
+  dialog opened by the Dashboard's **Start From URL** card, so you can import a
+  model from Hugging Face directly into a model folder. The tab appears only
+  when model deployment is also available in your installation.
 - **Session resource grid view**: Adds a **View mode** toggle -- **Table** or
   **Grid** -- above the session list on the Sessions page, on the Admin
   Session page, and on the **Sessions** tab of the **Agent Info** drawer on
@@ -349,6 +322,10 @@ future updates. Each feature is turned on with its **Enabled** checkbox.
   colored by the session's live resource utilization. The toggle appears only
   while this feature is enabled; for the grid's own controls, see
   [Session List View](#session-list-view-and-refresh).
+- **WebUI Assistant**: Adds a floating chat button that answers questions about
+  using the WebUI, based on this user manual. The first time you open it, you
+  connect it to a deployment or to an OpenAI-compatible endpoint that serves a
+  chat model.
 
 <a id="logs-tab"></a>
 

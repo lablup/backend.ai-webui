@@ -2,11 +2,17 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import type { resourceRegistryAuditLogQuery } from '../../__generated__/resourceRegistryAuditLogQuery.graphql';
 import type { resourceRegistryDeploymentQuery } from '../../__generated__/resourceRegistryDeploymentQuery.graphql';
 import type { resourceRegistrySessionQuery } from '../../__generated__/resourceRegistrySessionQuery.graphql';
 import type { resourceRegistryVfolderQuery } from '../../__generated__/resourceRegistryVfolderQuery.graphql';
 import { convertToOrderBy } from '../../helper';
+import FolderLink from '../FolderLink';
+import { auditEntityTypeLabels } from './chartSources';
+import { AUDIT_LOG_STATUSES } from './memberCards/memberCardData';
+import { readPrimary, type CaughtValue } from './panelPermission';
 import { getSessionFilterProperties } from './sessionFilterProperties';
+import { AUDIT_ENTITY_TYPES } from './superadminCards/superadminCardData';
 import type {
   PanelDescriptor,
   ResourceConfig,
@@ -21,6 +27,7 @@ import {
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import type { TFunction } from 'i18next';
+import * as _ from 'lodash-es';
 import { graphql } from 'react-relay';
 import type { OperationType } from 'relay-runtime';
 
@@ -43,32 +50,49 @@ import type { OperationType } from 'relay-runtime';
 type SessionNode = NonNullable<
   NonNullable<
     NonNullable<
-      resourceRegistrySessionQuery['response']['compute_session_nodes']
+      CaughtValue<
+        resourceRegistrySessionQuery['response']['compute_session_nodes']
+      >
     >['edges'][number]
   >['node']
 >;
 type DeploymentNode = NonNullable<
-  resourceRegistryDeploymentQuery['response']['myDeployments']
+  CaughtValue<resourceRegistryDeploymentQuery['response']['scopedDeployments']>
 >['edges'][number]['node'];
 type VfolderNode = NonNullable<
-  resourceRegistryVfolderQuery['response']['adminVfoldersV2']
+  CaughtValue<resourceRegistryVfolderQuery['response']['scopedVFoldersV2']>
 >['edges'][number]['node'];
 
 const formatDate = (value?: string | null) =>
   value ? dayjs(value).format('lll') : '-';
 
-// Offset-pagination variables shared by the unscoped admin connections; the
-// project-scoped session query adds `scope` itself.
+/** The `scoped*` scope of a card: the viewer's own rows, else the page's project, else the current domain. */
+const searchScopeOf = ({
+  ownerId,
+  projectId,
+  domainId,
+}: Pick<ResourceQueryArgs, 'ownerId' | 'projectId' | 'domainId'>) =>
+  ownerId
+    ? { user: [{ value: ownerId }] }
+    : projectId
+      ? { project: [{ value: projectId }] }
+      : { domain: [{ value: domainId }] };
+
+// Offset-pagination variables shared by the scoped V2 connections.
 const makeOffsetVariables =
   <Q extends OperationType>(): ResourceConfig<Q, unknown>['buildVariables'] =>
-  ({ filter, order, limit, offset }: ResourceQueryArgs) =>
+  (args: ResourceQueryArgs) =>
     ({
+      scope: searchScopeOf(args),
       // V2 filters are GraphQLFilter objects; a (session-style) string never
       // reaches a V2 resource, but guard anyway.
-      filter: typeof filter === 'string' ? undefined : (filter ?? undefined),
-      orderBy: convertToOrderBy(order ?? null),
-      limit,
-      offset,
+      filter:
+        typeof args.filter === 'string'
+          ? undefined
+          : (args.filter ?? undefined),
+      orderBy: convertToOrderBy(args.order ?? null),
+      limit: args.limit,
+      offset: args.offset,
     }) as Q['variables'];
 
 // Normalize a V2 offset connection ({ count, edges { node } }) to the panel's rows.
@@ -84,6 +108,23 @@ const selectOffsetConnection = <T extends Record<string, any>>(
         nodes: filterOutNullAndUndefined(connection.edges.map((e) => e?.node)),
       }
     : null;
+
+/**
+ * A session minilang filter narrowed to resource groups; undefined when
+ * neither is set.
+ */
+export const withResourceGroupClause = (
+  filter: string | null | undefined,
+  resourceGroups: ReadonlyArray<string> | null | undefined,
+): string | undefined => {
+  const clause = resourceGroups?.length
+    ? resourceGroups
+        .map((name) => `scaling_group == ${JSON.stringify(name)}`)
+        .join(' | ')
+    : '';
+  if (!clause) return filter || undefined;
+  return filter ? `(${filter}) & (${clause})` : clause;
+};
 
 const sessionConfig: ResourceConfig<resourceRegistrySessionQuery, SessionNode> =
   {
@@ -105,7 +146,7 @@ const sessionConfig: ResourceConfig<resourceRegistrySessionQuery, SessionNode> =
           offset: $offset
           filter: $filter
           order: $order
-        ) {
+        ) @catch(to: RESULT) {
           count
           edges {
             node {
@@ -119,16 +160,28 @@ const sessionConfig: ResourceConfig<resourceRegistrySessionQuery, SessionNode> =
     // Same condition language as the sessions page's filter, over every field
     // the manager's queryfilter accepts.
     getStringFilterProperties: getSessionFilterProperties,
-    buildVariables: ({ filter, order, limit, offset, projectId }) => ({
-      scopeId: `project:${projectId}`,
+    supportsResourceGroup: true,
+    buildVariables: ({
+      filter,
+      order,
+      limit,
+      offset,
+      projectId,
+      resourceGroups,
+      domainName,
+    }) => ({
+      scopeId: projectId ? `project:${projectId}` : `domain:${domainName}`,
       first: limit,
       offset,
-      filter: typeof filter === 'string' && filter ? filter : undefined,
+      filter: withResourceGroupClause(
+        typeof filter === 'string' ? filter : null,
+        resourceGroups,
+      ),
       order: order ?? '-created_at',
     }),
     // Legacy connection: count and nodes are individually nullable.
     selectConnection: (data) => {
-      const connection = data.compute_session_nodes;
+      const connection = readPrimary(data.compute_session_nodes);
       return connection
         ? {
             count: connection.count ?? 0,
@@ -148,22 +201,23 @@ const deploymentConfig: ResourceConfig<
   labelKey: 'webui.menu.Deployments',
   defaultOrder: '-createdAt',
   kind: 'deploymentNodes',
-  // `myDeployments` narrowed to the current project, exactly as the user-facing
-  // DeploymentListPage does. The project-scoped `projectDeployments` field is
-  // what the project-ADMIN page uses, so it is not the regular-member path.
+  // The member page reads the viewer's own deployments in its project, as the
+  // user-facing DeploymentListPage does; admin pages read the project or domain.
   query: graphql`
     query resourceRegistryDeploymentQuery(
+      $scope: DeploymentSearchScope!
       $filter: DeploymentFilter
       $orderBy: [DeploymentOrderBy!]
       $limit: Int
       $offset: Int
     ) {
-      myDeployments(
+      scopedDeployments(
+        scope: $scope
         filter: $filter
         orderBy: $orderBy
         limit: $limit
         offset: $offset
-      ) {
+      ) @catch(to: RESULT) {
         count
         edges {
           node {
@@ -188,16 +242,31 @@ const deploymentConfig: ResourceConfig<
       type: 'boolean',
     },
   ],
-  buildVariables: ({ filter, order, limit, offset, projectId }) => ({
+  supportsResourceGroup: true,
+  buildVariables: ({
+    filter,
+    order,
+    limit,
+    offset,
+    projectId,
+    resourceGroups,
+    ownerId,
+    domainId,
+  }) => ({
+    scope: searchScopeOf({ ownerId, projectId, domainId }),
     filter: {
       ...(typeof filter === 'string' ? {} : (filter ?? {})),
       ...(projectId ? { projectId: { equals: projectId } } : {}),
+      ...(resourceGroups?.length
+        ? { resourceGroup: { in: [...resourceGroups] } }
+        : {}),
     },
     orderBy: convertToOrderBy(order ?? null),
     limit,
     offset,
   }),
-  selectConnection: (data) => selectOffsetConnection(data.myDeployments),
+  selectConnection: (data) =>
+    selectOffsetConnection(readPrimary(data.scopedDeployments)),
 };
 
 const vfolderConfig: ResourceConfig<resourceRegistryVfolderQuery, VfolderNode> =
@@ -208,21 +277,24 @@ const vfolderConfig: ResourceConfig<resourceRegistryVfolderQuery, VfolderNode> =
     minRole: 'superadmin',
     query: graphql`
       query resourceRegistryVfolderQuery(
+        $scope: VFolderScope!
         $filter: VFolderFilter
         $orderBy: [VFolderOrderBy!]
         $limit: Int
         $offset: Int
       ) {
-        adminVfoldersV2(
+        scopedVFoldersV2(
+          scope: $scope
           filter: $filter
           orderBy: $orderBy
           limit: $limit
           offset: $offset
-        ) {
+        ) @catch(to: RESULT) {
           count
           edges {
             node {
               id
+              entityId
               host
               status
               metadata {
@@ -243,13 +315,22 @@ const vfolderConfig: ResourceConfig<resourceRegistryVfolderQuery, VfolderNode> =
         type: 'string',
       },
     ],
-    getColumns: (t) => [
+    getColumns: (t, options) => [
       {
         key: 'name',
         dataIndex: 'name',
         title: t('data.folders.Name'),
         sorter: true,
-        render: (_value, record) => record.metadata?.name,
+        // The name opens the folder explorer, as on the Data page.
+        render: (_value, record) =>
+          options?.disableNavigation ? (
+            record.metadata?.name
+          ) : (
+            <FolderLink
+              folderId={record.entityId}
+              folderName={record.metadata?.name ?? ''}
+            />
+          ),
       },
       {
         key: 'host',
@@ -280,8 +361,121 @@ const vfolderConfig: ResourceConfig<resourceRegistryVfolderQuery, VfolderNode> =
       },
     ],
     buildVariables: makeOffsetVariables<resourceRegistryVfolderQuery>(),
-    selectConnection: (data) => selectOffsetConnection(data.adminVfoldersV2),
+    selectConnection: (data) =>
+      selectOffsetConnection(readPrimary(data.scopedVFoldersV2)),
   };
+
+/** The audit log source's query on the superadmin page, which reads every record (`isClusterAuditScope`). */
+export const auditLogClusterQuery = graphql`
+  query resourceRegistryAuditLogClusterQuery(
+    $filter: AuditLogFilter
+    $orderBy: [AuditLogOrderBy!]
+    $limit: Int
+    $offset: Int
+  ) {
+    scopedAuditLogsV2: adminAuditLogsV2(
+      filter: $filter
+      orderBy: $orderBy
+      limit: $limit
+      offset: $offset
+    ) @catch(to: RESULT) {
+      count
+      edges {
+        node {
+          id
+          ...BAIAuditLogNodesFragment
+        }
+      }
+    }
+  }
+`;
+
+// Rows render through BAIAuditLogNodes (`kind: 'auditLogNodes'`), so no columns here.
+const auditLogConfig: ResourceConfig<resourceRegistryAuditLogQuery, unknown> = {
+  key: 'auditLog',
+  labelKey: 'auditLog.AuditLog',
+  defaultOrder: '-createdAt',
+  kind: 'auditLogNodes',
+  query: graphql`
+    query resourceRegistryAuditLogQuery(
+      $scope: AuditLogScope!
+      $filter: AuditLogFilter
+      $orderBy: [AuditLogOrderBy!]
+      $limit: Int
+      $offset: Int
+    ) {
+      scopedAuditLogsV2(
+        scope: $scope
+        filter: $filter
+        orderBy: $orderBy
+        limit: $limit
+        offset: $offset
+      ) @catch(to: RESULT) {
+        count
+        edges {
+          node {
+            id
+            ...BAIAuditLogNodesFragment
+          }
+        }
+      }
+    }
+  `,
+  getFilterProperties: (t, context) => [
+    {
+      key: 'entityType',
+      propertyLabel: t('dashboard.card.EntityType'),
+      type: 'enum',
+      // Picked, never typed: the table shows translated labels, and a typed
+      // label would be sent as the value.
+      strictSelection: true,
+      options: (() => {
+        const types = _.uniq([
+          ...(context?.entityTypes ?? []),
+          ...AUDIT_ENTITY_TYPES,
+        ]);
+        const labels = auditEntityTypeLabels(t, types);
+        return _.sortBy(
+          types.map((type) => ({ value: type, label: labels[type] })),
+          (option) => option.label,
+        );
+      })(),
+    },
+    {
+      key: 'status',
+      propertyLabel: t('auditLog.Result'),
+      type: 'enum',
+      strictSelection: true,
+      options: AUDIT_LOG_STATUSES.map(([status, labelKey]) => ({
+        value: status,
+        label: t(labelKey),
+      })),
+    },
+    {
+      key: 'actionName',
+      propertyLabel: t('auditLog.Action'),
+      type: 'string',
+    },
+    {
+      key: 'operation',
+      propertyLabel: t('auditLog.Operation'),
+      type: 'string',
+    },
+  ],
+  // The scope comes from `useAuditLogQueryScope` only, so no caller can fall back to a narrower one.
+  buildVariables: ({ filter, order, limit, offset, auditScope }) => {
+    if (!auditScope) throw new Error('This page has no audit log scope yet');
+    return {
+      scope: auditScope,
+      filter: typeof filter === 'string' ? undefined : (filter ?? undefined),
+      orderBy: convertToOrderBy(order ?? '-createdAt'),
+      limit,
+      offset,
+    };
+  },
+  selectConnection: (data) =>
+    selectOffsetConnection(readPrimary(data.scopedAuditLogsV2)),
+};
 
 export const resourceRegistry: {
   [K in ResourceKey]: ResourceConfig<any, any>;
@@ -289,6 +483,7 @@ export const resourceRegistry: {
   session: sessionConfig,
   deployment: deploymentConfig,
   vfolder: vfolderConfig,
+  auditLog: auditLogConfig,
 };
 
 export const resourceKeys = Object.keys(resourceRegistry) as ResourceKey[];

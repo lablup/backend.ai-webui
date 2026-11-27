@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<a16b7a6a57297201a654da7c6ce67989>>
+ * @generated SignedSource<<0fd21280783dc0bd92662939fdd869e5>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -16,6 +16,7 @@ export type KeypairResourcePolicyStoragePermissionTableV2_nodeFrgmt$data = Reado
     readonly host: string;
     readonly permissions: ReadonlyArray<VFolderHostPermissionV2>;
   }>;
+  readonly entityId: string;
   readonly id: string;
   readonly keypairs?: {
     readonly edges: ReadonlyArray<{
@@ -64,6 +65,13 @@ return {
   "name": "KeypairResourcePolicyStoragePermissionTableV2_nodeFrgmt",
   "selections": [
     (v0/*: any*/),
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "entityId",
+      "storageKey": null
+    },
     {
       "alias": null,
       "args": null,
@@ -190,6 +198,6 @@ return {
 };
 })();
 
-(node as any).hash = "64a629632f744187a846e1edb9e90e1c";
+(node as any).hash = "c4f0c352710eed611330960f3c778787";
 
 export default node;

@@ -5,14 +5,8 @@
 import { AstryxAdminTheme } from '../../astryx-theme';
 import { useBackToUserView } from '../../hooks/useBackToUserView';
 import { useRouteAccessDecision } from '../../hooks/useRouteAccess';
-import {
-  useActiveProjectName,
-  useCurrentMenuKey,
-} from '../../hooks/useRouteScope';
-import {
-  getPathFromMenuKey,
-  useWebUIMenuItems,
-} from '../../hooks/useWebUIMenuItems';
+import { isUserViewPath, useCurrentMenuKey } from '../../hooks/useRouteScope';
+import { useWebUIMenuItems } from '../../hooks/useWebUIMenuItems';
 import BAIMenu from '../BAIMenu';
 import { IconButton } from '@lablup/ui-common/IconButton';
 import { HStack } from '@lablup/ui-common/Stack';
@@ -46,9 +40,6 @@ const WebUISiderNavigation: React.FC<WebUISiderNavigationProps> = ({
   // `/project/:name/<feature>` and `/admin/<feature>` URL shapes where the
   // first pathname segment is the scope prefix, not the feature key.
   const currentMenuKey = useCurrentMenuKey();
-  // Active project NAME (URL `:projectName` if present, else current project
-  // atom), for the scope-aware Project Settings link.
-  const activeProjectName = useActiveProjectName();
 
   const {
     groupedGeneralMenu,
@@ -76,9 +67,10 @@ const WebUISiderNavigation: React.FC<WebUISiderNavigationProps> = ({
   // project-admin header, the user menu) can return the user. Use the role-
   // independent `isCurrentPathAdminCategory`: the role-filtered flags would
   // misclassify an admin page the user's menu excludes as "general" and
-  // pollute `goBackPath` with an admin path.
+  // pollute `goBackPath` with an admin path. A redirecting path (e.g. the
+  // legacy `/project`) is skipped too.
   useEffect(() => {
-    if (!isCurrentPathAdminCategory) {
+    if (!isCurrentPathAdminCategory && isUserViewPath(location.pathname)) {
       setGoBackPath(location.pathname);
     }
     // `location` is from react-router useLocation() — pathname is reactive across navigations.
@@ -130,7 +122,7 @@ const WebUISiderNavigation: React.FC<WebUISiderNavigationProps> = ({
         <BAIMenu
           hideGroupName={collapsed}
           selectedKeys={filterOutEmpty([
-            currentMenuKey || 'start',
+            currentMenuKey || 'dashboard',
             // TODO: After 'SessionListPage' is completed and used as the main page, remove this code
             //       and change 'job' key to 'session'
             currentMenuKey === 'session' ? 'job' : '',
@@ -140,10 +132,7 @@ const WebUISiderNavigation: React.FC<WebUISiderNavigationProps> = ({
               // System admin pages are entered from the user menu instead.
               key: 'project-settings',
               labelText: t('webui.menu.ProjectSettings'),
-              to: getPathFromMenuKey(
-                firstAvailableProjectAdminMenuItem.key,
-                activeProjectName,
-              ),
+              to: firstAvailableProjectAdminMenuItem.to,
               icon: <ShieldUserIcon style={{ color: token('--color-info') }} />,
             },
             ...groupedGeneralMenu,

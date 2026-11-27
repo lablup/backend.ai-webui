@@ -1,7 +1,6 @@
 {
   "entries": [
     { "path": "", "docPage": "dashboard.html" },
-    { "path": "start", "docPage": "start.html" },
     { "path": "dashboard", "docPage": "dashboard.html" },
     { "path": "summary", "docPage": "dashboard.html" },
     { "path": "session", "docPage": "sessions_all.html" },
@@ -14,15 +13,23 @@
       "docPage": "deployment.html",
       "anchor": "model-store"
     },
-    { "path": "import", "docPage": "start.html" },
-    { "path": "github", "docPage": "start.html" },
     { "path": "chat", "docPage": "chat.html" },
     { "path": "data", "docPage": "vfolder.html" },
     { "path": "my-environment", "docPage": "my_environments.html" },
     { "path": "agent-summary", "docPage": "agent_summary.html" },
     { "path": "statistics", "docPage": "statistics.html" },
     { "path": "usersettings", "docPage": "user_settings.html" },
-    { "path": "admin-dashboard", "docPage": "dashboard.html" },
+    {
+      "path": "admin-dashboard",
+      "docPage": "admin_menu.html",
+      "anchor": "admin-dashboard"
+    },
+    {
+      "path": "admin-dashboard",
+      "scope": "projectAdmin",
+      "docPage": "project_admin.html",
+      "anchor": "project-admin-dashboard"
+    },
     {
       "path": "admin-session",
       "docPage": "project_admin.html",
@@ -74,7 +81,8 @@
       "anchor": "storages"
     },
     {
-      "path": "settings",
+      "path": "system-settings",
+      "tab": "configurations",
       "docPage": "admin_menu.html",
       "anchor": "system-settings"
     },
@@ -104,11 +112,6 @@
       "path": "project-admin-users",
       "docPage": "project_admin.html",
       "anchor": "users"
-    },
-    {
-      "path": "project-data",
-      "docPage": "project_admin.html",
-      "anchor": "data"
     },
     {
       "path": "project-admin-session",

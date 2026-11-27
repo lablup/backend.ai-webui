@@ -8,6 +8,7 @@ import { ContainerRegistryEditorModalModifyRegistryMutation } from '../__generat
 import { App } from '../app-shim';
 import { Form, type FormInstance } from '../form-engine';
 import { useSuspendedBackendaiClient } from '../hooks';
+import { useEffectiveLoginConfig } from '../hooks/useWebUIConfig';
 import BAICodeEditor from './BAICodeEditor';
 import BAIFormItem from './BAIFormItem';
 import HiddenFormItem from './HiddenFormItem';
@@ -19,7 +20,6 @@ import {
   BAIModalProps,
   BAISelect,
   BAICheckboxInput,
-  BAISelector,
   BAITextInput,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -50,6 +50,10 @@ export type ContainerRegistryEditorModalResult = {
   url?: string;
   type?: string;
 };
+
+/** `ContainerRegistryV2.type` (`HARBOR2`) as the legacy string the form's type options use (`harbor2`). */
+export const toLegacyRegistryType = (type: string): string =>
+  type === 'ECR_PUB' ? 'ecr-public' : _.toLower(type);
 
 /** The mutation nodes carry form-only fields (`password`, …); hand `onOk` only the result shape. */
 const toResult = (
@@ -96,6 +100,7 @@ const ContainerRegistryEditorModal: React.FC<
   const { message, modal } = App.useApp();
 
   const baiClient = useSuspendedBackendaiClient();
+  const loginConfig = useEffectiveLoginConfig();
 
   const formRef = useRef<FormInstance<RegistryFormInput>>(null);
 
@@ -131,7 +136,7 @@ const ContainerRegistryEditorModal: React.FC<
   );
 
   const projectTypes: Array<'GENERAL' | 'MODEL_STORE'> = _.includes(
-    baiClient._config.blockList,
+    loginConfig.blockList,
     'model-store',
   )
     ? ['GENERAL']
@@ -509,7 +514,8 @@ const ContainerRegistryEditorModal: React.FC<
             },
           ]}
         >
-          <BAISelector
+          <BAISelect
+            showSearch={false}
             aria-label={t('registry.RegistryType')}
             options={[
               'docker',
@@ -519,7 +525,7 @@ const ContainerRegistryEditorModal: React.FC<
               'gitlab',
               'ecr',
               'ecr-public',
-            ]}
+            ].map((value) => ({ value, label: value }))}
           />
         </BAIFormItem>
         <BAIFormItem

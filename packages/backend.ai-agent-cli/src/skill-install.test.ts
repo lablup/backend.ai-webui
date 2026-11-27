@@ -40,6 +40,15 @@ describe('skill install', () => {
     expect(first.outcome).toBe('installed');
     expect(first.files).toContain('SKILL.md');
     expect(first.files).toContain('references/query-cookbook.md');
+    expect(first.files).toContain('references/webui-browser.md');
+    expect(
+      readFileSync(join(targetDir, 'references', 'webui-browser.md'), 'utf8'),
+    ).toBe(
+      readFileSync(
+        join(shippedSkillDir(), 'references', 'webui-browser.md'),
+        'utf8',
+      ),
+    );
     expect(first.files).toContain(AGENT_BLOCK_FILE);
 
     const block = readFileSync(join(targetDir, AGENT_BLOCK_FILE), 'utf8');

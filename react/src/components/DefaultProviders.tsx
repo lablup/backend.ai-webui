@@ -9,6 +9,7 @@ import { RelayEnvironment } from '../RelayEnvironment';
 import { BAIAppProvider } from '../app-shim';
 import AstryxBrandTheme from '../astryx-theme/AstryxBrandTheme';
 import { FormConfigProvider } from '../form-engine';
+import { isActAsDebugMode } from '../helper/actAs';
 import {
   getLoadedBuiLocale,
   loadBuiLocale,
@@ -21,6 +22,7 @@ import {
   useWebUINavigate,
 } from '../hooks';
 import { useDeviceMetaData, useImageMetaData } from '../hooks/backendai';
+import { useLoginConfig } from '../hooks/useWebUIConfig';
 import '../index.css';
 import I18nKeyMarkers, { appendI18nKeyMarker } from './I18nKeyMarkers';
 import NotificationHost from './NotificationHost';
@@ -30,6 +32,7 @@ import {
   BAIConfigProvider,
   BAIMetaDataProvider,
   BAIText,
+  BAIWebMCPProvider,
   useUpdateEffect,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
@@ -91,8 +94,7 @@ i18n
       const isDebugByUrlParam =
         process.env.NODE_ENV === 'development' &&
         new URLSearchParams(window.location.search).get('debug') === 'true';
-      // @ts-ignore
-      if (globalThis?.backendaiwebui?.debug === true || isDebugByUrlParam) {
+      if (isActAsDebugMode() || isDebugByUrlParam) {
         // Must stay a string: `t()` also feeds placeholders, tooltips and aria labels.
         // `I18nKeyMarkers` turns the invisible marker into the copy icon.
         if (typeof value !== 'string') return value;
@@ -269,6 +271,7 @@ export const DefaultProvidersForReactRoot: React.FC<{
   const [lang] = useCurrentLanguage();
   const { t } = useTranslation();
   const { token } = useTheme();
+  const enableWebMCP = useLoginConfig()?.enableWebMCP ?? false;
 
   // Non-`en` locales are lazy chunks; `loadBuiLocale` caches one promise per
   // language, so `use` suspends on the same object across renders.
@@ -375,7 +378,10 @@ export const DefaultProvidersForReactRoot: React.FC<{
                       <Suspense>
                         {/* <BrowserRouter> */}
                         {/* <RoutingEventHandler /> */}
-                        {children}
+                        {/* WebMCP tool gate, ADR 0025. */}
+                        <BAIWebMCPProvider enabled={enableWebMCP}>
+                          {children}
+                        </BAIWebMCPProvider>
                         {/* </BrowserRouter> */}
                       </Suspense>
                     </BAIMetaDataProviderWrapper>

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<4415f7d6a78cc8330a3bc8a068fbcb3a>>
+ * @generated SignedSource<<2bbd7b83d52ff53efda2c5df0a3e6c4a>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,6 +9,7 @@
 // @ts-nocheck
 
 import { ReaderFragment } from 'relay-runtime';
+export type PermissionBit = "CREATE" | "HARD_DELETE" | "READ" | "SOFT_DELETE" | "UPDATE" | "%future added value";
 export type VFolderMountPermission = "NONE" | "READ_ONLY" | "READ_WRITE" | "RW_DELETE" | "%future added value";
 export type VFolderOperationStatus = "CLONING" | "DELETE_COMPLETE" | "DELETE_ERROR" | "DELETE_ONGOING" | "DELETE_PENDING" | "READY" | "%future added value";
 export type VFolderOwnershipType = "GROUP" | "USER" | "%future added value";
@@ -20,6 +21,9 @@ export type VFolderNodeDescriptionV2Fragment$data = {
     readonly permission: VFolderMountPermission;
   };
   readonly entityId: string;
+  readonly entityLabels: {
+    readonly " $fragmentSpreads": FragmentRefs<"BAIEntityLabelSettingModalFragment" | "BAIEntityLabelTokensFragment">;
+  } | null | undefined;
   readonly host: string;
   readonly id: string;
   readonly metadata: {
@@ -43,6 +47,7 @@ export type VFolderNodeDescriptionV2Fragment$data = {
     } | null | undefined;
     readonly userId: string | null | undefined;
   };
+  readonly permissions: ReadonlyArray<PermissionBit>;
   readonly quota: {
     readonly maxFiles: number;
     readonly maxSize: {
@@ -51,7 +56,7 @@ export type VFolderNodeDescriptionV2Fragment$data = {
   };
   readonly status: VFolderOperationStatus;
   readonly unmanagedPath: string | null | undefined;
-  readonly " $fragmentSpreads": FragmentRefs<"VFolderPermissionCellV2Fragment" | "useVirtualFolderNodePathV2Fragment">;
+  readonly " $fragmentSpreads": FragmentRefs<"useVirtualFolderNodePathV2Fragment">;
   readonly " $fragmentType": "VFolderNodeDescriptionV2Fragment";
 };
 export type VFolderNodeDescriptionV2Fragment$key = {
@@ -111,6 +116,40 @@ return {
     {
       "alias": null,
       "args": null,
+      "kind": "ScalarField",
+      "name": "permissions",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": [
+        {
+          "kind": "Literal",
+          "name": "limit",
+          "value": 100
+        }
+      ],
+      "concreteType": "EntityLabelConnection",
+      "kind": "LinkedField",
+      "name": "entityLabels",
+      "plural": false,
+      "selections": [
+        {
+          "args": null,
+          "kind": "FragmentSpread",
+          "name": "BAIEntityLabelTokensFragment"
+        },
+        {
+          "args": null,
+          "kind": "FragmentSpread",
+          "name": "BAIEntityLabelSettingModalFragment"
+        }
+      ],
+      "storageKey": "entityLabels(limit:100)"
+    },
+    {
+      "alias": null,
+      "args": null,
       "concreteType": "VFolderMetadataInfo",
       "kind": "LinkedField",
       "name": "metadata",
@@ -153,14 +192,14 @@ return {
           "alias": null,
           "args": null,
           "kind": "ScalarField",
-          "name": "permission",
+          "name": "ownershipType",
           "storageKey": null
         },
         {
           "alias": null,
           "args": null,
           "kind": "ScalarField",
-          "name": "ownershipType",
+          "name": "permission",
           "storageKey": null
         }
       ],
@@ -261,35 +300,34 @@ return {
           "storageKey": null
         },
         {
-          "alias": null,
-          "args": null,
-          "concreteType": "ProjectV2",
-          "kind": "LinkedField",
-          "name": "project",
-          "plural": false,
-          "selections": [
-            {
-              "alias": null,
-              "args": null,
-              "concreteType": "ProjectBasicInfo",
-              "kind": "LinkedField",
-              "name": "basicInfo",
-              "plural": false,
-              "selections": [
-                (v0/*: any*/)
-              ],
-              "storageKey": null
-            }
-          ],
-          "storageKey": null
+          "kind": "CatchField",
+          "field": {
+            "alias": null,
+            "args": null,
+            "concreteType": "ProjectV2",
+            "kind": "LinkedField",
+            "name": "project",
+            "plural": false,
+            "selections": [
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "ProjectBasicInfo",
+                "kind": "LinkedField",
+                "name": "basicInfo",
+                "plural": false,
+                "selections": [
+                  (v0/*: any*/)
+                ],
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
+          },
+          "to": "NULL"
         }
       ],
       "storageKey": null
-    },
-    {
-      "args": null,
-      "kind": "FragmentSpread",
-      "name": "VFolderPermissionCellV2Fragment"
     },
     {
       "args": null,
@@ -302,6 +340,6 @@ return {
 };
 })();
 
-(node as any).hash = "5b7517f9bda5f798fd8b54628c781d4f";
+(node as any).hash = "e0332eee328f1527e3bdc4dfd7a6dc68";
 
 export default node;

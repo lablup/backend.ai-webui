@@ -1,7 +1,6 @@
 /**
  * FR-3880 — what the build-mode overlay puts into a built `index.html`, kept
- * out of `index.ts` so it can be tested without importing `vite` (and, with
- * it, esbuild, which will not load under jsdom).
+ * out of `index.ts` so it can be tested under jsdom without importing `vite`.
  */
 import type { ReviewServerState } from './client/types.js';
 import type { HtmlTagDescriptor } from 'vite';
@@ -14,7 +13,7 @@ export const STATE_ELEMENT_ID = 'bai-review-state';
 /**
  * Opt-in, and only these two spellings — case-sensitively, because
  * `routes.tsx`'s matching gate has to stay two literal comparisons for
- * esbuild to fold it away in a release build. Accepting `TRUE` here and not
+ * the minifier to fold it away in a release build. Accepting `TRUE` here and not
  * there would ship the picker without the route-label handoff.
  */
 export function isReviewOverlayBuildEnabled(): boolean {

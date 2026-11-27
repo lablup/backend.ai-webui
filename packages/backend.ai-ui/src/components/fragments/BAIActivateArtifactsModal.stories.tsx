@@ -34,12 +34,12 @@ const meta: Meta<typeof BAIActivateArtifactsModal> = {
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | \`selectedArtifactsFragment\` | \`BAIActivateArtifactsModalArtifactsFragment$key\` | - | GraphQL fragment reference for selected artifacts (required) |
-| \`onOk\` | \`(e: React.MouseEvent) => void\` | - | Called after successful mutation completion (not on button click) |
+| \`onOk\` | \`(e: React.MouseEvent, failedArtifactIds: string[]) => void\` | - | Called once the mutation settles, with the ids of the artifacts that failed |
 | \`onCancel\` | \`(e: React.MouseEvent) => void\` | - | Called when modal is cancelled |
 
 ## Features
 - **Confirmation Message**: Shows different messages for single artifact ("artifact name") vs multiple artifacts ("N artifacts")
-- **Mutation Integration**: Uses \`restoreArtifacts\` mutation to activate selected artifacts
+- **Mutation Integration**: Uses \`partialBulkRestoreArtifacts\` mutation to activate selected artifacts
 - **Success/Error Handling**: Displays success/error messages via Ant Design message component
 - **Loading State**: OK button shows loading state during mutation execution
 
@@ -76,9 +76,12 @@ Mutation is mocked and will execute successfully, closing the modal on completio
     },
     onOk: {
       control: false,
-      description: 'Called after successful mutation completion',
+      description:
+        'Called once the mutation settles, with the ids of the artifacts that failed',
       table: {
-        type: { summary: '(e: React.MouseEvent) => void' },
+        type: {
+          summary: '(e: React.MouseEvent, failedArtifactIds: string[]) => void',
+        },
       },
     },
     onCancel: {

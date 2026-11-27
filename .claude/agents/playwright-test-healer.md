@@ -304,7 +304,7 @@ await alert.getByRole('button', { name: 'terminate' }).click();
 
 **Project-Specific Conventions:**
 - Test files use `.spec.ts` extension (per `e2e/E2E-TEST-NAMING-GUIDELINES.md`)
-- Tests are organized in feature directories: `e2e/session/`, `e2e/serving/`, `e2e/user/`, etc.
+- Tests are organized in folders `e2e/<console>/<page>/` (`admin`, `project-admin`, `project`, `common`; see `e2e/README.md`), e.g. `e2e/project/session/`, `e2e/admin/users/`
 - POM classes are in `e2e/utils/classes/{feature}/`
 - Use `loginAsAdmin` or `loginAsUser` from `test-util.ts` for authentication
 - Use `navigateTo(page, 'route')` for navigation

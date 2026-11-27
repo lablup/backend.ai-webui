@@ -10,7 +10,7 @@ export const WHOAMI_QUERY =
 
 export interface ManagerSession {
   endpoint: string;
-  /** Empty for the public calls (`/func/`) that need no session. */
+  /** Empty for a session-less call; a manager with lablup/backend.ai#16736 refuses `/func/` then. */
   sessionId: string;
 }
 
@@ -178,9 +178,10 @@ export async function fetchWhoAmI(
 
 /**
  * What the WebUI client calls for the manager version: in SESSION mode
- * `getServerVersion()` issues `newPublicRequest('GET', '/')`, which the client
- * rewrites to `<endpoint>/func/` and reads `{ version, manager }` from
+ * `getServerVersion()` issues `GET /`, which the client rewrites to
+ * `<endpoint>/func/` and reads `{ version, manager }` from
  * (`packages/backend.ai-client/src/client.ts`, `get_manager_version`).
+ * Managers with lablup/backend.ai#16736 answer it only to a signed-in session.
  */
 export const VERSION_PATHS = ['/func/', '/server/version'] as const;
 
@@ -233,6 +234,7 @@ export async function fetchManagerVersion(
 
   const doFetch = options.fetchImpl ?? fetch;
   let lastError: unknown;
+  let refused = false;
   for (const path of VERSION_PATHS) {
     const url = `${session.endpoint}${path}`;
     try {
@@ -248,6 +250,7 @@ export async function fetchManagerVersion(
             : {}),
         },
       });
+      if (response.status === 401) refused = true;
       if (!response.ok) continue;
       const version = readVersionPayload(await response.json(), path);
       if (version) {
@@ -259,6 +262,14 @@ export async function fetchManagerVersion(
     }
   }
 
+  if (refused) {
+    if (session.sessionId) throw authRequiredError(session.endpoint);
+    throw new CliError(
+      'auth_required',
+      `The manager at ${session.endpoint} tells its version only to a signed-in session.`,
+      { hint: `${CLI_NAME} login --endpoint ${session.endpoint}` },
+    );
+  }
   throw new CliError(
     'internal',
     `Cannot read the manager version from ${session.endpoint} (tried ${VERSION_PATHS.join(', ')}).`,
@@ -267,8 +278,9 @@ export async function fetchManagerVersion(
 }
 
 /**
- * The manager version with no session at all — `/func/` is public, which is
- * what lets `init` pick a data ref before anyone has logged in.
+ * The manager version with no session at all, which lets `init` pick a data
+ * ref before anyone has logged in. Older managers only: a manager with
+ * lablup/backend.ai#16736 refuses it (401).
  */
 export function fetchPublicManagerVersion(
   endpoint: string,

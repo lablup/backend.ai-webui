@@ -163,7 +163,7 @@ beforeEach(() => {
     this.pause = vi.fn();
   } as unknown as () => TabCount);
 
-  mockedLoadConfig.mockResolvedValue(undefined);
+  mockedLoadConfig.mockResolvedValue({ status: 'loaded', domainName: null });
 });
 
 afterEach(() => {

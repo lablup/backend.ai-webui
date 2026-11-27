@@ -10,7 +10,7 @@
  *
  *   mint.mjs --manifest <path> [--app <name>] [--endpoint <url>] [--sha <sha>]
  *            [--pr <n>] [--repo <owner/repo>] [--env-file <path>]
- *            [--report <path>] [--settle <ms>] [--dry-run]
+ *            [--report <path>] [--settle <ms>] [--keep-tours] [--dry-run]
  *
  * Without `--pr` the PR is the current branch's and the app is the name
  * `dev-server` claims for it. With `--pr <n>` the PR is looked up on GitHub
@@ -70,6 +70,7 @@ function parseArgs(argv) {
     report: "",
     settle: "",
     dryRun: false,
+    keepTours: false,
   };
   const names = {
     "--manifest": "manifest",
@@ -86,6 +87,10 @@ function parseArgs(argv) {
     const arg = argv[i];
     if (arg === "--dry-run") {
       flags.dryRun = true;
+      continue;
+    }
+    if (arg === "--keep-tours") {
+      flags.keepTours = true;
       continue;
     }
     const name = names[arg];
@@ -195,11 +200,15 @@ async function resolveApp(flags) {
     // Offline, or no PR yet: `resolveAppName` falls back to the branch alone.
   }
   const mod = await import(resolve(REPO_ROOT, "scripts/portless-app-name.mjs"));
+  // dev.mjs caps the name to the gateway's label budget; predict the same name.
+  const gwPath = resolve(REPO_ROOT, "scripts/dev-gw.mjs");
+  const gw = existsSync(gwPath) ? await import(gwPath) : null;
   const name = mod.resolveAppName({
     envName: process.env.PORTLESS_APP_NAME,
     branch,
     pr,
     exact: !!(process.env.PORTLESS_APP_NAME_EXACT ?? "").trim(),
+    maxLen: gw?.appNameBudget(gw.shareBaseOf(gw.readDevGwConfig())),
   });
   if (!name) fail(3, `no app name for branch '${branch}' — pass --app <name>`);
   return name;
@@ -721,6 +730,19 @@ async function main() {
     ignoreHTTPSErrors: true,
     viewport: { width: 1440, height: 900 },
   });
+  // A fresh origin shows a superadmin AdminViewSwitchTour: the intro modal on
+  // admin pages, the spotlight on project pages. `--keep-tours` is for a PR on the tour.
+  // TODO: the tour flags are account settings (ADR 0035), so this seed reaches only an
+  // account without `settings`; write them through the API after sign-in.
+  if (!flags.keepTours)
+    await context.addInitScript((origin) => {
+      if (location.origin !== origin) return;
+      for (const name of [
+        "has_opened_tour_back_to_user_view",
+        "has_opened_tour_back_to_admin_settings",
+      ])
+        localStorage.setItem(`backendaiwebui.settings.user.${name}`, "true");
+    }, new URL(base).origin);
   const page = await context.newPage();
   try {
     await login(page, base, endpoint, env);
@@ -907,7 +929,7 @@ async function login(page, base, endpoint, env) {
   });
   if (await shell.isVisible().catch(() => false)) return;
   await form.fill(env.E2E_ADMIN_EMAIL);
-  await page.getByLabel("Password").fill(env.E2E_ADMIN_PASSWORD);
+  await page.getByLabel("Password", { exact: true }).fill(env.E2E_ADMIN_PASSWORD);
   const endpointInput = page.getByRole("textbox", {
     name: "Endpoint",
     exact: true,

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<70bef5cfc52ff68f5eb01376a3d96e82>>
+ * @generated SignedSource<<0bbb707e5b753b622d878ef6a0860663>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -17,6 +17,7 @@ export type QueryDefinitionFilter = {
   NOT?: ReadonlyArray<QueryDefinitionFilter> | null | undefined;
   OR?: ReadonlyArray<QueryDefinitionFilter> | null | undefined;
   categoryId?: UUIDFilter | null | undefined;
+  entityId?: UUIDFilter | null | undefined;
   name?: StringFilter | null | undefined;
 };
 export type StringFilter = {

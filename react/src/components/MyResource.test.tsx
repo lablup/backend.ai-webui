@@ -1,0 +1,174 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
+import '../../__test__/matchMedia.mock.js';
+import '../../__test__/resizeObserver.mock.js';
+import MyResource from './MyResource';
+import '@testing-library/jest-dom';
+import { render, screen } from '@testing-library/react';
+import { RelayEnvironmentProvider } from 'react-relay';
+import { createMockEnvironment } from 'relay-test-utils';
+import { describe, expect, it, vi } from 'vitest';
+
+vi.mock('react-i18next', () => ({
+  useTranslation: () => ({ t: (key: string) => key }),
+  Trans: ({ i18nKey }: { i18nKey: string }) => i18nKey,
+  initReactI18next: { type: '3rdParty', init: () => {} },
+}));
+
+vi.mock('../hooks/useCurrentProject', () => ({
+  useCurrentProjectValue: () => ({ id: 'project-0000', name: 'default' }),
+  useCurrentResourceGroupValue: () => 'default',
+}));
+
+// Only the statistics the card hands over matter here.
+vi.mock('backend.ai-ui', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('backend.ai-ui')>()),
+  BAIBoardItemTitle: () => null,
+  useBAIResourceSlots: () => ({
+    mergedResourceSlots: {
+      cpu: { human_readable_name: 'CPU', display_unit: 'Core' },
+    },
+  }),
+  ResourceStatistics: ({ resourceData }: { resourceData: unknown }) => (
+    <pre data-testid="resource-data">{JSON.stringify(resourceData)}</pre>
+  ),
+}));
+
+const renderCard = () => {
+  const environment = createMockEnvironment();
+  render(
+    <RelayEnvironmentProvider environment={environment}>
+      <MyResource />
+    </RelayEnvironmentProvider>,
+  );
+  return environment;
+};
+
+const readResourceData = async () =>
+  JSON.parse((await screen.findByTestId('resource-data')).textContent ?? '');
+
+describe('MyResource', () => {
+  it('shows the usage across all resource groups against the smaller of the user and project remainders', async () => {
+    const environment = renderCard();
+    const operation = environment.mock.getMostRecentOperation();
+    expect(operation.request.variables).toEqual({ projectId: 'project-0000' });
+    environment.mock.resolve(operation, {
+      data: {
+        myUserResourceAllocationV2: {
+          user: {
+            used: [{ resourceType: 'cpu', quantity: '3' }],
+            assignable: [
+              { resourceType: 'cpu', quantity: '4', unlimited: false },
+            ],
+          },
+        },
+        projectResourceAllocationV2: {
+          project: {
+            assignable: [
+              { resourceType: 'cpu', quantity: '6', unlimited: false },
+            ],
+          },
+        },
+        scopedResourceGroups: {
+          edges: [
+            {
+              node: {
+                resourceInfo: {
+                  capacity: {
+                    entries: [
+                      { resourceType: 'cpu', quantity: '8' },
+                      { resourceType: 'mem', quantity: '16' },
+                    ],
+                  },
+                },
+              },
+            },
+          ],
+        },
+      },
+    });
+
+    const data = await readResourceData();
+    expect(data.cpu.used).toEqual({ current: 3, total: 7 });
+    expect(data.cpu.free).toEqual({ current: 4, total: 7 });
+  });
+
+  // An unlimited accelerator the manager knows but no group serves.
+  const resolveWithGroups = (
+    environment: ReturnType<typeof renderCard>,
+    scopedResourceGroups: unknown,
+    used: Array<{ resourceType: string; quantity: string }> = [
+      { resourceType: 'cpu', quantity: '3' },
+    ],
+  ) =>
+    environment.mock.resolve(environment.mock.getMostRecentOperation(), {
+      data: {
+        myUserResourceAllocationV2: {
+          user: {
+            used,
+            assignable: [
+              { resourceType: 'cpu', quantity: '4', unlimited: false },
+              { resourceType: 'atom.device', quantity: null, unlimited: true },
+            ],
+          },
+        },
+        projectResourceAllocationV2: {
+          project: { assignable: [] },
+        },
+        scopedResourceGroups,
+      },
+    });
+
+  it('keeps CPU and memory only when no resource group reaches the project', async () => {
+    resolveWithGroups(renderCard(), { edges: [] });
+
+    const data = await readResourceData();
+    expect(data.cpu.used).toEqual({ current: 3, total: 7 });
+    expect(data.accelerators).toEqual([]);
+  });
+
+  it('keeps CPU and memory only when no group reports capacity', async () => {
+    resolveWithGroups(renderCard(), {
+      edges: [{ node: { resourceInfo: null } }],
+    });
+
+    const data = await readResourceData();
+    expect(data.cpu.used).toEqual({ current: 3, total: 7 });
+    expect(data.accelerators).toEqual([]);
+  });
+
+  it('keeps CPU and memory only when the group read comes back null', async () => {
+    resolveWithGroups(renderCard(), null);
+
+    const data = await readResourceData();
+    expect(data.cpu.used).toEqual({ current: 3, total: 7 });
+    expect(data.accelerators).toEqual([]);
+  });
+
+  it('keeps an accelerator in use even when no group of the project offers it', async () => {
+    resolveWithGroups(renderCard(), { edges: [] }, [
+      { resourceType: 'cpu', quantity: '3' },
+      { resourceType: 'atom.device', quantity: '1' },
+    ]);
+
+    const data = await readResourceData();
+    expect(data.accelerators.map((row: { key: string }) => row.key)).toEqual([
+      'atom.device',
+    ]);
+  });
+
+  it('keeps a rejected query inside the card', async () => {
+    const environment = renderCard();
+    environment.mock.rejectMostRecentOperation(
+      new Error('Cannot query field "myUserResourceAllocationV2"'),
+    );
+
+    expect(await readResourceData()).toEqual({
+      cpu: null,
+      memory: null,
+      accelerators: [],
+    });
+  });
+});

@@ -18,6 +18,10 @@ products share.
 
 ## Rules
 
+These rules place a module once it is shared: used by four or more pages, or
+imported by shared code outside a page folder. A module used by one to three
+pages lives in a page folder (ADR 0024), even when it depends on Backend.AI.
+
 1. **New product-neutral component → ui-common** (the `lablup/ui-common`
    repository), with Astryx-shaped props and `uic.<Component>.<key>` strings.
    It reaches webui through the next ui-common release, when the catalog
@@ -45,6 +49,7 @@ products share.
 ## Related
 
 - ADR 0009 — `docs/adr/0009-ui-common-as-the-single-entry-point-to-astryx.md`.
+- ADR 0024 — `docs/adr/0024-per-page-placement-by-usage-count.md` (when a module leaves its page folder).
 - FR-3533 — the consolidation that established this rule.
 - `component-props-extension.md` — how BUI wrappers and adapters extend what they wrap.
 - `destructive-confirmation.md` — the confirm-tier components, all BUI-homed.

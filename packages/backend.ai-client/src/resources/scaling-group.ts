@@ -18,8 +18,6 @@ export class ScalingGroup {
         'description',
         'is_active',
         'created_at',
-        'driver',
-        'driver_opts',
         'scheduler',
         'scheduler_opts',
         'wsproxy_addr',
@@ -64,8 +62,7 @@ export class ScalingGroup {
    * {
    *   'description': String          // description of scaling group
    *   'is_active': Boolean           // active status of scaling group
-   *   'driver': String
-   *   'driver_opts': JSONString
+   *   'driver': String               // required by the schema; the manager ignores it
    *   'scheduler': String
    *   'scheduler_opts': JSONString   // NEW in manager 22.03
    *   'wsproxy_addr': String         // NEW in manager 21.09
@@ -115,8 +112,6 @@ export class ScalingGroup {
    *   'description': String          // description of scaling group
    *   'is_active': Boolean           // active status of scaling group
    *   'is_public': Boolean
-   *   'driver': String
-   *   'driver_opts': JSONString
    *   'scheduler': String
    *   'scheduler_opts': JSONString   // NEW in manager 22.03
    *   'wsproxy_addr': String         // NEW in manager 21.09

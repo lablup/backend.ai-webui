@@ -1,7 +1,8 @@
-# Build the per-PR previews — Storybook, and the docs site with its changes
-# marked — publish them to gh-pages, and post the PR Analysis Report.
+# Build the per-PR previews — Storybook, the docs site with its changes marked,
+# and the ADR viewer with the changed ADRs — publish them to gh-pages, and post
+# the PR Analysis Report.
 #
-# The event-level `paths` filter is the UNION of what the two build jobs care
+# The event-level `paths` filter is the UNION of what the build jobs care
 # about, so each of them re-asks the question against the PR's own diff in the
 # `changes` job below and skips when the answer is no.
 #
@@ -35,6 +36,10 @@ on:
       - packages/backend.ai-ui/**
       - packages/backend.ai-webui-docs/**
       - packages/backend.ai-docs-toolkit/**
+      - docs/adr/**
+      - docs/ARCHITECTURE.md
+      - docs/ARCHITECTURE.ko.md
+      - docs/index.html
       - .github/workflows/pr-preview.yml
       - .github/scripts/pr-preview/**
       - .github/scripts/lfs/**
@@ -56,6 +61,7 @@ jobs:
       storybook: ${{ steps.detect.outputs.storybook }}
       docs: ${{ steps.detect.outputs.docs }}
       docs_langs: ${{ steps.detect.outputs.docs_langs }}
+      adr: ${{ steps.detect.outputs.adr }}
     steps:
       - uses: actions/checkout@v7
         with:
@@ -87,6 +93,10 @@ jobs:
           echo "Docs: ${DOCS_JSON}"
           echo "docs=$(jq -r '.docs' <<<"$DOCS_JSON")" >> "$GITHUB_OUTPUT"
           echo "docs_langs=$(jq -r '.languages | join(",")' <<<"$DOCS_JSON")" >> "$GITHUB_OUTPUT"
+
+          ADR_JSON="$(node .github/scripts/pr-preview/adr-changes.mjs --base "$BASE" --head HEAD)"
+          echo "ADR: $(jq -c '{adr, reason, diffMode, adrs: [.changes.adrs[] | "\(.id) \(.status)"]}' <<<"$ADR_JSON")"
+          echo "adr=$(jq -r '.adr' <<<"$ADR_JSON")" >> "$GITHUB_OUTPUT"
 
   build:
     needs: changes
@@ -205,14 +215,57 @@ jobs:
         id: urls
         run: echo "short_hash=$(echo "${{ github.event.pull_request.head.sha }}" | cut -c1-7)" >> "$GITHUB_OUTPUT"
 
-      # The script pulls Git LFS images for head and merge base (#11040).
-      - name: Build both docs trees and mark the changes
+      # LFS object cache (#11070): the key changes only when an image does, and
+      # restore-keys fall back to this PR's or main's latest store, so only new
+      # objects are downloaded. A PR's cache is readable by that PR alone; main's
+      # is written by docs-lfs-cache.yml. pull-docs-images.sh hashes every object.
+      - name: Compute the LFS cache key
+        id: lfs-key
         run: |
+          key="$(bash .github/scripts/lfs/docs-lfs-cache-key.sh)"
+          echo "key=${key}" >> "$GITHUB_OUTPUT"
+
+      - name: Restore the LFS object cache
+        id: lfs-cache
+        uses: actions/cache/restore@v6
+        with:
+          path: .git/lfs/objects
+          key: ${{ steps.lfs-key.outputs.key }}
+          restore-keys: docs-lfs-v1-
+
+      # The script pulls Git LFS images for head and merge base (#11040). A fork
+      # PR's new images may exist only in the fork's LFS store, so the head pull
+      # falls back to the fork's public URL, fetched anonymously (#11055).
+      - name: Build both docs trees and mark the changes
+        env:
+          LFS_USED_OIDS_FILE: ${{ runner.temp }}/lfs-used-oids
+          HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+          HEAD_CLONE_URL: ${{ github.event.pull_request.head.repo.clone_url }}
+        run: |
+          fork_args=()
+          if [ -n "$HEAD_REPO" ] && [ "$HEAD_REPO" != "$GITHUB_REPOSITORY" ]; then
+            fork_args=(--head-lfs-remote "$HEAD_CLONE_URL")
+          fi
           bash .github/scripts/pr-preview/build-docs-preview.sh \
             --base-ref "origin/${{ github.base_ref }}" \
             --languages "${{ needs.changes.outputs.docs_langs }}" \
             --out "${RUNNER_TEMP}/docs-preview" \
-            --label "PR preview"
+            --label "PR preview" \
+            "${fork_args[@]}"
+
+      # Saved only after a complete build, pruned to the head's and merge base's
+      # objects. Not for a fork PR: objects only the fork has would then skip the
+      # fetch from origin on the next run and pass the check at the end of this job.
+      - name: Prune the LFS object store to what the build used
+        if: steps.lfs-cache.outputs.cache-hit != 'true' && github.event.pull_request.head.repo.full_name == github.repository
+        run: bash .github/scripts/lfs/prune-lfs-store.sh "${RUNNER_TEMP}/lfs-used-oids"
+
+      - name: Save the LFS object cache
+        if: steps.lfs-cache.outputs.cache-hit != 'true' && github.event.pull_request.head.repo.full_name == github.repository
+        uses: actions/cache/save@v6
+        with:
+          path: .git/lfs/objects
+          key: ${{ steps.lfs-key.outputs.key }}
 
       # `docs-meta.json` is re-derived rather than passed through the job outputs
       # so the artifact carries the same JSON the detection script produced.
@@ -243,6 +296,63 @@ jobs:
           if-no-files-found: error
           retention-days: 7
 
+      # Fails after the uploads: the images built from the fork must reach this
+      # repository's LFS storage before merging, or main's builds break.
+      - name: Check that the PR's LFS images are in this repository
+        run: |
+          report="${RUNNER_TEMP}/docs-preview/lfs-fork-only.txt"
+          [ -f "$report" ] || exit 0
+          echo "::error::$(head -n1 "$report")"
+          cat "$report"
+          exit 1
+
+  # Static files only: the viewer reads the ADR Markdown and changes.json as is,
+  # so there is nothing to install or build.
+  adr:
+    needs: changes
+    if: needs.changes.outputs.adr == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 50
+
+      - name: Fetch base branch
+        run: git fetch --depth=50 origin "+refs/heads/${{ github.base_ref }}:refs/remotes/origin/${{ github.base_ref }}"
+
+      - name: Compute the artifact suffix
+        id: urls
+        run: echo "short_hash=$(echo "${{ github.event.pull_request.head.sha }}" | cut -c1-7)" >> "$GITHUB_OUTPUT"
+
+      - name: Assemble the ADR preview
+        env:
+          HEAD_REF: ${{ github.head_ref }}
+        run: |
+          set -euo pipefail
+          node .github/scripts/pr-preview/build-adr-preview.mjs \
+            --base "origin/${{ github.base_ref }}" \
+            --head HEAD \
+            --head-ref "$HEAD_REF" \
+            --out "${RUNNER_TEMP}/adr-preview"
+          mkdir -p adr-analysis
+          cp "${RUNNER_TEMP}/adr-preview/changes.json" adr-analysis/changes.json
+
+      - name: Upload ADR preview artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: pr-preview-adr-${{ steps.urls.outputs.short_hash }}
+          path: ${{ runner.temp }}/adr-preview/
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Upload ADR analysis artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: pr-preview-adr-analysis
+          path: adr-analysis/
+          if-no-files-found: error
+          retention-days: 7
+
   # ── the write half ─────────────────────────────────────────────────────────
   # `publish` and `report` hold the only write tokens in this workflow, one
   # scope each, and they are independent so a gh-pages failure still leaves a
@@ -256,13 +366,13 @@ jobs:
   # report from half the data; skipping leaves the previous push's preview up.
 
   publish:
-    needs: [build, docs]
+    needs: [build, docs, adr]
     if: >-
       !cancelled()
       && github.event.pull_request.head.repo.full_name == github.repository
-      && (needs.build.result == 'success' || needs.build.result == 'skipped')
-      && (needs.docs.result == 'success' || needs.docs.result == 'skipped')
-      && (needs.build.result == 'success' || needs.docs.result == 'success')
+      && !contains(needs.*.result, 'failure')
+      && !contains(needs.*.result, 'cancelled')
+      && contains(needs.*.result, 'success')
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -294,37 +404,43 @@ jobs:
           path: docs-dist
         continue-on-error: true
 
+      - name: Download ADR artifact
+        uses: actions/download-artifact@v8
+        with:
+          name: pr-preview-adr-${{ steps.urls.outputs.short_hash }}
+          path: adr-dist
+        continue-on-error: true
+
       - name: Verify the artifacts are usable
         id: verify
         run: |
           set -euo pipefail
-          # A PR gets whichever previews its own diff called for, so one of the
-          # two being absent is the normal case, not a failure.
+          # A PR gets whichever previews its own diff called for, so some of
+          # them being absent is the normal case, not a failure.
           KINDS=()
-          for kind in storybook docs; do
+          for kind in storybook docs adr; do
             if [ -d "${kind}-dist" ] && [ -n "$(ls -A "${kind}-dist" 2>/dev/null)" ]; then
-              echo "${kind}=true" >> "$GITHUB_OUTPUT"
               KINDS+=("$kind")
-            else
-              echo "${kind}=false" >> "$GITHUB_OUTPUT"
             fi
           done
 
           if [ ${#KINDS[@]} -eq 0 ]; then
             echo "ready=false" >> "$GITHUB_OUTPUT"
-            echo "::warning::Neither preview artifact is present — skipping the deploy for this run."
+            echo "::warning::No preview artifact is present — skipping the deploy for this run."
             exit 0
           fi
-          echo "ready=true" >> "$GITHUB_OUTPUT"
-          echo "kinds=$(printf '%s, ' "${KINDS[@]}" | sed 's/, $//')" >> "$GITHUB_OUTPUT"
+          {
+            echo "ready=true"
+            echo "dirs=${KINDS[*]}"
+            echo "kinds=$(printf '%s, ' "${KINDS[@]}" | sed 's/, $//')"
+          } >> "$GITHUB_OUTPUT"
 
       - name: Deploy to gh-pages
         if: steps.verify.outputs.ready == 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
-          HAS_STORYBOOK: ${{ steps.verify.outputs.storybook }}
-          HAS_DOCS: ${{ steps.verify.outputs.docs }}
+          DIRS: ${{ steps.verify.outputs.dirs }}
           KINDS: ${{ steps.verify.outputs.kinds }}
         run: |
           # A manual push with retry-on-conflict rather than a Pages action, so a
@@ -362,14 +478,10 @@ jobs:
             # stable across pushes and replacing the directory drops nothing
             # that this run should have kept.
             rm -rf "${PAGES_DIR}/pr/${PR_NUMBER}"
-            if [ "$HAS_STORYBOOK" = "true" ]; then
-              mkdir -p "${PAGES_DIR}/pr/${PR_NUMBER}/storybook"
-              cp -r storybook-dist/. "${PAGES_DIR}/pr/${PR_NUMBER}/storybook/"
-            fi
-            if [ "$HAS_DOCS" = "true" ]; then
-              mkdir -p "${PAGES_DIR}/pr/${PR_NUMBER}/docs"
-              cp -r docs-dist/. "${PAGES_DIR}/pr/${PR_NUMBER}/docs/"
-            fi
+            for kind in $DIRS; do
+              mkdir -p "${PAGES_DIR}/pr/${PR_NUMBER}/${kind}"
+              cp -r "${kind}-dist/." "${PAGES_DIR}/pr/${PR_NUMBER}/${kind}/"
+            done
             touch "${PAGES_DIR}/.nojekyll"
             node .github/scripts/pr-preview/write-index.mjs --root "$PAGES_DIR"
 
@@ -394,13 +506,13 @@ jobs:
           exit 1
 
   report:
-    needs: [build, docs]
+    needs: [build, docs, adr]
     if: >-
       !cancelled()
       && github.event.pull_request.head.repo.full_name == github.repository
-      && (needs.build.result == 'success' || needs.build.result == 'skipped')
-      && (needs.docs.result == 'success' || needs.docs.result == 'skipped')
-      && (needs.build.result == 'success' || needs.docs.result == 'success')
+      && !contains(needs.*.result, 'failure')
+      && !contains(needs.*.result, 'cancelled')
+      && contains(needs.*.result, 'success')
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
@@ -427,6 +539,13 @@ jobs:
           path: pr-docs-analysis
         continue-on-error: true
 
+      - name: Download ADR analysis artifact
+        uses: actions/download-artifact@v8
+        with:
+          name: pr-preview-adr-analysis
+          path: pr-adr-analysis
+        continue-on-error: true
+
       - name: Post or update the PR Analysis Report
         uses: actions/github-script@v9
         with:
@@ -434,11 +553,12 @@ jobs:
             const fs = require('node:fs');
             const { execFileSync } = require('node:child_process');
 
-            // Either half is enough to be worth a report: a docs-only PR
+            // Any one preview is enough to be worth a report: a docs-only PR
             // produces no analysis.json, a Storybook-only PR no manifest.
             const hasAnalysis = fs.existsSync('pr-analysis/analysis.json');
             const hasDocs = fs.existsSync('pr-docs-analysis/docs-manifest.json');
-            if (!hasAnalysis && !hasDocs) {
+            const hasAdr = fs.existsSync('pr-adr-analysis/changes.json');
+            if (!hasAnalysis && !hasDocs && !hasAdr) {
               core.info('No analysis artifacts — nothing to report.');
               return;
             }
@@ -454,6 +574,7 @@ jobs:
               shortHash: headSha.slice(0, 7),
               storybookUrl: `https://${owner}.github.io/${repo}/pr/${prNumber}/storybook/`,
               docsUrl: `https://${owner}.github.io/${repo}/pr/${prNumber}/docs/next/`,
+              adrUrl: `https://${owner}.github.io/${repo}/pr/${prNumber}/adr/`,
               runUrl: `${context.serverUrl}/${owner}/${repo}/actions/runs/${context.runId}`,
             }));
 
@@ -475,6 +596,9 @@ jobs:
             }
             if (fs.existsSync('pr-docs-analysis/docs-meta.json')) {
               args.push('--docs-meta', 'pr-docs-analysis/docs-meta.json');
+            }
+            if (hasAdr) {
+              args.push('--adr', 'pr-adr-analysis/changes.json');
             }
 
             const body = execFileSync('node', args, { encoding: 'utf8' });

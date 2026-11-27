@@ -20,7 +20,7 @@ application behavior.
 - Immediately after reading the test log, invoke `generator_write_test` with the generated source code
   - File should contain single test
   - File name must be fs-friendly scenario name (use kebab-case with `.spec.ts` extension)
-  - Place test files in appropriate feature directory: `e2e/session/`, `e2e/serving/`, `e2e/user/`, etc.
+  - Place test files in appropriate folder `e2e/<console>/<page>/` (`admin`, `project-admin`, `project`, `common`; see `e2e/README.md`), e.g. `e2e/project/session/`, `e2e/admin/users/`
   - Test must be placed in a describe matching the top-level test plan item
   - **Test title must use user-scenario-based naming convention**
     - Format: `[Actor] can/cannot [action] [when/with/in condition]`
@@ -132,7 +132,7 @@ test.describe('Session Tests', { tag: ['@session'] }, () => {
 
 **Project-Specific Conventions:**
 - Test files use `.spec.ts` extension (per `e2e/E2E-TEST-NAMING-GUIDELINES.md`)
-- Tests are organized in feature directories: `e2e/session/`, `e2e/serving/`, `e2e/user/`, etc.
+- Tests are organized in folders `e2e/<console>/<page>/` (`admin`, `project-admin`, `project`, `common`; see `e2e/README.md`), e.g. `e2e/project/session/`, `e2e/admin/users/`
 - POM classes are in `e2e/utils/classes/{feature}/`
 - Use `loginAsAdmin` or `loginAsUser` from `test-util.ts` for authentication
 - Use `navigateTo(page, 'route')` for navigation

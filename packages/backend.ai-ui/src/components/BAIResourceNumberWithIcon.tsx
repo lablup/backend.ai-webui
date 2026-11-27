@@ -21,6 +21,7 @@ import { useBAIi18n } from '../hooks/useBAIi18n';
 import { BAINvidiaIcon } from '../icons';
 import BAIFuriosaIcon from '../icons/BAIFuriosaIcon';
 import BAIGaudiIcon from '../icons/BAIGaudiIcon';
+import BAIIntelIcon from '../icons/BAIIntelIcon';
 import BAIIpuIcon from '../icons/BAIIpuIcon';
 import BAIRebelIcon from '../icons/BAIRebelIcon';
 import BAIRocmIcon from '../icons/BAIRocmIcon';
@@ -184,6 +185,7 @@ const BAIResourceNumberWithIcon = ({
 
 const knownDeviceIcons = {
   gaudi: <BAIGaudiIcon />,
+  intel: <BAIIntelIcon />,
   furiosa: <BAIFuriosaIcon />,
   tpu: <BAITpuIcon />,
   ipu: <BAIIpuIcon />,
@@ -192,6 +194,14 @@ const knownDeviceIcons = {
   rebel: <BAIRebelIcon />,
   tenstorrent: <BAITenstorrentIcon />,
 } as const;
+
+// The Intel XPU plugin reports `gpu1`, which is the CUDA logo in the host icon
+// directory; any other icon the server names for the slot still wins.
+const INTEL_XPU_SLOTS = ['xpu.device', 'xpu.shares'];
+const resolveDisplayIcon = (type: string, displayIcon?: string) =>
+  INTEL_XPU_SLOTS.includes(type) && (!displayIcon || displayIcon === 'gpu1')
+    ? 'intel'
+    : displayIcon;
 
 /**
  * The antd `TooltipProps` subset the two `tooltipProps` call sites actually
@@ -225,7 +235,10 @@ export const ResourceTypeIcon = ({
 
   const { mergedResourceSlots } = useBAIResourceSlots();
   const resolveIconPath = useBAIIconPath();
-  const displayIcon = mergedResourceSlots[type]?.display_icon;
+  const displayIcon = resolveDisplayIcon(
+    type,
+    mergedResourceSlots[type]?.display_icon,
+  );
   const genericIcon = (
     <BAIFlex style={{ width: size, height: size }}>
       <MicrochipIcon />

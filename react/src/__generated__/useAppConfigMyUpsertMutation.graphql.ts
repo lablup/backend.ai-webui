@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<7bd78c24439af579955db4b88567fbc0>>
+ * @generated SignedSource<<8964e9513d455fc402c52cf4130a8b8d>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -20,11 +20,7 @@ export type useAppConfigMyUpsertMutation$variables = {
   input: MyUpsertAppConfigFragmentsInput;
 };
 export type useAppConfigMyUpsertMutation$data = {
-  readonly myUpsertAppConfigFragments: {
-    readonly failed: ReadonlyArray<{
-      readonly configName: string;
-      readonly message: string;
-    }>;
+  readonly myAtomicBulkUpsertAppConfigFragments: {
     readonly items: ReadonlyArray<{
       readonly config: any;
       readonly configName: string;
@@ -45,14 +41,7 @@ var v0 = [
     "name": "input"
   }
 ],
-v1 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "configName",
-  "storageKey": null
-},
-v2 = [
+v1 = [
   {
     "alias": null,
     "args": [
@@ -62,9 +51,9 @@ v2 = [
         "variableName": "input"
       }
     ],
-    "concreteType": "UpsertAppConfigFragmentsPayload",
+    "concreteType": "AtomicBulkUpsertAppConfigFragmentsPayload",
     "kind": "LinkedField",
-    "name": "myUpsertAppConfigFragments",
+    "name": "myAtomicBulkUpsertAppConfigFragments",
     "plural": false,
     "selections": [
       {
@@ -82,31 +71,18 @@ v2 = [
             "name": "id",
             "storageKey": null
           },
-          (v1/*: any*/),
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "configName",
+            "storageKey": null
+          },
           {
             "alias": null,
             "args": null,
             "kind": "ScalarField",
             "name": "config",
-            "storageKey": null
-          }
-        ],
-        "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": null,
-        "concreteType": "AppConfigFragmentUpsertError",
-        "kind": "LinkedField",
-        "name": "failed",
-        "plural": true,
-        "selections": [
-          (v1/*: any*/),
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "message",
             "storageKey": null
           }
         ],
@@ -122,7 +98,7 @@ return {
     "kind": "Fragment",
     "metadata": null,
     "name": "useAppConfigMyUpsertMutation",
-    "selections": (v2/*: any*/),
+    "selections": (v1/*: any*/),
     "type": "Mutation",
     "abstractKey": null
   },
@@ -131,19 +107,19 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "useAppConfigMyUpsertMutation",
-    "selections": (v2/*: any*/)
+    "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "b653cb53e4ea61e20164bbb646b81b20",
+    "cacheID": "1b38df03b9587c117cbdfdc30df340dd",
     "id": null,
     "metadata": {},
     "name": "useAppConfigMyUpsertMutation",
     "operationKind": "mutation",
-    "text": "mutation useAppConfigMyUpsertMutation(\n  $input: MyUpsertAppConfigFragmentsInput!\n) {\n  myUpsertAppConfigFragments(input: $input) {\n    items {\n      id\n      configName\n      config\n    }\n    failed {\n      configName\n      message\n    }\n  }\n}\n"
+    "text": "mutation useAppConfigMyUpsertMutation(\n  $input: MyUpsertAppConfigFragmentsInput!\n) {\n  myAtomicBulkUpsertAppConfigFragments(input: $input) {\n    items {\n      id\n      configName\n      config\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "28e718646b9b553f87b5bf4ec2f06241";
+(node as any).hash = "bb1b7330394f783ac0e8bcbf28f6d73d";
 
 export default node;

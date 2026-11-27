@@ -31,6 +31,7 @@ import {
   useBAIResourceSlots,
   useConnectedBAIClient,
 } from '../provider';
+import { Badge } from '@lablup/ui-common/Badge';
 import { Text } from '@lablup/ui-common/Text';
 import { Token } from '@lablup/ui-common/Token';
 import { useTheme } from '@lablup/ui-common/theme';
@@ -259,7 +260,8 @@ const AllocationCell: React.FC<{ record: AgentNodeInList }> = ({ record }) => {
 const UtilizationCell: React.FC<{
   value: string | null | undefined;
   record: AgentNodeInList;
-}> = ({ value, record }) => {
+  hiddenLiveStatKeys?: ReadonlyArray<string>;
+}> = ({ value, record, hiddenLiveStatKeys }) => {
   'use memo';
   const { t } = useBAIi18n();
   const { mergedResourceSlots } = useBAIResourceSlots();
@@ -353,7 +355,10 @@ const UtilizationCell: React.FC<{
           />
         </BAIFlex>
         {_.map(_.keys(parsedValue?.node), (statKey) => {
-          if (['cpu_util', 'mem', 'disk'].includes(statKey)) {
+          if (
+            ['cpu_util', 'mem', 'disk'].includes(statKey) ||
+            _.includes(hiddenLiveStatKeys, statKey)
+          ) {
             return;
           }
           if (_.includes(statKey, '_util')) {
@@ -556,6 +561,9 @@ const StatusCell: React.FC<{
           },
         ]}
       />
+      {value && value !== 'ALIVE' ? (
+        <Badge variant={badgeVariantForStatus('agent', value)} label={value} />
+      ) : null}
       {parsedComputePlugins?.cuda ? (
         <>
           {parsedComputePlugins?.cuda?.cuda_version ? (
@@ -601,6 +609,8 @@ export interface BAIAgentTableProps extends Omit<
   customizeColumns?: (
     baseColumns: BAIColumnType<AgentNodeInList>[],
   ) => BAIColumnType<AgentNodeInList>[];
+  /** `live_stat.node` keys the utilization cell leaves out, such as `net_rx` and `net_tx`. */
+  hiddenLiveStatKeys?: ReadonlyArray<string>;
 }
 
 const BAIAgentTable: React.FC<BAIAgentTableProps> = ({
@@ -608,6 +618,7 @@ const BAIAgentTable: React.FC<BAIAgentTableProps> = ({
   onClickAgentName,
   onChangeOrder,
   customizeColumns,
+  hiddenLiveStatKeys,
   ...tableProps
 }) => {
   'use memo';
@@ -744,7 +755,11 @@ const BAIAgentTable: React.FC<BAIAgentTableProps> = ({
       dataIndex: 'live_stat',
       render: (value, record) => (
         <CellErrorBoundary resetKeys={[value, record?.available_slots]}>
-          <UtilizationCell value={value} record={record} />
+          <UtilizationCell
+            value={value}
+            record={record}
+            hiddenLiveStatKeys={hiddenLiveStatKeys}
+          />
         </CellErrorBoundary>
       ),
     },

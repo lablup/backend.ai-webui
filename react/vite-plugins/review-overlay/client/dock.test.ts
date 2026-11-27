@@ -26,6 +26,7 @@ let unhidden: string[];
 let went: string[];
 let moved: Array<[string, number]>;
 let edited: string[];
+let copiedOne: string[];
 
 const pin = (id: string, label: string): SetPin => ({
   id,
@@ -91,6 +92,7 @@ beforeEach(() => {
   went = [];
   moved = [];
   edited = [];
+  copiedOne = [];
   const host = document.createElement('div');
   document.body.append(host);
   root = host.attachShadow({ mode: 'open' });
@@ -108,6 +110,7 @@ const makeDock = (pageChords = true) =>
     onRemove: (id) => removed.push(id),
     onMove: (id, delta) => moved.push([id, delta]),
     onEdit: (id) => edited.push(id),
+    onCopyOne: (id) => copiedOne.push(id),
     onUnhide: (id) => unhidden.push(id),
     onToggleCards: () => toggled++,
     onToggleAccount: () => accountToggled++,
@@ -263,11 +266,23 @@ describe('createSetDock', () => {
         Array.from(rows()[0].querySelectorAll('.act')).map(
           (act) => act.className,
         ),
-      ).toEqual(['act edit', 'act up', 'act down', 'act remove']);
+      ).toEqual(['act copy', 'act edit', 'act up', 'act down', 'act remove']);
 
       rows()[1].querySelector<HTMLButtonElement>('.edit')?.click();
 
       expect(edited).toEqual(['c_b']);
+    });
+
+    it('copies the one pin its row names', () => {
+      dock.render([pin('c_a', 'a'), linked('c_b', 'b')]);
+
+      const copy = rows()[1].querySelector<HTMLButtonElement>('.copy');
+      expect(copy?.disabled).toBe(false);
+      expect(copy?.getAttribute('aria-label')).toBe('Copy this pin');
+      copy?.click();
+
+      expect(copiedOne).toEqual(['c_b']);
+      expect(copied).toBe(0);
     });
 
     it('disables it on a link’s pin, and says why', () => {

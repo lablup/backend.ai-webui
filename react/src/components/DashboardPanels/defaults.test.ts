@@ -24,29 +24,44 @@ describe('createPanel', () => {
     const first = createPanel(input);
     const second = createPanel(input);
     expect(first.id).not.toBe(second.id);
-    // Identity aside, both carry the same descriptor.
-    expect(first.descriptor).toEqual(second.descriptor);
+    const { id: _first, ...firstConfig } = first;
+    const { id: _second, ...secondConfig } = second;
+    expect(firstConfig).toEqual(secondConfig);
   });
 
-  it('preserves the given panelType', () => {
-    expect(createPanel(input).panelType).toBe('resourceTable');
+  it('keys the panel by its data source preset', () => {
+    expect(createPanel(input).key).toBe('resource.session');
+    expect(createPanel({ ...input, resourceType: 'deployment' }).key).toBe(
+      'resource.deployment',
+    );
+  });
+
+  it('maps the panel kind to a viz', () => {
+    expect(createPanel(input).viz).toBe('table');
+    expect(createPanel({ ...input, panelType: 'resourceCount' }).viz).toBe(
+      'stat',
+    );
     expect(
-      createPanel({ ...input, panelType: 'resourceCount' }).panelType,
-    ).toBe('resourceCount');
-    expect(
-      createPanel({ ...input, panelType: 'sessionResourceGrid' }).panelType,
-    ).toBe('sessionResourceGrid');
+      createPanel({ ...input, panelType: 'sessionResourceGrid' }).viz,
+    ).toBe('grid');
+  });
+
+  it('seeds the size from the kind', () => {
+    const table = createPanel(input);
+    expect([table.columnSpan, table.rowSpan]).toEqual([2, 3]);
+    const count = createPanel({ ...input, panelType: 'resourceCount' });
+    expect([count.columnSpan, count.rowSpan]).toEqual([1, 2]);
   });
 
   it('populates gridView with the default only for sessionResourceGrid panels', () => {
     const grid = createPanel({ ...input, panelType: 'sessionResourceGrid' });
-    expect(grid.descriptor.gridView).toEqual(DEFAULT_SESSION_GRID_VIEW);
+    expect(grid.gridView).toEqual(DEFAULT_SESSION_GRID_VIEW);
 
     const table = createPanel({ ...input, panelType: 'resourceTable' });
-    expect(table.descriptor.gridView).toBeNull();
+    expect(table.gridView).toBeNull();
 
     const count = createPanel({ ...input, panelType: 'resourceCount' });
-    expect(count.descriptor.gridView).toBeNull();
+    expect(count.gridView).toBeNull();
   });
 
   it('survives a JSON round-trip with a grid view set', () => {

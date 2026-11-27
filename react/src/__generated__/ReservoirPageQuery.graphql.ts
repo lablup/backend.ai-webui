@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<98b384ab52facac2e56bbb040b6487a5>>
+ * @generated SignedSource<<93d6c58ae34b94e7a21d89a87d182d9a>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -24,6 +24,7 @@ export type ArtifactFilter = {
   NOT?: ReadonlyArray<ArtifactFilter> | null | undefined;
   OR?: ReadonlyArray<ArtifactFilter> | null | undefined;
   availability?: ReadonlyArray<ArtifactAvailability> | null | undefined;
+  entityId?: UUIDFilter | null | undefined;
   name?: StringFilter | null | undefined;
   registry?: StringFilter | null | undefined;
   source?: StringFilter | null | undefined;
@@ -50,6 +51,12 @@ export type StringFilter = {
   notIn?: ReadonlyArray<string> | null | undefined;
   notStartsWith?: string | null | undefined;
   startsWith?: string | null | undefined;
+};
+export type UUIDFilter = {
+  equals?: string | null | undefined;
+  in?: ReadonlyArray<string> | null | undefined;
+  notEquals?: string | null | undefined;
+  notIn?: ReadonlyArray<string> | null | undefined;
 };
 export type ReservoirPageQuery$variables = {
   filter?: ArtifactFilter | null | undefined;

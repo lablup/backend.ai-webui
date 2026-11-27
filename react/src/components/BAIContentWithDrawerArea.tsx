@@ -30,7 +30,7 @@ const BAIContentWithDrawerArea: React.FC<Props> = ({
   ...contextProps
 }) => {
   const isOpenDrawer = useAtomValue(notificationDrawerOpenState);
-  // Responsive policy (ticket 14): JS behaviour branch — the drawer style is
+  // ADR 0020 R3: JS behaviour branch — the drawer style is
   // a layout MODE, not a track layout, so it stays on the JS-side hook.
   const { xl } = useBAIBreakpoint();
   const drawerStyle: DrawerStyle =

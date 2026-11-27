@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<7740bdf80d4a09588683bd4fe4532b34>>
+ * @generated SignedSource<<3db6932de36b254f4c7774701cc10e60>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -14,6 +14,7 @@ export type RolePresetDetailDrawerFragment$data = {
   readonly autoAssign: boolean;
   readonly createdAt: string;
   readonly deleted: boolean;
+  readonly entityId: string;
   readonly id: string;
   readonly name: string;
   readonly scopeType: string;
@@ -51,6 +52,13 @@ const node: ReaderFragment = {
       "args": null,
       "kind": "ScalarField",
       "name": "id",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "entityId",
       "storageKey": null
     },
     {
@@ -105,6 +113,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "0051280d148f5f65cf1eb3712a9de9b5";
+(node as any).hash = "5b26127ba85e4f6334868c4239bf5f60";
 
 export default node;

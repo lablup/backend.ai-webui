@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<561efcd307b8ee76d0e2faad28eaa910>>
+ * @generated SignedSource<<c6e21fc8276990cdef6d03a3902f1fe5>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -54,6 +54,7 @@ export type DeploymentSettingModalUpdateMutation$data = {
       };
       readonly replicaState: {
         readonly desiredReplicaCount: number;
+        readonly replicaCount: number;
       };
     };
   } | null | undefined;
@@ -170,6 +171,13 @@ v1 = [
                 "alias": null,
                 "args": null,
                 "kind": "ScalarField",
+                "name": "replicaCount",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
                 "name": "desiredReplicaCount",
                 "storageKey": null
               }
@@ -201,16 +209,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "ac9e20ce5b931369ce4ca5f78ca57923",
+    "cacheID": "65fd33fdc0078fbd90b0cadc155d9a1f",
     "id": null,
     "metadata": {},
     "name": "DeploymentSettingModalUpdateMutation",
     "operationKind": "mutation",
-    "text": "mutation DeploymentSettingModalUpdateMutation(\n  $input: UpdateDeploymentInput!\n) {\n  updateModelDeployment(input: $input) {\n    deployment {\n      id\n      metadata {\n        name\n        tags\n        resourceGroupName\n        updatedAt\n      }\n      networkAccess {\n        openToPublic\n      }\n      replicaState {\n        desiredReplicaCount\n      }\n    }\n  }\n}\n"
+    "text": "mutation DeploymentSettingModalUpdateMutation(\n  $input: UpdateDeploymentInput!\n) {\n  updateModelDeployment(input: $input) {\n    deployment {\n      id\n      metadata {\n        name\n        tags\n        resourceGroupName\n        updatedAt\n      }\n      networkAccess {\n        openToPublic\n      }\n      replicaState {\n        replicaCount\n        desiredReplicaCount\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "bdc119d19a1ff9cb9611a02edc900367";
+(node as any).hash = "51fa11278db2cd8e05cd5db1076b85ac";
 
 export default node;

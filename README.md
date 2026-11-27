@@ -92,6 +92,17 @@ Backend.AI Web UI focuses to
   - Delegate login to web server
   - Support userid / password login
 
+## Supported Browsers
+
+| Browser | Minimum version |
+|---|---|
+| Chrome | 123 |
+| Edge | 123 |
+| Safari (macOS, iOS / iPadOS) | 17.5 |
+| Firefox | 125 |
+
+A browser below this range, or one without the Popover API or CSS `light-dark()`, sees a notice on the loading screen listing these versions, and the Web UI does not load. A **Use anyway** button under the notice lets the user continue after a confirmation, with normal behavior not guaranteed ([ADR 0038](docs/adr/0038-use-anyway-past-the-unsupported-browser-block.md)). The desktop app ships its own engine and is not affected. The range and how it is checked are recorded in [ADR 0037](docs/adr/0037-supported-browser-range-and-load-block.md); the table lives in [`manifest/app.js`](manifest/app.js).
+
 ## Setup Guide
 
 ### Baked versions
@@ -193,16 +204,22 @@ $ make compile_wsproxy
 
 #### User manual screenshots (Git LFS)
 
-Once the user manual images (anywhere under `packages/backend.ai-webui-docs/src/`) move to
-[Git LFS](https://git-lfs.com), normal development needs nothing extra: a clone keeps them as
+The user manual images (anywhere under `packages/backend.ai-webui-docs/src/`) are in
+[Git LFS](https://git-lfs.com). Normal development needs nothing extra: a clone keeps them as
 small pointer files, even with git-lfs installed (`.lfsconfig`). To build the manual or work on
-its screenshots, install git-lfs, run `git lfs install` once, and fetch the images:
+its screenshots, install git-lfs, set it up once, and fetch the images:
 
 ```console
+$ git lfs install --skip-repo
 $ pnpm --filter backend.ai-webui-docs run images:pull
 ```
 
-Committing images under an LFS-tracked path without git-lfs is caught by the `lfs-pointer-check` CI job.
+Use `--skip-repo`: Husky owns this repository's hooks, so a plain `git lfs install` stops at
+`Hook already exists: pre-push` (it still sets up the filters). The upload is done by Husky's
+`.husky/pre-push`, which runs `git lfs pre-push`. Then add or replace images and commit and
+push as usual; the images are committed as pointers and `git push` uploads them. A push
+that carries an image committed as raw bytes (added without git-lfs) is refused, with the
+commands that rewrite the commit; every other push goes through, with or without git-lfs.
 
 ### Developing / testing with dev server
 
@@ -288,29 +305,6 @@ On another terminal:
 $ pnpm run test      # Run tests (tests are located in `tests` directory)
 ```
 
-#### Visual Regression test
-
-To perform visual regression tests,
-On a terminal;
-
-```console
-$ pnpm playwright test e2e/visual_regression
-```
-
-You can see screenshots in `e2e/snapshots`.
-
-If you want to update screenshots due to UI changes, On a terminal;
-
-```console
-$ pnpm playwright test e2e/visual_regression --update-snapshots
-```
-
-Also, If you want to see visual regression test report, On a terminal;
-
-```console
-$ pnpm exec playwright show-report
-```
-
 #### Jest test
 
 To perform JavaScript test,
@@ -387,6 +381,7 @@ $ make bundle
 ```
 
 will generate compiled static web bundle at `./app` directory. Then you can serve the web bundle via webservers.
+It also generates `backend.ai-webui-bundle-<version>-nosourcemap.zip`, the same bundle without source maps, for deployments that must not expose them.
 
 ### Serving with nginx
 

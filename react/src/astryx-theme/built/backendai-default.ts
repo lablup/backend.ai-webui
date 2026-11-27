@@ -9,10 +9,7 @@
  module (+ `.css`) through `./index.ts`, whose `__built: true` flag makes
  `<Theme>` skip runtime style injection.
 
- Regenerate after any recipe or theme.json change:
-
-     cd react && NODE_OPTIONS="--import=$PWD/../scripts/astryx-theme-css-stub.mjs" \
-       pnpm exec astryx theme build src/astryx-theme/built/backendai-default.ts
+ Regenerate after any recipe or theme.json change with step 1 of `./index.ts`.
 
  `scripts/verify.sh` runs the CLI's `--check` mode to fail on stale artifacts.
 

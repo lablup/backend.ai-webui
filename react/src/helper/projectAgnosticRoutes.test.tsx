@@ -19,7 +19,7 @@ import {
   PROJECT_AGNOSTIC_PATHNAME_REGEX,
   PROJECT_AGNOSTIC_ROUTE_PATHS,
 } from './projectAgnosticRoutes';
-import { matchRoutes } from 'react-router-dom';
+import { matchRoutes, type RouteObject } from 'react-router-dom';
 import { describe, expect, it } from 'vitest';
 
 interface MatchedRoute {
@@ -103,6 +103,32 @@ describe('PROJECT_AGNOSTIC_ROUTE_PATHS (FR-3414 drift guard)', () => {
   );
 });
 
+const adminSubtreeMenuKeys = (): string[] => {
+  const keys = new Set<string>();
+  const walk = (routes: RouteObject[] = []) => {
+    for (const route of routes) {
+      const menuKey = (route.handle as MatchedRoute['handle'])?.menuKey;
+      if (menuKey) keys.add(menuKey);
+      walk(route.children);
+    }
+  };
+  walk(mainLayoutChildRoutes.find((route) => route.path === 'admin')?.children);
+  return [...keys];
+};
+
+describe('the /admin/* subtree (#11209)', () => {
+  it('gates every menuKey it declares', () => {
+    const keys = adminSubtreeMenuKeys();
+    expect(keys).not.toHaveLength(0);
+    expect(
+      keys.filter(
+        (key) =>
+          !(PROJECT_AGNOSTIC_MENU_KEYS as readonly string[]).includes(key),
+      ),
+    ).toEqual([]);
+  });
+});
+
 describe('PROJECT_AGNOSTIC_PATHNAME_REGEX (FR-3414)', () => {
   it.each([
     // Modern /admin/* shape (routes.tsx `handle.menuKey` pages)
@@ -112,6 +138,7 @@ describe('PROJECT_AGNOSTIC_PATHNAME_REGEX (FR-3414)', () => {
     '/admin/deployments/dep-1',
     '/admin/deployments/deployment-presets/new',
     '/admin/data',
+    '/admin/dashboard',
     // FR-3414 widening — canonical shapes
     '/admin/users',
     // FR-3415 widening
@@ -127,6 +154,7 @@ describe('PROJECT_AGNOSTIC_PATHNAME_REGEX (FR-3414)', () => {
     '/admin/diagnostics',
     '/admin/rbac',
     '/admin/branding',
+    '/admin/system-settings',
     '/admin/information',
     // Legacy first-segment shapes (redirect shims)
     '/admin-session',
@@ -163,8 +191,9 @@ describe('PROJECT_AGNOSTIC_PATHNAME_REGEX (FR-3414)', () => {
     '/project/default/session',
     '/project/default/admin/deployments/dep-1', // project-admin space
     '/project/default/admin/users',
-    // The only excluded admin page: it still reads the ambient project.
-    '/admin/dashboard',
+    // The project admin dashboard, and the legacy path that redirects there or
+    // to `/admin/dashboard` by role.
+    '/project/default/admin/dashboard',
     '/admin-dashboard',
     '/admin', // bare admin root redirects; not a scoped surface itself
     '/administrator',

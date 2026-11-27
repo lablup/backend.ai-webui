@@ -72,12 +72,22 @@ automation's job.
 ### The draft test
 
 Update the `e2e-agent/` test that covers the flow; otherwise add
-`e2e-agent/<feature>/<flow>.e2e.ts`, following the folder names in `e2e/`.
+`e2e-agent/<part>/<page>/<flow>.e2e.ts`. The part and page folders are the
+ones `e2e/` uses (folder rule in `e2e/README.md`): `admin/` for the admin
+console (`/admin/*`), `project-admin/` for `/project/:projectName/admin/*`,
+`project/` for the user console, `common/` for auth, `config.toml` behaviour
+and plugins; the page is the first route segment after the scope. The part
+decides which server the nightly run uses (`E2E_PART`, `e2e/e2e-parts.ts`):
+a file outside these folders (the root, or an old `e2e-agent/<feature>/`
+path) still runs, in the `user` part on the user server, so never put one
+there. Import `e2e-agent/utils/` by the relative path from the file's folder
+(`../../utils/...` from `<part>/<page>/`).
 
 **A Playwright spec in `e2e/` covers the flow → port it, then delete it**,
 whether or not an `e2e-agent/` test already covers the flow, so the old
 steps never run after the merge. Port the whole spec file, not just the
-changed test, into one `e2e-agent/<feature>/<same-stem>.e2e.ts`:
+changed test, into one `e2e-agent/<part>/<page>/<same-stem>.e2e.ts` (the
+spec's own `e2e/<part>/<page>/` folders):
 
 - each `test(...)` becomes a draft test with the same name, its steps
   rewritten as the user scenario they walk, in `agent.act` sentences only;
@@ -92,7 +102,7 @@ changed test, into one `e2e-agent/<feature>/<same-stem>.e2e.ts`:
 ```ts
 import { test } from "@e2e-dev/web";
 
-// ported from: e2e/session/session-creation.spec.ts › <test name>
+// ported from: e2e/project/session/session-creation.spec.ts › <test name>
 test(
   "the user launches an interactive session with a project",
   {
@@ -120,6 +130,13 @@ test(
 - A ported test's first line names its source: `// ported from:
   e2e/<path>.spec.ts › <test name>`. An updated draft keeps the line it
   already had.
+- **No steps on admin console pages for preparation** (`/admin/*`, the old
+  flat URLs that redirect there, or "Switch to Admin Console"). Admin-side
+  preparation of a user console or project admin flow (a user or keypair, a
+  project, a resource policy) is not a step: automation does it and its
+  cleanup through the API helpers in `e2e-agent/utils/`
+  (`.claude/rules/e2e-admin-prep-via-api.md`).
+  A flow of the admin console itself acts on its pages as usual.
 
 ## 3. PR body
 
@@ -131,12 +148,12 @@ or `none`.
 ```md
 ## E2E flow
 
-Compared: e2e/session/session-creation.spec.ts › <test name>
+Compared: e2e/project/session/session-creation.spec.ts › <test name>
 Result: flow changed
 Change: <old step> → <new step>
 Intended: yes
-Agent flow: e2e-agent/session/<flow>.e2e.ts
-Ported from: e2e/session/session-creation.spec.ts (deleted)
+Agent flow: e2e-agent/project/session/<flow>.e2e.ts
+Ported from: e2e/project/session/session-creation.spec.ts (deleted)
 ```
 
 | `Result` | Lines after `Result` |
@@ -161,7 +178,7 @@ When the outcome is settled (every outcome except "not intended"), record
 HEAD with the hook's own record mode, so the path never drifts from the check:
 
 ```bash
-.claude/scripts/require-e2e-flow.sh --record
+bash "$(git rev-parse --show-toplevel)"/.claude/scripts/require-e2e-flow.sh --record   # any subdirectory, no exec bit needed
 ```
 
 Commit the draft test **before** recording, since the commit moves HEAD. The

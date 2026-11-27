@@ -19,8 +19,12 @@ import {
 import type { RelayMockEnvironment } from 'relay-test-utils/lib/RelayModernMockEnvironment';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-vi.mock('../hooks/useWebUIConfig', () => ({
+vi.mock('../hooks/useWebUIConfig', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('../hooks/useWebUIConfig')>()),
   fetchAndParseConfig: vi.fn(),
+}));
+vi.mock('../components/DefaultProviders', async () => ({
+  jotaiStore: (await import('jotai')).createStore(),
 }));
 vi.mock('../RelayEnvironment', async () => {
   const { createMockEnvironment } = await import('relay-test-utils');
@@ -28,6 +32,19 @@ vi.mock('../RelayEnvironment', async () => {
 });
 
 const environment = RelayEnvironment as unknown as RelayMockEnvironment;
+
+// One real store per file: start every test from empty settings layers.
+beforeEach(async () => {
+  const { jotaiStore } = await import('../components/DefaultProviders');
+  const {
+    baseLoginConfigState,
+    domainWebUISettingsState,
+    publicWebUISettingsState,
+  } = await import('../hooks/useWebUIConfig');
+  jotaiStore.set(baseLoginConfigState, null);
+  jotaiStore.set(publicWebUISettingsState, undefined);
+  jotaiStore.set(domainWebUISettingsState, undefined);
+});
 
 const globalId = (typeName: string, uuid: string) =>
   btoa(`${typeName}:${uuid}`);
@@ -59,6 +76,7 @@ const meWith = (
     role: string | null;
     domainName: string | null;
     domain: { entityId: string; basicInfo: { name: string } } | null;
+    domainConfig: Record<string, unknown>;
   }> = {},
 ) => ({
   myUserV2: {
@@ -76,6 +94,9 @@ const meWith = (
     recentProject: projects.recent ? { edges: edges(projects.recent) } : null,
     defaultProject: { edges: edges(projects.default ?? []) },
   },
+  myAppConfigs: overrides.domainConfig
+    ? [{ configName: 'domainConfig', config: overrides.domainConfig }]
+    : [],
 });
 
 // Queues one Relay payload per page and records the variables each was asked for.
@@ -103,6 +124,7 @@ const fakeUtils = (remembered: string | null) => ({
 
 const makeClient = () => ({
   logout: vi.fn().mockResolvedValue(undefined),
+  get_manager_version: vi.fn().mockResolvedValue('26.9.0'),
   _config: { endpoint: 'https://api.example.com', endpointHost: 'api' },
 });
 
@@ -122,6 +144,22 @@ describe('connectViaGQL', () => {
     delete g.backendaiclient;
   });
 
+  test("layers the domain's settings document from the same read onto the config", async () => {
+    const { jotaiStore } = await import('../components/DefaultProviders');
+    const { loginConfigState } = await import('../hooks/useWebUIConfig');
+    queueResponses([
+      meWith(
+        { default: [[PROJECT_A, 'alpha']] },
+        { domainConfig: { settings: { hideAgents: !cfg.hideAgents } } },
+      ),
+    ]);
+
+    await connectViaGQL(makeClient(), cfg, []);
+    expect(jotaiStore.get(loginConfigState)).toMatchObject({
+      hideAgents: !cfg.hideAgents,
+    });
+  });
+
   test('stores the user, the default project, and the domain name + uuid from one myUserV2 read', async () => {
     const variables = queueResponses([
       meWith({ default: [[PROJECT_A, 'alpha']] }),
@@ -130,7 +168,7 @@ describe('connectViaGQL', () => {
     await connectViaGQL(makeClient(), cfg, []);
 
     expect(variables).toEqual([
-      { recentProjectName: '', hasRecentProject: false },
+      { recentProjectName: '', hasRecentProject: false, needsAccessKey: false },
     ]);
 
     expect(g.backendaiclient.email).toBe('me@example.com');
@@ -205,7 +243,11 @@ describe('connectViaGQL', () => {
     await connectViaGQL(makeClient(), cfg, []);
 
     expect(variables).toEqual([
-      { recentProjectName: 'zeta', hasRecentProject: true },
+      {
+        recentProjectName: 'zeta',
+        hasRecentProject: true,
+        needsAccessKey: false,
+      },
     ]);
     expect(g.backendaiclient.current_group).toBe('zeta');
     expect(g.backendaiclient.current_group_id()).toBe(PROJECT_B);
@@ -268,6 +310,41 @@ describe('connectViaGQL', () => {
     ]);
     expect(g.backendaioptions.set).toHaveBeenCalledWith('endpoints', updated);
   });
+
+  test('reads the manager version before the user query, once signed in', async () => {
+    const client = makeClient();
+    environment.mock.queueOperationResolver(() => {
+      expect(client.get_manager_version).toHaveBeenCalledTimes(1);
+      return { data: meWith() } as any;
+    });
+
+    await connectViaGQL(client, cfg, []);
+  });
+
+  test('fails the connect when the manager refuses the version', async () => {
+    const refusal = { isError: true, statusCode: 401 };
+    const client = {
+      ...makeClient(),
+      get_manager_version: vi.fn().mockRejectedValue(refusal),
+    };
+
+    await expect(connectViaGQL(client, cfg, [])).rejects.toBe(refusal);
+    expect(client.logout).toHaveBeenCalledTimes(1);
+  });
+
+  test('keeps the session when the version read fails with a 5xx', async () => {
+    const client = {
+      ...makeClient(),
+      get_manager_version: vi
+        .fn()
+        .mockRejectedValue({ isError: true, statusCode: 502 }),
+    };
+
+    await expect(connectViaGQL(client, cfg, [])).rejects.toBeInstanceOf(
+      LoginBootstrapIncompleteError,
+    );
+    expect(client.logout).not.toHaveBeenCalled();
+  });
 });
 
 // A manager that never answers: the request settles only when its signal is
@@ -275,7 +352,7 @@ describe('connectViaGQL', () => {
 function makeHangingClient() {
   return {
     requestTimeout: 30_000,
-    get_manager_version: vi.fn(
+    probeServer: vi.fn(
       (signal: AbortSignal) =>
         new Promise((_, reject) => {
           signal.addEventListener('abort', () =>
@@ -295,12 +372,14 @@ describe('probeManager (dev build)', () => {
     vi.useRealTimers();
   });
 
-  it('resolves when the manager answers', async () => {
+  it('resolves when the server answers, without asking for the version', async () => {
     const client = {
       requestTimeout: 30_000,
-      get_manager_version: vi.fn().mockResolvedValue('26.9.0'),
+      probeServer: vi.fn().mockResolvedValue(undefined),
+      get_manager_version: vi.fn(),
     };
     await expect(probeManager(client)).resolves.toBeUndefined();
+    expect(client.get_manager_version).not.toHaveBeenCalled();
     expect(escapeLoginProbe()).toBe(false);
   });
 
@@ -420,13 +499,13 @@ describe('connectViaGQL — cancelled attempt', () => {
     const current = { ready: true };
     (globalThis as Record<string, unknown>).backendaiclient = current;
     const bootstrap = {
-      keypair: { access_key: 'AKIA', resource_policy: 'default' },
-      user: { email: 'stale@example.test', groups: [], role: 'user' },
+      myKeypairs: { edges: [{ node: { accessKey: 'AKIA' } }] },
+      myUserV2: { basicInfo: { email: 'stale@example.test' } },
       groups: [],
     } as unknown as Parameters<typeof connectViaGQL>[3];
 
     await expect(
-      connectViaGQL({ logout: vi.fn() }, cfg, [], bootstrap, () => true),
+      connectViaGQL(makeClient(), cfg, [], bootstrap, () => true),
     ).rejects.toBeInstanceOf(LoginAttemptCancelledError);
     expect((globalThis as Record<string, unknown>).backendaiclient).toBe(
       current,
@@ -492,27 +571,41 @@ describe('connectViaGQL — act-as tab (FR-4111)', () => {
   });
 
   it("adopts the target's access key over the webserver session's", async () => {
-    queueResponses([meWith({ default: [[PROJECT_A, 'alpha']] })]);
-    const client = actAsClient(
-      vi.fn().mockResolvedValue({ keypair: { access_key: 'TARGET_KEY' } }),
-    );
+    const variables = queueResponses([
+      {
+        ...meWith({ default: [[PROJECT_A, 'alpha']] }),
+        myKeypairs: {
+          edges: [
+            {
+              node: { id: globalId('KeyPairV2', 'k'), accessKey: 'TARGET_KEY' },
+            },
+          ],
+        },
+      },
+    ]);
+    const client = actAsClient();
     (client._config as Record<string, unknown>)._accessKey = 'ADMIN_KEY';
 
     await connectViaGQL(client, cfg, []);
+    expect(variables[0].needsAccessKey).toBe(true);
+    expect(client.query).not.toHaveBeenCalled();
     expect((client._config as Record<string, unknown>)._accessKey).toBe(
       'TARGET_KEY',
     );
   });
 
   it("takes the target's access key from the probe's bootstrap without a keypair read", async () => {
-    queueResponses([meWith({ default: [[PROJECT_A, 'alpha']] })]);
+    const variables = queueResponses([
+      meWith({ default: [[PROJECT_A, 'alpha']] }),
+    ]);
     const client = actAsClient();
     (client._config as Record<string, unknown>)._accessKey = 'ADMIN_KEY';
     const bootstrap = {
-      keypair: { access_key: 'TARGET_KEY' },
+      myKeypairs: { edges: [{ node: { accessKey: 'TARGET_KEY' } }] },
     } as unknown as LoginBootstrap;
 
     await connectViaGQL(client, cfg, [], bootstrap);
+    expect(variables[0].needsAccessKey).toBe(false);
     expect(client.query).not.toHaveBeenCalled();
     expect((client._config as Record<string, unknown>)._accessKey).toBe(
       'TARGET_KEY',
@@ -520,10 +613,13 @@ describe('connectViaGQL — act-as tab (FR-4111)', () => {
   });
 
   it('keeps the session access key outside act-as', async () => {
-    queueResponses([meWith({ default: [[PROJECT_A, 'alpha']] })]);
+    const variables = queueResponses([
+      meWith({ default: [[PROJECT_A, 'alpha']] }),
+    ]);
     const client = { ...makeClient(), query: vi.fn() };
 
     await connectViaGQL(client, cfg, []);
+    expect(variables[0].needsAccessKey).toBe(false);
     expect(client.query).not.toHaveBeenCalled();
   });
 });

@@ -219,6 +219,7 @@ const ConfirmPopoverButton: React.FC<{
       }
     >
       <BAIButton
+        data-testid={`bai-name-action-${action.key}`}
         type="text"
         size="small"
         icon={action.icon}
@@ -285,9 +286,17 @@ const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
         menuOnlyActions.length > 0 ? MORE_BUTTON_WIDTH + ACTIONS_GAP : 0;
       const availableWidth =
         containerWidth - minTitleReserve - moreButtonReserve;
+      // Folding one icon action alone only swaps it for an equally wide More button;
+      // an icon-less action renders as a wider text button, so it may still fold.
+      const settle = (count: number) =>
+        menuOnlyActions.length === 0 &&
+        autoActionCount - count === 1 &&
+        autoActions[count]?.icon
+          ? autoActionCount
+          : count;
 
       if (availableWidth <= 0) {
-        setVisibleCount(Math.max(0, minVisibleActions));
+        setVisibleCount(settle(Math.max(0, minVisibleActions)));
         return;
       }
 
@@ -316,7 +325,7 @@ const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
         }
       }
 
-      setVisibleCount(Math.max(count, minVisibleActions));
+      setVisibleCount(settle(Math.max(count, minVisibleActions)));
     },
   );
 
@@ -338,7 +347,12 @@ const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
       ro.disconnect();
       cancelAnimationFrame(rafId);
     };
-  }, [autoActionCount, minTitleWidth, calculateVisibleActions]);
+  }, [
+    autoActionCount,
+    menuOnlyActions.length,
+    minTitleWidth,
+    calculateVisibleActions,
+  ]);
 
   const hasOverflow = visibleCount < autoActionCount;
   const visibleActions = autoActions.slice(0, visibleCount);
@@ -542,6 +556,7 @@ const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
             return (
               <BAIButton
                 key={action.key}
+                data-testid={`bai-name-action-${action.key}`}
                 type="text"
                 size="small"
                 icon={action.icon}

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<daec05e36e9df76f871e8a42844384ab>>
+ * @generated SignedSource<<c8961d1c0f3741d189d1a2881ba19bd9>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,39 +9,30 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
-export type ModifyImageInput = {
+export type UpdateImageInput = {
   architecture?: string | null | undefined;
-  digest?: string | null | undefined;
+  configDigest?: string | null | undefined;
   image?: string | null | undefined;
-  is_local?: boolean | null | undefined;
-  labels?: ReadonlyArray<KVPairInput | null | undefined> | null | undefined;
+  isLocal?: boolean | null | undefined;
+  labels?: any | null | undefined;
   name?: string | null | undefined;
   registry?: string | null | undefined;
-  resource_limits?: ReadonlyArray<ResourceLimitInput | null | undefined> | null | undefined;
-  size_bytes?: number | null | undefined;
-  supported_accelerators?: ReadonlyArray<string | null | undefined> | null | undefined;
+  resourceLimits?: any | null | undefined;
+  sizeBytes?: number | null | undefined;
+  supportedAccelerators?: string | null | undefined;
   tag?: string | null | undefined;
   type?: string | null | undefined;
 };
-export type KVPairInput = {
-  key?: string | null | undefined;
-  value?: string | null | undefined;
-};
-export type ResourceLimitInput = {
-  key?: string | null | undefined;
-  max?: string | null | undefined;
-  min?: string | null | undefined;
-};
 export type ManageImageResourceLimitModalMutation$variables = {
-  architecture?: string | null | undefined;
-  props: ModifyImageInput;
-  target: string;
+  id: string;
+  input: UpdateImageInput;
 };
 export type ManageImageResourceLimitModalMutation$data = {
-  readonly modify_image: {
-    readonly msg: string | null | undefined;
-    readonly ok: boolean | null | undefined;
-  } | null | undefined;
+  readonly updateImage: {
+    readonly item: {
+      readonly id: string;
+    };
+  };
 };
 export type ManageImageResourceLimitModalMutation = {
   response: ManageImageResourceLimitModalMutation$data;
@@ -49,58 +40,54 @@ export type ManageImageResourceLimitModalMutation = {
 };
 
 const node: ConcreteRequest = (function(){
-var v0 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "architecture"
-},
-v1 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "props"
-},
-v2 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "target"
-},
-v3 = [
+var v0 = [
+  {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "id"
+  },
+  {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "input"
+  }
+],
+v1 = [
   {
     "alias": null,
     "args": [
       {
         "kind": "Variable",
-        "name": "architecture",
-        "variableName": "architecture"
+        "name": "id",
+        "variableName": "id"
       },
       {
         "kind": "Variable",
-        "name": "props",
-        "variableName": "props"
-      },
-      {
-        "kind": "Variable",
-        "name": "target",
-        "variableName": "target"
+        "name": "input",
+        "variableName": "input"
       }
     ],
-    "concreteType": "ModifyImage",
+    "concreteType": "UpdateImagePayload",
     "kind": "LinkedField",
-    "name": "modify_image",
+    "name": "updateImage",
     "plural": false,
     "selections": [
       {
         "alias": null,
         "args": null,
-        "kind": "ScalarField",
-        "name": "ok",
-        "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "msg",
+        "concreteType": "ImageV2",
+        "kind": "LinkedField",
+        "name": "item",
+        "plural": false,
+        "selections": [
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "id",
+            "storageKey": null
+          }
+        ],
         "storageKey": null
       }
     ],
@@ -109,40 +96,32 @@ v3 = [
 ];
 return {
   "fragment": {
-    "argumentDefinitions": [
-      (v0/*: any*/),
-      (v1/*: any*/),
-      (v2/*: any*/)
-    ],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
     "name": "ManageImageResourceLimitModalMutation",
-    "selections": (v3/*: any*/),
+    "selections": (v1/*: any*/),
     "type": "Mutation",
     "abstractKey": null
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": [
-      (v2/*: any*/),
-      (v0/*: any*/),
-      (v1/*: any*/)
-    ],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "ManageImageResourceLimitModalMutation",
-    "selections": (v3/*: any*/)
+    "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "b4c4a5b17c6aa265df64e4d2d6338684",
+    "cacheID": "3570439ebf319cbc8149c89579a7f3c5",
     "id": null,
     "metadata": {},
     "name": "ManageImageResourceLimitModalMutation",
     "operationKind": "mutation",
-    "text": "mutation ManageImageResourceLimitModalMutation(\n  $target: String!\n  $architecture: String\n  $props: ModifyImageInput!\n) {\n  modify_image(target: $target, architecture: $architecture, props: $props) {\n    ok\n    msg\n  }\n}\n"
+    "text": "mutation ManageImageResourceLimitModalMutation(\n  $id: UUID!\n  $input: UpdateImageInput!\n) {\n  updateImage(id: $id, input: $input) {\n    item {\n      id\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "491b6e500587a3630195d9025ef76f29";
+(node as any).hash = "e7838b26fdf350015cfb9fd65a5370f7";
 
 export default node;

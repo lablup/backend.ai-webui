@@ -99,6 +99,7 @@ const BAIKeypairResourcePolicyV2Table = ({
         fragment BAIKeypairResourcePolicyV2TableFragment on KeypairResourcePolicyV2
         @relay(plural: true) {
           id
+          entityId
           name
           createdAt
           defaultForUnspecified

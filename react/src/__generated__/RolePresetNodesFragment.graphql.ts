@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<84f80fa014c7f6b6e4a78a100232ced3>>
+ * @generated SignedSource<<d0644be21692ca16f277359907cf4b7e>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -13,6 +13,7 @@ import { FragmentRefs } from "relay-runtime";
 export type RolePresetNodesFragment$data = ReadonlyArray<{
   readonly autoAssign: boolean;
   readonly createdAt: string;
+  readonly entityId: string;
   readonly id: string;
   readonly name: string;
   readonly permissionPresets: {
@@ -40,6 +41,13 @@ const node: ReaderFragment = {
       "args": null,
       "kind": "ScalarField",
       "name": "id",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "entityId",
       "storageKey": null
     },
     {
@@ -100,6 +108,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "112c849542b215de923592ce5dcbfd73";
+(node as any).hash = "9a0244e2c2f1d2032ce92c145496c756";
 
 export default node;

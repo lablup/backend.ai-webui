@@ -1,0 +1,15 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
+/* The card fills its grid cell; its body stack and the panel inside take that height. */
+@layer components {
+  .session-resource-card {
+    display: flex;
+    flex-direction: column;
+  }
+  .session-resource-card > * {
+    flex: 1;
+    min-height: 0;
+  }
+}

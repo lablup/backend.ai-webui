@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<55192abc177db8ed046fad148b0f9868>>
+ * @generated SignedSource<<e9a199ed86206735e67ea77339b83f7b>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,12 +10,13 @@
 
 import { ConcreteRequest } from 'relay-runtime';
 export type UserResourcePolicyV2Mutation$variables = {
-  name: string;
+  id: string;
 };
 export type UserResourcePolicyV2Mutation$data = {
-  readonly adminDeleteUserResourcePolicyV2: {
-    readonly name: string;
-  } | null | undefined;
+  readonly purgeUserResourcePolicyV2: {
+    readonly entityId: string;
+    readonly purgedId: string;
+  };
 };
 export type UserResourcePolicyV2Mutation = {
   response: UserResourcePolicyV2Mutation$data;
@@ -27,7 +28,7 @@ var v0 = [
   {
     "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "name"
+    "name": "id"
   }
 ],
 v1 = [
@@ -36,20 +37,27 @@ v1 = [
     "args": [
       {
         "kind": "Variable",
-        "name": "name",
-        "variableName": "name"
+        "name": "id",
+        "variableName": "id"
       }
     ],
-    "concreteType": "DeleteUserResourcePolicyPayload",
+    "concreteType": "PurgeUserResourcePolicyPayload",
     "kind": "LinkedField",
-    "name": "adminDeleteUserResourcePolicyV2",
+    "name": "purgeUserResourcePolicyV2",
     "plural": false,
     "selections": [
       {
         "alias": null,
         "args": null,
         "kind": "ScalarField",
-        "name": "name",
+        "name": "purgedId",
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "entityId",
         "storageKey": null
       }
     ],
@@ -74,16 +82,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "fbf8580d648b402792efee8f1dbda4d5",
+    "cacheID": "a32928b722a8f3eeea53cc5ce8917387",
     "id": null,
     "metadata": {},
     "name": "UserResourcePolicyV2Mutation",
     "operationKind": "mutation",
-    "text": "mutation UserResourcePolicyV2Mutation(\n  $name: String!\n) {\n  adminDeleteUserResourcePolicyV2(name: $name) {\n    name\n  }\n}\n"
+    "text": "mutation UserResourcePolicyV2Mutation(\n  $id: UUID!\n) {\n  purgeUserResourcePolicyV2(id: $id) {\n    purgedId\n    entityId\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "12aba1bd23b572a97f9312abc5d145d1";
+(node as any).hash = "6966f1469fb944551698102b07d8c0dc";
 
 export default node;

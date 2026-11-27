@@ -2,7 +2,7 @@
 
 Operational checklist for the release manager. This file documents what to
 do _during_ a release that goes beyond "tag the commit". Background and
-design decisions live in the spec docs under `.specs/` (at the repo root);
+design decisions live in ADR 0023 (`docs/adr/0023-multi-version-docs-site-from-source-archive-branches.md` at the repo root);
 this file is the short, testable checklist.
 
 ---
@@ -201,7 +201,7 @@ rejected as part of FR-2729 / FR-2710 F6:
 
 ## See also
 
-- Spec: `.specs/FR-2729-webui-docs-multi-version-deployment/spec.md` (FR-9)
+- ADR 0023: `docs/adr/0023-multi-version-docs-site-from-source-archive-branches.md`
 - Workflow: `.github/workflows/docs-archive-orphan-branch.yml`
 - Workflow: `.github/workflows/package.yml` (job `build_docs`)
 - Config: `packages/backend.ai-webui-docs/docs-toolkit.config.yaml`

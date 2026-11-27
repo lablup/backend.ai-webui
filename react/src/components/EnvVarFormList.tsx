@@ -16,9 +16,8 @@ import {
   typeScaleVars,
 } from '@lablup/ui-common/theme/tokens.stylex';
 import * as stylex from '@stylexjs/stylex';
-import { BAIButton, BAIFlex, BAITextInput } from 'backend.ai-ui';
+import { BAIDynamicList, BAITextInput } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { CircleMinus, PlusIcon } from 'lucide-react';
 import React, { useId, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -47,7 +46,7 @@ const EnvVarValueInput: React.FC<
   {
     form: FormInstance;
     variableNamePath: Parameters<FormInstance['getFieldValue']>[0];
-    getPlaceholderForVariable: (variable: string) => string;
+    getPlaceholderForVariable: (variable: string) => string | undefined;
     label: string;
   } & Omit<React.ComponentProps<typeof BAITextInput>, 'placeholder'>
 > = ({
@@ -119,6 +118,8 @@ const comboboxStyles = stylex.create({
 
 interface EnvVarNameInputProps {
   /** Injected by `Form.Item`. */
+  id?: string;
+  /** Injected by `Form.Item`. */
   value?: string;
   /**
    * Injected by `Form.Item`, composed with the caller's own `onChange` (the
@@ -127,6 +128,8 @@ interface EnvVarNameInputProps {
    * way.
    */
   onChange?: (value: string) => void;
+  /** Injected by `Form.Item` so a blur runs the field's rules. */
+  onBlur?: () => void;
   /** Accessible name; visually hidden — `BAIFormItem` renders the visible one. */
   label: string;
   placeholder?: string;
@@ -149,8 +152,10 @@ interface EnvVarNameInputProps {
  * string stays the single source of truth for both typing and picking.
  */
 const EnvVarNameInput: React.FC<EnvVarNameInputProps> = ({
+  id,
   value,
   onChange,
+  onBlur,
   label,
   placeholder,
   suggestions,
@@ -252,6 +257,7 @@ const EnvVarNameInput: React.FC<EnvVarNameInputProps> = ({
         ref={(el) => {
           inputElRef.current = el;
         }}
+        id={id}
         type="text"
         value={value ?? ''}
         onChange={(next) => {
@@ -292,6 +298,7 @@ const EnvVarNameInput: React.FC<EnvVarNameInputProps> = ({
           );
         }}
         onBlur={(e) => {
+          onBlur?.();
           if (!popover.isOpen) return;
           const next = e.relatedTarget as Node | null;
           const popoverEl = document.getElementById(popover.id);
@@ -410,18 +417,10 @@ const EnvVarFormList: React.FC<EnvVarFormListProps> = ({
     ),
   ];
 
-  const getPlaceholderForVariable = (variable: string) => {
-    if (!variable || !allEnvVars.length)
-      return t('session.launcher.EnvironmentVariableValue');
-    const envVarConfig = _.find(
-      allEnvVars,
-      (env) => env && env.variable === variable,
-    );
-    return (
-      envVarConfig?.placeholder ||
-      t('session.launcher.EnvironmentVariableValue')
-    );
-  };
+  const getPlaceholderForVariable = (variable: string) =>
+    variable
+      ? _.find(allEnvVars, (env) => env.variable === variable)?.placeholder
+      : undefined;
 
   /**
    * The still-unused suggested variable names for one row, in
@@ -492,106 +491,118 @@ const EnvVarFormList: React.FC<EnvVarFormListProps> = ({
       ]}
     >
       {(fields, { add, remove }, { errors }) => (
-        <BAIFlex direction="column" gap="xs" align="stretch">
-          {fields.map(({ key, name, ...restField }) => (
-            <BAIFlex key={key} direction="row" align="baseline" gap="xs">
-              <Form.Item
-                {...restField}
-                style={{ marginBottom: 0, flex: 1 }}
-                name={[name, 'variable']}
-                rules={[
-                  ...(externalRules || []),
-                  {
-                    required: true,
-                    message: t('session.launcher.EnterEnvironmentVariable'),
-                  },
-                  {
-                    pattern: /^[a-zA-Z_][a-zA-Z0-9_]*$/,
-                    message: t(
-                      'session.launcher.EnvironmentVariableNamePatternError',
-                    ),
-                  },
-                  ({ getFieldValue }) => ({
-                    validator(_rule, variableName) {
-                      const variableNames = _.map(
-                        getFieldValue(props.name),
-                        (i) => i?.variable,
-                      );
+        <>
+          <BAIDynamicList
+            items={fields}
 
-                      if (
-                        !_.isEmpty(variableName) &&
-                        variableNames.length > 0 &&
-                        _.filter(variableNames, (i) => i === variableName)
-                          .length > 1
-                      ) {
-                        return Promise.reject(
-                          t(
-                            'session.launcher.EnvironmentVariableDuplicateName',
-                          ),
-                          // EnvironmentVariableDuplicateName
+            onRemove={(field) => remove(field.name)}
+            addButton={{
+              onClick: () => add(),
+              label: t('session.launcher.AddEnvironmentVariable'),
+            }}
+            columns={[
+              {
+                key: 'variable',
+                header: t('session.launcher.EnvironmentVariable'),
+                render: ({ key: _key, name, ...restField }, index) => (
+                  <Form.Item
+                    {...restField}
+                    style={{ marginBottom: 0 }}
+                    name={[name, 'variable']}
+                    rules={[
+                      ...(externalRules || []),
+                      {
+                        required: true,
+                        message: t('session.launcher.EnterEnvironmentVariable'),
+                      },
+                      {
+                        pattern: /^[a-zA-Z_][a-zA-Z0-9_]*$/,
+                        message: t(
+                          'session.launcher.EnvironmentVariableNamePatternError',
+                        ),
+                      },
+                      ({ getFieldValue }) => ({
+                        validator(_rule, variableName) {
+                          const variableNames = _.map(
+                            getFieldValue(props.name),
+                            (i) => i?.variable,
+                          );
+                          if (
+                            !_.isEmpty(variableName) &&
+                            _.filter(variableNames, (i) => i === variableName)
+                              .length > 1
+                          ) {
+                            return Promise.reject(
+                              t(
+                                'session.launcher.EnvironmentVariableDuplicateName',
+                              ),
+                            );
+                          }
+                          return Promise.resolve();
+                        },
+                      }),
+                    ]}
+                    validateTrigger={['onChange', 'onBlur']}
+                    {...restFormItemProps}
+                  >
+                    <EnvVarNameInput
+                      label={`${t('session.launcher.EnvironmentVariable')} ${index + 1}`}
+                      placeholder={t('general.Example', {
+                        value: 'MY_VARIABLE',
+                      })}
+                      suggestions={getSuggestedVariableNames(name)}
+                      onChange={() => {
+                        // Only named rows can become (or stop being)
+                        // duplicates; an empty sibling stays untouched.
+                        const otherNamedRows = _.filter(
+                          _.map(fields, (_field, fieldIndex) => [
+                            props.name,
+                            fieldIndex,
+                            'variable',
+                          ]),
+                          (path, fieldIndex) =>
+                            fieldIndex !== name &&
+                            !_.isEmpty(form.getFieldValue(path)),
                         );
-                      } else {
-                        return Promise.resolve();
-                      }
-                    },
-                  }),
-                ]}
-                {...restFormItemProps}
-              >
-                <EnvVarNameInput
-                  label={t('session.launcher.EnvironmentVariable')}
-                  placeholder={t('session.launcher.EnvironmentVariable')}
-                  suggestions={getSuggestedVariableNames(name)}
-                  onChange={() => {
-                    const fieldNames = fields.map((_field, fieldIndex) => [
-                      props.name,
-                      fieldIndex,
-                      'variable',
-                    ]);
-                    form.validateFields(fieldNames);
-                  }}
-                />
-              </Form.Item>
-              <Form.Item
-                {...restField}
-                name={[name, 'value']}
-                style={{ marginBottom: 0, flex: 1 }}
-                rules={[
-                  {
-                    required: true,
-                    message: t(
-                      'session.launcher.EnvironmentVariableValueRequired',
-                    ),
-                  },
-                ]}
-                validateTrigger={['onChange', 'onBlur']}
-              >
-                <EnvVarValueInput
-                  form={form}
-                  variableNamePath={[props.name, name, 'variable']}
-                  getPlaceholderForVariable={getPlaceholderForVariable}
-                  label={t('session.launcher.EnvironmentVariableValue')}
-                />
-              </Form.Item>
-              <CircleMinus size="1em" onClick={() => remove(name)} />
-            </BAIFlex>
-          ))}
-          <Form.Item noStyle>
-            <BAIButton
-              type="dashed"
-              // PILOT-DECISION: the antd `InputRef.focus()` that jumped the
-              // caret into the row just added is DROPPED (MAPPING §6.2).
-              onClick={() => {
-                add();
-              }}
-              icon={<PlusIcon />}
-              block
-            >
-              {t('session.launcher.AddEnvironmentVariable')}
-            </BAIButton>
-          </Form.Item>
+                        if (otherNamedRows.length > 0) {
+                          form.validateFields(otherNamedRows).catch(() => {});
+                        }
+                      }}
+                    />
+                  </Form.Item>
+                ),
+              },
+              {
+                key: 'value',
+                header: t('session.launcher.EnvironmentVariableValue'),
+                render: ({ key: _key, name, ...restField }, index) => (
+                  <Form.Item
+                    {...restField}
+                    name={[name, 'value']}
+                    style={{ marginBottom: 0 }}
+                    rules={[
+                      {
+                        required: true,
+                        message: t(
+                          'session.launcher.EnvironmentVariableValueRequired',
+                        ),
+                      },
+                    ]}
+                    validateTrigger={['onChange', 'onBlur']}
+                  >
+                    <EnvVarValueInput
+                      form={form}
+                      variableNamePath={[props.name, name, 'variable']}
+                      getPlaceholderForVariable={getPlaceholderForVariable}
+                      label={`${t('session.launcher.EnvironmentVariableValue')} ${index + 1}`}
+                    />
+                  </Form.Item>
+                ),
+              },
+            ]}
+          />
           <Form.ErrorList errors={errors} />
-        </BAIFlex>
+        </>
       )}
     </Form.List>
   );

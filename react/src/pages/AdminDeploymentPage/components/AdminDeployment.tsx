@@ -1,0 +1,634 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
+import type { AdminDeploymentDeleteMutation } from '../../../__generated__/AdminDeploymentDeleteMutation.graphql';
+import type {
+  AdminDeploymentQuery as AdminDeploymentQueryType,
+  DeploymentFilter,
+  DeploymentOrderBy,
+} from '../../../__generated__/AdminDeploymentQuery.graphql';
+import { App } from '../../../app-shim';
+import AutoUpdateFetchKeyButton from '../../../components/AutoUpdateFetchKeyButton';
+import DeploymentRevisionDetailDrawer from '../../../components/DeploymentRevisionDetailDrawer';
+import DeploymentSettingModal from '../../../components/DeploymentSettingModal';
+import DeploymentStatusCategoryControl, {
+  type DeploymentStatusCategory,
+  deploymentStatusCategoryFilter,
+  deploymentStatusCategoryOf,
+} from '../../../components/DeploymentStatusCategoryControl';
+import { convertFirstOrderByToString, convertToOrderBy } from '../../../helper';
+import { buildPath } from '../../../helper/pathBuilder';
+import {
+  useSuspendedBackendaiClient,
+  useWebUINavigate,
+  useCurrentDomain,
+} from '../../../hooks';
+import { Link } from '@lablup/ui-common/Link';
+import { Text } from '@lablup/ui-common/Text';
+import {
+  BAIAdminProjectSelect,
+  BAIDeleteConfirmModal,
+  BAIFlex,
+  BAIGraphQLFilterProperty,
+  BAIGraphQLPropertyFilter,
+  BAIModelDeploymentNodes,
+  BAINameActionCell,
+  type BAITableSettings,
+  BAIUnmountAfterClose,
+  BAIScopedUserSelect,
+  availableDeploymentSorterKeys,
+  DeploymentOrderValue,
+  filterOutEmpty,
+  filterOutNullAndUndefined,
+  isDeploymentInStoppedCategory,
+  isValidUUID,
+  useBAILogger,
+  BAIEntityLabelSettingModal,
+  toEntityLabelFilter,
+  useIsLabelableEntityType,
+  type ModelDeploymentNodeInList,
+  BAISelect,
+} from 'backend.ai-ui';
+import * as _ from 'lodash-es';
+import { Trash2, SquarePenIcon } from 'lucide-react';
+import { useDeferredValue, useState, Suspense } from 'react';
+import { useTranslation } from 'react-i18next';
+import {
+  graphql,
+  PreloadedQuery,
+  useMutation,
+  usePreloadedQuery,
+  UseQueryLoaderLoadQueryOptions,
+} from 'react-relay';
+
+export const AdminDeploymentQuery = graphql`
+  query AdminDeploymentQuery(
+    $filter: DeploymentFilter
+    $orderBy: [DeploymentOrderBy!]
+    $limit: Int
+    $offset: Int
+  ) {
+    adminDeployments(
+      filter: $filter
+      orderBy: $orderBy
+      limit: $limit
+      offset: $offset
+    ) {
+      count
+      edges {
+        node {
+          id
+          entityId
+          ...BAIModelDeploymentNodesFragment
+          ...DeploymentSettingModal_deployment
+          metadata {
+            name
+            status
+          }
+          currentRevision {
+            id
+            revisionNumber
+            ...DeploymentRevisionDetail_revision
+          }
+        }
+      }
+    }
+  }
+`;
+
+export interface AdminDeploymentProps {
+  queryRef: PreloadedQuery<AdminDeploymentQueryType>;
+  onReload: (
+    variables: AdminDeploymentQueryType['variables'],
+    options?: UseQueryLoaderLoadQueryOptions,
+  ) => void;
+  tableSettings: BAITableSettings;
+}
+
+/**
+ * `order` is `[-]<camelCaseKey>`; a key the table cannot sort by is dropped.
+ * Shared with `AdminDeploymentPage`, which sanitizes URL-supplied `order`
+ * before the tab's first query runs.
+ */
+export const sanitizeDeploymentOrder = (
+  order: string | null | undefined,
+): string | null => {
+  if (!order) return null;
+  const key = order.startsWith('-') ? order.slice(1) : order;
+  return _.includes(availableDeploymentSorterKeys, key) ? order : null;
+};
+
+const AdminDeployment = ({
+  queryRef,
+  onReload,
+  tableSettings,
+}: AdminDeploymentProps) => {
+  'use memo';
+  const { id: currentDomainId } = useCurrentDomain();
+  const domainScope = { domain: [{ value: currentDomainId }] };
+  const { t } = useTranslation();
+  const { message } = App.useApp();
+  const { logger } = useBAILogger();
+  const baiClient = useSuspendedBackendaiClient();
+  const webUINavigate = useWebUINavigate();
+
+  const [editingDeploymentId, setEditingDeploymentId] = useState<string | null>(
+    null,
+  );
+  const [deletingDeploymentId, setDeletingDeploymentId] = useState<
+    string | null
+  >(null);
+  const isLabelable = useIsLabelableEntityType('deployment');
+  const [labelingDeployment, setLabelingDeployment] =
+    useState<ModelDeploymentNodeInList | null>(null);
+  const [drawerRevisionId, setDrawerRevisionId] = useState<string | null>(null);
+
+  const supportsReplicaNestedFilter =
+    baiClient.isManagerVersionCompatibleWith('26.8.0');
+
+  const mergedFilter = queryRef.variables.filter as
+    DeploymentFilter | undefined;
+  const statusCategory = deploymentStatusCategoryOf(mergedFilter);
+  const userFilter = _.omit(mergedFilter, [
+    'status',
+    'desiredReplicas',
+  ]) as DeploymentFilter;
+
+  const order =
+    (convertFirstOrderByToString(
+      queryRef.variables.orderBy,
+    ) as DeploymentOrderValue | null) ?? undefined;
+
+  const pageSize = queryRef.variables.limit ?? 10;
+  const offset = queryRef.variables.offset ?? 0;
+  const current = pageSize ? Math.floor(offset / pageSize) + 1 : 1;
+
+  const deferredQueryRef = useDeferredValue(queryRef);
+  const isRefetching = deferredQueryRef !== queryRef;
+
+  const { adminDeployments } = usePreloadedQuery<AdminDeploymentQueryType>(
+    AdminDeploymentQuery,
+    deferredQueryRef,
+  );
+
+  const deploymentNodes = filterOutNullAndUndefined(
+    _.map(adminDeployments?.edges, 'node'),
+  );
+  const total = adminDeployments?.count ?? 0;
+  const editingDeployment =
+    editingDeploymentId == null
+      ? null
+      : (deploymentNodes.find((n) => n.id === editingDeploymentId) ?? null);
+  const deletingDeployment =
+    deletingDeploymentId == null
+      ? null
+      : (deploymentNodes.find((n) => n.id === deletingDeploymentId) ?? null);
+  const drawerRevision =
+    drawerRevisionId == null
+      ? null
+      : (deploymentNodes.find((n) => n.id === drawerRevisionId)
+          ?.currentRevision ?? null);
+
+  const [commitDeleteMutation, isInFlightDeleteMutation] =
+    useMutation<AdminDeploymentDeleteMutation>(graphql`
+      mutation AdminDeploymentDeleteMutation($input: DeleteDeploymentInput!) {
+        deleteModelDeployment(input: $input) {
+          id
+        }
+      }
+    `);
+
+  const uuidRule = {
+    message: t('general.InvalidUUID'),
+    validate: (value: string) => isValidUUID(value.toLowerCase()),
+  };
+
+  const filterProperties: Array<BAIGraphQLFilterProperty> = filterOutEmpty([
+    {
+      key: 'name',
+      propertyLabel: t('deployment.filter.Name'),
+      type: 'string',
+    },
+    {
+      key: 'endpointUrl',
+      propertyLabel: t('deployment.filter.EndpointUrl'),
+      type: 'string',
+    },
+    {
+      key: 'openToPublic',
+      propertyLabel: t('deployment.filter.OpenToPublic'),
+      type: 'boolean',
+    },
+    {
+      key: 'resourceGroup',
+      propertyLabel: t('deployment.filter.ResourceGroup'),
+      type: 'string' as const,
+    },
+    {
+      key: 'projectId',
+      propertyLabel: t('deployment.Project'),
+      type: 'uuid' as const,
+      fixedOperator: 'equals' as const,
+      rule: uuidRule,
+      renderInput: ({ onAddCondition, value, isDisabled }) => (
+        <BAIAdminProjectSelect
+          label={t('deployment.Project')}
+          isLabelHidden
+          value={value}
+          isDisabled={isDisabled}
+          onChange={(next, option) =>
+            onAddCondition(
+              next as string | undefined,
+              Array.isArray(option) ? option[0]?.label : option?.label,
+            )
+          }
+        />
+      ),
+    },
+    {
+      key: 'createdAt',
+      propertyLabel: t('deployment.filter.CreatedAt'),
+      type: 'datetime' as const,
+      operators: ['after' as const, 'before' as const],
+      defaultOperator: 'after' as const,
+    },
+    {
+      key: 'destroyedAt',
+      propertyLabel: t('deployment.filter.DestroyedAt'),
+      type: 'datetime' as const,
+      operators: ['after' as const, 'before' as const],
+      defaultOperator: 'after' as const,
+    },
+    {
+      key: 'createdUserId',
+      propertyLabel: t('deployment.Owner'),
+      type: 'uuid' as const,
+      fixedOperator: 'equals' as const,
+      rule: uuidRule,
+      renderInput: ({ onAddCondition, value, isDisabled }) => (
+        <Suspense fallback={<BAISelect disabled loading />}>
+          <BAIScopedUserSelect
+            scope={domainScope}
+            valuePropName="id"
+            label={t('deployment.Owner')}
+            isLabelHidden
+            value={value}
+            isDisabled={isDisabled}
+            onChange={(next, option) =>
+              // The picker emits the user UUID; forward the option label
+              // (email) so the condition tag stays readable.
+              onAddCondition(
+                next as string | undefined,
+                Array.isArray(option) ? option[0]?.label : option?.label,
+              )
+            }
+          />
+        </Suspense>
+      ),
+    },
+    // `replicas.some.X` nests as ReplicaNestedFilter -> ReplicaFilter -> the
+    // per-field filter, which is what `buildNestedFilter` emits from the key.
+    supportsReplicaNestedFilter && {
+      key: 'replicas.some.status',
+      propertyLabel: t('deployment.filter.ReplicaStatus'),
+      type: 'enum' as const,
+      fixedOperator: 'equals' as const,
+      strictSelection: true,
+      options: [
+        { label: t('replicaStatus.Provisioning'), value: 'PROVISIONING' },
+        { label: t('replicaStatus.Running'), value: 'RUNNING' },
+        { label: t('replicaStatus.Terminating'), value: 'TERMINATING' },
+        { label: t('replicaStatus.Terminated'), value: 'TERMINATED' },
+        { label: t('replicaStatus.FailedToStart'), value: 'FAILED_TO_START' },
+      ],
+    },
+    supportsReplicaNestedFilter && {
+      key: 'replicas.some.healthStatus',
+      propertyLabel: t('deployment.filter.ReplicaHealthStatus'),
+      type: 'enum' as const,
+      fixedOperator: 'equals' as const,
+      strictSelection: true,
+      options: [
+        { label: t('replicaStatus.NotChecked'), value: 'NOT_CHECKED' },
+        { label: t('replicaStatus.Healthy'), value: 'HEALTHY' },
+        { label: t('replicaStatus.Unhealthy'), value: 'UNHEALTHY' },
+        { label: t('replicaStatus.Degraded'), value: 'DEGRADED' },
+      ],
+    },
+    supportsReplicaNestedFilter && {
+      key: 'replicas.some.trafficStatus',
+      propertyLabel: t('deployment.filter.ReplicaTrafficStatus'),
+      type: 'enum' as const,
+      fixedOperator: 'equals' as const,
+      strictSelection: true,
+      options: [
+        { label: t('replicaStatus.Active'), value: 'ACTIVE' },
+        { label: t('replicaStatus.Inactive'), value: 'INACTIVE' },
+      ],
+    },
+    ...(isLabelable
+      ? [
+          {
+            key: 'labels.some.key',
+            propertyLabel: t('entityLabel.LabelKey'),
+            type: 'string' as const,
+          },
+          {
+            key: 'labels.some.value',
+            propertyLabel: t('entityLabel.LabelValue'),
+            type: 'string' as const,
+          },
+        ]
+      : []),
+  ]);
+
+  return (
+    <>
+      <BAIFlex direction="column" align="stretch" gap="sm">
+        <BAIFlex justify="between" wrap="wrap" gap="sm">
+          <BAIFlex gap="sm" align="start" wrap="wrap" style={{ flexShrink: 1 }}>
+            <DeploymentStatusCategoryControl
+              value={statusCategory}
+              onChange={(nextCategory: DeploymentStatusCategory) => {
+                onReload(
+                  {
+                    ...queryRef.variables,
+                    filter: {
+                      ...userFilter,
+                      ...deploymentStatusCategoryFilter(nextCategory),
+                    },
+                    offset: 0,
+                  },
+                  { fetchPolicy: 'network-only' },
+                );
+              }}
+            />
+            <BAIGraphQLPropertyFilter<DeploymentFilter>
+              filterProperties={filterProperties}
+              value={userFilter ?? undefined}
+              onChange={(value) => {
+                onReload(
+                  {
+                    ...queryRef.variables,
+                    filter: {
+                      ...(value ?? {}),
+                      ...deploymentStatusCategoryFilter(statusCategory),
+                    },
+                    offset: 0,
+                  },
+                  { fetchPolicy: 'network-only' },
+                );
+              }}
+            />
+          </BAIFlex>
+          <AutoUpdateFetchKeyButton
+            settingId="admin-deployment-list"
+            defaultAutoUpdateDelay={15_000}
+            onChange={() =>
+              onReload(queryRef.variables, { fetchPolicy: 'network-only' })
+            }
+            loading={isRefetching}
+          />
+        </BAIFlex>
+        <BAIModelDeploymentNodes
+          onEditLabels={isLabelable ? setLabelingDeployment : undefined}
+          showLabelsByDefault
+          onLabelClick={(label) => {
+            onReload(
+              {
+                ...queryRef.variables,
+                filter: {
+                  ...toEntityLabelFilter(label),
+                  ...deploymentStatusCategoryFilter(statusCategory),
+                },
+                offset: 0,
+              },
+              { fetchPolicy: 'network-only' },
+            );
+          }}
+          deploymentsFrgmt={deploymentNodes}
+          loading={isRefetching}
+          order={order}
+          onChangeOrder={(nextOrder) => {
+            onReload(
+              {
+                ...queryRef.variables,
+                orderBy: convertToOrderBy<DeploymentOrderBy>(
+                  nextOrder ?? undefined,
+                ),
+                offset: 0,
+              },
+              { fetchPolicy: 'network-only' },
+            );
+          }}
+          pagination={{
+            current,
+            pageSize,
+            total,
+            onChange: (nextCurrent, nextPageSize) =>
+              onReload(
+                {
+                  ...queryRef.variables,
+                  limit: nextPageSize,
+                  offset:
+                    nextCurrent > 1 ? (nextCurrent - 1) * nextPageSize : 0,
+                },
+                { fetchPolicy: 'network-only' },
+              ),
+          }}
+          tableSettings={tableSettings}
+          // Drop the replicas / currentRevisionId / preferredDomainName /
+          // strategyType columns entirely and show `owner` by default,
+          // alongside name/currentRevisionNumber/status/replicaSummary/
+          // model/createdAt.
+          customizeColumns={(base) => {
+            const allowedKeys = [
+              'name',
+              'currentRevisionNumber',
+              'status',
+              'labels',
+              'replicaSummary',
+              'model',
+              'createdAt',
+              'owner',
+              'id',
+              'endpointUrl',
+              'updatedAt',
+              'openToPublic',
+              'resourceGroup',
+              'domainName',
+              'projectId',
+            ];
+            const defaultVisibleKeys = new Set([
+              'name',
+              'currentRevisionNumber',
+              'status',
+              'labels',
+              'replicaSummary',
+              'model',
+              'createdAt',
+              'owner',
+            ]);
+            return base
+              .filter((col) => allowedKeys.includes(col.key as string))
+              .map((col) => {
+                if (col.key === 'name') {
+                  return {
+                    ...col,
+                    render: (_value, record) => {
+                      const destroying = isDeploymentInStoppedCategory(
+                        record.metadata?.status,
+                      );
+                      return (
+                        <BAINameActionCell
+                          title={record.metadata?.name ?? '-'}
+                          onTitleClick={() =>
+                            webUINavigate(
+                              buildPath(
+                                'admin',
+                                `deployments/${record.entityId}`,
+                              ),
+                            )
+                          }
+                          copyable
+                          showActions="always"
+                          actions={[
+                            {
+                              key: 'edit',
+                              title: t('deployment.EditDeployment'),
+                              icon: <SquarePenIcon />,
+                              disabled: destroying,
+                              onClick: () => setEditingDeploymentId(record.id),
+                            },
+                            {
+                              key: 'delete',
+                              title: t('deployment.DeleteDeployment'),
+                              icon: <Trash2 size="1em" />,
+                              type: 'danger',
+                              disabled: destroying,
+                              onClick: () => setDeletingDeploymentId(record.id),
+                            },
+                          ]}
+                        />
+                      );
+                    },
+                  };
+                }
+                const defaultHidden = !defaultVisibleKeys.has(
+                  col.key as string,
+                );
+                if (col.key === 'currentRevisionNumber') {
+                  return {
+                    ...col,
+                    defaultHidden,
+                    render: (_value, record) => {
+                      const revisionNumber = deploymentNodes.find(
+                        (n) => n.id === record.id,
+                      )?.currentRevision?.revisionNumber;
+                      if (revisionNumber == null) {
+                        return <Text color="secondary">-</Text>;
+                      }
+                      return (
+                        <Link
+                          onClick={() => setDrawerRevisionId(record.id)}
+                        >{`#${revisionNumber}`}</Link>
+                      );
+                    },
+                  };
+                }
+                return { ...col, defaultHidden };
+              });
+          }}
+        />
+      </BAIFlex>
+      <BAIEntityLabelSettingModal
+        open={!!labelingDeployment}
+        entityType="deployment"
+        targets={
+          labelingDeployment
+            ? [
+                {
+                  entityId: labelingDeployment.entityId,
+                  name: labelingDeployment.metadata?.name ?? undefined,
+                },
+              ]
+            : []
+        }
+        entityLabelsFrgmt={labelingDeployment?.entityLabels}
+        onRequestClose={(success) => {
+          setLabelingDeployment(null);
+          if (success)
+            onReload(queryRef.variables, { fetchPolicy: 'network-only' });
+        }}
+      />
+      {/* Edit-only call site: the deployment already belongs to a project, so
+          the props union rejects a `project` here entirely (ADR-0001). That
+          member requires a non-null fragment, hence the guard. */}
+      {editingDeployment != null && (
+        <DeploymentSettingModal
+          open
+          deploymentFrgmt={editingDeployment}
+          onRequestClose={() => {
+            setEditingDeploymentId(null);
+          }}
+        />
+      )}
+      <BAIDeleteConfirmModal
+        open={!!deletingDeployment}
+        title={t('deployment.DeleteDeployment')}
+        target={t('deployment.Deployment')}
+        items={
+          deletingDeployment
+            ? [
+                {
+                  key: deletingDeployment.id,
+                  label: deletingDeployment.metadata?.name ?? '',
+                },
+              ]
+            : []
+        }
+        confirmText={deletingDeployment?.metadata?.name ?? ''}
+        requireConfirmInput
+        inputProps={{
+          placeholder: deletingDeployment?.metadata?.name ?? '',
+        }}
+        okButtonProps={{ loading: isInFlightDeleteMutation }}
+        onOk={() => {
+          if (!deletingDeployment) return;
+          commitDeleteMutation({
+            variables: {
+              input: {
+                id: deletingDeployment.entityId,
+              },
+            },
+            onCompleted: (_response, errors) => {
+              if (errors && errors.length > 0) {
+                logger.error('Failed to delete deployment', errors);
+                message.error(t('deployment.FailedToDeleteDeployment'));
+                return;
+              }
+              message.success(t('deployment.DeploymentDeleted'));
+              setDeletingDeploymentId(null);
+              onReload(queryRef.variables, { fetchPolicy: 'network-only' });
+            },
+            onError: (error) => {
+              logger.error('Failed to delete deployment', error);
+              message.error(t('deployment.FailedToDeleteDeployment'));
+            },
+          });
+        }}
+        onCancel={() => setDeletingDeploymentId(null)}
+      />
+      <BAIUnmountAfterClose>
+        <DeploymentRevisionDetailDrawer
+          open={!!drawerRevision}
+          revisionFrgmt={drawerRevision}
+          onClose={() => setDrawerRevisionId(null)}
+        />
+      </BAIUnmountAfterClose>
+    </>
+  );
+};
+
+export default AdminDeployment;

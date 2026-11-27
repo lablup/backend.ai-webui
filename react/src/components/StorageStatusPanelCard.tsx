@@ -19,6 +19,7 @@ import {
   BAIRowWrapWithDividers,
   useUpdateEffect,
   cssLengthToPx,
+  useIsInBAIBoardItem,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { useDeferredValue } from 'react';
@@ -44,6 +45,7 @@ const StorageStatusPanelCard: React.FC<StorageStatusPanelProps> = ({
 }) => {
   const { t } = useTranslation();
   const { token } = useTheme();
+  const isInBoard = useIsInBAIBoardItem();
   const baiClient = useSuspendedBackendaiClient();
   const currentProject = useCurrentProjectValue();
   if (!currentProject.name) {
@@ -53,7 +55,9 @@ const StorageStatusPanelCard: React.FC<StorageStatusPanelProps> = ({
     throw new Error('Project ID is required for StorageStatusPanelCard');
   }
   const deferredFetchKey = useDeferredValue(fetchKey);
-  const [invitations, { updateInvitations }] = useVFolderInvitations();
+  const [invitations, { updateInvitations }] = useVFolderInvitations({
+    id: currentProject.id,
+  });
   const invitationCount = invitations.length;
 
   useUpdateEffect(() => {
@@ -138,8 +142,13 @@ const StorageStatusPanelCard: React.FC<StorageStatusPanelProps> = ({
       direction="column"
       align="stretch"
       style={{
-        paddingInline: token('--spacing-8'),
-        paddingBottom: token('--spacing-4'),
+        // On a board the board pads the item.
+        ...(isInBoard
+          ? {}
+          : {
+              paddingInline: token('--spacing-8'),
+              paddingBottom: token('--spacing-4'),
+            }),
         ...style,
       }}
       {...flexProps}

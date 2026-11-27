@@ -2,129 +2,129 @@
 
 ## Summary
 
-> 낯선 용어는 문서 맨 아래 [용어](#용어)에 모아 두었다.
+> Unfamiliar terms are collected in the [Glossary](#glossary) at the end.
 
-- 이 저장소에서 값 하나를 chip으로 그릴 때 Astryx `Badge`와 Astryx `Token` 중 무엇을 쓰는지는 값이 어떻게 바뀌는지로 정한다. 시스템이 스스로 바꾸는 [live value](#용어)는 `Badge`로, 사용자나 관리자가 편집할 때만 바뀌거나 분류를 나타내는 [settled value](#용어)는 `Token`으로 그린다.
-- 개수(count)는 계속 `Badge`이고, 점 하나로 상태를 보이는 곳은 계속 `StatusDot`(BUI `BAIBadge`)이다.
-- chip을 그리는 BUI·host component의 이름은 그 component가 그리는 primitive에 따라 `*Badge` 또는 `*Token`으로 끝난다. "Tag"는 image tag, deployment tag 같은 domain 명사로만 남는다.
-- chip 색은 `packages/backend.ai-ui/src/helper/astryxTagVariant.ts`의 helper로만 고른다. `Badge`는 `badgeVariantFor*`, `Token`은 `tokenColorFor*`를 쓴다.
-- 이 결정은 `.claude/rules/badge-vs-token.md`가 review 규칙으로, `AGENTS.md`의 UI-COMMON block 아래 PROJECT LINES의 `STATUS SEMANTICS` 줄이 agent 지침으로 옮긴다. 그 줄은 `ui-common agents`가 생성한 "Status = StatusDot/Token; Badge = counts only"를 이 저장소에서 덮어쓴다.
-- 범위 밖: `StatusDot`으로 그리는 isActive 표시를 `BAIBooleanToken`으로 바꾸는 일, 사용자 매뉴얼의 "status tag"·"tag chip" 표현, e2e의 `.ant-tag` locator는 별도 이슈로 다룬다.
+- When this repository draws a single value as a chip, the way the value changes decides whether the chip is an Astryx `Badge` or an Astryx `Token`. A [live value](#glossary), which the system changes on its own, is drawn with `Badge`. A [settled value](#glossary), which changes only when a user or an administrator edits it or which names a classification, is drawn with `Token`.
+- A count stays a `Badge`, and a place that shows a status with a single dot stays a `StatusDot` (BUI `BAIBadge`).
+- A BUI or host component that draws a chip has a name that ends in `*Badge` or `*Token`, according to the primitive the component draws. "Tag" remains only as a domain noun, such as image tag or deployment tag.
+- A chip's colour is chosen only through the helpers in `packages/backend.ai-ui/src/helper/astryxTagVariant.ts`. A `Badge` uses `badgeVariantFor*`, and a `Token` uses `tokenColorFor*`.
+- `.claude/rules/badge-vs-token.md` carries this decision as a review rule, and the `STATUS SEMANTICS` line in the PROJECT LINES under the UI-COMMON block of `AGENTS.md` carries it as an agent instruction. That line overrides, in this repository, the sentence "Status = StatusDot/Token; Badge = counts only" that `ui-common agents` generates.
+- Out of scope: separate issues cover replacing the isActive display drawn with `StatusDot` by `BAIBooleanToken`, the wording "status tag" and "tag chip" in the user manual, and the `.ant-tag` locators in e2e.
 
 ## Context
 
-- **What the two primitives are**: Astryx core에는 `Tag`나 `Chip` primitive가 없다. chip 모양은 `Badge`(`label: ReactNode`, `variant`, 클릭 불가)와 `Token`(`label: string`, `color`, `icon`, `onClick`, `onRemove`, `endContent`) 둘뿐이다. `StatusDot`은 점 하나만 그리며 chip이 아니다.
-- **Styling after PR #9777**: FR-4002의 theme 변경으로 `Token`은 투명한 바탕에 자기 색의 1px outline을, `Badge`는 옅게 칠한 바탕과 outline과 진한 글자를 갖는다. 두 chip이 한 화면에서 눈에 띄게 달라졌으므로, 어느 값을 어느 chip으로 그리는지가 사용자에게 의미를 전하게 되었다.
-- **One wrapper, two meanings**: BUI의 `BAITag`는 antd `Tag`의 `color` 문자열을 받아 `closable`이면 `Token`, 아니면 `Badge`를 그렸다. 쓰는 곳이 `closable`을 넘기지 않아 사실상 모든 chip이 `Badge`였고, 사용자 이름·권한·버전 같은 settled value와 session 상태 같은 live value가 같은 모양이었다. `BAIDoubleTag`, `BAITagList`, `BAIBadgeList`, `BooleanTag`도 이름과 상관없이 모두 `Badge`를 그렸다.
-- **Upstream guidance disagrees with itself**: `ui-common agents`가 생성한 agent 지침은 "Status = StatusDot/Token; Badge = counts only"라고 쓰지만, Astryx `Badge` 문서는 semantic variant를 system state에 쓰라고 한다. 이 저장소에는 status를 chip으로 그리는 화면이 많아, 두 문장 중 어느 쪽도 그대로 따를 수 없다.
-- **A hidden colour bug**: `BAIRouteNodes`는 `useSemanticColorMap`의 hex 문자열을 `BAITag`의 `color`로 넘겨 route status와 health status가 모두 neutral로 그려졌다. 색 입력을 helper 하나로 묶지 않은 것이 이 bug를 가렸다.
+- **What the two primitives are**: Astryx core has no `Tag` or `Chip` primitive. The only chip shapes are `Badge` (`label: ReactNode`, `variant`, not clickable) and `Token` (`label: string`, `color`, `icon`, `onClick`, `onRemove`, `endContent`). `StatusDot` draws a single dot and is not a chip.
+- **Styling after PR #9777**: The theme change of FR-4002 gives `Token` a transparent background with a 1px outline in its own colour, and gives `Badge` a lightly filled background, an outline, and dark text. The two chips now look clearly different on the same screen, so the choice of chip for a value now carries meaning to the user.
+- **One wrapper, two meanings**: BUI's `BAITag` took the `color` string of antd `Tag` and drew a `Token` when `closable` was set and a `Badge` otherwise. The call sites did not pass `closable`, so almost every chip was a `Badge`, and settled values such as user names, permissions, and versions looked the same as live values such as session status. `BAIDoubleTag`, `BAITagList`, `BAIBadgeList`, and `BooleanTag` also all drew `Badge`, whatever their names said.
+- **Upstream guidance disagrees with itself**: The agent instructions that `ui-common agents` generates say "Status = StatusDot/Token; Badge = counts only", but the Astryx `Badge` documentation says to use the semantic variants for system state. This repository has many screens that draw a status as a chip, so it cannot follow either sentence as written.
+- **A hidden colour bug**: `BAIRouteNodes` passed the hex string from `useSemanticColorMap` as the `color` of `BAITag`, so both route status and health status were drawn as neutral. Nothing routed colour input through a single helper, and that hid this bug.
 
-## 설계도
+## Diagram
 
 ```mermaid
 flowchart TB
-  value["화면에 그릴 값 하나"]
-  value -- "개수" --> count["Astryx Badge<br/>BAIBadgeCount, BAITabCountBadge"]
-  value -- "점만 필요한 상태" --> dot["StatusDot<br/>BAIBadge"]
-  value -- "사용자가 보는 동안 시스템이 바꾼다" --> live["Astryx Badge<br/>BAIDoubleBadge, *Badge"]
-  value -- "편집해야만 바뀐다, 분류, 기록된 결과" --> settled["Astryx Token<br/>BAIDoubleToken, *Token"]
+  value["One value to draw on screen"]
+  value -- "count" --> count["Astryx Badge<br/>BAIBadgeCount, BAITabCountBadge"]
+  value -- "status that needs only a dot" --> dot["StatusDot<br/>BAIBadge"]
+  value -- "the system changes it while the user watches" --> live["Astryx Badge<br/>BAIDoubleBadge, *Badge"]
+  value -- "changes only by editing, classification, recorded outcome" --> settled["Astryx Token<br/>BAIDoubleToken, *Token"]
   subgraph helper["astryxTagVariant.ts"]
     bv["badgeVariantForStatus<br/>badgeVariantForTagColor"]
     tc["tokenColorForStatus<br/>tokenColorForTagColor"]
   end
   bv -- "variant" --> live
   tc -- "color" --> settled
-  bv -- "Badge variant에서 파생" --> tc
+  bv -- "derived from the Badge variant" --> tc
 ```
 
 ## Decision
 
-### 1. 값이 바뀌는 방식이 primitive를 정한다
+### 1. The way a value changes decides the primitive
 
-| primitive | 쓰는 값 | 예 |
-|---|---|---|
-| Astryx `Badge` | 시스템이 스스로 바꾸는 값 | lifecycle·health status, 진행 중 표시(Installing, Deploying, Applying), 사용자 모르게 움직이는 system pointer(Current, Latest), 매초 바뀌는 ticker와 metric |
-| Astryx `Token` | 사용자나 관리자가 편집할 때만 바뀌는 값, 또는 분류 label | 이름, type, 권한, version, tag·label, on/off 설정, 한 번 기록되고 움직이지 않는 결과(login 결과, audit row의 status, error 기록) |
+| primitive      | values it draws                                                                               | examples                                                                                                                                                                                                |
+| -------------- | --------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Astryx `Badge` | A value the system changes on its own                                                         | lifecycle and health status, in-progress markers (Installing, Deploying, Applying), system pointers that move without the user's action (Current, Latest), tickers and metrics that change every second |
+| Astryx `Token` | A value that changes only when a user or an administrator edits it, or a classification label | names, types, permissions, versions, tags and labels, on/off settings, outcomes that are recorded once and do not move (login results, the status of an audit row, error records)                       |
 
-- **Deciding question**: "사용자가 아무것도 하지 않는데 화면을 보는 동안 이 값이 바뀔 수 있는가?"에 예이면 `Badge`, 아니오이면 `Token`이다. 이 질문과 예시는 `.claude/rules/badge-vs-token.md`가 review 규칙으로 싣는다.
-- **Shared slot**: 한 자리에 `Badge`와 `Token`이 번갈아 들어가지 않는다. Current·Latest 표시가 `Badge`인 것은 같은 자리에 오는 `Deploying`이 `Badge`이기 때문이기도 하다.
-- **Recorded outcomes**: 기록된 결과는 `Token`이다. history 표의 모든 행에 칠해진 `Badge`를 두면 행마다 경고처럼 읽히고, outline만 있는 `Token`은 기록으로 읽힌다.
+- **Deciding question**: The question is "Can this value change while the user watches the screen and does nothing?" If the answer is yes, the value is a `Badge`; if the answer is no, it is a `Token`. `.claude/rules/badge-vs-token.md` carries this question and the examples as a review rule.
+- **Shared slot**: A single slot never alternates between a `Badge` and a `Token`. The Current and Latest markers are a `Badge` partly because `Deploying`, which appears in the same slot, is a `Badge`.
+- **Recorded outcomes**: A recorded outcome is a `Token`. A filled `Badge` on every row of a history table reads as a warning on each row, while a `Token` with only an outline reads as a record.
 
-### 2. 개수는 Badge, 점 하나는 StatusDot으로 남는다
+### 2. Counts stay Badge and a single dot stays StatusDot
 
-- **Counts**: `BAIBadgeCount`, `BAITabCountBadge`, `+N` overflow 표시는 Astryx 지침대로 `Badge`다.
-- **Dot-only status**: `BAIBadge`와 그것을 감싸는 `BAIAuditLogStatusBadge`, `BAISchedulingResultBadge`, `StorageUsageBadge`는 `StatusDot`을 그리며 이 결정이 바꾸지 않는다.
+- **Counts**: `BAIBadgeCount`, `BAITabCountBadge`, and the `+N` overflow marker are `Badge`, as the Astryx guidance says.
+- **Dot-only status**: `BAIBadge` and the components that wrap it, `BAIAuditLogStatusBadge`, `BAISchedulingResultBadge`, and `StorageUsageBadge`, draw `StatusDot`, and this decision does not change them.
 
-### 3. chip component 이름은 그리는 primitive를 따른다
+### 3. A chip component's name follows the primitive it draws
 
-- **Suffix**: chip을 그리는 component는 `*Badge` 또는 `*Token`으로 끝난다. 예: `BAIDeploymentStatusBadge`, `BAISessionTypeToken`, `BAIBooleanToken`, `BAITokenList`, `BAITokenRow`, `SessionStatusBadge`, `VFolderPermissionToken`.
-- **Tag as a domain noun**: "Tag"는 image tag와 deployment tag를 가리킬 때만 쓴다. `BAIImageNodeSimpleTag(V2)`는 image 행 전체의 이름이라 그대로 두고, `BAIDeploymentTagTokens`는 deployment tag를 `Token`으로 그린다는 뜻이다.
-- **No generic wrapper**: `BAITag`는 지웠다. 쓰는 곳은 Astryx `Badge`나 `Token`을 직접 import하고 색은 4항의 helper로 고른다.
+- **Suffix**: A component that draws a chip ends in `*Badge` or `*Token`. Examples: `BAIDeploymentStatusBadge`, `BAISessionTypeToken`, `BAIBooleanToken`, `BAITokenList`, `BAITokenRow`, `SessionStatusBadge`, `VFolderPermissionToken`.
+- **Tag as a domain noun**: The word "Tag" is used only for image tags and deployment tags. `BAIImageNodeSimpleTag(V2)` keeps its name because the name covers the whole image row, and `BAIDeploymentTagTokens` means that the component draws deployment tags as `Token`.
+- **No generic wrapper**: `BAITag` was deleted. Each call site imports Astryx `Badge` or `Token` directly and chooses the colour with the helpers in item 4.
 
-### 4. 색은 `astryxTagVariant.ts`의 helper로만 고른다
+### 4. Colour is chosen only through the helpers in `astryxTagVariant.ts`
 
-| primitive | helper | 입력 |
-|---|---|---|
-| `Badge` | `badgeVariantForStatus(domain, value)` | `STATUS_BADGE_VARIANT`의 domain과 enum 값 |
-| `Badge` | `badgeVariantForTagColor(color)` | antd 시절의 색 이름 |
-| `Token` | `tokenColorForStatus(domain, value)` | 같은 domain과 enum 값 |
-| `Token` | `tokenColorForTagColor(color)` | 같은 색 이름 |
+| primitive | helper                                 | input                                                |
+| --------- | -------------------------------------- | ---------------------------------------------------- |
+| `Badge`   | `badgeVariantForStatus(domain, value)` | a domain of `STATUS_BADGE_VARIANT` and an enum value |
+| `Badge`   | `badgeVariantForTagColor(color)`       | a colour name from the antd era                      |
+| `Token`   | `tokenColorForStatus(domain, value)`   | the same domain and enum value                       |
+| `Token`   | `tokenColorForTagColor(color)`         | the same colour name                                 |
 
-- **Derived token colour**: `Token` 색은 `astryxTagVariant.ts`의 `BADGE_VARIANT_TO_TOKEN_COLOR`가 `Badge` variant에서 파생한다. palette 색은 같은 이름으로 가고, `gray`는 쓰지 않는다.
+- **Derived token colour**: `BADGE_VARIANT_TO_TOKEN_COLOR` in `astryxTagVariant.ts` derives the `Token` colour from the `Badge` variant. A palette colour maps to the colour of the same name, and `gray` is not used.
 
 | `Badge` variant | `Token` color |
-|---|---|
-| `success` | `green` |
-| `warning` | `orange` |
-| `error` | `red` |
-| `info` | `blue` |
-| `neutral` | `default` |
+| --------------- | ------------- |
+| `success`       | `green`       |
+| `warning`       | `orange`      |
+| `error`         | `red`         |
+| `info`          | `blue`        |
+| `neutral`       | `default`     |
 
-- **No local maps**: 파일마다 status와 색의 map을 새로 만들지 않는다. 새 domain은 `STATUS_BADGE_VARIANT`에 추가한다.
-- **Primary marker**: main access key 표시는 `PRIMARY_TOKEN_COLOR`(`'green'`)로 그린다.
-- **Agent CLI vocabulary**: `packages/backend.ai-agent-cli/mappings/*.yaml`의 `variant` 값은 계속 `Badge` variant 이름이다. settled value의 `Token` 색은 `tokenColorForStatus`가 그 값에서 파생한다.
+- **No local maps**: A file does not create its own map from status to colour. A new domain is added to `STATUS_BADGE_VARIANT`.
+- **Primary marker**: The main access key marker is drawn with `PRIMARY_TOKEN_COLOR` (`'green'`).
+- **Agent CLI vocabulary**: The `variant` values in `packages/backend.ai-agent-cli/mappings/*.yaml` stay `Badge` variant names. `tokenColorForStatus` derives the `Token` colour of a settled value from that value.
 
-### 5. Token label은 문자열이다
+### 5. A Token label is a string
 
-`Token`의 `label`은 `string`만 받는다. node가 필요한 곳도 `Badge`로 되돌리지 않고 아래 경로를 쓴다.
+The `label` of `Token` accepts only a `string`. A place that needs a node does not go back to `Badge`; it uses one of the paths below.
 
-| 필요한 것 | 경로 |
-|---|---|
-| 앞에 붙는 glyph | `icon` prop |
-| `mode × size`, `label · count` 같은 합성 문자열 | 문자열 하나로 합친다 |
-| 검색어 highlight | `label`에 원래 문자열, `isLabelHidden`, `endContent`에 `BAITextHighlighter`로 감싼 같은 문자열 |
+| need                                                       | path                                                                                                                 |
+| ---------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| a leading glyph                                            | the `icon` prop                                                                                                      |
+| a composed string such as `mode × size` or `label · count` | join it into one string                                                                                              |
+| search keyword highlight                                   | the original string in `label`, `isLabelHidden`, and the same string wrapped in `BAITextHighlighter` in `endContent` |
 
-- **Accessible name**: highlight 경로에서도 접근 가능한 이름은 `label`의 원래 문자열이다.
+- **Accessible name**: On the highlight path too, the accessible name is the original string in `label`.
 
-### 6. 붙은 chip 쌍은 두 가지로 따로 있다
+### 6. Joined chip pairs exist as two separate components
 
-- **Two components**: key와 value를 붙여 그리는 chip 쌍은 settled value용 `BAIDoubleToken`과 live value용 `BAIDoubleBadge`로 나뉜다. `kind` 같은 전환 prop은 없다.
-- **Value types**: `BAIDoubleToken`의 `values`는 `string[]` 또는 `{ label: string; color?: AstryxTokenColor }[]`이고 문자열이면 `blue`다. `highlightKeyword`는 `BAIDoubleToken`에만 있다. `BAIDoubleBadge`의 `values`는 `string[]` 또는 `{ label: string; variant?: AstryxBadgeVariant }[]`이고 문자열이면 `neutral`이다.
-- **Same weld**: 두 component 모두 이웃 chip의 outline을 겹치고 안쪽 모서리를 편다. `BAIDoubleToken`은 `BAIDoubleToken.css`의 `.bai-double` class로, `BAIDoubleBadge`는 그 구현이 옮겨 간 ui-common `DoubleBadge`의 stylesheet로 그린다.
+- **Two components**: A chip pair that draws a key and a value joined together is split into `BAIDoubleToken` for settled values and `BAIDoubleBadge` for live values. No switching prop such as `kind` exists.
+- **Value types**: The `values` of `BAIDoubleToken` is `string[]` or `{ label: string; color?: AstryxTokenColor }[]`, and a plain string is drawn `blue`. Only `BAIDoubleToken` has `highlightKeyword`. The `values` of `BAIDoubleBadge` is `string[]` or `{ label: string; variant?: AstryxBadgeVariant }[]`, and a plain string is drawn `neutral`.
+- **Same weld**: Both components overlap the outlines of neighbouring chips and square off the inner corners. `BAIDoubleToken` draws this with the `.bai-double` class in `BAIDoubleToken.css`, and `BAIDoubleBadge` draws it with the stylesheet of ui-common `DoubleBadge`, where its implementation moved.
 
-## 대안과 기각 사유
+## Rejected alternatives
 
-- **Keep a generic `BAITag` with a `kind` switch**: `BAITag`가 `kind="live" | "settled"`를 받아 `Badge`나 `Token`을 고르는 형태다. call site의 import를 바꾸지 않아도 되는 것이 장점이다. 기각한 이유는 wrapper 이름에서 어느 primitive인지 읽을 수 없고, `kind`를 빠뜨린 call site가 기본값으로 조용히 한쪽에 묶이기 때문이다. 이 결정이 없애려는 모호함이 그 wrapper 자체다.
-- **Follow Astryx's "Badge = counts only"**: 생성된 agent 지침 그대로 status를 `StatusDot`이나 `Token`으로만 그리는 형태다. upstream과 어긋나지 않는 것이 장점이다. 기각한 이유는 Astryx `Badge` 문서 자체가 semantic variant를 system state에 쓰라고 하고, 표 한 칸에 진행 중 status와 spinner를 함께 보여야 하는 화면에서 `StatusDot`은 label을 보이지 않기 때문이다.
+- **Keep a generic `BAITag` with a `kind` switch**: In this form, `BAITag` takes `kind="live" | "settled"` and picks `Badge` or `Token`. Its advantage is that call sites do not need to change their imports. It is rejected because the wrapper's name does not tell the reader which primitive it draws, and a call site that leaves out `kind` is silently bound to one side by the default. The wrapper itself is the ambiguity this decision removes.
+- **Follow Astryx's "Badge = counts only"**: In this form, a status is drawn only as `StatusDot` or `Token`, exactly as the generated agent instructions say. Its advantage is that it does not diverge from upstream. It is rejected because the Astryx `Badge` documentation itself says to use the semantic variants for system state, and because `StatusDot` shows no label on a screen where one table cell must show an in-progress status together with a spinner.
 
 ## Consequences
 
-- **Visible difference**: 한 화면에서 칠해진 chip은 지금 상태를, outline chip은 값이나 분류를 뜻하게 된다. 권한, 이름, type, version을 그리던 chip이 모두 outline으로 바뀐다.
-- **Route colours return**: `BAIRouteNodes`의 route status와 health status가 `badgeVariantForStatus('route', …)`로 그려져 처음으로 색을 갖는다.
-- **Highlight cost**: 검색어 highlight가 필요한 `Token`은 `isLabelHidden`과 `endContent`를 함께 써야 해서 call site가 한 줄 길어진다.
-- **Override to maintain**: `STATUS SEMANTICS` 줄은 UI-COMMON block의 marker 밖 PROJECT LINES에 있어서, `@lablup/ui-common`을 올린 뒤 `ui-common agents --write`로 block을 다시 생성해도 남는다([ADR 0009](0009-ui-common-as-the-single-entry-point-to-astryx.md)). 생성된 block의 문장이 바뀌면 그 줄이 덮어쓰는 문장도 맞춰 고친다.
-- **Pointers stay Badge**: Current·Latest는 사용자가 아무것도 하지 않아도 옮겨가는 system pointer라 `Badge`다. 같은 모양의 사용자 설정 표시가 새로 생기면 1항의 질문으로 다시 판정한다.
+- **Visible difference**: On one screen, a filled chip now means the current state, and an outline chip means a value or a classification. Every chip that drew a permission, a name, a type, or a version changes to an outline.
+- **Route colours return**: `BAIRouteNodes` draws route status and health status with `badgeVariantForStatus('route', …)`, so they have colour for the first time.
+- **Highlight cost**: A `Token` that needs search keyword highlight must use `isLabelHidden` and `endContent` together, so the call site grows by one line.
+- **Override to maintain**: The `STATUS SEMANTICS` line sits in the PROJECT LINES outside the markers of the UI-COMMON block, so it survives when `ui-common agents --write` regenerates the block after a `@lablup/ui-common` bump ([ADR 0009](0009-ui-common-as-the-single-entry-point-to-astryx.md)). When a sentence in the generated block changes, the maintainer also updates the sentence that this line overrides.
+- **Pointers stay Badge**: Current and Latest are system pointers that move even when the user does nothing, so they are `Badge`. When a new marker of the same shape for a user setting appears, the question in item 1 decides it again.
 
-## 출처
+## Sources
 
-- Jira: FR-4002. GitHub: lablup/backend.ai-webui#9777이 두 primitive의 스타일을 바꿨다.
-- Astryx core 0.5.4의 `Badge`, `Token`, `StatusDot` 문서(`pnpm run ui-common component <Name>`).
-- 결정일: 2026-09-18.
-- 관련: [ADR 0005](0005-container-image-meta-row.md)는 image tag chip을 그리는 곳을 정하고, 이 결정에 따라 그 chip을 `Token`으로 그린다. `.claude/rules/badge-vs-token.md`가 review 규칙이고, `.claude/rules/component-props-extension.md`가 wrapper props의 base를 정한다.
+- Jira: FR-4002. GitHub: lablup/backend.ai-webui#9777 changed the styling of the two primitives.
+- The `Badge`, `Token`, and `StatusDot` documentation of Astryx core 0.5.4 (`pnpm run ui-common component <Name>`).
+- Decided 2026-09-18.
+- Related: [ADR 0005](0005-container-image-meta-row.md) decides where image tag chips are drawn, and under this decision it draws those chips as `Token`. `.claude/rules/badge-vs-token.md` is the review rule, and `.claude/rules/component-props-extension.md` decides the base of a wrapper's props.
 
-## 용어
+## Glossary
 
-| 용어 | 뜻 |
-|---|---|
-| live value | 사용자가 아무것도 하지 않아도 시스템이 바꾸는 값이다. session·deployment·agent의 status, 진행 중 표시, 경과 시간, Current·Latest pointer가 그렇다. |
-| settled value | 사용자나 관리자가 편집할 때만 바뀌는 값, 분류 label, 한 번 기록되고 바뀌지 않는 결과다. 이름, type, 권한, version, tag, on/off 설정, login 결과가 그렇다. |
+| Term          | Meaning                                                                                                                                                                                                                                                             |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| live value    | A live value is a value that the system changes even when the user does nothing. Examples are the status of a session, a deployment, or an agent, an in-progress marker, elapsed time, and the Current and Latest pointers.                                         |
+| settled value | A settled value is a value that changes only when a user or an administrator edits it, a classification label, or an outcome that is recorded once and does not change. Examples are names, types, permissions, versions, tags, on/off settings, and login results. |

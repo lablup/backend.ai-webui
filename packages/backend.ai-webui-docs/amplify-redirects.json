@@ -1,7 +1,7 @@
 {
   "_comment": [
     "AWS Amplify 'Rewrites and redirects' rules for webui.docs.backend.ai.",
-    "Spec: .specs/FR-2729-webui-docs-multi-version-deployment/spec.md (FR-4, FR-5).",
+    "Decision: docs/adr/0023-multi-version-docs-site-from-source-archive-branches.md.",
     "",
     "Amplify Hosting does NOT read this file directly — see amplify.yml header note.",
     "DevOps applies these rules in the Amplify console under 'App settings →",

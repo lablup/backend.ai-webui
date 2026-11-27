@@ -8,6 +8,7 @@ import {
   toFixedFloorWithoutTrailingZeros,
 } from '../helper';
 import { useResourceSlotsDetails } from '../hooks/backendai';
+import { useEffectiveLoginConfig } from '../hooks/useWebUIConfig';
 import { Grid } from '@lablup/ui-common/Grid';
 import { Heading } from '@lablup/ui-common/Heading';
 import { Text } from '@lablup/ui-common/Text';
@@ -59,6 +60,7 @@ const AgentDetailModal: React.FC<AgentDetailModalProps> = ({
     agentNodeFrgmt,
   );
   const parsedLiveStat = JSON.parse(agent?.live_stat || '{}');
+  const { showAgentNetworkStats } = useEffectiveLoginConfig();
   const parsedAvailableSlots = JSON.parse(agent?.available_slots || '{}');
 
   return (
@@ -72,7 +74,7 @@ const AgentDetailModal: React.FC<AgentDetailModalProps> = ({
       <BAIFlex direction="column" align="stretch" gap={'md'}>
         {/* antd Row gutter={[24,24]} + Col xs={24} sm={12} (uniform 2-up from
             576px) → Grid columns={{minWidth:280, max:2}} gap={6}
-            (RESPONSIVE-POLICY R1; 24px gutter = step 6). */}
+            (ADR 0020 R1; 24px gutter = step 6). */}
         <Grid columns={{ minWidth: 280, max: 2 }} gap={6}>
           {parsedLiveStat?.devices?.cpu_util ? (
             <BAIFlex direction="column" gap="xxs" align="stretch">
@@ -116,7 +118,7 @@ const AgentDetailModal: React.FC<AgentDetailModalProps> = ({
                 />
               </BAIFlex>
             ) : null}
-            {parsedLiveStat?.node ? (
+            {parsedLiveStat?.node && showAgentNetworkStats ? (
               <BAIFlex direction="column" gap="xxs" align="start">
                 <Heading level={5}>{t('session.launcher.Network')}</Heading>
                 <BAIFlex gap="xl">

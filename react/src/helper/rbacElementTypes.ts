@@ -8,3 +8,12 @@
 // uppercase spelling of the retired `RBACElementType` enum.
 export const rbacTypeI18nKey = (entityType: string) =>
   `rbac.types.${entityType.toUpperCase()}`;
+
+/**
+ * A type's RBAC label, the raw name when none exists. Audit log entity types
+ * (`vfolder`, `resource_group`, `artifact_registry`) share the RBAC spelling.
+ */
+export const rbacTypeLabel = (
+  t: (key: string, options: { defaultValue: string }) => string,
+  entityType: string,
+) => t(rbacTypeI18nKey(entityType), { defaultValue: entityType });

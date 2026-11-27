@@ -10,9 +10,9 @@
  *   1. `var(--color-text-tertiary)`            — name does not exist in the
  *      Astryx ramp (primary/secondary/disabled/accent + named hues); the
  *      declaration went invalid -> browser-default scrollbar in every theme.
- *   2. `var(--color-text-error)`               — also nonexistent (the
- *      semantic error token is the solid `--color-error`); a danger action
- *      rendered in the inherited colour instead of red.
+ *   2. `var(--color-text-error)`               — nonexistent until Astryx
+ *      0.7.7 added the status text roles; a danger action rendered in the
+ *      inherited colour instead of red.
  *   3. `var(--color-background-primary, #fff)` — nonexistent name with a
  *      literal fallback; the fallback won forever, painting a WHITE body in
  *      dark mode. Every earlier dark screenshot was taken against it.
@@ -257,15 +257,15 @@ describe.skipIf(!realCssPresent)(
     });
 
     it("the spike's broken names are genuinely absent", () => {
-      // `--color-text-tertiary`, the spike's third broken name, is a declared
-      // custom token of the brand theme since FR-3605, so it left this list.
-      expect(declared.has("--color-text-error")).toBe(false);
+      // `--color-text-tertiary` (brand custom token, FR-3605) and
+      // `--color-text-error` (Astryx 0.7.7) have since become declared.
       expect(declared.has("--color-background-primary")).toBe(false);
     });
 
     it("the brand theme declares the custom tokens the app reads", () => {
       expect(declared.has("--color-text-tertiary")).toBe(true);
       expect(declared.has("--color-info")).toBe(true);
+      expect(declared.has("--color-text-error")).toBe(true);
     });
 
     it("the spike's fixes resolve to declared names", () => {

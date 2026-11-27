@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<b49ed5da4b0336b7219aae0606702038>>
+ * @generated SignedSource<<31d151556570bfb986fdd4feab4f8dcc>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -17,7 +17,7 @@ export type RoleAssignmentTabBulkRevokeMutation$variables = {
   input: BulkRevokeRoleInput;
 };
 export type RoleAssignmentTabBulkRevokeMutation$data = {
-  readonly adminBulkRevokeRole: {
+  readonly partialBulkRevokeRoles: {
     readonly failed: ReadonlyArray<{
       readonly message: string;
       readonly userId: string;
@@ -25,7 +25,7 @@ export type RoleAssignmentTabBulkRevokeMutation$data = {
     readonly revoked: ReadonlyArray<{
       readonly id: string;
     }>;
-  } | null | undefined;
+  };
 };
 export type RoleAssignmentTabBulkRevokeMutation = {
   response: RoleAssignmentTabBulkRevokeMutation$data;
@@ -52,7 +52,7 @@ v1 = [
     ],
     "concreteType": "BulkRevokeRolePayload",
     "kind": "LinkedField",
-    "name": "adminBulkRevokeRole",
+    "name": "partialBulkRevokeRoles",
     "plural": false,
     "selections": [
       {
@@ -120,16 +120,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "4145760fac5406bb4414f43c50e49198",
+    "cacheID": "80d8c27f318a9917224bd51a7dfab070",
     "id": null,
     "metadata": {},
     "name": "RoleAssignmentTabBulkRevokeMutation",
     "operationKind": "mutation",
-    "text": "mutation RoleAssignmentTabBulkRevokeMutation(\n  $input: BulkRevokeRoleInput!\n) {\n  adminBulkRevokeRole(input: $input) {\n    revoked {\n      id\n    }\n    failed {\n      userId\n      message\n    }\n  }\n}\n"
+    "text": "mutation RoleAssignmentTabBulkRevokeMutation(\n  $input: BulkRevokeRoleInput!\n) {\n  partialBulkRevokeRoles(input: $input) {\n    revoked {\n      id\n    }\n    failed {\n      userId\n      message\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "3763aa44ba7ad12e3d043f66eeafeac7";
+(node as any).hash = "014b843eb6fdc2deb8caa68bfd7b70c7";
 
 export default node;

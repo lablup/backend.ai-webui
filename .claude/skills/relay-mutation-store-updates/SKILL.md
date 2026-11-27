@@ -238,5 +238,4 @@ matchable the same way.
 
 ## Related
 
-- `.specs/FR-3372-refetch-after-mutation/spec.md` — the remediation spec this skill distills
 - FR-3170 — the audit epic; FR-3372 — this analysis

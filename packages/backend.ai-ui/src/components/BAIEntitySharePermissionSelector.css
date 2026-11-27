@@ -1,0 +1,5 @@
+/* The trigger is an Astryx Button, which centers its content; a select reads
+   its value at the start and its chevron at the end. */
+.bai-entity-share-permission-selector__trigger {
+  justify-content: space-between;
+}

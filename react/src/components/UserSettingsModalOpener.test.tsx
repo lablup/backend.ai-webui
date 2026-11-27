@@ -37,9 +37,9 @@ vi.mock('../hooks/useWebUIMenuItems', () => ({
   useWebUIMenuItems: () => ({ defaultMenuPath: '/start' }),
 }));
 
-// The modal itself is `React.lazy` and pulls in Relay, the settings panes and
-// the whole Astryx dialog stack; the contract under test is the URL, not the
-// dialog, so it is stubbed down to its close button.
+// The modal pulls in Relay, the settings pane chunk and the whole Astryx dialog
+// stack; the contract under test is the URL, not the dialog, so it is stubbed
+// down to its close button.
 vi.mock('./UserSettingsModal', () => ({
   default: ({
     category,

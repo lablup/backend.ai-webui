@@ -8,7 +8,9 @@ import { useIsLabelableEntityType } from '../../hooks/useLabelableEntityTypes';
 import BAIBooleanToken from '../BAIBooleanToken';
 import BAIDeploymentStatusBadge, {
   BAIDeploymentStatus,
+  getDeploymentPauseCause,
 } from '../BAIDeploymentStatusBadge';
+import BAIDoubleBadge from '../BAIDoubleBadge';
 import BAIFlex from '../BAIFlex';
 import BAIId from '../BAIId';
 import BAIText from '../BAIText';
@@ -101,7 +103,11 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
   const deployments = useFragment<BAIModelDeploymentNodesFragment$key>(
     graphql`
       fragment BAIModelDeploymentNodesFragment on ModelDeployment
-      @relay(plural: true) {
+      @relay(plural: true)
+      @argumentDefinitions(
+        # false skips what only the optional columns read.
+        withDetails: { type: "Boolean", defaultValue: true }
+      ) {
         id
         entityId
         currentRevisionId
@@ -113,28 +119,29 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
           createdAt
           updatedAt
           resourceGroupName
-          projectV2 {
+          projectV2 @include(if: $withDetails) {
             basicInfo {
               name
             }
             id
           }
         }
-        networkAccess {
+        networkAccess @include(if: $withDetails) {
           endpointUrl
           preferredDomainName
           openToPublic
         }
-        defaultDeploymentStrategy {
+        defaultDeploymentStrategy @include(if: $withDetails) {
           type
         }
         replicaState {
+          replicaCount
           desiredReplicaCount
         }
         runningReplicas: replicas(filter: { status: { equals: RUNNING } }) {
           count
         }
-        currentRevision {
+        currentRevision @include(if: $withDetails) {
           id
           revisionNumber
           modelMountConfig {
@@ -144,11 +151,13 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
             }
           }
         }
-        entityLabels(limit: 100) {
+        entityLabels(limit: 100) @include(if: $withDetails) {
           ...BAIEntityLabelTokensFragment
           ...BAIEntityLabelSettingModalFragment
         }
         ...BAIDeploymentOwnerInfo_deployment
+          @include(if: $withDetails)
+          @alias(as: "ownerInfo")
       }
     `,
     deploymentsFrgmt,
@@ -200,6 +209,25 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
           const status = record.metadata?.status;
           if (!status || status === '%future added value') {
             return '-';
+          }
+          const pauseCause = getDeploymentPauseCause(
+            status,
+            record.replicaState,
+          );
+          if (pauseCause) {
+            return (
+              <BAIDoubleBadge
+                values={[
+                  {
+                    label: t('comp:BAIModelDeploymentNodes.Paused'),
+                    variant: 'warning',
+                  },
+                  pauseCause === 'user'
+                    ? t('comp:BAIModelDeploymentNodes.PausedByUser')
+                    : t('comp:BAIModelDeploymentNodes.PausedByAutoScaling'),
+                ]}
+              />
+            );
           }
           return (
             <BAIDeploymentStatusBadge status={status as BAIDeploymentStatus} />
@@ -403,7 +431,7 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
         title: t('comp:BAIModelDeploymentNodes.Owner'),
         defaultHidden: true,
         render: (__, record) => (
-          <BAIDeploymentOwnerInfo deploymentFrgmt={record} />
+          <BAIDeploymentOwnerInfo deploymentFrgmt={record.ownerInfo} />
         ),
       },
       {

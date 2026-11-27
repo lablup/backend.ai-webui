@@ -1,0 +1,357 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
+import { ResourceGroupOrderField } from '../../../../__generated__/ResourceGroupFairShareStepQuery.graphql';
+import {
+  ResourceGroupFairShareTableFragment$data,
+  ResourceGroupFairShareTableFragment$key,
+} from '../../../../__generated__/ResourceGroupFairShareTableFragment.graphql';
+import { useResourceSlotsDetails } from '../../../../hooks/backendai';
+import ResourceGroupFairShareSettingModal from './ResourceGroupFairShareSettingModal';
+import { Divider } from '@lablup/ui-common/Divider';
+import { Text } from '@lablup/ui-common/Text';
+import { useTheme } from '@lablup/ui-common/theme';
+import {
+  BAIBadge,
+  BAIFlex,
+  BAINameActionCell,
+  BAIQuestionIconWithTooltip,
+  BAITable,
+  BAITableProps,
+  BAIUnmountAfterClose,
+  ResourceTypeIcon,
+  convertToBinaryUnit,
+  type BAIColumnsType,
+} from 'backend.ai-ui';
+import dayjs from 'dayjs';
+import * as _ from 'lodash-es';
+import { Settings } from 'lucide-react';
+import { parseAsString, parseAsStringLiteral, useQueryStates } from 'nuqs';
+import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { graphql, useFragment } from 'react-relay';
+
+type ResourceGroup = NonNullable<
+  ResourceGroupFairShareTableFragment$data[number]
+>;
+
+const availableResourceGroupSorterKeys = [
+  'name',
+  'isActive',
+  'createdAt',
+] as const;
+export const resourceGroupOrderFieldMap: Record<
+  (typeof availableResourceGroupSorterKeys)[number],
+  ResourceGroupOrderField
+> = {
+  name: 'NAME',
+  isActive: 'IS_ACTIVE',
+  createdAt: 'CREATED_AT',
+};
+export const availableResourceGroupSorterValues = [
+  ...availableResourceGroupSorterKeys,
+  ...availableResourceGroupSorterKeys.map((key) => `-${key}` as const),
+] as const;
+const isEnableSorter = (key: string) => {
+  return _.includes(availableResourceGroupSorterKeys, key);
+};
+
+interface ResourceGroupFairShareTableProps extends BAITableProps<ResourceGroup> {
+  resourceGroupNodeFragment: ResourceGroupFairShareTableFragment$key | null;
+  onClickGroupName?: (resourceGroupName: string) => void;
+}
+
+const ResourceGroupFairShareTable: React.FC<
+  ResourceGroupFairShareTableProps
+> = ({ resourceGroupNodeFragment, onClickGroupName, ...tableProps }) => {
+  'use memo';
+
+  const { t } = useTranslation();
+  const { token } = useTheme();
+
+  const { mergedResourceSlots } = useResourceSlotsDetails();
+
+  const [selectedResourceGroup, setSelectedResourceGroup] =
+    useState<ResourceGroup | null>(null);
+
+  const [queryParams, setQueryParams] = useQueryStates(
+    {
+      order: parseAsStringLiteral(availableResourceGroupSorterValues),
+      filter: parseAsString,
+    },
+    {
+      history: 'replace',
+    },
+  );
+
+  const resourceGroups = useFragment(
+    graphql`
+      fragment ResourceGroupFairShareTableFragment on ResourceGroup
+      @relay(plural: true) {
+        id
+        name
+        status {
+          isActive
+        }
+        metadata {
+          createdAt
+        }
+        fairShareSpec {
+          halfLifeDays
+          lookbackDays
+          decayUnitDays
+          defaultWeight
+          resourceWeights {
+            resourceType
+            weight
+            usesDefault
+          }
+        }
+        resourceInfo {
+          capacity {
+            entries {
+              resourceType
+              quantity
+            }
+          }
+          used {
+            entries {
+              resourceType
+              quantity
+            }
+          }
+        }
+
+        ...ResourceGroupFairShareSettingModalFragment
+      }
+    `,
+    resourceGroupNodeFragment,
+  );
+
+  const columns: BAIColumnsType<ResourceGroup> = [
+    {
+      title: t('fairShare.Name'),
+      key: 'name',
+      fixed: 'left',
+      dataIndex: 'name',
+      sorter: isEnableSorter('name'),
+      render: (name, record) => (
+        <BAINameActionCell
+          title={name}
+          onTitleClick={() => onClickGroupName?.(name)}
+          showActions="always"
+          actions={[
+            {
+              key: 'settings',
+              title: t('button.Settings'),
+              icon: <Settings size="1em" />,
+              onClick: () => setSelectedResourceGroup(record),
+            },
+          ]}
+        />
+      ),
+    },
+    {
+      title: t('fairShare.Allocations'),
+      key: 'allocations',
+      render: (_value, record) => {
+        const capacityEntries = record?.resourceInfo?.capacity?.entries;
+        const usedEntries = record?.resourceInfo?.used?.entries;
+        return _.isEmpty(capacityEntries) ? (
+          '-'
+        ) : (
+          <BAIFlex>
+            {_.map(capacityEntries, ({ resourceType, quantity }, index) => {
+              return (
+                <React.Fragment key={resourceType}>
+                  <BAIFlex justify="between">
+                    <BAIFlex gap="xxs">
+                      <ResourceTypeIcon
+                        key={resourceType}
+                        type={resourceType}
+                        tooltipProps={{
+                          placement: 'left',
+                        }}
+                      />
+                      <Text>
+                        {resourceType === 'mem'
+                          ? `${convertToBinaryUnit(usedEntries?.find((e) => e.resourceType === resourceType)?.quantity ?? 0, 'g', 0)?.numberFixed ?? 0} / ${convertToBinaryUnit(quantity, 'g', 0)?.numberFixed ?? 0}`
+                          : `${usedEntries?.find((e) => e.resourceType === resourceType)?.quantity ?? 0} / ${quantity}`}
+                      </Text>
+                      <Text
+                        color="secondary"
+                        style={{ fontSize: token('--spacing-2') }}
+                      >
+                        {mergedResourceSlots?.[resourceType]?.display_unit}
+                      </Text>
+                    </BAIFlex>
+                  </BAIFlex>
+                  {index !== (capacityEntries?.length ?? 0) - 1 && (
+                    <Divider orientation="vertical" />
+                  )}
+                </React.Fragment>
+              );
+            })}
+          </BAIFlex>
+        );
+      },
+    },
+    {
+      title: (
+        <BAIFlex gap="xxs">
+          {t('fairShare.ResourceWeights')}
+          <BAIQuestionIconWithTooltip
+            title={t('fairShare.ResourceWeightsDescription')}
+          />
+        </BAIFlex>
+      ),
+      key: 'resourceWeights',
+      dataIndex: ['fairShareSpec', 'resourceWeights'],
+      render: (entries) => {
+        return _.isEmpty(entries) ? (
+          '-'
+        ) : (
+          <BAIFlex>
+            {_.map(
+              entries,
+              (
+                rw: {
+                  resourceType: string;
+                  weight: string;
+                  usesDefault: boolean;
+                },
+                index,
+              ) => (
+                <React.Fragment key={rw.resourceType}>
+                  <BAIFlex gap="xxs">
+                    <ResourceTypeIcon
+                      type={rw.resourceType}
+                      tooltipProps={{
+                        placement: 'left',
+                      }}
+                    />
+                    {rw.weight}
+                    <Text
+                      color="secondary"
+                      style={{ fontSize: token('--font-size-sm') }}
+                    >
+                      {rw.usesDefault ? `(${t('fairShare.UsingDefault')})` : ''}
+                    </Text>
+                  </BAIFlex>
+                  {index !== entries.length - 1 && (
+                    <Divider orientation="vertical" />
+                  )}
+                </React.Fragment>
+              ),
+            )}
+          </BAIFlex>
+        );
+      },
+    },
+    {
+      title: (
+        <BAIFlex gap="xxs">
+          {t('fairShare.DefaultWeight')}
+          <BAIQuestionIconWithTooltip
+            title={t('fairShare.DefaultWeightDescription')}
+          />
+        </BAIFlex>
+      ),
+      key: 'defaultWeight',
+      dataIndex: ['fairShareSpec', 'defaultWeight'],
+    },
+    {
+      title: (
+        <BAIFlex gap="xxs">
+          {t('fairShare.DecayUnitDays')}
+          <BAIQuestionIconWithTooltip
+            title={t('fairShare.DecayUnitDaysDescription')}
+          />
+        </BAIFlex>
+      ),
+      key: 'decayUnitDays',
+      dataIndex: ['fairShareSpec', 'decayUnitDays'],
+      render: (value) => <BAIFlex>{t('general.Days', { num: value })}</BAIFlex>,
+    },
+    {
+      title: (
+        <BAIFlex gap="xxs">
+          {t('fairShare.HalfLifeDays')}
+          <BAIQuestionIconWithTooltip
+            title={t('fairShare.HalfLifeDaysDescription')}
+          />
+        </BAIFlex>
+      ),
+      key: 'halfLifeDays',
+      dataIndex: ['fairShareSpec', 'halfLifeDays'],
+      render: (value) => <BAIFlex>{t('general.Days', { num: value })}</BAIFlex>,
+    },
+    {
+      title: (
+        <BAIFlex gap="xxs">
+          {t('fairShare.LookbackDays')}
+          <BAIQuestionIconWithTooltip
+            title={t('fairShare.LookbackDaysDescription')}
+          />
+        </BAIFlex>
+      ),
+      key: 'lookbackDays',
+      dataIndex: ['fairShareSpec', 'lookbackDays'],
+      render: (value) => <BAIFlex>{t('general.Days', { num: value })}</BAIFlex>,
+    },
+    {
+      title: t('general.Status'),
+      key: 'isActive',
+      dataIndex: ['status', 'isActive'],
+      sortKey: 'isActive',
+      sorter: isEnableSorter('isActive'),
+      render: (isActive: boolean) => (
+        <BAIBadge
+          color={isActive ? 'success' : 'default'}
+          text={isActive ? t('general.Active') : t('general.Inactive')}
+        />
+      ),
+    },
+    {
+      title: t('general.CreatedAt'),
+      key: 'createdAt',
+      dataIndex: ['metadata', 'createdAt'],
+      sortKey: 'createdAt',
+      sorter: isEnableSorter('createdAt'),
+      render: (date) => (date ? dayjs(date).format('lll') : '-'),
+    },
+  ];
+
+  return (
+    <>
+      <BAITable
+        scroll={{ x: 'max-content' }}
+        rowKey={'id'}
+        {...tableProps}
+        dataSource={resourceGroups || []}
+        columns={columns}
+        order={queryParams.order}
+        onChangeOrder={(order) => {
+          setQueryParams({
+            order:
+              (order as (typeof availableResourceGroupSorterValues)[number]) ||
+              null,
+          });
+        }}
+      />
+
+      <BAIUnmountAfterClose>
+        <ResourceGroupFairShareSettingModal
+          resourceGroupNodeFrgmt={selectedResourceGroup}
+          open={!!selectedResourceGroup}
+          onRequestClose={() => {
+            setSelectedResourceGroup(null);
+          }}
+        />
+      </BAIUnmountAfterClose>
+    </>
+  );
+};
+
+export default ResourceGroupFairShareTable;

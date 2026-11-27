@@ -4,10 +4,7 @@
  the number would. BAITable used to drop every string width, so such a column
  flexed with the table.
 */
-import {
-  renderScrollTable,
-  SCROLL_COLUMNS,
-} from './BAITable.scrollTestFixtures';
+import { renderScrollTable, SCROLL_COLUMNS } from './BAITable.scroll.fixtures';
 
 const firstHeaderOf = (container: HTMLElement) =>
   container.querySelector<HTMLTableCellElement>('thead th')!;

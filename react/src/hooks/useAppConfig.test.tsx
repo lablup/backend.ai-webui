@@ -2,225 +2,619 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import {
-  useUpdateMyUserAppConfig,
-  useUpdatePublicDomainAppConfig,
-} from './useAppConfig';
+import scopedQueryNode from '../__generated__/useAppConfigScopedQuery.graphql';
+import type { AppConfigScope } from './useAppConfig';
 import { act, renderHook, waitFor } from '@testing-library/react';
-import { ReactNode } from 'react';
-import { RelayEnvironmentProvider } from 'react-relay';
+import { createStore, Provider } from 'jotai';
+import { ReactNode, Suspense } from 'react';
+import { fetchQuery, RelayEnvironmentProvider } from 'react-relay';
 import { createMockEnvironment } from 'relay-test-utils';
 
-vi.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string) => key,
-    i18n: { language: 'en', changeLanguage: () => new Promise(() => {}) },
-    ready: true,
-  }),
-  // BUI's locale module runs `i18n.use(initReactI18next).init()` on import.
-  initReactI18next: { type: '3rdParty', init: () => {} },
+vi.mock('./index', () => ({
+  useCurrentDomain: () => ({ id: 'domain-1', name: 'default' }),
 }));
 
-vi.mock('.', () => ({
-  useCurrentDomainValue: () => 'default',
-}));
+const DOMAIN = { type: 'domain', id: 'domain-1' } as const;
+const OTHER_DOMAIN = { type: 'domain', id: 'domain-2' } as const;
+const PUBLIC = { type: 'public' } as const;
+
+// A fresh module per test: the write queue and the atom are module state.
+const loadHooks = async () => {
+  vi.resetModules();
+  return import('./useAppConfig');
+};
 
 type MockEnvironment = ReturnType<typeof createMockEnvironment>;
+type JotaiStore = ReturnType<typeof createStore>;
+type Doc = Record<string, unknown>;
 
-const renderWithRelay = <T,>(hook: () => T) => {
-  const environment = createMockEnvironment();
-  const wrapper = ({ children }: { children: ReactNode }) => (
-    <RelayEnvironmentProvider environment={environment}>
-      {children}
-    </RelayEnvironmentProvider>
-  );
-  const { result } = renderHook(hook, { wrapper });
-  return { environment, result };
-};
-
-const waitForOperation = async (
-  environment: MockEnvironment,
-  operationName: string,
-) => {
-  await waitFor(() =>
-    expect(
-      environment.mock
-        .getAllOperations()
-        .some((op) => op.request.node.params.name === operationName),
-    ).toBe(true),
-  );
-  return environment.mock
+const operationsNamed = (environment: MockEnvironment, name: string) =>
+  environment.mock
     .getAllOperations()
-    .find((op) => op.request.node.params.name === operationName)!;
+    .filter((op) => op.request.node.params.name === name);
+
+const waitForOperation = async (environment: MockEnvironment, name: string) => {
+  await waitFor(() =>
+    expect(operationsNamed(environment, name).length).toBeGreaterThan(0),
+  );
+  return operationsNamed(environment, name)[0];
 };
 
-/** Resolves the raw public read, then returns the document the upsert sends. */
-const runPublicDomainWrite = async (
-  rawConfig: Record<string, unknown> | null,
-  write: (
-    setter: ReturnType<typeof useUpdatePublicDomainAppConfig>,
-  ) => Promise<void>,
-  failed: Array<{ configName: string; message: string }> = [],
+const wrapperFor = (environment: MockEnvironment, store: JotaiStore) => {
+  const Wrapper = ({ children }: { children: ReactNode }) => (
+    <Provider store={store}>
+      <RelayEnvironmentProvider environment={environment}>
+        <Suspense fallback={null}>{children}</Suspense>
+      </RelayEnvironmentProvider>
+    </Provider>
+  );
+  return Wrapper;
+};
+
+const setup = async () => ({
+  hooks: await loadHooks(),
+  environment: createMockEnvironment(),
+  store: createStore(),
+});
+type Setup = Awaited<ReturnType<typeof setup>>;
+
+/** Mounts `useScopedAppConfig` and answers its read (`'denied'`: a field error). */
+const mountScoped = async (
+  { hooks, environment, store }: Setup,
+  scope: AppConfigScope,
+  answer: Record<string, Doc | null> | 'denied',
 ) => {
-  const { environment, result } = renderWithRelay(() =>
-    useUpdatePublicDomainAppConfig(),
+  const names = answer === 'denied' ? ['domainConfig'] : Object.keys(answer);
+  const { result } = renderHook(
+    () => hooks.useScopedAppConfig(scope, names as any),
+    { wrapper: wrapperFor(environment, store) },
   );
-  let pending!: Promise<void>;
+  const read = await waitForOperation(environment, 'useAppConfigScopedQuery');
+  const payload =
+    answer === 'denied'
+      ? {
+          data: { scopedAppConfigFragmentsByNames: null },
+          errors: [
+            { message: 'denied', path: ['scopedAppConfigFragmentsByNames'] },
+          ],
+        }
+      : {
+          data: {
+            scopedAppConfigFragmentsByNames: Object.entries(answer).map(
+              ([configName, config], index) =>
+                config ? { id: `read-${index}`, configName, config } : null,
+            ),
+          },
+        };
   act(() => {
-    pending = write(result.current);
+    environment.mock.resolve(read, payload as any);
   });
+  await waitFor(() => expect(result.current).not.toBeNull());
+  return { result, read };
+};
 
-  const read = await waitForOperation(
-    environment,
-    'useAppConfigPublicRawQuery',
-  );
-  act(() => {
-    environment.mock.resolve(read, {
-      data: {
-        scopedAppConfigFragmentsByNames: rawConfig
-          ? [
-              {
-                id: 'fragment-1',
-                configName: 'publicConfigByDomain',
-                config: rawConfig,
-              },
-            ]
-          : [],
-      },
-    });
-  });
-
-  const upsert = await waitForOperation(
-    environment,
-    'useAppConfigUpsertMutation',
-  );
+/** Answers the next mutation named `name` with the documents it sent. */
+const answerUpsert = async (
+  environment: MockEnvironment,
+  name: 'useAppConfigUpsertMutation' | 'useAppConfigMyUpsertMutation',
+) => {
+  const upsert = await waitForOperation(environment, name);
   const sent = upsert.request.variables.input;
+  const field =
+    name === 'useAppConfigUpsertMutation'
+      ? 'scopedAtomicBulkUpsertAppConfigFragments'
+      : 'myAtomicBulkUpsertAppConfigFragments';
   act(() => {
     environment.mock.resolve(upsert, {
-      data: { scopedUpsertAppConfigFragments: { items: [], failed } },
-    });
-  });
-  return { sent, pending };
-};
-
-describe('useUpdatePublicDomainAppConfig', () => {
-  it('replaces only the current domain slice and keeps other domains', async () => {
-    const otherDomain = { appearance: { schemaVersion: 2, brand: 'other' } };
-    const { sent, pending } = await runPublicDomainWrite(
-      {
-        other: otherDomain,
-        default: { appearance: { schemaVersion: 2, brand: 'old' }, keep: 1 },
-      },
-      (setter) => setter('appearance', { schemaVersion: 2, brand: 'new' }),
-    );
-    await pending;
-
-    expect(sent.scope).toEqual({ scopeType: 'PUBLIC' });
-    expect(sent.items).toEqual([
-      {
-        configName: 'publicConfigByDomain',
-        config: {
-          other: otherDomain,
-          default: { appearance: { schemaVersion: 2, brand: 'new' }, keep: 1 },
+      data: {
+        [field]: {
+          items: sent.items.map(
+            (item: { configName: string }, index: number) => ({
+              id: `written-${item.configName}-${index}`,
+              ...item,
+            }),
+          ),
         },
       },
-    ]);
+    });
   });
+  return sent;
+};
 
-  it('writes to the domain passed explicitly instead of the current one', async () => {
-    const { sent, pending } = await runPublicDomainWrite(
-      { default: { appearance: { brand: 'current' } } },
-      (setter) => setter('appearance', { brand: 'target' }, 'target'),
-    );
-    await pending;
-
-    expect(sent.items[0].config).toEqual({
-      default: { appearance: { brand: 'current' } },
-      target: { appearance: { brand: 'target' } },
+describe('useScopedAppConfig', () => {
+  it('reads one scope and returns each requested document', async () => {
+    const ctx = await setup();
+    const { read, result } = await mountScoped(ctx, DOMAIN, {
+      domainConfig: { settings: { a: 1 } },
+    });
+    expect(read.request.variables).toEqual({
+      scope: { scopeType: 'DOMAIN', scopeId: 'domain-1' },
+      configNames: ['domainConfig'],
+    });
+    expect(result.current.scopedAppConfig).toEqual({
+      domainConfig: { settings: { a: 1 } },
     });
   });
 
-  it('creates the document when no public fragment exists yet', async () => {
-    const { sent, pending } = await runPublicDomainWrite(null, (setter) =>
-      setter('appearance', { brand: 'first' }),
-    );
-    await pending;
-
-    expect(sent.items[0].config).toEqual({
-      default: { appearance: { brand: 'first' } },
-    });
+  it('returns undefined for an unreadable scope and refuses to write it', async () => {
+    const ctx = await setup();
+    const { result } = await mountScoped(ctx, DOMAIN, 'denied');
+    expect(result.current.scopedAppConfig).toBeUndefined();
+    await expect(
+      result.current.upsertScopedAppConfig({
+        configName: 'domainConfig',
+        subKey: 'settings',
+        value: {},
+      }),
+    ).rejects.toThrow('domain could not be read');
+    expect(
+      operationsNamed(ctx.environment, 'useAppConfigUpsertMutation'),
+    ).toHaveLength(0);
   });
 
-  it('removes only the current domain sub key when the value is undefined', async () => {
-    const { sent, pending } = await runPublicDomainWrite(
-      {
-        other: { appearance: { brand: 'other' } },
-        default: { appearance: { brand: 'old' }, keep: 1 },
+  it('writes on the read document, keeping the other keys', async () => {
+    const ctx = await setup();
+    const { result } = await mountScoped(ctx, OTHER_DOMAIN, {
+      domainConfig: { announcement: { title: 'x' }, settings: { a: 1 } },
+    });
+    let written: unknown;
+    await act(async () => {
+      const pending = result.current.upsertScopedAppConfig({
+        configName: 'domainConfig',
+        subKey: ['settings', 'b'],
+        value: (current: unknown) => (current ?? 0) as number,
+      });
+      const sent = await answerUpsert(
+        ctx.environment,
+        'useAppConfigUpsertMutation',
+      );
+      expect(sent).toEqual({
+        scope: { scopeType: 'DOMAIN', scopeId: 'domain-2' },
+        items: [
+          {
+            configName: 'domainConfig',
+            config: { announcement: { title: 'x' }, settings: { a: 1, b: 0 } },
+          },
+        ],
+      });
+      written = await pending;
+    });
+    expect(written).toEqual({
+      domainConfig: {
+        announcement: { title: 'x' },
+        settings: { a: 1, b: 0 },
       },
-      (setter) => setter('appearance', undefined),
-    );
-    await pending;
-
-    expect(sent.items[0].config).toEqual({
-      other: { appearance: { brand: 'other' } },
-      default: { keep: 1 },
+    });
+    expect(result.current.scopedAppConfig?.domainConfig).toEqual({
+      announcement: { title: 'x' },
+      settings: { a: 1, b: 0 },
     });
   });
 
-  it('rejects with the server message when the item fails', async () => {
-    const { pending } = await runPublicDomainWrite(
-      {},
-      (setter) => setter('appearance', { brand: 'denied' }),
-      [{ configName: 'publicConfigByDomain', message: 'not allowed' }],
-    );
-
-    await expect(pending).rejects.toThrow('publicConfigByDomain: not allowed');
-  });
-});
-
-describe('useUpdateMyUserAppConfig', () => {
-  it('replaces only the given key of the raw user fragment', async () => {
-    const { environment, result } = renderWithRelay(() =>
-      useUpdateMyUserAppConfig(),
-    );
-    let pending!: Promise<void>;
-    act(() => {
-      pending = result.current('themeFamily', 'ocean');
+  it('builds a second write on the first one’s response', async () => {
+    const ctx = await setup();
+    const { result } = await mountScoped(ctx, OTHER_DOMAIN, {
+      domainConfig: null,
     });
+    await act(async () => {
+      const first = result.current.upsertScopedAppConfig({
+        configName: 'domainConfig',
+        subKey: 'a',
+        value: 1,
+      });
+      const second = result.current.upsertScopedAppConfig({
+        configName: 'domainConfig',
+        subKey: 'b',
+        value: 2,
+      });
+      await answerUpsert(ctx.environment, 'useAppConfigUpsertMutation');
+      await first;
+      await waitFor(() =>
+        expect(
+          operationsNamed(ctx.environment, 'useAppConfigUpsertMutation'),
+        ).toHaveLength(1),
+      );
+      const sent = await answerUpsert(
+        ctx.environment,
+        'useAppConfigUpsertMutation',
+      );
+      expect(sent.items[0].config).toEqual({ a: 1, b: 2 });
+      await second;
+    });
+  });
 
-    const read = await waitForOperation(
-      environment,
-      'useAppConfigUserRawQuery',
-    );
-    act(() => {
-      environment.mock.resolve(read, {
+  it('reads again when a read that started during the write lands after it', async () => {
+    const ctx = await setup();
+    const { result } = await mountScoped(ctx, OTHER_DOMAIN, {
+      domainConfig: { a: 0 },
+    });
+    await act(async () => {
+      const pending = result.current.upsertScopedAppConfig({
+        configName: 'domainConfig',
+        subKey: 'a',
+        value: 1,
+      });
+      await waitForOperation(ctx.environment, 'useAppConfigUpsertMutation');
+      // Another reader fetches the same documents while the mutation is in flight.
+      fetchQuery(ctx.environment, scopedQueryNode, {
+        scope: { scopeType: 'DOMAIN', scopeId: 'domain-2' },
+        configNames: ['domainConfig'],
+      }).subscribe({});
+      const lateRead = await waitForOperation(
+        ctx.environment,
+        'useAppConfigScopedQuery',
+      );
+      await answerUpsert(ctx.environment, 'useAppConfigUpsertMutation');
+      ctx.environment.mock.resolve(lateRead, {
         data: {
-          myAppConfigFragmentsByNames: [
-            {
-              id: 'fragment-1',
-              configName: 'userConfig',
-              config: { themeFamily: 'default', language: 'ko' },
-            },
+          scopedAppConfigFragmentsByNames: [
+            { id: 'read-0', configName: 'domainConfig', config: { a: 0 } },
           ],
         },
       });
-    });
-
-    const upsert = await waitForOperation(
-      environment,
-      'useAppConfigMyUpsertMutation',
-    );
-    expect(upsert.request.variables.input.items).toEqual([
-      {
-        configName: 'userConfig',
-        config: { themeFamily: 'ocean', language: 'ko' },
-      },
-    ]);
-    act(() => {
-      environment.mock.resolve(upsert, {
-        data: { myUpsertAppConfigFragments: { items: [], failed: [] } },
+      const again = await waitForOperation(
+        ctx.environment,
+        'useAppConfigScopedQuery',
+      );
+      ctx.environment.mock.resolve(again, {
+        data: {
+          scopedAppConfigFragmentsByNames: [
+            { id: 'read-0', configName: 'domainConfig', config: { a: 1 } },
+          ],
+        },
       });
+      await pending;
+    });
+    expect(result.current.scopedAppConfig?.domainConfig).toEqual({ a: 1 });
+  });
+
+  it('rejects a name it was not called with', async () => {
+    const ctx = await setup();
+    const { result } = await mountScoped(ctx, PUBLIC, {
+      publicConfigByDomain: {},
+    });
+    await expect(
+      result.current.upsertScopedAppConfig({
+        configName: 'domainConfig',
+        subKey: 'a',
+        value: 1,
+      }),
+    ).rejects.toThrow('domainConfig was not requested');
+  });
+
+  it.each([
+    ['PUBLIC', PUBLIC, 'publicConfigByDomain', 1],
+    ['the signed-in domain', DOMAIN, 'domainConfig', 1],
+    ['another domain', OTHER_DOMAIN, 'domainConfig', 0],
+  ] as const)(
+    'reloads myAppConfigState after a write to %s only when it is the user’s own',
+    async (_label, scope, configName, reloads) => {
+      const ctx = await setup();
+      const { result } = await mountScoped(ctx, scope, { [configName]: {} });
+      await act(async () => {
+        const pending = result.current.upsertScopedAppConfig({
+          configName,
+          subKey: 'a',
+          value: 1,
+        });
+        await answerUpsert(ctx.environment, 'useAppConfigUpsertMutation');
+        await pending;
+      });
+      expect(
+        operationsNamed(ctx.environment, 'useAppConfigLoadQuery'),
+      ).toHaveLength(reloads);
+    },
+  );
+});
+
+describe('myAppConfigState', () => {
+  const rows = (userConfig: Doc | null) => [
+    { configName: 'publicConfigByDomain', config: { default: { t: 'p' } } },
+    { configName: 'domainConfig', config: { settings: { s: 1 } } },
+    { configName: 'userConfig', config: userConfig },
+  ];
+
+  it('reads userConfig, domainConfig and publicConfigByDomain from the stored answer', async () => {
+    const { hooks, environment, store } = await setup();
+    hooks.setMyAppConfigs(store, rows({ themeFamily: 'dark' }));
+    const wrapper = wrapperFor(environment, store);
+    expect(
+      renderHook(() => hooks.useMyAppConfig('userConfig', 'themeFamily'), {
+        wrapper,
+      }).result.current[0],
+    ).toBe('dark');
+    const domain = renderHook(
+      () => hooks.useMyAppConfig('domainConfig', 'settings'),
+      { wrapper },
+    ).result.current;
+    expect(domain[0]).toEqual({ s: 1 });
+    expect(domain[1]).toBeUndefined();
+    expect(domain[3]).toBe('loaded');
+    expect(
+      renderHook(
+        () => hooks.useMyAppConfig('publicConfigByDomain', ['default', 't']),
+        { wrapper },
+      ).result.current[0],
+    ).toBe('p');
+  });
+
+  it('writes the merged userConfig with the change to the USER scope', async () => {
+    const { hooks, environment, store } = await setup();
+    hooks.setMyAppConfigs(store, rows({ dashboard: { a: [1] }, x: 1 }));
+    const { result } = renderHook(
+      () => hooks.useMyAppConfig<number>('userConfig', 'x'),
+      {
+        wrapper: wrapperFor(environment, store),
+      },
+    );
+    await act(async () => {
+      const pending = result.current[1]((current) => (current ?? 0) + 1);
+      const sent = await answerUpsert(
+        environment,
+        'useAppConfigMyUpsertMutation',
+      );
+      expect(sent).toEqual({
+        items: [
+          { configName: 'userConfig', config: { dashboard: { a: [1] }, x: 2 } },
+        ],
+      });
+      await pending;
+    });
+    expect(result.current[0]).toBe(2);
+  });
+
+  it('shows the change at once and rolls it back when the write fails', async () => {
+    const { hooks, environment, store } = await setup();
+    hooks.setMyAppConfigs(store, rows({ x: 1 }));
+    const { result } = renderHook(
+      () => hooks.useMyAppConfig<number>('userConfig', 'x'),
+      {
+        wrapper: wrapperFor(environment, store),
+      },
+    );
+    let pending: Promise<void> = Promise.resolve();
+    act(() => {
+      pending = result.current[1](5);
+    });
+    expect(result.current[0]).toBe(5);
+    await act(async () => {
+      const upsert = await waitForOperation(
+        environment,
+        'useAppConfigMyUpsertMutation',
+      );
+      environment.mock.reject(upsert, new Error('boom'));
+      await expect(pending).rejects.toThrow('boom');
+    });
+    expect(result.current[0]).toBe(1);
+  });
+
+  it('rolls back only what the failed write carried', async () => {
+    const { hooks, environment, store } = await setup();
+    hooks.setMyAppConfigs(store, rows({ x: 1, y: 1 }));
+    const userConfig = () =>
+      store.get(hooks.myAppConfigState).configs.userConfig;
+    await act(async () => {
+      hooks.applyMyUserConfig(store, 'x', 5);
+      const first = hooks.sendMyUserConfig(store, environment);
+      const upsert = await waitForOperation(
+        environment,
+        'useAppConfigMyUpsertMutation',
+      );
+      // Made while the first write is in flight: y is new, x is changed again.
+      hooks.applyMyUserConfig(store, 'y', 7);
+      const second = hooks.sendMyUserConfig(store, environment);
+      environment.mock.reject(upsert, new Error('boom'));
+      await expect(first).rejects.toThrow('boom');
+      expect(userConfig()).toEqual({ x: 1, y: 7 });
+      const sent = await answerUpsert(
+        environment,
+        'useAppConfigMyUpsertMutation',
+      );
+      expect(sent.items[0].config).toEqual({ x: 1, y: 7 });
+      await second;
+    });
+  });
+
+  it('keeps a later change to the key a failed write carried', async () => {
+    const { hooks, environment, store } = await setup();
+    hooks.setMyAppConfigs(store, rows({ x: 1 }));
+    await act(async () => {
+      hooks.applyMyUserConfig(store, 'x', 5);
+      const first = hooks.sendMyUserConfig(store, environment);
+      const upsert = await waitForOperation(
+        environment,
+        'useAppConfigMyUpsertMutation',
+      );
+      hooks.applyMyUserConfig(store, 'x', 6);
+      const second = hooks.sendMyUserConfig(store, environment);
+      environment.mock.reject(upsert, new Error('boom'));
+      await expect(first).rejects.toThrow('boom');
+      const sent = await answerUpsert(
+        environment,
+        'useAppConfigMyUpsertMutation',
+      );
+      expect(sent.items[0].config).toEqual({ x: 6 });
+      await second;
+    });
+  });
+
+  it('keeps a change not sent yet when it reloads', async () => {
+    const { hooks, environment, store } = await setup();
+    hooks.setMyAppConfigs(store, rows({ x: 1 }));
+    hooks.applyMyUserConfig(store, 'x', 2);
+    const pending = hooks.loadMyAppConfig(store, environment);
+    const read = await waitForOperation(environment, 'useAppConfigLoadQuery');
+    environment.mock.resolve(read, {
+      data: { myAppConfigs: rows({ x: 1, z: 3 }) },
     });
     await pending;
+    expect(store.get(hooks.myAppConfigState).configs.userConfig).toEqual({
+      x: 2,
+      z: 3,
+    });
+  });
+
+  it.each([
+    ['before sign-in', undefined],
+    ['after a failed first read', null],
+  ] as const)('refuses to write %s', async (_label, answer) => {
+    const { hooks, environment, store } = await setup();
+    if (answer === null) hooks.setMyAppConfigs(store, null);
+    const { result } = renderHook(
+      () => hooks.useMyAppConfig<number>('userConfig', 'x'),
+      {
+        wrapper: wrapperFor(environment, store),
+      },
+    );
+    await expect(result.current[1](1)).rejects.toThrow('not written');
+    await expect(result.current[2]()).rejects.toThrow('not written');
+    expect(environment.mock.getAllOperations()).toHaveLength(0);
+  });
+
+  it('keeps an earlier answer as the base when a later read fails', async () => {
+    const { hooks, store } = await setup();
+    hooks.setMyAppConfigs(store, rows({ x: 1 }));
+    hooks.setMyAppConfigs(store, null);
+    expect(store.get(hooks.myAppConfigState)).toMatchObject({
+      status: 'loaded',
+      configs: { userConfig: { x: 1 } },
+    });
+  });
+
+  it('marks a failed first load', async () => {
+    const { hooks, environment, store } = await setup();
+    const pending = hooks.loadMyAppConfig(store, environment);
+    const read = await waitForOperation(environment, 'useAppConfigLoadQuery');
+    expect(read.request.variables).toEqual({
+      configNames: ['publicConfigByDomain', 'domainConfig', 'userConfig'],
+    });
+    environment.mock.reject(read, new Error('down'));
+    await pending;
+    expect(store.get(hooks.myAppConfigState).status).toBe('failed');
+  });
+
+  it('folds the loads asked for while one runs into one later load', async () => {
+    const { hooks, environment, store } = await setup();
+    const first = hooks.loadMyAppConfig(store, environment);
+    const second = hooks.loadMyAppConfig(store, environment);
+    const third = hooks.loadMyAppConfig(store, environment);
+    expect(second).toBe(third);
+    const read = await waitForOperation(environment, 'useAppConfigLoadQuery');
+    environment.mock.resolve(read, { data: { myAppConfigs: rows({ x: 1 }) } });
+    await first;
+    await waitFor(() =>
+      expect(
+        operationsNamed(environment, 'useAppConfigLoadQuery'),
+      ).toHaveLength(1),
+    );
+    const again = operationsNamed(environment, 'useAppConfigLoadQuery')[0];
+    environment.mock.resolve(again, { data: { myAppConfigs: rows({ x: 2 }) } });
+    await second;
+    expect(store.get(hooks.myAppConfigState).configs.userConfig).toEqual({
+      x: 2,
+    });
+  });
+
+  it('reset removes the key from the USER document, then reloads the domain default', async () => {
+    const { hooks, environment, store } = await setup();
+    hooks.setMyAppConfigs(store, rows({ x: 9, y: 1 }));
+    const { result } = renderHook(
+      () => hooks.useMyAppConfig<number>('userConfig', 'x'),
+      {
+        wrapper: wrapperFor(environment, store),
+      },
+    );
+    await act(async () => {
+      const pending = result.current[2]();
+      const sent = await answerUpsert(
+        environment,
+        'useAppConfigMyUpsertMutation',
+      );
+      expect(sent.items[0].config).toEqual({ y: 1 });
+      const reload = await waitForOperation(
+        environment,
+        'useAppConfigLoadQuery',
+      );
+      environment.mock.resolve(reload, {
+        data: { myAppConfigs: rows({ x: 3, y: 1 }) },
+      });
+      await pending;
+    });
+    expect(result.current[0]).toBe(3);
+  });
+
+  it('queues the reload after a scoped write behind a pending set', async () => {
+    const ctx = await setup();
+    ctx.hooks.setMyAppConfigs(ctx.store, rows({ x: 1 }));
+    const { result: scoped } = await mountScoped(ctx, PUBLIC, {
+      publicConfigByDomain: {},
+    });
+    const { result: my } = renderHook(
+      () => ctx.hooks.useMyAppConfig<number>('userConfig', 'x'),
+      {
+        wrapper: wrapperFor(ctx.environment, ctx.store),
+      },
+    );
+    await act(async () => {
+      const set = my.current[1](2);
+      const write = scoped.current.upsertScopedAppConfig({
+        configName: 'publicConfigByDomain',
+        subKey: 'a',
+        value: 1,
+      });
+      await answerUpsert(ctx.environment, 'useAppConfigMyUpsertMutation');
+      await answerUpsert(ctx.environment, 'useAppConfigUpsertMutation');
+      await Promise.all([set, write]);
+      const reload = await waitForOperation(
+        ctx.environment,
+        'useAppConfigLoadQuery',
+      );
+      ctx.environment.mock.resolve(reload, {
+        data: { myAppConfigs: rows({ x: 2 }) },
+      });
+    });
+    await waitFor(() => expect(my.current[0]).toBe(2));
+  });
+
+  it('sends a change made during a reset after its reload', async () => {
+    const { hooks, environment, store } = await setup();
+    hooks.setMyAppConfigs(store, rows({ x: 9 }));
+    const { result } = renderHook(
+      () => hooks.useMyAppConfig<number>('userConfig', 'x'),
+      {
+        wrapper: wrapperFor(environment, store),
+      },
+    );
+    await act(async () => {
+      const reset = result.current[2]();
+      hooks.applyMyUserConfig(store, 'y', 5);
+      const set = hooks.sendMyUserConfig(store, environment);
+      const resetWrite = await answerUpsert(
+        environment,
+        'useAppConfigMyUpsertMutation',
+      );
+      // The reset's write already carries y: the atom held it when the write was sent.
+      expect(resetWrite.items[0].config).toEqual({ y: 5 });
+      const reload = await waitForOperation(
+        environment,
+        'useAppConfigLoadQuery',
+      );
+      expect(
+        operationsNamed(environment, 'useAppConfigMyUpsertMutation'),
+      ).toHaveLength(0);
+      environment.mock.resolve(reload, {
+        data: { myAppConfigs: rows({ x: 3, y: 5 }) },
+      });
+      await reset;
+      await set;
+    });
+    // y was confirmed by the reset's write, so nothing is sent again.
+    expect(
+      operationsNamed(environment, 'useAppConfigMyUpsertMutation'),
+    ).toHaveLength(0);
+    expect(store.get(hooks.myAppConfigState).configs.userConfig).toEqual({
+      x: 3,
+      y: 5,
+    });
   });
 });

@@ -166,6 +166,7 @@ agents:
   styleGuideFile: "DOCUMENTATION-STYLE-GUIDE.md"
   translationGuideFile: "TRANSLATION-GUIDE.md"
   screenshotGuideFile: "SCREENSHOT-GUIDELINES.md"
+  imagesPullCommand: "pnpm --filter backend.ai-webui-docs run images:pull"
   app:
     baseUrl: "http://localhost:9081"
     routes:

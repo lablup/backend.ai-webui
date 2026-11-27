@@ -27,4 +27,65 @@ describe('rbacTypeI18nKey', () => {
       ),
     ).toEqual([]);
   });
+
+  it('resolves to an English label for every entity type the manager declares', () => {
+    const labels = (enResource as { rbac: { types: Record<string, string> } })
+      .rbac.types;
+    // The `EntityType` kinds under `ai.backend.common.data.entity` (backend.ai main).
+    const entityTypes = [
+      'agent',
+      'app_config',
+      'app_config_allow_list',
+      'app_config_definition',
+      'app_config_fragment',
+      'artifact',
+      'artifact_registry',
+      'client_ip_masking_policy',
+      'container_registry',
+      'deployment',
+      'deployment_preset',
+      'domain',
+      'entity_share',
+      'global',
+      'idle_checker',
+      'image',
+      'keypair_resource_policy',
+      'login_client_type',
+      'model_card',
+      'network',
+      'notification_channel',
+      'notification_rule',
+      'object_storage',
+      'project',
+      'project_resource_policy',
+      'prometheus_query_preset',
+      'prometheus_query_preset_category',
+      'resource_group',
+      'resource_preset',
+      'resource_slot_type',
+      'retention_policy',
+      'role',
+      'role_preset',
+      'runtime_variant',
+      'runtime_variant_preset',
+      'scope_admin',
+      'service_catalog',
+      'session',
+      'session_group',
+      'session_template',
+      'storage_namespace',
+      'storage_volume',
+      'system_session_environ',
+      'user',
+      'user_resource_policy',
+      'vfolder',
+      'vfolder_auto_mount',
+      'vfs_storage',
+    ];
+    expect(
+      entityTypes.filter(
+        (type) => !labels[rbacTypeI18nKey(type).replace('rbac.types.', '')],
+      ),
+    ).toEqual([]);
+  });
 });

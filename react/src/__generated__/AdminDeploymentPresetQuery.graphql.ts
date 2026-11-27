@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<350d8d3ae00efab9d4ebd03327234156>>
+ * @generated SignedSource<<f8fef26a938b0f5757e9c2577751ef64>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -15,7 +15,9 @@ export type DeploymentRevisionPresetFilter = {
   AND?: ReadonlyArray<DeploymentRevisionPresetFilter> | null | undefined;
   NOT?: ReadonlyArray<DeploymentRevisionPresetFilter> | null | undefined;
   OR?: ReadonlyArray<DeploymentRevisionPresetFilter> | null | undefined;
+  entityId?: UUIDFilter | null | undefined;
   id?: UUIDFilter | null | undefined;
+  labels?: EntityLabelNestedFilter | null | undefined;
   name?: StringFilter | null | undefined;
   runtimeVariantId?: UUIDFilter | null | undefined;
 };
@@ -46,6 +48,22 @@ export type StringFilter = {
   notIn?: ReadonlyArray<string> | null | undefined;
   notStartsWith?: string | null | undefined;
   startsWith?: string | null | undefined;
+};
+export type EntityLabelNestedFilter = {
+  every?: EntityLabelFilter | null | undefined;
+  exists?: boolean | null | undefined;
+  none?: EntityLabelFilter | null | undefined;
+  some?: EntityLabelFilter | null | undefined;
+};
+export type EntityLabelFilter = {
+  AND?: ReadonlyArray<EntityLabelFilter> | null | undefined;
+  NOT?: ReadonlyArray<EntityLabelFilter> | null | undefined;
+  OR?: ReadonlyArray<EntityLabelFilter> | null | undefined;
+  entityId?: UUIDFilter | null | undefined;
+  entityType?: StringFilter | null | undefined;
+  fieldId?: UUIDFilter | null | undefined;
+  key?: StringFilter | null | undefined;
+  value?: StringFilter | null | undefined;
 };
 export type DeploymentRevisionPresetOrderBy = {
   direction?: string;

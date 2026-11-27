@@ -5,6 +5,7 @@
 import { useWebUINavigate } from '.';
 import { backendaiOptions, backendaiUtils } from '../global-stores';
 import { exitActAs, getActAsTarget } from '../helper/actAs';
+import { flushUserSettingsSyncWithin } from '../helper/userSettingsAppConfig';
 import React, { useEffect, useEffectEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -83,6 +84,8 @@ async function performLogoutCleanup(notificationMessage: string) {
       }),
     );
 
+    // Send the debounced account settings while the client can still write.
+    await flushUserSettingsSyncWithin();
     await logoutBackendAIClient();
     clearLoginStorage();
 
@@ -115,6 +118,7 @@ async function performAppCloseCleanup(notificationMessage: string) {
       }),
     );
 
+    await flushUserSettingsSyncWithin();
     await logoutBackendAIClient();
     clearLoginStorage();
   }
@@ -143,6 +147,7 @@ export function useLogout() {
   const logout = async (performClose = false, callbackURL = '/') => {
     // The login cookie is shared with the super admin's other tabs; only leave act-as.
     if (getActAsTarget()) {
+      await flushUserSettingsSyncWithin();
       exitActAs();
       return;
     }

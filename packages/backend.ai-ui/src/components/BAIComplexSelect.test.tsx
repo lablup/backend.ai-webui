@@ -51,7 +51,7 @@ const OPTIONS: Array<BAIComplexSelectOption> = [
 ];
 
 const h = { hidden: true } as const;
-const trigger = () => screen.getAllByRole('button')[0];
+const trigger = () => screen.getAllByRole('combobox')[0];
 const optionRows = () => screen.getAllByRole('option', h);
 const triggerText = () => trigger()?.textContent?.trim() ?? '';
 
@@ -159,6 +159,23 @@ describe('BAIComplexSelect option and panel mapping', () => {
     expect(optionRows()[2]).toHaveTextContent('extra-c');
   });
 
+  it('names a `{ reason }` option with the reason read in its row', async () => {
+    const user = userEvent.setup();
+    render(
+      <BAIComplexSelect
+        label="Target"
+        options={[
+          { value: 'a', label: 'alpha' },
+          { value: 'b', label: 'bravo', disabled: { reason: 'No access' } },
+        ]}
+      />,
+    );
+    await user.click(trigger());
+    expect(optionRows()[1]).toHaveAttribute('aria-disabled', 'true');
+    expect(optionRows()[1]).toHaveTextContent('No access');
+    expect(optionRows()[0]).not.toHaveTextContent('No access');
+  });
+
   it('reports search keystrokes through onSearch', async () => {
     const user = userEvent.setup();
     const onSearch = vi.fn();
@@ -166,7 +183,10 @@ describe('BAIComplexSelect option and panel mapping', () => {
       <BAIComplexSelect label="Target" options={OPTIONS} onSearch={onSearch} />,
     );
     await user.click(trigger());
-    await user.type(screen.getByRole('combobox', h), 'br');
+    await user.type(
+      screen.getByRole('combobox', { name: 'Search options', ...h }),
+      'br',
+    );
     expect(onSearch).toHaveBeenLastCalledWith('br');
   });
 

@@ -10,12 +10,14 @@
  |---|---|---|
  | `appHeader` | 100 | `MainLayout` header; `SiderToggleButton` sits one above it |
  | (reserved) | 101–899 | unowned. A layer placed here sits BELOW the boot curtain, so anything that must stay visible during boot belongs above `splash` |
+ | `assistant` | 800 | `WebUIAssistant`'s chat panel: over page content, under every drawer and dialog |
  | `splash` | 900 | `index.html` `#splash`, which stays mounted as the logged-out backdrop. It sits BELOW `modalBase` deliberately: every dialog is a `document.body` portal now, so no login-screen wrapper can lift one over a splash that outranks the band |
  | `loginHost` | 950 | `InteractiveLoginPage`'s full-viewport card host |
  | (legacy 1000 band) | 1000–1002 | a SECOND vocabulary this ladder does not own: the antd-era popup base (1000), inlined by `FolderExplorerModal` (`+ 2`); the non-modal `Drawer` (ui-common's fork) bases at 1000 too, and `DragAndDrop` sits at 1001 |
  | `modalBase` | 1100 | ui-common `Modal` (so `BAIModal` and the app-shim's `modal.*`) and `BAIDrawerPortal` (the scrimmed drawer), plus `BAI_Z_INDEX_MODAL_LEVEL_STEP` per level of ui-common's modal stack they share. `BAI_MODAL_Z_INDEX_BAND` hands this band to that stack |
  | `loginSideHelp` | 1101 | `LoginFormPanel`'s side help panel — a fixed sibling anchored to the base modal's edge, so it clears that modal's mask but not a modal opened on top of it |
  | `notification` | 11000 | `.bai-notification-stack` |
+ | `assistantButton` | 11001 | `WebUIAssistant`'s floating button, which the user drags anywhere, so it stays above notifications (and every dialog) |
  | (CSS top layer) | above all | Astryx `Toast`/`Popover`/`DropdownMenu`/`Tooltip`, `BAITour` — not stackable against this ladder. A NON-SCRIM `Drawer` is not here either: ui-common's fork opens it with `show()` (lab 0.6.5 would use the top layer), so it stacks at the legacy 1000 band above |
  | context-local stacking | off the ladder at any magnitude | `BAIBoard.css` (BUI), `BAITable*`, `BAICompactGroup.css` — local to a subtree |
 */
@@ -25,6 +27,7 @@ import { configureModalZIndex } from '@lablup/ui-common/Modal';
 /** Low → high; `zIndexLadder.test.ts` pins the declaration order increasing. */
 export const BAI_Z_INDEX = {
   appHeader: 100,
+  assistant: 800,
   splash: 900,
   loginHost: 950,
   modalBase: 1100,
@@ -34,6 +37,7 @@ export const BAI_Z_INDEX = {
   // covers it.
   loginSideHelp: 1101,
   notification: 11000,
+  assistantButton: 11001,
 } as const;
 
 /** Each nested portal — dialog or scrimmed drawer — claims one step above `modalBase`. */

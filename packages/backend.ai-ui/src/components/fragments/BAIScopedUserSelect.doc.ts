@@ -21,7 +21,7 @@ export const docs = {
   ],
   usage: {
     description:
-      'The user picker behind the keypair, credential, deployment, project-admin and storage-permission forms, and the reference consumer of BAIComplexSelect. It pages scopedUsersV2 (ADR 0012) with the required scope prop, typed as the query\'s UserScope input: an admin page passes the current domain from the host\'s useCurrentDomain() id, a project-admin page passes { project: [{ value: projectId }] }. The component does no scope lookup of its own, so it suspends only for the value query, and a caller that renders it lazily, such as a filter popover, wraps it in Suspense. RBAC management keeps BAIAdminUserV2Select over adminUsersV2, because its users are not bound to one domain (ADR 0012). The paginated document pages the scoped connection ten rows at a time with limit/offset, ordered by EMAIL ascending, and compiles the debounced search text into an email iContains predicate; the value document re-resolves the selected id(s) into emails through a uuid in filter. That second query is load-bearing rather than cosmetic — the trigger reads its text from the value, and a user chosen on page one is no longer in options once loadNext has paged past it — but it only runs under valuePropName="id", because with emails the key already is the label. The option list is fetched when the popup opens, and the trigger shows a loading state while that fetch is in flight, so nothing suspends on mount for it. scopedUsersV2 exists on managers 26.9.0 and later; there is no fallback for older managers. The outer value stays a plain key — the email by default, or the local user UUID when valuePropName is "id" — and label-in-value stays inside the wrapper, except that onChange also hands back the matching label pair. The rest of BAIComplexSelectProps passes through, including the required label, isLabelHidden, width, isDisabled and status; options, value, onChange, searchValue, onSearch and total are owned here.',
+      'The user picker behind the keypair, credential, deployment, project-admin and storage-permission forms, and the reference consumer of BAIComplexSelect. It pages scopedUsersV2 (ADR 0012) with the required scope prop, typed as the query\'s UserScope input: an admin page passes the current domain from the host\'s useCurrentDomain() id, a project-admin page passes { project: [{ value: projectId }] }. The component does no scope lookup of its own, so it suspends only for the value query, and a caller that renders it lazily, such as a filter popover, wraps it in Suspense. RBAC management keeps BAIAdminUserV2Select over adminUsersV2, because its users are not bound to one domain (ADR 0012). The paginated document pages the scoped connection ten rows at a time with limit/offset, ordered by EMAIL ascending, and compiles the debounced search text into an email iContains predicate; the value document re-resolves the selected id(s) into emails through a uuid in filter. That second query is load-bearing rather than cosmetic — the trigger reads its text from the value, and a user chosen on page one is no longer in options once loadNext has paged past it — but it only runs under valuePropName="id", because with emails the key already is the label. The option list is fetched when the popup opens, and the trigger shows a loading state while that fetch is in flight, so nothing suspends on mount for it. With allowCustomSelect, an e-mail address typed in the search box that no listed user matches is offered as one more option, so an address outside the scope can still be picked: its value is that address and the option handed to onChange carries isCustom, while a listed user’s option carries its local userId. scopedUsersV2 exists on managers 26.9.0 and later; there is no fallback for older managers. The outer value stays a plain key — the email by default, or the local user UUID when valuePropName is "id" — and label-in-value stays inside the wrapper, except that onChange also hands back the matching label pair. The rest of BAIComplexSelectProps passes through, including the required label, isLabelHidden, width, isDisabled and status; options, value, onChange, searchValue, onSearch and total are owned here.',
     bestPractices: [
       {
         guidance: true,
@@ -56,6 +56,11 @@ export const docs = {
       {
         guidance: true,
         description:
+          'Set allowCustomSelect on an invite field that must also take an address the scope cannot see, and read isCustom / userId off the second onChange argument to tell the two apart.',
+      },
+      {
+        guidance: true,
+        description:
           'Take the label from the second onChange argument when a filter chip or summary needs the human-readable email; it cannot be derived from the key at the call site.',
       },
       {
@@ -79,9 +84,9 @@ export const docs = {
     },
     {
       name: 'onChange',
-      type: '(value: string | Array<string> | undefined, option?: BAILabeledValue | Array<BAILabeledValue>) => void',
+      type: '(value: string | Array<string> | undefined, option?: BAIScopedUserSelectOption | Array<BAIScopedUserSelectOption>) => void',
       description:
-        'Fired with the new key, or array of keys under multiple. The second argument is the matching label/value pair — an array in multiple mode — so a caller can display the email without a second lookup.',
+        'Fired with the new key, or array of keys under multiple. The second argument is the matching label/value pair — an array in multiple mode — plus userId for a listed user or isCustom for an address offered through allowCustomSelect.',
     },
     {
       name: 'scope',
@@ -89,6 +94,13 @@ export const docs = {
       required: true,
       description:
         'The users to list, as the scopedUsersV2 scope input: { domain: [{ value: domainUUID }] }, { project: [{ value: projectUUID }] }, or several, combined with OR.',
+    },
+    {
+      name: 'allowCustomSelect',
+      type: 'boolean',
+      description:
+        'Offers the typed search text as an option when it is an e-mail address that no listed user matches exactly. Picking it makes the value that address, and the option passed to onChange carries isCustom: true. Only applies under valuePropName "email".',
+      default: 'false',
     },
     {
       name: 'valuePropName',
@@ -179,6 +191,27 @@ const domainScope = { domain: [{ value: id }] };
   }
   />
 </Suspense>`,
+    },
+    {
+      label:
+        'Invite field: a member of the caller’s projects, or any e-mail address',
+      code: `<BAIScopedUserSelect
+  scope={{ project: _.map(memberProjectIds, (value) => ({ value })) }}
+  allowCustomSelect
+  allowClear
+  label={t('general.E-Mail')}
+  value={recipient?.email ?? null}
+  onChange={(_value, option) => {
+    const picked = _.castArray(option ?? [])[0];
+    setRecipient(
+      !picked
+        ? null
+        : picked.userId
+          ? { kind: 'user', userId: picked.userId, email: picked.value }
+          : { kind: 'email', email: picked.value },
+    );
+  }}
+/>`,
     },
   ],
 } satisfies ComponentDoc;

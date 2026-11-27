@@ -173,10 +173,9 @@ dropdown menu on the **Confirm and Launch** step. See
     (`?`) icon next to each option for a short description. After choosing a
     mode, set the **Cluster Size** with the slider or number input: in
     Single Node mode the size counts **containers** on one agent, and in
-    Multi Node mode it counts **nodes** spread across agents. The *remaining*
-    mark on the slider shows the largest size that can start immediately with
-    the resources currently allocated — a larger size is allowed, but the
-    session may stay pending until enough resources free up. A Multi Node
+    Multi Node mode it counts **nodes** spread across agents. You can set a size
+    larger than the currently available resources allow, but the session may
+    stay pending until enough resources free up. A Multi Node
     session with a size of 1 is created as a Single Node session. For more
     information, refer to the
     [Overview of Backend.AI cluster compute session](#backendai-cluster-compute-session).
@@ -563,8 +562,9 @@ The Audit Log table includes the following columns:
   or `-` when it was not recorded
 - **Operation**: The type of action performed (for example, session creation, termination, or
   resource change)
-- **Status**: The outcome of the action (`SUCCESS`, `ERROR`, `RUNNING`, `DENIED`, or
-  `UNKNOWN`). `DENIED` means the action was deliberately rejected by policy rather than
+- **Action**: The name of the action that wrote the record
+- **Result**: The outcome of the action (**Success**, **Failed**, **Denied**, **Running**, or
+  **Unknown**). **Denied** means the action was deliberately rejected by policy rather than
   having failed with an error
 - **Time**: When the action occurred
 
@@ -572,8 +572,9 @@ The Audit Log table includes the following columns:
 
 Use the filter bar above the table to narrow down the log entries:
 
-- **Status**: Filter by action outcome (`SUCCESS`, `ERROR`, `RUNNING`, `UNKNOWN`)
+- **Result**: Filter by action outcome (**Success**, **Failed**, **Denied**, **Running**, **Unknown**)
 - **Operation**: Search by operation name or keyword
+- **Action**: Search by action name or keyword
 - **Triggered By**: Search by actor ID
 - **Time**: Filter by a date-range picker
 
@@ -624,10 +625,6 @@ with the click of a button. Also, there is no need for a separate package instal
 library provided by the computation session can be used as it is. For detailed
 instructions on how to use Jupyter Notebook, please refer to the official Jupyter Notebook
 documentation.
-
-`id_container file` in the notebook's file explorer, contains a private
-SSH key. If necessary, users can download it and use it for SSH / SFTP access to
-the container.
 
 Click the `NEW` button at the top right and select the Notebook for Backend.AI,
 then the ipynb window appears where users can enter their own code.

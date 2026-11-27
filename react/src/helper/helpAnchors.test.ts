@@ -32,6 +32,27 @@ describe('resolveHelpDocPath', () => {
     );
   });
 
+  it('prefers the entry for the route scope over the unscoped one', () => {
+    expect(resolveHelpDocPath('admin-dashboard', null, 'projectAdmin')).toBe(
+      'project_admin.html#project-admin-dashboard',
+    );
+    expect(resolveHelpDocPath('admin-dashboard', null, 'admin')).toBe(
+      'admin_menu.html#admin-dashboard',
+    );
+    expect(resolveHelpDocPath('admin-dashboard')).toBe(
+      'admin_menu.html#admin-dashboard',
+    );
+  });
+
+  it('falls back to the unscoped entry when the scope has none', () => {
+    expect(resolveHelpDocPath('scheduler', null, 'admin')).toBe(
+      'admin_menu.html#fair-share-scheduler',
+    );
+    expect(resolveHelpDocPath('agent', 'storages', 'admin')).toBe(
+      'admin_menu.html#storages',
+    );
+  });
+
   it('returns an empty path for an unmapped route', () => {
     expect(resolveHelpDocPath('no-such-route')).toBe('');
     expect(resolveHelpDocPath('no-such-route', 'no-such-tab')).toBe('');
@@ -40,7 +61,9 @@ describe('resolveHelpDocPath', () => {
 
 describe('helpAnchors data', () => {
   it('has no duplicate route/tab keys', () => {
-    const keys = helpAnchors.map((entry) => `${entry.path} ${entry.tab ?? ''}`);
+    const keys = helpAnchors.map(
+      (entry) => `${entry.scope ?? ''} ${entry.path} ${entry.tab ?? ''}`,
+    );
     expect(new Set(keys).size).toBe(keys.length);
   });
 

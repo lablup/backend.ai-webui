@@ -19,7 +19,10 @@ import {
   type SessionMonitorSummary,
 } from '../helper/sessionMonitor';
 import { useCurrentUserInfo } from './backendai';
-import { hasStoredUserSetting, useBAISettingUserState } from './useBAISetting';
+import {
+  useBAISettingUserState,
+  useHasStoredUserSetting,
+} from './useBAISetting';
 import { useCurrentUserProjectRoles } from './useCurrentUserProjectRoles';
 import { INITIAL_FETCH_KEY } from 'backend.ai-ui';
 import { atom } from 'jotai';
@@ -43,7 +46,7 @@ export type SessionMonitorScope = {
   filter: string;
   /** Only the viewer's own sessions: the default, and what alerts need. */
   onlyMine: boolean;
-  /** The viewer may read other users' sessions (domain admin and above). */
+  /** The viewer may read other users' sessions (superadmin only). */
   isDomainAdmin: boolean;
 };
 /** Written by `SessionMonitorWatcher`; null hides the chip. */
@@ -55,13 +58,16 @@ export const sessionMonitorScopeAtom = atom<SessionMonitorScope | null>(null);
  */
 export const useSessionMonitorCondition = () => {
   'use memo';
-  const { isSuperAdmin, domainAdminDomains } = useCurrentUserProjectRoles();
+  const { isSuperAdmin } = useCurrentUserProjectRoles();
   const [currentUser] = useCurrentUserInfo();
   const [condition] = useBAISettingUserState('session_monitor_condition');
-  const isDomainAdmin = isSuperAdmin || domainAdminDomains.length > 0;
+  const hasStoredCondition = useHasStoredUserSetting(
+    'session_monitor_condition',
+  );
+  const isDomainAdmin = isSuperAdmin;
   const userId = currentUser.uuid ?? '';
   return {
-    condition: hasStoredUserSetting('session_monitor_condition')
+    condition: hasStoredCondition
       ? (condition ?? '')
       : buildSessionMonitorDefaultCondition({ userId, isDomainAdmin }),
     isDomainAdmin,
@@ -80,7 +86,7 @@ export const useSessionMonitorScope = (): SessionMonitorScope => {
   return {
     scopeId: isDomainAdmin ? `domain:${domainName}` : `user:${userId}`,
     filter: condition,
-    // Below domain admin the user scope already holds only their sessions.
+    // Below superadmin the user scope already holds only their sessions.
     onlyMine:
       !isDomainAdmin || condition.includes(sessionMonitorOwnerFilter(userId)),
     isDomainAdmin,

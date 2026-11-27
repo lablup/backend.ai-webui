@@ -16,7 +16,7 @@ export const docs = {
   ],
   usage: {
     description:
-      'Confirmation modal for putting one or more deactivated artifacts back into service on the Reservoir page. It reads a plural `BAIActivateArtifactsModalArtifactsFragment` on `Artifact` (selecting `id` and `name`), so the caller spreads that fragment on the artifact rows it selects from and passes the selected array as `selectedArtifactsFragment`. Confirming runs the `restoreArtifacts` mutation over the local ids of that array, reports success or every returned error through the app-shim message API, and calls `onOk` only after the mutation completes without errors. Its content is wrapped in BAIUnmountAfterClose so it unmounts once the modal has closed; remaining props go to BAIModal, but `onOk`, `onCancel`, `okText` and `okButtonProps` are applied after the spread and cannot be overridden.',
+      'Confirmation modal for putting one or more deactivated artifacts back into service on the Reservoir page. It reads a plural `BAIActivateArtifactsModalArtifactsFragment` on `Artifact` (selecting `id`, `entityId` and `name`), so the caller spreads that fragment on the artifact rows it selects from and passes the selected array as `selectedArtifactsFragment`. Confirming runs the `partialBulkRestoreArtifacts` mutation over the `entityId`s of that array. When every artifact is activated it shows a success message; when any fail (or the request itself is rejected, which counts every artifact as failed) it shows an error message with the count and lists the failed artifacts with their reasons in BAIBulkErrorModal. Either way it calls `onOk` once the request settles, passing the Relay ids of the failed artifacts. Its content is wrapped in BAIUnmountAfterClose so it unmounts once the modal has closed; remaining props go to BAIModal, but `onOk`, `onCancel`, `okText` and `okButtonProps` are applied after the spread and cannot be overridden.',
     bestPractices: [
       {
         guidance: true,
@@ -26,7 +26,7 @@ export const docs = {
       {
         guidance: true,
         description:
-          'Clear the selection and refresh the artifact list inside `onOk` — the mutation returns only `id` and `availability`, so anything else the row shows needs a refetch.',
+          'In `onOk`, close the modal, refetch the list when anything succeeded, and keep only `failedArtifactIds` selected so the next activate retries them.',
       },
       {
         guidance: true,
@@ -50,14 +50,14 @@ export const docs = {
       name: 'selectedArtifactsFragment',
       type: 'BAIActivateArtifactsModalArtifactsFragment$key',
       description:
-        'Plural fragment reference for the artifacts to activate. Its ids become the `restoreArtifacts` input and its `name` drives the confirmation copy; an empty array renders the plural message with a count of 0.',
+        'Plural fragment reference for the artifacts to activate. Its `entityId`s become the `partialBulkRestoreArtifacts` input and its `name` drives the confirmation copy; an empty array renders the plural message with a count of 0.',
       required: true,
     },
     {
       name: 'onOk',
-      type: '(e: React.MouseEvent<HTMLElement>) => void',
+      type: '(e: React.MouseEvent<HTMLButtonElement>, failedArtifactIds: string[]) => void',
       description:
-        'Called after `restoreArtifacts` completes with no errors, never on failure. Clear the selection and refetch here.',
+        'Called once the request settles, with the Relay ids of the artifacts that were not activated (empty when all succeeded). Close the modal, refetch, and keep the failed ones selected here.',
     },
     {
       name: 'onCancel',
@@ -73,10 +73,12 @@ export const docs = {
   open={!!selectedRestoreArtifacts.length}
   selectedArtifactsFragment={selectedRestoreArtifacts}
   onCancel={() => setSelectedRestoreArtifacts([])}
-  onOk={() => {
+  onOk={(_e, failedArtifactIds) => {
     updateFetchKey();
     setSelectedRestoreArtifacts([]);
-    setSelectedArtifactIdList([]);
+    setSelectedArtifactIdList((prev) =>
+      prev.filter((v) => failedArtifactIds.includes(v.id)),
+    );
   }}
 />`,
     },

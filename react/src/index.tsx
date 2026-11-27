@@ -14,8 +14,9 @@ import {
   getActAsTarget,
 } from './helper/actAs';
 import { loadCustomThemeConfig } from './helper/customThemeConfig';
-import { applyDevServerTitle } from './helper/devServerTitle';
+import { updateDocumentTitle } from './helper/documentTitle';
 import { ThemeModeProvider } from './hooks/useThemeMode';
+import reportWebVitals from './reportWebVitals';
 import { Provider as JotaiProvider } from 'jotai';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
@@ -58,45 +59,36 @@ if (process.env.NODE_ENV === 'development') {
   };
 }
 
-// Load custom theme config once in react/index.tsx
-loadCustomThemeConfig();
+function bootstrap() {
+  loadCustomThemeConfig();
 
-// to-astryx final switch — the `ConfigProvider.config({ holderRender })` block
-// that used to live here is gone.
-//
-// It existed for antd's STATIC methods (`message.*` / `notification.*` /
-// `Modal.*`), which render in a detached holder built from `globalConfig()` —
-// outside the app's ConfigProvider, and therefore outside both its CSP nonce
-// and its theme. The holder had to be re-wrapped in its own ConfigProvider
-// carrying the nonce (so cssinjs's injected <style> survived a strict
-// `style-src 'nonce-…'`) and the dark algorithm (so a statically-invoked toast
-// did not paint light on a dark page), subscribing to
-// `change:backendaiwebui.setting.isDarkMode` to follow a mid-session flip.
-//
-// None of that has a subject any more. The imperative API is `app-shim`
-// (ticket 04), whose host `<BAIAppProvider>` is mounted INSIDE the app's
-// `<AstryxBrandTheme>` in `DefaultProviders`, so it inherits theme and mode
-// like any other component — and Astryx injects no runtime <style>, so there
-// is no nonce to plumb.
+  // Writes the first title, before any route or session state exists; it carries
+  // the Portless app name in dev.
+  updateDocumentTitle();
 
-// In dev, distinguish multiple dev-server tabs by prefixing the tab title with
-// the Portless app name injected via VITE_DEV_SERVER_NAME (no-op in production).
-applyDevServerTitle();
+  // Must run before any client is created: it decides whether this tab acts as another user.
+  adoptActAsHandoff();
+  const actAsTarget = getActAsTarget();
+  if (actAsTarget) applyActAsTitle(actAsTarget);
 
-// Must run before any client is created: it decides whether this tab acts as another user.
-adoptActAsHandoff();
-const actAsTarget = getActAsTarget();
-if (actAsTarget) applyActAsTitle(actAsTarget);
+  const root = ReactDOM.createRoot(
+    document.getElementById('react-root') as HTMLElement,
+  );
+  root.render(
+    <React.StrictMode>
+      <JotaiProvider store={jotaiStore}>
+        <ThemeModeProvider>
+          <App />
+        </ThemeModeProvider>
+      </JotaiProvider>
+    </React.StrictMode>,
+  );
 
-const root = ReactDOM.createRoot(
-  document.getElementById('react-root') as HTMLElement,
-);
-root.render(
-  <React.StrictMode>
-    <JotaiProvider store={jotaiStore}>
-      <ThemeModeProvider>
-        <App />
-      </ThemeModeProvider>
-    </JotaiProvider>
-  </React.StrictMode>,
-);
+  reportWebVitals();
+}
+
+if (window.isUnsupportedBrowser) {
+  window.__bootstrapApp = bootstrap;
+} else {
+  bootstrap();
+}

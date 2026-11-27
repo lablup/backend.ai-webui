@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<09089d1ed480fefc95d84d5f97eba882>>
+ * @generated SignedSource<<f017a1966f89ba4fbb71a6834c8c9432>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -32,11 +32,11 @@ export type VFolderHostPermissionEntryInput = {
   permissions: ReadonlyArray<string>;
 };
 export type KeypairResourcePolicyStoragePermissionTableV2UpdateMutation$variables = {
+  id: string;
   input: UpdateKeypairResourcePolicyInput;
-  name: string;
 };
 export type KeypairResourcePolicyStoragePermissionTableV2UpdateMutation$data = {
-  readonly adminUpdateKeypairResourcePolicyV2: {
+  readonly updateKeypairResourcePolicyV2: {
     readonly keypairResourcePolicy: {
       readonly allowedVfolderHosts: ReadonlyArray<{
         readonly host: string;
@@ -44,7 +44,7 @@ export type KeypairResourcePolicyStoragePermissionTableV2UpdateMutation$data = {
       }>;
       readonly id: string;
     };
-  } | null | undefined;
+  };
 };
 export type KeypairResourcePolicyStoragePermissionTableV2UpdateMutation = {
   response: KeypairResourcePolicyStoragePermissionTableV2UpdateMutation$data;
@@ -52,34 +52,36 @@ export type KeypairResourcePolicyStoragePermissionTableV2UpdateMutation = {
 };
 
 const node: ConcreteRequest = (function(){
-var v0 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "input"
-},
-v1 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "name"
-},
-v2 = [
+var v0 = [
+  {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "id"
+  },
+  {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "input"
+  }
+],
+v1 = [
   {
     "alias": null,
     "args": [
       {
         "kind": "Variable",
-        "name": "input",
-        "variableName": "input"
+        "name": "id",
+        "variableName": "id"
       },
       {
         "kind": "Variable",
-        "name": "name",
-        "variableName": "name"
+        "name": "input",
+        "variableName": "input"
       }
     ],
     "concreteType": "UpdateKeypairResourcePolicyPayload",
     "kind": "LinkedField",
-    "name": "adminUpdateKeypairResourcePolicyV2",
+    "name": "updateKeypairResourcePolicyV2",
     "plural": false,
     "selections": [
       {
@@ -131,38 +133,32 @@ v2 = [
 ];
 return {
   "fragment": {
-    "argumentDefinitions": [
-      (v0/*: any*/),
-      (v1/*: any*/)
-    ],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
     "name": "KeypairResourcePolicyStoragePermissionTableV2UpdateMutation",
-    "selections": (v2/*: any*/),
+    "selections": (v1/*: any*/),
     "type": "Mutation",
     "abstractKey": null
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": [
-      (v1/*: any*/),
-      (v0/*: any*/)
-    ],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "KeypairResourcePolicyStoragePermissionTableV2UpdateMutation",
-    "selections": (v2/*: any*/)
+    "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "b32c683c848359e0df4639c78848c9e0",
+    "cacheID": "4166b0d348db53d23dea3fda5b942151",
     "id": null,
     "metadata": {},
     "name": "KeypairResourcePolicyStoragePermissionTableV2UpdateMutation",
     "operationKind": "mutation",
-    "text": "mutation KeypairResourcePolicyStoragePermissionTableV2UpdateMutation(\n  $name: String!\n  $input: UpdateKeypairResourcePolicyInput!\n) {\n  adminUpdateKeypairResourcePolicyV2(name: $name, input: $input) {\n    keypairResourcePolicy {\n      id\n      allowedVfolderHosts {\n        host\n        permissions\n      }\n    }\n  }\n}\n"
+    "text": "mutation KeypairResourcePolicyStoragePermissionTableV2UpdateMutation(\n  $id: UUID!\n  $input: UpdateKeypairResourcePolicyInput!\n) {\n  updateKeypairResourcePolicyV2(id: $id, input: $input) {\n    keypairResourcePolicy {\n      id\n      allowedVfolderHosts {\n        host\n        permissions\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "77b6178578d763b06b51385effda09f6";
+(node as any).hash = "1edbd6b2918155378d20cbdd6a2c64af";
 
 export default node;

@@ -52,7 +52,7 @@ beforeEach(() => {
   saved.length = 0;
   built.length = 0;
   ui = createOverlayUI({
-    onBuildBlock: (text) => {
+    onAddPin: (text) => {
       built.push(text);
       return null;
     },
@@ -298,11 +298,11 @@ describe('copying both flavours', () => {
  * The note rides in the anchor, so the block can only be built from a capture
  * encoded around the text that is in the box right now.
  */
-describe('gating the copy on the note', () => {
+describe('gating the add on the note', () => {
   const textarea = () =>
     compose().querySelector('textarea') as HTMLTextAreaElement;
-  const copyButton = () =>
-    compose().querySelector('[data-act="copy"]') as HTMLButtonElement;
+  const saveButton = () =>
+    compose().querySelector('[data-act="save"]') as HTMLButtonElement;
   const err = () => compose().querySelector('.err') as HTMLElement;
   const type = (value: string) => {
     textarea().value = value;
@@ -315,21 +315,22 @@ describe('gating the copy on the note', () => {
   });
 
   // R5.2: the whole chrome is lucide at one size, emoji nowhere.
-  it('labels the copy button with a lucide icon, not an emoji', () => {
-    expect(copyButton().querySelector('svg')).not.toBeNull();
-    expect(copyButton().textContent).toBe('Copy block');
+  it('labels the add button with a lucide icon, not an emoji', () => {
+    expect(saveButton().querySelector('svg')).not.toBeNull();
+    expect(saveButton().textContent).toBe('Add to set');
+    expect(compose().querySelectorAll('.actions button')).toHaveLength(2);
     expect(compose().textContent).not.toMatch(/\p{Extended_Pictographic}/u);
   });
 
   /**
-   * R5.2 put an icon and a label span inside the copy button, so a click on
-   * the words has the span as its target and the delegated handler saw no
-   * button at all — the composer answered only the keyboard.
+   * R5.2 put an icon and a label span inside the button, so a click on the
+   * words has the span as its target and the delegated handler saw no button
+   * at all — the composer answered only the keyboard.
    */
-  it('copies from a click on the button’s own label, not just its padding', () => {
+  it('adds from a click on the button’s own label, not just its padding', () => {
     ui.setComposeReady(true, '');
 
-    copyButton()
+    saveButton()
       .querySelector('.lbl')
       ?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
 
@@ -337,13 +338,35 @@ describe('gating the copy on the note', () => {
   });
 
   it('re-disables the button the moment the note leaves the capture', () => {
-    expect(copyButton().disabled).toBe(true);
+    expect(saveButton().disabled).toBe(true);
     ui.setComposeReady(true, '');
-    expect(copyButton().disabled).toBe(false);
+    expect(saveButton().disabled).toBe(false);
     type('needs re-encoding');
-    expect(copyButton().disabled).toBe(true);
+    expect(saveButton().disabled).toBe(true);
     ui.setComposeReady(true, 'needs re-encoding');
-    expect(copyButton().disabled).toBe(false);
+    expect(saveButton().disabled).toBe(false);
+    ui.setDraftSize(30, true);
+    expect(saveButton().disabled).toBe(true);
+    expect(saveButton().textContent).toBe('Set is full (30)');
+  });
+
+  it('adds the pin on ⌘⏎ and writes no clipboard', () => {
+    const execCommand = vi.fn(() => true);
+    document.execCommand = execCommand;
+    ui.setComposeReady(true, '');
+    type('a note');
+    ui.setComposeReady(true, 'a note');
+
+    textarea().dispatchEvent(
+      new KeyboardEvent('keydown', {
+        key: 'Enter',
+        ctrlKey: true,
+        bubbles: true,
+      }),
+    );
+
+    expect(built).toEqual(['a note']);
+    expect(execCommand).not.toHaveBeenCalled();
   });
 
   it('asks for one re-encode per typing pause, not per keystroke', async () => {
@@ -396,7 +419,7 @@ describe('the pin accent', () => {
   });
 
   // White on #FF0DE7 is 3.25:1 — under the 4.5:1 AA floor for the 14px
-  // "Copy block" label. #0a1317 on it is 5.78:1.
+  // "Add to set" label. #0a1317 on it is 5.78:1.
   it('carries a dark on-accent so the primary button label passes AA', () => {
     expect(css()).toContain('--bai-review-on-accent: #0a1317');
   });
@@ -409,8 +432,8 @@ describe('the pin accent', () => {
 describe('the composer in edit mode', () => {
   const textarea = () =>
     compose().querySelector('textarea') as HTMLTextAreaElement;
-  const copyButton = () =>
-    compose().querySelector('[data-act="copy"]') as HTMLButtonElement;
+  const saveButton = () =>
+    compose().querySelector('[data-act="save"]') as HTMLButtonElement;
   const warn = () => compose().querySelector('.warn') as HTMLElement;
   const pressSave = () =>
     textarea().dispatchEvent(
@@ -450,7 +473,7 @@ describe('the composer in edit mode', () => {
 
     expect(ui.isComposeOpen()).toBe(true);
     expect(textarea().value).toBe('the label is cut off');
-    expect(copyButton().textContent).toBe('Save note');
+    expect(saveButton().textContent).toBe('Save note');
     expect(compose().style.top).toBe('234px');
   });
 
@@ -469,7 +492,7 @@ describe('the composer in edit mode', () => {
     ui.openCompose(target, 40, 306);
 
     expect(compose().classList.contains('editing')).toBe(false);
-    expect(copyButton().textContent).toBe('Copy block');
+    expect(saveButton().textContent).toBe('Add to set');
   });
 
   it('saves on ⌘⏎ and builds no block at all', () => {
@@ -499,8 +522,8 @@ describe('the composer in edit mode', () => {
     ui.setDraftSize(10, true);
     openEditor('a note');
 
-    expect(copyButton().disabled).toBe(false);
-    expect(copyButton().textContent).toBe('Save note');
+    expect(saveButton().disabled).toBe(false);
+    expect(saveButton().textContent).toBe('Save note');
   });
 });
 

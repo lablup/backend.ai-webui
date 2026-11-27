@@ -257,7 +257,7 @@ async function embedFontFromPath(
   const [filePath, selector] = candidatePath.split('#');
   if (!fs.existsSync(filePath)) return null;
 
-  let fontBytes = fs.readFileSync(filePath);
+  let fontBytes: Buffer = fs.readFileSync(filePath);
 
   // TTC: extract the right sub-font into a standalone OTF/TTF buffer
   if (fontBytes.length >= 4 && fontBytes.toString('ascii', 0, 4) === 'ttcf') {

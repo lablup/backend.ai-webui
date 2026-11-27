@@ -10,7 +10,7 @@ canonical reference, and each BAI wrapper's file header documents its deliberate
 
 ## React Compiler — `'use memo'`
 
-- `babel-plugin-react-compiler` runs in **annotation mode**: memoization happens only in
+- The React Compiler (Oxc, through `@vitejs/plugin-react`) runs in **annotation mode**: memoization happens only in
   function bodies that start with `'use memo'`.
 - Add `'use memo'` as the **first statement of every component body and every custom hook
   body** (function bodies, not files). Never remove, rename, or backtick an existing one.
@@ -92,6 +92,12 @@ inherited call sites needed no edit when their internals were rebuilt on Astryx.
   comments follow `.claude/rules/comment-density.md`: only what the code cannot say, ≤2
   lines by default, with the reasoning in the commit body and the PR instead.
 
+## Forms (ADR 0040)
+
+- Reach a form through `<Form ref={formRef}>` by default; keep `Form.useForm()` only when the
+  instance is read during render outside the `<Form>` or the input must survive a brief
+  unmount. Full rule: `.claude/rules/form-store-ownership.md`.
+
 ## Relay
 
 - **Architecture**: split the query orchestrator (`useLazyLoadQuery`, owns fetch policy and
@@ -109,6 +115,16 @@ inherited call sites needed no edit when their internals were rebuilt on Astryx.
   select it and use it for values, filters, mutation inputs and React keys. Do not add new
   `toLocalId(node.id)`, `row_id` or nested `{ id }` decoding for such a type (#10494).
   A type with neither field keeps the existing approach.
+- **Bulk mutations**: a `partialBulk*` mutation reports each item. Select the success
+  list's ids and the failure list with its id and `message` (the field names differ per
+  payload: read the schema, do not assume `successes`/`failed { id }`). All succeeded →
+  `message.success`. Some failed → `message.error` with the count, keep the failed items
+  selected for a retry, and list them in `BAIBulkErrorModal`. The request itself rejected →
+  list every requested item as failed in the same modal. An `atomicBulk*` mutation succeeds
+  or fails as a whole: one success path, one error path (`onCompleted` errors and a null
+  payload, `onError`), no per-item UI. After any success, refetch when list membership
+  changed (see the `relay-mutation-store-updates` skill). References:
+  `RoleAssignmentTab.tsx` (partial), `FairShareWeightSettingModal.tsx` (atomic).
 - `@since` / `@sinceMultiple` / `@deprecatedSince` / `@deprecatedSinceMultiple` /
   `@skipOnClient` in `graphql` tags are
   **client-side** directives defined in `data/client-directives.graphql` and stripped at
@@ -124,7 +140,7 @@ inherited call sites needed no edit when their internals were rebuilt on Astryx.
 |---|---|
 | Shared component under `packages/backend.ai-ui/` | `BAI*` (`BAIButton`, `BAIFlex`, `BAIUserNodes`) |
 | Relay-backed table bound to a GraphQL type | `*Nodes` (`SessionNodes`, `VFolderNodes`) — colocates a `@relay(plural: true)` fragment |
-| Top-level route component in `react/src/pages/` | `*Page` (`AdminComputeSessionListPage`) |
+| Top-level route component | `react/src/pages/<Name>Page/<Name>Page.tsx` (tests in `<Name>Page.test.tsx`, no `index.tsx` barrel; importers name the file); the folder carries the route component's name (`SchedulerPage/`), its page-only code sits in `components/` / `hooks/` / `helper/` beside it, and its `CLAUDE.md` describes the page (ADR 0024) |
 | Modal / drawer shell | `*Modal` / `*Drawer` |
 | Reusable group of `Form.Item`s | `*FormItems` (`ResourceAllocationFormItems`) |
 
@@ -216,6 +232,9 @@ templates — copy the nearest one and adapt.
       types, colocated fragments, single pagination mode.
 - [ ] `BAIButton action` for async work; `useFetchKey` where refetch is needed;
       `BAIUnmountAfterClose` around form-bearing modals/drawers.
+- [ ] Forms (ADR 0040): `<Form ref={formRef}>` by default. Every new `Form.useForm()` is one
+      of the rule 2 cases in `.claude/rules/form-store-ownership.md` (render-time read outside the `<Form>`, or input that
+      must survive a brief unmount).
 - [ ] i18n: correct hook for the package (`useTranslation` vs `useBAIi18n`), no hard-coded
       user-facing strings.
 - [ ] `useBAILogger` instead of `console.*`; no empty catch; pre-defined error boundaries.

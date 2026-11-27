@@ -3,8 +3,8 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { SessionStatusDetailModalFragment$key } from '../../__generated__/SessionStatusDetailModalFragment.graphql';
-import { useSuspendedBackendaiClient } from '../../hooks';
 import { useCurrentUserRole } from '../../hooks/backendai';
+import { useEffectiveLoginConfig } from '../../hooks/useWebUIConfig';
 import SessionStatusBadge from './SessionStatusBadge';
 import { MetadataListItem } from '@lablup/ui-common/MetadataList';
 import { Text } from '@lablup/ui-common/Text';
@@ -77,7 +77,7 @@ const SessionStatusDetailModal: React.FC<SessionStatusDetailModalProps> = ({
 }) => {
   const { t } = useTranslation();
   const userRole = useCurrentUserRole();
-  const baiClient = useSuspendedBackendaiClient();
+  const loginConfig = useEffectiveLoginConfig();
 
   const session = useFragment(
     graphql`
@@ -195,8 +195,7 @@ const SessionStatusDetailModal: React.FC<SessionStatusDetailModalProps> = ({
           ? _.map(statusData?.error?.collection ?? statusData, (collection) => {
               return (
                 <Fragment key={collection.name}>
-                  {(userRole === 'superadmin' ||
-                    !baiClient._config.hideAgents) &&
+                  {(userRole === 'superadmin' || !loginConfig.hideAgents) &&
                     collection?.agent_id && (
                       <MetadataListItem label={t('session.AgentId')}>
                         {collection?.agent_id}

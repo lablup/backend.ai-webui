@@ -22,7 +22,6 @@ before you can log in with your account.
 
 ![=400px](../images/signup_dialog.png)
 
-
 :::note
 Depending on the server configuration and plugin settings, signing up by
 anonymous user may not be allowed. In that case, please contact the administrator
@@ -149,7 +148,7 @@ and consider changing your password.
 :::
 
 After logging in, you can check the information of the current resource usage on
-the Start page.
+the Dashboard.
 
 By clicking the user icon in the upper-right corner, you will see the user menu.
 You can log out by selecting the `Log Out` menu item.
@@ -161,7 +160,6 @@ If your system has a login session timer enabled, you will be automatically
 logged out when the timer expires. For details, see the
 [Login Session Timer](#login-session-timer) section in Top Bar Features.
 :::
-
 
 <a id="when-you-forgot-your-password"></a>
 
@@ -179,14 +177,6 @@ Depending on the server configuration, the password change feature may not be
 available. In that case, contact your administrator.
 :::
 
-:::warning
-If login failure occurs more than 10 times consecutively, access
-to the endpoint is temporarily restricted for 20 minutes for security
-reasons. If the access restriction continues after 20 minutes, please contact
-your system administrator.
-:::
-
-
 <a id="sidebar-menus"></a>
 
 ## Sidebar menus
@@ -194,10 +184,6 @@ your system administrator.
 <a id="menus-available-to-your-role"></a>
 
 ### Menus available to your role
-
-The sidebar lists only the pages you are allowed to open. Every user sees the
-general menu groups; the **Administration** groups appear in addition for
-superadmins and domain admins.
 
 Project-admin entries are evaluated against **the currently selected project**,
 not against your account as a whole. The project you are working in is
@@ -218,7 +204,6 @@ Change the size of the sidebar via the buttons on the right side of the sidebar.
 Click it to significantly reduce the width of the sidebar, giving you a wider view of its contents.
 Clicking it again will return the sidebar to its original width.
 You can also use the shortcut key ( `[` ) to toggle between the narrow and original sidebar widths.
-
 
 ![=268px](../images/menu_collapse.png)
 

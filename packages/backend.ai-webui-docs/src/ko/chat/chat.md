@@ -47,7 +47,7 @@ navTitle: 채팅
 
 Backend.AI에 배포되어 있지 않은 OpenAI 호환 서비스와도 대화할 수 있습니다. **배포** 드롭다운에서 **커스텀 엔드포인트 연결…** 을 선택한 뒤, 해당 서비스의 **Base URL**과 서비스가 요구하는 경우 **API 키**를 입력하고 **연결**을 클릭합니다. 그러면 채팅 카드에 해당 서비스가 제공하는 모델이 표시되며, **커스텀 엔드포인트 수정**을 클릭하면 폼이 다시 열려 주소나 키를 변경할 수 있습니다.
 
-<!-- TODO(screenshot): /chat — the custom endpoint form (Base URL + API key) opened from the Deployment dropdown; capture backend manager was unavailable -->
+![](../images/chat_custom_endpoint_form.png)
 
 <a id="model-connection-settings"></a>
 
@@ -100,7 +100,7 @@ Backend.AI에 배포되어 있지 않은 OpenAI 호환 서비스와도 대화할
 
 ## 채팅 기록 삭제
 
-`더보기` 버튼을 클릭하면 `채팅 지우기` 옵션이 나타납니다. 이 옵션을 선택하면 카드에 있는 모든 채팅 기록이 삭제됩니다. 단, 카드의 세션은 종료되지 않습니다.
+`더보기` 버튼을 클릭하면 `채팅 기록 삭제` 옵션이 나타납니다. 이 옵션을 선택하면 카드에 있는 모든 채팅 기록이 삭제되지만, 카드의 세션은 종료되지 않습니다.
 
 ![=168px](../images/delete_chatting_session.png)
 

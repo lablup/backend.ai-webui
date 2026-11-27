@@ -18,7 +18,7 @@ import { convertToBinaryUnit, parseValueWithUnit, SizeUnit } from '../helper';
 import { useControllableValue, usePrevious } from '../hooks';
 import { useBAIi18n } from '../hooks/useBAIi18n';
 import BAINumberInput, { type BAINumberInputProps } from './BAINumberInput';
-import BAISelector from './BAISelector';
+import BAISelect from './BAISelect';
 import { InputGroup, InputGroupText } from '@lablup/ui-common/InputGroup';
 import {
   NumberStepper,
@@ -71,6 +71,8 @@ export interface BAIDynamicUnitInputNumberProps extends Omit<
   /** Accessible name. Hidden when absent (the field usually sits under one). */
   label?: string;
   isLabelHidden?: boolean;
+  /** Width of the input group, as `NumberInput`'s `width` takes it. */
+  width?: number | string;
   style?: CSSProperties;
   className?: string;
   [key: `data-${string}`]: string | undefined;
@@ -92,6 +94,7 @@ const BAIDynamicUnitInputNumber: React.FC<BAIDynamicUnitInputNumberProps> = ({
   size,
   label,
   isLabelHidden,
+  width,
   style,
   className,
   ...restProps
@@ -249,7 +252,7 @@ const BAIDynamicUnitInputNumber: React.FC<BAIDynamicUnitInputNumberProps> = ({
       isLabelHidden={isLabelHidden ?? label === undefined}
       isDisabled={disabled}
       size={size ? ASTRYX_SIZE[size] : undefined}
-      style={style}
+      style={width === undefined ? style : { ...style, width }}
     >
       {addonPrefix ? <InputGroupText>{addonPrefix}</InputGroupText> : null}
       <BAINumberInput
@@ -282,13 +285,8 @@ const BAIDynamicUnitInputNumber: React.FC<BAIDynamicUnitInputNumberProps> = ({
       {/* A single available unit is a static label, not a choice — antd faked
           that with `suffixIcon={null} open={false}` on a Select. */}
       {units.length > 1 ? (
-        // QA-FINDINGS Q-34 — the unit Selector sits immediately to the right
-        // of the number field, so the overlay behaviour Astryx applies when
-        // `placement == null && !hasSearch` puts the option list on top of the
-        // unit the user currently has selected. Name the placement so the panel
-        // takes the standard layer position (below, offset 0).
-        <BAISelector
-          placement="below"
+        <BAISelect
+          showSearch={false}
           aria-label={t('general.Unit')}
           value={unit}
           options={units.map((u) => ({
@@ -301,7 +299,7 @@ const BAIDynamicUnitInputNumber: React.FC<BAIDynamicUnitInputNumberProps> = ({
           // claims the whole row and the number field shrinks to its flex basis.
           // Size the unit to its own content and let the number field take the
           // rest — antd's `Select` in a `Space.Compact` behaved this way.
-          controlStyle={{ flex: '0 0 auto', width: 'auto' }}
+          style={{ flex: '0 0 auto', width: 'auto' }}
         />
       ) : (
         <InputGroupText>{`${unit.toUpperCase()}iB`}</InputGroupText>

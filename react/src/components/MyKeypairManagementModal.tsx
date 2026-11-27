@@ -404,7 +404,12 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
             wrap="wrap"
             style={{ marginBottom: token('--spacing-3') }}
           >
-            <BAIFlex gap="xs" align="start" wrap="wrap">
+            <BAIFlex
+              gap="xs"
+              align="start"
+              wrap="wrap"
+              style={{ flexShrink: 1 }}
+            >
               <BAISegmentedControl
                 value={activeFilter}
                 onChange={(value) => {
@@ -713,7 +718,12 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
           </BAIFlex>
           <BAIFlex direction="column" gap="xs">
             <BAIText type="secondary">{t('credential.SecretKey')}</BAIText>
-            <BAIText copyable code ellipsis={{ tooltip: true }}>
+            <BAIText
+              copyable
+              code
+              ellipsis={{ tooltip: true }}
+              className="ph-no-capture"
+            >
               {credentialResult?.secretKey}
             </BAIText>
           </BAIFlex>

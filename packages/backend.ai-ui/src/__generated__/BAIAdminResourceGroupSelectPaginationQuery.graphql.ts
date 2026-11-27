@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<cc5b9e25a6a2a3ac550bdf5e50ae7043>>
+ * @generated SignedSource<<351223190a2da626f304e1cd297c0e48>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -15,6 +15,7 @@ export type ResourceGroupFilter = {
   NOT?: ReadonlyArray<ResourceGroupFilter> | null | undefined;
   OR?: ReadonlyArray<ResourceGroupFilter> | null | undefined;
   description?: StringFilter | null | undefined;
+  entityId?: UUIDFilter | null | undefined;
   isActive?: boolean | null | undefined;
   isDefault?: boolean | null | undefined;
   isPublic?: boolean | null | undefined;
@@ -55,6 +56,7 @@ export type EntityLabelFilter = {
   OR?: ReadonlyArray<EntityLabelFilter> | null | undefined;
   entityId?: UUIDFilter | null | undefined;
   entityType?: StringFilter | null | undefined;
+  fieldId?: UUIDFilter | null | undefined;
   key?: StringFilter | null | undefined;
   value?: StringFilter | null | undefined;
 };

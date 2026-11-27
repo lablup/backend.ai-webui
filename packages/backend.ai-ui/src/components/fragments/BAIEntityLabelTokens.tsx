@@ -1,5 +1,6 @@
 import { BAIEntityLabelTokensFragment$key } from '../../__generated__/BAIEntityLabelTokensFragment.graphql';
 import BAIFlex from '../BAIFlex';
+import type { FilterProperty } from '../BAIGraphQLPropertyFilter';
 import { Token } from '@lablup/ui-common/Token';
 import React from 'react';
 import { graphql, useFragment } from 'react-relay';
@@ -28,6 +29,19 @@ export const toEntityLabelFilter = (label: BAIEntityLabel) => ({
     some: { key: { iEquals: label.key }, value: { iEquals: label.value } },
   },
 });
+
+/** The filter-bar properties that show and edit a `toEntityLabelFilter` condition as key and value chips. */
+export const entityLabelFilterProperties = (propertyLabels: {
+  key: string;
+  value: string;
+}): Array<FilterProperty> => [
+  { key: 'labels.some.key', propertyLabel: propertyLabels.key, type: 'string' },
+  {
+    key: 'labels.some.value',
+    propertyLabel: propertyLabels.value,
+    type: 'string',
+  },
+];
 
 const BAIEntityLabelTokens: React.FC<BAIEntityLabelTokensProps> = ({
   entityLabelsFrgmt,

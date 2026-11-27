@@ -121,6 +121,7 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
           openToPublic
         }
         replicaState {
+          replicaCount
           desiredReplicaCount
         }
       }
@@ -162,6 +163,7 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
               openToPublic
             }
             replicaState {
+              replicaCount
               desiredReplicaCount
             }
           }
@@ -301,8 +303,7 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
                       .filter(Boolean),
                   ),
                   openToPublic: deployment.networkAccess.openToPublic ?? false,
-                  replicaCount:
-                    deployment.replicaState?.desiredReplicaCount ?? 1,
+                  replicaCount: deployment.replicaState?.replicaCount ?? 1,
                 }
               : { openToPublic: false, replicaCount: 1, tags: [] }
           }

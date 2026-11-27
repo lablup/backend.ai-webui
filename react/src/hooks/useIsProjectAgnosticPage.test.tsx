@@ -33,6 +33,7 @@ describe('useIsProjectAgnosticPage (FR-3413, widened in FR-3414 and FR-3415)', (
       'admin-session',
       'admin-deployments',
       'admin-data',
+      'admin-dashboard',
       'credential',
       'environment',
       'resource-policy',
@@ -45,6 +46,7 @@ describe('useIsProjectAgnosticPage (FR-3413, widened in FR-3414 and FR-3415)', (
       'diagnostics',
       'rbac',
       'branding',
+      'system-settings',
       'information',
     ]);
   });
@@ -69,7 +71,9 @@ describe('useIsProjectAgnosticPage (FR-3413, widened in FR-3414 and FR-3415)', (
     ['/admin/diagnostics', 'diagnostics'],
     ['/admin/rbac', 'rbac'],
     ['/admin/branding', 'branding'],
+    ['/admin/system-settings', 'system-settings'],
     ['/admin/information', 'information'],
+    ['/admin/dashboard', 'admin-dashboard'],
   ])('is true on the handle-marked admin route %s', (path, menuKey) => {
     renderAt(path, [
       {
@@ -102,8 +106,11 @@ describe('useIsProjectAgnosticPage (FR-3413, widened in FR-3414 and FR-3415)', (
         menuKey: 'project-admin-users',
       },
     ],
-    // The only excluded admin page: it still reads the ambient project.
-    ['/admin/dashboard', { scope: 'admin', menuKey: 'admin-dashboard' }],
+    // Same menu key as `/admin/dashboard`, but project-scoped.
+    [
+      '/project/default/admin/dashboard',
+      { scope: 'projectAdmin', menuKey: 'admin-dashboard' },
+    ],
   ])('is false on the project-dependent route %s', (path, handle) => {
     renderAt(path, [{ path, element: <Probe />, handle }]);
     expect(screen.getByTestId('probe')).toHaveTextContent('false');

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<0dc6c95f6ec12f42614f89c27501ddae>>
+ * @generated SignedSource<<949355838c887d3dcbd7e970b892e9bd>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -17,6 +17,7 @@ export type KeypairResourcePolicyV2SettingModalFragment$data = {
     readonly permissions: ReadonlyArray<VFolderHostPermissionV2>;
   }>;
   readonly defaultForUnspecified: string;
+  readonly entityId: string;
   readonly id: string;
   readonly idleTimeout: number;
   readonly maxConcurrentSessions: number;
@@ -48,6 +49,13 @@ const node: ReaderFragment = {
       "args": null,
       "kind": "ScalarField",
       "name": "id",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "entityId",
       "storageKey": null
     },
     {
@@ -168,6 +176,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "689ae08c63690331faf350dfffd98b2c";
+(node as any).hash = "040cbc5af654632034ad8c8310d83577";
 
 export default node;

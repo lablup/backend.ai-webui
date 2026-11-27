@@ -25,27 +25,34 @@ export const useMergedAllowedStorageHostPermission = (
   userAccessKey: string,
 ) => {
   const baiClient = useSuspendedBackendaiClient();
-  const { keypair } =
+  const { myKeypairs } =
     useLazyLoadQuery<useMergedAllowedStorageHostPermission_KeypairQuery>(
       graphql`
         query useMergedAllowedStorageHostPermission_KeypairQuery(
-          $domainName: String
-          $accessKey: String
+          $accessKey: String!
         ) {
-          keypair(domain_name: $domainName, access_key: $accessKey)
+          myKeypairs(filter: { accessKey: { equals: $accessKey } }, limit: 1)
             @required(action: THROW) {
-            resource_policy @required(action: THROW)
+            edges {
+              node {
+                id
+                resourcePolicy
+              }
+            }
           }
         }
       `,
       {
-        domainName: domain,
         accessKey: userAccessKey,
       },
       {
         fetchPolicy: 'store-or-network',
       },
     );
+  const keypair = myKeypairs.edges[0]?.node;
+  if (!keypair) {
+    throw new Error(`No keypair holds the access key ${userAccessKey}.`);
+  }
   const mergedAllowedVFolderHosts =
     useLazyLoadQuery<useMergedAllowedStorageHostPermission_AllowedVFolderHostsQuery>(
       graphql`
@@ -70,7 +77,7 @@ export const useMergedAllowedStorageHostPermission = (
       {
         domainName: domain,
         projectId: projectId ?? NIL_UUID,
-        resourcePolicyName: keypair?.resource_policy,
+        resourcePolicyName: keypair.resourcePolicy,
         skipProjectScope: projectId === null,
       },
       {

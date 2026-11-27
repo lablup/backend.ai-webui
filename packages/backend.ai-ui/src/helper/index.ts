@@ -4,6 +4,7 @@ import * as _ from 'lodash-es';
 
 export * from './astryxTagVariant';
 export * from './combineFilters';
+export * from './durationFormatter';
 export * from './runtimeVariantPresetUI';
 export * from './vfolderHostPermission';
 
@@ -328,7 +329,8 @@ type KnownGlobalIdType =
   | 'UserNode'
   | 'ProjectNode'
   | 'ModelDeployment'
-  | 'ImageV2';
+  | 'ImageV2'
+  | 'ContainerRegistryNode';
 
 export const toGlobalId = (type: KnownGlobalIdType, id: string): string => {
   return btoa(`${type}:${id}`);

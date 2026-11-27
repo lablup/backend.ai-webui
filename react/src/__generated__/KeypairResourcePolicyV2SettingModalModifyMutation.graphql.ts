@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<df0e1538a2c844817751e4399808cdf0>>
+ * @generated SignedSource<<6c9c8d1ed2ab81a48a5a830f5b2fdfe8>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -32,11 +32,11 @@ export type VFolderHostPermissionEntryInput = {
   permissions: ReadonlyArray<string>;
 };
 export type KeypairResourcePolicyV2SettingModalModifyMutation$variables = {
+  id: string;
   input: UpdateKeypairResourcePolicyInput;
-  name: string;
 };
 export type KeypairResourcePolicyV2SettingModalModifyMutation$data = {
-  readonly adminUpdateKeypairResourcePolicyV2: {
+  readonly updateKeypairResourcePolicyV2: {
     readonly keypairResourcePolicy: {
       readonly allowedVfolderHosts: ReadonlyArray<{
         readonly host: string;
@@ -63,7 +63,7 @@ export type KeypairResourcePolicyV2SettingModalModifyMutation$data = {
         readonly unlimited: boolean;
       }>;
     };
-  } | null | undefined;
+  };
 };
 export type KeypairResourcePolicyV2SettingModalModifyMutation = {
   response: KeypairResourcePolicyV2SettingModalModifyMutation$data;
@@ -71,17 +71,19 @@ export type KeypairResourcePolicyV2SettingModalModifyMutation = {
 };
 
 const node: ConcreteRequest = (function(){
-var v0 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "input"
-},
-v1 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "name"
-},
-v2 = [
+var v0 = [
+  {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "id"
+  },
+  {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "input"
+  }
+],
+v1 = [
   {
     "alias": null,
     "args": null,
@@ -104,24 +106,24 @@ v2 = [
     "storageKey": null
   }
 ],
-v3 = [
+v2 = [
   {
     "alias": null,
     "args": [
       {
         "kind": "Variable",
-        "name": "input",
-        "variableName": "input"
+        "name": "id",
+        "variableName": "id"
       },
       {
         "kind": "Variable",
-        "name": "name",
-        "variableName": "name"
+        "name": "input",
+        "variableName": "input"
       }
     ],
     "concreteType": "UpdateKeypairResourcePolicyPayload",
     "kind": "LinkedField",
-    "name": "adminUpdateKeypairResourcePolicyV2",
+    "name": "updateKeypairResourcePolicyV2",
     "plural": false,
     "selections": [
       {
@@ -167,7 +169,7 @@ v3 = [
             "kind": "LinkedField",
             "name": "totalResourceSlots",
             "plural": true,
-            "selections": (v2/*: any*/),
+            "selections": (v1/*: any*/),
             "storageKey": null
           },
           {
@@ -198,7 +200,7 @@ v3 = [
             "kind": "LinkedField",
             "name": "maxPendingSessionResourceSlots",
             "plural": true,
-            "selections": (v2/*: any*/),
+            "selections": (v1/*: any*/),
             "storageKey": null
           },
           {
@@ -256,38 +258,32 @@ v3 = [
 ];
 return {
   "fragment": {
-    "argumentDefinitions": [
-      (v0/*: any*/),
-      (v1/*: any*/)
-    ],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
     "name": "KeypairResourcePolicyV2SettingModalModifyMutation",
-    "selections": (v3/*: any*/),
+    "selections": (v2/*: any*/),
     "type": "Mutation",
     "abstractKey": null
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": [
-      (v1/*: any*/),
-      (v0/*: any*/)
-    ],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "KeypairResourcePolicyV2SettingModalModifyMutation",
-    "selections": (v3/*: any*/)
+    "selections": (v2/*: any*/)
   },
   "params": {
-    "cacheID": "44e36db821eafc2b3a5eb3a7c46e4b61",
+    "cacheID": "f5ce644e817cbfd8c8d9bc7ec813d4d4",
     "id": null,
     "metadata": {},
     "name": "KeypairResourcePolicyV2SettingModalModifyMutation",
     "operationKind": "mutation",
-    "text": "mutation KeypairResourcePolicyV2SettingModalModifyMutation(\n  $name: String!\n  $input: UpdateKeypairResourcePolicyInput!\n) {\n  adminUpdateKeypairResourcePolicyV2(name: $name, input: $input) {\n    keypairResourcePolicy {\n      id\n      name\n      createdAt\n      defaultForUnspecified\n      totalResourceSlots {\n        resourceType\n        quantity\n        unlimited\n      }\n      maxSessionLifetime\n      maxConcurrentSessions\n      maxPendingSessionCount\n      maxPendingSessionResourceSlots {\n        resourceType\n        quantity\n        unlimited\n      }\n      maxConcurrentSftpSessions\n      maxContainersPerSession\n      idleTimeout\n      allowedVfolderHosts {\n        host\n        permissions\n      }\n    }\n  }\n}\n"
+    "text": "mutation KeypairResourcePolicyV2SettingModalModifyMutation(\n  $id: UUID!\n  $input: UpdateKeypairResourcePolicyInput!\n) {\n  updateKeypairResourcePolicyV2(id: $id, input: $input) {\n    keypairResourcePolicy {\n      id\n      name\n      createdAt\n      defaultForUnspecified\n      totalResourceSlots {\n        resourceType\n        quantity\n        unlimited\n      }\n      maxSessionLifetime\n      maxConcurrentSessions\n      maxPendingSessionCount\n      maxPendingSessionResourceSlots {\n        resourceType\n        quantity\n        unlimited\n      }\n      maxConcurrentSftpSessions\n      maxContainersPerSession\n      idleTimeout\n      allowedVfolderHosts {\n        host\n        permissions\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "efbe7900175ab6be4af3c27a35689b9f";
+(node as any).hash = "5e3ca031a99fcef4534f969b663c11cf";
 
 export default node;

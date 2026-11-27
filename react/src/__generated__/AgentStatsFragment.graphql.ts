@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<a18bb9e565a4e0f790dd4a15bdbc7b4e>>
+ * @generated SignedSource<<81985a727d3e2d157c1cd2f8dd0261ec>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,21 +9,21 @@
 // @ts-nocheck
 
 import { ReaderFragment } from 'relay-runtime';
-import { FragmentRefs } from "relay-runtime";
+import { FragmentRefs, Result } from "relay-runtime";
 export type AgentStatsFragment$data = {
-  readonly agentStats: {
+  readonly agentStats: Result<{
     readonly totalResource: {
       readonly capacity: any;
       readonly free: any;
       readonly used: any;
     };
-  } | null | undefined;
-  readonly aliveAgents: {
-    readonly count: number | null | undefined;
-  } | null | undefined;
-  readonly schedulableAgents: {
-    readonly count: number | null | undefined;
-  } | null | undefined;
+  } | null | undefined, unknown>;
+  readonly aliveAgents: Result<{
+    readonly count: number;
+  } | null | undefined, unknown>;
+  readonly schedulableAgents: Result<{
+    readonly count: number;
+  } | null | undefined, unknown>;
   readonly " $fragmentType": "AgentStatsFragment";
 };
 export type AgentStatsFragment$key = {
@@ -35,11 +35,14 @@ import AgentStatsRefetchQuery_graphql from './AgentStatsRefetchQuery.graphql';
 
 const node: ReaderFragment = (function(){
 var v0 = {
+  "equals": "ALIVE"
+},
+v1 = {
   "kind": "Literal",
-  "name": "first",
+  "name": "limit",
   "value": 1
 },
-v1 = [
+v2 = [
   {
     "alias": null,
     "args": null,
@@ -49,18 +52,7 @@ v1 = [
   }
 ];
 return {
-  "argumentDefinitions": [
-    {
-      "defaultValue": null,
-      "kind": "LocalArgument",
-      "name": "aliveAgentFilter"
-    },
-    {
-      "defaultValue": null,
-      "kind": "LocalArgument",
-      "name": "schedulableAgentFilter"
-    }
-  ],
+  "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": {
     "refetch": {
@@ -72,81 +64,98 @@ return {
   "name": "AgentStatsFragment",
   "selections": [
     {
-      "alias": null,
-      "args": null,
-      "concreteType": "AgentStats",
-      "kind": "LinkedField",
-      "name": "agentStats",
-      "plural": false,
-      "selections": [
-        {
-          "alias": null,
-          "args": null,
-          "concreteType": "AgentResource",
-          "kind": "LinkedField",
-          "name": "totalResource",
-          "plural": false,
-          "selections": [
-            {
-              "alias": null,
-              "args": null,
-              "kind": "ScalarField",
-              "name": "free",
-              "storageKey": null
-            },
-            {
-              "alias": null,
-              "args": null,
-              "kind": "ScalarField",
-              "name": "used",
-              "storageKey": null
-            },
-            {
-              "alias": null,
-              "args": null,
-              "kind": "ScalarField",
-              "name": "capacity",
-              "storageKey": null
+      "kind": "CatchField",
+      "field": {
+        "alias": null,
+        "args": null,
+        "concreteType": "AgentStats",
+        "kind": "LinkedField",
+        "name": "agentStats",
+        "plural": false,
+        "selections": [
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "AgentResource",
+            "kind": "LinkedField",
+            "name": "totalResource",
+            "plural": false,
+            "selections": [
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "free",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "used",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "capacity",
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
+          }
+        ],
+        "storageKey": null
+      },
+      "to": "RESULT"
+    },
+    {
+      "kind": "CatchField",
+      "field": {
+        "alias": "aliveAgents",
+        "args": [
+          {
+            "kind": "Literal",
+            "name": "filter",
+            "value": {
+              "status": (v0/*: any*/)
             }
-          ],
-          "storageKey": null
-        }
-      ],
-      "storageKey": null
+          },
+          (v1/*: any*/)
+        ],
+        "concreteType": "AgentV2Connection",
+        "kind": "LinkedField",
+        "name": "agentsV2",
+        "plural": false,
+        "selections": (v2/*: any*/),
+        "storageKey": "agentsV2(filter:{\"status\":{\"equals\":\"ALIVE\"}},limit:1)"
+      },
+      "to": "RESULT"
     },
     {
-      "alias": "aliveAgents",
-      "args": [
-        {
-          "kind": "Variable",
-          "name": "filter",
-          "variableName": "aliveAgentFilter"
-        },
-        (v0/*: any*/)
-      ],
-      "concreteType": "AgentConnection",
-      "kind": "LinkedField",
-      "name": "agent_nodes",
-      "plural": false,
-      "selections": (v1/*: any*/),
-      "storageKey": null
-    },
-    {
-      "alias": "schedulableAgents",
-      "args": [
-        {
-          "kind": "Variable",
-          "name": "filter",
-          "variableName": "schedulableAgentFilter"
-        },
-        (v0/*: any*/)
-      ],
-      "concreteType": "AgentConnection",
-      "kind": "LinkedField",
-      "name": "agent_nodes",
-      "plural": false,
-      "selections": (v1/*: any*/),
-      "storageKey": null
+      "kind": "CatchField",
+      "field": {
+        "alias": "schedulableAgents",
+        "args": [
+          {
+            "kind": "Literal",
+            "name": "filter",
+            "value": {
+              "schedulable": true,
+              "status": (v0/*: any*/)
+            }
+          },
+          (v1/*: any*/)
+        ],
+        "concreteType": "AgentV2Connection",
+        "kind": "LinkedField",
+        "name": "agentsV2",
+        "plural": false,
+        "selections": (v2/*: any*/),
+        "storageKey": "agentsV2(filter:{\"schedulable\":true,\"status\":{\"equals\":\"ALIVE\"}},limit:1)"
+      },
+      "to": "RESULT"
     }
   ],
   "type": "Query",
@@ -154,6 +163,6 @@ return {
 };
 })();
 
-(node as any).hash = "184fa590bf7419b2316880010ceb48ed";
+(node as any).hash = "e217cb656048f87c06a9d79f978a321b";
 
 export default node;

@@ -2,9 +2,10 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { useCurrentDomainValue, useSuspendedBackendaiClient } from '.';
+import { useCurrentDomainValue } from '.';
 import { useAccessibleProjectsQuery } from '../__generated__/useAccessibleProjectsQuery.graphql';
 import { useCurrentUserRole } from './backendai';
+import { useEffectiveLoginConfig } from './useWebUIConfig';
 import * as _ from 'lodash-es';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import type { FetchPolicy } from 'relay-runtime';
@@ -44,10 +45,10 @@ export const useAccessibleProjects = (
   options?: UseAccessibleProjectsOptions,
 ) => {
   'use memo';
-  const baiClient = useSuspendedBackendaiClient();
+  const loginConfig = useEffectiveLoginConfig();
   const currentDomainName = useCurrentDomainValue();
   const userRole = useCurrentUserRole();
-  const blockList = baiClient?._config?.blockList ?? null;
+  const blockList = loginConfig.blockList ?? null;
 
   const domainName = options?.domain ?? currentDomainName;
   // Membership comes from `ProjectV2`: legacy `UserGroup.id` is the same raw
@@ -116,4 +117,11 @@ export const useAccessibleProjects = (
     : undefined;
 
   return { groups, accessibleProjects, personalProject };
+};
+
+/** Whether `projectId` is the current user's own personal project. */
+export const useIsPersonalProject = (projectId?: string | null) => {
+  'use memo';
+  const { personalProject } = useAccessibleProjects();
+  return !!projectId && personalProject?.id === projectId;
 };

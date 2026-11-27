@@ -49,6 +49,9 @@ export class Resources {
     this.resources['atom-max.device'] = {};
     this.resources['atom-max.device'].total = 0;
     this.resources['atom-max.device'].used = 0;
+    this.resources['rebel100.device'] = {};
+    this.resources['rebel100.device'].total = 0;
+    this.resources['rebel100.device'].used = 0;
     this.resources['gaudi2.device'] = {};
     this.resources['gaudi2.device'].total = 0;
     this.resources['gaudi2.device'].used = 0;
@@ -208,6 +211,16 @@ export class Resources {
               this.resources['atom-max.device'].used =
                 parseInt(this.resources['atom-max.device'].used) +
                 Math.floor(Number(occupied_slots['atom-max.device']));
+            }
+            if ('rebel100.device' in available_slots) {
+              this.resources['rebel100.device'].total =
+                parseInt(this.resources['rebel100.device'].total) +
+                Math.floor(Number(available_slots['rebel100.device']));
+            }
+            if ('rebel100.device' in occupied_slots) {
+              this.resources['rebel100.device'].used =
+                parseInt(this.resources['rebel100.device'].used) +
+                Math.floor(Number(occupied_slots['rebel100.device']));
             }
             if ('gaudi2.device' in available_slots) {
               this.resources['gaudi2.device'].total =

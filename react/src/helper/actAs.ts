@@ -10,14 +10,18 @@
  * keeps the super-admin view. The opener hands the target over through a
  * one-time nonce in `localStorage`, so a crafted link alone cannot turn it on.
  */
+import { updateDocumentTitle } from './documentTitle';
 import { generateUUID } from './uuid';
 
 export interface ActAsTarget {
   userId: string;
   email: string;
   name: string;
+  /** Debug mode for this act-as tab only; never written to any app config. */
+  debug?: boolean;
 }
 
+// index.html's theme-family bootstrap repeats these three names and the target check.
 export const ACT_AS_HANDOFF_PARAM = 'actAsHandoff';
 const SESSION_KEY = 'backendaiwebui.actAs';
 const HANDOFF_KEY_PREFIX = 'backendaiwebui.actAs.handoff.';
@@ -34,7 +38,8 @@ const isActAsTarget = (value: unknown): value is ActAsTarget => {
     typeof v?.userId === 'string' &&
     v.userId.length > 0 &&
     typeof v.email === 'string' &&
-    typeof v.name === 'string'
+    typeof v.name === 'string' &&
+    (v.debug === undefined || typeof v.debug === 'boolean')
   );
 };
 
@@ -62,14 +67,37 @@ const sweepExpiredHandoffs = (now: number) => {
   }
 };
 
+// The Electron build serves the app from `file://`, where only the initial
+// index.html resolves; `/` would point at the filesystem root.
+const appEntryURL = () =>
+  new URL(
+    globalThis.isElectron ? globalThis.electronInitialHref : '/',
+    window.location.href,
+  );
+
+// The i18n post-processor reads this on every `t()`, so parse only on change.
+let cachedRaw: string | null | undefined;
+let cachedTarget: ActAsTarget | null = null;
+
 export const getActAsTarget = (): ActAsTarget | null => {
   try {
-    const value = parseJSON(sessionStorage.getItem(SESSION_KEY));
-    return isActAsTarget(value) ? value : null;
+    const raw = sessionStorage.getItem(SESSION_KEY);
+    if (raw !== cachedRaw) {
+      const value = parseJSON(raw);
+      cachedRaw = raw;
+      cachedTarget = isActAsTarget(value) ? value : null;
+    }
+    return cachedTarget;
   } catch {
     return null;
   }
 };
+
+/**
+ * Debug mode (i18n key markers, raw errors, app-launcher proxy options, error
+ * details) is on only in an act-as tab opened with it checked.
+ */
+export const isActAsDebugMode = (): boolean => getActAsTarget()?.debug === true;
 
 /**
  * Opens a new tab that acts as `target`. Returns false if storage is
@@ -88,7 +116,8 @@ export const openActAsTab = (target: ActAsTarget): boolean => {
   } catch {
     return false;
   }
-  const url = new URL('/', window.location.href);
+  const url = appEntryURL();
+  url.hash = '';
   url.searchParams.set(ACT_AS_HANDOFF_PARAM, nonce);
   // Not `noopener`: with it `window.open` always returns null, so a blocked
   // popup would be indistinguishable from success.
@@ -115,6 +144,8 @@ export const adoptActAsHandoff = () => {
   if (!nonce) return;
   url.searchParams.delete(ACT_AS_HANDOFF_PARAM);
   window.history.replaceState(window.history.state, '', url.href);
+  // index.html captured it with the nonce; later reloads must not carry it.
+  if (globalThis.isElectron) globalThis.electronInitialHref = url.href;
 
   const key = HANDOFF_KEY_PREFIX + nonce;
   try {
@@ -133,10 +164,7 @@ export const adoptActAsHandoff = () => {
 };
 
 export const applyActAsTitle = (target: ActAsTarget) => {
-  const prefix = `[${target.name || target.email}] `;
-  if (!document.title.startsWith(prefix)) {
-    document.title = `${prefix}${document.title}`;
-  }
+  updateDocumentTitle({ actAsName: target.name || target.email });
 };
 
 /** Leaves act-as: closes the tab, or falls back to the super-admin view. */
@@ -149,6 +177,6 @@ export const exitActAs = () => {
   window.close();
   // `window.close()` is ignored for tabs the script did not open.
   setTimeout(() => {
-    window.location.replace(new URL('/', window.location.href).href);
+    window.location.replace(appEntryURL().href);
   }, 200);
 };

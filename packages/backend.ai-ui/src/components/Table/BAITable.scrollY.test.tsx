@@ -7,7 +7,7 @@ import {
   SCROLL_PINNED_COLUMNS,
   dimLayerOf,
   renderScrollTable,
-} from './BAITable.scrollTestFixtures';
+} from './BAITable.scroll.fixtures';
 
 describe('BAITable scroll.y', () => {
   it.each([

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<26a986b5b363661be1d1f33e5ece14d4>>
+ * @generated SignedSource<<52cd6452bbb11033b043b540727ca474>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,16 +9,13 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
-export type PurgeRoleInput = {
+export type RBACManagementPagePurgeRoleMutation$variables = {
   id: string;
 };
-export type RBACManagementPagePurgeRoleMutation$variables = {
-  input: PurgeRoleInput;
-};
 export type RBACManagementPagePurgeRoleMutation$data = {
-  readonly adminPurgeRole: {
-    readonly id: string;
-  } | null | undefined;
+  readonly purgeRole: {
+    readonly purgedId: string;
+  };
 };
 export type RBACManagementPagePurgeRoleMutation = {
   response: RBACManagementPagePurgeRoleMutation$data;
@@ -30,7 +27,7 @@ var v0 = [
   {
     "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "input"
+    "name": "id"
   }
 ],
 v1 = [
@@ -39,20 +36,20 @@ v1 = [
     "args": [
       {
         "kind": "Variable",
-        "name": "input",
-        "variableName": "input"
+        "name": "id",
+        "variableName": "id"
       }
     ],
     "concreteType": "PurgeRolePayload",
     "kind": "LinkedField",
-    "name": "adminPurgeRole",
+    "name": "purgeRole",
     "plural": false,
     "selections": [
       {
         "alias": null,
         "args": null,
         "kind": "ScalarField",
-        "name": "id",
+        "name": "purgedId",
         "storageKey": null
       }
     ],
@@ -77,16 +74,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "93ad1f3d0813191d97a9195d29feeac3",
+    "cacheID": "feb00ca7d5c319fd8b502834750c791b",
     "id": null,
     "metadata": {},
     "name": "RBACManagementPagePurgeRoleMutation",
     "operationKind": "mutation",
-    "text": "mutation RBACManagementPagePurgeRoleMutation(\n  $input: PurgeRoleInput!\n) {\n  adminPurgeRole(input: $input) {\n    id\n  }\n}\n"
+    "text": "mutation RBACManagementPagePurgeRoleMutation(\n  $id: UUID!\n) {\n  purgeRole(id: $id) {\n    purgedId\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "fa9ba2bdd510368b17354afbb8fb319d";
+(node as any).hash = "995e3846851bfb6fad3388c088fa6a04";
 
 export default node;

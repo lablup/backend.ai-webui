@@ -33,6 +33,7 @@ import ProjectAdminScopeAlert from '../ProjectAdminScopeAlert';
 import SessionMonitorWatcher from '../SessionMonitor/SessionMonitorWatcher';
 import ThemePreviewModeAlert from '../ThemePreviewModeAlert';
 import { DRAWER_WIDTH } from '../WEBUINotificationDrawer';
+import WebUIAssistant from '../WebUIAssistant/WebUIAssistant';
 import WebUIBreadcrumb from '../WebUIBreadcrumb';
 import './MainLayout.css';
 import WebUIHeader from './WebUIHeader';
@@ -156,6 +157,8 @@ function MainLayout() {
   return (
     <>
       <CSSTokenVariables />
+      {/* DismissSplashOnMount suspends until sign-in has applied the domain
+          settings, so nothing below mounts before then: pages need no wait of their own. */}
       <Suspense fallback={null}>
         <DismissSplashOnMount />
         <PrefetchLabelableEntityTypes />
@@ -345,6 +348,11 @@ function MainLayout() {
                   </BAIFlex>
                   <BAIOverlayScrollbar targetRef={contentScrollFlexRef} />
                 </div>
+                <ErrorBoundaryWithNullFallback>
+                  <Suspense fallback={null}>
+                    <WebUIAssistant />
+                  </Suspense>
+                </ErrorBoundaryWithNullFallback>
               </BAIErrorBoundary>
             </BAIContentWithDrawerArea>
           </BAIAppShell>
@@ -511,23 +519,29 @@ export const CSSTokenVariables = () => {
  * (its own `Suspense`), so nothing else in this boundary suspends and the
  * splash was torn down before login had even finished.
  *
- * Also suspends on the signed-in user's `userConfig.themeFamily` and copies
- * it into the localStorage mirror BEFORE the splash goes, so the account's
- * family is what the page reveals (FR-3834). The mirror survives logout; the
- * next login overrides it here.
+ * Also copies the signed-in user's `userConfig.themeFamily`, which sign-in
+ * loaded before the client became ready, into the FOUC mirror BEFORE
+ * the splash goes (FR-3834). The mirror survives logout; the next login
+ * overrides it here.
  */
 const DismissSplashOnMount = () => {
   'use memo';
   useSuspendedBackendaiClient();
-  const userConfigFamily = useMyAppConfig<string>('themeFamily');
+  const [userConfigFamily, , , userConfigStatus] = useMyAppConfig(
+    'userConfig',
+    'themeFamily',
+  );
+  // A failed sign-in read keeps the mirrored family.
+  const isUserConfigLoaded = userConfigStatus === 'loaded';
   const { setActiveThemeFamily } = useCustomThemeConfig();
-  const syncThemeFamilyMirror = useEffectEvent(() => {
+  const applyUserConfig = useEffectEvent(() => {
+    if (!isUserConfigLoaded) return;
     setActiveThemeFamily(
       typeof userConfigFamily === 'string' ? userConfigFamily : undefined,
     );
   });
   useEffect(() => {
-    syncThemeFamilyMirror();
+    applyUserConfig();
     (globalThis as any).__dismissSplash?.();
     (globalThis as any).__mainLayoutReady = true;
     document.dispatchEvent(new CustomEvent('main-layout-ready'));

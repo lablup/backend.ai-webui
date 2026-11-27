@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<b5f0a1dc21ebb8484d9c4bbd6c9c4883>>
+ * @generated SignedSource<<c7d72188997eda1b6ca203fefa0c156d>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,21 +9,21 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
-export type ModifyKeyPairInput = {
-  concurrency_limit?: number | null | undefined;
-  is_active?: boolean | null | undefined;
-  is_admin?: boolean | null | undefined;
-  rate_limit?: number | null | undefined;
-  resource_policy?: string | null | undefined;
+export type AdminUpdateKeypairInput = {
+  accessKey: string;
+  isActive?: boolean | null | undefined;
+  isAdmin?: boolean | null | undefined;
+  rateLimit?: number | null | undefined;
+  resourcePolicy?: string | null | undefined;
 };
 export type AdminUserCredentialListModifyMutation$variables = {
-  access_key: string;
-  props: ModifyKeyPairInput;
+  input: AdminUpdateKeypairInput;
 };
 export type AdminUserCredentialListModifyMutation$data = {
-  readonly modify_keypair: {
-    readonly msg: string | null | undefined;
-    readonly ok: boolean | null | undefined;
+  readonly adminUpdateKeypairV2: {
+    readonly keypair: {
+      readonly id: string;
+    };
   } | null | undefined;
 };
 export type AdminUserCredentialListModifyMutation = {
@@ -36,12 +36,7 @@ var v0 = [
   {
     "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "access_key"
-  },
-  {
-    "defaultValue": null,
-    "kind": "LocalArgument",
-    "name": "props"
+    "name": "input"
   }
 ],
 v1 = [
@@ -50,32 +45,31 @@ v1 = [
     "args": [
       {
         "kind": "Variable",
-        "name": "access_key",
-        "variableName": "access_key"
-      },
-      {
-        "kind": "Variable",
-        "name": "props",
-        "variableName": "props"
+        "name": "input",
+        "variableName": "input"
       }
     ],
-    "concreteType": "ModifyKeyPair",
+    "concreteType": "AdminUpdateKeypairPayload",
     "kind": "LinkedField",
-    "name": "modify_keypair",
+    "name": "adminUpdateKeypairV2",
     "plural": false,
     "selections": [
       {
         "alias": null,
         "args": null,
-        "kind": "ScalarField",
-        "name": "ok",
-        "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "msg",
+        "concreteType": "KeyPairV2",
+        "kind": "LinkedField",
+        "name": "keypair",
+        "plural": false,
+        "selections": [
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "id",
+            "storageKey": null
+          }
+        ],
         "storageKey": null
       }
     ],
@@ -100,16 +94,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "ab00fbd53ee7b0aeb266bbc87c7b653b",
+    "cacheID": "29ea604629e460b632896aa7d868decd",
     "id": null,
     "metadata": {},
     "name": "AdminUserCredentialListModifyMutation",
     "operationKind": "mutation",
-    "text": "mutation AdminUserCredentialListModifyMutation(\n  $access_key: String!\n  $props: ModifyKeyPairInput!\n) {\n  modify_keypair(access_key: $access_key, props: $props) {\n    ok\n    msg\n  }\n}\n"
+    "text": "mutation AdminUserCredentialListModifyMutation(\n  $input: AdminUpdateKeypairInput!\n) {\n  adminUpdateKeypairV2(input: $input) {\n    keypair {\n      id\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "86169244ef9796d1ba0b5d67e3682c70";
+(node as any).hash = "115ce59ac2e0ccb4eb10d52366bdf693";
 
 export default node;

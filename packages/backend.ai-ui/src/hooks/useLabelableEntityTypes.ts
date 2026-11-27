@@ -4,7 +4,16 @@ import { fetchQuery, graphql, useRelayEnvironment } from 'react-relay';
 
 /** The entity type names the label UI is wired for. */
 export type BAILabelableEntityType =
-  'session' | 'vfolder' | 'deployment' | 'resource_group';
+  | 'session'
+  | 'vfolder'
+  | 'deployment'
+  | 'resource_group'
+  | 'user'
+  | 'role'
+  | 'role_preset'
+  | 'model_card'
+  | 'artifact'
+  | 'deployment_preset';
 
 /**
  * The entity types the manager accepts labels for, fetched once per page load and

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<2066a80b987a84b3887072c674de0c66>>
+ * @generated SignedSource<<2c1c3cd84e284cf9b502ba6cf4c6e082>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -23,6 +23,7 @@ export type DeploymentHistoryFilter = {
   createdAt?: DateTimeFilter | null | undefined;
   deploymentId?: UUIDFilter | null | undefined;
   errorCode?: StringFilter | null | undefined;
+  fieldId?: UUIDFilter | null | undefined;
   fromStatus?: ReadonlyArray<string> | null | undefined;
   id?: UUIDFilter | null | undefined;
   message?: StringFilter | null | undefined;

@@ -56,13 +56,14 @@
   },
   "devDependencies": {
     "@eslint/js": "catalog:",
+    "@typescript/native": "npm:typescript@~7.0.2",
     "ajv": "^8.20.0",
     "eslint-config-bai": "workspace:*",
     "graphql": "catalog:",
     "tsup": "^8.5.0",
-    "typescript": "^5.9.3",
+    "typescript": "npm:@typescript/typescript6@~6.0.2",
     "typescript-eslint": "catalog:",
-    "vitest": "^4.1.10",
+    "vitest": "^4.1.12",
     "yaml": "^2.9.0"
   }
 }

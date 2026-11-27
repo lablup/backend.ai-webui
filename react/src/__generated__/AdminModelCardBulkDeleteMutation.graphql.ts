@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<177313f73fdcc3ac12c8e3a6c85a65d6>>
+ * @generated SignedSource<<3e375f15dfa4433574d727ea3bb6a7b3>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,7 +9,7 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
-export type BulkDeleteModelCardsV2Input = {
+export type PartialBulkPurgeModelCardsInput = {
   ids: ReadonlyArray<string>;
   options?: DeleteModelCardV2Options | null | undefined;
 };
@@ -17,16 +17,18 @@ export type DeleteModelCardV2Options = {
   deleteAssociatedVfolder?: boolean;
 };
 export type AdminModelCardBulkDeleteMutation$variables = {
-  input: BulkDeleteModelCardsV2Input;
+  input: PartialBulkPurgeModelCardsInput;
 };
 export type AdminModelCardBulkDeleteMutation$data = {
-  readonly adminBulkDeleteModelCardsV2: {
+  readonly partialBulkPurgeModelCardsV2: {
     readonly failed: ReadonlyArray<{
-      readonly cardId: string;
+      readonly id: string;
       readonly message: string;
     }>;
-    readonly successes: ReadonlyArray<string>;
-  } | null | undefined;
+    readonly successes: ReadonlyArray<{
+      readonly id: string;
+    }>;
+  };
 };
 export type AdminModelCardBulkDeleteMutation = {
   response: AdminModelCardBulkDeleteMutation$data;
@@ -41,7 +43,14 @@ var v0 = [
     "name": "input"
   }
 ],
-v1 = [
+v1 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "id",
+  "storageKey": null
+},
+v2 = [
   {
     "alias": null,
     "args": [
@@ -51,33 +60,32 @@ v1 = [
         "variableName": "input"
       }
     ],
-    "concreteType": "BulkDeleteModelCardsV2Payload",
+    "concreteType": "PartialBulkModelCardsPayload",
     "kind": "LinkedField",
-    "name": "adminBulkDeleteModelCardsV2",
+    "name": "partialBulkPurgeModelCardsV2",
     "plural": false,
     "selections": [
       {
         "alias": null,
         "args": null,
-        "kind": "ScalarField",
+        "concreteType": "ModelCardV2",
+        "kind": "LinkedField",
         "name": "successes",
+        "plural": true,
+        "selections": [
+          (v1/*: any*/)
+        ],
         "storageKey": null
       },
       {
         "alias": null,
         "args": null,
-        "concreteType": "BulkDeleteModelCardV2Error",
+        "concreteType": "PartialBulkFailure",
         "kind": "LinkedField",
         "name": "failed",
         "plural": true,
         "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "cardId",
-            "storageKey": null
-          },
+          (v1/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -98,7 +106,7 @@ return {
     "kind": "Fragment",
     "metadata": null,
     "name": "AdminModelCardBulkDeleteMutation",
-    "selections": (v1/*: any*/),
+    "selections": (v2/*: any*/),
     "type": "Mutation",
     "abstractKey": null
   },
@@ -107,19 +115,19 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "AdminModelCardBulkDeleteMutation",
-    "selections": (v1/*: any*/)
+    "selections": (v2/*: any*/)
   },
   "params": {
-    "cacheID": "41531d617eda12f10098bff2e4623f27",
+    "cacheID": "3c2955201b8d4cbb313caec8ece4d5a3",
     "id": null,
     "metadata": {},
     "name": "AdminModelCardBulkDeleteMutation",
     "operationKind": "mutation",
-    "text": "mutation AdminModelCardBulkDeleteMutation(\n  $input: BulkDeleteModelCardsV2Input!\n) {\n  adminBulkDeleteModelCardsV2(input: $input) {\n    successes\n    failed {\n      cardId\n      message\n    }\n  }\n}\n"
+    "text": "mutation AdminModelCardBulkDeleteMutation(\n  $input: PartialBulkPurgeModelCardsInput!\n) {\n  partialBulkPurgeModelCardsV2(input: $input) {\n    successes {\n      id\n    }\n    failed {\n      id\n      message\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "91c710abd67f83d9dce9f866a1c82272";
+(node as any).hash = "64e6b7173dd6b5d09bb43df36b4395ff";
 
 export default node;

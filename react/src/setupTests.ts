@@ -21,7 +21,7 @@ import { vi } from 'vitest';
 (globalThis as any).jest = vi;
 
 // `waitFor`'s 1000ms default leaves almost no headroom: the ADR-0001
-// project-prop-contract tests (`DeploymentSettingModal`, `FolderCreateModalV2`)
+// project-prop-contract tests (`DeploymentSettingModal`, `FolderCreateModal`)
 // measure 621–787ms on an idle 8-core dev box and 1502ms on a CI runner, where
 // they intermittently failed with `expected [] to have a length of 1` — the
 // Relay mutation had simply not been dispatched inside the window. Raising the
@@ -63,13 +63,9 @@ if (typeof HTMLDialogElement !== 'undefined') {
   }
 }
 
-// Polyfill fetch for jsdom environment
-if (typeof global.fetch === 'undefined') {
-  global.fetch = () =>
-    Promise.resolve({
-      json: () => Promise.resolve({}),
-      text: () => Promise.resolve(''),
-      ok: true,
-      status: 200,
-    } as Response);
-}
+globalThis.fetch = (input: RequestInfo | URL) =>
+  Promise.reject(
+    new Error(
+      `Unit tests must not send real requests: stub fetch with vi.stubGlobal (ADR 0036). Called with ${String(input)}`,
+    ),
+  );

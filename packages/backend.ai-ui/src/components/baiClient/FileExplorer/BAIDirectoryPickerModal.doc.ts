@@ -73,6 +73,13 @@ export const docs = {
         'Called with the confirmed sub path when the footer button is used, and with `undefined` on cancel, Escape or the header close. An empty string means the vfolder root was chosen, so the argument must be tested against `undefined` rather than for truthiness.',
       required: true,
     },
+    {
+      name: 'isDirectorySizeVisible',
+      type: 'boolean',
+      default: 'false',
+      description:
+        "Shows each directory's size in the explorer, passed on to `BAIFileExplorer`; the host passes its `isDirectorySizeVisible` setting.",
+    },
   ],
   examples: [
     {

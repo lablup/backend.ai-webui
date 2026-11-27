@@ -3,14 +3,13 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import {
-  DOMAIN_ANNOUNCEMENT_CONFIG_KEY,
-  DomainAnnouncement,
+  readDomainAnnouncement,
   isAnnouncementCollapsible,
   isAnnouncementVisible,
   summarizeAnnouncementTitle,
 } from '../helper/announcement';
 import { useCurrentUserRole } from '../hooks/backendai';
-import { useDomainAppConfig } from '../hooks/useAppConfig';
+import { useMyAppConfig } from '../hooks/useAppConfig';
 import './AnnouncementBanner.css';
 import { Banner } from '@lablup/ui-common/Banner';
 import { Button } from '@lablup/ui-common/Button';
@@ -51,9 +50,8 @@ const AnnouncementBanner: React.FC = () => {
   // own toggle sits at the far end of the header, away from the text it
   // reveals.
   const [isExpanded, { toggle: toggleExpanded }] = useToggle(false);
-  const announcement = useDomainAppConfig<DomainAnnouncement>(
-    DOMAIN_ANNOUNCEMENT_CONFIG_KEY,
-  );
+  const [domainSettings] = useMyAppConfig('domainConfig', 'settings');
+  const announcement = readDomainAnnouncement(domainSettings);
   const [dismissedKey, setDismissedKey] = useSessionStorageState<
     string | undefined
   >('backendaiwebui.dismissed_announcement');

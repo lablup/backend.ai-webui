@@ -30,10 +30,9 @@
  * `useCurrentProject -> useRouteScope -> useCurrentProject` import cycle -- and
  * its module-init TDZ hazard -- that a direct hook-to-hook import would create.
  *
- * Deliberately EXCLUDED: `admin-dashboard` only (out of scope for FR-3407 —
- * the page is unused and still reads the ambient project directly).
- * `environment` and `reservoir` joined the list in FR-3415, once both got
- * explicit in-page project selection.
+ * `admin-dashboard` also names the project admin dashboard
+ * (`/project/:projectName/admin/dashboard`), which is project-scoped: only its
+ * `/admin` route belongs here, so the hook also checks the route scope.
  */
 
 /**
@@ -45,6 +44,7 @@ export const PROJECT_AGNOSTIC_MENU_KEYS = [
   'admin-session',
   'admin-deployments',
   'admin-data',
+  'admin-dashboard',
   'credential',
   'environment',
   'resource-policy',
@@ -57,6 +57,7 @@ export const PROJECT_AGNOSTIC_MENU_KEYS = [
   'diagnostics',
   'rbac',
   'branding',
+  'system-settings',
   'information',
 ] as const;
 
@@ -112,6 +113,11 @@ export const PROJECT_AGNOSTIC_ROUTE_PATHS: Record<
     canonicalPath: '/admin/data',
     legacyPaths: ['/admin-data'],
   },
+  'admin-dashboard': {
+    canonicalPath: '/admin/dashboard',
+    // `/admin-dashboard` redirects by role, to a project-scoped page for project admins.
+    legacyPaths: [],
+  },
   credential: {
     canonicalPath: '/admin/users',
     legacyPaths: ['/credential'],
@@ -162,6 +168,10 @@ export const PROJECT_AGNOSTIC_ROUTE_PATHS: Record<
   branding: {
     canonicalPath: '/admin/branding',
     legacyPaths: ['/branding'],
+  },
+  'system-settings': {
+    canonicalPath: '/admin/system-settings',
+    legacyPaths: [],
   },
   information: {
     canonicalPath: '/admin/information',

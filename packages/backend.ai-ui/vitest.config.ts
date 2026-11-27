@@ -31,13 +31,7 @@ export default defineConfig({
   },
 
   plugins: [
-    react({
-      babel: {
-        plugins: [
-          ['babel-plugin-react-compiler', { compilationMode: 'annotation' }],
-        ],
-      },
-    }),
+    react({ compiler: { compilationMode: 'annotation' } }),
     relay({ module: 'esmodule' }),
     svgr(),
   ],
@@ -45,9 +39,7 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'jsdom',
-    setupFiles: [
-      resolve(__dirname, 'setupTests.ts'),
-    ],
+    setupFiles: [resolve(__dirname, 'setupTests.ts')],
     include: ['src/**/*.{test,spec}.{ts,tsx}'],
     exclude: ['**/node_modules/**', '**/dist/**', '**/__generated__/**'],
     // ui-common's own components import their `.css`, which Node cannot load

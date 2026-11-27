@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<673b64817c73666c33549f05c52157f2>>
+ * @generated SignedSource<<7f2f82720da52032a0e67cd0f7791e31>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,18 +11,6 @@
 import { ReaderFragment } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type TotalResourceWithinResourceGroupFragment$data = {
-  readonly agent_nodes?: {
-    readonly count: number | null | undefined;
-    readonly edges: ReadonlyArray<{
-      readonly node: {
-        readonly available_slots: string | null | undefined;
-        readonly id: string;
-        readonly occupied_slots: string | null | undefined;
-        readonly scaling_group: string | null | undefined;
-        readonly status: string | null | undefined;
-      } | null | undefined;
-    } | null | undefined>;
-  } | null | undefined;
   readonly agent_summary_list?: {
     readonly items: ReadonlyArray<{
       readonly available_slots: string | null | undefined;
@@ -32,6 +20,18 @@ export type TotalResourceWithinResourceGroupFragment$data = {
       readonly status: string | null | undefined;
     } | null | undefined>;
     readonly total_count: number;
+  } | null | undefined;
+  readonly agentsV2?: {
+    readonly count: number;
+    readonly edges: ReadonlyArray<{
+      readonly node: {
+        readonly id: string;
+        readonly resourceInfo: {
+          readonly capacity: any;
+          readonly used: any;
+        };
+      };
+    }>;
   } | null | undefined;
   readonly " $fragmentType": "TotalResourceWithinResourceGroupFragment";
 };
@@ -43,50 +43,25 @@ export type TotalResourceWithinResourceGroupFragment$key = {
 import TotalResourceWithinResourceGroupFragmentRefetchQuery_graphql from './TotalResourceWithinResourceGroupFragmentRefetchQuery.graphql';
 
 const node: ReaderFragment = (function(){
-var v0 = [
-  {
-    "alias": null,
-    "args": null,
-    "kind": "ScalarField",
-    "name": "id",
-    "storageKey": null
-  },
-  {
-    "alias": null,
-    "args": null,
-    "kind": "ScalarField",
-    "name": "status",
-    "storageKey": null
-  },
-  {
-    "alias": null,
-    "args": null,
-    "kind": "ScalarField",
-    "name": "available_slots",
-    "storageKey": null
-  },
-  {
-    "alias": null,
-    "args": null,
-    "kind": "ScalarField",
-    "name": "occupied_slots",
-    "storageKey": null
-  },
-  {
-    "alias": null,
-    "args": null,
-    "kind": "ScalarField",
-    "name": "scaling_group",
-    "storageKey": null
-  }
-];
+var v0 = {
+  "kind": "Literal",
+  "name": "limit",
+  "value": 100
+},
+v1 = {
+  "kind": "Literal",
+  "name": "offset",
+  "value": 0
+},
+v2 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "id",
+  "storageKey": null
+};
 return {
   "argumentDefinitions": [
-    {
-      "defaultValue": null,
-      "kind": "LocalArgument",
-      "name": "agentNodeFilter"
-    },
     {
       "defaultValue": null,
       "kind": "LocalArgument",
@@ -121,16 +96,8 @@ return {
               "name": "filter",
               "value": "schedulable == true"
             },
-            {
-              "kind": "Literal",
-              "name": "limit",
-              "value": 100
-            },
-            {
-              "kind": "Literal",
-              "name": "offset",
-              "value": 0
-            },
+            (v0/*: any*/),
+            (v1/*: any*/),
             {
               "kind": "Variable",
               "name": "scaling_group",
@@ -154,7 +121,37 @@ return {
               "kind": "LinkedField",
               "name": "items",
               "plural": true,
-              "selections": (v0/*: any*/),
+              "selections": [
+                (v2/*: any*/),
+                {
+                  "alias": null,
+                  "args": null,
+                  "kind": "ScalarField",
+                  "name": "status",
+                  "storageKey": null
+                },
+                {
+                  "alias": null,
+                  "args": null,
+                  "kind": "ScalarField",
+                  "name": "available_slots",
+                  "storageKey": null
+                },
+                {
+                  "alias": null,
+                  "args": null,
+                  "kind": "ScalarField",
+                  "name": "occupied_slots",
+                  "storageKey": null
+                },
+                {
+                  "alias": null,
+                  "args": null,
+                  "kind": "ScalarField",
+                  "name": "scaling_group",
+                  "storageKey": null
+                }
+              ],
               "storageKey": null
             },
             {
@@ -178,25 +175,55 @@ return {
           "alias": null,
           "args": [
             {
-              "kind": "Variable",
-              "name": "filter",
-              "variableName": "agentNodeFilter"
+              "fields": [
+                {
+                  "fields": [
+                    {
+                      "kind": "Variable",
+                      "name": "equals",
+                      "variableName": "resourceGroup"
+                    }
+                  ],
+                  "kind": "ObjectValue",
+                  "name": "scalingGroup"
+                },
+                {
+                  "kind": "Literal",
+                  "name": "schedulable",
+                  "value": true
+                },
+                {
+                  "kind": "Literal",
+                  "name": "status",
+                  "value": {
+                    "equals": "ALIVE"
+                  }
+                }
+              ],
+              "kind": "ObjectValue",
+              "name": "filter"
             },
+            (v0/*: any*/),
+            (v1/*: any*/),
             {
               "kind": "Literal",
-              "name": "first",
-              "value": 100
+              "name": "orderBy",
+              "value": [
+                {
+                  "field": "ID"
+                }
+              ]
             }
           ],
-          "concreteType": "AgentConnection",
+          "concreteType": "AgentV2Connection",
           "kind": "LinkedField",
-          "name": "agent_nodes",
+          "name": "agentsV2",
           "plural": false,
           "selections": [
             {
               "alias": null,
               "args": null,
-              "concreteType": "AgentEdge",
+              "concreteType": "AgentV2Edge",
               "kind": "LinkedField",
               "name": "edges",
               "plural": true,
@@ -204,11 +231,38 @@ return {
                 {
                   "alias": null,
                   "args": null,
-                  "concreteType": "AgentNode",
+                  "concreteType": "AgentV2",
                   "kind": "LinkedField",
                   "name": "node",
                   "plural": false,
-                  "selections": (v0/*: any*/),
+                  "selections": [
+                    (v2/*: any*/),
+                    {
+                      "alias": null,
+                      "args": null,
+                      "concreteType": "AgentResource",
+                      "kind": "LinkedField",
+                      "name": "resourceInfo",
+                      "plural": false,
+                      "selections": [
+                        {
+                          "alias": null,
+                          "args": null,
+                          "kind": "ScalarField",
+                          "name": "capacity",
+                          "storageKey": null
+                        },
+                        {
+                          "alias": null,
+                          "args": null,
+                          "kind": "ScalarField",
+                          "name": "used",
+                          "storageKey": null
+                        }
+                      ],
+                      "storageKey": null
+                    }
+                  ],
                   "storageKey": null
                 }
               ],
@@ -232,6 +286,6 @@ return {
 };
 })();
 
-(node as any).hash = "7b179b18efbc97a0952f082b55315041";
+(node as any).hash = "fcbc47f65eb8dd82b6ad1f4622ef49f2";
 
 export default node;

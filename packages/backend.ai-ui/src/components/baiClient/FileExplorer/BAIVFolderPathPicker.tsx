@@ -54,6 +54,8 @@ export interface BAIVFolderPathPickerProps {
    * "Select a path" copy.
    */
   label?: string;
+  /** Shows each directory's size in the explorer; the host passes its setting. */
+  isDirectorySizeVisible?: boolean;
 }
 
 /**
@@ -101,6 +103,7 @@ const BAIVFolderPathPicker: React.FC<BAIVFolderPathPickerProps> = (props) => {
     label,
     allowClear,
     placeholder,
+    isDirectorySizeVisible = false,
   } = props;
   const { t } = useBAIi18n();
   const [selectedSubPath, setSelectedSubPath] = useControllableValue<
@@ -132,8 +135,8 @@ const BAIVFolderPathPicker: React.FC<BAIVFolderPathPickerProps> = (props) => {
   return (
     <>
       <ComplexSelector<string | undefined>
-        // Display-only trigger. Astryx `Selector` owns its popup with no open
-        // hook (BAISelect keeps `open`/`onOpenChange` inert), so the trigger
+        // Display-only trigger. Astryx `Selector` owns its popup and can't be
+        // held closed (BAISelect keeps `open` inert), so the trigger
         // is a ComplexSelector: preventDefault() makes composeEventHandlers
         // skip its own popover-open handler, and the modal opens instead.
         onClick={(e) => {
@@ -180,6 +183,7 @@ const BAIVFolderPathPicker: React.FC<BAIVFolderPathPickerProps> = (props) => {
             open={isPickerOpen}
             vfolderUuid={vfolderUuid ?? ''}
             queryRef={pickerQueryRef}
+            isDirectorySizeVisible={isDirectorySizeVisible}
             defaultPath={selectedSubPath ?? ''}
             onRequestClose={(newSubPath) => {
               // `undefined` means the modal was cancelled — keep the value.

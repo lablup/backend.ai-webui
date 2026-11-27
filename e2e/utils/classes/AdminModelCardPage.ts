@@ -98,11 +98,19 @@ export class AdminModelCardPage {
   }
 
   async applyNameFilter(value: string): Promise<void> {
-    // PowerSearch has no submit button — typing opens a quoted free-text
-    // suggestion, and clicking it commits the condition.
-    await this.getFilterSearchInput().fill(value);
-    await this.getFilterSearchResultOption(value).click();
-    await this.page.waitForURL(new RegExp(`filter=`));
+    // PowerSearch commits the quoted free-text suggestion on click. Retry until
+    // the URL filter holds the value, and never type again once it does.
+    const option = this.getFilterSearchResultOption(value);
+    const isApplied = () =>
+      (new URL(this.page.url()).searchParams.get('filter') ?? '').includes(
+        value,
+      );
+    await expect(async () => {
+      if (isApplied()) return;
+      await this.getFilterSearchInput().fill(value);
+      await option.click({ timeout: 3000 });
+      await expect.poll(isApplied, { timeout: 5000 }).toBe(true);
+    }).toPass({ timeout: 30000 });
   }
 
   async clearFilter(): Promise<void> {
@@ -192,10 +200,9 @@ export class AdminModelCardPage {
   }
 
   getCreateModalVFolderSelect(): Locator {
-    // The VFolder picker is Astryx `ComplexSelector` (`aria-haspopup="dialog"`),
-    // which renders role="button" (not "combobox") with its accessible name
-    // taken from the field label via `aria-labelledby`.
-    return this.getCreateModal().getByRole('button', {
+    // The VFolder picker is Astryx `ComplexSelector`: a role="combobox"
+    // trigger named by the field label.
+    return this.getCreateModal().getByRole('combobox', {
       name: 'Model Storage Folder',
     });
   }
@@ -327,11 +334,11 @@ export class AdminModelCardPage {
     const vfolderFormItem = modal
       .locator('.uic-form-item')
       .filter({ hasText: 'Model Storage Folder' });
-    // The picker is Astryx `ComplexSelector`: its trigger is role="button"
+    // The picker is Astryx `ComplexSelector`: its trigger is role="combobox"
     // (named after the field label via `aria-labelledby`), and opening it
     // pops a nested role="dialog" (also named after the field label)
     // containing a search box and a role="listbox" of role="option" rows.
-    const vfolderTrigger = vfolderFormItem.getByRole('button', {
+    const vfolderTrigger = vfolderFormItem.getByRole('combobox', {
       name: 'Model Storage Folder',
     });
 
@@ -386,17 +393,17 @@ export class AdminModelCardPage {
       await this.createNewFolderViaPlus(fields.createNewFolderName);
     } else {
       // Select an existing VFolder: use specified title or pick the first available option.
-      // The picker is Astryx `ComplexSelector` — its role="button" trigger
+      // The picker is Astryx `ComplexSelector` — its role="combobox" trigger
       // (named after the field label) opens a nested role="dialog" holding a
       // search box and a role="listbox" of role="option" rows.
       const vfolderFormItem = modal
         .locator('.uic-form-item')
         .filter({ hasText: 'Model Storage Folder' });
-      const vfolderTrigger = vfolderFormItem.getByRole('button', {
+      const vfolderTrigger = vfolderFormItem.getByRole('combobox', {
         name: 'Model Storage Folder',
       });
       await vfolderTrigger.click();
-      // Wait for the VFolder query to load options (BAIVFolderSelect uses network-only fetch on open)
+      // Wait for the VFolder query to load options (the folder select reads its options only once open)
       const dropdown = this.page.getByRole('dialog', {
         name: 'Model Storage Folder',
       });

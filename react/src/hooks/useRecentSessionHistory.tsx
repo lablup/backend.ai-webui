@@ -3,11 +3,8 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { App } from '../app-shim';
-import {
-  useMyAppConfig,
-  useRefetchMyAppConfig,
-  useUpdateMyUserAppConfig,
-} from './useAppConfig';
+import { getActAsTarget } from '../helper/actAs';
+import { useMyAppConfig } from './useAppConfig';
 import { SessionHistory, useBAISettingUserState } from './useBAISetting';
 import {
   useEventNotStable,
@@ -15,47 +12,78 @@ import {
   useErrorMessageResolver,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { useState } from 'react';
+import { useEffect, useEffectEvent, useState } from 'react';
 
 type SessionHistoryKey = 'recentSessionHistory' | 'pinnedSessionHistory';
 
-// Each write replaces the whole `userConfig` document, so concurrent writes
-// (a rename updates both lists) must run one after another.
-let writeQueue: Promise<unknown> = Promise.resolve();
+// Several stores of one key mount at once; only the first moves its local history.
+const migratingKeys = new Set<SessionHistoryKey>();
 
 /**
  * Session history lives in the user's server-side `userConfig` so it follows
- * the user across browsers. A history this browser kept in localStorage is
- * shown until the first write carries it over to the server.
+ * the user across browsers. A history this browser kept in localStorage moves
+ * there once, and leaves localStorage only when that write succeeded. An
+ * act-as tab uses only the target's `userConfig`: that localStorage is the super admin's.
  */
 const useSessionHistoryStore = (key: SessionHistoryKey) => {
   'use memo';
   const { message } = App.useApp();
   const { getErrorMessage } = useErrorMessageResolver();
-  const serverValue = useMyAppConfig<Array<SessionHistory>>(key);
-  const [localValue] = useBAISettingUserState(key);
-  const updateMyUserAppConfig = useUpdateMyUserAppConfig();
-  const refetchMyAppConfig = useRefetchMyAppConfig();
-  // Shows the written value while the write and the refetch are in flight.
+  const [serverValue, setServerValue, , userConfigStatus] = useMyAppConfig<
+    Array<SessionHistory>
+  >('userConfig', key);
+  // Without a loaded userConfig, `undefined` does not mean the server has no history.
+  const isUserConfigLoaded = userConfigStatus === 'loaded';
+  const isActingAs = !!getActAsTarget();
+  const [localValue, setLocalValue] = useBAISettingUserState(key);
+  // Shows the written value while the write is in flight.
   const [pending, setPending] = useState<{ value: Array<SessionHistory> }>();
 
-  const setValue = async (next: Array<SessionHistory>) => {
-    setPending({ value: next });
-    const write = writeQueue.then(async () => {
-      await updateMyUserAppConfig(key, next);
-      await refetchMyAppConfig();
-    });
-    writeQueue = write.catch(() => {});
+  /** Writes `next` after the writes already queued on `userConfig`; false when it failed (the error is shown). */
+  const write = async (next: Array<SessionHistory>): Promise<boolean> => {
     try {
-      await write;
+      await setServerValue(next);
+      return true;
     } catch (error) {
       message.error(getErrorMessage(error));
+      return false;
+    }
+  };
+
+  const setValue = async (next: Array<SessionHistory>): Promise<boolean> => {
+    setPending({ value: next });
+    try {
+      return await write(next);
     } finally {
       setPending(undefined);
     }
   };
 
-  return [pending?.value ?? serverValue ?? localValue, setValue] as const;
+  const migrateLocalHistory = useEffectEvent(() => {
+    if (
+      isActingAs ||
+      !isUserConfigLoaded ||
+      migratingKeys.has(key) ||
+      serverValue !== undefined ||
+      _.isEmpty(localValue)
+    )
+      return;
+    migratingKeys.add(key);
+    // No pending value: the local history stays on screen until the server has it.
+    write(localValue!).then((written) => {
+      if (written) setLocalValue(undefined);
+      // A failed move may run again on a later mount.
+      else migratingKeys.delete(key);
+    });
+  });
+  useEffect(() => {
+    migrateLocalHistory();
+  }, [serverValue, localValue]);
+
+  return [
+    pending?.value ?? serverValue ?? (isActingAs ? undefined : localValue),
+    setValue,
+  ] as const;
 };
 
 export const useRecentSessionHistory = () => {

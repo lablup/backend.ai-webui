@@ -8,7 +8,7 @@ import {
   usePinnedSessionHistory,
   useRecentSessionHistory,
 } from '../hooks/useRecentSessionHistory';
-import type { SessionLauncherFormValue } from '../pages/SessionLauncherPage';
+import type { SessionLauncherFormValue } from '../pages/SessionLauncherPage/SessionLauncherPage';
 import { ResourceNumbersOfSession } from './ResourceNumbersOfSession';
 import { IconButton } from '@lablup/ui-common/IconButton';
 import { Text } from '@lablup/ui-common/Text';
@@ -135,7 +135,8 @@ const SessionTemplateModal: React.FC<SessionTemplateModalProps> = ({
                 </BAIFlex>
               ),
               dataIndex: 'pinned',
-              width: 40,
+              // Room for the header's pin and help icons; at 40px the help icon was cut off.
+              width: 64,
               render: (_value, record) => {
                 const isPinned = !!record.pinned;
                 const isHovered = hoverRowKey === record.id;

@@ -109,6 +109,7 @@ const AgentSelect: React.FC<Props> = ({
 
   // Offset pages accumulate as the popup scrolls (`endReached` -> `loadNext`);
   // a new search string or resource group starts over from page one.
+  // TODO(needs-backend): #11077 agentsV2 is superadmin-only; the launcher shows this to every role.
   const { paginationData, result, loadNext, isLoadingNext } =
     useLazyPaginatedQuery<AgentSelectPaginatedQuery, AgentSummaryItem>(
       graphql`

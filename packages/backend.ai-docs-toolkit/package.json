@@ -1,6 +1,6 @@
 {
   "name": "backend.ai-docs-toolkit",
-  "version": "26.10.0-alpha.1",
+  "version": "26.10.0-alpha.3",
   "description": "A reusable documentation toolkit for generating PDFs and web previews from Markdown content",
   "repository": {
     "type": "git",
@@ -65,9 +65,10 @@
   },
   "devDependencies": {
     "@types/fontkit": "^2.0.9",
+    "@types/node": "catalog:",
+    "@typescript/native": "npm:typescript@~7.0.2",
     "playwright": "^1.58.2",
-    "sharp": "^0.35.4",
-    "tsx": "^4.21.0",
-    "typescript": "~5.5.4"
+    "sharp": "^0.35.5",
+    "tsx": "^4.21.0"
   }
 }

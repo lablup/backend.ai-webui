@@ -45,6 +45,18 @@ export const mountableVFolderFilter = (
   status: { notIn: ['DELETE_COMPLETE'] },
 });
 
+/** Leaves out folders being deleted or already deleted. */
+export const notDeletedVFolderFilter: VFolderFilter = {
+  status: {
+    notIn: [
+      'DELETE_PENDING',
+      'DELETE_ONGOING',
+      'DELETE_ERROR',
+      'DELETE_COMPLETE',
+    ],
+  },
+};
+
 const AUTO_MOUNTED_FOLDER_LIMIT = 100;
 
 /**

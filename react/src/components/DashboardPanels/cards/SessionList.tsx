@@ -1,0 +1,214 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
+import type { SessionListDomainQuery } from '../../../__generated__/SessionListDomainQuery.graphql';
+import type { SessionListMineQuery } from '../../../__generated__/SessionListMineQuery.graphql';
+import type {
+  SessionListProjectQuery,
+  SessionListProjectQuery$data,
+  SessionV2Filter,
+  SessionV2OrderBy,
+} from '../../../__generated__/SessionListProjectQuery.graphql';
+import type { CardScope } from '../cardScope';
+import { readPrimary, type CaughtValue } from '../panelPermission';
+import { filterOutNullAndUndefined } from 'backend.ai-ui';
+import React from 'react';
+import { graphql, useLazyLoadQuery } from 'react-relay';
+
+export type SessionRow = NonNullable<
+  NonNullable<
+    NonNullable<
+      CaughtValue<SessionListProjectQuery$data['sessions']>
+    >['edges'][number]
+  >['node']
+>;
+
+export interface SessionPage {
+  count: number;
+  rows: ReadonlyArray<SessionRow>;
+}
+
+interface SessionQueryArgs {
+  filter: SessionV2Filter;
+  orderBy: ReadonlyArray<SessionV2OrderBy>;
+  limit: number;
+  offset: number;
+  fetchKey: string;
+}
+
+export interface SessionListProps extends SessionQueryArgs {
+  scope: CardScope;
+  children: (page: SessionPage) => React.ReactNode;
+}
+
+type Connection = {
+  readonly count: number;
+  readonly edges: ReadonlyArray<
+    { readonly node: SessionRow | null | undefined } | null | undefined
+  >;
+} | null;
+
+const toPage = (connection: Connection | undefined): SessionPage => ({
+  count: connection?.count ?? 0,
+  rows: filterOutNullAndUndefined(connection?.edges.map((edge) => edge?.node)),
+});
+
+const MineSessions: React.FC<
+  SessionQueryArgs & {
+    projectId: string;
+    children: (page: SessionPage) => React.ReactNode;
+  }
+> = ({ projectId, filter, orderBy, limit, offset, fetchKey, children }) => {
+  'use memo';
+  const data = useLazyLoadQuery<SessionListMineQuery>(
+    graphql`
+      query SessionListMineQuery(
+        $filter: SessionV2Filter!
+        $orderBy: [SessionV2OrderBy!]!
+        $limit: Int!
+        $offset: Int!
+      ) {
+        sessions: mySessionsV2(
+          filter: $filter
+          orderBy: $orderBy
+          limit: $limit
+          offset: $offset
+        ) @catch(to: RESULT) {
+          count
+          edges {
+            node {
+              entityId
+              lifecycle {
+                createdAt
+              }
+              ...BAISessionNodesV2Fragment
+            }
+          }
+        }
+      }
+    `,
+    {
+      filter: { ...filter, projectId: { equals: projectId } },
+      orderBy: [...orderBy],
+      limit,
+      offset,
+    },
+    { fetchPolicy: 'store-and-network', fetchKey },
+  );
+  return children(toPage(readPrimary(data.sessions)));
+};
+
+const ProjectSessions: React.FC<
+  SessionQueryArgs & {
+    projectId: string;
+    children: (page: SessionPage) => React.ReactNode;
+  }
+> = ({ projectId, filter, orderBy, limit, offset, fetchKey, children }) => {
+  'use memo';
+  const data = useLazyLoadQuery<SessionListProjectQuery>(
+    graphql`
+      query SessionListProjectQuery(
+        $projectId: UUID!
+        $filter: SessionV2Filter!
+        $orderBy: [SessionV2OrderBy!]!
+        $limit: Int!
+        $offset: Int!
+      ) {
+        sessions: projectSessionsV2(
+          scope: { projectId: $projectId }
+          filter: $filter
+          orderBy: $orderBy
+          limit: $limit
+          offset: $offset
+        ) @catch(to: RESULT) {
+          count
+          edges {
+            node {
+              entityId
+              lifecycle {
+                createdAt
+              }
+              ...BAISessionNodesV2Fragment
+            }
+          }
+        }
+      }
+    `,
+    { projectId, filter, orderBy: [...orderBy], limit, offset },
+    { fetchPolicy: 'store-and-network', fetchKey },
+  );
+  return children(toPage(readPrimary(data.sessions)));
+};
+
+const DomainSessions: React.FC<
+  SessionQueryArgs & {
+    domainId: string;
+    children: (page: SessionPage) => React.ReactNode;
+  }
+> = ({ domainId, filter, orderBy, limit, offset, fetchKey, children }) => {
+  'use memo';
+  const data = useLazyLoadQuery<SessionListDomainQuery>(
+    graphql`
+      query SessionListDomainQuery(
+        $domainId: UUID!
+        $filter: SessionV2Filter!
+        $orderBy: [SessionV2OrderBy!]!
+        $limit: Int!
+        $offset: Int!
+      ) {
+        sessions: scopedSessionsV2(
+          scope: { domain: [{ value: $domainId }] }
+          filter: $filter
+          orderBy: $orderBy
+          limit: $limit
+          offset: $offset
+        ) @catch(to: RESULT) {
+          count
+          edges {
+            node {
+              entityId
+              lifecycle {
+                createdAt
+              }
+              ...BAISessionNodesV2Fragment
+            }
+          }
+        }
+      }
+    `,
+    { domainId, filter, orderBy: [...orderBy], limit, offset },
+    { fetchPolicy: 'store-and-network', fetchKey },
+  );
+  return children(toPage(readPrimary(data.sessions)));
+};
+
+/** One page of sessions in the card's scope, for the session list cards. */
+const SessionList: React.FC<SessionListProps> = ({ scope, ...props }) => {
+  'use memo';
+  switch (scope.kind) {
+    case 'mine':
+      return <MineSessions projectId={scope.projectId} {...props} />;
+    case 'project':
+      return <ProjectSessions projectId={scope.projectId} {...props} />;
+    case 'domain':
+      return <DomainSessions domainId={scope.domainId} {...props} />;
+  }
+};
+
+export default SessionList;
+
+export type { SessionV2Filter };
+
+/** Columns a session list adds when its rows span projects: which project and resource group. */
+export const crossProjectColumns = (scope: CardScope): Array<string> =>
+  scope.kind === 'domain' ? ['project', 'resourceGroup'] : [];
+
+/** Narrows a session filter to the card's resource group setting; no setting reads every group. */
+export const inResourceGroups = (
+  filter: SessionV2Filter,
+  resourceGroups: ReadonlyArray<string> | undefined,
+): SessionV2Filter =>
+  resourceGroups?.length
+    ? { ...filter, resourceGroupName: { in: [...resourceGroups] } }
+    : filter;

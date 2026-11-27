@@ -4,29 +4,39 @@
  */
 import { useSuspendedBackendaiClient } from '.';
 import {
-  checkBlocklistValidity,
   checkConnectionMode,
-  checkGeneralNumericFields,
-  checkImageReferences,
   checkPlaceholderValues,
-  checkPluginConfiguration,
-  checkResourceLimits,
   checkSslMismatch,
   checkUrlFields,
+  fileOnlyConfig,
   isPlaceholder,
 } from '../diagnostics/rules/configRules';
+import {
+  SETTING_IMAGE_KEYS,
+  SETTING_URL_KEYS,
+  changedSettingKeys,
+  checkIgnoredConfigTomlKeys,
+  checkPluginConfiguration,
+  checkSettingImageReferences,
+  checkSettingMenuKeys,
+  checkSettingUrls,
+} from '../diagnostics/rules/settingsRules';
+import {
+  getDefaultLoginConfig,
+  type LoginConfigState,
+} from '../helper/loginConfig';
 import type { DiagnosticResult } from '../types/diagnostics';
 import {
   useConfigParseError,
   useProxyUrl,
+  useLoginConfig,
   useRawConfig,
 } from './useWebUIConfig';
 import { VALID_MENU_KEYS } from './useWebUIMenuItems';
 
 /**
- * Hook that checks webserver configuration consistency.
- * Compares raw TOML config values against the running client config.
- * Synchronous — no suspense needed.
+ * Checks the keys `config.toml` still owns against the file, and the System
+ * Settings values the WebUI runs with (ADR 0028). Synchronous.
  */
 export function useWebServerConfigDiagnostics(
   _fetchKey?: string,
@@ -35,6 +45,10 @@ export function useWebServerConfigDiagnostics(
 
   const baiClient = useSuspendedBackendaiClient();
   const rawConfig = useRawConfig();
+  const fileConfig = rawConfig
+    ? fileOnlyConfig(rawConfig, !!globalThis.isElectron)
+    : {};
+  const loginConfig = useLoginConfig();
   const proxyUrl = useProxyUrl();
   const configParseError = useConfigParseError();
 
@@ -59,11 +73,10 @@ export function useWebServerConfigDiagnostics(
   }
 
   const apiEndpoint: string = baiClient?._config?.endpoint ?? '';
-  const blockList: string[] = baiClient?._config?.blockList ?? [];
 
   // --- Placeholder detection (e.g. "[Proxy URL]" left in config.toml) ---
   if (rawConfig) {
-    const placeholderIssues = checkPlaceholderValues(rawConfig);
+    const placeholderIssues = checkPlaceholderValues(fileConfig);
     results.push(...placeholderIssues);
   }
 
@@ -108,29 +121,13 @@ export function useWebServerConfigDiagnostics(
     });
   }
 
-  // --- Blocklist validity ---
-  const blocklistCheck = checkBlocklistValidity(blockList, VALID_MENU_KEYS);
-  if (blocklistCheck) {
-    results.push(blocklistCheck);
-  } else if (blockList.length > 0) {
-    results.push({
-      id: 'config-blocklist-valid',
-      severity: 'passed',
-      category: 'config',
-      titleKey: 'diagnostics.BlocklistValid',
-      descriptionKey: 'diagnostics.BlocklistValidDesc',
-      interpolationValues: { count: String(blockList.length) },
-    });
-  }
-
   // --- Connection mode (enum + SESSION consistency) ---
   const connectionMode: string =
     (rawConfig?.general?.connectionMode as string) ??
     baiClient?._config?.connectionMode ??
     '';
   const webServerUrl: string =
-    ((rawConfig?.server as Record<string, unknown> | undefined)
-      ?.webServerURL as string) ?? '';
+    (fileConfig.server?.webServerURL as string) ?? '';
   const apiEndpointForCheck: string =
     (rawConfig?.general?.apiEndpoint as string) ?? apiEndpoint;
   const connectionModeIssues = checkConnectionMode(
@@ -151,9 +148,9 @@ export function useWebServerConfigDiagnostics(
     });
   }
 
-  // --- URL field validation ---
+  // --- URL fields config.toml still owns ---
   if (rawConfig) {
-    const { issues: urlIssues, checkedCount } = checkUrlFields(rawConfig);
+    const { issues: urlIssues, checkedCount } = checkUrlFields(fileConfig);
     if (urlIssues.length > 0) {
       results.push(...urlIssues);
     } else if (checkedCount > 0) {
@@ -167,79 +164,62 @@ export function useWebServerConfigDiagnostics(
     }
   }
 
-  // --- Resource limits ([resources] section) ---
-  const resourceLimitIssues = checkResourceLimits(
-    rawConfig?.resources as Record<string, unknown> | undefined,
-  );
-  // --- Numeric fields in [general] (maxCountForPreopenPorts, loginAttemptLimit, loginBlockTime) ---
-  const generalNumericIssues = checkGeneralNumericFields(
-    rawConfig?.general as Record<string, unknown> | undefined,
-  );
-  const allNumericIssues = [...resourceLimitIssues, ...generalNumericIssues];
-  if (allNumericIssues.length > 0) {
-    results.push(...allNumericIssues);
-  } else if (rawConfig?.resources) {
-    results.push({
-      id: 'config-resource-limits-passed',
-      severity: 'passed',
-      category: 'config',
-      titleKey: 'diagnostics.ResourceLimitsPassed',
-      descriptionKey: 'diagnostics.ResourceLimitsPassedDesc',
-    });
+  if (loginConfig) {
+    results.push(
+      ...checkIgnoredConfigTomlKeys(rawConfig),
+      ...settingsDiagnostics(loginConfig, getDefaultLoginConfig()),
+    );
   }
 
-  // --- Image references (systemSSHImage, defaultFileBrowserImage, etc.) ---
-  const imageRefIssues = checkImageReferences(
-    rawConfig?.general as Record<string, unknown> | undefined,
-  );
-  if (imageRefIssues.length > 0) {
-    results.push(...imageRefIssues);
-  } else if (rawConfig?.general) {
-    // Only show "passed" when at least one image ref field is non-placeholder
-    const imageRefFields = [
-      'systemSSHImage',
-      'defaultFileBrowserImage',
-      'defaultSessionEnvironment',
-      'defaultImportEnvironment',
-    ];
-    const generalSection = rawConfig.general as Record<string, unknown>;
-    const hasNonPlaceholderImageRef = imageRefFields.some((f) => {
-      const v = generalSection[f];
-      return v && typeof v === 'string' && v.trim() !== '' && !isPlaceholder(v);
-    });
-    if (hasNonPlaceholderImageRef) {
-      results.push({
-        id: 'config-image-references-passed',
-        severity: 'passed',
-        category: 'config',
-        titleKey: 'diagnostics.ImageReferencesPassed',
-        descriptionKey: 'diagnostics.ImageReferencesPassedDesc',
-      });
+  return results;
+}
+
+/** The System Settings rules; a pass shows only for a value someone set. */
+function settingsDiagnostics(
+  state: LoginConfigState,
+  defaults: LoginConfigState,
+): DiagnosticResult[] {
+  const results: DiagnosticResult[] = [];
+  const passedIfChanged = (
+    issues: DiagnosticResult[],
+    keys: ReadonlyArray<string>,
+    passed: Pick<DiagnosticResult, 'id' | 'titleKey' | 'descriptionKey'>,
+  ) => {
+    if (issues.length > 0) {
+      results.push(...issues);
+    } else if (changedSettingKeys(state, defaults, keys).length > 0) {
+      results.push({ ...passed, severity: 'passed', category: 'config' });
     }
-  }
+  };
 
-  // --- Plugin configuration (page names, login/sidebar JS filenames) ---
+  passedIfChanged(checkSettingUrls(state), SETTING_URL_KEYS, {
+    id: 'settings-urls-valid',
+    titleKey: 'diagnostics.SettingUrlsValid',
+    descriptionKey: 'diagnostics.SettingUrlsValidDesc',
+  });
+  passedIfChanged(checkSettingImageReferences(state), SETTING_IMAGE_KEYS, {
+    id: 'settings-image-references-passed',
+    titleKey: 'diagnostics.ImageReferencesPassed',
+    descriptionKey: 'diagnostics.ImageReferencesPassedDesc',
+  });
+
+  results.push(...checkSettingMenuKeys(state, VALID_MENU_KEYS));
+
   const pluginIssues = checkPluginConfiguration(
-    rawConfig?.plugin as Record<string, unknown> | undefined,
+    state.pluginPages,
+    state.loginPlugin,
   );
   if (pluginIssues.length > 0) {
     results.push(...pluginIssues);
-  } else if (
-    rawConfig?.plugin?.page &&
-    !isPlaceholder(rawConfig.plugin.page as string)
-  ) {
-    const pluginNames = (rawConfig.plugin.page as string)
-      .split(',')
-      .map((n) => n.trim())
-      .filter(Boolean)
-      .join(', ');
+  } else if (state.pluginPages.length > 0) {
     results.push({
-      id: 'config-plugin-valid',
+      id: 'settings-plugin-valid',
       severity: 'passed',
       category: 'config',
       titleKey: 'diagnostics.PluginConfigValid',
       descriptionKey: 'diagnostics.PluginConfigValidDesc',
-      interpolationValues: { plugins: pluginNames },
+      settingKey: 'pluginPage',
+      interpolationValues: { plugins: state.pluginPages.join(', ') },
     });
   }
 

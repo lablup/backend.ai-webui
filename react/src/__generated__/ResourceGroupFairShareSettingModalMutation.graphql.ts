@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<63d4b3828e21727d151f786f52f000f7>>
+ * @generated SignedSource<<ac568e203884659c8b863f094ef4b20f>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -25,7 +25,7 @@ export type ResourceGroupFairShareSettingModalMutation$variables = {
   input: UpdateResourceGroupFairShareSpecInput;
 };
 export type ResourceGroupFairShareSettingModalMutation$data = {
-  readonly adminUpdateResourceGroupFairShareSpec: {
+  readonly updateResourceGroupFairShareSpec: {
     readonly resourceGroup: {
       readonly fairShareSpec: {
         readonly decayUnitDays: number;
@@ -68,7 +68,7 @@ v1 = [
     ],
     "concreteType": "UpdateResourceGroupFairShareSpecPayload",
     "kind": "LinkedField",
-    "name": "adminUpdateResourceGroupFairShareSpec",
+    "name": "updateResourceGroupFairShareSpec",
     "plural": false,
     "selections": [
       {
@@ -189,16 +189,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "06b3668d30bd3e0cdb1a26e934580abe",
+    "cacheID": "727604c5ce7dc23ca214d444165e5ac7",
     "id": null,
     "metadata": {},
     "name": "ResourceGroupFairShareSettingModalMutation",
     "operationKind": "mutation",
-    "text": "mutation ResourceGroupFairShareSettingModalMutation(\n  $input: UpdateResourceGroupFairShareSpecInput!\n) {\n  adminUpdateResourceGroupFairShareSpec(input: $input) {\n    resourceGroup {\n      id\n      name\n      fairShareSpec {\n        halfLifeDays\n        lookbackDays\n        decayUnitDays\n        defaultWeight\n        resourceWeights {\n          resourceType\n          weight\n          usesDefault\n        }\n      }\n    }\n  }\n}\n"
+    "text": "mutation ResourceGroupFairShareSettingModalMutation(\n  $input: UpdateResourceGroupFairShareSpecInput!\n) {\n  updateResourceGroupFairShareSpec(input: $input) {\n    resourceGroup {\n      id\n      name\n      fairShareSpec {\n        halfLifeDays\n        lookbackDays\n        decayUnitDays\n        defaultWeight\n        resourceWeights {\n          resourceType\n          weight\n          usesDefault\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "bced39f3d091890c9d9b289b2dd5b9f7";
+(node as any).hash = "6adee96699695ade0313c9a3d80b5e61";
 
 export default node;

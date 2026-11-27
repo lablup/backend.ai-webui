@@ -2,82 +2,82 @@
 
 ## Summary
 
-> 낯선 용어는 문서 맨 아래 [용어](#용어)에 모아 두었다.
+> Unfamiliar terms are collected in the [Glossary](#glossary) at the end.
 
-- 이 저장소의 PR 리뷰 정책은 루트의 `REVIEW.md` 한 파일에 둔다. 리뷰어가 사람이든 agent든 bot이든 이 파일을 읽는다.
-- ready gate(`fw:pr-ready-gate`)는 PR이 바꾼 path를 `REVIEW.md`의 `## Risk tiers` 목록과 맞춰 [risk tier](#용어)를 정하고, tier가 리뷰 깊이와 권장 승인 수를 정한다.
-- 모든 finding은 Important, Nit, Pre-existing 중 하나의 tag를 달고, gate는 모든 finding에 답한다.
+- This repository keeps its PR review policy in one file, `REVIEW.md` at the root. Every reviewer reads this file, whether the reviewer is a person, an agent, or a bot.
+- The ready gate (`fw:pr-ready-gate`) sets the [risk tier](#glossary) by matching the paths a PR changed against the `## Risk tiers` lists in `REVIEW.md`, and the tier sets the review depth and the recommended number of approvals.
+- Every finding carries one tag out of Important, Nit, and Pre-existing, and the gate answers every finding.
 
 ## Context
 
-- **Previous instructions**: 리뷰 지침은 Copilot만 읽는 `.github/copilot-instructions.md`에 있었고, 모든 PR이 같은 깊이로 리뷰되었다.
-- **Gate change**: claude-mp의 `fw:pr-ready-gate`(fw 29.0.0)는 Copilot 대신 Claude Code의 `/code-review`를 돌리고, 리뷰 정책을 저장소의 `REVIEW.md`에서 읽는다.
-- **Source pattern**: 변경 path로 risk tier를 정하고 tier별로 리뷰 깊이를 다르게 하는 방식은 Anthropic의 [Solving code review at Anthropic](https://claude.dev/blog/solving-code-review-at-anthropic/)이 설명한 방식이다.
+- **Previous instructions**: The review instructions were in `.github/copilot-instructions.md`, which only Copilot read, and every PR was reviewed at the same depth.
+- **Gate change**: claude-mp's `fw:pr-ready-gate` (fw 29.0.0) runs Claude Code's `/code-review` instead of Copilot, and it reads the review policy from the repository's `REVIEW.md`.
+- **Source pattern**: Anthropic's [Solving code review at Anthropic](https://claude.dev/blog/solving-code-review-at-anthropic/) describes the method of setting a risk tier from the changed paths and varying the review depth per tier.
 
-## 설계도
+## Diagram
 
 ```mermaid
 flowchart LR
-  pr["PR의 변경 path 목록"]
+  pr["The PR's list of changed paths"]
   review["REVIEW.md<br/>## Risk tiers"]
   tier["risk-tier.sh<br/>fw:pr-ready-gate"]
   cr["/code-review"]
   sec["/security-review"]
-  body["PR body의 fw-risk-tier block"]
+  body["fw-risk-tier block in the PR body"]
   pr -- "gh pr diff --name-only" --> tier
-  review -- "High·Low glob 목록" --> tier
-  tier -- "effort medium·high·xhigh" --> cr
-  tier -- "High tier일 때만" --> sec
-  tier -- "tier, matched path, 권장 승인 수 (쓰기)" --> body
-  review -- "보고할 실패, tag, 보고하지 않을 것" --> cr
+  review -- "High and Low glob lists" --> tier
+  tier -- "effort medium, high, or xhigh" --> cr
+  tier -- "only for the High tier" --> sec
+  tier -- "writes tier, matched path, recommended approvals" --> body
+  review -- "failures to report, tags, what not to report" --> cr
 ```
 
 ## Decision
 
-### 1. 리뷰 정책은 REVIEW.md에 둔다
+### 1. The review policy lives in REVIEW.md
 
-- **Single file**: 보고할 실패 유형, evidence 규칙, 보고하지 않을 것, tag, risk tier 목록은 `REVIEW.md`에 둔다. build와 component 규약은 `AGENTS.md`에 남는다.
-- **Ignored paths**: 생성 파일 목록은 `.claude/rules/review-ignored-paths.md`와 같게 유지하고, 둘 중 하나를 바꾸는 PR은 둘 다 바꾼다.
+- **Single file**: `REVIEW.md` holds the failure types to report, the evidence rule, what not to report, the tags, and the risk tier lists. The build and component conventions stay in `AGENTS.md`.
+- **Ignored paths**: The list of generated files stays identical to `.claude/rules/review-ignored-paths.md`, and a PR that changes either file changes both.
 
-### 2. risk tier가 리뷰 깊이를 정한다
+### 2. The risk tier sets the review depth
 
-- **Classification**: 바뀐 파일 하나라도 High glob에 맞으면 High, 모든 파일이 Low glob에 맞으면 Low, 그 밖은 Medium이다.
-- **Review depth**: tier마다 gate가 하는 리뷰와 권장 승인 수는 아래와 같다. 승인 수는 권장이고 실제 요구는 branch protection이 정한다.
+- **Classification**: If any one changed file matches a High glob, the tier is High. If every file matches a Low glob, the tier is Low. Otherwise the tier is Medium.
+- **Review depth**: The table below shows the review the gate runs and the recommended number of approvals for each tier. The number of approvals is a recommendation, and branch protection sets the actual requirement.
 
-| tier | `/code-review` effort | `/security-review` | 권장 승인 수 |
-|---|---|---|---|
-| Low | medium | 없음 | 0 |
-| Medium | high | 없음 | 1 |
-| High | xhigh | 실행 | 2 |
+| tier   | `/code-review` effort | `/security-review` | Recommended approvals |
+| ------ | --------------------- | ------------------ | --------------------- |
+| Low    | medium                | None               | 0                     |
+| Medium | high                  | None               | 1                     |
+| High   | xhigh                 | Runs               | 2                     |
 
-- **Override scope**: `REVIEW.md`의 `### High`·`### Low` 목록은 gate의 기본 목록을 통째로 대신한다. 기본 목록에서 유지할 glob은 `REVIEW.md`에 다시 적는다.
-- **Dropped defaults**: `REVIEW.md` 목록은 gate 기본 목록 중 일부를 일부러 빼거나 좁힌다. `**/auth*`는 `AuthorIcon.tsx` 같은 무관한 파일에 맞아서 뺐고, 저장소 전체의 `*credential*`·`*purge*`·`*delete*`는 매뉴얼 screenshot에 맞아서 `react/src`와 BUI `src`로 좁혔다. `**/electron*/**`는 실제 경로인 `electron-app/**`로 바꿨다. `packages/backend.ai-client/**`는 `src/**`로 좁혀, client package의 문서와 테스트는 Low로 떨어진다.
+- **Override scope**: The `### High` and `### Low` lists in `REVIEW.md` replace the gate's default lists entirely. A glob from the default lists that should stay must be written again in `REVIEW.md`.
+- **Dropped defaults**: The `REVIEW.md` lists deliberately drop or narrow some of the gate's default globs. `**/auth*` was dropped because it matches unrelated files such as `AuthorIcon.tsx`. The repository-wide `*credential*`, `*purge*`, and `*delete*` were narrowed to `react/src` and the BUI `src`, because they matched manual screenshots. `**/electron*/**` was changed to the real path, `electron-app/**`. `packages/backend.ai-client/**` was narrowed to `src/**`, so the client package's docs and tests fall to Low.
 
-### 3. finding은 tag를 달고 모두 답을 받는다
+### 3. Every finding carries a tag and gets an answer
 
-- **Tags**: Important는 잘못된 동작, 권한 누출, 계약 위반, 문서화된 규칙 위반이다. Nit은 PR이 바꾼 줄의 그 밖의 것이고 리뷰당 3개까지다. Pre-existing은 PR이 바꾸지 않은 줄의 결함이고 이 PR에 고치라고 요구하지 않는다.
-- **Every finding answered**: gate는 finding마다 고치거나, 사람의 판단으로 넘기거나, 적용하지 않는 이유를 답한 뒤에만 PR을 draft에서 꺼낸다.
+- **Tags**: Important covers wrong behavior, permission leaks, contract violations, and violations of documented rules. Nit covers anything else on lines the PR changed, with at most 3 per review. Pre-existing covers defects on lines the PR did not change, and the reviewer does not ask for them to be fixed in this PR.
+- **Every finding answered**: The gate takes the PR out of draft only after it has answered each finding by fixing it, handing it to a person's judgment, or giving the reason it does not apply.
 
-## 대안과 기각 사유
+## Rejected alternatives
 
-- **Keep Copilot instructions**: `.github/copilot-instructions.md`를 유지한다. 설정이 이미 있다는 것이 장점이다. 기각한 이유는 gate가 더 이상 Copilot을 부르지 않고, 그 파일은 다른 리뷰어가 읽지 않기 때문이다.
-- **One depth for every PR**: tier 없이 모든 PR을 같은 effort로 리뷰한다. 규칙이 단순하다는 것이 장점이다. 기각한 이유는 문서만 바꾼 PR과 인증·설정을 바꾼 PR이 같은 비용과 같은 깊이로 리뷰되기 때문이다.
+- **Keep Copilot instructions**: This alternative keeps `.github/copilot-instructions.md`. Its advantage is that the setup already exists. It is rejected because the gate no longer calls Copilot, and other reviewers do not read that file.
+- **One depth for every PR**: This alternative reviews every PR at the same effort with no tiers. Its advantage is a simple rule. It is rejected because a PR that only changes docs and a PR that changes authentication or configuration would be reviewed at the same cost and the same depth.
 
 ## Consequences
 
-- **Steering files are High**: `REVIEW.md`, `AGENTS.md`, `.claude/**`, `.github/**`, 검증 harness, lint·build·test 설정, ADR은 Markdown이어도 High이다. High가 Low보다 우선한다.
-- **Path-based limit**: tier는 path만 보므로, High 목록에 없는 path에서 위험한 코드를 바꾼 PR은 Medium으로 리뷰된다. `REVIEW.md`의 보안 항목은 Medium tier 리뷰어가 직접 확인한다.
-- **Plugin dependency**: 이 정책을 실행하는 것은 fw 29.0.0 이상의 gate다. 그보다 낮은 fw가 설치된 session의 gate는 `REVIEW.md`를 읽지 않는다.
+- **Steering files are High**: `REVIEW.md`, `AGENTS.md`, `.claude/**`, `.github/**`, the verification harness, the lint, build, and test configuration, and the ADRs are High even though they are Markdown. High takes precedence over Low.
+- **Path-based limit**: The tier looks only at paths, so a PR that changes risky code in a path not on the High list is reviewed as Medium. The Medium tier reviewer checks the security items in `REVIEW.md` directly.
+- **Plugin dependency**: The gate in fw 29.0.0 or later runs this policy. In a session with an older fw installed, the gate does not read `REVIEW.md`.
 
-## 출처
+## Sources
 
-- GitHub: #10640, #10641. 구현: lablup/claude-mp#169 (`plugins/fw/skills/pr-ready-gate/`, `scripts/risk-tier.sh`).
-- 방식의 출처: https://claude.dev/blog/solving-code-review-at-anthropic/
-- 결정일: 2026-10-27.
-- 관련: `.claude/rules/review-ignored-paths.md`, `.claude/rules/adr.md`. 이웃한 ADR은 없다.
+- GitHub: #10640, #10641. Implementation: lablup/claude-mp#169 (`plugins/fw/skills/pr-ready-gate/`, `scripts/risk-tier.sh`).
+- Source of the method: https://claude.dev/blog/solving-code-review-at-anthropic/
+- Decision date: 2026-10-27.
+- Related: `.claude/rules/review-ignored-paths.md`, `.claude/rules/adr.md`. No neighbouring ADR exists.
 
-## 용어
+## Glossary
 
-| 용어 | 뜻 |
-|---|---|
-| risk tier | PR이 바꾼 path로 정하는 High·Medium·Low 등급이다. ready gate가 이 등급으로 리뷰 effort, 보안 리뷰 여부, 권장 승인 수를 정한다. |
+| Term      | Meaning                                                                                                                                                                                                             |
+| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| risk tier | A risk tier is the High, Medium, or Low grade that the paths a PR changed decide. The ready gate uses this grade to set the review effort, whether a security review runs, and the recommended number of approvals. |

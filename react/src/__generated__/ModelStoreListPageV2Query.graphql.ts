@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<dd75138102d0b8afbc6c12cd47b3de36>>
+ * @generated SignedSource<<1e068e6b0952dcee61e2a11f16d70121>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -114,7 +114,7 @@ export type ModelStoreListPageV2Query$data = {
       readonly node: {
         readonly entityId: string;
         readonly id: string;
-        readonly " $fragmentSpreads": FragmentRefs<"ModelStoreListPageV2_ModelCardV2Fragment">;
+        readonly " $fragmentSpreads": FragmentRefs<"ModelStoreListPageV2_ModelCardV2Fragment" | "WebMCPModelCardListToolsFragment">;
       };
     }>;
   } | null | undefined;
@@ -242,6 +242,11 @@ return {
                     "args": null,
                     "kind": "FragmentSpread",
                     "name": "ModelStoreListPageV2_ModelCardV2Fragment"
+                  },
+                  {
+                    "args": null,
+                    "kind": "FragmentSpread",
+                    "name": "WebMCPModelCardListToolsFragment"
                   }
                 ],
                 "storageKey": null
@@ -383,16 +388,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "e834b6f848569b5c600d83e1e88fe5bc",
+    "cacheID": "1f0cc930e8ec02616b6162daf22d5803",
     "id": null,
     "metadata": {},
     "name": "ModelStoreListPageV2Query",
     "operationKind": "query",
-    "text": "query ModelStoreListPageV2Query(\n  $scope: ProjectModelCardV2Scope!\n  $filter: ModelCardV2Filter\n  $orderBy: [ModelCardV2OrderBy!]\n  $limit: Int!\n  $offset: Int!\n) {\n  projectModelCardsV2(scope: $scope, filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        entityId\n        ...ModelStoreListPageV2_ModelCardV2Fragment\n      }\n    }\n  }\n}\n\nfragment ModelStoreListPageV2_ModelCardV2Fragment on ModelCardV2 {\n  name\n  metadata {\n    title\n    task\n    author\n  }\n  updatedAt\n  createdAt\n  availablePresets(orderBy: [{field: RANK, direction: \"ASC\"}]) {\n    count\n  }\n}\n"
+    "text": "query ModelStoreListPageV2Query(\n  $scope: ProjectModelCardV2Scope!\n  $filter: ModelCardV2Filter\n  $orderBy: [ModelCardV2OrderBy!]\n  $limit: Int!\n  $offset: Int!\n) {\n  projectModelCardsV2(scope: $scope, filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        entityId\n        ...ModelStoreListPageV2_ModelCardV2Fragment\n        ...WebMCPModelCardListToolsFragment\n      }\n    }\n  }\n}\n\nfragment ModelStoreListPageV2_ModelCardV2Fragment on ModelCardV2 {\n  name\n  metadata {\n    title\n    task\n    author\n  }\n  updatedAt\n  createdAt\n  availablePresets(orderBy: [{field: RANK, direction: \"ASC\"}]) {\n    count\n  }\n}\n\nfragment WebMCPModelCardListToolsFragment on ModelCardV2 {\n  entityId\n  name\n  metadata {\n    title\n    task\n    author\n  }\n  createdAt\n  updatedAt\n}\n"
   }
 };
 })();
 
-(node as any).hash = "2b393592518869141be9b3f50788e3c2";
+(node as any).hash = "7410ae52d643ee43d1a1f3f2e0291f3b";
 
 export default node;

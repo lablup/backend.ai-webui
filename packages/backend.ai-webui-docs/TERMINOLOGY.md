@@ -43,8 +43,8 @@ The tables below list the approved term for each concept, per language, grouped 
 |---|---|---|---|---|---|---|---|
 | active-pool | Active Pool | 활성 풀 | アクティブプール | แอ็กทีฟพูล | — | FR-3302 | The set of model-service replicas currently receiving traffic through App Proxy. Membership tracks traffic and is independent of a replica's health status. See app-proxy. |
 | app-proxy | App Proxy | App Proxy | App Proxy | App Proxy | — | FR-2841 | The standalone, per-resource-group proxy service that relays in-container application traffic directly between the user's browser and the compute session's Agent. Renamed from WSProxy to App Proxy in the UI in FR-2841. Use "App Proxy" only; do not reference the old "WSProxy" name in user-facing documentation. UI label stays in English across all locales. |
-| app-proxy-api-token | App Proxy API Token | App Proxy API 토큰 | App Proxy APIトークン | โทเค็น API ของ App Proxy | Field label (Resource Group settings) | FR-2841 | Resource Group settings field label for the App Proxy API token. |
 | app-proxy-server-address | App Proxy Server Address | App Proxy 서버 주소 | App Proxy サーバアドレス | ที่อยู่เซิร์ฟเวอร์ App Proxy | Field label (Resource Group settings) | FR-2841 | Resource Group settings field label for the App Proxy server address. |
+| audit-log | Audit Log | 감사로그 | 監査ログ | บันทึกการตรวจสอบ | — | — | The record of actions performed on a resource (session, folder, deployment, project), shown in Audit Log tabs and dashboard cards. KO writes it as one word, "감사로그", following the team writing glossary (#10965). The Korean manual still uses the spaced form until it is updated separately, so no KO avoid row exists yet. |
 | autoscaling-rule | Auto Scaling Rule | 오토스케일링 규칙 | 自動スケーリングルール | กฎการปรับขนาดอัตโนมัติ | — | FR-3207 | The rule that automatically adjusts a deployment's replica count based on live metrics. Match the UI label exactly: KO uses "오토스케일링" (the autoScalingRule i18n keys), NOT "자동 스케일링". Documentation section: deployment/deployment.md |
 | container | Container | — | — | — | — | — | The runtime environment of a compute session. Do NOT use "container" and "kernel" interchangeably. |
 | endpoint | Endpoint | — | — | — | — | — | The access point created for a served model. |
@@ -150,7 +150,7 @@ There is **no** standalone `wsproxy` daemon. In Backend.AI core, App Proxy is a 
 - Constant: `WSPROXY_V1_VERSION = "v1"`
 - The WebUI's own client-side embedded proxy (`src/wsproxy/`) and its `config.toml` key `wsproxy.proxyURL`
 
-The KO/JA/TH UI label stays in English as "App Proxy"; do not append the old "WSProxy" name in any locale's user-facing documentation. The App Proxy field labels (App Proxy Server Address, App Proxy API Token) appear in the Resource Group settings — see the `app-proxy-*` rows in the table above for per-language values.
+The KO/JA/TH UI label stays in English as "App Proxy"; do not append the old "WSProxy" name in any locale's user-facing documentation. The App Proxy Server Address field label appears in the Resource Group settings — see the `app-proxy-server-address` row in the table above for its per-language values.
 
 **Do NOT use** "WSProxy" as the user-facing label in new documentation, and do **not** describe `wsproxy` as a server-side binary or daemon (it isn't one). Keep `wsproxy` (lowercase, `code` style) only for the internal identifiers listed above — DB columns, the API route, the `WSPROXY_V1_VERSION` constant, the WebUI's own client-side proxy (`src/wsproxy/`), and the `config.toml` key `wsproxy.proxyURL`.
 

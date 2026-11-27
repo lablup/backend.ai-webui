@@ -20,12 +20,15 @@ describe('getPathFromMenuKey', () => {
     expect(getPathFromMenuKey('session', 'alpha')).toBe(
       '/project/alpha/session',
     );
-    expect(getPathFromMenuKey('start', 'alpha')).toBe('/project/alpha/start');
     expect(getPathFromMenuKey('data', 'alpha')).toBe('/project/alpha/data');
   });
 
   it('resolves general menu aliases to their canonical feature', () => {
-    // 'job' -> session, 'summary' -> dashboard
+    // 'job' -> session, 'summary' and the retired 'start' -> dashboard
+    expect(getPathFromMenuKey('start', 'alpha')).toBe(
+      '/project/alpha/dashboard',
+    );
+    expect(getPathFromMenuKey('start')).toBe('/dashboard');
     expect(getPathFromMenuKey('job', 'alpha')).toBe('/project/alpha/session');
     expect(getPathFromMenuKey('summary', 'alpha')).toBe(
       '/project/alpha/dashboard',
@@ -35,9 +38,6 @@ describe('getPathFromMenuKey', () => {
   it('builds project-admin paths under the /admin/ segment', () => {
     expect(getPathFromMenuKey('project-admin-session', 'alpha')).toBe(
       '/project/alpha/admin/session',
-    );
-    expect(getPathFromMenuKey('project-data', 'alpha')).toBe(
-      '/project/alpha/admin/data',
     );
     expect(getPathFromMenuKey('project-admin-users', 'alpha')).toBe(
       '/project/alpha/admin/users',
@@ -51,6 +51,22 @@ describe('getPathFromMenuKey', () => {
     expect(getPathFromMenuKey('reservoir')).toBe('/admin/reservoir');
   });
 
+  it('resolves the admin dashboard by admin role', () => {
+    expect(getPathFromMenuKey('admin-dashboard', 'alpha', 'superadmin')).toBe(
+      '/admin/dashboard',
+    );
+    expect(
+      getPathFromMenuKey('admin-dashboard', 'alpha', 'currentProjectAdmin'),
+    ).toBe('/project/alpha/admin/dashboard');
+    expect(getPathFromMenuKey('admin-dashboard', 'alpha')).toBe(
+      '/admin/dashboard',
+    );
+    // Other admin keys ignore the role.
+    expect(
+      getPathFromMenuKey('project-admin-users', 'alpha', 'currentProjectAdmin'),
+    ).toBe('/project/alpha/admin/users');
+  });
+
   it('encodes the project name for project-scoped keys', () => {
     expect(getPathFromMenuKey('session', 'a b')).toBe('/project/a%20b/session');
   });
@@ -62,7 +78,9 @@ describe('getPathFromMenuKey', () => {
     expect(getPathFromMenuKey('session', '')).toBe('/session');
     expect(getPathFromMenuKey('job')).toBe('/session');
     expect(getPathFromMenuKey('summary')).toBe('/dashboard');
-    expect(getPathFromMenuKey('project-data')).toBe('/project-data');
+    expect(getPathFromMenuKey('project-admin-users')).toBe(
+      '/project-admin-users',
+    );
   });
 
   it('never produces a path with an empty project segment', () => {

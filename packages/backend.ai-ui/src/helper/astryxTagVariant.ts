@@ -289,6 +289,11 @@ export const STATUS_BADGE_VARIANT = {
     SYSTEM: 'neutral',
     CUSTOM: 'success',
   },
+  /** Resource group active state (ResourceGroupDetailDrawer). */
+  resourceGroup: {
+    ACTIVE: 'success',
+    INACTIVE: 'neutral',
+  },
   /** Cloud platform / region category colors (AgentList, StorageProxyList). */
   cloudPlatform: {
     aws: 'orange',

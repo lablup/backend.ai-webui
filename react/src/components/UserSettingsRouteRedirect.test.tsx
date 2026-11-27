@@ -109,9 +109,11 @@ describe('UserSettingsRouteRedirect', () => {
   });
 
   it("carries the palette's setting deep link across the redirect", async () => {
-    renderAt('/usersettings?tab=general&setting=userSettings.AutoLogout');
+    renderAt(
+      '/usersettings?tab=general&setting=userSettings.AutomaticUpdateCheck',
+    );
     expect(await screen.findByTestId('location')).toHaveTextContent(
-      '/usersettings?setting=userSettings.AutoLogout&settings=general',
+      '/usersettings?setting=userSettings.AutomaticUpdateCheck&settings=general',
     );
   });
 });

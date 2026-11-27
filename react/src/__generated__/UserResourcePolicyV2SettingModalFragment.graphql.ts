@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<743c20da77f2a2fe7d2b56fbfc0391f2>>
+ * @generated SignedSource<<51bcd5c8946c9306a8c91e8b5223d593>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,6 +11,7 @@
 import { ReaderFragment } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type UserResourcePolicyV2SettingModalFragment$data = {
+  readonly entityId: string;
   readonly id: string;
   readonly maxConcurrentLogins: number | null | undefined;
   readonly maxCustomizedImageCount: number;
@@ -38,6 +39,13 @@ const node: ReaderFragment = {
       "args": null,
       "kind": "ScalarField",
       "name": "id",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "entityId",
       "storageKey": null
     },
     {
@@ -98,6 +106,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "f9fd0c1e131b6d0eb49eb1fdd99abef6";
+(node as any).hash = "ae5424cb16845f1af7703a07e7a7d60f";
 
 export default node;

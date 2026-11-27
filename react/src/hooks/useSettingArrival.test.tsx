@@ -16,7 +16,7 @@ import React from 'react';
 import { MemoryRouter, useLocation } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-const TITLES = ['Auto logout', 'Desktop notification'];
+const TITLES = ['Automatic update check', 'Desktop notification'];
 
 vi.mock('react-i18next', async (importOriginal) => {
   const actual = await importOriginal<typeof import('react-i18next')>();
@@ -24,7 +24,9 @@ vi.mock('react-i18next', async (importOriginal) => {
     ...actual,
     useTranslation: () => ({
       t: (key: string) =>
-        key === 'userSettings.AutoLogout' ? 'Auto logout' : key,
+        key === 'userSettings.AutomaticUpdateCheck'
+          ? 'Automatic update check'
+          : key,
     }),
   };
 });
@@ -48,10 +50,10 @@ describe('useSettingArrival', () => {
 
   it('highlights the addressed item, then strips only the setting param', () => {
     const { result } = renderArrival(
-      '/usersettings?tab=general&setting=userSettings.AutoLogout',
+      '/usersettings?tab=general&setting=userSettings.AutomaticUpdateCheck',
     );
 
-    expect(result.current.arrivalTitle).toBe('Auto logout');
+    expect(result.current.arrivalTitle).toBe('Automatic update check');
 
     act(() => {
       vi.advanceTimersByTime(SETTING_ARRIVAL_HIGHLIGHT_MS);
@@ -63,14 +65,14 @@ describe('useSettingArrival', () => {
 
   it('waits while the addressed item is not rendered', () => {
     const { result } = renderArrival(
-      '/usersettings?tab=logs&setting=userSettings.AutoLogout',
+      '/usersettings?tab=logs&setting=userSettings.AutomaticUpdateCheck',
       [],
     );
 
     expect(result.current.arrivalTitle).toBeNull();
     // The param survives so the arrival still fires once the right tab renders.
     expect(result.current.search).toBe(
-      '?tab=logs&setting=userSettings.AutoLogout',
+      '?tab=logs&setting=userSettings.AutomaticUpdateCheck',
     );
   });
 

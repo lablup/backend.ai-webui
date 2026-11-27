@@ -1,0 +1,14 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
+/* Sticks inside `.main-layout-content-scroll` (the header sits outside it) and
+   scrolls its own checklist while the board scrolls underneath. */
+.dashboard-edit-sider {
+  top: var(--spacing-4);
+  align-self: flex-start;
+  max-height: calc(100dvh - var(--webui-header-height) - var(--spacing-8));
+  overflow-y: auto;
+  /* Keeps the checklist clear of its own scrollbar. */
+  scrollbar-gutter: stable;
+}

@@ -193,6 +193,13 @@ export const docs = {
       description:
         'Called with the entry and the directory it lives in when the row edit action is used. Only reachable while `enableEdit` is on and the mode is not `directoryPicker`.',
     },
+    {
+      name: 'isDirectorySizeVisible',
+      type: 'boolean',
+      default: 'false',
+      description:
+        "Shows each directory's size in the size column. Off by default because the size is computed on the storage side and is costly on large folders; the host passes its `isDirectorySizeVisible` setting.",
+    },
   ],
   examples: [
     {

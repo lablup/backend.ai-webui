@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<d14096e0f34af725845fe58e930566e2>>
+ * @generated SignedSource<<4531198e4c92b2188f7393f3677cdf9d>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,13 +10,15 @@
 
 import { ConcreteRequest } from 'relay-runtime';
 export type ImportImageModalEnableRegistryMutation$variables = {
-  allowed_docker_registries: ReadonlyArray<string | null | undefined>;
-  domain: string;
+  containerRegistryId: string;
+  domainId: string;
 };
 export type ImportImageModalEnableRegistryMutation$data = {
-  readonly modify_domain: {
-    readonly msg: string | null | undefined;
-    readonly ok: boolean | null | undefined;
+  readonly createDomainContainerRegistryRelations: {
+    readonly items: ReadonlyArray<{
+      readonly containerRegistryId: string;
+      readonly domainId: string;
+    }>;
   } | null | undefined;
 };
 export type ImportImageModalEnableRegistryMutation = {
@@ -28,51 +30,74 @@ const node: ConcreteRequest = (function(){
 var v0 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "allowed_docker_registries"
+  "name": "containerRegistryId"
 },
 v1 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "domain"
+  "name": "domainId"
 },
 v2 = [
   {
     "alias": null,
     "args": [
       {
-        "kind": "Variable",
-        "name": "name",
-        "variableName": "domain"
-      },
-      {
         "fields": [
           {
-            "kind": "Variable",
-            "name": "allowed_docker_registries",
-            "variableName": "allowed_docker_registries"
+            "items": [
+              {
+                "fields": [
+                  {
+                    "kind": "Variable",
+                    "name": "containerRegistryId",
+                    "variableName": "containerRegistryId"
+                  },
+                  {
+                    "kind": "Variable",
+                    "name": "domainId",
+                    "variableName": "domainId"
+                  }
+                ],
+                "kind": "ObjectValue",
+                "name": "items.0"
+              }
+            ],
+            "kind": "ListValue",
+            "name": "items"
           }
         ],
         "kind": "ObjectValue",
-        "name": "props"
+        "name": "input"
       }
     ],
-    "concreteType": "ModifyDomain",
+    "concreteType": "CreateDomainContainerRegistryRelationsPayload",
     "kind": "LinkedField",
-    "name": "modify_domain",
+    "name": "createDomainContainerRegistryRelations",
     "plural": false,
     "selections": [
       {
         "alias": null,
         "args": null,
-        "kind": "ScalarField",
-        "name": "ok",
-        "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "msg",
+        "concreteType": "DomainContainerRegistryRelation",
+        "kind": "LinkedField",
+        "name": "items",
+        "plural": true,
+        "selections": [
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "domainId",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "containerRegistryId",
+            "storageKey": null
+          }
+        ],
         "storageKey": null
       }
     ],
@@ -103,16 +128,16 @@ return {
     "selections": (v2/*: any*/)
   },
   "params": {
-    "cacheID": "e43138c11072c938595d5a11c48376f4",
+    "cacheID": "e70c48c4a552db5bfa29141b86030d35",
     "id": null,
     "metadata": {},
     "name": "ImportImageModalEnableRegistryMutation",
     "operationKind": "mutation",
-    "text": "mutation ImportImageModalEnableRegistryMutation(\n  $domain: String!\n  $allowed_docker_registries: [String]!\n) {\n  modify_domain(name: $domain, props: {allowed_docker_registries: $allowed_docker_registries}) {\n    ok\n    msg\n  }\n}\n"
+    "text": "mutation ImportImageModalEnableRegistryMutation(\n  $domainId: UUID!\n  $containerRegistryId: UUID!\n) {\n  createDomainContainerRegistryRelations(input: {items: [{domainId: $domainId, containerRegistryId: $containerRegistryId}]}) {\n    items {\n      domainId\n      containerRegistryId\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "71e3300236cc2f52e2ee9e4c9c28334b";
+(node as any).hash = "01d039e0870f60c9549ccb89bf4d298c";
 
 export default node;

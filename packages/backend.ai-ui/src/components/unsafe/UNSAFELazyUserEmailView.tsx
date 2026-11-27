@@ -7,8 +7,10 @@
  `Typography.Text` prop surface locally, so the props these call sites pass
  (`type`, `ellipsis`, `copyable`, `style`) are unchanged.
 */
-import { UNSAFELazyUserEmailViewQuery } from '../../__generated__/UNSAFELazyUserEmailViewQuery.graphql';
-import { toGlobalId } from '../../helper';
+import {
+  UNSAFELazyUserEmailViewQuery,
+  UserScope,
+} from '../../__generated__/UNSAFELazyUserEmailViewQuery.graphql';
 import BAIText, { type BAITextProps } from '../BAIText';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
@@ -17,6 +19,8 @@ export interface UNSAFELazyUserEmailViewProps extends Omit<
   'children'
 > {
   uuid?: string;
+  /** The users this scope reaches are looked up, usually the current domain (ADR 0012). */
+  scope: UserScope;
   fetchKey?: string;
 }
 
@@ -26,19 +30,32 @@ export interface UNSAFELazyUserEmailViewProps extends Omit<
  */
 const UNSAFELazyUserEmailView: React.FC<UNSAFELazyUserEmailViewProps> = ({
   uuid,
+  scope,
   fetchKey,
   ...textProps
 }) => {
-  const { user_node } = useLazyLoadQuery<UNSAFELazyUserEmailViewQuery>(
+  const { scopedUsersV2 } = useLazyLoadQuery<UNSAFELazyUserEmailViewQuery>(
     graphql`
-      query UNSAFELazyUserEmailViewQuery($uuid: String!) {
-        user_node(id: $uuid) {
-          email
+      query UNSAFELazyUserEmailViewQuery($scope: UserScope!, $uuid: UUID!) {
+        scopedUsersV2(
+          scope: $scope
+          filter: { entityId: { equals: $uuid } }
+          limit: 1
+        ) {
+          edges {
+            node {
+              id
+              basicInfo {
+                email
+              }
+            }
+          }
         }
       }
     `,
     {
-      uuid: uuid ? toGlobalId('UserNode', uuid) : '',
+      scope,
+      uuid: uuid ?? '',
     },
     {
       fetchPolicy: !uuid
@@ -49,9 +66,8 @@ const UNSAFELazyUserEmailView: React.FC<UNSAFELazyUserEmailViewProps> = ({
       fetchKey,
     },
   );
-  return (
-    user_node?.email && <BAIText {...textProps}>{user_node?.email}</BAIText>
-  );
+  const email = scopedUsersV2?.edges?.[0]?.node?.basicInfo?.email;
+  return email && <BAIText {...textProps}>{email}</BAIText>;
 };
 
 export default UNSAFELazyUserEmailView;

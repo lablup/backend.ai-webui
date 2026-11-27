@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<9336b113468c2bd8e290cb73681059b1>>
+ * @generated SignedSource<<2c241cdfc9b13c5ed9d0b2b87b6b0bb2>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -21,6 +21,9 @@ export type ImageV2Filter = {
   architecture?: StringFilter | null | undefined;
   configDigest?: StringFilter | null | undefined;
   createdAt?: DateTimeFilter | null | undefined;
+  creatorId?: UUIDFilter | null | undefined;
+  customized?: boolean | null | undefined;
+  entityId?: UUIDFilter | null | undefined;
   id?: UUIDFilter | null | undefined;
   image?: StringFilter | null | undefined;
   isLocal?: boolean | null | undefined;
@@ -104,6 +107,7 @@ export type EntityLabelFilter = {
   OR?: ReadonlyArray<EntityLabelFilter> | null | undefined;
   entityId?: UUIDFilter | null | undefined;
   entityType?: StringFilter | null | undefined;
+  fieldId?: UUIDFilter | null | undefined;
   key?: StringFilter | null | undefined;
   value?: StringFilter | null | undefined;
 };

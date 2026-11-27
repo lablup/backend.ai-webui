@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<5adad86985e5ec5dad7fc295fbd9879d>>
+ * @generated SignedSource<<b822b0a5e00c9e7885b9c456d2f3fc97>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,21 +10,16 @@
 
 import { ConcreteRequest } from 'relay-runtime';
 export type RoleStatus = "ACTIVE" | "DELETED" | "INACTIVE" | "%future added value";
-export type UpdateRoleInput = {
-  autoAssign?: boolean | null | undefined;
-  description?: string | null | undefined;
-  id: string;
-  name?: string | null | undefined;
-  status?: RoleStatus | null | undefined;
-};
 export type RBACManagementPageActivateRoleMutation$variables = {
-  input: UpdateRoleInput;
+  id: string;
 };
 export type RBACManagementPageActivateRoleMutation$data = {
-  readonly adminUpdateRole: {
-    readonly id: string;
-    readonly status: RoleStatus;
-  } | null | undefined;
+  readonly restoreRole: {
+    readonly role: {
+      readonly id: string;
+      readonly status: RoleStatus;
+    };
+  };
 };
 export type RBACManagementPageActivateRoleMutation = {
   response: RBACManagementPageActivateRoleMutation$data;
@@ -36,7 +31,7 @@ var v0 = [
   {
     "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "input"
+    "name": "id"
   }
 ],
 v1 = [
@@ -45,27 +40,38 @@ v1 = [
     "args": [
       {
         "kind": "Variable",
-        "name": "input",
-        "variableName": "input"
+        "name": "id",
+        "variableName": "id"
       }
     ],
-    "concreteType": "Role",
+    "concreteType": "RestoreRolePayload",
     "kind": "LinkedField",
-    "name": "adminUpdateRole",
+    "name": "restoreRole",
     "plural": false,
     "selections": [
       {
         "alias": null,
         "args": null,
-        "kind": "ScalarField",
-        "name": "id",
-        "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "status",
+        "concreteType": "Role",
+        "kind": "LinkedField",
+        "name": "role",
+        "plural": false,
+        "selections": [
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "id",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "status",
+            "storageKey": null
+          }
+        ],
         "storageKey": null
       }
     ],
@@ -90,16 +96,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "a54e3e63ac43e77daefa1453e8287d1c",
+    "cacheID": "8563612d276a3780ec05bf25d908f39e",
     "id": null,
     "metadata": {},
     "name": "RBACManagementPageActivateRoleMutation",
     "operationKind": "mutation",
-    "text": "mutation RBACManagementPageActivateRoleMutation(\n  $input: UpdateRoleInput!\n) {\n  adminUpdateRole(input: $input) {\n    id\n    status\n  }\n}\n"
+    "text": "mutation RBACManagementPageActivateRoleMutation(\n  $id: UUID!\n) {\n  restoreRole(id: $id) {\n    role {\n      id\n      status\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "ea8e1feab494efe8fcc47ba441d0f1e1";
+(node as any).hash = "aa6c7a5ecd326f26b7aaa6dd38520b14";
 
 export default node;

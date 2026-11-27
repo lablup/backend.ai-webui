@@ -4,12 +4,12 @@
  */
 import { TotalResourceWithinResourceGroupFragment$key } from '../__generated__/TotalResourceWithinResourceGroupFragment.graphql';
 import { TotalResourceWithinResourceGroupRemainingAgentsQuery } from '../__generated__/TotalResourceWithinResourceGroupRemainingAgentsQuery.graphql';
-import { useSuspendedBackendaiClient } from '../hooks';
 import {
   useCurrentUserRole,
   useResourceSlotsDetails,
 } from '../hooks/backendai';
 import { useCurrentResourceGroupValue } from '../hooks/useCurrentProject';
+import { useEffectiveLoginConfig } from '../hooks/useWebUIConfig';
 import SharedResourceGroupSelectForCurrentProject from './SharedResourceGroupSelectForCurrentProject';
 import { Heading } from '@lablup/ui-common/Text';
 import { useTheme } from '@lablup/ui-common/theme';
@@ -18,6 +18,7 @@ import {
   BAIFetchKeyButton,
   BAIFlex,
   BAIFlexProps,
+  BAIIconWithTooltip,
   ResourceStatistics,
   addNumberWithUnits,
   convertToNumber,
@@ -27,8 +28,10 @@ import {
   useControllableValue,
   BAISegmentedControl,
   BAISegmentedControlItem,
+  useIsInBAIBoardItem,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
+import { CircleHelp } from 'lucide-react';
 import {
   ReactNode,
   useDeferredValue,
@@ -50,16 +53,36 @@ import {
 const AGENT_PAGE_SIZE = 100;
 
 interface AgentSlots {
-  id: string | null | undefined;
-  available_slots: string | null | undefined;
-  occupied_slots: string | null | undefined;
+  capacity: unknown;
+  used: unknown;
 }
 
+const parseSlots = (slots: unknown): Record<string, unknown> =>
+  (typeof slots === 'string' ? JSON.parse(slots || '{}') : slots) ?? {};
+
+type AgentPage = Pick<
+  TotalResourceWithinResourceGroupRemainingAgentsQuery['response'],
+  'agentsV2' | 'agent_summary_list'
+>;
+
+const toAgentSlots = (page: AgentPage | null | undefined): Array<AgentSlots> =>
+  page?.agentsV2
+    ? page.agentsV2.edges.map(({ node }) => ({
+        capacity: node.resourceInfo.capacity,
+        used: node.resourceInfo.used,
+      }))
+    : filterOutNullAndUndefined(page?.agent_summary_list?.items ?? []).map(
+        (item) => ({
+          capacity: item.available_slots,
+          used: item.occupied_slots,
+        }),
+      );
+
+// Offset paging: keep these filters and orderBy identical to the fragment's first page.
 const remainingAgentsQuery = graphql`
   query TotalResourceWithinResourceGroupRemainingAgentsQuery(
     $resourceGroup: String
     $isSuperAdmin: Boolean!
-    $agentNodeFilter: String!
     $limit: Int!
     $offset: Int!
   ) {
@@ -76,13 +99,23 @@ const remainingAgentsQuery = graphql`
         occupied_slots
       }
     }
-    agent_nodes(filter: $agentNodeFilter, first: $limit, offset: $offset)
-      @include(if: $isSuperAdmin) {
+    agentsV2(
+      filter: {
+        status: { equals: ALIVE }
+        schedulable: true
+        scalingGroup: { equals: $resourceGroup }
+      }
+      orderBy: [{ field: ID }]
+      limit: $limit
+      offset: $offset
+    ) @include(if: $isSuperAdmin) {
       edges {
         node {
           id
-          available_slots
-          occupied_slots
+          resourceInfo {
+            capacity
+            used
+          }
         }
       }
     }
@@ -131,12 +164,9 @@ const useRemainingAgents = ({
           { ...variables, limit: AGENT_PAGE_SIZE, offset },
         ).toPromise();
       if (isCancelled()) return agents;
-      const items: ReadonlyArray<AgentSlots | null | undefined> =
-        page?.agent_nodes
-          ? page.agent_nodes.edges.map((edge) => edge?.node)
-          : (page?.agent_summary_list?.items ?? []);
+      const items = toAgentSlots(page);
       if (_.isEmpty(items)) break;
-      agents.push(...filterOutNullAndUndefined(items));
+      agents.push(...items);
     }
     return agents;
   });
@@ -163,38 +193,54 @@ const useRemainingAgents = ({
 interface TotalResourceWithinResourceGroupProps extends BAIFlexProps {
   queryRef: TotalResourceWithinResourceGroupFragment$key;
   refetching?: boolean;
+  /** Hides the card's own refresh button, for hosts that refresh it themselves. */
+  hideRefreshButton?: boolean;
   displayType?: 'used' | 'free';
   onDisplayTypeChange?: (type: 'used' | 'free') => void;
   extra?: ReactNode;
+  /** Fixes the resource group (the parent query's); without it the header's group and a picker are used. */
+  resourceGroup?: string;
+  /** Drops the title row, for a host that owns the card header and its resource group picker. */
+  asSection?: boolean;
 }
 
 export const useIsAvailableTotalResourceWithinResourceGroup = () => {
-  const baiClient = useSuspendedBackendaiClient();
+  const loginConfig = useEffectiveLoginConfig();
   const userRole = useCurrentUserRole();
-  const isHiddenAgents = !!baiClient?._config?.hideAgents;
+  const isHiddenAgents = !!loginConfig.hideAgents;
 
-  // Superadmins read `agent_nodes` even when hideAgents is true; others need `agent_summary_list`.
+  // Superadmins read `agentsV2` even when hideAgents is true; others need `agent_summary_list`.
   return userRole === 'superadmin' || !isHiddenAgents;
 };
 
 const TotalResourceWithinResourceGroup: React.FC<
   TotalResourceWithinResourceGroupProps
-> = ({ queryRef, refetching, extra, ...props }) => {
+> = ({
+  queryRef,
+  refetching,
+  hideRefreshButton,
+  extra,
+  resourceGroup,
+  asSection,
+  ...props
+}) => {
   'use memo';
   const { t } = useTranslation();
   const [isPendingRefetch, startRefetchTransition] = useTransition();
-  const currentResourceGroup = useCurrentResourceGroupValue();
+  const headerResourceGroup = useCurrentResourceGroupValue();
+  const currentResourceGroup = resourceGroup ?? headerResourceGroup;
   const deferredSelectedResourceGroup = useDeferredValue(currentResourceGroup);
   const userRole = useCurrentUserRole();
   const { token } = useTheme();
+  const isInBoard = useIsInBAIBoardItem();
 
-  const [{ agent_nodes, agent_summary_list }, refetch] = useRefetchableFragment(
+  // TODO(needs-backend): #11077 agentsV2 is superadmin-only, so other roles stay on agent_summary_list.
+  const [data, refetch] = useRefetchableFragment(
     graphql`
       fragment TotalResourceWithinResourceGroupFragment on Query
       @argumentDefinitions(
         resourceGroup: { type: "String" }
         isSuperAdmin: { type: "Boolean!" }
-        agentNodeFilter: { type: "String!" }
       )
       @refetchable(
         queryName: "TotalResourceWithinResourceGroupFragmentRefetchQuery"
@@ -215,15 +261,23 @@ const TotalResourceWithinResourceGroup: React.FC<
           }
           total_count
         }
-        agent_nodes(filter: $agentNodeFilter, first: 100)
-          @include(if: $isSuperAdmin) {
+        agentsV2(
+          filter: {
+            status: { equals: ALIVE }
+            schedulable: true
+            scalingGroup: { equals: $resourceGroup }
+          }
+          orderBy: [{ field: ID }]
+          limit: 100
+          offset: 0
+        ) @include(if: $isSuperAdmin) {
           edges {
             node {
               id
-              status
-              available_slots
-              occupied_slots
-              scaling_group
+              resourceInfo {
+                capacity
+                used
+              }
             }
           }
           count
@@ -238,34 +292,30 @@ const TotalResourceWithinResourceGroup: React.FC<
     Exclude<TotalResourceWithinResourceGroupProps['displayType'], undefined>
   >(props, {
     defaultValue: 'free',
+    valuePropName: 'displayType',
     trigger: 'onDisplayTypeChange',
     defaultValuePropName: 'defaultDisplayType',
   });
 
   useEffect(() => {
-    if (deferredSelectedResourceGroup) {
+    if (deferredSelectedResourceGroup && !resourceGroup) {
       refetch({
         resourceGroup: deferredSelectedResourceGroup,
         isSuperAdmin: userRole === 'superadmin',
       });
     }
-  }, [deferredSelectedResourceGroup, refetch, userRole]);
+  }, [deferredSelectedResourceGroup, refetch, userRole, resourceGroup]);
 
-  const firstPageAgents: Array<AgentSlots> = filterOutNullAndUndefined(
-    agent_nodes
-      ? _.map(agent_nodes?.edges, 'node')
-      : agent_summary_list?.items || [],
-  );
+  const firstPageAgents = toAgentSlots(data);
   const { remainingAgents, isLoadingRemaining } = useRemainingAgents({
-    firstPageKey: agent_nodes ?? agent_summary_list,
+    firstPageKey: data.agentsV2 ?? data.agent_summary_list,
     loadedCount: firstPageAgents.length,
-    totalCount: agent_nodes
-      ? agent_nodes.count
-      : agent_summary_list?.total_count,
+    totalCount: data.agentsV2
+      ? data.agentsV2.count
+      : data.agent_summary_list?.total_count,
     variables: {
       resourceGroup: deferredSelectedResourceGroup,
       isSuperAdmin: userRole === 'superadmin',
-      agentNodeFilter: `schedulable == true & status == "ALIVE" & scaling_group == "${deferredSelectedResourceGroup}"`,
     },
   });
 
@@ -280,8 +330,8 @@ const TotalResourceWithinResourceGroup: React.FC<
       let availableSlots;
 
       try {
-        occupiedSlots = JSON.parse(agent.occupied_slots || '{}');
-        availableSlots = JSON.parse(agent.available_slots || '{}');
+        occupiedSlots = parseSlots(agent.used);
+        availableSlots = parseSlots(agent.capacity);
       } catch {
         return;
       }
@@ -416,87 +466,116 @@ const TotalResourceWithinResourceGroup: React.FC<
       direction="column"
       align="stretch"
       style={{
-        paddingInline: token('--spacing-8'),
-        paddingBottom: token('--spacing-4'),
+        // On a board the board pads the item.
+        ...(isInBoard
+          ? {}
+          : {
+              paddingBlock: token('--spacing-4'),
+              paddingInline: token('--spacing-8'),
+              flex: 1,
+              // A narrow cell leaves no height to center in; the title still keeps its distance.
+              rowGap: token('--spacing-4'),
+            }),
         ...props.style,
       }}
-      {..._.omit(props, ['style'])}
+      {..._.omit(props, [
+        'style',
+        'displayType',
+        'defaultDisplayType',
+        'onDisplayTypeChange',
+      ])}
     >
-      <BAIBoardItemTitle
-        title={
-          <BAIFlex gap={'xs'} wrap="wrap">
-            {/* antd Typography.Text (fontSizeHeading5 = 16px +
-                fontWeightStrong). 16px is heading-5 on the restored antd type
-                ramp; `level={3}` tracked the same 16px under Astryx's own. */}
-            <Heading level={5}>{t('webui.menu.TotalResourcesIn')}</Heading>
-            <SharedResourceGroupSelectForCurrentProject
-              size="small"
-              showSearch
-              style={{ minWidth: 100 }}
-              loading={currentResourceGroup !== deferredSelectedResourceGroup}
-              popupMatchSelectWidth={false}
-              tooltip={t('general.ResourceGroup')}
-            />
-          </BAIFlex>
-        }
-        tooltip={t('webui.menu.TotalResourcesInResourceGroupDescription')}
-        extra={
-          <BAIFlex gap={'xs'} wrap="wrap">
-            {/* PILOT-DECISION: SegmentedControl.label is aria-only and required;
+      {asSection ? null : (
+        // The same header row as the dashboard's card: title, help, picker.
+        <BAIBoardItemTitle
+          title={
+            <BAIFlex gap="xs" wrap="wrap" align="center">
+              <Heading level={5}>
+                {t('webui.menu.TotalResourcesInResourceGroup')}
+              </Heading>
+              <BAIIconWithTooltip
+                icon={<CircleHelp size="1em" />}
+                content={t(
+                  'webui.menu.TotalResourcesInResourceGroupDescription',
+                )}
+              />
+              {resourceGroup ? (
+                <Heading level={5}>{resourceGroup}</Heading>
+              ) : (
+                <SharedResourceGroupSelectForCurrentProject
+                  isLoading={
+                    currentResourceGroup !== deferredSelectedResourceGroup
+                  }
+                />
+              )}
+            </BAIFlex>
+          }
+          extra={
+            <BAIFlex gap="xs" wrap="wrap" align="center">
+              {/* PILOT-DECISION: SegmentedControl.label is aria-only and required;
                 composed from the two option labels to avoid new i18n keys. */}
-            <BAISegmentedControl
-              size="sm"
-              aria-label={`${t('dashboard.Used')}/${t('dashboard.Free')}`}
-              value={displayType}
-              onChange={(v) =>
-                setDisplayType(
-                  v as Exclude<
-                    TotalResourceWithinResourceGroupProps['displayType'],
-                    undefined
-                  >,
-                )
-              }
-            >
-              <BAISegmentedControlItem
-                value="used"
-                label={t('dashboard.Used')}
+              <BAISegmentedControl
+                size="sm"
+                aria-label={`${t('dashboard.Used')}/${t('dashboard.Free')}`}
+                value={displayType}
+                onChange={(v) =>
+                  setDisplayType(
+                    v as Exclude<
+                      TotalResourceWithinResourceGroupProps['displayType'],
+                      undefined
+                    >,
+                  )
+                }
+              >
+                <BAISegmentedControlItem
+                  value="used"
+                  label={t('dashboard.Used')}
+                />
+                <BAISegmentedControlItem
+                  value="free"
+                  label={t('dashboard.Free')}
+                />
+              </BAISegmentedControl>
+              <BAIFetchKeyButton
+                hidden={hideRefreshButton}
+                size="small"
+                loading={isPendingRefetch || refetching || isLoadingRemaining}
+                value=""
+                onChange={() => {
+                  // Handle local refetching
+                  startRefetchTransition(() => {
+                    refetch(
+                      {
+                        resourceGroup: deferredSelectedResourceGroup,
+                        isSuperAdmin: _.isEqual(userRole, 'superadmin'),
+                      },
+                      {
+                        fetchPolicy: 'network-only',
+                      },
+                    );
+                  });
+                }}
+                variant="link"
+                color="default"
               />
-              <BAISegmentedControlItem
-                value="free"
-                label={t('dashboard.Free')}
-              />
-            </BAISegmentedControl>
-            <BAIFetchKeyButton
-              size="small"
-              loading={isPendingRefetch || refetching || isLoadingRemaining}
-              value=""
-              onChange={() => {
-                // Handle local refetching
-                startRefetchTransition(() => {
-                  refetch(
-                    {
-                      resourceGroup: deferredSelectedResourceGroup,
-                      isSuperAdmin: _.isEqual(userRole, 'superadmin'),
-                    },
-                    {
-                      fetchPolicy: 'network-only',
-                    },
-                  );
-                });
-              }}
-              variant="link"
-              color="default"
-            />
-            {extra}
-          </BAIFlex>
-        }
-      />
+              {extra}
+            </BAIFlex>
+          }
+        />
+      )}
 
-      <ResourceStatistics
-        resourceData={resourceData}
-        displayType={displayType}
-        progressMode="normal"
-      />
+      <BAIFlex
+        direction="column"
+        align="stretch"
+        justify="center"
+        style={{ flex: 1 }}
+      >
+        <ResourceStatistics
+          resourceData={resourceData}
+          displayType={displayType}
+          progressMode="normal"
+        />
+      </BAIFlex>
     </BAIFlex>
   );
 };

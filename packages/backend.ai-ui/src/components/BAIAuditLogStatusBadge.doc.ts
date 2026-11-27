@@ -60,7 +60,7 @@ export const docs = {
       label: 'In an audit log table column',
       code: `{
   key: 'status',
-  title: t('comp:BAIAuditLogNodes.Status'),
+  title: t('comp:BAIAuditLogNodes.Result'),
   dataIndex: 'status',
   render: (__, record) => (
     <BAIAuditLogStatusBadge status={toAuditLogStatus(record.status)} />

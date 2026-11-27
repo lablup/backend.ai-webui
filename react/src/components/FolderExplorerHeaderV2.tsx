@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
  Ticket 16 — converted to Astryx. `Grid.useBreakpoint` becomes
- `useBAIBreakpoint` (RESPONSIVE-POLICY R2), `Skeleton.Button` becomes the
+ `useBAIBreakpoint` (ADR 0020 R3), `Skeleton.Button` becomes the
  `BAISkeleton` button variant, and the editable title uses the rebuilt
  `EditableVFolderNameV2` (`variant="title"` replaces the antd
  `component={Typography.Title}` polymorphism).

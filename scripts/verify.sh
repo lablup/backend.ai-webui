@@ -44,9 +44,7 @@ LANE_SLUGS=()
 # actually checked (changed files vs full tree, fallbacks, skipped parts).
 note() { echo ">> $*"; }
 
-# Run a package-local binary directly: `pnpm exec` costs ~1.5s of start-up per
-# call, and the packages pin different TypeScript majors, so the binary must be
-# the package's own, not the root one.
+# Run a package-local binary directly: `pnpm exec` costs ~1.5s of start-up per call.
 bin() { # bin <package dir> <binary> [args...]
   local dir="$1" name="$2"
   shift 2
@@ -166,7 +164,7 @@ check_lint() {
   fi
   local rc=0
   lint_changed react 'react/(src|vite-plugins)/' || rc=1
-  lint_changed packages/backend.ai-ui 'packages/backend\.ai-ui/(src|\.storybook)/' || rc=1
+  lint_changed packages/backend.ai-ui 'packages/backend\.ai-ui/((src|\.storybook|test)/|vitest\.visual\.config\.)' || rc=1
   pnpm -r --stream --filter backend.ai-client --filter backend.ai-agent-cli lint:ci || rc=1
   return $rc
 }
@@ -257,7 +255,7 @@ check_stylex_injection() {
   # stylesheet rollup emitted first — possibly a lazy route's. Nothing warns
   # when the predicate stops matching, so: (1) the config must declare it;
   # (2) when a production build is present, the sentinel rule authored in
-  # react/src/pages/AstryxStylexProbePage.tsx must land in the entry
+  # react/src/pages/AstryxStylexProbePage/AstryxStylexProbePage.tsx must land in the entry
   # stylesheet only. Keep STYLEX_SENTINEL in sync with that `sentinel` style.
   local STYLEX_SENTINEL='z-index: ?2147480001'
   local config=react/vite.config.ts
@@ -301,8 +299,10 @@ check_astryx_theme_built() {
   # The committed `astryx theme build` artifacts under
   # react/src/astryx-theme/built/ must match the theme source; `-c` recompiles
   # in memory and exits non-zero on drift. Rebuild procedure: built/index.ts.
-  # The condition resolves `backend.ai-ui/theme` to source (ADR 0013 §4).
-  NODE_OPTIONS="--conditions=@backend.ai/source" \
+  # jiti ignores --conditions, so alias the subpath to what it resolves to (ADR 0013 §4).
+  local theme
+  theme=$(cd react && node --conditions=@backend.ai/source -p "require.resolve('backend.ai-ui/theme')") || return 1
+  JITI_ALIAS="{\"backend.ai-ui/theme\":\"$theme\"}" \
     bin react astryx theme build -c \
     src/astryx-theme/built/backendai-default.ts \
     -o src/astryx-theme/built/backendai-default-built.css
@@ -387,10 +387,7 @@ start_lane gate "TypeScript" bin react tsc --noEmit --incremental
 # so each gets its own lane.
 start_lane gate "TypeScript (backend.ai-ui)" bin packages/backend.ai-ui tsc --noEmit --incremental
 start_lane gate "TypeScript (agent-cli)" bin packages/backend.ai-agent-cli tsc --noEmit
-# The review overlay client is vendored by the Chrome extension (ADR 0008) and
-# built with narrower flags than react's. Deliberately the ROOT TypeScript
-# (5.5.4): react's 6.x folded the iterable DOM declarations into the base `DOM`
-# lib, so the no-`DOM.Iterable` half of the gate cannot fail there.
+# The review overlay client is vendored by the Chrome extension (ADR 0008).
 start_lane gate "TypeScript (review overlay host seam)" \
   bin . tsc --noEmit -p react/vite-plugins/review-overlay/tsconfig.host.json
 start_lane gate "Vite warmup paths" check_warmup_paths
@@ -413,6 +410,8 @@ start_lane gate "z-index ladder mirrors" node scripts/migration-gates/z-index-la
 start_lane gate "Agent mappings" check_agent_mappings
 start_lane gate "Help anchors (user manual)" check_help_anchors
 start_lane gate "Terminology" check_terminology_drift
+# ADR 0018: every ADR and docs/ARCHITECTURE.md has a Korean `.ko.md` companion.
+start_lane gate "ADR pairs" node scripts/check-adr-pairs.mjs
 # Gates the non-English avoid-row DATA, a separate axis from CHECK 1 above; the
 # hard gate is terminology-selftest.yml (FR-3051).
 start_lane report "Terminology self-test (report-only here; hard gate in CI)" \
@@ -421,6 +420,9 @@ start_lane report "Astryx token gate (report-only; bar is no NEW findings)" \
   check_token_gate_report
 start_lane report "Compat floor (report-only; the floor is in the team dev catalog, ADR 0011)" \
   check_compat_floor_report
+# A `merge=` driver missing from git config does nothing, silently.
+start_lane report "Merge drivers (report-only)" \
+  node scripts/register-merge-drivers.mjs --check
 
 if [ -n "${VERIFY_TESTS:-}" ]; then
   start_lane gate "Vitest (react)" vitest_lane react

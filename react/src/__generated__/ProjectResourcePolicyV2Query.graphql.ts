@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<ce670a0b018847f1ae48f7198ecaf656>>
+ * @generated SignedSource<<4988be1283a44ebd0688f2b92aee8b4c>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -17,6 +17,7 @@ export type ProjectResourcePolicyV2Filter = {
   NOT?: ReadonlyArray<ProjectResourcePolicyV2Filter> | null | undefined;
   OR?: ReadonlyArray<ProjectResourcePolicyV2Filter> | null | undefined;
   createdAt?: DateTimeFilter | null | undefined;
+  entityId?: UUIDFilter | null | undefined;
   maxNetworkCount?: IntFilter | null | undefined;
   maxQuotaScopeSize?: IntFilter | null | undefined;
   maxVfolderCount?: IntFilter | null | undefined;
@@ -58,6 +59,12 @@ export type IntFilter = {
   lessThanOrEqual?: number | null | undefined;
   notEquals?: number | null | undefined;
 };
+export type UUIDFilter = {
+  equals?: string | null | undefined;
+  in?: ReadonlyArray<string> | null | undefined;
+  notEquals?: string | null | undefined;
+  notIn?: ReadonlyArray<string> | null | undefined;
+};
 export type ProjectResourcePolicyV2OrderBy = {
   direction?: OrderDirection;
   field?: ProjectResourcePolicyV2OrderField;
@@ -74,6 +81,7 @@ export type ProjectResourcePolicyV2Query$data = {
     readonly edges: ReadonlyArray<{
       readonly node: {
         readonly createdAt: string | null | undefined;
+        readonly entityId: string;
         readonly id: string;
         readonly maxNetworkCount: number;
         readonly maxQuotaScopeSize: {
@@ -152,17 +160,24 @@ v7 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "name",
+  "name": "entityId",
   "storageKey": null
 },
 v8 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "maxVfolderCount",
+  "name": "name",
   "storageKey": null
 },
 v9 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "maxVfolderCount",
+  "storageKey": null
+},
+v10 = {
   "alias": null,
   "args": null,
   "concreteType": "BinarySizeInfo",
@@ -180,14 +195,14 @@ v9 = {
   ],
   "storageKey": null
 },
-v10 = {
+v11 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "maxNetworkCount",
   "storageKey": null
 },
-v11 = {
+v12 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
@@ -237,6 +252,7 @@ return {
                   (v9/*: any*/),
                   (v10/*: any*/),
                   (v11/*: any*/),
+                  (v12/*: any*/),
                   {
                     "args": null,
                     "kind": "FragmentSpread",
@@ -301,7 +317,8 @@ return {
                   (v8/*: any*/),
                   (v9/*: any*/),
                   (v10/*: any*/),
-                  (v11/*: any*/)
+                  (v11/*: any*/),
+                  (v12/*: any*/)
                 ],
                 "storageKey": null
               }
@@ -314,16 +331,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "3f41f5ff31ff8ecc9d31dc5bd6866ed4",
+    "cacheID": "5a8473f97eef6096c6d8d8784ef6fbd4",
     "id": null,
     "metadata": {},
     "name": "ProjectResourcePolicyV2Query",
     "operationKind": "query",
-    "text": "query ProjectResourcePolicyV2Query(\n  $filter: ProjectResourcePolicyV2Filter\n  $orderBy: [ProjectResourcePolicyV2OrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  adminProjectResourcePoliciesV2(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        name\n        maxVfolderCount\n        maxQuotaScopeSize {\n          expr\n        }\n        maxNetworkCount\n        createdAt\n        ...BAIProjectResourcePolicyV2TableFragment\n        ...ProjectResourcePolicyV2SettingModalFragment\n      }\n    }\n  }\n}\n\nfragment BAIProjectResourcePolicyV2TableFragment on ProjectResourcePolicyV2 {\n  id\n  name\n  createdAt\n  maxVfolderCount\n  maxQuotaScopeSize {\n    expr\n  }\n  maxNetworkCount\n}\n\nfragment ProjectResourcePolicyV2SettingModalFragment on ProjectResourcePolicyV2 {\n  id\n  name\n  maxVfolderCount\n  maxQuotaScopeSize {\n    expr\n  }\n  maxNetworkCount\n}\n"
+    "text": "query ProjectResourcePolicyV2Query(\n  $filter: ProjectResourcePolicyV2Filter\n  $orderBy: [ProjectResourcePolicyV2OrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  adminProjectResourcePoliciesV2(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        entityId\n        name\n        maxVfolderCount\n        maxQuotaScopeSize {\n          expr\n        }\n        maxNetworkCount\n        createdAt\n        ...BAIProjectResourcePolicyV2TableFragment\n        ...ProjectResourcePolicyV2SettingModalFragment\n      }\n    }\n  }\n}\n\nfragment BAIProjectResourcePolicyV2TableFragment on ProjectResourcePolicyV2 {\n  id\n  entityId\n  name\n  createdAt\n  maxVfolderCount\n  maxQuotaScopeSize {\n    expr\n  }\n  maxNetworkCount\n}\n\nfragment ProjectResourcePolicyV2SettingModalFragment on ProjectResourcePolicyV2 {\n  id\n  entityId\n  name\n  maxVfolderCount\n  maxQuotaScopeSize {\n    expr\n  }\n  maxNetworkCount\n}\n"
   }
 };
 })();
 
-(node as any).hash = "e48b5bd0f7b5a5861c72db10ccf216a2";
+(node as any).hash = "f29eeb889d7bcc422916a32d84f2c820";
 
 export default node;

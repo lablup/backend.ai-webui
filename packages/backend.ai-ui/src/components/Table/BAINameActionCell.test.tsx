@@ -240,4 +240,88 @@ describe('BAINameActionCell — minTitleWidth reserves width for the title', () 
     expect(screen.queryByRole('button', { name: /Delete/ })).toBeNull();
     expect(screen.getAllByRole('button')).toHaveLength(1);
   });
+
+  const editLabels = {
+    key: 'edit-labels',
+    title: 'Edit labels',
+    icon: <span data-testid="edit-labels-icon" />,
+  };
+
+  it.each([
+    ['always', NARROW_CELL_WIDTH],
+    ['hover', NARROW_CELL_WIDTH],
+    // Leaves a few px for actions, so the fit loop rather than the early return decides.
+    ['always', NARROW_CELL_WIDTH - 20],
+  ] as const)(
+    'keeps a single icon action as its own button instead of a More button of the same width (showActions=%s, minTitleWidth=%i)',
+    (showActions, minTitleWidth) => {
+      render(
+        <BAINameActionCell
+          title="label-a, label-b"
+          showActions={showActions}
+          minTitleWidth={minTitleWidth}
+          actions={[editLabels]}
+        />,
+      );
+
+      expect(
+        screen.getByRole('button', { name: /Edit labels/ }),
+      ).toBeInTheDocument();
+      expect(screen.getAllByRole('button')).toHaveLength(1);
+    },
+  );
+
+  it('still folds a lone icon-less action, which renders as a wider text button', () => {
+    render(
+      <BAINameActionCell
+        title="label-a, label-b"
+        showActions="always"
+        minTitleWidth={NARROW_CELL_WIDTH}
+        actions={[{ key: 'edit', title: 'Edit' }]}
+      />,
+    );
+
+    expect(screen.queryByRole('button', { name: /^Edit$/ })).toBeNull();
+    expect(screen.getAllByRole('button')).toHaveLength(1);
+  });
+
+  it('re-measures when the menu-only action that justified the fold goes away', () => {
+    const cell = (actions: BAINameActionCellAction[]) => (
+      <BAINameActionCell
+        title="label-a, label-b"
+        showActions="always"
+        minTitleWidth={NARROW_CELL_WIDTH}
+        actions={actions}
+      />
+    );
+    const { rerender } = render(
+      cell([
+        editLabels,
+        { key: 'delete', title: 'Delete', showInMenu: 'always' },
+      ]),
+    );
+    expect(screen.queryByRole('button', { name: /Edit labels/ })).toBeNull();
+
+    rerender(cell([editLabels]));
+    expect(
+      screen.getByRole('button', { name: /Edit labels/ }),
+    ).toBeInTheDocument();
+  });
+
+  it('still folds a single action when a menu-only action already shows the More button', () => {
+    render(
+      <BAINameActionCell
+        title="a-very-long-file-name.tar.gz"
+        showActions="always"
+        minTitleWidth={NARROW_CELL_WIDTH}
+        actions={[
+          { ...editLabels, key: 'download', title: 'Download' },
+          { key: 'delete', title: 'Delete', showInMenu: 'always' },
+        ]}
+      />,
+    );
+
+    expect(screen.queryByRole('button', { name: /Download/ })).toBeNull();
+    expect(screen.getAllByRole('button')).toHaveLength(1);
+  });
 });

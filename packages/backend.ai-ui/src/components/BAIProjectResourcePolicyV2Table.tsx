@@ -77,6 +77,7 @@ const BAIProjectResourcePolicyV2Table = ({
         fragment BAIProjectResourcePolicyV2TableFragment on ProjectResourcePolicyV2
         @relay(plural: true) {
           id
+          entityId
           name
           createdAt
           maxVfolderCount

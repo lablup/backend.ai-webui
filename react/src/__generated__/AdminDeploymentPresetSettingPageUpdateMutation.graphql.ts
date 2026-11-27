@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<3eb9f311a7b29eaf75ee37d977a51288>>
+ * @generated SignedSource<<e8e32b98b1d8a3dd75a210ddb5948d77>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -114,7 +114,7 @@ export type AdminDeploymentPresetSettingPageUpdateMutation$variables = {
   input: UpdateDeploymentRevisionPresetInput;
 };
 export type AdminDeploymentPresetSettingPageUpdateMutation$data = {
-  readonly adminUpdateDeploymentRevisionPreset: {
+  readonly updateDeploymentRevisionPreset: {
     readonly preset: {
       readonly id: string;
       readonly image: {
@@ -132,7 +132,7 @@ export type AdminDeploymentPresetSettingPageUpdateMutation$data = {
       readonly updatedAt: string | null | undefined;
       readonly " $fragmentSpreads": FragmentRefs<"AdminDeploymentPresetSettingPageContent_preset">;
     };
-  } | null | undefined;
+  };
 };
 export type AdminDeploymentPresetSettingPageUpdateMutation = {
   response: AdminDeploymentPresetSettingPageUpdateMutation$data;
@@ -252,7 +252,7 @@ return {
         "args": (v1/*: any*/),
         "concreteType": "UpdateDeploymentRevisionPresetPayload",
         "kind": "LinkedField",
-        "name": "adminUpdateDeploymentRevisionPreset",
+        "name": "updateDeploymentRevisionPreset",
         "plural": false,
         "selections": [
           {
@@ -294,7 +294,7 @@ return {
         "args": (v1/*: any*/),
         "concreteType": "UpdateDeploymentRevisionPresetPayload",
         "kind": "LinkedField",
-        "name": "adminUpdateDeploymentRevisionPreset",
+        "name": "updateDeploymentRevisionPreset",
         "plural": false,
         "selections": [
           {
@@ -754,16 +754,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "198c5d2f8280532dc82184ac91022808",
+    "cacheID": "0367a166c6e72b6b060d23558c873e03",
     "id": null,
     "metadata": {},
     "name": "AdminDeploymentPresetSettingPageUpdateMutation",
     "operationKind": "mutation",
-    "text": "mutation AdminDeploymentPresetSettingPageUpdateMutation(\n  $input: UpdateDeploymentRevisionPresetInput!\n) {\n  adminUpdateDeploymentRevisionPreset(input: $input) {\n    preset {\n      id\n      name\n      updatedAt\n      runtimeVariant {\n        id\n        name\n      }\n      image {\n        id\n        identity {\n          canonicalName\n          architecture\n        }\n      }\n      ...AdminDeploymentPresetSettingPageContent_preset\n    }\n  }\n}\n\nfragment AdminDeploymentPresetSettingPageContent_preset on DeploymentRevisionPreset {\n  id\n  name\n  description\n  runtimeVariantId\n  runtimeVariant {\n    name\n    id\n  }\n  cluster {\n    clusterMode\n    clusterSize\n  }\n  execution {\n    imageId\n    startupCommand\n    bootstrapScript\n    environ {\n      key\n      value\n    }\n  }\n  resource {\n    resourceOpts {\n      name\n      value\n    }\n  }\n  resourceSlots {\n    slotName\n    quantity\n  }\n  deploymentDefaults {\n    openToPublic\n    replicaCount\n    revisionHistoryLimit\n    deploymentStrategy\n  }\n  presetValues {\n    presetId\n    value\n  }\n  modelDefinition {\n    models {\n      name\n      modelPath\n      service {\n        preStartActions {\n          action\n          args\n        }\n        command @since(version: \"26.7.0\")\n        startCommand\n        shell\n        port\n        healthCheck {\n          enable\n          interval\n          path\n          maxRetries\n          maxWaitTime\n          expectedStatusCode\n          initialDelay\n        }\n      }\n      metadata {\n        author\n        title\n        version\n        created\n        lastModified\n        description\n        task\n        category\n        architecture\n        framework\n        label\n        license\n        minResource\n      }\n    }\n  }\n}\n"
+    "text": "mutation AdminDeploymentPresetSettingPageUpdateMutation(\n  $input: UpdateDeploymentRevisionPresetInput!\n) {\n  updateDeploymentRevisionPreset(input: $input) {\n    preset {\n      id\n      name\n      updatedAt\n      runtimeVariant {\n        id\n        name\n      }\n      image {\n        id\n        identity {\n          canonicalName\n          architecture\n        }\n      }\n      ...AdminDeploymentPresetSettingPageContent_preset\n    }\n  }\n}\n\nfragment AdminDeploymentPresetSettingPageContent_preset on DeploymentRevisionPreset {\n  id\n  name\n  description\n  runtimeVariantId\n  runtimeVariant {\n    name\n    id\n  }\n  cluster {\n    clusterMode\n    clusterSize\n  }\n  execution {\n    imageId\n    startupCommand\n    bootstrapScript\n    environ {\n      key\n      value\n    }\n  }\n  resource {\n    resourceOpts {\n      name\n      value\n    }\n  }\n  resourceSlots {\n    slotName\n    quantity\n  }\n  deploymentDefaults {\n    openToPublic\n    replicaCount\n    revisionHistoryLimit\n    deploymentStrategy\n  }\n  presetValues {\n    presetId\n    value\n  }\n  modelDefinition {\n    models {\n      name\n      modelPath\n      service {\n        preStartActions {\n          action\n          args\n        }\n        command @since(version: \"26.7.0\")\n        startCommand\n        shell\n        port\n        healthCheck {\n          enable\n          interval\n          path\n          maxRetries\n          maxWaitTime\n          expectedStatusCode\n          initialDelay\n        }\n      }\n      metadata {\n        author\n        title\n        version\n        created\n        lastModified\n        description\n        task\n        category\n        architecture\n        framework\n        label\n        license\n        minResource\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "5b11fdaea6ee0991aeded73bd6f3cc39";
+(node as any).hash = "3b8e84b65073e749c9201d142764c8ee";
 
 export default node;

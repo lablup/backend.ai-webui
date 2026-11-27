@@ -4,7 +4,7 @@
  */
 import { getOS, preserveDotStartCase } from '../helper';
 import { useSuspenseTanQuery } from './reactQueryAlias';
-import { MenuKeys } from './useWebUIMenuItems';
+import { useEffectiveLoginConfig } from './useWebUIConfig';
 import { useEventListener } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import type { SingleParserBuilder } from 'nuqs';
@@ -36,8 +36,7 @@ export const useWebUILocation = () => useLocation();
 
 /**
  * Per-tab query-string snapshot/restore for page-like tab hosts
- * (pattern A-ii in .specs/FR-3267-tab-url-state). Reads the tab from router
- * location, not nuqs —
+ * (ADR 0021). Reads the tab from router location, not nuqs —
  * nuqs applies external URL changes in a transition that can hang on the
  * incoming tab's Suspense.
  */
@@ -617,8 +616,8 @@ export const useBackendAIImageMetaData = () => {
 };
 
 export const useAppDownloadMap = () => {
-  const baiClient = useSuspendedBackendaiClient();
-  const appDownloadUrl = baiClient?._config?.appDownloadUrl || '';
+  const loginConfig = useEffectiveLoginConfig();
+  const appDownloadUrl = loginConfig.appDownloadUrl || '';
 
   const appDownloadMap = {
     Linux: { os: 'linux', architecture: ['arm64', 'x64'], extension: 'zip' },
@@ -651,8 +650,8 @@ export const useAppDownloadMap = () => {
 
 export const useCliDownloadMap = () => {
   'use memo';
-  const baiClient = useSuspendedBackendaiClient();
-  const cliDownloadUrl = baiClient?._config?.cliDownloadUrl || '';
+  const loginConfig = useEffectiveLoginConfig();
+  const cliDownloadUrl = loginConfig.cliDownloadUrl || '';
 
   // The Backend.AI CLI is distributed as SCIE (Self-Contained Installable
   // Executables) — a single binary bundling the Python interpreter + CLI +
@@ -706,56 +705,5 @@ type BackendAIConfig = {
   _session_id: string;
   domainName: string;
   domainId: string;
-  default_session_environment: string;
-  default_import_environment: string;
-  allow_project_resource_monitor: boolean;
-  allow_manual_image_name_for_session: boolean;
-  openPortToPublic: boolean;
-  allowPreferredPort: boolean;
-  maxCPUCoresPerContainer: number;
-  maxMemoryPerContainer: number;
-  maxCUDADevicesPerContainer: number;
-  maxCUDASharesPerContainer: number;
-  maxROCMDevicesPerContainer: number;
-  maxTPUDevicesPerContainer: number;
-  maxIPUDevicesPerContainer: number;
-  maxATOMDevicesPerContainer: number;
-  maxATOMPlusDevicesPerContainer: number;
-  maxGaudi2DevicesPerContainer: number;
-  maxWarboyDevicesPerContainer: number;
-  maxRNGDDevicesPerContainer: number;
-  maxShmPerContainer: number;
-  maxFileUploadSize: number;
-  allow_image_list: string[];
-  maskUserInfo: boolean;
-  singleSignOnVendors: string[];
-  ssoRealmName: string;
-  enableImportFromHuggingFace: boolean;
-  enableContainerCommit: boolean;
-  enableModelFolders: boolean;
-  appDownloadUrl: string;
-  cliDownloadUrl: string;
-  systemSSHImage: string;
-  defaultFileBrowserImage: string;
-  fasttrackEndpoint: string;
-  hideAgents: boolean;
-  force2FA: boolean;
-  directoryBasedUsage: boolean;
-  maxCountForPreopenPorts: number;
-  pluginPages: string;
-  blockList: MenuKeys[];
-  inactiveList: MenuKeys[];
-  allowSignout: boolean;
-  allowNonAuthTCP: boolean;
-  enableExtendLoginSession: boolean;
-  showNonInstalledImages: boolean;
-  enableInteractiveLoginAccountSwitch: boolean;
-  isDirectorySizeVisible: boolean;
-  enableReservoir: boolean;
-  debug: boolean;
   proxyURL: string;
-  allowCustomResourceAllocation: boolean;
-  allowAppDownloadPanel: boolean;
-  allowThemeMode: boolean;
-  allowCLIDownloadPanel: boolean;
 };

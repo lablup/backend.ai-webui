@@ -24,8 +24,8 @@
                            owns the state, incl. the `[` shortcut, and draws
                            its own hover-revealed toggle)
    breakpoint="md"      -> the caller's `useBAIBreakpoint()` effect
-                           (RESPONSIVE-POLICY R3; Astryx has no breakpoint
-                           system, MAPPING §3.9)
+                           (ADR 0020 R3; Astryx has no breakpoint
+                           system)
    trigger={null}       -> `hasButton: false`
    children             -> split into SideNav's `header` / `children` /
                            `footer` slots, which is what the hand-rolled

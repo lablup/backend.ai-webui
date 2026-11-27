@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<9c0809f5639ceb91ebfb38a3ad42250b>>
+ * @generated SignedSource<<f3c3b89e92a90829b1592665fa0551c4>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -23,6 +23,7 @@ export type DeploymentPresetDetailModalFragment$data = {
     readonly revisionHistoryLimit: number | null | undefined;
   };
   readonly description: string | null | undefined;
+  readonly entityId: string;
   readonly execution: {
     readonly bootstrapScript: string | null | undefined;
     readonly environ: ReadonlyArray<{
@@ -111,6 +112,13 @@ return {
   "name": "DeploymentPresetDetailModalFragment",
   "selections": [
     (v0/*: any*/),
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "entityId",
+      "storageKey": null
+    },
     (v1/*: any*/),
     {
       "alias": null,
@@ -452,6 +460,6 @@ return {
 };
 })();
 
-(node as any).hash = "4134597dfb3acb1b0e15e8f5c5dec56a";
+(node as any).hash = "c377031da39fcf7e75f3dd70ce3946cb";
 
 export default node;

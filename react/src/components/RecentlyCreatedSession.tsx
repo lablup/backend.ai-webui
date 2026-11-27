@@ -13,17 +13,15 @@ import {
   toLocalId,
   BAIFlex,
   BAIUnmountAfterClose,
-  BAIFetchKeyButton,
   BAIBoardItemTitle,
+  useIsInBAIBoardItem,
 } from 'backend.ai-ui';
-import { useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useRefetchableFragment } from 'react-relay';
 import { useLocation } from 'react-router-dom';
 
 interface RecentlyCreatedSessionProps {
   queryRef: RecentlyCreatedSessionFragment$key;
-  isRefetching?: boolean;
   /**
    * Explicit project prop contract (ADR-0001, FR-3413): pass-through to the
    * session-detail drawer. The mounting page decides the project context.
@@ -33,11 +31,11 @@ interface RecentlyCreatedSessionProps {
 
 const RecentlyCreatedSession: React.FC<RecentlyCreatedSessionProps> = ({
   queryRef,
-  isRefetching,
   project,
 }) => {
   const { t } = useTranslation();
   const { token } = useTheme();
+  const isInBoard = useIsInBAIBoardItem();
   // Read from the router, not nuqs: the board's session panels set the param
   // with a navigation, which nuqs applies in a transition that React holds
   // back while any async action is pending.
@@ -53,9 +51,8 @@ const RecentlyCreatedSession: React.FC<RecentlyCreatedSessionProps> = ({
     else searchParams.set('sessionDetail', value);
     navigate({ search: searchParams.toString(), hash: location.hash });
   };
-  const [isPendingRefetch, startRefetchTransition] = useTransition();
 
-  const [data, refetch] = useRefetchableFragment(
+  const [data] = useRefetchableFragment(
     graphql`
       fragment RecentlyCreatedSessionFragment on Query
       @argumentDefinitions(
@@ -86,8 +83,9 @@ const RecentlyCreatedSession: React.FC<RecentlyCreatedSessionProps> = ({
         direction="column"
         align="stretch"
         style={{
-          paddingInline: token('--spacing-8'),
           height: '100%',
+          // On a board the board pads the item.
+          ...(isInBoard ? {} : { paddingInline: token('--spacing-8') }),
         }}
       >
         <BAIBoardItemTitle
@@ -95,27 +93,6 @@ const RecentlyCreatedSession: React.FC<RecentlyCreatedSessionProps> = ({
           tooltip={t('session.RecentlyCreatedSessionsTooltip', {
             count: 5,
           })}
-          extra={
-            <BAIFetchKeyButton
-              size="small"
-              loading={isPendingRefetch || isRefetching}
-              value=""
-              onChange={() => {
-                startRefetchTransition(() => {
-                  refetch(
-                    {},
-                    {
-                      fetchPolicy: 'network-only',
-                    },
-                  );
-                });
-              }}
-              type="text"
-              style={{
-                backgroundColor: 'transparent',
-              }}
-            />
-          }
         />
 
         {/* Scrollable Content Section */}
@@ -126,7 +103,7 @@ const RecentlyCreatedSession: React.FC<RecentlyCreatedSessionProps> = ({
             flex: 1,
             overflowY: 'auto',
             overflowX: 'hidden',
-            marginBottom: token('--spacing-4'),
+            ...(isInBoard ? {} : { marginBottom: token('--spacing-4') }),
           }}
         >
           <SessionNodes

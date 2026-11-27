@@ -15,11 +15,14 @@ export const knownAcceleratorResourceSlotNames = [
   'atom.device',
   'atom-plus.device',
   'atom-max.device',
+  'rebel100.device',
   'gaudi2.device',
   'warboy.device',
   'rngd.device',
   'hyperaccel-lpu.device',
   'tt-n300.device',
+  'xpu.device',
+  'xpu.shares',
 ] as const;
 export type KnownAcceleratorResourceSlotName =
   (typeof knownAcceleratorResourceSlotNames)[number];

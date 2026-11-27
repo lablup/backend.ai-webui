@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<047955301c254bee6f71f7f9dedc79ce>>
+ * @generated SignedSource<<23afcaeae5419d48f3b55de0d1e3a2ab>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,21 +9,22 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
-export type KeyPairInput = {
-  concurrency_limit?: number | null | undefined;
-  is_active?: boolean | null | undefined;
-  is_admin?: boolean | null | undefined;
-  rate_limit: number;
-  resource_policy: string;
+export type AdminCreateKeypairInput = {
+  isActive?: boolean;
+  isAdmin?: boolean;
+  rateLimit?: number;
+  resourcePolicy: string;
+  userId: string;
 };
 export type KeypairSettingModalCreateMutation$variables = {
-  props: KeyPairInput;
-  user_id: string;
+  input: AdminCreateKeypairInput;
 };
 export type KeypairSettingModalCreateMutation$data = {
-  readonly create_keypair: {
-    readonly msg: string | null | undefined;
-    readonly ok: boolean | null | undefined;
+  readonly adminCreateKeypairV2: {
+    readonly keypair: {
+      readonly accessKey: string;
+      readonly id: string;
+    };
   } | null | undefined;
 };
 export type KeypairSettingModalCreateMutation = {
@@ -32,48 +33,51 @@ export type KeypairSettingModalCreateMutation = {
 };
 
 const node: ConcreteRequest = (function(){
-var v0 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "props"
-},
-v1 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "user_id"
-},
-v2 = [
+var v0 = [
+  {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "input"
+  }
+],
+v1 = [
   {
     "alias": null,
     "args": [
       {
         "kind": "Variable",
-        "name": "props",
-        "variableName": "props"
-      },
-      {
-        "kind": "Variable",
-        "name": "user_id",
-        "variableName": "user_id"
+        "name": "input",
+        "variableName": "input"
       }
     ],
-    "concreteType": "CreateKeyPair",
+    "concreteType": "AdminCreateKeypairPayload",
     "kind": "LinkedField",
-    "name": "create_keypair",
+    "name": "adminCreateKeypairV2",
     "plural": false,
     "selections": [
       {
         "alias": null,
         "args": null,
-        "kind": "ScalarField",
-        "name": "ok",
-        "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "msg",
+        "concreteType": "KeyPairV2",
+        "kind": "LinkedField",
+        "name": "keypair",
+        "plural": false,
+        "selections": [
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "id",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "accessKey",
+            "storageKey": null
+          }
+        ],
         "storageKey": null
       }
     ],
@@ -82,38 +86,32 @@ v2 = [
 ];
 return {
   "fragment": {
-    "argumentDefinitions": [
-      (v0/*: any*/),
-      (v1/*: any*/)
-    ],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
     "name": "KeypairSettingModalCreateMutation",
-    "selections": (v2/*: any*/),
+    "selections": (v1/*: any*/),
     "type": "Mutation",
     "abstractKey": null
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": [
-      (v1/*: any*/),
-      (v0/*: any*/)
-    ],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "KeypairSettingModalCreateMutation",
-    "selections": (v2/*: any*/)
+    "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "2911946ae5cad21bdff21cc88cf64c74",
+    "cacheID": "cb68541891bd8cecf26a8833e82a8710",
     "id": null,
     "metadata": {},
     "name": "KeypairSettingModalCreateMutation",
     "operationKind": "mutation",
-    "text": "mutation KeypairSettingModalCreateMutation(\n  $user_id: String!\n  $props: KeyPairInput!\n) {\n  create_keypair(user_id: $user_id, props: $props) {\n    ok\n    msg\n  }\n}\n"
+    "text": "mutation KeypairSettingModalCreateMutation(\n  $input: AdminCreateKeypairInput!\n) {\n  adminCreateKeypairV2(input: $input) {\n    keypair {\n      id\n      accessKey\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "a81bb2d7d4e5a095deaf58a442f4211d";
+(node as any).hash = "851c5fa0a11f1fb7471137eb6dedd2c8";
 
 export default node;

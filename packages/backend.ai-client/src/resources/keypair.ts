@@ -148,11 +148,11 @@ export class Keypair {
   /**
    * Add Keypair with given information.
    *
-   * @param {string} userId - User ID for new Keypair.
+   * @param {string} userId - UUID of the user who owns the new Keypair.
    * @param {boolean} isActive - is_active state. Default is True.
    * @param {boolean} isAdmin - is_admin state. Default is False.
    * @param {string} resourcePolicy - resource policy name to assign. Default is `default`.
-   * @param {number} rateLimit - API rate limit for 900 seconds. Prevents from DDoS attack.
+   * @param {number} rateLimit - API rate limit per minute. Prevents from DDoS attack.
    */
   async add(
     userId = null,
@@ -161,55 +161,24 @@ export class Keypair {
     resourcePolicy = 'default',
     rateLimit = 1000,
   ): Promise<any> {
-    let fields = [
-      'is_active',
-      'is_admin',
-      'resource_policy',
-      'concurrency_limit',
-      'rate_limit',
-    ];
-    let q =
-      `mutation($user_id: String!, $input: KeyPairInput!) {` +
-      `  create_keypair(user_id: $user_id, props: $input) {` +
-      `    ok msg keypair { ${fields.join(' ')} }` +
+    const fields = ['isActive', 'isAdmin', 'resourcePolicy', 'rateLimit'];
+    const q =
+      `mutation($input: AdminCreateKeypairInput!) {` +
+      `  adminCreateKeypairV2(input: $input) {` +
+      `    keypair { ${fields.join(' ')} }` +
+      `    secretKey` +
       `  }` +
       `}`;
-    let v = {
-      user_id: userId,
+    const v = {
       input: {
-        is_active: isActive,
-        is_admin: isAdmin,
-        resource_policy: resourcePolicy,
-        rate_limit: rateLimit,
+        userId: userId,
+        resourcePolicy: resourcePolicy,
+        isActive: isActive,
+        isAdmin: isAdmin,
+        rateLimit: rateLimit,
       },
     };
     return this.client.query(q, v);
-    /** accessKey is no longer used */
-    /*
-    if (accessKey !== null && accessKey !== '') {
-      fields = fields.concat(['access_key', 'secret_key']);
-    } */
-    /* if (accessKey !== null && accessKey !== '') {
-     v = {
-       'user_id': userId,
-       'input': {
-         'is_active': isActive,
-         'is_admin': isAdmin,
-         'resource_policy': resourcePolicy,
-         'rate_limit': rateLimit,
-       },
-     };
-   } else {
-     v = {
-       'user_id': userId,
-       'input': {
-         'is_active': isActive,
-         'is_admin': isAdmin,
-         'resource_policy': resourcePolicy,
-         'rate_limit': rateLimit
-       },
-     };
-   } */
   }
 
   /**

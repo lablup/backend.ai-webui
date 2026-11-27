@@ -10,12 +10,6 @@ import '@testing-library/jest-dom';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-/**
- * FR-3054 follow-up: the manual-form modal now closes from the mutation's
- * `onSuccess`, so a non-idempotent close callback would toggle it back open
- * when the user cancels while the request is still in flight.
- */
-
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (key: string) => key,
@@ -26,8 +20,7 @@ vi.mock('react-i18next', () => ({
 }));
 
 const postSSHKeypair = vi.fn();
-const fetchSSHKeypair = vi.fn().mockResolvedValue({ ssh_public_key: '' });
-const refreshSSHKeypair = vi.fn().mockResolvedValue({});
+const fetchSSHKeypair = vi.fn();
 
 vi.mock('../hooks', async (importOriginal) => {
   const originalModule = await importOriginal<typeof import('../hooks')>();
@@ -36,7 +29,6 @@ vi.mock('../hooks', async (importOriginal) => {
     useSuspendedBackendaiClient: () => ({
       postSSHKeypair,
       fetchSSHKeypair,
-      refreshSSHKeypair,
     }),
   };
 });
@@ -57,57 +49,81 @@ vi.mock('../app-shim', async (importOriginal) => {
   };
 });
 
-describe('SSHKeypairManagementModal (FR-3054)', () => {
+const onRequestClose = vi.fn();
+
+const renderModal = () =>
+  render(
+    <QueryClientProvider
+      client={
+        new QueryClient({
+          defaultOptions: { queries: { retry: 0 }, mutations: { retry: 0 } },
+        })
+      }
+    >
+      <SSHKeypairManagementModal open onRequestClose={onRequestClose} />
+    </QueryClientProvider>,
+  );
+
+describe('SSHKeypairManagementModal', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    fetchSSHKeypair.mockResolvedValue({ ssh_public_key: 'ssh-rsa EXISTING' });
   });
 
-  it('keeps the manual form modal closed when the user cancels while the request is in flight', async () => {
-    let resolvePost: (value: unknown) => void = () => {};
-    postSSHKeypair.mockImplementation(
-      () =>
-        new Promise((resolve) => {
-          resolvePost = resolve;
-        }),
+  it('shows the current public key in an editable field', async () => {
+    renderModal();
+    await waitFor(() =>
+      expect(screen.getByLabelText('userSettings.PublicKey')).toHaveValue(
+        'ssh-rsa EXISTING',
+      ),
     );
+    expect(
+      screen.queryByLabelText('userSettings.PrivateKey'),
+    ).not.toBeInTheDocument();
+  });
 
+  it('saves the edited public key and closes', async () => {
+    postSSHKeypair.mockResolvedValue({});
     const user = userEvent.setup();
-    render(
-      <QueryClientProvider
-        client={
-          new QueryClient({ defaultOptions: { mutations: { retry: 0 } } })
-        }
-      >
-        <SSHKeypairManagementModal open onRequestClose={vi.fn()} />
-      </QueryClientProvider>,
-    );
+    renderModal();
 
-    await user.click(
-      await screen.findByRole('button', { name: 'button.EnterManually' }),
+    await waitFor(() =>
+      expect(screen.getByLabelText('userSettings.PublicKey')).toHaveValue(
+        'ssh-rsa EXISTING',
+      ),
     );
-    await screen.findByLabelText('userSettings.PublicKey');
-
+    await user.clear(screen.getByLabelText('userSettings.PublicKey'));
     await user.type(
       screen.getByLabelText('userSettings.PublicKey'),
-      'ssh-rsa AAAA',
+      'ssh-ed25519 NEW',
     );
-    await user.type(screen.getByLabelText('userSettings.PrivateKey'), 'key');
     await user.click(screen.getByRole('button', { name: 'button.Save' }));
-    await waitFor(() => expect(postSSHKeypair).toHaveBeenCalledTimes(1));
 
-    await user.click(screen.getByRole('button', { name: /cancel/i }));
-    await waitFor(() =>
-      expect(
-        screen.queryByLabelText('userSettings.PublicKey'),
-      ).not.toBeInTheDocument(),
+    await waitFor(() => expect(onRequestClose).toHaveBeenCalledTimes(1));
+    expect(postSSHKeypair).toHaveBeenCalledWith({ pubkey: 'ssh-ed25519 NEW' });
+    expect(messageSuccess).toHaveBeenCalledWith(
+      'userSettings.SSHKeypairEnterManuallyFinished',
     );
+  });
 
-    resolvePost({});
+  it('keeps the modal open and shows the error when the save is rejected', async () => {
+    postSSHKeypair.mockRejectedValue({
+      statusCode: 400,
+      title: '400 Bad Request',
+      message: 'server responded failure: 400 Bad Request',
+      description: 'The SSH keypair is invalid.',
+    });
+    const user = userEvent.setup();
+    renderModal();
 
-    // The late onSuccess must not bring the dismissed modal back.
-    await waitFor(() => expect(messageSuccess).toHaveBeenCalledTimes(1));
-    expect(
-      screen.queryByLabelText('userSettings.PublicKey'),
-    ).not.toBeInTheDocument();
+    await waitFor(() =>
+      expect(screen.getByLabelText('userSettings.PublicKey')).toHaveValue(
+        'ssh-rsa EXISTING',
+      ),
+    );
+    await user.click(screen.getByRole('button', { name: 'button.Save' }));
+
+    await waitFor(() => expect(messageError).toHaveBeenCalledTimes(1));
+    expect(onRequestClose).not.toHaveBeenCalled();
   });
 });

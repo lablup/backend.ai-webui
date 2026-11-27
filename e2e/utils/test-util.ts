@@ -1,11 +1,32 @@
+import { WEBUI_SETTING_DEFINITIONS } from '../../react/src/helper/webuiSettings';
 import { FolderCreationModal } from './classes/vfolder/FolderCreationModal';
+import {
+  accountLabel,
+  applyLoginState,
+  clearLoginState,
+  dropLoginState,
+  extendTestTimeout,
+  forgetSharedSession,
+  holdsHelperSession,
+  isAnonymousRateLimit,
+  loginProblem,
+  markHelperSession,
+  noteUnusableState,
+  noteUsableState,
+  isAuthSpec,
+  loginStateFile,
+  rateLimitWaitMs,
+  readLocalStorage,
+  readLoginState,
+  saveLoginState,
+} from './login-state';
 import TOML from '@iarna/toml';
 import {
   APIRequestContext,
   Locator,
   Page,
+  Response,
   expect,
-  request as apiRequest,
 } from '@playwright/test';
 
 function isPlainObject(value: unknown): value is Record<string, unknown> {
@@ -132,12 +153,100 @@ export async function seedStoredApiEndpoint(
   }, endpoint);
 }
 
+/**
+ * Mark the superadmin view-switch tours (`AdminViewSwitchTour`) as seen, so
+ * their intro modal does not cover the page in a fresh context. Keys already
+ * set (e.g. `'false'` by a spec that walks the tour) are left alone.
+ */
+// TODO(e2e): the tour flags are account settings (ADR 0035), so this seed reaches
+// only an account without `settings`; write them through the API after sign-in.
+export async function skipAdminViewSwitchTours(page: Page) {
+  await page.addInitScript(() => {
+    for (const key of [
+      'backendaiwebui.settings.user.has_opened_tour_back_to_user_view',
+      'backendaiwebui.settings.user.has_opened_tour_back_to_admin_settings',
+    ]) {
+      if (localStorage.getItem(key) === null) {
+        localStorage.setItem(key, 'true');
+      }
+    }
+  });
+}
+
+/**
+ * Puts the login page on `endpoint` and leaves it on the account form. A
+ * config.toml without `apiEndpoint` asks for the server first (the endpoint
+ * step, #10872); once confirmed the form shows it beside "Change endpoint". An
+ * older form keeps the field under "Advanced", and a pinned server has none.
+ */
+export async function fillLoginEndpoint(page: Page, endpoint: string) {
+  const stepInput = page.getByTestId('login-endpoint-step-input');
+  const changeEndpoint = page.getByTestId('login-change-endpoint');
+  const email = page.getByLabel('Email or Username');
+  const confirm = async () => {
+    await stepInput.fill(endpoint);
+    await page.getByTestId('login-endpoint-step-continue').click();
+    await expect(email).toBeVisible({ timeout: 30_000 });
+  };
+  // A stored server is confirmed on its own first: the step shows it read-only
+  // until the check ends with the form (or an editable step on failure).
+  const editableStep = page.locator(
+    '[data-testid="login-endpoint-step-input"]:not([readonly])',
+  );
+  await expect(editableStep.or(email).first()).toBeVisible({
+    timeout: 30_000,
+  });
+  if (await editableStep.isVisible()) {
+    await confirm();
+    return;
+  }
+  if (await changeEndpoint.isVisible().catch(() => false)) {
+    const shown = await loginEndpointRow(page).innerText();
+    if (!shown.includes(endpoint.replace(/\/+$/, ''))) {
+      await changeEndpoint.click();
+      await confirm();
+    }
+    return;
+  }
+  // `getByLabel('Endpoint')` also matches the History / About buttons.
+  const endpointInput = page.getByRole('textbox', {
+    name: 'Endpoint',
+    exact: true,
+  });
+  if (!(await endpointInput.isVisible({ timeout: 500 }).catch(() => false))) {
+    const advanced = page.getByText('Advanced');
+    if (await advanced.isVisible().catch(() => false)) await advanced.click();
+  }
+  // No field at all means the server pins `apiEndpoint`.
+  try {
+    await endpointInput.waitFor({ state: 'visible', timeout: 3000 });
+    await endpointInput.fill(endpoint);
+  } catch {
+    // server-pinned endpoint: nothing to fill
+  }
+}
+
+/** The confirmed server beside "Change endpoint" on the login form. */
+export function loginEndpointRow(page: Page) {
+  return page.getByTestId('login-endpoint-row');
+}
+
+export type LoginOptions = {
+  /**
+   * Log in for real and keep the session private to this page: it neither
+   * reads nor writes the worker's saved login state. Use it for logins as
+   * the subject under test and before a logout, which ends the session.
+   */
+  fresh?: boolean;
+};
+
 export async function login(
   page: Page,
   request: APIRequestContext,
   username: string,
   password: string,
   endpoint: string,
+  options: LoginOptions = {},
 ) {
   // Modify config.toml to enable session-based login with manual endpoint input
   await modifyConfigToml(page, request, {
@@ -148,9 +257,32 @@ export async function login(
     },
   });
 
-  await page.goto(webuiEndpoint);
+  await skipAdminViewSwitchTours(page);
+
+  const stateFile =
+    options.fresh || isAuthSpec()
+      ? undefined
+      : loginStateFile(endpoint, username);
+  if (
+    stateFile &&
+    (await restoreLogin(page, stateFile, endpoint, username, password))
+  ) {
+    return;
+  }
+  // A context still holding a helper login would boot straight into it.
+  if (holdsHelperSession(page)) {
+    await clearLoginState(page, new URL(webuiEndpoint).origin);
+  }
+  const before = await submitLogin(page, username, password, endpoint);
+  markHelperSession(page);
+  if (stateFile) {
+    await saveLoginState(page, stateFile, username, password, before);
+  }
+}
+
+function removeDevServerOverlay(page: Page) {
   // Remove webpack-dev-server overlay iframe that can intercept pointer events
-  await page
+  return page
     .evaluate(() => {
       const overlay = document.getElementById(
         'webpack-dev-server-client-overlay',
@@ -158,57 +290,202 @@ export async function login(
       if (overlay) overlay.remove();
     })
     .catch(() => {});
+}
+
+/** The signed-in account's email as the app's client holds it, or `''`. */
+async function signedInEmail(page: Page): Promise<string> {
+  return page
+    .waitForFunction(() => (globalThis as any).backendaiclient?.email, null, {
+      timeout: 15_000,
+    })
+    .then((handle) => handle.jsonValue() as Promise<string>)
+    .catch(() => '');
+}
+
+/** The path of `url` below `endpoint`'s own path (a webserver may sit under a prefix). */
+function pathBelow(endpoint: string, url: string): string | undefined {
+  const base = new URL(endpoint);
+  const target = new URL(url);
+  const prefix = base.pathname.replace(/\/+$/, '');
+  if (target.origin !== base.origin || !target.pathname.startsWith(prefix)) {
+    return undefined;
+  }
+  return target.pathname.slice(prefix.length) || '/';
+}
+
+/**
+ * Boots the app on a saved login state. `false` when it does not end signed
+ * in as `username`; the context is then cleared for a real login, and the
+ * state is dropped only when it is known dead (login form, 401, another
+ * account) rather than when the boot merely failed.
+ */
+async function restoreLogin(
+  page: Page,
+  stateFile: string,
+  endpoint: string,
+  username: string,
+  password: string,
+): Promise<boolean> {
+  const saved = readLoginState(stateFile, password);
+  if (!saved) return false;
+  const { state } = saved;
+  // The account the saved login showed; a username login compares to it.
+  const expected = (
+    saved.account ?? (username.includes('@') ? username : '')
+  ).toLowerCase();
+  const appOrigin = new URL(webuiEndpoint).origin;
+  let unauthorized: string | undefined;
+  const onResponse = (response: Response) => {
+    const path = pathBelow(endpoint, response.url());
+    // The health and version probes answer 401 to a signed-in app too.
+    const probe = path === undefined || /\/health$|^\/func\/?$/.test(path);
+    if (response.status() === 401 && !probe) unauthorized ??= path;
+  };
+  let dead: string | undefined;
+  let failed: string | undefined;
+  try {
+    await applyLoginState(page, stateFile, state, appOrigin);
+    page.on('response', onResponse);
+    await page.goto(webuiEndpoint);
+    await removeDevServerOverlay(page);
+    const signedIn = page.getByTestId('user-dropdown-button');
+    const loginForm = page
+      .getByLabel('Email or Username')
+      .or(page.getByTestId('login-endpoint-step-input'));
+    await expect(signedIn.or(loginForm).first()).toBeVisible({
+      timeout: 60_000,
+    });
+    if (!(await signedIn.isVisible())) {
+      dead = 'login form shown';
+    } else {
+      const email = await signedInEmail(page);
+      if (!email) {
+        failed = 'signed-in account unknown';
+      } else if (expected && email.toLowerCase() !== expected) {
+        dead = `signed in as account ${accountLabel(email)}`;
+      }
+    }
+  } catch (error) {
+    failed = `boot failed: ${String(error).split('\n')[0].slice(0, 120)}`;
+  } finally {
+    page.off('response', onResponse);
+  }
+  if (!dead && unauthorized) dead = `401 on ${unauthorized}`;
+  if (!dead && !failed) {
+    noteUsableState(stateFile);
+    console.log(
+      `[login-cache] restored session for account ${accountLabel(username)}`,
+    );
+    return true;
+  }
+  console.log(
+    `[login-cache] ${dead ? 'stale' : 'unusable'} state for account ${accountLabel(username)} (${dead ?? failed}); logging in again`,
+  );
+  if (dead) dropLoginState(stateFile);
+  else if (noteUnusableState(stateFile)) {
+    console.log(
+      '[login-cache] second unusable restore in a row; state dropped',
+    );
+  }
+  // The restore spent part of the test's budget; the real login gets its own.
+  extendTestTimeout(90_000);
+  await clearLoginState(page, appOrigin);
+  return false;
+}
+
+/**
+ * The status and the problem `type`/`title` of a login answer — never the
+ * body itself, which carries the access key on success. `rateLimited` only
+ * for the anonymous rate limit, not the webserver's failed-login block.
+ */
+async function describeLoginAnswer(
+  response: Response,
+): Promise<{ text: string; rateLimited: boolean }> {
+  const { type, title } = loginProblem(await response.json().catch(() => ({})));
+  const path = new URL(response.url()).pathname;
+  const text = `${response.status()} on ${path}${type ? ` ${type}` : ''}${title ? ` "${title}"` : ''}`;
+  return {
+    text,
+    rateLimited: isAnonymousRateLimit(response.status(), type, title),
+  };
+}
+
+/**
+ * Fills and submits the login form until the app shows the signed-in header.
+ * Returns the app origin's localStorage as it was before the login form was
+ * touched, so the caller can tell what the login (endpoint step included)
+ * wrote.
+ */
+async function submitLogin(
+  page: Page,
+  username: string,
+  password: string,
+  endpoint: string,
+): Promise<Record<string, string>> {
+  await page.goto(webuiEndpoint);
+  await removeDevServerOverlay(page);
+  const before = await readLocalStorage(page);
+  await fillLoginEndpoint(page, endpoint);
   await page.getByLabel('Email or Username').fill(username);
-  await page.getByLabel('Password').fill(password);
+  await page.getByLabel('Password', { exact: true }).fill(password);
   // Astryx Button exposes no aria-label — its accessible name is the visible text.
   const loginButton = page.getByRole('button', { name: 'Login', exact: true });
-  // Expand the endpoint section if it's not already visible.
-  // `getByLabel('Endpoint')` matches on substring, so it also picks up the
-  // "Endpoint History" trigger and the "About Endpoint" button — three
-  // elements, so it throws. `exact` pins the role lookup to the input alone.
-  const endpointInput = page.getByRole('textbox', {
-    name: 'Endpoint',
-    exact: true,
-  });
-  if (!(await endpointInput.isVisible({ timeout: 500 }).catch(() => false))) {
-    // Older login UIs hide the input behind an 'Advanced' toggle.
-    const advanced = page.getByText('Advanced');
-    if (await advanced.isVisible().catch(() => false)) {
-      await advanced.click();
-    }
-  }
-  // No endpoint input means the server pins `apiEndpoint` (the config.toml
-  // intercept above did not take — an installed cluster under
-  // `playwright.smoke.config.ts`). Wait briefly rather than probing once:
-  // `isVisible()` does not auto-wait, and a slow render must not submit an
-  // empty endpoint.
-  try {
-    await endpointInput.waitFor({ state: 'visible', timeout: 3000 });
-    await endpointInput.fill(endpoint);
-  } catch {
-    // server-pinned endpoint: nothing to fill
-  }
-  // A busy shared test backend can transiently reject a *valid* login (the
-  // manager surfaces an internal error, the UI renders it as "Login
-  // information mismatch"). Retry the submit a couple of times, with a fixed
-  // 5s delay between attempts, so a short server hiccup doesn't fail the whole
-  // (often serial) suite at a random beforeEach.
-  //
-  // Cost of that choice, since login() runs per test: against a backend that
-  // is genuinely down this burns up to 3 x 30s + 2 x 5s = 100s per test before
-  // reporting, instead of failing fast. The per-attempt wait stays at 30s on
-  // purpose — a rejection surfaces far sooner than that, but a slow-but-
-  // accepted login keeps the form up for an unknown while, and a shorter wait
-  // would misread it as a rejection and re-submit.
+  const account = accountLabel(username);
+  // A busy shared backend can transiently reject a valid login, so a
+  // rejection is retried twice, 5s apart. A 429 is the manager's per-IP
+  // anonymous window, which retries only refill: it waits for the reset once.
   const maxAttempts = 3;
   const retryDelayMs = 5000;
+  let rateLimitWaited = false;
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    // The form's /server/login answer, or a 429 on a probe it sends first.
+    const loginResponse = page
+      .waitForResponse(
+        (response) => {
+          const { pathname } = new URL(response.url());
+          if (
+            response.request().method() === 'POST' &&
+            pathname.endsWith('/server/login')
+          ) {
+            return true;
+          }
+          // The version probe and login-check the form sends before it.
+          const path = pathBelow(endpoint, response.url());
+          return (
+            response.status() === 429 &&
+            path !== undefined &&
+            /^\/func\/?$|^\/server\/login-check$/.test(path)
+          );
+        },
+        { timeout: 30_000 },
+      )
+      .catch(() => undefined);
     await loginButton.click();
+    const response = await loginResponse;
+    const answer = response ? await describeLoginAnswer(response) : undefined;
+    if (response && answer?.rateLimited) {
+      if (rateLimitWaited) {
+        throw new Error(
+          `[login] rate limited (429) again for account ${account} after waiting for the window reset; the server's anonymous request limit is exhausted`,
+        );
+      }
+      rateLimitWaited = true;
+      const waitMs = rateLimitWaitMs(response.headers());
+      console.log(
+        `[login] rate limited (429) for account ${account}; waiting ${Math.round(waitMs / 1000)}s, then retrying once`,
+      );
+      extendTestTimeout(waitMs);
+      await page.waitForTimeout(waitMs);
+      attempt = maxAttempts - 1;
+      continue;
+    }
     try {
       await page.waitForSelector('[data-testid="user-dropdown-button"]', {
-        timeout: 30000,
+        // No answer at all in 30s: the submit most likely went nowhere.
+        timeout: response ? 30000 : 10000,
       });
-      return;
+      console.log(`[login-cache] real login for account ${account}`);
+      return before;
     } catch (error) {
       const stillOnLoginForm = await loginButton.isVisible().catch(() => false);
       if (!stillOnLoginForm) {
@@ -217,35 +494,21 @@ export async function login(
         await page.waitForSelector('[data-testid="user-dropdown-button"]', {
           timeout: 60000,
         });
-        return;
+        console.log(`[login-cache] real login for account ${account}`);
+        return before;
       }
-      // Diagnostic: surface the server's actual rejection reason (the UI
-      // collapses every failure into "Login information mismatch"). Runs in a
-      // throwaway context so a successful probe cannot leave its session
-      // cookie in the page's context and silently authenticate the next
-      // attempt.
-      let probeContext: APIRequestContext | undefined;
-      try {
-        probeContext = await apiRequest.newContext();
-        const probe = await probeContext.post(`${endpoint}/server/login`, {
-          data: { username, password },
-        });
-        console.log(
-          `[login] attempt ${attempt} rejected for ${username}; direct API login → ${probe.status()} ${(await probe.text()).slice(0, 300)}`,
-        );
-      } catch (probeError) {
-        console.log(
-          `[login] attempt ${attempt} rejected for ${username}; probe failed: ${String(probeError).slice(0, 200)}`,
-        );
-      } finally {
-        await probeContext?.dispose();
-      }
+      // The UI collapses every failure into "Login information mismatch";
+      // the form's own answer carries the server's reason.
+      console.log(
+        `[login] attempt ${attempt} rejected for account ${account}; server answered ${answer?.text ?? 'nothing'}`,
+      );
       if (attempt === maxAttempts) {
         throw error;
       }
       await page.waitForTimeout(retryDelayMs);
     }
   }
+  throw new Error(`[login] no login attempt left for account ${account}`);
 }
 
 export const userInfo = {
@@ -269,40 +532,26 @@ export const userInfo = {
     email: process.env.E2E_DOMAIN_ADMIN_EMAIL || 'domain-admin@lablup.com',
     password: process.env.E2E_DOMAIN_ADMIN_PASSWORD || 'cWbsM_vB',
   },
-  visualRegressionAdmin: {
-    email:
-      process.env.E2E_ADMIN_EMAIL_FOR_VISUAL ||
-      process.env.E2E_ADMIN_EMAIL ||
-      'admin@lablup.com',
-    password:
-      process.env.E2E_ADMIN_PASSWORD_FOR_VISUAL ||
-      process.env.E2E_ADMIN_PASSWORD ||
-      'wJalrXUt',
-  },
-  visualRegressionUser: {
-    email:
-      process.env.E2E_USER_EMAIL_FOR_VISUAL ||
-      process.env.E2E_USER_EMAIL ||
-      'user@lablup.com',
-    password:
-      process.env.E2E_USER_PASSWORD_FOR_VISUAL ||
-      process.env.E2E_USER_PASSWORD ||
-      'C8qnIo29',
-  },
 };
 
-export async function loginAsAdmin(page: Page, request: APIRequestContext) {
+export async function loginAsAdmin(
+  page: Page,
+  request: APIRequestContext,
+  options?: LoginOptions,
+) {
   await login(
     page,
     request,
     userInfo.admin.email,
     userInfo.admin.password,
     webServerEndpoint,
+    options,
   );
 }
 export async function loginAsDomainAdmin(
   page: Page,
   request: APIRequestContext,
+  options?: LoginOptions,
 ) {
   await login(
     page,
@@ -310,33 +559,49 @@ export async function loginAsDomainAdmin(
     userInfo.domainAdmin.email,
     userInfo.domainAdmin.password,
     webServerEndpoint,
+    options,
   );
 }
-export async function loginAsUser(page: Page, request: APIRequestContext) {
+export async function loginAsUser(
+  page: Page,
+  request: APIRequestContext,
+  options?: LoginOptions,
+) {
   await login(
     page,
     request,
     userInfo.user.email,
     userInfo.user.password,
     webServerEndpoint,
+    options,
   );
 }
-export async function loginAsUser2(page: Page, request: APIRequestContext) {
+export async function loginAsUser2(
+  page: Page,
+  request: APIRequestContext,
+  options?: LoginOptions,
+) {
   await login(
     page,
     request,
     userInfo.user2.email,
     userInfo.user2.password,
     webServerEndpoint,
+    options,
   );
 }
-export async function loginAsMonitor(page: Page, request: APIRequestContext) {
+export async function loginAsMonitor(
+  page: Page,
+  request: APIRequestContext,
+  options?: LoginOptions,
+) {
   await login(
     page,
     request,
     userInfo.monitor.email,
     userInfo.monitor.password,
     webServerEndpoint,
+    options,
   );
 }
 export async function loginAsCreatedAccount(
@@ -345,39 +610,33 @@ export async function loginAsCreatedAccount(
   email: string,
   password: string,
 ) {
-  await login(page, request, email, password, webServerEndpoint);
-}
-
-export async function loginAsVisualRegressionAdmin(
-  page: Page,
-  request: APIRequestContext,
-) {
-  await login(
-    page,
-    request,
-    userInfo.visualRegressionAdmin.email,
-    userInfo.visualRegressionAdmin.password,
-    webServerEndpoint,
-  );
-}
-
-export async function loginAsVisualRegressionUser(
-  page: Page,
-  request: APIRequestContext,
-) {
-  await login(
-    page,
-    request,
-    userInfo.visualRegressionUser.email,
-    userInfo.visualRegressionUser.password,
-    webServerEndpoint,
-  );
+  // A created account is the subject under test, never a shared session.
+  await login(page, request, email, password, webServerEndpoint, {
+    fresh: true,
+  });
 }
 
 export async function logout(page: Page) {
+  forgetSharedSession(page);
   await page.getByTestId('user-dropdown-button').click();
-  await page.getByText('Log Out').click();
+  await page.getByRole('menuitem', { name: 'Log Out' }).click();
   await page.waitForTimeout(1000);
+}
+
+/**
+ * A top-level sidebar nav item by its visible label. Astryx `SideNavItem`
+ * renders an enabled item as `<a>` (role "link") and a disabled one as
+ * `<button disabled>` (role "button"), so both roles are matched, scoped to
+ * the sidebar landmark to avoid same-named links elsewhere (breadcrumb).
+ */
+export function getSideNavItem(
+  page: Page,
+  name: string | RegExp,
+): ReturnType<Page['getByRole']> {
+  const sideNav = page.getByRole('navigation', { name: 'Side navigation' });
+  return sideNav
+    .getByRole('link', { name, exact: typeof name === 'string' })
+    .or(sideNav.getByRole('button', { name, exact: typeof name === 'string' }));
 }
 
 /**
@@ -534,26 +793,30 @@ export async function selectPropertyFilter(
   await searchBar.click();
   await page.getByRole('option', { name: propertyName, exact: true }).click();
 
-  // Fill the Value control in the edit popover it opens. The value editor's
-  // accessible name is "Value" (`t('@astryx.powersearch.valueEditor.value')`)
-  // regardless of which control renders it: free-text fields render a
-  // `TextInput` (`role="textbox"`, commits via the popover's Apply button);
-  // strict-selection fields render a `Selector` (`role="combobox"`, commits
-  // immediately on picking an option) — `PowerSearchValueEditor.tsx`.
-  const valueTextbox = page.getByRole('textbox', { name: 'Value' });
-  if (await valueTextbox.isVisible({ timeout: 3000 }).catch(() => false)) {
-    await valueTextbox.fill(searchValue);
-    await page.getByRole('button', { name: 'Apply', exact: true }).click();
-  } else {
-    await page.getByRole('combobox', { name: 'Value' }).click();
+  // The popover renders a "Value" textbox (Apply commits) or combobox (a pick commits).
+  const valueControl = page
+    .getByRole('textbox', { name: 'Value', exact: true })
+    .or(page.getByRole('combobox', { name: 'Value', exact: true }))
+    .filter({ visible: true })
+    .first();
+  await expect(valueControl).toBeVisible({ timeout: 30000 });
+  if ((await valueControl.getAttribute('role')) === 'combobox') {
+    await valueControl.click();
     await page.getByRole('option', { name: searchValue, exact: true }).click();
+  } else {
+    await valueControl.fill(searchValue);
+    await page.getByRole('button', { name: 'Apply', exact: true }).click();
   }
 
   // Committing the value hands focus back to the search bar, which reopens
   // the field typeahead (listbox "Search results") over the first table rows
   // and intercepts clicks on their action buttons. Close it before returning.
   const typeahead = page.getByRole('listbox', { name: 'Search results' });
-  if (await typeahead.isVisible({ timeout: 1000 }).catch(() => false)) {
+  const reopened = await typeahead
+    .waitFor({ state: 'visible', timeout: 1000 })
+    .then(() => true)
+    .catch(() => false);
+  if (reopened) {
     await searchBar.press('Escape');
     await expect(typeahead).toBeHidden({ timeout: 5000 });
   }
@@ -578,7 +841,7 @@ export function getTableRefreshButton(page: Page) {
  * the display label) for sortable columns; match the header's visible TEXT
  * instead. Anchored exactly (`^...$`) so a short label doesn't substring-match
  * a longer header sharing a prefix. See
- * `e2e/auto-scaling-rule-preset/preset-crud.spec.ts` (`presetColumnHeader`) /
+ * `e2e/admin/deployments/prometheus-preset/preset-crud.spec.ts` (`presetColumnHeader`) /
  * `e2e/environment/registry.spec.ts` (`registryColumnHeader`) for the
  * original pattern (ledger id
  * `e2e/*::sortable-column-header-accessible-name-override`).
@@ -673,8 +936,6 @@ export async function createVFolderAndVerify(
   page: Page,
   folderName: string,
   usageMode: 'general' | 'model' = 'general',
-  type: 'user' | 'project' = 'user',
-  permission: 'rw' | 'ro' = 'rw',
 ) {
   await navigateTo(page, 'data');
   // VFolderNodeListPage's BAICard extra renders a single "Create Folder" button.
@@ -695,26 +956,10 @@ export async function createVFolderAndVerify(
     await (await modal.getModelUsageModeRadio()).click();
   }
 
-  // Ownership is page-derived since FR-3441 (no in-form Type radio); this
-  // helper drives the user Data page, which creates user folders only.
-  if (type === 'project') {
-    throw new Error(
-      'createVFolderAndVerify drives the user Data page, which creates user folders only (FR-3441); drive the Project Admin Data page for project folders.',
-    );
-  }
-
-  // Select permission
-  if (permission === 'rw') {
-    await (await modal.getReadWritePermissionRadio()).click();
-  } else if (permission === 'ro') {
-    await (await modal.getReadOnlyPermissionRadio()).click();
-  }
-
-  await (await modal.getCreateButton()).click();
-  // Wait for the creation modal to close before verifying
-  await expect(
-    page.getByRole('dialog').filter({ hasText: 'Create a new storage folder' }),
-  ).toBeHidden({ timeout: 30000 });
+  // No mount permission step: every new folder is created read-only for
+  // shared users (#10647); the default is changed from the share modal.
+  await modal.submit();
+  await modal.waitForClosed();
   await verifyVFolder(page, folderName);
 }
 
@@ -1077,12 +1322,9 @@ export async function acceptAllInvitationAndVerifySpecificFolder(
 }
 
 /**
- * Leave a shared (invited) vfolder via SharedFolderPermissionInfoModal.
- *
- * Regression guard for FR-2978: VFolder.leave_invited used to send `null`
- * as the request body, which the manager's BodyParam[LeaveVFolderReq] rejected
- * with a 400. Driving the full UI flow here ensures the client sends a valid
- * JSON body end-to-end.
+ * Leave a shared (invited) vfolder via SharedFolderPermissionInfoModal, which
+ * looks the recipient's share up in `myEntityShares` and calls
+ * `leaveEntityShare` on it.
  *
  * Caller must already be logged in as the invitee and have accepted the
  * invitation (see acceptAllInvitationAndVerifySpecificFolder).
@@ -1286,11 +1528,8 @@ export async function deleteSession(page: Page, sessionName: string) {
 /**
  * Convert a config object to TOML string that is compatible with the app's TOML parser.
  *
- * The app's preprocessToml processes apiEndpointText with JSON.parse, which keeps
- * the original value on failure (try/catch with no-op catch).
- *
- * Additionally, some TOML serializers emit underscore-separated numbers
- * (e.g., 4_294_967_296) which may be parsed as strings instead of numbers.
+ * Some TOML serializers emit underscore-separated numbers (e.g., 4_294_967_296)
+ * which may be parsed as strings instead of numbers.
  *
  * This function uses @iarna/toml stringify and post-processes the output to:
  * 1. Remove lines with empty string values (the app treats missing keys as empty)
@@ -1362,6 +1601,264 @@ function deduplicateTomlKeys(tomlStr: string): string {
 
 // Store the accumulated config modifications in a WeakMap keyed by page
 const configCache = new WeakMap<Page, any>();
+// Only what specs passed: the settings mock must not revive the base file's
+// values, which the app no longer reads.
+const requestedConfigCache = new WeakMap<Page, any>();
+
+// The app no longer reads System Settings keys from config.toml (#10664). A
+// spec that sets one through `modifyConfigToml` gets it through this page's
+// app-config responses instead, so no cluster-wide document is written.
+const RENAMED_SETTING_KEYS: Record<string, string> = {
+  'menu.blocklist': 'menuBlocklist',
+  'menu.inactivelist': 'menuInactivelist',
+  'pipeline.frontendEndpoint': 'fasttrackEndpoint',
+  'plugin.login': 'pluginLogin',
+  'plugin.page': 'pluginPage',
+};
+
+type SettingScope = 'public' | 'domain';
+type SettingsByScope = Record<SettingScope, Record<string, unknown>> & {
+  // Keys a spec cleared with '': dropped from the served document, so the
+  // app falls back to its code default whatever the cluster has stored.
+  cleared: Record<SettingScope, Set<string>>;
+};
+
+const CLEARED = Symbol('cleared');
+
+// `undefined` is ignored (a `[placeholder]`, a non-number); '' is CLEARED.
+function toSettingValue(type: string, raw: unknown): unknown {
+  if (raw === null || raw === undefined) return undefined;
+  if (typeof raw === 'string') {
+    const text = raw.trim();
+    if (text === '' || text === '""') return CLEARED;
+    if (/^\[.*\]$/.test(text)) return undefined;
+  }
+  switch (type) {
+    case 'boolean':
+      return raw === true || raw === 'true';
+    case 'number': {
+      const value =
+        typeof raw === 'number' ? raw : Number(String(raw).replace(/_/g, ''));
+      return Number.isFinite(value) ? value : undefined;
+    }
+    case 'stringList':
+      return Array.isArray(raw)
+        ? raw
+        : String(raw)
+            .split(',')
+            .map((v) => v.trim())
+            .filter(Boolean);
+    default:
+      return String(raw);
+  }
+}
+
+function settingsFromToml(config: Record<string, any>): SettingsByScope {
+  const settings: SettingsByScope = {
+    public: {},
+    domain: {},
+    cleared: { public: new Set(), domain: new Set() },
+  };
+  for (const [section, fields] of Object.entries(config ?? {})) {
+    if (!isPlainObject(fields)) continue;
+    for (const [field, raw] of Object.entries(fields)) {
+      if (raw === undefined) continue;
+      const key = RENAMED_SETTING_KEYS[`${section}.${field}`] ?? field;
+      const definition = WEBUI_SETTING_DEFINITIONS.find((d) => d.key === key);
+      if (!definition) continue;
+      const scope = definition.scope as SettingScope;
+      const value = toSettingValue(definition.type, raw);
+      if (value === CLEARED) {
+        settings.cleared[scope].add(key);
+        delete settings[scope][key];
+      } else if (value !== undefined) {
+        settings.cleared[scope].delete(key);
+        settings[scope][key] = value;
+      }
+    }
+  }
+  return settings;
+}
+
+function touchesScope(settings: SettingsByScope, scope: SettingScope) {
+  return (
+    Object.keys(settings[scope]).length > 0 || settings.cleared[scope].size > 0
+  );
+}
+
+// What the spec requested wins over the cluster's stored document.
+function overrideSettings(
+  stored: unknown,
+  settings: SettingsByScope,
+  scope: SettingScope,
+): Record<string, unknown> {
+  const merged: Record<string, unknown> = {
+    ...(isPlainObject(stored) ? stored : {}),
+    ...settings[scope],
+  };
+  for (const key of settings.cleared[scope]) delete merged[key];
+  return merged;
+}
+
+/**
+ * `stored` with the settings `modifyConfigToml` serves to `page` for `scope`
+ * layered on top, as that page's route handlers do.
+ */
+export function withRequestedSettings(
+  page: Page,
+  scope: SettingScope,
+  stored: Record<string, unknown> | undefined,
+): Record<string, unknown> | undefined {
+  const requested = requestedConfigCache.get(page);
+  if (!requested) return stored;
+  const settings = settingsFromToml(requested);
+  return touchesScope(settings, scope)
+    ? overrideSettings(stored, settings, scope)
+    : stored;
+}
+
+type RouteHandler = Parameters<Page['route']>[1];
+const appConfigRoutes = new WeakMap<
+  Page,
+  { publicHandler?: RouteHandler; gqlHandler?: RouteHandler }
+>();
+const PUBLIC_APP_CONFIG_URL = '**/func/v2/app-config/public/get';
+const GQL_URL = '**/admin/gql';
+// The public slice is looked up under this domain when the file names none.
+const FALLBACK_PUBLIC_DOMAIN = 'default';
+
+async function routeAppConfigSettings(
+  page: Page,
+  requested: Record<string, any>,
+  domainName: string,
+): Promise<void> {
+  const settings = settingsFromToml(requested);
+  const previous = appConfigRoutes.get(page) ?? {};
+  if (previous.publicHandler) {
+    await page.unroute(PUBLIC_APP_CONFIG_URL, previous.publicHandler);
+  }
+  if (previous.gqlHandler) {
+    await page.unroute(GQL_URL, previous.gqlHandler);
+  }
+  const next: { publicHandler?: RouteHandler; gqlHandler?: RouteHandler } = {};
+
+  if (touchesScope(settings, 'public')) {
+    next.publicHandler = async (route) => {
+      let payload: any = { app_configs: [] };
+      try {
+        payload = await (await route.fetch()).json();
+      } catch {
+        // Unreachable or not JSON: serve the injected slice alone.
+      }
+      const configs: Array<any> = Array.isArray(payload?.app_configs)
+        ? payload.app_configs
+        : [];
+      let entry = configs.find(
+        (c) => c?.config_name === 'publicConfigByDomain',
+      );
+      if (!entry) {
+        entry = { config_name: 'publicConfigByDomain', config: {} };
+        configs.push(entry);
+      }
+      const slice = (entry.config ??= {})[domainName] ?? {};
+      entry.config[domainName] = {
+        ...slice,
+        settings: overrideSettings(slice.settings, settings, 'public'),
+      };
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ ...payload, app_configs: configs }),
+      });
+    };
+    await page.route(PUBLIC_APP_CONFIG_URL, next.publicHandler);
+  }
+
+  if (touchesScope(settings, 'domain')) {
+    next.gqlHandler = async (route) => {
+      // Leave every other operation to the mocks registered before this one.
+      if (!(route.request().postData() ?? '').includes('myAppConfigs')) {
+        await route.fallback();
+        return;
+      }
+      const response = await route.fetch();
+      let json: any;
+      try {
+        json = await response.json();
+      } catch {
+        await route.fulfill({ response });
+        return;
+      }
+      const rows = json?.data?.myAppConfigs;
+      if (!Array.isArray(rows)) {
+        await route.fulfill({ response, json });
+        return;
+      }
+      let row = rows.find((r: any) => r?.configName === 'domainConfig');
+      if (!row) {
+        row = { configName: 'domainConfig', config: {} };
+        rows.push(row);
+      }
+      row.config = {
+        ...row.config,
+        settings: overrideSettings(row.config?.settings, settings, 'domain'),
+      };
+      await route.fulfill({ response, json });
+    };
+    await page.route(GQL_URL, next.gqlHandler);
+  }
+  appConfigRoutes.set(page, next);
+}
+
+/**
+ * The deployment's real `config.toml`, parsed. Fetched from a throwaway
+ * browser context (bypasses bot protection and never touches the page's own
+ * route handlers). `undefined` when the server could not be reached.
+ */
+export async function fetchConfigToml(
+  page: Page,
+): Promise<Record<string, any> | undefined> {
+  const browser = page.context().browser();
+  if (!browser) {
+    throw new Error('Browser instance not available');
+  }
+
+  const tempContext = await browser.newContext();
+  const tempPage = await tempContext.newPage();
+
+  const maxRetries = 3;
+  let lastError: unknown = null;
+  let config: Record<string, any> | undefined;
+
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      await tempPage.goto(webuiEndpoint, { waitUntil: 'commit' });
+      const configToml = await tempPage.evaluate(async () => {
+        const res = await fetch('/config.toml', { cache: 'no-store' });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.text();
+      });
+      // @iarna/toml throws on duplicate keys; the app's parser keeps the last
+      // occurrence, so match that before parsing.
+      config = TOML.parse(deduplicateTomlKeys(configToml));
+      break;
+    } catch (error) {
+      lastError = error;
+      if (attempt < maxRetries) {
+        await tempPage.waitForTimeout(500);
+      }
+    }
+  }
+
+  await tempContext.close();
+
+  if (!config) {
+    console.warn(
+      `Failed to fetch config.toml from ${webuiEndpoint} after ${maxRetries} attempts: ${lastError}.`,
+    );
+  }
+  return config;
+}
 
 export async function modifyConfigToml(
   page: Page,
@@ -1372,74 +1869,45 @@ export async function modifyConfigToml(
   let config = configCache.get(page);
 
   if (!config) {
-    // First time: Use a completely separate browser context to fetch original config
-    // This prevents any cache pollution between the fetch and the main test
-    const browser = page.context().browser();
-    if (!browser) {
-      throw new Error('Browser instance not available');
-    }
-
-    const tempContext = await browser.newContext();
-    const tempPage = await tempContext.newPage();
-
-    const maxRetries = 3;
-    let lastError: unknown = null;
-
-    for (let attempt = 1; attempt <= maxRetries; attempt++) {
-      try {
-        // Navigate temp page to fetch config
-        await tempPage.goto(webuiEndpoint, { waitUntil: 'commit' });
-
-        // Fetch config.toml from within the browser context (bypasses bot protection)
-        const configToml = await tempPage.evaluate(async () => {
-          const res = await fetch('/config.toml', { cache: 'no-store' });
-          if (!res.ok) throw new Error(`HTTP ${res.status}`);
-          return res.text();
-        });
-        // Deduplicate keys within each TOML section before parsing.
-        // @iarna/toml throws on duplicate keys; the production app (smol-toml) may not.
-        // When duplicate keys exist in config.toml, keep the last occurrence of each key.
-        const deduplicatedToml = deduplicateTomlKeys(configToml);
-        config = TOML.parse(deduplicatedToml);
-        break; // Success, exit retry loop
-      } catch (error) {
-        lastError = error;
-        if (attempt < maxRetries) {
-          // Wait briefly before retrying
-          await tempPage.waitForTimeout(500);
-        }
-      }
-    }
-
-    // Close temp context entirely
-    await tempContext.close();
-
-    if (!config) {
-      // Fallback: use an empty config object so the requested changes can still be
-      // applied and served via route interception. This makes login resilient when
-      // the server cannot be reached at the configured webuiEndpoint (e.g., when
-      // running tests via the Playwright MCP tool without the env var set).
-      console.warn(
-        `Failed to fetch config.toml from ${webuiEndpoint} after ${maxRetries} attempts: ${lastError}. ` +
-          `Using empty base config — only explicitly requested keys will be set.`,
-      );
-      config = {};
-    }
+    // Fallback to an empty base so the requested keys are still served via
+    // route interception when the server cannot be reached (e.g. the
+    // Playwright MCP tool without the env var set).
+    config = (await fetchConfigToml(page)) ?? {};
   }
 
   // Deep merge the new configuration into the existing config
   // Use custom merge that preserves explicit undefined values
   config = mergeWithUndefined(config, configColumn);
+  const requested = mergeWithUndefined(
+    requestedConfigCache.get(page) ?? {},
+    configColumn,
+  );
 
   // Cache the updated config
   configCache.set(page, config);
+  requestedConfigCache.set(page, requested);
+
+  const needsPublicSlice = touchesScope(settingsFromToml(requested), 'public');
+  const domainName: string =
+    config.general?.apiDomainName || FALLBACK_PUBLIC_DOMAIN;
+  await routeAppConfigSettings(page, requested, domainName);
+  if (needsPublicSlice && !config.general?.apiEndpoint) {
+    // The pre-login slice is only fetched once the app has an endpoint.
+    await seedStoredApiEndpoint(page);
+  }
+  const servedConfig =
+    needsPublicSlice && !config.general?.apiDomainName
+      ? mergeWithUndefined(config, {
+          general: { apiDomainName: FALLBACK_PUBLIC_DOMAIN },
+        })
+      : config;
 
   // Clear all existing route handlers for config.toml
   await page.unroute('**/config.toml**');
 
   // Set up the new route handler with the current config
   // IMPORTANT: Use a closure to capture the current config value
-  const configToServe = config;
+  const configToServe = servedConfig;
   await page.route('**/config.toml**', async (route) => {
     await route.fulfill({
       status: 200,
@@ -1538,7 +2006,7 @@ export async function modifyThemeJson(
             srcDark: '/manifest/backend.ai-webui-black.svg',
             srcCollapsedDark: '/manifest/backend.ai-brand-simple-black.svg',
             alt: 'Backend.AI Logo',
-            href: '/start',
+            href: '/dashboard',
           },
           companyName: 'Lablup Inc.',
           brandName: 'Backend.AI',

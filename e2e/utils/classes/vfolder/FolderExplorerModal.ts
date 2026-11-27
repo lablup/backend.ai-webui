@@ -29,17 +29,6 @@ export class FolderExplorerModal {
     ).toBeVisible();
   }
 
-  async verifyPermission(
-    permission: 'Read & Write' | 'Read only',
-  ): Promise<void> {
-    // Scope to the selector's trigger: its option list is also in the DOM.
-    await expect(
-      this.modal
-        .getByRole('combobox', { name: 'Mount Permission' })
-        .getByText(permission, { exact: true }),
-    ).toBeVisible();
-  }
-
   async verifyFileExplorerLoaded(): Promise<void> {
     await expect(
       this.modal.getByRole('columnheader', { name: 'Name' }),
@@ -96,24 +85,37 @@ export class FolderExplorerModal {
     return fileBrowserButton;
   }
 
-  async verifyFolderDetails(): Promise<void> {
-    await expect(this.modal.getByText('Ownership')).toBeVisible();
-    await expect(this.mountPermissionTerm()).toBeVisible();
-    await this.verifyPermission('Read & Write');
+  private definitionOf(term: string): Locator {
+    return this.modal
+      .getByRole('term')
+      .filter({ hasText: new RegExp(`^${term}$`) })
+      .locator('xpath=following-sibling::*[1]');
+  }
+
+  // Mirrors VFolderNodeDescriptionV2: the owner always mounts read & write, so
+  // the row only shows for folders the viewer does not own, project ones included.
+  async verifyFolderDetails(
+    viewerEmail: string,
+    expectedMountPermission: 'Read only' | 'Read & Write',
+  ): Promise<void> {
+    const ownership = this.definitionOf('Ownership');
+    await expect(ownership).toHaveText(/^(User|Project)$/);
+    const isProjectFolder =
+      (await ownership.textContent())?.trim() === 'Project';
+    const ownerEmail = isProjectFolder
+      ? null
+      : (await this.definitionOf('User').textContent())?.trim().toLowerCase();
+
+    const mountPermission = this.definitionOf('Mount Permission');
+    if (ownerEmail === viewerEmail.toLowerCase()) {
+      await expect(mountPermission).toHaveCount(0);
+    } else {
+      await expect(mountPermission).toHaveText(expectedMountPermission);
+    }
   }
 
   async verifyOwnership(): Promise<void> {
     await expect(this.modal.getByText('Ownership')).toBeVisible();
-  }
-
-  async verifyMountPermission(): Promise<void> {
-    await expect(this.mountPermissionTerm()).toBeVisible();
-  }
-
-  // The row's Selector also carries a hidden "Mount Permission" label, so
-  // match the MetadataList term rather than any text.
-  private mountPermissionTerm(): Locator {
-    return this.modal.getByRole('term').filter({ hasText: 'Mount Permission' });
   }
 
   async verifyErrorMessage(message: string): Promise<void> {
@@ -128,32 +130,6 @@ export class FolderExplorerModal {
     const closeButton = this.modal.getByRole('button', { name: 'Close' });
     await expect(closeButton).toBeVisible();
     return closeButton;
-  }
-
-  async changePermission(
-    targetLabel: 'Read only' | 'Read & Write',
-  ): Promise<void> {
-    // Find the Description row that contains "Mount Permission" label,
-    // then locate the Select within that row
-    const permissionRow = this.modal
-      .locator('.ant-descriptions-row')
-      .filter({ hasText: 'Mount Permission' });
-    await expect(permissionRow).toBeVisible({ timeout: 10000 });
-
-    const permissionSelect = permissionRow.locator('.ant-select');
-    await permissionSelect.click();
-
-    // Wait for dropdown to appear and select the target option
-    const dropdown = this.page.locator('.ant-select-dropdown').last();
-    await expect(dropdown).toBeVisible();
-    await dropdown.getByText(targetLabel, { exact: true }).click();
-
-    // Verify success message
-    const notification = this.page.getByRole('alert').filter({
-      hasText: /Permission updated/i,
-    });
-    await expect(notification).toBeVisible({ timeout: 10000 });
-    await expect(notification).toBeHidden({ timeout: 10000 });
   }
 
   async verifyFileVisible(fileName: string): Promise<void> {

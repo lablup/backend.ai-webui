@@ -7,8 +7,7 @@
  child modals — so the move from page to modal stays a UI change only.
 */
 import { App } from '../app-shim';
-import { useSuspendedBackendaiClient } from '../hooks';
-import { useUpdateMyUserAppConfig } from '../hooks/useAppConfig';
+import { useMyAppConfig } from '../hooks/useAppConfig';
 import {
   useBAISettingGeneralState,
   useBAISettingUserState,
@@ -18,6 +17,7 @@ import {
   useCustomThemeConfig,
 } from '../hooks/useCustomThemeConfig';
 import { useThemeMode } from '../hooks/useThemeMode';
+import { useEffectiveLoginConfig } from '../hooks/useWebUIConfig';
 import MyKeypairManagementModal from './MyKeypairManagementModal';
 import SSHKeypairManagementModal from './SSHKeypairManagementModal';
 import SettingList, { SettingGroup } from './SettingList';
@@ -40,7 +40,7 @@ const UserSettingsGeneralPane = () => {
   const { t } = useTranslation();
   const { message } = App.useApp();
   const { getErrorMessage } = useErrorMessageResolver();
-  const baiClient = useSuspendedBackendaiClient();
+  const loginConfig = useEffectiveLoginConfig();
 
   const { themeMode, setThemeMode } = useThemeMode();
   const {
@@ -48,9 +48,12 @@ const UserSettingsGeneralPane = () => {
     setActiveThemeFamily: setThemeFamily,
     themeFamilies: families,
   } = useCustomThemeConfig();
-  // `userConfig.themeFamily` is the authoritative store; the localStorage
-  // FOUC mirror is written only after the server accepts (FR-1964).
-  const updateMyUserAppConfig = useUpdateMyUserAppConfig();
+  // `userConfig.themeFamily` is the authoritative store; the FOUC mirror
+  // (`THEME_FAMILY_STORAGE_KEY`) is written only after the server accepts (FR-1964).
+  const [, setUserConfigThemeFamily] = useMyAppConfig<string>(
+    'userConfig',
+    'themeFamily',
+  );
   // The select shows the chosen family while the write is in flight.
   const [pendingThemeFamily, setPendingThemeFamily] = useState<{
     family: string | undefined;
@@ -58,7 +61,7 @@ const UserSettingsGeneralPane = () => {
   const persistThemeFamily = async (next: string | undefined) => {
     setPendingThemeFamily({ family: next });
     try {
-      await updateMyUserAppConfig('themeFamily', next);
+      await setUserConfigThemeFamily(next);
       setThemeFamily(next);
     } catch (error) {
       message.error(getErrorMessage(error));
@@ -83,7 +86,6 @@ const UserSettingsGeneralPane = () => {
   const [, setLanguage] = useBAISettingGeneralState('language');
   const [autoAutomaticUpdateCheck, setAutoAutomaticUpdateCheck] =
     useBAISettingUserState('automatic_update_check');
-  const [autoLogout, setAutoLogout] = useBAISettingUserState('auto_logout');
   const [isOpenSSHKeypairInfoModal, { toggle: toggleSSHKeypairInfoModal }] =
     useToggle(false);
   const [
@@ -94,8 +96,6 @@ const UserSettingsGeneralPane = () => {
     useBAISettingUserState('preserve_login');
   const [experimentalAIAgents, setExperimentalAIAgents] =
     useBAISettingUserState('experimental_ai_agents');
-  const [experimentalCustomDashboard, setExperimentalCustomDashboard] =
-    useBAISettingUserState('experimental_custom_dashboard_panels');
   const [
     experimentalImportFromHuggingFace,
     setExperimentalImportFromHuggingFace,
@@ -104,6 +104,8 @@ const UserSettingsGeneralPane = () => {
     useBAISettingUserState('experimental_session_resource_grid');
   const [experimentalSessionMonitor, setExperimentalSessionMonitor] =
     useBAISettingUserState('experimental_session_monitor');
+  const [experimentalWebUIAssistant, setExperimentalWebUIAssistant] =
+    useBAISettingUserState('experimental_webui_assistant');
   const [shellInfo, setShellInfo] = useState<ShellScriptType>('bootstrap');
   const [isOpenShellScriptEditModal, { toggle: toggleShellScriptEditModal }] =
     useToggle(false);
@@ -181,7 +183,7 @@ const UserSettingsGeneralPane = () => {
         // Theme family selection is operator-gated (config.toml
         // `allowThemeMode`) and needs more than the `default` family in the
         // catalog (a theme.json without a `families` block yields none).
-        baiClient._config.allowThemeMode &&
+        loginConfig.allowThemeMode &&
         !isThemePreviewMode &&
         Object.keys(families).length > 1
           ? {
@@ -275,7 +277,7 @@ const UserSettingsGeneralPane = () => {
                   }
                 : item,
             ),
-            hasSearch: true,
+            showSearch: true,
           },
           defaultValue: defaultLanguage,
           value: selectedLanguage || defaultLanguage,
@@ -311,15 +313,6 @@ const UserSettingsGeneralPane = () => {
           defaultValue: false,
           value: autoAutomaticUpdateCheck,
           onChange: setAutoAutomaticUpdateCheck,
-        },
-        {
-          'data-testid': 'items-auto-logout',
-          type: 'checkbox',
-          title: t('userSettings.AutoLogout'),
-          description: t('userSettings.DescAutoLogout'),
-          defaultValue: false,
-          value: autoLogout,
-          onChange: setAutoLogout,
         },
         {
           'data-testid': 'items-my-keypair-info',
@@ -431,15 +424,6 @@ const UserSettingsGeneralPane = () => {
           onChange: setExperimentalAIAgents,
         },
         {
-          'data-testid': 'items-experimental-custom-dashboard-panels',
-          type: 'checkbox',
-          title: t('userSettings.CustomDashboardPanels'),
-          description: t('general.Enabled'),
-          defaultValue: false,
-          value: experimentalCustomDashboard,
-          onChange: setExperimentalCustomDashboard,
-        },
-        {
           'data-testid': 'items-experimental-import-from-huggingface',
           type: 'checkbox',
           title: t('userSettings.ImportFromHuggingFace'),
@@ -465,6 +449,15 @@ const UserSettingsGeneralPane = () => {
           defaultValue: false,
           value: experimentalSessionMonitor,
           onChange: setExperimentalSessionMonitor,
+        },
+        {
+          'data-testid': 'items-experimental-webui-assistant',
+          type: 'checkbox',
+          title: t('userSettings.WebUIAssistant'),
+          description: t('userSettings.DescWebUIAssistant'),
+          defaultValue: false,
+          value: experimentalWebUIAssistant,
+          onChange: setExperimentalWebUIAssistant,
         },
       ],
     },

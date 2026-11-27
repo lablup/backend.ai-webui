@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<4b5b0a5bd688a0c9e41cba1a76baab44>>
+ * @generated SignedSource<<0b7fe24e4f87ab2e636b3fecdbbc8398>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -100,6 +100,13 @@ return {
                 "alias": null,
                 "args": null,
                 "kind": "ScalarField",
+                "name": "entityId",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
                 "name": "name",
                 "storageKey": null
               },
@@ -137,13 +144,6 @@ return {
                 "kind": "ScalarField",
                 "name": "updatedAt",
                 "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "entityId",
-                "storageKey": null
               }
             ],
             "type": "RolePreset",
@@ -155,16 +155,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "3a523f214c82c3caa2af5284f6bcb26b",
+    "cacheID": "abe5f88e9bd2d633725c5c4bcdfa508f",
     "id": null,
     "metadata": {},
     "name": "RolePresetDetailDrawerRefetchQuery",
     "operationKind": "query",
-    "text": "query RolePresetDetailDrawerRefetchQuery(\n  $id: ID!\n) {\n  node(id: $id) {\n    __typename\n    ...RolePresetDetailDrawerFragment\n    id\n  }\n}\n\nfragment RolePresetDetailDrawerFragment on RolePreset {\n  id\n  name\n  scopeType\n  autoAssign\n  deleted\n  createdAt\n  updatedAt\n  ...RolePresetPermissionTableFragment\n}\n\nfragment RolePresetPermissionTableFragment on RolePreset {\n  id\n  entityId\n  scopeType\n}\n"
+    "text": "query RolePresetDetailDrawerRefetchQuery(\n  $id: ID!\n) {\n  node(id: $id) {\n    __typename\n    ...RolePresetDetailDrawerFragment\n    id\n  }\n}\n\nfragment RolePresetDetailDrawerFragment on RolePreset {\n  id\n  entityId\n  name\n  scopeType\n  autoAssign\n  deleted\n  createdAt\n  updatedAt\n  ...RolePresetPermissionTableFragment\n}\n\nfragment RolePresetPermissionTableFragment on RolePreset {\n  id\n  entityId\n  scopeType\n}\n"
   }
 };
 })();
 
-(node as any).hash = "0051280d148f5f65cf1eb3712a9de9b5";
+(node as any).hash = "5b26127ba85e4f6334868c4239bf5f60";
 
 export default node;

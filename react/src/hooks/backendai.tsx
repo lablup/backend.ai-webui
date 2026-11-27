@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useSuspendedBackendaiClient } from '.';
-import { maskString } from '../helper';
+import { maskUserIdentity } from '../helper';
 import { roleFromV2, type UserRole } from '../helper/userRole';
 import {
   useSuspenseTanQuery,
@@ -11,6 +11,7 @@ import {
   useTanQuery,
 } from './reactQueryAlias';
 import { useBAISettingUserState, UserSettings } from './useBAISetting';
+import { useEffectiveLoginConfig } from './useWebUIConfig';
 import {
   ImageMetaData,
   ResourceSlotDetail,
@@ -32,11 +33,14 @@ export const knownAcceleratorResourceSlotNames = [
   'atom.device',
   'atom-plus.device',
   'atom-max.device',
+  'rebel100.device',
   'gaudi2.device',
   'warboy.device',
   'rngd.device',
   'hyperaccel-lpu.device',
   'tt-n300.device',
+  'xpu.device',
+  'xpu.shares',
 ] as const;
 export type KnownAcceleratorResourceSlotName =
   (typeof knownAcceleratorResourceSlotNames)[number];
@@ -153,6 +157,7 @@ export type mutationOptions<T> = {
 
 export const useCurrentUserInfo = () => {
   const baiClient = useSuspendedBackendaiClient();
+  const loginConfig = useEffectiveLoginConfig();
 
   const [userInfo, _setUserInfo] = useState<UserInfo>({
     full_name: baiClient.full_name,
@@ -161,22 +166,11 @@ export const useCurrentUserInfo = () => {
   });
 
   const getUsername = () => {
-    let name: string =
+    const name: string =
       _.trim(userInfo.full_name).length > 0
         ? userInfo.full_name
         : userInfo.email;
-    // mask username only when the configuration is enabled
-    if (baiClient._config.maskUserInfo) {
-      const maskStartIdx = 2;
-      const emailPattern =
-        /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-      const isEmail: boolean = emailPattern.test(name);
-      const maskLength = isEmail
-        ? name.split('@')[0].length - maskStartIdx
-        : name.length - maskStartIdx;
-      name = maskString(name, '*', maskStartIdx, maskLength);
-    }
-    return name;
+    return loginConfig.maskUserInfo ? maskUserIdentity(name) : name;
   };
 
   useEffect(() => {

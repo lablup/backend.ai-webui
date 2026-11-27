@@ -13,15 +13,25 @@ import { createHash } from 'node:crypto';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import {
+  appNameBudget,
+  isOneLabel,
+  legacyShareBaseOf,
+  readDevGwConfig,
+  shareBaseOf,
+  shareUrlFor,
+} from './dev-gw.mjs';
 import { resolveAppName } from './portless-app-name.mjs';
 
 const env = { ...process.env };
 
-// Both TypeScript watch programs under this script — the root `tsc --watch`
-// child below and the one vite-plugin-checker runs inside the Vite process —
-// default to TS's `UseFsEvents` watch strategy, which installs ONE watcher per
-// file in the program. On macOS that is one open file descriptor per file, so a
-// GUI/IDE-launched dev server (launchd soft `maxfiles` = 256) hits EMFILE.
+// The watch program vite-plugin-checker runs inside the Vite process (the
+// TypeScript 6 API; the root `tsc --watch` child is TypeScript 7, which does not
+// read this variable) defaults to TS's `UseFsEvents` watch strategy, which
+// installs ONE watcher per file in the program. On macOS that is one open file
+// descriptor per file, so a GUI/IDE-launched dev server (launchd soft
+// `maxfiles` = 256) hits EMFILE.
 //
 // `UseFsEventsOnParentDirectory` coalesces those into one watcher per
 // *directory* instead. It is TypeScript's own documented remedy for watcher
@@ -171,6 +181,12 @@ function lookupPr(branchName) {
   return readCachedPr(cacheFile);
 }
 
+// Team share URL, present only when this box has run `dev-gw join` once.
+// The gateway rewrites Host to `<app>.localhost:<target_port>`, so routing
+// works with no Portless/Vite change here — only the URL differs.
+const devGwConfig = readDevGwConfig();
+const devGwShareBase = shareBaseOf(devGwConfig);
+
 // Exact mode discards every identifier, so it must not pay for the lookup that
 // produces one — up to the 4s timeout on a box with no network.
 const exactAppName = !!process.env.PORTLESS_APP_NAME_EXACT?.trim();
@@ -179,29 +195,14 @@ const appName = resolveAppName({
   branch,
   pr: exactAppName ? null : lookupPr(branch),
   exact: exactAppName,
+  // `<app>--<box>` is one DNS label, so the box name eats into the app's room.
+  maxLen: appNameBudget(devGwShareBase),
 });
 if (appName) {
   // Surface the app name to the React bundle for the dev-only tab title.
   env.VITE_DEV_SERVER_NAME = appName;
 }
 
-// Team share URL, present only when this box has run `dev-gw join` once.
-// The gateway rewrites Host to `<app>.localhost:<target_port>`, so routing
-// works with no Portless/Vite change here — only the URL differs.
-const devGwConfigPath =
-  process.env.DEV_GW_CONFIG?.trim() || join(homedir(), '.config', 'fw', 'dev-gw.json');
-let devGwConfig = null;
-try {
-  devGwConfig = JSON.parse(readFileSync(devGwConfigPath, 'utf8'));
-} catch {
-  // Not joined (ENOENT), unreadable, or malformed — no share URL to print.
-}
-// A parseable file can still be the wrong shape; only a URL template is usable.
-const devGwShareBase =
-  typeof devGwConfig?.share_base === 'string' &&
-  /^https?:\/\/\{app\}\./.test(devGwConfig.share_base)
-    ? devGwConfig.share_base
-    : null;
 // The gateway forwards to the port recorded at join time forever, so a server
 // on a different port would be proxied to nothing. `portless_port` is the
 // pre-rename spelling, still on boxes that have not re-joined.
@@ -209,18 +210,29 @@ const portlessPort = process.env.PORTLESS_PORT?.trim() || '1355';
 const devGwTargetPort = devGwConfig?.target_port ?? devGwConfig?.portless_port;
 const devGwPortMismatch =
   devGwTargetPort != null && String(devGwTargetPort) !== portlessPort;
+const devGwShare = appName ? shareUrlFor(devGwShareBase, appName) : null;
 if (devGwShareBase && devGwPortMismatch) {
   console.log(
     `-- Team share URL unavailable: the gateway was joined with Portless :${devGwTargetPort}, this server uses :${portlessPort} — re-run \`dev-gw join\``,
   );
-} else if (devGwShareBase && appName) {
-  const shareUrl = devGwShareBase.replace('{app}', appName);
-  env.VITE_DEV_SHARE_URL = shareUrl;
-  console.log(`-- Team share URL: ${shareUrl} (dev VPN, via dev-gw)`);
+} else if (devGwShareBase && devGwShare?.url) {
+  env.VITE_DEV_SHARE_URL = devGwShare.url;
+  console.log(`-- Team share URL: ${devGwShare.url} (dev VPN, via dev-gw)`);
+  const legacy = shareUrlFor(legacyShareBaseOf(devGwConfig), appName).url;
+  if (legacy)
+    console.log(
+      `-- Team share URL for an http:// API endpoint: ${legacy} (an https page cannot call an http API)`,
+    );
+} else if (devGwShareBase && devGwShare?.error) {
+  console.log(`-- Team share URL unavailable: ${devGwShare.error}`);
 } else if (devGwShareBase) {
   // `portless run` derives the app name itself, so it is unknown until it prints.
+  // A worktree's `<branch>.<project>` is two labels, which the one-label form cannot route.
+  const caveat = isOneLabel(devGwShareBase)
+    ? '; a name with a dot cannot be routed — set PORTLESS_APP_NAME'
+    : '';
   console.log(
-    `-- Team share URL: ${devGwShareBase.replace('{app}', '<app>')} — <app> is the name Portless prints below (dev VPN, via dev-gw)`,
+    `-- Team share URL: ${devGwShareBase.replaceAll('{app}', '<app>')} — <app> is the name Portless prints below${caveat} (dev VPN, via dev-gw)`,
   );
 }
 
@@ -232,6 +244,11 @@ if (!existsSync(new URL('../config.toml', import.meta.url))) {
       'Run `pnpm run dev-env use <server>` (writes it from the server\'s probed switches) or copy config.toml.sample.',
   );
 }
+
+// The user manual's Markdown is served from /resources/manual/.
+spawnSync(process.execPath, [fileURLToPath(new URL('./copy-manual.mjs', import.meta.url))], {
+  stdio: 'inherit',
+});
 
 const portlessSpec = appName
   ? `portless ${appName} --force ${portFlag}`
@@ -283,18 +300,55 @@ const treeAlive = () => {
 // shutdown signal, poll for survivors and escalate to SIGKILL once the grace
 // period runs out. Nothing in this group may outlive dev.mjs.
 const SIGKILL_GRACE_MS = 5000;
+// portless runs its child in a process group of its own, outside concurrently's.
+const descendantGroups = () => {
+  if (!detached) return [];
+  const rows = (spawnSync('ps', ['-A', '-o', 'pid=,ppid=,pgid='], { encoding: 'utf8' }).stdout || '')
+    .trim()
+    .split('\n')
+    .map((line) => line.trim().split(/\s+/).map(Number));
+  const ownGroup = rows.find(([pid]) => pid === process.pid)?.[2];
+  const pids = new Set([child.pid]);
+  const groups = new Set();
+  for (let grown = true; grown; ) {
+    grown = false;
+    for (const [pid, ppid, pgid] of rows) {
+      if (pids.has(ppid) && !pids.has(pid)) {
+        pids.add(pid);
+        if (pgid !== child.pid && pgid !== ownGroup) groups.add(pgid);
+        grown = true;
+      }
+    }
+  }
+  return [...groups];
+};
+const groupAlive = (pgid) => {
+  try {
+    process.kill(-pgid, 0);
+    return true;
+  } catch {
+    return false;
+  }
+};
 let escalation = null;
-const escalate = async () => {
+const escalate = async (groups) => {
+  const alive = () => treeAlive() || groups.some(groupAlive);
   const deadline = Date.now() + SIGKILL_GRACE_MS;
-  while (treeAlive() && Date.now() < deadline) {
+  while (alive() && Date.now() < deadline) {
     await new Promise((resolve) => setTimeout(resolve, 100));
   }
   if (treeAlive()) signalTree('SIGKILL');
+  for (const pgid of groups) {
+    try {
+      process.kill(-pgid, 'SIGKILL');
+    } catch {}
+  }
 };
 const shutdown = (sig) => {
   stopPrRefresh();
+  const groups = escalation ? [] : descendantGroups();
   signalTree(sig); // repeated Ctrl+C re-signals; the escalation only starts once
-  return (escalation ??= escalate());
+  return (escalation ??= escalate(groups));
 };
 process.on('SIGINT', () => shutdown('SIGINT'));
 process.on('SIGTERM', () => shutdown('SIGTERM'));
@@ -305,6 +359,6 @@ child.on('exit', async (code, signal) => {
   // (leaked grandchild mid-shutdown). Sweep it before exiting.
   // treeAlive() only covers concurrently's group; the PR refresh is not in it.
   stopPrRefresh();
-  if (treeAlive()) await shutdown('SIGTERM');
+  if (escalation || treeAlive()) await shutdown('SIGTERM');
   process.exit(signal ? 1 : (code ?? 0));
 });

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<c71a28026fd4acbed20b7c9da5ed50b8>>
+ * @generated SignedSource<<b7b4c67a781b5ec2dcf26454b6848859>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -18,7 +18,6 @@ export type ResourceGroupSettingModalFragment$data = {
   readonly scheduler: string | null | undefined;
   readonly scheduler_opts: string | null | undefined;
   readonly wsproxy_addr: string | null | undefined;
-  readonly wsproxy_api_token: string | null | undefined;
   readonly " $fragmentType": "ResourceGroupSettingModalFragment";
 } | null | undefined;
 export type ResourceGroupSettingModalFragment$key = {
@@ -75,13 +74,6 @@ const node: ReaderFragment = {
       "alias": null,
       "args": null,
       "kind": "ScalarField",
-      "name": "wsproxy_api_token",
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
       "name": "scheduler",
       "storageKey": null
     },
@@ -97,6 +89,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "0ab802477d12e3999d4ed89849da6631";
+(node as any).hash = "738d94e03577df0f1298c085d29dcb12";
 
 export default node;

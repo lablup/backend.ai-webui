@@ -1,3 +1,4 @@
+import { readEffectiveWebUISetting } from '../../webui-settings-util';
 import { Page, expect } from '@playwright/test';
 
 /**
@@ -65,58 +66,62 @@ export class SessionAPIHelper {
   async create(
     options: SessionAPICreateOptions,
   ): Promise<SessionAPICreateResult> {
-    return this.page.evaluate(async (opts) => {
-      const client = (globalThis as any).backendaiclient;
-      if (!client) throw new Error('backendaiclient is not initialized');
+    const defaultImage = await readEffectiveWebUISetting(
+      this.page,
+      'defaultImportEnvironment',
+    );
+    if (typeof defaultImage !== 'string' || !defaultImage) {
+      throw new Error('The defaultImportEnvironment System Setting is empty');
+    }
+    return this.page.evaluate(
+      async ({ opts, defaultImage }) => {
+        const client = (globalThis as any).backendaiclient;
+        if (!client) throw new Error('backendaiclient is not initialized');
 
-      const defaultImage = client._config?.default_import_environment;
-      if (!defaultImage) {
-        throw new Error(
-          'default_import_environment is not configured in client._config',
-        );
-      }
-      const [lang, architecture] = defaultImage.split('@');
+        const [lang, architecture] = defaultImage.split('@');
 
-      const resources: Record<string, any> = {
-        type: opts.sessionType,
-        cluster_mode: 'single-node',
-        cluster_size: 1,
-        maxWaitSeconds: 15,
-        enqueueOnly: true,
-        reuseIfExists: false,
-        config: {
-          resources: { cpu: 1, mem: '1g' },
-          scaling_group: 'default',
-        },
-      };
-
-      if (opts.sessionType === 'batch' && opts.startupCommand) {
-        resources.startupCommand = opts.startupCommand;
-      }
-
-      if (opts.dependencies && opts.dependencies.length > 0) {
-        resources.dependencies = opts.dependencies;
-      }
-
-      try {
-        const result = await client.createIfNotExists(
-          lang,
-          opts.sessionName,
-          resources,
-          30000,
-          architecture || 'x86_64',
-        );
-
-        return {
-          sessionId: result.sessionId,
-          sessionName: opts.sessionName,
+        const resources: Record<string, any> = {
+          type: opts.sessionType,
+          cluster_mode: 'single-node',
+          cluster_size: 1,
+          maxWaitSeconds: 15,
+          enqueueOnly: true,
+          reuseIfExists: false,
+          config: {
+            resources: { cpu: 1, mem: '1g' },
+            scaling_group: 'default',
+          },
         };
-      } catch (err: any) {
-        throw new Error(
-          `createIfNotExists failed: ${err?.message || JSON.stringify(err)}`,
-        );
-      }
-    }, options);
+
+        if (opts.sessionType === 'batch' && opts.startupCommand) {
+          resources.startupCommand = opts.startupCommand;
+        }
+
+        if (opts.dependencies && opts.dependencies.length > 0) {
+          resources.dependencies = opts.dependencies;
+        }
+
+        try {
+          const result = await client.createIfNotExists(
+            lang,
+            opts.sessionName,
+            resources,
+            30000,
+            architecture || 'x86_64',
+          );
+
+          return {
+            sessionId: result.sessionId,
+            sessionName: opts.sessionName,
+          };
+        } catch (err: any) {
+          throw new Error(
+            `createIfNotExists failed: ${err?.message || JSON.stringify(err)}`,
+          );
+        }
+      },
+      { opts: options, defaultImage },
+    );
   }
 
   /**
