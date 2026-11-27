@@ -1178,6 +1178,7 @@
       "DefaultMountPermission": "기본 마운트 권한",
       "Delete": "삭제",
       "DeleteAFolder": "폴더 삭제",
+      "DeleteCompleted": "삭제 완료",
       "DeleteFailureDescription": "폴더 {{total}}개 중 {{failed}}개를 삭제하지 못했습니다. 아래에서 폴더별 사유를 확인하세요.",
       "DeleteForever": "영구 삭제",
       "DeleteForeverConfirmText": "삭제",

@@ -1178,6 +1178,7 @@
       "DefaultMountPermission": "Izin mount default",
       "Delete": "Hapus",
       "DeleteAFolder": "Hapus folder",
+      "DeleteCompleted": "Dihapus permanen",
       "DeleteFailureDescription": "{{failed}} dari {{total}} folder tidak dapat dihapus. Periksa alasan untuk setiap folder di bawah ini.",
       "DeleteForever": "Hapus selamanya",
       "DeleteForeverConfirmText": "hapus",

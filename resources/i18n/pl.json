@@ -1178,6 +1178,7 @@
       "DefaultMountPermission": "Domyślne uprawnienie montowania",
       "Delete": "Kasować",
       "DeleteAFolder": "Usuń folder",
+      "DeleteCompleted": "Trwale usunięte",
       "DeleteFailureDescription": "Nie udało się usunąć {{failed}} z {{total}} folderów. Sprawdź poniżej powód dla każdego folderu.",
       "DeleteForever": "Usuń na zawsze",
       "DeleteForeverConfirmText": "usuń",

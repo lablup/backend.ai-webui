@@ -1178,6 +1178,7 @@
       "DefaultMountPermission": "Permiso de montaje predeterminado",
       "Delete": "Borrar",
       "DeleteAFolder": "Eliminar una carpeta",
+      "DeleteCompleted": "Eliminados definitivamente",
       "DeleteFailureDescription": "No se pudieron eliminar {{failed}} de {{total}} carpetas. Consulte el motivo de cada carpeta a continuación.",
       "DeleteForever": "Borrar para siempre",
       "DeleteForeverConfirmText": "eliminar",

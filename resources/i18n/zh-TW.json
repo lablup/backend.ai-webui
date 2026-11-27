@@ -1178,6 +1178,7 @@
       "DefaultMountPermission": "預設掛載權限",
       "Delete": "刪除",
       "DeleteAFolder": "刪除文件夾",
+      "DeleteCompleted": "已徹底刪除",
       "DeleteFailureDescription": "{{total}} 個資料夾中有 {{failed}} 個無法刪除。請在下方查看每個資料夾的失敗原因。",
       "DeleteForever": "永久刪除",
       "DeleteForeverConfirmText": "刪除",

@@ -67,16 +67,26 @@ const DELETE_STATUSES = [
   'DELETE_ERROR',
   'DELETE_COMPLETE',
 ] as const;
+// Same trash set as the user Data page; DELETE_COMPLETE gets its own tab here.
+const VISIBLE_DELETED_STATUSES = [
+  'DELETE_PENDING',
+  'DELETE_ONGOING',
+  'DELETE_ERROR',
+] as const;
 
 const STATUS_FILTER_ACTIVE = {
   status: { notIn: DELETE_STATUSES },
 } as const;
 const STATUS_FILTER_DELETED = {
-  status: { in: DELETE_STATUSES },
+  status: { in: VISIBLE_DELETED_STATUSES },
+} as const;
+const STATUS_FILTER_DELETE_COMPLETE = {
+  status: { equals: 'DELETE_COMPLETE' },
 } as const;
 
 const DEFAULT_ORDER = '-created_at';
-const statusCategoryValues = ['active', 'deleted'] as const;
+const statusCategoryValues = ['active', 'deleted', 'deleteComplete'] as const;
+type StatusCategory = (typeof statusCategoryValues)[number];
 const modeValues = ['all', 'general', 'data', 'automount', 'model'] as const;
 
 // Module constants so each mode's filter keeps a stable identity; a fresh object
@@ -167,7 +177,9 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
   const statusFilter =
     queryParams.statusCategory === 'deleted'
       ? STATUS_FILTER_DELETED
-      : STATUS_FILTER_ACTIVE;
+      : queryParams.statusCategory === 'deleteComplete'
+        ? STATUS_FILTER_DELETE_COMPLETE
+        : STATUS_FILTER_ACTIVE;
 
   // Built from literals and stable references only (no helper call): the
   // compiler keeps unknown calls with mutable arguments un-memoized, and any
@@ -191,6 +203,7 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
     ),
     filterForActiveCount: STATUS_FILTER_ACTIVE,
     filterForDeletedCount: STATUS_FILTER_DELETED,
+    filterForDeleteCompleteCount: STATUS_FILTER_DELETE_COMPLETE,
   };
   const deferredQueryVariables = useDeferredValue(queryVariables);
   const deferredFetchKey = useDeferredValue(fetchKey);
@@ -205,6 +218,7 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
           $orderBy: [VFolderOrderBy!]
           $filterForActiveCount: VFolderFilter
           $filterForDeletedCount: VFolderFilter
+          $filterForDeleteCompleteCount: VFolderFilter
         ) {
           adminVfoldersV2(
             offset: $offset
@@ -232,6 +246,11 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
             count
           }
           deleted: adminVfoldersV2(filter: $filterForDeletedCount) {
+            count
+          }
+          deleteComplete: adminVfoldersV2(
+            filter: $filterForDeleteCompleteCount
+          ) {
             count
           }
         }
@@ -270,7 +289,7 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
               setQuery(
                 {
                   ...storedQuery.queryParams,
-                  statusCategory: key as 'active' | 'deleted',
+                  statusCategory: key as StatusCategory,
                 },
                 { history: 'replace' },
               );
@@ -283,6 +302,7 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
               {
                 active: t('data.Active'),
                 deleted: t('data.folders.TrashBin'),
+                deleteComplete: t('data.folders.DeleteCompleted'),
               },
               (label, key) => {
                 const count =

@@ -1178,6 +1178,7 @@
       "DefaultMountPermission": "Kebenaran lekap lalai",
       "Delete": "Padam",
       "DeleteAFolder": "Padamkan folder",
+      "DeleteCompleted": "Dipadam sepenuhnya",
       "DeleteFailureDescription": "{{failed}} daripada {{total}} folder tidak dapat dipadam. Semak sebab untuk setiap folder di bawah.",
       "DeleteForever": "Padam selama-lamanya",
       "DeleteForeverConfirmText": "padam",

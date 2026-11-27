@@ -1178,6 +1178,7 @@
       "DefaultMountPermission": "Standard-Mount-Berechtigung",
       "Delete": "Löschen",
       "DeleteAFolder": "Einen Ordner löschen",
+      "DeleteCompleted": "Endgültig gelöscht",
       "DeleteFailureDescription": "{{failed}} von {{total}} Ordnern konnten nicht gelöscht werden. Überprüfen Sie unten den Grund für jeden Ordner.",
       "DeleteForever": "Unwiederuflich löschen",
       "DeleteForeverConfirmText": "löschen",

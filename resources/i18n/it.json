@@ -1178,6 +1178,7 @@
       "DefaultMountPermission": "Permesso di montaggio predefinito",
       "Delete": "Elimina",
       "DeleteAFolder": "Elimina una cartella",
+      "DeleteCompleted": "Eliminati definitivamente",
       "DeleteFailureDescription": "Impossibile eliminare {{failed}} cartelle su {{total}}. Controlla il motivo per ciascuna cartella qui sotto.",
       "DeleteForever": "Elimina per sempre",
       "DeleteForeverConfirmText": "elimina",
