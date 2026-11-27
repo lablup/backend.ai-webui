@@ -15,8 +15,12 @@ import {
   resolveAppPath,
   searchParamsToRecord,
 } from '../helper/webmcpNavigation';
-import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
-import { useCurrentUserRole } from '../hooks/backendai';
+import {
+  useCurrentDomain,
+  useSuspendedBackendaiClient,
+  useWebUINavigate,
+} from '../hooks';
+import { useCurrentUserInfo, useCurrentUserRole } from '../hooks/backendai';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useCurrentRouteLabel } from '../hooks/useCurrentRouteLabel';
 import {
@@ -47,6 +51,15 @@ export const displayedEmail = (
   return maskUserInfo ? maskUserIdentity(email) : email;
 };
 
+/** The full name, masked as the header masks it; null when blank. */
+export const displayedFullName = (
+  fullName: string | null | undefined,
+  maskUserInfo: boolean | undefined,
+): string | null => {
+  if (!fullName?.trim()) return null;
+  return maskUserInfo ? maskUserIdentity(fullName) : fullName;
+};
+
 const NO_INPUT: WebMCPInputSchema = {
   type: 'object',
   properties: {},
@@ -54,8 +67,11 @@ const NO_INPUT: WebMCPInputSchema = {
 };
 
 export interface WhoamiInfo {
+  userId: string | null;
   email: string | null;
+  fullName: string | null;
   role: string | null;
+  domain: { id: string | null; name: string | null } | null;
   project: { id: string | null; name: string | null } | null;
   apiEndpoint: string | null;
   webuiVersion: string | null;
@@ -64,7 +80,7 @@ export interface WhoamiInfo {
 export const createWhoamiTool = (info: WhoamiInfo): WebMCPTool => ({
   name: 'bai_whoami',
   description:
-    'The user signed in to this Backend.AI WebUI tab: email, role, current project (id and name), the Backend.AI API endpoint and the WebUI version.',
+    "The user signed in to this Backend.AI WebUI tab: userId (user UUID), email, fullName, role, domain (id and name), current project (id and name), the Backend.AI API endpoint and the WebUI version. email and fullName may be masked when the deployment hides user info; userId never is, so use it to narrow to the user's own items, e.g. the condition user_id == <userId> on a session panel for 'my sessions'.",
   inputSchema: NO_INPUT,
   annotations: { readOnlyHint: true, untrustedContentHint: true },
   execute: () => info,
@@ -207,6 +223,9 @@ const WebMCPGlobalToolsRegistrar: React.FC = () => {
   const baiClient = useSuspendedBackendaiClient();
   const loginConfig = useEffectiveLoginConfig();
   const role = useCurrentUserRole();
+  // The hook hears this tab's own rename; the client field keeps the login name.
+  const [currentUser] = useCurrentUserInfo();
+  const { id: domainId, name: domainName } = useCurrentDomain();
   // Sanctioned global reader (ADR 0001): bai_whoami reports the ambient project.
   const currentProject = useCurrentProjectValue();
   const activeProjectName = useActiveProjectName();
@@ -238,8 +257,17 @@ const WebMCPGlobalToolsRegistrar: React.FC = () => {
 
   useWebMCPTool(
     createWhoamiTool({
+      userId: baiClient.user_uuid || null,
       email: displayedEmail(baiClient.email, loginConfig.maskUserInfo),
+      fullName: displayedFullName(
+        currentUser.full_name,
+        loginConfig.maskUserInfo,
+      ),
       role: role ?? null,
+      domain:
+        domainId || domainName
+          ? { id: domainId || null, name: domainName || null }
+          : null,
       project: currentProject?.id
         ? { id: currentProject.id, name: currentProject.name ?? null }
         : null,
