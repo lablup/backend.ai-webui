@@ -99,12 +99,20 @@ read `package.json` / `pnpm-workspace.yaml` / `ls` rather than expecting a list 
 - Fragment prop naming: `queryRef` for Query types, `{typeName}Frgmt` for others.
 - Use `useBAILogger` instead of `console.log`. Use pre-defined error boundaries (`BAIErrorBoundary`, `ErrorBoundaryWithNullFallback`).
 - Use Jotai for global state, Relay for GraphQL state.
+- Forms (ADR 0040): `<Form ref={formRef}>` by default; keep `Form.useForm()` only when the instance is read during render outside the `<Form>` or the input must survive a brief unmount (`.claude/rules/form-store-ownership.md`).
 - Comment only what the code cannot say — ≤2 lines by default; the reasoning behind a change goes in the commit body and the PR, not the source file (`.claude/rules/comment-density.md`). The long justification blocks already in the tree are migration-era history: trim a file's blocks when you edit it, don't sweep.
 
 ### Architecture Decision Records (detail: `.claude/rules/adr.md`, auto-loaded)
 
 - Architecture-level decisions live in `docs/adr/`, indexed by `docs/ARCHITECTURE.md`. A decision on `main` is in force: read the ADRs covering an area before changing it, and never implement against one.
 - A change that makes a new decision other code must follow records an ADR in the same PR and proceeds; the PR is where a human reviews it. A reversal of an ADR in force is flagged to a human before landing.
+
+### Unit Tests (detail: `docs/adr/0036-component-unit-test-conventions.md`)
+
+- Applies to Vitest unit tests of components and hooks under `react/src` and `packages/backend.ai-ui/src`.
+- Mock every API and network boundary, for example Relay through `createMockEnvironment`, the Backend.AI client through a `vi.mock` of the hook that returns it, `fetch` through `vi.stubGlobal`; the ADR lists the other paths. No unit test reaches a manager: the setup files make an unstubbed `fetch` throw.
+- Hooks beside the client hook in `react/src/hooks` (`useCurrentDomainValue`, …) call the real client hook: replace each one the component calls in the same `vi.mock`.
+- Test what the component is meant to do, with props its type allows. Do not add cases for misuse (forbidden props, `@ts-expect-error` input, missing providers); add one only with the fix for a bug it caused.
 
 ### On-Demand Skills (loaded only when needed)
 

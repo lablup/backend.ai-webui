@@ -322,6 +322,10 @@ future updates. Each feature is turned on with its **Enabled** checkbox.
   colored by the session's live resource utilization. The toggle appears only
   while this feature is enabled; for the grid's own controls, see
   [Session List View](#session-list-view-and-refresh).
+- **WebUI Assistant**: Adds a floating chat button that answers questions about
+  using the WebUI, based on this user manual. The first time you open it, you
+  connect it to a deployment or to an OpenAI-compatible endpoint that serves a
+  chat model.
 
 <a id="logs-tab"></a>
 

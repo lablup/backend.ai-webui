@@ -10,7 +10,7 @@ import { Button } from '@lablup/ui-common/Button';
 import { EmptyState } from '@lablup/ui-common/EmptyState';
 import { Text } from '@lablup/ui-common/Text';
 import { useTheme } from '@lablup/ui-common/theme';
-import { BAIFlex } from 'backend.ai-ui';
+import { BAIFlex, useBAILogger } from 'backend.ai-ui';
 import type { GraphQLFormattedError } from 'graphql';
 import { useAtomValue } from 'jotai';
 import { RotateCw, TriangleAlertIcon } from 'lucide-react';
@@ -84,6 +84,7 @@ const BAIErrorBoundary: React.FC<BAIErrorBoundaryProps> = ({
   const isExpiredLoginSession = useAtomValue(isLoginSessionExpiredState);
   const { markTriggered, markReset } = useActiveErrorBoundaryControl();
   const isDebugMode = isActAsDebugMode();
+  const { logger } = useBAILogger();
   return (
     <ErrorBoundary
       {...props}
@@ -93,6 +94,11 @@ const BAIErrorBoundary: React.FC<BAIErrorBoundaryProps> = ({
         // state and should fall back to a full page reload instead of SPA
         // navigation.
         markTriggered();
+        logger
+          .withContext('errorBoundary', {
+            componentStack: info.componentStack,
+          })
+          .error(error);
         props.onError?.(error, info);
       }}
       onReset={(details) => {

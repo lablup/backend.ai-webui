@@ -57,14 +57,14 @@ vi.mock('react-relay', async (importOriginal) => {
               Promise.resolve().then(() =>
                 config.onCompleted(
                   {
-                    updateDomainV2: {
-                      domain: {
-                        id: 'domain-global-id',
-                        registry: {
-                          allowedDockerRegistries:
-                            config.variables.allowedDockerRegistries,
+                    createDomainContainerRegistryRelations: {
+                      items: [
+                        {
+                          domainId: config.variables.domainId,
+                          containerRegistryId:
+                            config.variables.containerRegistryId,
                         },
-                      },
+                      ],
                     },
                   },
                   null,
@@ -142,9 +142,12 @@ vi.mock('../app-shim', async (importOriginal) => {
 // whole contract the "registry not registered" branch depends on.
 const mockRegistryEditorRender = vi.fn();
 
-vi.mock('./ContainerRegistryEditorModal', async () => {
+vi.mock('./ContainerRegistryEditorModal', async (importOriginal) => {
   const React = await import('react');
+  const originalModule =
+    await importOriginal<typeof import('./ContainerRegistryEditorModal')>();
   return {
+    toLegacyRegistryType: originalModule.toLegacyRegistryType,
     default: (props: any) => {
       mockRegistryEditorRender(props);
       return props.open
@@ -156,6 +159,7 @@ vi.mock('./ContainerRegistryEditorModal', async () => {
               onClick: () =>
                 props.onOk('create', {
                   id: 'registry-created',
+                  row_id: 'registry-created-row-id',
                   registry_name: props.initialValues?.registry_name,
                   project: props.initialValues?.project,
                   url: props.initialValues?.url,
@@ -185,6 +189,7 @@ vi.mock('backend.ai-ui', async (importOriginal) => {
 
 type RegistryNodeShape = {
   id: string;
+  row_id: string;
   registry_name: string;
   project: string | null;
   url: string;
@@ -193,6 +198,7 @@ type RegistryNodeShape = {
 
 const REGISTRY: RegistryNodeShape = {
   id: 'registry-1',
+  row_id: 'registry-row-1',
   registry_name: 'cr.backend.ai',
   project: 'stable',
   url: 'https://cr.backend.ai',
@@ -201,6 +207,7 @@ const REGISTRY: RegistryNodeShape = {
 
 const NGC_REGISTRY: RegistryNodeShape = {
   id: 'registry-2',
+  row_id: 'registry-row-2',
   registry_name: 'nvcr.io',
   project: 'nvidia',
   url: 'https://nvcr.io',
@@ -214,6 +221,7 @@ const NGC_REGISTRY: RegistryNodeShape = {
  */
 const MIRROR_REGISTRY: RegistryNodeShape = {
   id: 'registry-3',
+  row_id: 'registry-row-3',
   registry_name: 'mirror.example.com',
   project: 'team-a',
   url: 'https://mirror.example.com:5000/v2',
@@ -224,6 +232,7 @@ const MIRROR_REGISTRY: RegistryNodeShape = {
 const MIRROR_TEAM_B_REGISTRY: RegistryNodeShape = {
   ...MIRROR_REGISTRY,
   id: 'registry-4',
+  row_id: 'registry-row-4',
   project: 'team-b',
 };
 
@@ -257,8 +266,8 @@ let registryPageFetchCount = 0;
 const queueRegistryPages = (
   environment: ReturnType<typeof createMockEnvironment>,
   registryPages: Array<Array<RegistryNodeShape>>,
-  /** The domain's `allowed_docker_registries`; omitted means not reported. */
-  allowedRegistries?: Array<string>,
+  /** The registry IDs related to the current domain; omitting it relates every row. */
+  allowedRegistryIds?: Array<string>,
 ) => {
   registryPages.forEach((nodes, index) => {
     const hasNextPage = index < registryPages.length - 1;
@@ -266,11 +275,24 @@ const queueRegistryPages = (
       registryPageFetchCount += 1;
       return {
         data: {
-          domain: allowedRegistries
-            ? { allowed_docker_registries: allowedRegistries }
-            : null,
-          container_registry_nodes: {
-            edges: nodes.map((node) => ({ node })),
+          adminContainerRegistriesV2: {
+            edges: nodes.map((node) => ({
+              node: {
+                id: node.id,
+                entityId: node.row_id,
+                registryName: node.registry_name,
+                project: node.project,
+                url: node.url,
+                type: node.type.toUpperCase(),
+                currentDomain: {
+                  count:
+                    allowedRegistryIds === undefined ||
+                    allowedRegistryIds.includes(node.row_id)
+                      ? 1
+                      : 0,
+                },
+              },
+            })),
             pageInfo: {
               hasNextPage,
               endCursor: hasNextPage ? `cursor-${index}` : null,
@@ -388,7 +410,7 @@ describe('ImportImageModal (FR-3940 review round)', () => {
     queueRegistryPages(
       environment,
       [[REGISTRY, NGC_REGISTRY]],
-      ['cr.backend.ai'],
+      [REGISTRY.row_id],
     );
     render(
       <QueryClientProvider client={new QueryClient()}>
@@ -410,7 +432,7 @@ describe('ImportImageModal (FR-3940 review round)', () => {
     queueRegistryPages(
       environment,
       [[REGISTRY, NGC_REGISTRY]],
-      ['cr.backend.ai', 'nvcr.io'],
+      [REGISTRY.row_id, NGC_REGISTRY.row_id],
     );
     await user.click(
       screen.getByRole('button', {
@@ -419,8 +441,8 @@ describe('ImportImageModal (FR-3940 review round)', () => {
     );
 
     expect(mockEnableRequest).toHaveBeenCalledWith({
-      id: 'domain-uuid',
-      allowedDockerRegistries: ['cr.backend.ai', 'nvcr.io'],
+      domainId: 'domain-uuid',
+      containerRegistryId: NGC_REGISTRY.row_id,
     });
     await waitFor(() =>
       expect(
@@ -430,6 +452,27 @@ describe('ImportImageModal (FR-3940 review round)', () => {
     expect(
       screen.getByText(/environment\.ImportImageReady/),
     ).toBeInTheDocument();
+  });
+
+  it('treats a domain related to no registry as allowing none', async () => {
+    const environment = createMockEnvironment();
+    queueRegistryPages(environment, [[REGISTRY, NGC_REGISTRY]], []);
+    render(
+      <QueryClientProvider client={new QueryClient()}>
+        <RelayEnvironmentProvider environment={environment}>
+          <ImportImageModal open onRequestClose={vi.fn()} />
+        </RelayEnvironmentProvider>
+      </QueryClientProvider>,
+    );
+    await typeReferences(PYTORCH);
+
+    await waitFor(() =>
+      expect(
+        screen.getByText('environment.ImportImageRegistryDisabledInDomain'),
+      ).toBeInTheDocument(),
+    );
+    // A warning, not a block, as with any disallowed registry.
+    expect(importButton()).toBeEnabled();
   });
 
   it('matches against registries from every page of the connection', async () => {
@@ -621,8 +664,11 @@ describe('ImportImageModal (FR-3940 review round)', () => {
         content: 'registry.RegistrySuccessfullyAdded',
       }),
     );
-    // The domain did not report its allowed list, so nothing is written.
-    expect(mockEnableRequest).not.toHaveBeenCalled();
+    // A new registry is related to no domain yet, so it is enabled here.
+    expect(mockEnableRequest).toHaveBeenCalledWith({
+      domainId: 'domain-uuid',
+      containerRegistryId: 'registry-created-row-id',
+    });
     await waitFor(() =>
       expect(
         screen.getByText(/environment\.ImportImageReady/),
@@ -644,7 +690,7 @@ describe('ImportImageModal (FR-3940 review round)', () => {
   it('enables a registry created from the modal in the current domain', async () => {
     const user = userEvent.setup();
     const environment = createMockEnvironment();
-    queueRegistryPages(environment, [[REGISTRY]], ['cr.backend.ai']);
+    queueRegistryPages(environment, [[REGISTRY]], [REGISTRY.row_id]);
     render(
       <QueryClientProvider client={new QueryClient()}>
         <RelayEnvironmentProvider environment={environment}>
@@ -660,13 +706,13 @@ describe('ImportImageModal (FR-3940 review round)', () => {
     queueRegistryPages(
       environment,
       [[REGISTRY, NGC_REGISTRY]],
-      ['cr.backend.ai', 'nvcr.io'],
+      [REGISTRY.row_id, NGC_REGISTRY.row_id],
     );
     await user.click(await screen.findByTestId('mock-registry-editor-modal'));
 
     expect(mockEnableRequest).toHaveBeenCalledWith({
-      id: 'domain-uuid',
-      allowedDockerRegistries: ['cr.backend.ai', 'nvcr.io'],
+      domainId: 'domain-uuid',
+      containerRegistryId: 'registry-created-row-id',
     });
     await waitFor(() =>
       expect(

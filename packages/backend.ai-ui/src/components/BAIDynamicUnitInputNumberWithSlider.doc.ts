@@ -32,7 +32,7 @@ export const docs = {
       {
         guidance: true,
         description:
-          'Give `extraMarks` labels that carry text — a JSX label is flattened to its accessible text, and a label with none renders as an unlabelled tick.',
+          'Give an `extraMarks` entry a text label, or `null` for an unlabelled tick — a JSX label is flattened to its accessible text.',
       },
       {
         guidance: false,
@@ -138,7 +138,7 @@ export const docs = {
   min={resourceLimits.mem?.min}
   max={resourceLimits.mem?.max}
   extraMarks={{
-    [remainingGiB]: { label: <RemainingMark /> },
+    [remainingGiB]: null,
   }}
   onChange={(nextValue) => {
     form.setFieldValue('allocationPreset', 'custom');

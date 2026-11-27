@@ -4,26 +4,43 @@
  */
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useVFolderInvitations } from '../hooks/useVFolderInvitations';
-import { useEffect } from 'react';
+import type { ProjectContextOrNull } from '../types/projectContext';
+import { useEffect, useEffectEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 
-/** Pins a notification while folder invitations wait; it opens the response modal. */
-const FolderInvitationNotifier: React.FC = () => {
+const NOTIFICATION_KEY = 'invitedFolders';
+
+/**
+ * Pins a notification while folder invitations of the page's project wait; it
+ * opens the response modal. A project with none takes the notification away.
+ */
+const FolderInvitationNotifier: React.FC<{ project: ProjectContextOrNull }> = ({
+  project,
+}) => {
   'use memo';
   const { t } = useTranslation();
-  const { upsertNotification } = useSetBAINotification();
-  const [invitations] = useVFolderInvitations();
+  const { upsertNotification, clearNotification } = useSetBAINotification();
+  const [invitations] = useVFolderInvitations(project);
 
-  useEffect(() => {
-    if (invitations.length <= 0) return;
+  const syncNotification = useEffectEvent(() => {
+    if (invitations.length <= 0) {
+      clearNotification(NOTIFICATION_KEY);
+      return;
+    }
     upsertNotification({
-      key: 'invitedFolders',
-      message: t('data.InvitedFoldersTooltip', { count: invitations.length }),
+      key: NOTIFICATION_KEY,
+      // No count: the modal it opens lists the invitations of the page it opens on.
+      message: t('data.invitation.PendingInvitationsNotice'),
       to: { search: new URLSearchParams({ invitation: 'true' }).toString() },
       open: true,
       duration: 0,
     });
-  }, [invitations.length, t, upsertNotification]);
+  });
+
+  const hasInvitations = invitations.length > 0;
+  useEffect(() => {
+    syncNotification();
+  }, [hasInvitations, project?.id]);
 
   return null;
 };

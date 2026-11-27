@@ -47,6 +47,8 @@ const AutomaticShmemSwitch: React.FC<{
 
 interface SharedMemoryFormItemsProps {
   min?: string;
+  /** The shmem cap (`resourceLimits.shmem.max`); the current memory caps it further. */
+  max?: string;
   onChangeResourceShmem?: BAIDynamicUnitInputNumberProps['onChange'];
   /**
    * antd `SwitchProps['onChange']` was `(checked, event) => void`; Astryx
@@ -58,9 +60,11 @@ interface SharedMemoryFormItemsProps {
 
 const SharedMemoryFormItems: React.FC<SharedMemoryFormItemsProps> = ({
   min,
+  max,
   onChangeResourceShmem,
   onChangeAutomaticShmem,
 }) => {
+  'use memo';
   const { t } = useTranslation();
   const { token } = useTheme();
 
@@ -227,6 +231,22 @@ const SharedMemoryFormItems: React.FC<SharedMemoryFormItemsProps> = ({
                         }
                       },
                     },
+                    {
+                      validator: async (_rule, value: string) => {
+                        if (
+                          getFieldValue('enabledAutomaticShmem') ||
+                          !max ||
+                          _.isEmpty(value) ||
+                          compareNumberWithUnits(value, max) <= 0
+                        ) {
+                          return Promise.resolve();
+                        }
+                        throw t('general.MaxValueNotification', {
+                          name: t('resourcePreset.SharedMemory'),
+                          max: _.toUpper(max) + 'iB',
+                        });
+                      },
+                    },
                   ]}
                 >
                   <BAIDynamicUnitInputNumber
@@ -234,7 +254,11 @@ const SharedMemoryFormItems: React.FC<SharedMemoryFormItemsProps> = ({
                     min={min}
                     size="small"
                     addonPrefix={'SHM'}
-                    max={getFieldValue(['resource', 'mem']) || '0g'}
+                    label={t('resourcePreset.SharedMemory')}
+                    isLabelHidden
+                    max={
+                      max && compareNumberWithUnits(max, mem) < 0 ? max : mem
+                    }
                     onChange={onChangeResourceShmem}
                   />
                 </Form.Item>

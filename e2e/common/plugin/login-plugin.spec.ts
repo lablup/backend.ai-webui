@@ -28,7 +28,8 @@ test.describe(
         plugin: { login: PLUGIN_NAME },
       });
 
-      await page.route(`**/dist/plugins/${PLUGIN_NAME}.js`, async (route) => {
+      // A Vite dev server requests the dynamic import with `?import` appended.
+      await page.route(`**/dist/plugins/${PLUGIN_NAME}.js*`, async (route) => {
         await route.fulfill({
           status: 200,
           contentType: 'application/javascript',

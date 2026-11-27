@@ -929,7 +929,7 @@ async function login(page, base, endpoint, env) {
   });
   if (await shell.isVisible().catch(() => false)) return;
   await form.fill(env.E2E_ADMIN_EMAIL);
-  await page.getByLabel("Password").fill(env.E2E_ADMIN_PASSWORD);
+  await page.getByLabel("Password", { exact: true }).fill(env.E2E_ADMIN_PASSWORD);
   const endpointInput = page.getByRole("textbox", {
     name: "Endpoint",
     exact: true,

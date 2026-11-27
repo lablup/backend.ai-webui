@@ -27,7 +27,6 @@ import { useCurrentDomainValue } from '../../../hooks';
 import type { AppConfigUpdate } from '../../../hooks/useAppConfig';
 import { buildHostedManualBaseURL } from '../../../hooks/useHelpURL';
 import { setEffectiveWebUISettings } from '../../../hooks/useWebUIConfig';
-import { toMaxSizeLabel } from '../helper/sizeSetting';
 import MenuKeySelector from './MenuKeySelector';
 import PluginPathInput from './PluginPathInput';
 import SettingsJsonModal from './SettingsJsonModal';
@@ -354,9 +353,7 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
     const base = {
       'data-testid': `webui-setting-${definition.key}`,
       title: label.title,
-      description: definition.size
-        ? `${label.description} ${t('webuiSettings.MaxSizeHint', { size: toMaxSizeLabel(definition.size) })}`
-        : label.description,
+      description: label.description,
       onReset: () => setValue(definition, undefined),
     };
     switch (definition.type) {
@@ -377,7 +374,8 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
           children: definition.size ? (
             <WebUISettingSizeInput
               label={label.title}
-              value={current as number}
+              value={definition.key in values ? (current as number) : undefined}
+              defaultValue={rowDefault as number}
               size={definition.size}
               width={CONTROL_WIDTH}
               onChange={(value) => setValue(definition, value)}

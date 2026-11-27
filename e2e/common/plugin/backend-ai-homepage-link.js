@@ -39,10 +39,9 @@
     return true;
   }
 
-  if (inject()) return;
-
-  const observer = new MutationObserver(() => {
-    if (inject()) observer.disconnect();
+  inject();
+  new MutationObserver(inject).observe(document.body, {
+    childList: true,
+    subtree: true,
   });
-  observer.observe(document.body, { childList: true, subtree: true });
 })();

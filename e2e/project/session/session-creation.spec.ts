@@ -1,8 +1,22 @@
+import {
+  createAdminApiContext,
+  createKeypairResourcePolicyViaApi,
+  createUserViaApi,
+  deleteKeypairResourcePolicyViaApi,
+  purgeUserViaApi,
+  sweepStaleKeypairResourcePoliciesViaApi,
+} from '../../utils/admin-api';
 import { StartPage } from '../../utils/classes/common/StartPage';
 import { SessionLauncher } from '../../utils/classes/session/SessionLauncher';
-import { loginAsAdmin, navigateTo } from '../../utils/test-util';
+import { getE2EDomainName, getE2EProjectName } from '../../utils/e2e-scope';
+import {
+  loginAsAdmin,
+  loginAsCreatedAccount,
+  navigateTo,
+} from '../../utils/test-util';
 import { getMenuItem } from '../../utils/test-util-antd';
 import { test, expect, Page } from '@playwright/test';
+import { randomBytes } from 'node:crypto';
 
 const getStartSessionButton = (page: Page) => {
   // Use the main Start Session button (usually the last one in the page)
@@ -352,46 +366,68 @@ test.describe(
 );
 
 test.describe(
-  'Restrict resource policy and see resource warning message',
+  'Session Launcher - Resource Policy Limits',
   { tag: ['@regression', '@session', '@functional'] },
   () => {
-    // TODO: fix this test
-    test.skip('superadmin to modify keypair resource policy', async ({
+    const runId = `${Date.now().toString(36)}${randomBytes(3).toString('hex')}`;
+    const policyName = `e2e-zero-slots-${runId}`;
+    const email = `e2e-zero-slots-${runId}@lablup.com`;
+    const password = `e2e-${randomBytes(12).toString('hex')}@Pw`;
+
+    test.beforeAll(async () => {
+      const api = await createAdminApiContext();
+      try {
+        // Leftovers of a killed run; best effort, never blocks the setup.
+        await sweepStaleKeypairResourcePoliciesViaApi(
+          api,
+          /^e2e-zero-slots-/,
+        ).catch((error) =>
+          console.warn('[session-creation] stale policy sweep failed:', error),
+        );
+        await createKeypairResourcePolicyViaApi(api, policyName, {
+          cpu: '0',
+          mem: '0',
+        });
+        await createUserViaApi(api, {
+          email,
+          password,
+          domainName: await getE2EDomainName(api),
+          projectName: await getE2EProjectName(api),
+          keypairResourcePolicy: policyName,
+        });
+      } finally {
+        await api.dispose();
+      }
+    });
+
+    // The user's keypair references the policy, so the user goes first.
+    test.afterAll(async () => {
+      const api = await createAdminApiContext();
+      try {
+        await purgeUserViaApi(api, email).catch((error) =>
+          console.warn(`[session-creation] could not purge ${email}:`, error),
+        );
+        await deleteKeypairResourcePolicyViaApi(api, policyName);
+      } finally {
+        await api.dispose();
+      }
+    });
+
+    test('User can see the insufficient-resources warning when the keypair resource policy allows no CPU or memory', async ({
       page,
       request,
     }) => {
-      await loginAsAdmin(page, request);
-      // go to resource policy page
-      await navigateTo(page, 'resource-policy');
-      // modify resource limit (cpu, memory) to zero
-      await page
-        .getByRole('table')
-        .getByRole('button', { name: 'setting' })
-        .click();
-      await page.locator('.ant-checkbox-input').first().uncheck();
-      await page.getByLabel('CPU(optional)').click();
-      await page.getByLabel('CPU(optional)').fill('0');
-      await page
-        .locator(
-          'div:nth-child(2) > div > div > .ant-checkbox-wrapper > span:nth-child(2)',
-        )
-        .first()
-        .uncheck();
-      await page.getByLabel('Memory(optional)').click();
-      await page.getByLabel('Memory(optional)').fill('0');
-      await page.getByRole('button', { name: 'OK' }).click();
-      // go back to session page and see message in resource allocation section
+      await loginAsCreatedAccount(page, request, email, password);
       await navigateTo(page, 'session/start');
-      await page.getByRole('button', { name: 'Next right' }).click();
-      const notEnoughCPUResourceMsg = await page
-        .locator('#resource_cpu_help')
-        .getByText('Allocatable resources falls')
-        .textContent();
-      const notEnoughRAMResourceMsg = await page
-        .getByText('Allocatable resources falls')
-        .nth(1)
-        .textContent();
-      expect(notEnoughCPUResourceMsg).toEqual(notEnoughRAMResourceMsg);
+      await page.getByRole('button', { name: 'Next' }).click();
+      await expect(
+        page
+          .getByText(
+            'Allocatable resources falls below the minimum resource required in the selected image.',
+          )
+          .filter({ visible: true })
+          .first(),
+      ).toBeVisible({ timeout: 15000 });
     });
   },
 );

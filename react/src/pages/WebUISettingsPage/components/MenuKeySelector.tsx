@@ -6,7 +6,10 @@ import {
   useWebUIMenuCatalog,
   type WebUIMenuTier,
 } from '../../../hooks/useWebUIMenuCatalog';
-import type { MultiSelectorOptionType } from '@lablup/ui-common/MultiSelector';
+import type {
+  MultiSelectorOptionType,
+  MultiSelectorSelectedItem,
+} from '@lablup/ui-common/MultiSelector';
 import {
   BAIFlex,
   BAIMultiSelector,
@@ -50,10 +53,22 @@ const MenuKeySelector: React.FC<MenuKeySelectorProps> = ({
     catalog.map((entry) => [entry.key as string, entry.tier]),
   );
   const unknownKeys = value.filter((key) => !(key in tierOf));
-  // "Sessions" is both a user and an admin menu: the trigger names the tier.
+  // "Sessions" is both a user and an admin menu: the trigger and its tooltip
+  // name the tier.
   const sharedLabels = new Set(
     _.keys(_.pickBy(_.countBy(catalog, 'labelText'), (count) => count > 1)),
   );
+  const formatSelection = (items: Array<MultiSelectorSelectedItem>) =>
+    items
+      .map(({ value: key, label }) =>
+        sharedLabels.has(label) && tierOf[key] && tierOf[key] !== 'user'
+          ? t('webuiSettings.MenuLabelWithTier', {
+              menu: label,
+              tier: tierLabels[tierOf[key]],
+            })
+          : label,
+      )
+      .join(', ');
 
   const options: Array<MultiSelectorOptionType> = [
     ...TIERS.map((tier): MultiSelectorOptionType => ({
@@ -93,15 +108,8 @@ const MenuKeySelector: React.FC<MenuKeySelectorProps> = ({
           {option.label ?? option.value}
         </BAIFlex>
       )}
-      formatValue={(items) =>
-        items
-          .map(({ value: key, label }) =>
-            sharedLabels.has(label) && tierOf[key] && tierOf[key] !== 'user'
-              ? `${label} (${tierLabels[tierOf[key]]})`
-              : label,
-          )
-          .join(', ')
-      }
+      formatValue={formatSelection}
+      showSelectedOptionsTooltip={{ content: formatSelection }}
     />
   );
 };
