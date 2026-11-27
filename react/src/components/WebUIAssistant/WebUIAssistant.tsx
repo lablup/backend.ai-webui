@@ -157,7 +157,7 @@ const WebUIAssistantFloating: React.FC = () => {
   const focusFabOnCloseRef = useRef(false);
   const closePanel = () => {
     // In drawer mode the button is hidden while open, so focus would fall to <body>.
-    focusFabOnCloseRef.current = !!isDrawerMode;
+    focusFabOnCloseRef.current = isPanelShown && !!isDrawerMode;
     setIsOpen(false);
   };
   const offsetStyle = {
@@ -231,10 +231,23 @@ const WebUIAssistantFloating: React.FC = () => {
       onPanelHidden();
       return;
     }
+    // The drawer top is a DOM write and goes before paint; the floating side is state.
+    if (isDrawerMode) measureDrawerTop();
     const frame = requestAnimationFrame(() => onLayoutChange());
     window.addEventListener('resize', onLayoutChange);
+    // A banner shown or dismissed above the header resizes one of its ancestors.
+    const header = document.querySelector('[data-testid="webui-header"]');
+    const observer = isDrawerMode ? new ResizeObserver(onLayoutChange) : null;
+    for (
+      let node = header?.parentElement;
+      observer && node && node !== document.body;
+      node = node.parentElement
+    ) {
+      observer.observe(node);
+    }
     return () => {
       cancelAnimationFrame(frame);
+      observer?.disconnect();
       window.removeEventListener('resize', onLayoutChange);
     };
   }, [isPanelShown, isDrawerMode]);
