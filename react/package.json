@@ -1,6 +1,6 @@
 {
   "name": "backend-ai-webui-react",
-  "version": "26.10.0-alpha.3",
+  "version": "26.10.0-alpha.4",
   "private": true,
   "type": "module",
   "dependencies": {
