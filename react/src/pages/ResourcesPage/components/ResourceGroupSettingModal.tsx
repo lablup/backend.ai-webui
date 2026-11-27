@@ -109,12 +109,13 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
   );
 
   // Superadmin-only SFTP proxy membership, read from etcd without suspending
-  // (gated on a deferred `open`). Only the first load skeletons the field: a
-  // background refetch must not unmount a registered Form.Item.
+  // (gated on a deferred `open`). The field waits for this mount's first fetch,
+  // so the prefill is not a stale cache; later refetches keep it registered.
   const deferredOpen = useDeferredValue(modalProps.open);
   const {
     data: proxyResourceGroups,
-    isPending: isSftpMapPending,
+    isFetching: isSftpMapFetching,
+    isFetchedAfterMount: isSftpMapFetchedAfterMount,
     isError: isSftpMapError,
     refetch: refetchSftpMap,
   } = useSFTPProxyResourceGroupsQuery({
@@ -125,7 +126,8 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
     resourceGroup?.name ? [resourceGroup.name] : [],
   );
   const hasSftpMap = proxyResourceGroups !== undefined;
-  const isSftpMapLoading = !hasSftpMap && isSftpMapPending;
+  const isSftpMapLoading =
+    (!hasSftpMap || !isSftpMapFetchedAfterMount) && isSftpMapFetching;
 
   // TODO(needs-backend): lablup/backend.ai#16372, lablup/backend.ai#16373 the V2 resource group
   // inputs have no `scheduler_opts`; move create/update to `adminCreateResourceGroupV2` / `updateResourceGroup` then.
@@ -206,7 +208,7 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
           isInFlightCommitAssociateDomain ||
           isInFlightCommitUpdateResourceGroup ||
           // A failed map skips only the proxy sync (with a warning on save).
-          (baiClient.is_superadmin && isSftpMapLoading && !isSftpMapError),
+          (baiClient.is_superadmin && isSftpMapLoading),
       }}
       onOk={() => {
         formRef.current
@@ -252,14 +254,21 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
                 return Promise.resolve();
               }
               // Create mode diffs against the live map, so a group recreated
-              // under an old name drops the stale proxy entries it would inherit.
+              // under an old name drops stale proxy entries — except where it is
+              // the proxy's only group: an emptied list deletes the key, which
+              // means "all groups".
               const baseline = resourceGroup
                 ? (values.sftpProxiesBaseline ?? [])
                 : proxiesServingGroups(proxyResourceGroups, [groupName]);
-              const { added, removed } = computeProxyDelta(
-                baseline,
-                values.sftpProxies,
-              );
+              const delta = computeProxyDelta(baseline, values.sftpProxies);
+              const added = delta.added;
+              const removed = resourceGroup
+                ? delta.removed
+                : delta.removed.filter(
+                    (proxy) =>
+                      _.without(proxyResourceGroups?.[proxy] ?? [], groupName)
+                        .length > 0,
+                  );
               return applyGroupProxyDelta([groupName], added, removed).then(
                 (results) => {
                   const failed = results.filter((r) => r.status === 'rejected');
@@ -431,7 +440,7 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
             />
           </BAIFormItem>
           {baiClient.is_superadmin ? (
-            !hasSftpMap && isSftpMapError ? (
+            !hasSftpMap && isSftpMapError && !isSftpMapFetching ? (
               <BAIFormItem label={t('storageProxy.SFTPStorageProxies')}>
                 <ErrorState
                   tone="warning"
@@ -445,7 +454,7 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
                   }}
                 />
               </BAIFormItem>
-            ) : !hasSftpMap ? (
+            ) : !hasSftpMap || isSftpMapLoading ? (
               <BAIFormItem label={t('storageProxy.SFTPStorageProxies')}>
                 <BAISkeleton variant="input" />
               </BAIFormItem>

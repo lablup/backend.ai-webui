@@ -3964,7 +3964,7 @@
     "SFTPStorageProxies": "SFTP Storage Proxies",
     "SFTPStorageProxiesDescription": "Storage proxies used when users in this resource group transfer files to their folders over SFTP.",
     "SFTPStorageProxiesNotSaved": "SFTP storage proxy settings were not loaded, so they were not saved.",
-    "SFTPStorageProxiesNotSavedDesc": "SFTP storage proxies were not saved. Retry loading them, then save again."
+    "SFTPStorageProxiesNotSavedDesc": "SFTP storage proxies won't be saved until they load. Retry, then save."
   },
   "summary": {
     "ATOMEnabled": "ATOM NPU Enabled",
