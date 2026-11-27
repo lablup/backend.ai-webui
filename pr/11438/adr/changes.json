@@ -1,0 +1,57 @@
+{
+  "base": "main",
+  "head": "fix/gh-11437-theme-family-stale-after-relogin",
+  "baseSha": "9484e1e5b7ba0a114fa3faa2d70bd68de9613372",
+  "headSha": "157d2b489ddf903b767e23814861f4f4ea173c6d",
+  "adrs": [
+    {
+      "id": "0025",
+      "status": "modified",
+      "title": "WebMCP tool surface",
+      "files": {
+        "en": {
+          "path": "adr/0025-webmcp-tool-surface.md",
+          "status": "modified"
+        },
+        "ko": {
+          "path": "adr/0025-webmcp-tool-surface.ko.md",
+          "status": "modified"
+        }
+      }
+    },
+    {
+      "id": "0043",
+      "status": "added",
+      "title": "Root layout route for the app providers",
+      "files": {
+        "en": {
+          "path": "adr/0043-root-layout-route-for-the-app-providers.md",
+          "status": "added"
+        },
+        "ko": {
+          "path": "adr/0043-root-layout-route-for-the-app-providers.ko.md",
+          "status": "added"
+        }
+      }
+    },
+    {
+      "id": "0044",
+      "status": "added",
+      "title": "App-level theme role from the route scope",
+      "files": {
+        "en": {
+          "path": "adr/0044-app-level-theme-role-from-the-route-scope.md",
+          "status": "added"
+        },
+        "ko": {
+          "path": "adr/0044-app-level-theme-role-from-the-route-scope.ko.md",
+          "status": "added"
+        }
+      }
+    }
+  ],
+  "architecture": {
+    "en": "modified",
+    "ko": "modified"
+  }
+}
