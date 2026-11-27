@@ -254,20 +254,12 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
                 message.warning(t('storageProxy.SFTPStorageProxiesNotSaved'));
                 return Promise.resolve();
               }
-              // Create mode drops stale entries, but never a proxy's last group:
-              // an emptied list deletes the key, which means "all groups".
-              const baseline = resourceGroup
-                ? (values.sftpProxiesBaseline ?? [])
-                : proxiesServingGroups(proxyResourceGroups, [groupName]);
-              const delta = computeProxyDelta(baseline, values.sftpProxies);
-              const added = delta.added;
-              const removed = resourceGroup
-                ? delta.removed
-                : delta.removed.filter(
-                    (proxy) =>
-                      _.without(proxyResourceGroups?.[proxy] ?? [], groupName)
-                        .length > 0,
-                  );
+              // Create mode's baseline is []: it only adds, and never touches
+              // entries a deleted group of the same name left on a proxy.
+              const { added, removed } = computeProxyDelta(
+                values.sftpProxiesBaseline ?? [],
+                values.sftpProxies,
+              );
               return applyGroupProxyDelta([groupName], added, removed).then(
                 (results) => {
                   const failed = results.filter((r) => r.status === 'rejected');
