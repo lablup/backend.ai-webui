@@ -68,6 +68,8 @@ import {
   ChatMessageBubble,
   ChatMessageList,
   ChatSystemMessage,
+  useChatNewMessages,
+  useChatStreamScroll,
 } from '@lablup/ui-common/Chat';
 import { IconButton } from '@lablup/ui-common/IconButton';
 import { List, ListItem } from '@lablup/ui-common/List';
@@ -89,7 +91,7 @@ import {
   LocateFixed,
   MessageCircleQuestion,
 } from 'lucide-react';
-import { useEffect, useEffectEvent } from 'react';
+import { useEffect, useEffectEvent, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
 const MODEL_POLL_INTERVAL_MS = 5000;
@@ -386,7 +388,24 @@ const WebUIAssistantChat: React.FC<WebUIAssistantChatProps> = ({
     return dashboardResponse(reply, { items });
   };
 
-  const { messages, sendMessage, status, stop, error } = useChat({
+  // ChatMessageList does not scroll on its own (ChatLayout does), so the panel follows growth here.
+  const messagesScrollRef = useRef<HTMLDivElement>(null);
+  // The scroller mounts only once a model is ready; `enabled` attaches its listeners then.
+  const streamScroll = useChatStreamScroll({
+    scrollRef: messagesScrollRef,
+    enabled: !!modelId,
+  });
+  const { contentRef: messagesContentRef } = useChatNewMessages({
+    isLocked: streamScroll.isLocked,
+    onResize: streamScroll.scrollIfLocked,
+  });
+  const {
+    messages,
+    sendMessage: sendChatMessage,
+    status,
+    stop,
+    error,
+  } = useChat({
     id: 'webui-assistant',
     experimental_throttle: 100,
     transport: new DefaultChatTransport({
@@ -637,6 +656,11 @@ const WebUIAssistantChat: React.FC<WebUIAssistantChatProps> = ({
     </BAIFlex>
   );
 
+  const sendMessage = (message: { text: string }) => {
+    streamScroll.scrollToBottom();
+    sendChatMessage(message);
+  };
+
   const messageItems = [
     ...messages.map((message, index) => {
       const isUser = message.role === 'user';
@@ -697,6 +721,7 @@ const WebUIAssistantChat: React.FC<WebUIAssistantChatProps> = ({
         direction="column"
         align="stretch"
         gap="sm"
+        ref={messagesScrollRef}
         className="webui-assistant-panel__messages"
         style={{
           flex: '1 1 0%',
@@ -753,7 +778,13 @@ const WebUIAssistantChat: React.FC<WebUIAssistantChatProps> = ({
             </List>
           </BAIFlex>
         ) : (
-          <ChatMessageList density="compact" isStreaming={isStreaming}>
+          <ChatMessageList
+            ref={messagesContentRef}
+            density="compact"
+            isStreaming={isStreaming}
+            // Grows with its messages so the resize observer sees the growth.
+            style={{ flex: '1 0 auto' }}
+          >
             {messageItems}
           </ChatMessageList>
         )}
