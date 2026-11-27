@@ -75,6 +75,7 @@ import { IconButton } from '@lablup/ui-common/IconButton';
 import { List, ListItem } from '@lablup/ui-common/List';
 import { Spinner } from '@lablup/ui-common/Spinner';
 import { Text } from '@lablup/ui-common/Text';
+import * as stylex from '@stylexjs/stylex';
 import {
   DefaultChatTransport,
   convertToModelMessages,
@@ -224,6 +225,11 @@ interface WebUIAssistantChatProps {
   /** Whether an answer is being written, for the panel's working indicator. */
   onWorkingChange?: (isWorking: boolean) => void;
 }
+
+const styles = stylex.create({
+  // Grows with its messages so the resize observer sees the growth.
+  messageList: { flex: '1 0 auto' },
+});
 
 const WebUIAssistantChat: React.FC<WebUIAssistantChatProps> = ({
   baseURL: apiBaseURL,
@@ -501,6 +507,18 @@ const WebUIAssistantChat: React.FC<WebUIAssistantChatProps> = ({
     return () => reportWorking(false);
   }, [isStreaming]);
   const isModelReady = !!modelId;
+
+  // Banners sit outside the observed list, and a panel shown again from display:none starts at the top.
+  const followBanner = useEffectEvent(() => streamScroll.scrollIfLocked());
+  useEffect(() => {
+    followBanner();
+  }, [error?.message, manualQuery.isError]);
+  const jumpToLatest = useEffectEvent(() =>
+    streamScroll.scrollToBottom({ behavior: 'instant' }),
+  );
+  useEffect(() => {
+    if (isVisible && isModelReady) jumpToLatest();
+  }, [isVisible, isModelReady]);
 
   if (!isModelReady) {
     return (
@@ -782,8 +800,7 @@ const WebUIAssistantChat: React.FC<WebUIAssistantChatProps> = ({
             ref={messagesContentRef}
             density="compact"
             isStreaming={isStreaming}
-            // Grows with its messages so the resize observer sees the growth.
-            style={{ flex: '1 0 auto' }}
+            xstyle={styles.messageList}
           >
             {messageItems}
           </ChatMessageList>
