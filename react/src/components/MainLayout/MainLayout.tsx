@@ -16,7 +16,10 @@ import useKeyboardShortcut from '../../hooks/useKeyboardShortcut';
 import { useLogoutEventListeners } from '../../hooks/useLogout';
 import { useRouteAccessDecision } from '../../hooks/useRouteAccess';
 import { useCurrentMenuKey, useRouteScope } from '../../hooks/useRouteScope';
-import { useSiderCollapsedState } from '../../hooks/useShellPanels';
+import {
+  useSiderCollapsedState,
+  webUIAssistantDrawerOpenState,
+} from '../../hooks/useShellPanels';
 import { useSetupWebUIPluginEffect } from '../../hooks/useWebUIPluginState';
 import ActAsBanner from '../ActAsBanner';
 import AnnouncementBanner from '../AnnouncementBanner';
@@ -49,9 +52,10 @@ import {
   BAIOverlayScrollbar,
   BAIResourceSlotsProvider,
   BAISkeleton,
+  useBAIBreakpoint,
   useLabelableEntityTypes,
 } from 'backend.ai-ui';
-import { atom, useSetAtom } from 'jotai';
+import { atom, useAtomValue, useSetAtom } from 'jotai';
 import * as _ from 'lodash-es';
 import React, {
   Suspense,
@@ -85,6 +89,10 @@ function MainLayout() {
   // Lifted to Jotai so the search palette's "Toggle sidebar" action drives the
   // same state as the `[` shortcut.
   const [sideCollapsed, setSideCollapsed] = useSiderCollapsedState();
+  // Below xl an open WebUI Assistant drawer takes its room from the sidebar, which shows compact meanwhile.
+  const isAssistantDrawerOpen = useAtomValue(webUIAssistantDrawerOpenState);
+  const { xl } = useBAIBreakpoint();
+  const isSiderCompact = sideCollapsed || (isAssistantDrawerOpen && !xl);
   // The operator's `theme.siderMode` polarity override applies to the drawer's
   // navigation surface too.
   const shouldReverse = useSiderThemeReversed();
@@ -184,7 +192,7 @@ function MainLayout() {
             }
             sideNav={
               <WebUISider
-                collapsed={sideCollapsed}
+                collapsed={isSiderCompact}
                 onCollapse={(collapsed, type) => {
                   type === 'clickTrigger' && setSideCollapsed(collapsed);
                 }}

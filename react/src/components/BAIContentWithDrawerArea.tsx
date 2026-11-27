@@ -39,7 +39,8 @@ const BAIContentWithDrawerArea: React.FC<Props> = ({
   const { xl } = useBAIBreakpoint();
   const drawerStyle: DrawerStyle =
     xl && isOpenDrawer ? 'margin-style' : 'overlay-style';
-  const isAssistantDocked = xl && isAssistantDrawerOpen;
+  // Docked at every width; below xl MainLayout makes room by showing the sidebar compact.
+  const isAssistantDocked = isAssistantDrawerOpen;
   return (
     <div
       {...contextProps}
