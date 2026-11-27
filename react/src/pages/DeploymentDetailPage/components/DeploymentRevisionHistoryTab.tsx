@@ -905,6 +905,7 @@ const DeploymentRevisionHistoryTab: React.FC<
                 onClearSelection={() => setSelectedRevisions([])}
               />
               <IconButton
+                variant="ghost"
                 icon={<GitCompareArrows size="1em" />}
                 label={t('deployment.Compare')}
                 tooltip={
