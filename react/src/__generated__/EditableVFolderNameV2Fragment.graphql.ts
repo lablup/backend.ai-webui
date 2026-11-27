@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<0f6cd05f380aec2a5c80e1c2dc9314a2>>
+ * @generated SignedSource<<8fc93b091cb984d779737b4937a200a6>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,7 +9,7 @@
 // @ts-nocheck
 
 import { ReaderFragment } from 'relay-runtime';
-export type VFolderOperationStatus = "CLONING" | "DELETE_COMPLETE" | "DELETE_ERROR" | "DELETE_ONGOING" | "DELETE_PENDING" | "READY" | "%future added value";
+export type VFolderOperationStatus = "CLONING" | "CREATING" | "DELETE_COMPLETE" | "DELETE_ERROR" | "DELETE_ONGOING" | "DELETE_PENDING" | "READY" | "%future added value";
 import { FragmentRefs } from "relay-runtime";
 export type EditableVFolderNameV2Fragment$data = {
   readonly entityId: string;

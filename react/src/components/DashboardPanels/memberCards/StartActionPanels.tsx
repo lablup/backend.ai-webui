@@ -7,7 +7,7 @@ import {
   reviewStepOf,
 } from '../../../helper/sessionLauncherHistory';
 import { useWebUINavigate } from '../../../hooks';
-import { useIsPersonalProject } from '../../../hooks/useAccessibleProjects';
+import { useAccessibleProjects } from '../../../hooks/useAccessibleProjects';
 import { useProjectPath } from '../../../hooks/useRouteScope';
 import type { SessionLauncherFormValue } from '../../../pages/SessionLauncherPage/SessionLauncherPage';
 import DeploymentSettingModal from '../../DeploymentSettingModal';
@@ -145,7 +145,7 @@ export const CreateFolderPanel: React.FC<PanelComponentProps> = () => {
   const webuiNavigate = useWebUINavigate();
   const buildProjectPath = useProjectPath();
   const project = useDashboardProject();
-  const isPersonalProject = useIsPersonalProject(project?.id);
+  const { personalProject } = useAccessibleProjects();
   const [isOpen, setIsOpen] = useState(false);
   return (
     <>
@@ -160,7 +160,9 @@ export const CreateFolderPanel: React.FC<PanelComponentProps> = () => {
         <FolderCreateModal
           open={isOpen}
           project={project}
-          allowAutoMount={isPersonalProject}
+          autoMountScopeType={
+            project && project.id === personalProject?.id ? 'USER' : 'PROJECT'
+          }
           onRequestClose={(response) => {
             setIsOpen(false);
             if (response) webuiNavigate(buildProjectPath('data'));

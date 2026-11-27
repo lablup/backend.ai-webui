@@ -55,6 +55,7 @@ vi.mock('../hooks', async (importOriginal) => {
     ...originalModule,
     useSuspendedBackendaiClient: () => ({
       is_superadmin: clientState.isSuperadmin,
+      user_uuid: 'current-user-uuid',
       _config: {
         domainName: 'default',
       },
@@ -140,11 +141,21 @@ vi.mock('./ProjectSelectForAdminPage', async () => {
   };
 });
 
+// The auto-mount permission check runs on mount and is not under test here.
+const folderOperations = (environment: RelayMockEnvironment) =>
+  environment.mock
+    .getAllOperations()
+    .filter(
+      (operation) =>
+        operation.request.node.params.name !==
+        'FolderCreateModalAutoMountPermissionQuery',
+    );
+
 const renderModal = (
   project: { id: string; name: string } | null,
   onRequestClose = vi.fn(),
   initialValues?: Record<string, unknown>,
-  allowAutoMount?: boolean,
+  autoMountScopeType?: 'USER' | 'PROJECT',
 ) => {
   const environment: RelayMockEnvironment = createMockEnvironment();
   render(
@@ -152,8 +163,8 @@ const renderModal = (
       <FolderCreateModal
         open
         project={project}
-        allowAutoMount={allowAutoMount}
         initialValues={initialValues}
+        autoMountScopeType={autoMountScopeType}
         onRequestClose={onRequestClose}
       />
     </RelayEnvironmentProvider>,
@@ -183,7 +194,7 @@ describe('FolderCreateModal project prop contract (ADR-0001)', () => {
     await fillFolderNameAndSubmit(user, 'contract-folder');
 
     await waitFor(() => {
-      expect(environment.mock.getAllOperations()).toHaveLength(1);
+      expect(folderOperations(environment)).toHaveLength(1);
     });
     const operation = environment.mock.getMostRecentOperation();
     expect(operation.request.node.params.name).toBe(
@@ -192,54 +203,6 @@ describe('FolderCreateModal project prop contract (ADR-0001)', () => {
     // The mutation carries exactly the project passed by the page.
     expect(operation.request.variables.projectId).toBe('fixed-project-id');
     expect(operation.request.variables.input.name).toBe('contract-folder');
-  });
-
-  it('creates an automount folder as the caller’s own folder', async () => {
-    const user = userEvent.setup();
-    const { environment } = renderModal(
-      { id: 'fixed-project-id', name: 'fixed-project-name' },
-      vi.fn(),
-      { usage_mode: 'automount' },
-      true,
-    );
-
-    expect(screen.getByTestId('automount-usage-mode')).toBeInTheDocument();
-    await fillFolderNameAndSubmit(user, '.contract-folder');
-
-    await waitFor(() => {
-      expect(environment.mock.getAllOperations()).toHaveLength(1);
-    });
-    const operation = environment.mock.getMostRecentOperation();
-    // The manager rejects dot-prefixed project folders.
-    expect(operation.request.node.params.name).toBe(
-      'FolderCreateModalPersonalMutation',
-    );
-    expect(operation.request.variables.input).toMatchObject({
-      name: '.contract-folder',
-      usageMode: 'general',
-      projectId: null,
-    });
-  });
-
-  it('does not offer AutoMount unless the page allows it', async () => {
-    const user = userEvent.setup();
-    const { environment } = renderModal(
-      { id: 'fixed-project-id', name: 'fixed-project-name' },
-      vi.fn(),
-      { usage_mode: 'automount' },
-    );
-
-    expect(
-      screen.queryByTestId('automount-usage-mode'),
-    ).not.toBeInTheDocument();
-    await fillFolderNameAndSubmit(user, 'contract-folder');
-
-    await waitFor(() => {
-      expect(environment.mock.getAllOperations()).toHaveLength(1);
-    });
-    expect(
-      environment.mock.getMostRecentOperation().request.variables.input,
-    ).toMatchObject({ name: 'contract-folder', usageMode: 'GENERAL' });
   });
 
   it('disables Create and points to the personal project without CREATE on the project', async () => {
@@ -251,7 +214,7 @@ describe('FolderCreateModal project prop contract (ADR-0001)', () => {
       });
 
       await waitFor(() => {
-        expect(environment.mock.getAllOperations()).toHaveLength(1);
+        expect(folderOperations(environment)).toHaveLength(1);
       });
       const operation = environment.mock.getMostRecentOperation();
       expect(operation.request.node.params.name).toBe(
@@ -298,7 +261,7 @@ describe('FolderCreateModal project prop contract (ADR-0001)', () => {
       // The confirm step stands between Create and the mutation. jsdom does
       // not open a second Modal after mount, so the dialog itself is not read.
       await new Promise((resolve) => setTimeout(resolve, 300));
-      expect(environment.mock.getAllOperations()).toHaveLength(0);
+      expect(folderOperations(environment)).toHaveLength(0);
     } finally {
       clientState.skipSharedConfirm = true;
     }
@@ -315,7 +278,7 @@ describe('FolderCreateModal project prop contract (ADR-0001)', () => {
     await fillFolderNameAndSubmit(user, 'contract-folder');
 
     await waitFor(() => {
-      expect(environment.mock.getAllOperations()).toHaveLength(1);
+      expect(folderOperations(environment)).toHaveLength(1);
     });
     const operation = environment.mock.getMostRecentOperation();
     expect(operation.request.variables.projectId).toBe('fixed-project-id');
@@ -331,7 +294,7 @@ describe('FolderCreateModal project prop contract (ADR-0001)', () => {
 
     await fillFolderNameAndSubmit(user, 'contract-folder');
     await waitFor(() => {
-      expect(environment.mock.getAllOperations()).toHaveLength(1);
+      expect(folderOperations(environment)).toHaveLength(1);
     });
     // The payload's vfolder spreads a fragment defined on the abstract
     // `Node` interface; pin the concrete type and give it a decodable
@@ -365,7 +328,7 @@ describe('FolderCreateModal project prop contract (ADR-0001)', () => {
     expect(
       await screen.findByText('data.folders.TargetProjectRequired'),
     ).toBeInTheDocument();
-    expect(environment.mock.getAllOperations()).toHaveLength(0);
+    expect(folderOperations(environment)).toHaveLength(0);
   });
 
   it('targets exactly the project chosen in the in-modal selector when `project` is null', async () => {
@@ -376,7 +339,7 @@ describe('FolderCreateModal project prop contract (ADR-0001)', () => {
     await fillFolderNameAndSubmit(user, 'contract-folder');
 
     await waitFor(() => {
-      expect(environment.mock.getAllOperations()).toHaveLength(1);
+      expect(folderOperations(environment)).toHaveLength(1);
     });
     const operation = environment.mock.getMostRecentOperation();
     expect(operation.request.node.params.name).toBe(
@@ -384,5 +347,104 @@ describe('FolderCreateModal project prop contract (ADR-0001)', () => {
     );
     // The mutation carries exactly the project chosen inside the modal.
     expect(operation.request.variables.projectId).toBe('chosen-project-id');
+  });
+});
+
+describe('FolderCreateModal auto-mount', () => {
+  const VFOLDER_UUID = '00000000-0000-0000-0000-000000000001';
+  const VFOLDER_GLOBAL_ID = btoa(`VFolder:${VFOLDER_UUID}`);
+
+  const findOperation = (environment: RelayMockEnvironment, name: string) =>
+    environment.mock
+      .getAllOperations()
+      .find((op) => op.request.node.params.name === name);
+
+  const createWithAutoMount = async (
+    project: { id: string; name: string },
+    autoMountScopeType?: 'USER' | 'PROJECT',
+  ) => {
+    const user = userEvent.setup();
+    const { environment } = renderModal(
+      project,
+      vi.fn(),
+      undefined,
+      autoMountScopeType,
+    );
+
+    await waitFor(() =>
+      expect(
+        findOperation(environment, 'FolderCreateModalAutoMountPermissionQuery'),
+      ).toBeDefined(),
+    );
+    environment.mock.resolve(
+      findOperation(environment, 'FolderCreateModalAutoMountPermissionQuery')!,
+      { data: { myScopePermissions: { item: { permissions: ['CREATE'] } } } },
+    );
+
+    const autoMountSwitch = screen.getByRole('switch', {
+      name: 'autoMount.AutoMountSettings',
+    });
+    await waitFor(() =>
+      expect(autoMountSwitch).not.toHaveAttribute('aria-disabled', 'true'),
+    );
+    await user.click(autoMountSwitch);
+    await user.type(
+      await screen.findByRole('textbox', {
+        name: 'autoMount.MountDestination',
+      }),
+      '/home/work/data',
+    );
+    await fillFolderNameAndSubmit(user, 'auto-mount-folder');
+
+    await waitFor(() =>
+      expect(
+        findOperation(environment, 'FolderCreateModalProjectMutation'),
+      ).toBeDefined(),
+    );
+    const createOperation = findOperation(
+      environment,
+      'FolderCreateModalProjectMutation',
+    )!;
+    environment.mock.resolve(
+      createOperation,
+      MockPayloadGenerator.generate(createOperation, {
+        Node: () => ({ __typename: 'VFolder', id: VFOLDER_GLOBAL_ID }),
+        VFolder: () => ({ id: VFOLDER_GLOBAL_ID, entityId: VFOLDER_UUID }),
+      }),
+    );
+
+    await waitFor(() =>
+      expect(
+        findOperation(environment, 'FolderCreateModalAutoMountMutation'),
+      ).toBeDefined(),
+    );
+    return findOperation(environment, 'FolderCreateModalAutoMountMutation')!
+      .request.variables.input;
+  };
+
+  it('auto-mounts on the user scope when the caller passes USER', async () => {
+    const input = await createWithAutoMount(
+      { id: 'personal-project-id', name: 'me' },
+      'USER',
+    );
+    expect(input).toMatchObject({
+      scope: { scopeType: 'USER', scopeId: 'current-user-uuid' },
+      vfolderId: VFOLDER_UUID,
+      mountDestination: '/home/work/data',
+      subpath: '.',
+      mountPermission: 'READ_WRITE',
+    });
+  });
+
+  it('auto-mounts on the project scope by default', async () => {
+    const input = await createWithAutoMount({
+      id: 'fixed-project-id',
+      name: 'fixed-project-name',
+    });
+    expect(input).toMatchObject({
+      scope: { scopeType: 'PROJECT', scopeId: 'fixed-project-id' },
+      vfolderId: VFOLDER_UUID,
+      mountDestination: '/home/work/data',
+    });
   });
 });

@@ -39,6 +39,7 @@ import type { RcFile } from './FileUploadManager';
 import FolderExplorerHeaderV2 from './FolderExplorerHeaderV2';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import ScopedAuditLog, { ScopedAuditLogQuery } from './ScopedAuditLog';
+import VFolderAutoMountMetadataSection from './VFolderAutoMountMetadataSection';
 import VFolderNodeDescriptionV2 from './VFolderNodeDescriptionV2';
 import VFolderTextFileEditorModal from './VFolderTextFileEditorModal';
 import { Banner } from '@lablup/ui-common/Banner';
@@ -211,6 +212,7 @@ const useFolderExplorerQuery = (vfolderID: string) => {
           }
           ...FolderExplorerModalV2OwnershipFragment
           ...FolderExplorerHeaderV2Fragment
+          ...VFolderAutoMountMetadataSectionFragment
           ...VFolderNodeDescriptionV2Fragment
         }
       }
@@ -562,11 +564,16 @@ const FolderExplorerBody: React.FC<{
           key: 'metadata',
           label: t('explorer.Metadata'),
           children: (
-            <div style={infoPanelPanelStyle}>
+            <VStack gap={5} align="stretch" style={infoPanelPanelStyle}>
               {vfolderNode ? (
                 <VFolderNodeDescriptionV2 vfolderNodeFrgmt={vfolderNode} />
               ) : null}
-            </div>
+              {vfolderNode ? (
+                <BAIErrorBoundary>
+                  <VFolderAutoMountMetadataSection vfolderFrgmt={vfolderNode} />
+                </BAIErrorBoundary>
+              ) : null}
+            </VStack>
           ),
         },
         {

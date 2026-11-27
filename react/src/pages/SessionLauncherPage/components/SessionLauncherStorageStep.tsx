@@ -6,7 +6,7 @@ import FolderCreateModal from '../../../components/FolderCreateModal';
 import { useFolderExplorerOpener } from '../../../components/FolderExplorerOpener';
 import { Form, type FormInstance } from '../../../form-engine';
 import { useSuspendedBackendaiClient } from '../../../hooks';
-import { useIsPersonalProject } from '../../../hooks/useAccessibleProjects';
+import { useAccessibleProjects } from '../../../hooks/useAccessibleProjects';
 import { useMountableStorageHosts } from '../../../hooks/useMountableStorageHosts';
 import { useEffectiveLoginConfig } from '../../../hooks/useWebUIConfig';
 import type { ProjectContext } from '../../../types/projectContext';
@@ -32,6 +32,7 @@ const SessionLauncherStorageStep: React.FC<{
 
   const baiClient = useSuspendedBackendaiClient();
   const { isDirectorySizeVisible } = useEffectiveLoginConfig();
+  const { personalProject } = useAccessibleProjects();
   const scope = mountableVFolderScope(baiClient.user_uuid, project.id);
   const mountableHosts = useMountableStorageHosts(project.id);
   // Shares the query the input reads, so the input's refetch reaches this rule.
@@ -41,7 +42,6 @@ const SessionLauncherStorageStep: React.FC<{
   });
   const mountConfigRule = useVFolderMountConfigFormRule({ autoMountedFolders });
   const { generateFolderPath } = useFolderExplorerOpener();
-  const isPersonalProject = useIsPersonalProject(project.id);
 
   return (
     <>
@@ -67,7 +67,9 @@ const SessionLauncherStorageStep: React.FC<{
       <FolderCreateModal
         open={isCreateModalOpen}
         project={project}
-        allowAutoMount={isPersonalProject}
+        autoMountScopeType={
+          project.id === personalProject?.id ? 'USER' : 'PROJECT'
+        }
         onRequestClose={(response) => {
           setIsCreateModalOpen(false);
           if (!response) return;

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<5bfb4f33534c56f53ddada326161aa20>>
+ * @generated SignedSource<<940ed7f9d8e3d10e77cc5275d0d80424>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -26,6 +26,8 @@ export type SessionV2Filter = {
   id?: UUIDFilter | null | undefined;
   isPreemptible?: boolean | null | undefined;
   jobPriority?: IntFilter | null | undefined;
+  kernelGroupEnviron?: KernelGroupEnvironNestedFilter | null | undefined;
+  kernelGroupResourceSlots?: KernelGroupResourceSlotNestedFilter | null | undefined;
   labels?: EntityLabelNestedFilter | null | undefined;
   name?: StringFilter | null | undefined;
   networkId?: StringFilter | null | undefined;
@@ -127,6 +129,43 @@ export type SessionV2NetworkTypeFilter = {
   in?: ReadonlyArray<SessionV2NetworkType> | null | undefined;
   notEquals?: SessionV2NetworkType | null | undefined;
   notIn?: ReadonlyArray<SessionV2NetworkType> | null | undefined;
+};
+export type KernelGroupEnvironNestedFilter = {
+  every?: KernelGroupEnvironFilter | null | undefined;
+  exists?: boolean | null | undefined;
+  none?: KernelGroupEnvironFilter | null | undefined;
+  some?: KernelGroupEnvironFilter | null | undefined;
+};
+export type KernelGroupEnvironFilter = {
+  AND?: ReadonlyArray<KernelGroupEnvironFilter> | null | undefined;
+  NOT?: ReadonlyArray<KernelGroupEnvironFilter> | null | undefined;
+  OR?: ReadonlyArray<KernelGroupEnvironFilter> | null | undefined;
+  fieldId?: UUIDFilter | null | undefined;
+  kernelGroupId?: UUIDFilter | null | undefined;
+  key?: StringFilter | null | undefined;
+};
+export type KernelGroupResourceSlotNestedFilter = {
+  every?: KernelGroupResourceSlotFilter | null | undefined;
+  exists?: boolean | null | undefined;
+  none?: KernelGroupResourceSlotFilter | null | undefined;
+  some?: KernelGroupResourceSlotFilter | null | undefined;
+};
+export type KernelGroupResourceSlotFilter = {
+  AND?: ReadonlyArray<KernelGroupResourceSlotFilter> | null | undefined;
+  NOT?: ReadonlyArray<KernelGroupResourceSlotFilter> | null | undefined;
+  OR?: ReadonlyArray<KernelGroupResourceSlotFilter> | null | undefined;
+  fieldId?: UUIDFilter | null | undefined;
+  kernelGroupId?: UUIDFilter | null | undefined;
+  quantity?: DecimalFilter | null | undefined;
+  slotName?: StringFilter | null | undefined;
+};
+export type DecimalFilter = {
+  equals?: any | null | undefined;
+  greaterThan?: any | null | undefined;
+  greaterThanOrEqual?: any | null | undefined;
+  lessThan?: any | null | undefined;
+  lessThanOrEqual?: any | null | undefined;
+  notEquals?: any | null | undefined;
 };
 export type BAIAdminSessionSelectValueQuery$variables = {
   filter?: SessionV2Filter | null | undefined;

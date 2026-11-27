@@ -8,6 +8,7 @@
  `BAIText copyable`, `BAIModal` (host-quota modal), `BAISkeleton`.
 */
 import { VFolderDeployModalQuery } from '../__generated__/VFolderDeployModalQuery.graphql';
+import type { VFolderNodesV2AutoMountCellFragment$key } from '../__generated__/VFolderNodesV2AutoMountCellFragment.graphql';
 import { VFolderNodesV2DeleteMutation } from '../__generated__/VFolderNodesV2DeleteMutation.graphql';
 import {
   VFolderNodesV2Fragment$data,
@@ -42,6 +43,7 @@ import {
   BAIAlertIconWithTooltip,
   BAIEntityLabelCell,
   BAIEntityLabelSettingModal,
+  BAIBooleanToken,
   BAIIconWithTooltip,
   BAIModal,
   BAINameActionCell,
@@ -62,6 +64,7 @@ import {
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import {
+  InfoIcon,
   RocketIcon,
   RotateCcwIcon,
   Share2Icon,
@@ -258,6 +261,75 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
 interface VFolderHostCellProps {
   host?: string | null;
 }
+
+const VFolderAutoMountCell: React.FC<{
+  vfolderFrgmt: VFolderNodesV2AutoMountCellFragment$key;
+}> = ({ vfolderFrgmt }) => {
+  'use memo';
+  const { t } = useTranslation();
+  const { vfolderAutoMounts } = useFragment(
+    graphql`
+      fragment VFolderNodesV2AutoMountCellFragment on VFolder {
+        # Duplicate mounts are blocked, so a folder has at most one auto-mount (ADR 0040).
+        vfolderAutoMounts(limit: 1) {
+          edges {
+            node {
+              id
+              entityId
+              scopeType
+              scopeId
+              mountDestination
+              subpath
+              mountPermission
+              ...VFolderAutoMountSettingModalFragment
+            }
+          }
+        }
+      }
+    `,
+    vfolderFrgmt,
+  );
+  const autoMount = vfolderAutoMounts?.edges[0]?.node;
+  return (
+    <HStack gap={1} vAlign="center">
+      <BAIBooleanToken
+        value={!!autoMount}
+        trueLabel={t('autoMount.Configured')}
+        falseLabel={t('autoMount.NotConfigured')}
+      />
+      {autoMount && (
+        <BAIIconWithTooltip
+          icon={<InfoIcon size="1em" />}
+          aria-label={t('autoMount.AutoMount')}
+          content={
+            <VStack>
+              {/* Inherit the tooltip's own colour; the default is page text. */}
+              <Text color="inherit" weight="semibold">
+                {autoMount.scopeType === 'USER'
+                  ? t('autoMount.ScopeUser')
+                  : t('autoMount.ScopeProject')}
+              </Text>
+              <Text color="inherit">
+                {t('autoMount.MountDestination')}: {autoMount.mountDestination}
+              </Text>
+              <Text color="inherit">
+                {t('autoMount.Subpath')}: {autoMount.subpath}
+              </Text>
+              <Text color="inherit">
+                {t('autoMount.MountPermission')}:{' '}
+                {autoMount.mountPermission === 'READ_ONLY'
+                  ? t('data.ReadOnly')
+                  : autoMount.mountPermission === 'READ_WRITE'
+                    ? t('data.ReadWrite')
+                    : t('autoMount.ReadWriteDelete')}
+              </Text>
+            </VStack>
+          }
+        />
+      )}
+    </HStack>
+  );
+};
 
 // Renders a Host column cell: usage badge (if the backend reports one)
 // plus the host name. The badge's data comes from `vfolder.list_hosts()`,
@@ -559,6 +631,7 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
           ...BAIEntityLabelTokensFragment
           ...BAIEntityLabelSettingModalFragment
         }
+        ...VFolderNodesV2AutoMountCellFragment
         ...VFolderNodeIdenticonV2Fragment
         ...SharedFolderPermissionInfoModalV2Fragment
         ...InviteFolderSettingModalFragment
@@ -788,6 +861,13 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
               vfolder.accessControl?.ownershipType === 'USER'
                 ? vfolder?.ownership?.user?.basicInfo?.email
                 : vfolder?.ownership?.project?.basicInfo?.name,
+          },
+          {
+            key: 'auto_mount',
+            title: t('autoMount.AutoMount'),
+            render: (__, vfolder) => (
+              <VFolderAutoMountCell vfolderFrgmt={vfolder} />
+            ),
           },
           {
             key: 'usage_mode',

@@ -2,11 +2,9 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { FolderCreateModalAutoMountMutation } from '../__generated__/FolderCreateModalAutoMountMutation.graphql';
+import { FolderCreateModalAutoMountPermissionQuery } from '../__generated__/FolderCreateModalAutoMountPermissionQuery.graphql';
 import { FolderCreateModalPermissionQuery } from '../__generated__/FolderCreateModalPermissionQuery.graphql';
-import {
-  FolderCreateModalPersonalMutation,
-  FolderCreateModalPersonalMutation$data,
-} from '../__generated__/FolderCreateModalPersonalMutation.graphql';
 import {
   FolderCreateModalProjectMutation,
   FolderCreateModalProjectMutation$data,
@@ -20,9 +18,12 @@ import { useMyAppConfig } from '../hooks/useAppConfig';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { ProjectContext, ProjectContextOrNull } from '../types/projectContext';
 import BAIFormItem from './BAIFormItem';
+import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
 import ProjectSelectForAdminPage from './ProjectSelectForAdminPage';
 // Keeps its antd-shaped contract until the ComplexSelector-based rebuild lands.
 import StorageSelect from './StorageSelect';
+import type { VFolderAutoMountScopeType } from './VFolderAutoMountSettingModal';
+import './collapsible-section.css';
 import { Banner } from '@lablup/ui-common/Banner';
 import { Button } from '@lablup/ui-common/Button';
 import { Divider } from '@lablup/ui-common/Divider';
@@ -56,18 +57,17 @@ interface FolderCreateFormItemsType {
   name: string;
   host: string | undefined;
   group: string | undefined;
-  usage_mode: 'general' | 'model' | 'automount';
+  usage_mode: 'general' | 'model';
   cloneable: boolean;
+  auto_mount_enabled?: boolean;
+  auto_mount_destination?: string;
+  auto_mount_subpath?: string;
+  auto_mount_permission?: 'READ_ONLY' | 'READ_WRITE' | 'RW_DELETE';
 }
 
-// Both mutations select the same vfolder fields.
-export type FolderCreationResponse =
-  | NonNullable<
-      FolderCreateModalProjectMutation$data['createVFolderInProject']
-    >['vfolder']
-  | NonNullable<
-      FolderCreateModalPersonalMutation$data['createVfolderV2']
-    >['vfolder'];
+export type FolderCreationResponse = NonNullable<
+  FolderCreateModalProjectMutation$data['createVFolderInProject']
+>['vfolder'];
 
 export interface FolderCreateModalProps extends Omit<
   BAIModalProps,
@@ -97,16 +97,14 @@ export interface FolderCreateModalProps extends Omit<
    */
   folderType?: 'model_project';
   /**
-   * Set only when `project` is the caller's personal project: offers AutoMount,
-   * which is created as the caller's own folder (`createVfolderV2` without a
-   * project) because the manager rejects dot-prefixed project folders.
-   */
-  allowAutoMount?: boolean;
-  /**
    * Optional banner above the form for caller-specific constraints,
    * rendered as an Astryx `Banner status="warning"`.
    */
   alertMessage?: React.ReactNode;
+  /** Scope the folder's auto-mount is set on; the caller decides (ADR 0040). */
+  autoMountScopeType?: VFolderAutoMountScopeType;
+  /** The `USER` scope's user when it is not the caller, with an email for the notice. */
+  autoMountUser?: { id: string; email?: string | null };
 }
 
 const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
@@ -115,8 +113,9 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
   initialValidate = false,
   initialValues: initialValuesFromProps = {},
   folderType,
-  allowAutoMount = false,
   alertMessage,
+  autoMountScopeType = 'PROJECT',
+  autoMountUser,
   ...modalProps
 }) => {
   'use memo';
@@ -174,9 +173,31 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
     group: project?.id,
     usage_mode: 'general',
     cloneable: false,
+    auto_mount_enabled: false,
+    auto_mount_destination: '',
+    auto_mount_subpath: '.',
+    auto_mount_permission: 'READ_WRITE',
   };
 
   const isFolderTypeLocked = folderType === 'model_project';
+  const isPersonalTarget = autoMountScopeType === 'USER';
+  const autoMountTarget = effectiveProject
+    ? isPersonalTarget
+      ? { scopeType: 'user', scopeId: autoMountUser?.id ?? baiClient.user_uuid }
+      : { scopeType: 'project', scopeId: effectiveProject.id }
+    : null;
+  const autoMountTargetKey = autoMountTarget
+    ? `${autoMountTarget.scopeType}:${autoMountTarget.scopeId}`
+    : null;
+  const [autoMountPermission, setAutoMountPermission] = useState<{
+    key: string;
+    canCreate: boolean;
+  } | null>(null);
+  // `undefined` while the check for the current target is in flight.
+  const canSetAutoMount: boolean | undefined =
+    autoMountPermission && autoMountPermission.key === autoMountTargetKey
+      ? autoMountPermission.canCreate
+      : undefined;
   // When folderType narrows the form, these preset values override any
   // user-passed initialValues for the affected fields.
   const folderTypePreset: Partial<FolderCreateFormItemsType> | undefined =
@@ -191,9 +212,6 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
     ...INITIAL_FORM_VALUES,
     ...initialValuesFromProps,
     ...folderTypePreset,
-    ...(!allowAutoMount && initialValuesFromProps.usage_mode === 'automount'
-      ? { usage_mode: 'general' as const }
-      : {}),
     // Fixed mode: the `project` prop wins over any caller `initialValues.group`.
     ...(project ? { group: project.id } : {}),
   };
@@ -232,35 +250,14 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
       }
     `);
 
-  // Without a project the manager lands the folder in the caller's personal
-  // project; the only path that accepts a dot-prefixed (AutoMount) name.
-  const commitCreatePersonalMutation =
-    useMutationWithPromise<FolderCreateModalPersonalMutation>(graphql`
-      mutation FolderCreateModalPersonalMutation(
-        $input: CreateVFolderV2Input!
+  const commitCreateAutoMountMutation =
+    useMutationWithPromise<FolderCreateModalAutoMountMutation>(graphql`
+      mutation FolderCreateModalAutoMountMutation(
+        $input: CreateVFolderAutoMountInput!
       ) {
-        createVfolderV2(input: $input) {
-          vfolder {
+        createVfolderAutoMount(input: $input) {
+          vfolderAutoMount {
             id
-            entityId
-            vfolderStatus: status
-            host
-            metadata {
-              name
-              usageMode
-              quotaScopeId
-              cloneable
-            }
-            accessControl {
-              permission
-              ownershipType
-            }
-            ownership {
-              userId
-              projectId
-              creatorEmail
-            }
-            ...BAINodeNotificationItemFragment @alias(as: "notificationFrgmt")
           }
         }
       }
@@ -277,41 +274,26 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
     }
     if (!values) return;
 
-    const isAutomount = values.usage_mode === 'automount';
-    const folderName =
-      isAutomount && !_.startsWith(values.name, '.')
-        ? `.${values.name}`
-        : values.name;
+    const folderName = values.name;
 
-    // Every folder starts read-only for shared users (#10647); the default
-    // mount permission is changed from the share modal.
+    const wantsAutoMountSetting =
+      canSetAutoMount === true && !!values.auto_mount_enabled;
     let vfolderResults: FolderCreationResponse | undefined;
     try {
-      if (isAutomount && allowAutoMount) {
-        vfolderResults = await commitCreatePersonalMutation({
-          input: {
-            name: folderName,
-            host: values.host ?? null,
-            cloneable: !!values.cloneable,
-            usageMode: 'general',
-            permission: 'ro',
-            projectId: null,
-          },
-        }).then((res) => res?.createVfolderV2?.vfolder);
-      } else {
-        vfolderResults = await commitCreateInProjectMutation({
-          // Not `values.group`: the form snapshots initialValues at mount and
-          // never resyncs them to later `project` prop changes.
-          projectId: effectiveProject?.id ?? values.group ?? '',
-          input: {
-            name: folderName,
-            host: values.host ?? null,
-            cloneable: !!values.cloneable,
-            usageMode: values.usage_mode === 'model' ? 'MODEL' : 'GENERAL',
-            permission: 'READ_ONLY',
-          },
-        }).then((res) => res?.createVFolderInProject?.vfolder);
-      }
+      // Every folder starts read-only for shared users (#10647); the default
+      // mount permission is changed from the share modal.
+      vfolderResults = await commitCreateInProjectMutation({
+        // Not `values.group`: the form snapshots initialValues at mount and
+        // never resyncs them to later `project` prop changes.
+        projectId: effectiveProject?.id ?? values.group ?? '',
+        input: {
+          name: folderName,
+          host: values.host ?? null,
+          cloneable: !!values.cloneable,
+          usageMode: values.usage_mode === 'model' ? 'MODEL' : 'GENERAL',
+          permission: 'READ_ONLY',
+        },
+      }).then((res) => res?.createVFolderInProject?.vfolder);
     } catch (error) {
       const errorDetail = Array.isArray(error)
         ? _.map(error, 'message').join('\n')
@@ -333,12 +315,40 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
       return;
     }
 
+    let autoMountError: string | undefined;
+    if (wantsAutoMountSetting && vfolderResults && autoMountTarget) {
+      // The folder exists by now; a refused auto-mount is reported, not undone.
+      await commitCreateAutoMountMutation({
+        input: {
+          scope: {
+            scopeType:
+              autoMountTarget.scopeType === 'user' ? 'USER' : 'PROJECT',
+            scopeId: autoMountTarget.scopeId,
+          },
+          vfolderId: vfolderResults.entityId,
+          mountDestination: (values.auto_mount_destination ?? '').trim(),
+          subpath: values.auto_mount_subpath?.trim() || '.',
+          mountPermission: values.auto_mount_permission ?? 'READ_WRITE',
+        },
+      }).catch((error) => {
+        logger.error(error);
+        autoMountError = getErrorMessage(error);
+      });
+    }
+
     if (vfolderResults) {
+      // A refused auto-mount rides on the creation notice instead of a second one.
       upsertNotification({
         key: `folder-create-success-${vfolderResults.entityId}`,
         icon: 'folder',
         node: vfolderResults.notificationFrgmt,
-        description: t('data.folders.FolderCreated'),
+        ...(autoMountError !== undefined
+          ? {
+              type: 'warning' as const,
+              description: t('autoMount.AutoMountFailedAfterCreation'),
+              extraDescription: autoMountError,
+            }
+          : { description: t('data.folders.FolderCreated') }),
         open: true,
       });
     } else {
@@ -406,6 +416,25 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
           }
         }}
       >
+        {autoMountTarget && autoMountTargetKey ? (
+          <ErrorBoundaryWithNullFallback>
+            <Suspense fallback={null}>
+              <AutoMountPermissionCheck
+                scopeType={autoMountTarget.scopeType}
+                scopeId={autoMountTarget.scopeId}
+                onResolved={(canCreate) => {
+                  setAutoMountPermission({
+                    key: autoMountTargetKey,
+                    canCreate,
+                  });
+                  if (!canCreate) {
+                    formRef.current?.setFieldValue('auto_mount_enabled', false);
+                  }
+                }}
+              />
+            </Suspense>
+          </ErrorBoundaryWithNullFallback>
+        ) : null}
         {shouldCheckCreatePermission && effectiveProject ? (
           <Suspense fallback={null}>
             <FolderCreatePermissionCheck
@@ -529,29 +558,16 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
                   max: FOLDER_NAME_MAX_LENGTH,
                   message: t('data.FolderNameTooLong'),
                 },
-                ({ getFieldValue }) => ({
+                () => ({
                   validator(_rule, value) {
                     if (_.isEmpty(value)) {
                       return Promise.reject(
                         new Error(t('data.FolderNameRequired')),
                       );
                     }
-                    if (
-                      getFieldValue('usage_mode') === 'automount' &&
-                      !_.startsWith(value, '.')
-                    ) {
+                    if (_.startsWith(value, '.')) {
                       return Promise.reject(
-                        new Error(
-                          t('data.AutomountFolderNameMustStartWithDot'),
-                        ),
-                      );
-                    }
-                    if (
-                      getFieldValue('usage_mode') !== 'automount' &&
-                      _.startsWith(value, '.')
-                    ) {
-                      return Promise.reject(
-                        new Error(t('data.DotPrefixReservedForAutomount')),
+                        new Error(t('data.FolderNameCannotStartWithDot')),
                       );
                     }
                     return Promise.resolve();
@@ -575,13 +591,6 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
                 aria-label={t('data.UsageMode')}
                 disabled={isFolderTypeLocked}
                 orientation="horizontal"
-                onChange={() => {
-                  // Only validate name field if it has a value to prevent
-                  // excessive validation
-                  if (formRef.current?.getFieldValue('name')) {
-                    formRef.current.validateFields(['name']);
-                  }
-                }}
               >
                 <BAIRadioListItem
                   value="general"
@@ -593,18 +602,6 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
                   label={t('data.Models')}
                   data-testid="model-usage-mode"
                 />
-                {allowAutoMount && (
-                  <BAIRadioListItem
-                    value="automount"
-                    label={t('data.AutoMount')}
-                    data-testid="automount-usage-mode"
-                    endContent={
-                      <BAIQuestionIconWithTooltip
-                        title={t('data.AutomountFolderCreationDesc')}
-                      />
-                    }
-                  />
-                )}
               </BAIRadioList>
             </BAIFormItem>
 
@@ -644,6 +641,122 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
                 );
               }}
             </Form.Item>
+
+            {/* The switch is the section's only expander: its fields exist only while auto-mount is on. */}
+            <VStack
+              className="bai-collapsible-section"
+              align="stretch"
+              data-testid="folder-create-auto-mount-section"
+            >
+              <HStack
+                className="bai-toggle-section__header"
+                justify="between"
+                vAlign="center"
+              >
+                <HStack gap={1} vAlign="center">
+                  <BAIText strong>{t('autoMount.AutoMountSettings')}</BAIText>
+                  <BAIQuestionIconWithTooltip
+                    title={
+                      isPersonalTarget
+                        ? t('autoMount.AutoMountInUserSessionsDesc')
+                        : t('autoMount.AutoMountInSessionsDesc')
+                    }
+                  />
+                </HStack>
+                <Form.Item name={'auto_mount_enabled'} noStyle>
+                  <BAISwitch
+                    aria-label={t('autoMount.AutoMountSettings')}
+                    isLoading={
+                      !!autoMountTarget && canSetAutoMount === undefined
+                    }
+                    disabled={canSetAutoMount !== true}
+                    disabledMessage={
+                      canSetAutoMount === false
+                        ? isPersonalTarget
+                          ? t('autoMount.NoPermissionToSetAutoMount')
+                          : t('autoMount.NoPermissionToSetProjectAutoMount')
+                        : undefined
+                    }
+                  />
+                </Form.Item>
+              </HStack>
+              <Form.Item dependencies={['auto_mount_enabled']} noStyle>
+                {({ getFieldValue: getValue }) =>
+                  getValue('auto_mount_enabled') && (
+                    <VStack
+                      className="bai-toggle-section__content"
+                      align="stretch"
+                    >
+                      {isPersonalTarget &&
+                      autoMountUser &&
+                      autoMountUser.id !== baiClient.user_uuid ? (
+                        <Banner
+                          status="warning"
+                          title={t('autoMount.SetOnOtherUserAutoMount', {
+                            email: autoMountUser.email ?? autoMountUser.id,
+                          })}
+                        />
+                      ) : null}
+                      <BAIFormItem
+                        label={t('autoMount.MountDestination')}
+                        tooltip={t('autoMount.MountDestinationDesc')}
+                        name={'auto_mount_destination'}
+                        layout="horizontal"
+                        required
+                        rules={[
+                          {
+                            required: true,
+                            whitespace: true,
+                            message: t('autoMount.PleaseEnterMountDestination'),
+                          },
+                        ]}
+                      >
+                        <BAITextInput
+                          aria-label={t('autoMount.MountDestination')}
+                          placeholder="/home/work/data"
+                        />
+                      </BAIFormItem>
+                      <BAIFormItem
+                        label={t('autoMount.Subpath')}
+                        tooltip={t('autoMount.SubpathDesc')}
+                        name={'auto_mount_subpath'}
+                        layout="horizontal"
+                      >
+                        <BAITextInput
+                          aria-label={t('autoMount.Subpath')}
+                          placeholder="."
+                        />
+                      </BAIFormItem>
+                      <BAIFormItem
+                        label={t('autoMount.MountPermission')}
+                        name={'auto_mount_permission'}
+                        layout="horizontal"
+                        required
+                      >
+                        <BAISelect
+                          showSearch={false}
+                          aria-label={t('autoMount.MountPermission')}
+                          options={[
+                            {
+                              value: 'READ_ONLY',
+                              label: t('data.ReadOnly'),
+                            },
+                            {
+                              value: 'READ_WRITE',
+                              label: t('data.ReadWrite'),
+                            },
+                            {
+                              value: 'RW_DELETE',
+                              label: t('autoMount.ReadWriteDelete'),
+                            },
+                          ]}
+                        />
+                      </BAIFormItem>
+                    </VStack>
+                  )
+                }
+              </Form.Item>
+            </VStack>
           </Form>
         </VStack>
       </BAIModal>
@@ -700,6 +813,48 @@ interface FolderCreatePermissionCheckProps {
   projectId: string;
   onResolved: (canCreate: boolean) => void;
 }
+
+/** Reports whether the caller may create auto-mounts on the scope. */
+const AutoMountPermissionCheck: React.FC<{
+  scopeType: string;
+  scopeId: string;
+  onResolved: (canCreate: boolean) => void;
+}> = ({ scopeType, scopeId, onResolved }) => {
+  'use memo';
+  const { myScopePermissions } =
+    useLazyLoadQuery<FolderCreateModalAutoMountPermissionQuery>(
+      graphql`
+        query FolderCreateModalAutoMountPermissionQuery(
+          $scopeType: String!
+          $scopeId: UUID!
+        ) {
+          myScopePermissions(
+            input: {
+              target: {
+                scopeType: $scopeType
+                scopeId: $scopeId
+                entityType: "vfolder_auto_mount"
+              }
+            }
+          ) {
+            item {
+              permissions
+            }
+          }
+        }
+      `,
+      { scopeType, scopeId },
+      { fetchPolicy: 'store-and-network' },
+    );
+  const canCreate = _.includes(myScopePermissions?.item.permissions, 'CREATE');
+
+  const reportResolved = useEffectEvent(() => onResolved(canCreate));
+  useEffect(() => {
+    reportResolved();
+  }, [scopeType, scopeId, canCreate]);
+
+  return null;
+};
 
 /** Reports whether the caller holds CREATE on vfolders in the project. */
 const FolderCreatePermissionCheck: React.FC<

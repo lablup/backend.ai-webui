@@ -22,7 +22,7 @@ import { convertToOrderBy, handleRowSelectionChange } from '../../helper';
 import { isDeletedCategory } from '../../helper/vfolderStatus';
 import { useCurrentUserInfo } from '../../hooks/backendai';
 import { useBAIPaginationOptionStateOnSearchParam } from '../../hooks/reactPaginationQueryOptions';
-import { useIsPersonalProject } from '../../hooks/useAccessibleProjects';
+import { useAccessibleProjects } from '../../hooks/useAccessibleProjects';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
 import { useCreateActionArrival } from '../../hooks/useCreateActionArrival';
 import { useCurrentProjectValue } from '../../hooks/useCurrentProject';
@@ -79,7 +79,7 @@ interface VFolderNodeListPageProps {}
 
 const DEFAULT_ORDER = '-created_at';
 const statusCategoryValues = ['active', 'deleted'] as const;
-const modeValues = ['all', 'general', 'data', 'automount', 'model'] as const;
+const modeValues = ['all', 'general', 'data', 'model'] as const;
 
 const DELETE_STATUSES = [
   'DELETE_PENDING',
@@ -124,7 +124,6 @@ const USAGE_MODE_FILTERS: Partial<
     ],
   },
   data: { usageMode: { equals: 'DATA' } },
-  automount: { name: { iStartsWith: '.' } },
   model: { usageMode: { equals: 'MODEL' } },
 };
 
@@ -137,7 +136,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
   const isLabelable = useIsLabelableEntityType('vfolder');
   const currentProject = useCurrentProjectValue();
   const projectContext = toProjectContext(currentProject);
-  const isPersonalProject = useIsPersonalProject(currentProject.id);
+  const { personalProject } = useAccessibleProjects();
   const [currentUser] = useCurrentUserInfo();
   const loginConfig = useEffectiveLoginConfig();
   // Deferred, so a project's first invitation read does not suspend the page.
@@ -393,7 +392,6 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
                     label: t('data.Pipeline'),
                     value: 'data',
                   },
-                  { label: t('data.AutoMount'), value: 'automount' },
                   loginConfig.enableModelFolders && {
                     label: t('data.Models'),
                     value: 'model',
@@ -435,6 +433,11 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
                   {
                     key: 'cloneable',
                     propertyLabel: t('data.folders.Cloneable'),
+                    type: 'boolean',
+                  },
+                  {
+                    key: 'autoMounts.exists',
+                    propertyLabel: t('autoMount.AutoMount'),
                     type: 'boolean',
                   },
                   ...(isLabelable
@@ -608,14 +611,11 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
       <FolderCreateModal
         open={isOpenCreateModal}
         project={projectContext}
-        allowAutoMount={isPersonalProject}
+        autoMountScopeType={
+          currentProject.id === personalProject?.id ? 'USER' : 'PROJECT'
+        }
         initialValues={{
-          usage_mode:
-            queryParams.mode === 'model'
-              ? 'model'
-              : queryParams.mode === 'automount'
-                ? 'automount'
-                : 'general',
+          usage_mode: queryParams.mode === 'model' ? 'model' : 'general',
         }}
         onRequestClose={(success) => {
           if (success) {

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<010d0ef1cf13a3246acfa355043313a1>>
+ * @generated SignedSource<<a899a1980c53ac7381f87fb47c32b078>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -23,6 +23,7 @@ export type UpdateUserV2Input = {
   groupIds?: ReadonlyArray<string> | null | undefined;
   mainAccessKey?: string | null | undefined;
   needPasswordChange?: boolean | null | undefined;
+  oldPassword?: string | null | undefined;
   password?: string | null | undefined;
   resourcePolicy?: string | null | undefined;
   role?: UserRoleV2 | null | undefined;

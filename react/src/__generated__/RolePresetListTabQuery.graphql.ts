@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<f7d5bae2ddafbf4cef8877808307bf0d>>
+ * @generated SignedSource<<f3bbfb1393e3378c575ccb99bd2e2199>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -19,6 +19,7 @@ export type RolePresetFilter = {
   NOT?: ReadonlyArray<RolePresetFilter> | null | undefined;
   OR?: ReadonlyArray<RolePresetFilter> | null | undefined;
   autoAssign?: boolean | null | undefined;
+  autoAssignToOwner?: boolean | null | undefined;
   deleted?: boolean | null | undefined;
   deletedAt?: NullableDateTimeFilter | null | undefined;
   entityId?: UUIDFilter | null | undefined;

@@ -488,7 +488,14 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
           projectV2 {
             basicInfo {
               name
+              type
             }
+          }
+        }
+        creator {
+          entityId
+          basicInfo {
+            email
           }
         }
         currentRevision {
@@ -2746,6 +2753,21 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
         // would write back a folder this revision cannot mount.
         open={isModelFolderCreateModalOpen && !!deploymentProject}
         project={deploymentProject}
+        // ADR 0040: a personal project's deployment auto-mounts on its owner.
+        autoMountScopeType={
+          deployment?.metadata?.projectV2?.basicInfo?.type === 'PERSONAL'
+            ? 'USER'
+            : 'PROJECT'
+        }
+        autoMountUser={
+          deployment?.metadata?.projectV2?.basicInfo?.type === 'PERSONAL' &&
+          deployment.creator
+            ? {
+                id: deployment.creator.entityId,
+                email: deployment.creator.basicInfo.email,
+              }
+            : undefined
+        }
         initialValues={{ usage_mode: 'model' }}
         onRequestClose={(result) => {
           setIsModelFolderCreateModalOpen(false);

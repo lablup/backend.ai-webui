@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<fa3da7edd994ece2ab1b679a16e5d64a>>
+ * @generated SignedSource<<93d400510565b81c474e03bc389fc34d>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,7 +11,7 @@
 import { ReaderFragment } from 'relay-runtime';
 export type PermissionBit = "CREATE" | "HARD_DELETE" | "READ" | "SOFT_DELETE" | "UPDATE" | "%future added value";
 export type VFolderMountPermission = "NONE" | "READ_ONLY" | "READ_WRITE" | "RW_DELETE" | "%future added value";
-export type VFolderOperationStatus = "CLONING" | "DELETE_COMPLETE" | "DELETE_ERROR" | "DELETE_ONGOING" | "DELETE_PENDING" | "READY" | "%future added value";
+export type VFolderOperationStatus = "CLONING" | "CREATING" | "DELETE_COMPLETE" | "DELETE_ERROR" | "DELETE_ONGOING" | "DELETE_PENDING" | "READY" | "%future added value";
 export type VFolderOwnershipType = "GROUP" | "USER" | "%future added value";
 export type VFolderUsageMode = "DATA" | "GENERAL" | "MODEL" | "%future added value";
 import { FragmentRefs } from "relay-runtime";
@@ -67,7 +67,7 @@ export type VFolderNodesV2Fragment$data = ReadonlyArray<{
     };
   } | null | undefined;
   readonly vfolderStatus: VFolderOperationStatus;
-  readonly " $fragmentSpreads": FragmentRefs<"DeleteForeverVFolderModalV2Fragment" | "InviteFolderSettingModalFragment" | "SharedFolderPermissionInfoModalV2Fragment" | "VFolderNodeIdenticonV2Fragment">;
+  readonly " $fragmentSpreads": FragmentRefs<"DeleteForeverVFolderModalV2Fragment" | "InviteFolderSettingModalFragment" | "SharedFolderPermissionInfoModalV2Fragment" | "VFolderNodeIdenticonV2Fragment" | "VFolderNodesV2AutoMountCellFragment">;
   readonly " $fragmentType": "VFolderNodesV2Fragment";
 } | null | undefined>;
 export type VFolderNodesV2Fragment$key = ReadonlyArray<{
@@ -388,6 +388,11 @@ return {
     {
       "args": null,
       "kind": "FragmentSpread",
+      "name": "VFolderNodesV2AutoMountCellFragment"
+    },
+    {
+      "args": null,
+      "kind": "FragmentSpread",
       "name": "VFolderNodeIdenticonV2Fragment"
     },
     {
@@ -427,6 +432,6 @@ return {
 };
 })();
 
-(node as any).hash = "81ae6e6d255a0568cb5d880acf6cc738";
+(node as any).hash = "2b4995a2c4adca84fc48a970202a3ac0";
 
 export default node;
