@@ -15,7 +15,11 @@ import {
   resolveAppPath,
   searchParamsToRecord,
 } from '../helper/webmcpNavigation';
-import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
+import {
+  useCurrentDomain,
+  useSuspendedBackendaiClient,
+  useWebUINavigate,
+} from '../hooks';
 import { useCurrentUserInfo, useCurrentUserRole } from '../hooks/backendai';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useCurrentRouteLabel } from '../hooks/useCurrentRouteLabel';
@@ -219,10 +223,9 @@ const WebMCPGlobalToolsRegistrar: React.FC = () => {
   const baiClient = useSuspendedBackendaiClient();
   const loginConfig = useEffectiveLoginConfig();
   const role = useCurrentUserRole();
-  // Follows a rename in user settings, which the client fields do not.
+  // The hook hears this tab's own rename; the client field keeps the login name.
   const [currentUser] = useCurrentUserInfo();
-  const domainId: string | undefined = baiClient._config?.domainId;
-  const domainName: string | undefined = baiClient._config?.domainName;
+  const { id: domainId, name: domainName } = useCurrentDomain();
   // Sanctioned global reader (ADR 0001): bai_whoami reports the ambient project.
   const currentProject = useCurrentProjectValue();
   const activeProjectName = useActiveProjectName();
@@ -254,8 +257,8 @@ const WebMCPGlobalToolsRegistrar: React.FC = () => {
 
   useWebMCPTool(
     createWhoamiTool({
-      userId: currentUser.uuid || null,
-      email: displayedEmail(currentUser.email, loginConfig.maskUserInfo),
+      userId: baiClient.user_uuid || null,
+      email: displayedEmail(baiClient.email, loginConfig.maskUserInfo),
       fullName: displayedFullName(
         currentUser.full_name,
         loginConfig.maskUserInfo,

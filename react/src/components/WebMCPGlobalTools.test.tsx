@@ -38,6 +38,7 @@ vi.mock('react-i18next', async (importOriginal) => ({
 vi.mock('../hooks', async (importOriginal) => ({
   ...(await importOriginal<typeof import('../hooks')>()),
   useSuspendedBackendaiClient: mocks.useSuspendedBackendaiClient,
+  useCurrentDomain: () => ({ name: 'default', id: 'd-1' }),
   useWebUINavigate: () => mocks.navigate,
 }));
 vi.mock('../hooks/backendai', async (importOriginal) => ({
